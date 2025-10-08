@@ -56,6 +56,8 @@ export class Data {
           } else {
             return new TypedIdentifier(name, input.filename, found);
           }
+        } else if (found instanceof Basic.UnknownType) {
+          return new TypedIdentifier(name, input.filename, found);
         }
 
         for (const c of found) {

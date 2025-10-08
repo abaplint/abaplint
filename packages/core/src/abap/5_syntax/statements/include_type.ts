@@ -1,13 +1,13 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {IStructureComponent, StructureType, TableType, VoidType} from "../../types/basic";
+import {IStructureComponent, StructureType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 
 export class IncludeType {
-  public runSyntax(node: StatementNode, input: SyntaxInput): IStructureComponent[] | VoidType {
+  public runSyntax(node: StatementNode, input: SyntaxInput): IStructureComponent[] | VoidType | UnknownType {
     const components: IStructureComponent[] = [];
 
     const iname = node.findFirstExpression(Expressions.TypeName);
@@ -36,6 +36,8 @@ export class IncludeType {
       ityp = ityp.getRowType();
     }
     if (ityp instanceof VoidType) {
+      return ityp;
+    } else if (ityp instanceof UnknownType) {
       return ityp;
     }
 
