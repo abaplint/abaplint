@@ -74,6 +74,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public commonPart: boolean = true;
   /** Check for FIELD-GROUPS */
   public fieldGroups: boolean = true;
+  /** Check for REPLACE INTO */
+  public replaceInto: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -192,6 +194,11 @@ ENDIF.`,
 
       if (this.conf.commonPart && sta instanceof Statements.DataBegin && staNode.findDirectTokenByText("COMMON")) {
         const issue = Issue.atStatement(file, staNode, "COMMON PART is obsolete", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
+      if (this.conf.replaceInto && sta instanceof Statements.Replace && staNode.findDirectTokenByText("INTO")) {
+        const issue = Issue.atStatement(file, staNode, "REPLACE INTO is obsolete", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 
