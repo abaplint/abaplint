@@ -8,6 +8,10 @@ const tests = [
   "field foo-bar.", // used in CHAINs
   "FIELD foo-bar MODULE check_matnr ON CHAIN-REQUEST.",
   `FIELD foo-bar WITH bar-moo.`,
+  `field foo-bar select * from ztab
+                        where field = foo-bar into result
+                        whenever not found
+                        send errormessage.`,
 ];
 
 statementType(tests, "FIELD", Statements.Field);
