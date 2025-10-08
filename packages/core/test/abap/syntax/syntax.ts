@@ -11704,4 +11704,12 @@ DATA END OF foo.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("basic FIELD-GROUPS", () => {
+    const abap = `
+FIELD-GROUPS header.
+INSERT VALUE #( ) INTO header.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
