@@ -506,6 +506,7 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
         INTO TABLE @tab
         FROM ztab.`,
 
+  `SELECT CAST( arbgb AS DATS ) AS foo FROM t100 INTO TABLE @DATA(sdf).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
