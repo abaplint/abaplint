@@ -6887,6 +6887,10 @@
           "description": "Check for CLIENT SPECIFIED",
           "type": "boolean"
         },
+        "commonPart": {
+          "description": "Check for COMMON PART",
+          "type": "boolean"
+        },
         "communication": {
           "description": "Checks for COMMUNICATION",
           "type": "boolean"
@@ -6908,6 +6912,10 @@
         },
         "exitFromSQL": {
           "description": "Checks for EXIT FROM SQL",
+          "type": "boolean"
+        },
+        "fieldGroups": {
+          "description": "Check for FIELD-GROUPS",
           "type": "boolean"
         },
         "fieldSymbolStructure": {
@@ -6964,6 +6972,10 @@
         },
         "regex": {
           "description": "Check for POSIX REGEX usage",
+          "type": "boolean"
+        },
+        "replaceInto": {
+          "description": "Check for REPLACE INTO",
           "type": "boolean"
         },
         "requested": {
@@ -7027,7 +7039,10 @@
         "occurences",
         "clientSpecified",
         "formDefinition",
-        "formImplementation"
+        "formImplementation",
+        "commonPart",
+        "fieldGroups",
+        "replaceInto"
       ],
       "type": "object"
     },

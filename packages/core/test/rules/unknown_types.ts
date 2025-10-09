@@ -2407,4 +2407,17 @@ PARAMETERS p_gjahr LIKE foobar-gjahr OBLIGATORY DEFAULT sy-datum(4).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("INCLUDE STRUCTURE data", () => {
+    const abap = `
+DATA: BEGIN OF zedi_pos,
+        xfii TYPE x LENGTH 2,
+      END OF zedi_pos.
+DATA BEGIN OF edi_line OCCURS 100.
+    INCLUDE STRUCTURE zedi_pos.
+DATA END OF edi_line.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

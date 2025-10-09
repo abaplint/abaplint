@@ -11712,4 +11712,16 @@ INSERT VALUE #( ) INTO header.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("more INCLUDE STRUCTURE", () => {
+    const abap = `
+DATA: BEGIN OF zedi_pos,
+        xfii TYPE x LENGTH 2,
+      END OF zedi_pos.
+DATA BEGIN OF edi_line OCCURS 100.
+    INCLUDE STRUCTURE zedi_pos.
+DATA END OF edi_line.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

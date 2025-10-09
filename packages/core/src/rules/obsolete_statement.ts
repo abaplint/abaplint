@@ -70,6 +70,12 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public formDefinition: boolean = true;
   /** Check for FORM IMPLEMENTATION */
   public formImplementation: boolean = true;
+  /** Check for COMMON PART */
+  public commonPart: boolean = true;
+  /** Check for FIELD-GROUPS */
+  public fieldGroups: boolean = true;
+  /** Check for REPLACE INTO */
+  public replaceInto: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -186,8 +192,23 @@ ENDIF.`,
         issues.push(issue);
       }
 
+      if (this.conf.commonPart && sta instanceof Statements.DataBegin && staNode.findDirectTokenByText("COMMON")) {
+        const issue = Issue.atStatement(file, staNode, "COMMON PART is obsolete", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
+      if (this.conf.replaceInto && sta instanceof Statements.Replace && staNode.findDirectTokenByText("INTO")) {
+        const issue = Issue.atStatement(file, staNode, "REPLACE INTO is obsolete", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
       if (this.conf.pack && sta instanceof Statements.Pack) {
         const issue = Issue.atStatement(file, staNode, "PACK is obsolete", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
+      if (this.conf.fieldGroups && sta instanceof Statements.FieldGroup) {
+        const issue = Issue.atStatement(file, staNode, "FIELD-GROUPS is obsolete", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 

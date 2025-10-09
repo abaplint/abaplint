@@ -14,7 +14,7 @@ export class Types {
   public runSyntax(node: StructureNode, input: SyntaxInput, qualifiedNamePrefix?: string): TypedIdentifier | undefined {
     const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
     const components: IStructureComponent[] = [];
-    let voidd: VoidType | undefined = undefined;
+    let voidd: VoidType | Basic.UnknownType | undefined = undefined;
 
     if (qualifiedNamePrefix === undefined) {
       qualifiedNamePrefix = "";
@@ -30,7 +30,7 @@ export class Types {
           }
         } else if (ctyp instanceof Statements.IncludeType) {
           const found = new IncludeType().runSyntax(c, input);
-          if (found instanceof VoidType) {
+          if (found instanceof VoidType || found instanceof Basic.UnknownType) {
             voidd = found;
           } else {
             components.push(...found);
