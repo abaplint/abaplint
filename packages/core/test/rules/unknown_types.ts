@@ -2420,4 +2420,16 @@ DATA END OF edi_line.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("TYPE REF TO voided structure with include", () => {
+    const abap = `
+TYPES BEGIN OF ty_foo.
+INCLUDE TYPE voided.
+TYPES END OF ty_foo.
+
+DATA lr_ref TYPE REF TO ty_foo.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
