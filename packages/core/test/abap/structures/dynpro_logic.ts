@@ -95,6 +95,18 @@ PROCESS ON VALUE-REQUEST.
 PROCESS BEFORE OUTPUT.
   MODULE alv_8000.
 `},
+
+  {abap: `
+PROCESS BEFORE OUTPUT.
+  LOOP.
+    MODULE foo.
+  ENDLOOP.
+
+PROCESS AFTER INPUT.
+  LOOP.
+    MODULE bar.
+  ENDLOOP.
+`},
 ];
 
 structureType(cases, new DynproLogic());
