@@ -11735,4 +11735,13 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("FORM with dashed parameter name", () => {
+    const abap = `
+FORM run USING foo-tabix.
+  WRITE foo-tabix.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
