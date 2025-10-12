@@ -11724,4 +11724,15 @@ DATA END OF edi_line.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECTION-SCREEN test dashed title", () => {
+    const abap = `
+SELECTION-SCREEN BEGIN OF SCREEN 2000 TITLE foo-bar.
+SELECTION-SCREEN END OF SCREEN 2000.
+
+START-OF-SELECTION.
+  foo-bar = 'hello'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
