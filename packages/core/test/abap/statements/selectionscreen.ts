@@ -61,6 +61,8 @@ const tests = [
   `SELECTION-SCREEN END   OF VERSION 002.`,
   `SELECTION-SCREEN ULINE MODIF ID fk1.`,
   `SELECTION-SCREEN DEFAULT SCREEN 1010.`,
+  `selection-screen begin of block file with frame title t-002.`,
+  `SELECTION-SCREEN BEGIN OF SCREEN 2000 title foo-bar.`,
 ];
 
 statementType(tests, "SELECTION-SCREEN", Statements.SelectionScreen);

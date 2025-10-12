@@ -230,6 +230,7 @@ export * from "./editor_call";
 export * from "./break";
 export * from "./delete_textpool";
 export * from "./get";
+export * from "./loop_extract";
 export * from "./selectoption";
 export * from "./convert";
 export * from "./static";

@@ -1587,7 +1587,7 @@ ENDFORM.`);
 
     const hover1 = new Hover(reg).find(buildPosition(main, 3, 14));
     expect(hover1).to.not.equal(undefined);
-    expect(hover1?.value).to.contain("zcl_mc");
+    expect(hover1?.value).to.contain("ZCL_MC");
 
     const hover2 = new Hover(reg).find(buildPosition(main, 4, 14));
     expect(hover2).to.not.equal(undefined);

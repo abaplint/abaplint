@@ -22,8 +22,8 @@ export class SelectionScreen implements StatementSyntax {
     }
 
     const field = node.findFirstExpression(Expressions.InlineField);
-    if (field !== undefined && field.getFirstToken().getStr().length > 8) {
-      const message = "SELECTION-SCREEN name too long, " + field.getFirstToken().getStr();
+    if (field !== undefined && field.concatTokens().length > 8) {
+      const message = "SELECTION-SCREEN name too long, " + field.concatTokens();
       input.issues.push(syntaxIssue(input, field.getFirstToken(), message));
       return;
     }
@@ -39,9 +39,11 @@ export class SelectionScreen implements StatementSyntax {
 
       input.scope.addIdentifier(new TypedIdentifier(blockToken, input.filename, type, [IdentifierMeta.SelectionScreenTab]));
     } else if (concat.startsWith("SELECTION-SCREEN TAB") && fieldName) {
-      input.scope.addIdentifier(new TypedIdentifier(fieldName, input.filename, new CharacterType(83), [IdentifierMeta.SelectionScreenTab]));
+      const id = new TypedIdentifier(fieldName, input.filename, new CharacterType(83), [IdentifierMeta.SelectionScreenTab]);
+      input.scope.addNamedIdentifier(field!.concatTokens(), id);
     } else if (fieldName) {
-      input.scope.addIdentifier(new TypedIdentifier(fieldName, input.filename, new CharacterType(83)));
+      const id = new TypedIdentifier(fieldName, input.filename, new CharacterType(83));
+      input.scope.addNamedIdentifier(field!.concatTokens(), id);
     }
   }
 }

@@ -20,6 +20,7 @@ export class Normal implements IStructure {
                sta(MacroCall),
                sub(Structures.LoopAtScreen),
                sub(Structures.Loop),
+               sub(Structures.LoopExtract),
                sta(Statements.Append),
                sub(Structures.Try),
                sub(Structures.OnChange),

@@ -159,6 +159,20 @@ const tests = [
     FROM tab
     WHERE (lv_where_f).`,
 
+  `SELECT MAX( lfgja )
+    INTO var1
+    FROM mardh
+    GROUP BY matnr.`,
+
+  `SELECT MAX( lfgja )
+    INTO var1
+    FROM mardh CLIENT SPECIFIED
+    GROUP BY matnr.`,
+
+  `SELECT MAX( lfgja ) MAX( lfmon )
+    INTO (var1, var2)
+    FROM mardh
+    GROUP BY matnr.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

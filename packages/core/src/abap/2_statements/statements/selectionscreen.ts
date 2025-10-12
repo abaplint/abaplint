@@ -8,17 +8,19 @@ import {IStatementRunnable} from "../statement_runnable";
 export class SelectionScreen implements IStatement {
 
   public getMatcher(): IStatementRunnable {
+    const text = altPrio(TextElement, InlineField);
+
     const beginBlock = seq("BEGIN OF BLOCK",
                            BlockName,
                            optPrio("WITH FRAME"),
-                           optPrio(seq("TITLE", alt(InlineField, TextElement))),
+                           optPrio(seq("TITLE", text)),
                            optPrio("NO INTERVALS"));
     const endBlock = seq("END OF BLOCK", BlockName);
 
     const nesting = seq("NESTING LEVEL", Source);
 
     const scrOptions = per(seq("AS", alt("WINDOW", "SUBSCREEN")),
-                           seq("TITLE", alt(InlineField, TextElement)),
+                           seq("TITLE", text),
                            "NO INTERVALS",
                            nesting);
 
@@ -47,14 +49,14 @@ export class SelectionScreen implements IStatement {
 
     const comment = seq("COMMENT",
                         position,
-                        opt(alt(InlineField, TextElement)),
+                        opt(text),
                         opt(commentOpt));
 
     const command = seq("USER-COMMAND", alt(Field, Constant));
 
     const push = seq("PUSHBUTTON",
                      position,
-                     alt(InlineField, TextElement),
+                     text,
                      command,
                      opt(modif),
                      opt(visible));
@@ -66,7 +68,7 @@ export class SelectionScreen implements IStatement {
                     tok(WParenLeft),
                     Integer,
                     tok(ParenRightW),
-                    alt(InlineField, TextElement),
+                    text,
                     command,
                     opt(def),
                     opt(modif));

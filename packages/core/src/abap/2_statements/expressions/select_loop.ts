@@ -1,4 +1,4 @@
-import {seq, per, alt, Expression, optPrio, altPrio, ver} from "../combi";
+import {seq, per, alt, Expression, optPrio, altPrio, ver, plusPrio} from "../combi";
 import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLClient, SQLForAllEntries, SQLIntoList, SQLAggregation} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLOrderBy} from "./sql_order_by";
@@ -41,7 +41,7 @@ export class SelectLoop extends Expression {
                        optPrio(SQLForAllEntries),
                        optPrio(seq(where, optPrio(SQLOrderBy), into, optPrio(SQLUpTo))));
 
-    const aggr = seq(SQLAggregation, into, optPrio(SQLUpTo), SQLFrom, where, SQLGroupBy);
+    const aggr = seq(plusPrio(SQLAggregation), into, optPrio(SQLUpTo), SQLFrom, optPrio(SQLClient), optPrio(where), SQLGroupBy);
 
     const ret = seq("SELECT",
                     altPrio(seq(optPrio("DISTINCT"), SQLFieldListLoop, perm), strict, aggr),

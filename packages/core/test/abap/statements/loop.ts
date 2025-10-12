@@ -16,7 +16,6 @@ const tests = [
   "LOOP AT lt_catalog INTO ls_component USING KEY is_key WHERE is_key = abap_true.",
   "loop at it_foo assigning <bar> casting.",
   "loop at lt_data into <ls_data> where (condition).",
-  "LOOP.",
   "LOOP AT itab INTO wa GROUP BY wa-column.",
   "LOOP AT GROUP group INTO member.",
   "LOOP AT itab INTO DATA(wa) GROUP BY ( sy-tabix - 1 ) DIV n + 1.",

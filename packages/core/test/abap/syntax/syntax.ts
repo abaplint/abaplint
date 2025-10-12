@@ -3200,7 +3200,7 @@ START-OF-SELECTION.
     DATA lx_error TYPE REF TO cx_foobar.
     RAISE EXCEPTION lx_error.`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
   it("nested TYPES definition", () => {
@@ -11720,6 +11720,17 @@ DATA: BEGIN OF zedi_pos,
 DATA BEGIN OF edi_line OCCURS 100.
     INCLUDE STRUCTURE zedi_pos.
 DATA END OF edi_line.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECTION-SCREEN test dashed title", () => {
+    const abap = `
+SELECTION-SCREEN BEGIN OF SCREEN 2000 TITLE foo-bar.
+SELECTION-SCREEN END OF SCREEN 2000.
+
+START-OF-SELECTION.
+  foo-bar = 'hello'.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
