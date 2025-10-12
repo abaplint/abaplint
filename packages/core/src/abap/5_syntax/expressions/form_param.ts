@@ -6,10 +6,18 @@ import {BasicTypes} from "../basic_types";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput} from "../_syntax_input";
 import {AssertError} from "../assert_error";
+import {Identifier} from "../../1_lexer/tokens";
 
 export class FormParam {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput): TypedIdentifier {
-    const nameToken = node.findFirstExpression(FormParamName)?.getFirstToken();
+    const formParamName = node.findFirstExpression(FormParamName);
+    if (formParamName === undefined) {
+      throw new AssertError("FormParam, could not find FormParamName");
+    }
+    let nameToken = formParamName.getFirstToken();
+    if (formParamName.getChildren().length > 1) {
+      nameToken = new Identifier(nameToken.getStart(), formParamName.concatTokens());
+    }
 
     if (node.findDirectTokenByText("STRUCTURE") && nameToken) {
       // STRUCTURES typing
@@ -25,6 +33,8 @@ export class FormParam {
       }
       return new TypedIdentifier(nameToken, input.filename, type, [IdentifierMeta.FormParameter]);
     }
+
+
 
     if (node.getChildren().length === 1 && nameToken) {
       // untyped FORM parameter

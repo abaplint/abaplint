@@ -11735,7 +11735,7 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("FORM USING with dashed parameter name", () => {
+  it("FORM USING with dashed parameter name", () => {
     const abap = `
 FORM run USING foo-tabix.
   WRITE foo-tabix.
