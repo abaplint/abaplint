@@ -41,7 +41,7 @@ export class SelectLoop extends Expression {
                        optPrio(SQLForAllEntries),
                        optPrio(seq(where, optPrio(SQLOrderBy), into, optPrio(SQLUpTo))));
 
-    const aggr = seq(plusPrio(SQLAggregation), into, optPrio(SQLUpTo), SQLFrom, optPrio(where), SQLGroupBy);
+    const aggr = seq(plusPrio(SQLAggregation), into, optPrio(SQLUpTo), SQLFrom, optPrio(SQLClient), optPrio(where), SQLGroupBy);
 
     const ret = seq("SELECT",
                     altPrio(seq(optPrio("DISTINCT"), SQLFieldListLoop, perm), strict, aggr),

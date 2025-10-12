@@ -164,6 +164,11 @@ const tests = [
     FROM mardh
     GROUP BY matnr.`,
 
+  `SELECT MAX( lfgja )
+    INTO var1
+    FROM mardh CLIENT SPECIFIED
+    GROUP BY matnr.`,
+
   `SELECT MAX( lfgja ) MAX( lfmon )
     INTO (var1, var2)
     FROM mardh
