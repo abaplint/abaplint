@@ -22,13 +22,12 @@ export class Loop implements IStatement {
 
     const options = per(LoopTarget, from, to, where, usingKey, group, step);
 
-    const at = seq("AT",
-                   opt(seq("SCREEN", failCombinator())),
+    const at = seq(opt(seq("SCREEN", failCombinator())),
                    opt(ver(Version.v740sp08, "GROUP", Version.OpenABAP)),
                    LoopSource,
                    opt(options));
 
-    return seq("LOOP", opt(at));
+    return seq("LOOP AT", at);
   }
 
 }

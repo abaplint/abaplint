@@ -48,6 +48,7 @@ export * from "./dynpro_loop";
 export * from "./statics";
 export * from "./test_injection";
 export * from "./test_seam";
+export * from "./loop_extract";
 export * from "./try";
 export * from "./type_enum";
 export * from "./type_mesh";
