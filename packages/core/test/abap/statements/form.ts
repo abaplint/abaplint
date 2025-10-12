@@ -151,6 +151,7 @@ const tests = [
   "FORM sdfsd TABLES sdfs/sdf/sdfs.",
   "FORM foobar TABLES it_move STRUCTURE data_work-wa.",
   "FORM !bar.",
+  "FORM <foobar>.",
 ];
 
 statementType(tests, "FORM", Statements.Form);

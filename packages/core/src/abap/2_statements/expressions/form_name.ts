@@ -5,7 +5,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class FormName extends Expression {
   public getRunnable(): IStatementRunnable {
 // todo, does not handle namespaces properly
-    return seq(reg(/^!?[\w%$\*\/\?]+$/),
+    return seq(reg(/^!?[\w%$\*\/\?<>]+$/),
                starPrio(seq(tok(Dash), optPrio(reg(/^\w+$/)))),
                optPrio(tok(DashW)));
   }
