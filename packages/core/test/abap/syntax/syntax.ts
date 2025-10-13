@@ -11762,4 +11762,14 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("Table control, SCREEN field", () => {
+    const abap = `
+CONTROLS tablecontrol TYPE TABLEVIEW USING SCREEN 2000.
+DATA lv_line LIKE LINE OF tablecontrol-cols.
+IF lv_line-screen-group1 EQ 'A'.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
