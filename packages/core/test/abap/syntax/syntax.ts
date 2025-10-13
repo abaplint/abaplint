@@ -11735,4 +11735,31 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("FORM USING with dashed parameter name", () => {
+    const abap = `
+FORM run USING foo-tabix.
+  WRITE foo-tabix.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FORM CHANGING with dashed parameter name", () => {
+    const abap = `
+FORM run CHANGING foo-tabix.
+  WRITE foo-tabix.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FORM TABLES with dashed parameter name", () => {
+    const abap = `
+FORM run TABLES foo-tabix.
+  WRITE foo-tabix.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

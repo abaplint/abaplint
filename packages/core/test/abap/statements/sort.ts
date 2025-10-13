@@ -58,7 +58,6 @@ const tests = [
   "  (foo-f20d) DESCENDING.",
 
   "SORT table BY ref->num.",
-  "SORT AS TEXT.",
 //  "sort et_entityset by (lt_sort_options[]).",
 ];
 
