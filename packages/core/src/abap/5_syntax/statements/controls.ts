@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {TypedIdentifier} from "../../types/_typed_identifier";
-import {StructureType, CharacterType, IntegerType, TableType, TableKeyType} from "../../types/basic";
+import {StructureType, CharacterType, IntegerType, TableType, TableKeyType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput} from "../_syntax_input";
 
@@ -19,7 +19,7 @@ export class Controls implements StatementSyntax {
 
     if (node.findDirectTokenByText("TABLEVIEW") && token) {
       const cols = new StructureType([
-        {name: "SCREEN", type: new CharacterType(1)}, // todo
+        {name: "SCREEN", type: VoidType.get("TABLEVIEW-SCREEN")}, // todo
         {name: "INDEX", type: IntegerType.get()},
         {name: "SELECTED", type: new CharacterType(1)},
         {name: "VISLENGTH", type: IntegerType.get()},
