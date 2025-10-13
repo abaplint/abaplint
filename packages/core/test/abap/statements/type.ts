@@ -45,6 +45,7 @@ const tests = [
   `TYPES /foo/bar/foo/bar TYPE c.`,
   `types ty_s_sbu_upd_ind type /foo/bar with indicators upddd type abap_bool.`,
   `TYPES indicatortype TYPE ty WITH INDICATORS ind.`,
+//  `TYPES ttyp TYPE SORTED TABLE OF ty WITH UNIQUE KEY 2fieldname.`,
 ];
 
 statementType(tests, "TYPE", Statements.Type);

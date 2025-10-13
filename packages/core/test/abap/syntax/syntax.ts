@@ -11762,4 +11762,41 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Table control, SCREEN field", () => {
+    const abap = `
+CONTROLS tablecontrol TYPE TABLEVIEW USING SCREEN 2000.
+DATA lv_line LIKE LINE OF tablecontrol-cols.
+IF lv_line-screen-group1 EQ 'A'.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Voided ranges with date offsets", () => {
+    const abap = `
+TABLES voided.
+RANGES datum FOR voided-date.
+
+WRITE: datum-low(4),
+       datum-low+4(2),
+       datum-low+6(2),
+       datum-high(4),
+       datum-high+4(2),
+       datum-high+6(2).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("COMMON PART, lower case", () => {
+    const abap = `
+data begin of common part hello.
+data world type i.
+data end of common part.
+
+START-OF-SELECTION.
+  world = world - 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
