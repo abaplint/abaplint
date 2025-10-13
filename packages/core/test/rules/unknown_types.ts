@@ -1712,7 +1712,7 @@ TYPES moo
   INITIAL SIZE 2.`;
     let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}], fullErrorNamespace());
     issues = issues.filter(i => i.getKey() === key);
-    expect(issues.length).to.equal(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("Sequence of stuff in intf/clas sections", () => {
