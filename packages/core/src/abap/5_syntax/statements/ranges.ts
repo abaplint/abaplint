@@ -16,7 +16,7 @@ export class Ranges implements StatementSyntax {
       throw new AssertError("Ranges, unexpected node");
     }
 
-    const found = new BasicTypes(input).parseType(typeExpression);
+    const found = new BasicTypes(input).resolveLikeName(typeExpression);
     if (found && nameToken) {
       const structure = new StructureType([
         {name: "sign", type: new CharacterType(1)},

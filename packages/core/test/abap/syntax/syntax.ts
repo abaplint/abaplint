@@ -11772,4 +11772,19 @@ ENDIF.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Voided ranges with date offsets", () => {
+    const abap = `
+TABLES voided.
+RANGES datum FOR voided-date.
+
+WRITE: datum-low(4),
+       datum-low+4(2),
+       datum-low+6(2),
+       datum-high(4),
+       datum-high+4(2),
+       datum-high+6(2).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
