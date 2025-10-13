@@ -11787,4 +11787,16 @@ WRITE: datum-low(4),
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("COMMON PART, lower case", () => {
+    const abap = `
+data begin of common part hello.
+data world type i.
+data end of common part.
+
+START-OF-SELECTION.
+  world = world - 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

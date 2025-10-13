@@ -16,7 +16,7 @@ import {Constants} from "./constants";
 export class Data {
   public static runSyntax(node: StructureNode, input: SyntaxInput): TypedIdentifier | undefined {
     const fouth = node.getFirstChild()?.getChildren()[3];
-    const isCommonPart = fouth instanceof TokenNode && fouth.concatTokens() === "COMMON";
+    const isCommonPart = fouth instanceof TokenNode && fouth.concatTokens().toUpperCase() === "COMMON";
     if (isCommonPart) {
       this.runCommonPartSyntax(node, input);
       return undefined;
