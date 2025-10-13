@@ -11799,4 +11799,15 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Macro, sy-repid", () => {
+    const abap = `
+DEFINE _foo.
+WRITE / sy-repid.
+END-OF-DEFINITION.
+
+_foo.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
