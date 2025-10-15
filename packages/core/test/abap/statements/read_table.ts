@@ -1,5 +1,5 @@
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {statementType, statementVersion, statementVersionFail} from "../_utils";
+import {statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 import {Version} from "../../../src/version";
 
 const tests = [
@@ -62,6 +62,12 @@ const versions = [
 ];
 
 statementVersion(versions, "READ TABLE", Statements.ReadTable);
+
+const versionsOk = [
+  {abap: `READ TABLE lt_tags TRANSPORTING NO FIELDS WITH TABLE KEY name_key
+            COMPONENTS name = zcl_abapgit_git_tag=>add_tag_prefix( lv_new_tag_name ).`, ver: Version.v702},
+];
+statementVersionOk(versionsOk, "READ TABLE", Statements.ReadTable);
 
 const versionsFail = [
   // https://github.com/abapGit/abapGit/issues/7413
