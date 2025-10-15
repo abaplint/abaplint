@@ -6,7 +6,7 @@ import {Version} from "../../../version";
 
 export class ComponentCompareSimple extends Expression {
   public getRunnable(): IStatementRunnable {
-    const source = alt(SimpleSource4, ver(Version.v740sp02, Source, Version.OpenABAP));
+    const source = altPrio(SimpleSource4, ver(Version.v740sp02, Source, Version.OpenABAP));
     const ret = seq(altPrio(ComponentChainSimple, Dynamic), "=", source);
     return plus(ret);
   }
