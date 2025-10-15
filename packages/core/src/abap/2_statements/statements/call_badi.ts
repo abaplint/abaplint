@@ -8,8 +8,7 @@ export class CallBadi implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const call = seq("CALL",
-                     "BADI",
+    const call = seq("CALL BADI",
                      MethodSource,
                      MethodCallBody);
 
