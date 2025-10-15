@@ -200,6 +200,16 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
     return ret;
   }
 
+  public findDirectExpressionsMulti(type: (new () => IStatementRunnable)[]): readonly ExpressionNode[] {
+    const ret: ExpressionNode[] = [];
+    for (const child of this.getChildren()) {
+      if (child instanceof ExpressionNode && type.some(t => child.get() instanceof t)) {
+        ret.push(child);
+      }
+    }
+    return ret;
+  }
+
   public findDirectTokenByText(text: string): AbstractToken | undefined {
     const upper = text.toUpperCase();
     for (const child of this.getChildren()) {

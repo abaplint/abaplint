@@ -1,5 +1,5 @@
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {statementType, statementVersion} from "../_utils";
+import {statementType, statementVersion, statementVersionFail} from "../_utils";
 import {Version} from "../../../src/version";
 
 const tests = [
@@ -62,3 +62,10 @@ const versions = [
 ];
 
 statementVersion(versions, "READ TABLE", Statements.ReadTable);
+
+const versionsFail = [
+  // https://github.com/abapGit/abapGit/issues/7413
+  {abap: `READ TABLE lt_lcs WITH KEY key = lines( lt_lcs ) - 1 INTO temp15.`, ver: Version.v702},
+];
+
+statementVersionFail(versionsFail, "READ TABLE");

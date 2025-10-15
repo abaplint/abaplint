@@ -14,12 +14,9 @@ import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 export class ReadTable implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const concat = node.concatTokens().toUpperCase();
-    const sources = node.findDirectExpressions(Expressions.Source);
+    const sources = node.findDirectExpressionsMulti([Expressions.Source, Expressions.SimpleSource2]);
 
-    let firstSource = node.findDirectExpression(Expressions.SimpleSource2);
-    if (firstSource === undefined) {
-      firstSource = sources[0];
-    }
+    const firstSource = sources[0];
     const sourceType = firstSource ? Source.runSyntax(firstSource, input) : undefined;
 
     if (sourceType === undefined) {
