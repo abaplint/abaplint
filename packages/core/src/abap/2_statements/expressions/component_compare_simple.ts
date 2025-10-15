@@ -1,4 +1,4 @@
-import {seq, plus, altPrio, Expression, alt, ver} from "../combi";
+import {seq, plus, altPrio, Expression, ver} from "../combi";
 import {Dynamic, SimpleSource4, Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {ComponentChainSimple} from "./component_chain_simple";
