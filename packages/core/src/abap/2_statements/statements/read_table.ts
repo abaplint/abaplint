@@ -14,16 +14,14 @@ export class ReadTable implements IStatement {
 
     const components = seq(alt(Field, Dynamic), "COMPONENTS", ComponentCompareSimple);
 
-    const source = altPrio(SimpleSource2, ver(Version.v740sp02, Source, Version.OpenABAP));
-
     const key = seq(altPrio("WITH KEY", "WITH TABLE KEY"),
                     alt(ComponentCompareSimple,
                         components,
-                        seq(optPrio("="), source)));
+                        seq(optPrio("="), Source)));
 
     const using = seq("USING KEY", alt(Field, Dynamic));
 
-    const from = seq("FROM", source);
+    const from = seq("FROM", Source);
 
     const perm = per(alt(index, key, from),
                      ReadTableTarget,
@@ -34,7 +32,7 @@ export class ReadTable implements IStatement {
                      "BINARY SEARCH");
 
     return seq("READ TABLE",
-               source,
+               alt(SimpleSource2, ver(Version.v740sp02, Source, Version.OpenABAP)),
                opt(perm));
   }
 
