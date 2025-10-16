@@ -16,7 +16,9 @@ export class ComponentCompareSimple {
           targetType = ComponentChain.runSyntax(rowType, c, input);
         } else if (c.get() instanceof Expressions.Dynamic) {
           targetType = undefined;
-        } else if (c.get() instanceof Expressions.Source || c.get() instanceof Expressions.SimpleSource4) {
+        } else if (c.get() instanceof Expressions.Source
+            || c.get() instanceof Expressions.SimpleSource4
+            || c.get() instanceof Expressions.SimpleSource2) {
           const sourceType = Source.runSyntax(c, input, targetType);
           if (targetType && new TypeUtils(input.scope).isAssignable(sourceType, targetType) === false) {
             const message = "ComponentCompareSimple, incompatible types";
