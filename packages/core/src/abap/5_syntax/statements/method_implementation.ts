@@ -5,6 +5,7 @@ import {ScopeType} from "../_scope_type";
 import {ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {Visibility} from "../../4_file_information/visibility";
 
 export class MethodImplementation implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -22,6 +23,14 @@ export class MethodImplementation implements StatementSyntax {
     }
 
     const {method: methodDefinition} = helper.searchMethodName(classDefinition, methodName);
+
+    if (classDefinition.isForTesting()
+        && methodDefinition?.getVisibility() !== Visibility.Private
+        && ["SETUP", "TEARDOWN", "CLASS_SETUP", "CLASS_TEARDOWN"].includes(methodName.toUpperCase())) {
+      const message = "Special test method \"" + methodName + "\" must be private";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
+    }
 
     const start = node.getFirstToken().getStart();
     if (methodDefinition?.isStatic() === false) {

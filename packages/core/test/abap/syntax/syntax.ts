@@ -11868,4 +11868,46 @@ foo1 = foo2.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, local class with setup method in public section", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS setup.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD setup.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, special test method must be private", () => {
+    const abap = `
+CLASS lcl DEFINITION FOR TESTING.
+  PUBLIC SECTION.
+    METHODS setup.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD setup.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("must be private");
+  });
+
+  it("ok, special test method is private", () => {
+    const abap = `
+CLASS lcl DEFINITION FOR TESTING.
+  PRIVATE SECTION.
+    METHODS setup.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD setup.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
