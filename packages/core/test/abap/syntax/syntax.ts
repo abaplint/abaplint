@@ -11810,7 +11810,7 @@ _foo.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("Move, not compatible", () => {
+  it("Move, not compatible", () => {
     const abap = `
 TYPES: BEGIN OF ty_branch,
          display_name TYPE string,
@@ -11828,7 +11828,44 @@ DATA foo2 TYPE ty_git_branch.
 
 foo1 = foo2.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.include("not compatible");
+    expect(issues[0]?.getMessage()).to.include("Incompatible types");
+  });
+
+  it("Move, compatible", () => {
+    const abap = `
+TYPES: BEGIN OF ty_foo1,
+         display_name TYPE string,
+       END OF ty_foo1.
+
+TYPES: BEGIN OF ty_foo2,
+         name TYPE string,
+       END OF ty_foo2.
+
+DATA foo1 TYPE ty_foo1.
+DATA foo2 TYPE ty_foo2.
+
+foo1 = foo2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Move, compatible", () => {
+    const abap = `
+TYPES: BEGIN OF ty_foo1,
+         display_name TYPE c length 2,
+         bar type i,
+       END OF ty_foo1.
+
+TYPES: BEGIN OF ty_foo2,
+         name         TYPE c length 2,
+       END OF ty_foo2.
+
+DATA foo1 TYPE ty_foo1.
+DATA foo2 TYPE ty_foo2.
+
+foo1 = foo2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
 });
