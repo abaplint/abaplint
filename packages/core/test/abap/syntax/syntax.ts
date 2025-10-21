@@ -11810,4 +11810,25 @@ _foo.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.skip("Move, not compatible", () => {
+    const abap = `
+TYPES: BEGIN OF ty_branch,
+         display_name TYPE string,
+         up_to_date   TYPE abap_bool,
+       END OF ty_branch.
+
+TYPES:
+  BEGIN OF ty_git_branch,
+    sha1         TYPE x LENGTH 40,
+    name         TYPE string,
+  END OF ty_git_branch.
+
+DATA foo1 TYPE ty_branch.
+DATA foo2 TYPE ty_git_branch.
+
+foo1 = foo2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("not compatible");
+  });
+
 });
