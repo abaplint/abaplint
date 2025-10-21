@@ -33,7 +33,7 @@ export class FieldAssignment {
         const text = c.concatTokens();
         if (text !== "-" && context instanceof StructureType) {
           context = context.getComponentByName(text);
-          if (context === undefined && targetType.containsVoid() === false) {
+          if (context === undefined) {
             const message = `field ${text} does not exist in structure`;
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
             return;

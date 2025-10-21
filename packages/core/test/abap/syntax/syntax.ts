@@ -11922,4 +11922,14 @@ READ TABLE tab INTO row INDEX 1.`;
     expect(issues[0]?.getMessage()).to.include("INDEX on hashed table not possible");
   });
 
+  it("Structure voided field, expect syntax error the field does not exist", () => {
+    const abap = `
+TYPES: BEGIN OF ty_item,
+         foo TYPE voided,
+       END OF ty_item.
+DATA(ls_item) = VALUE ty_item( object = 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("does not exist in structure");
+  });
+
 });
