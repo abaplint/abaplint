@@ -11910,4 +11910,16 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("INDEX on hashed table not possible", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE c LENGTH 10,
+       END OF ty.
+DATA tab TYPE HASHED TABLE OF ty WITH UNIQUE KEY foo.
+DATA row LIKE LINE OF tab.
+READ TABLE tab INTO row INDEX 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("INDEX on hashed table not possible");
+  });
+
 });
