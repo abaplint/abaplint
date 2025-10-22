@@ -1,6 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {VoidType, TableType, IntegerType, DataReference, AnyType, UnknownType, StructureType, ObjectReferenceType, StringType} from "../../types/basic";
+import {VoidType, TableType, IntegerType, DataReference, AnyType, UnknownType, StructureType, ObjectReferenceType, StringType, TableAccessType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
 import {Target} from "../expressions/target";
@@ -44,6 +44,10 @@ export class ReadTable implements StatementSyntax {
       const indexType = Source.runSyntax(indexSource, input);
       if (new TypeUtils(input.scope).isAssignable(indexType, IntegerType.get()) === false) {
         const message = "READ TABLE, INDEX must be simple, got " + indexType?.constructor.name;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      } else if (sourceType instanceof TableType && sourceType.getAccessType() === TableAccessType.hashed) {
+        const message = "INDEX on hashed table not possible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }

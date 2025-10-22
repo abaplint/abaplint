@@ -485,9 +485,32 @@ export class TypeUtils {
           || source instanceof UnknownType) {
         return true;
       } else if (source instanceof StructureType) {
-        if (this.structureContainsString(target) && !this.structureContainsString(source)) {
+        const targetDeep = this.structureContainsString(target);
+        const sourceDeep = this.structureContainsString(source);
+        if (targetDeep && !sourceDeep) {
           return false;
         }
+
+        const targetComponents = target.getComponents();
+        const sourceComponents = source.getComponents();
+        if (targetComponents.length !== sourceComponents.length) {
+          if (targetDeep === true || sourceDeep === true) {
+            return false;
+          }
+        }
+
+        for (let i = 0; i < targetComponents.length; i++) {
+          if (sourceComponents[i] === undefined) {
+            continue;
+          }
+          // hmm
+          if (sourceComponents[i].type instanceof StringType && !(targetComponents[i].type instanceof StringType)) {
+            return false;
+          } else if (!(sourceComponents[i].type instanceof StringType) && targetComponents[i].type instanceof StringType) {
+            return false;
+          }
+        }
+
         return true;
       } else if (target.containsVoid() === true) {
         return true;

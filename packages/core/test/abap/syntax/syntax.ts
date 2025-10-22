@@ -11810,4 +11810,137 @@ _foo.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Move, not compatible", () => {
+    const abap = `
+TYPES: BEGIN OF ty_branch,
+         display_name TYPE string,
+         up_to_date   TYPE abap_bool,
+       END OF ty_branch.
+
+TYPES:
+  BEGIN OF ty_git_branch,
+    sha1         TYPE x LENGTH 40,
+    name         TYPE string,
+  END OF ty_git_branch.
+
+DATA foo1 TYPE ty_branch.
+DATA foo2 TYPE ty_git_branch.
+
+foo1 = foo2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Incompatible types");
+  });
+
+  it("Move, compatible", () => {
+    const abap = `
+TYPES: BEGIN OF ty_foo1,
+         display_name TYPE string,
+       END OF ty_foo1.
+
+TYPES: BEGIN OF ty_foo2,
+         name TYPE string,
+       END OF ty_foo2.
+
+DATA foo1 TYPE ty_foo1.
+DATA foo2 TYPE ty_foo2.
+
+foo1 = foo2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Move, compatible", () => {
+    const abap = `
+TYPES: BEGIN OF ty_foo1,
+         display_name TYPE c length 2,
+         bar type i,
+       END OF ty_foo1.
+
+TYPES: BEGIN OF ty_foo2,
+         name         TYPE c length 2,
+       END OF ty_foo2.
+
+DATA foo1 TYPE ty_foo1.
+DATA foo2 TYPE ty_foo2.
+
+foo1 = foo2.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, local class with setup method in public section", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS setup.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD setup.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, special test method must be private", () => {
+    const abap = `
+CLASS lcl DEFINITION FOR TESTING.
+  PUBLIC SECTION.
+    METHODS setup.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD setup.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("must be private");
+  });
+
+  it("ok, special test method is private", () => {
+    const abap = `
+CLASS lcl DEFINITION FOR TESTING.
+  PRIVATE SECTION.
+    METHODS setup.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD setup.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INDEX on hashed table not possible", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE c LENGTH 10,
+       END OF ty.
+DATA tab TYPE HASHED TABLE OF ty WITH UNIQUE KEY foo.
+DATA row LIKE LINE OF tab.
+READ TABLE tab INTO row INDEX 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("INDEX on hashed table not possible");
+  });
+
+  it("Structure voided field, expect syntax error the field does not exist", () => {
+    const abap = `
+TYPES: BEGIN OF ty_item,
+         foo TYPE voided,
+       END OF ty_item.
+DATA(ls_item) = VALUE ty_item( object = 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("does not exist in structure");
+  });
+
+  it("Structure voided structure, then its okay", () => {
+    const abap = `
+TYPES BEGIN OF ty_item.
+TYPES foo TYPE voided.
+INCLUDE STRUCTURE voidddd.
+TYPES END OF ty_item.
+DATA(ls_item) = VALUE ty_item( object = 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
