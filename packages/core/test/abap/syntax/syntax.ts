@@ -11932,4 +11932,15 @@ DATA(ls_item) = VALUE ty_item( object = 2 ).`;
     expect(issues[0]?.getMessage()).to.include("does not exist in structure");
   });
 
+  it("Structure voided structure, then its okay", () => {
+    const abap = `
+TYPES BEGIN OF ty_item.
+TYPES foo TYPE voided.
+INCLUDE STRUCTURE voidddd.
+TYPES END OF ty_item.
+DATA(ls_item) = VALUE ty_item( object = 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
