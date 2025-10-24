@@ -11943,4 +11943,28 @@ DATA(ls_item) = VALUE ty_item( object = 2 ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("Inline generic data definition", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo EXPORTING bar TYPE data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( IMPORTING bar = DATA(sdf) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("DATA definition cannot be generic");
+  });
+
+  it("ok, ref generic fs", () => {
+    const abap = `
+FIELD-SYMBOLS <fs> TYPE any.
+DATA(ref) = REF #( <fs> ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
