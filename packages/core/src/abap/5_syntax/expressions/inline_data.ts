@@ -1,10 +1,10 @@
 import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {CGenericType, CLikeType, CSequenceType, StringType, UnknownType} from "../../types/basic";
+import {CGenericType, CLikeType, CSequenceType, StringType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
-import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class InlineData {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, type: AbstractType | undefined): void {
@@ -17,6 +17,13 @@ export class InlineData {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
+
+      if (type.isGeneric()) {
+        const message = "DATA definition cannot be generic";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        type = VoidType.get(CheckSyntaxKey);
+      }
+
       const identifier = new TypedIdentifier(token, input.filename, type, [IdentifierMeta.InlineDefinition]);
       input.scope.addIdentifier(identifier);
       input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
