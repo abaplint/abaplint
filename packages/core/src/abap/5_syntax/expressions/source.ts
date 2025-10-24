@@ -4,7 +4,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, XSequenceType, XStringType, HexType, XGenericType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, XSequenceType, XStringType, HexType, XGenericType, AnyType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -135,14 +135,19 @@ export class Source {
           const s = Source.runSyntax(node.findDirectExpression(Expressions.Source), input);
           /*
           console.dir(node.concatTokens());
-          console.dir(targetType);
-          console.dir(foundType);
           console.dir(s);
+          console.dir(foundType);
+          console.dir(targetType);
           */
+
           if (foundType && foundType.isGeneric() && s) {
             foundType = new DataReference(s);
           } else if (foundType === undefined && s) {
-            foundType = new DataReference(s);
+            if (s instanceof AnyType) {
+              foundType = new DataReference(VoidType.get("REF-ANY"));
+            } else {
+              foundType = new DataReference(s);
+            }
           } else if (foundType && targetType === undefined) {
             foundType = new DataReference(foundType);
           }

@@ -11959,4 +11959,12 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("DATA definition cannot be generic");
   });
 
+  it("ok, ref generic fs", () => {
+    const abap = `
+FIELD-SYMBOLS <fs> TYPE any.
+DATA(ref) = REF #( <fs> ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

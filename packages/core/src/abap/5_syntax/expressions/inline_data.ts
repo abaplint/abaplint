@@ -1,7 +1,7 @@
 import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {CGenericType, CLikeType, CSequenceType, StringType, UnknownType, VoidType} from "../../types/basic";
+import {CGenericType, CLikeType, CSequenceType, StringType, UnknownType, VoidType, XSequenceType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
@@ -12,6 +12,8 @@ export class InlineData {
     if (token && type) {
       if (type instanceof CSequenceType || type instanceof CLikeType) {
         type = StringType.get();
+      } else if (type instanceof XSequenceType) {
+        type = StringType.get();
       } else if (type instanceof CGenericType) {
         const message = "InlineData, generic type C cannot be used for inferred type";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -19,7 +21,7 @@ export class InlineData {
       }
 
       if (type.isGeneric()) {
-        const message = "DATA definition cannot be generick, " + type.constructor.name;
+        const message = "DATA definition cannot be generic, " + type.constructor.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         type = VoidType.get(CheckSyntaxKey);
       }
