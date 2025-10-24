@@ -19,7 +19,7 @@ export class InlineData {
       }
 
       if (type.isGeneric()) {
-        const message = "DATA definition cannot be generic";
+        const message = "DATA definition cannot be generick, " + type.constructor.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         type = VoidType.get(CheckSyntaxKey);
       }
