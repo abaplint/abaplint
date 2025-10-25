@@ -127,6 +127,7 @@ const tests = [
   `data lt_delete type table for delete /foo/bar.`,
   `data lt type table for read import /foo/bar.`,
   `data lt type table for update /foo/bar\\\\/bar/moo.`,
+  `DATA f#oo# TYPE i.`,
 ];
 
 statementType(tests, "DATA", Statements.Data);
