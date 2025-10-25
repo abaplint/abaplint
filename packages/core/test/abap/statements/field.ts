@@ -12,6 +12,7 @@ const tests = [
                         where field = foo-bar into result
                         whenever not found
                         send errormessage.`,
+  `FIELD foo-bar MODULE moo AT CURSOR-SELECTION.`,
 ];
 
 statementType(tests, "FIELD", Statements.Field);
