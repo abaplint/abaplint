@@ -122,6 +122,7 @@ export class BasicTypes {
     if (chain === undefined) {
       throw new Error("resolveLikeName, chain undefined");
     }
+
     const fullName = chain.concatTokens();
     let children = [...chain.getChildren()];
 
@@ -172,6 +173,25 @@ export class BasicTypes {
         } else if (child.concatTokens() === "[]") {
           if (type instanceof Types.TableType) {
             type = new TableType(type.getRowType(), {withHeader: false, keyType: Types.TableKeyType.default});
+          }
+        } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.FieldLength) {
+          const len = parseInt(child.concatTokens().replace("(", "").replace(")", ""), 10);
+          if (isNaN(len)) {
+            type = new Types.UnknownType("Type error, invalid field length");
+          } else {
+            if (type instanceof Types.DateType) {
+              if (len > 8) {
+                type = new Types.UnknownType("Type error, offset too long");
+              } else {
+                type = new Types.CharacterType(len);
+              }
+            } else if (type instanceof Types.CharacterType) {
+              if (len <= type.getLength()) {
+                type = new Types.CharacterType(len);
+              } else {
+                type = new Types.UnknownType("Type error, offset too long");
+              }
+            }
           }
         } else { // field name
           if (type instanceof Types.TableType) {

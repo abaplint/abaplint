@@ -2432,12 +2432,11 @@ DATA lr_ref TYPE REF TO ty_foo.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("sy datum sub", () => {
+  it("sy datum sub", () => {
     const abap = `
 DATA foo LIKE sy-datum(4).`;
     let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
-    console.dir(issues);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
