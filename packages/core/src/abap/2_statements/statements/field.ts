@@ -8,7 +8,7 @@ import {ParenRightW, WParenLeft} from "../../1_lexer/tokens";
 export class Field implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const module = seq("MODULE", FormName, opt(alt("ON INPUT", "ON REQUEST", "ON CHAIN-REQUEST")));
+    const module = seq("MODULE", FormName, opt(alt("ON INPUT", "ON REQUEST", "ON CHAIN-REQUEST", "AT CURSOR-SELECTION")));
     const values = seq("VALUES", tok(WParenLeft), "BETWEEN", Constant, "AND", Constant, tok(ParenRightW));
     const wit = seq("WITH", FieldChain);
 
