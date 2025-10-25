@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, tok} from "../combi";
+import {verNot, str, seq, opt, alt, tok, plus, altPrio} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import * as Expressions from "../expressions";
 import {Version} from "../../../version";
@@ -25,14 +25,18 @@ export class Perform implements IStatement {
     const full = seq(alt(Expressions.FormName, Expressions.Dynamic),
                      opt(verNot(Version.Cloud, program)));
 
+    const normal = seq(opt(found),
+                       opt(PerformTables),
+                       opt(PerformUsing),
+                       opt(PerformChanging),
+                       opt(found),
+                       opt(commit));
+
+    const of = seq("OF", plus(Expressions.FormName));
+
     const ret = seq("PERFORM",
                     alt(short, full),
-                    opt(found),
-                    opt(PerformTables),
-                    opt(PerformUsing),
-                    opt(PerformChanging),
-                    opt(found),
-                    opt(commit));
+                    altPrio(of, normal));
 
     return ret;
   }

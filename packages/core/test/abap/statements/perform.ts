@@ -20,6 +20,7 @@ const tests = [
   "PERFORM foo(zbar) IF FOUND USING l_data CHANGING l_chg.",
   "PERFORM foo?.",
   "PERFORM ru$n$.",
+  `perform sy-index of v01 v02 v03 v04.`,
 ];
 
 statementType(tests, "PERFORM", Statements.Perform);
