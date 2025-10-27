@@ -4,7 +4,7 @@ import {getTokens} from "../_utils";
 import {Config} from "../../../src/config";
 import {SQLIn} from "../../../src/abap/2_statements/expressions";
 
-describe.only("Test expression, SQLIn", () => {
+describe("Test expression, SQLIn", () => {
 
   it("test1", () => {
     const abap = `IN ( SELECT field FROM ztab )`;
