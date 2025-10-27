@@ -77,17 +77,25 @@ class ParsingPerformance {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 export class Registry implements IRegistry {
-  private readonly objects: { [name: string]: { [type: string]: IObject } } = {};
-  private readonly objectsByType: { [type: string]: { [name: string]: IObject } } = {};
-  private readonly dependencies: { [type: string]: { [name: string]: boolean } } = {};
-  private readonly ddicReferences: IDDICReferences;
-  private readonly msagReferences: IMSAGReferences;
-  private readonly macroReferences: IMacroReferences;
+  private objects: { [name: string]: { [type: string]: IObject } } = {};
+  private objectsByType: { [type: string]: { [name: string]: IObject } } = {};
+  private dependencies: { [type: string]: { [name: string]: boolean } } = {};
+  private ddicReferences: IDDICReferences;
+  private msagReferences: IMSAGReferences;
+  private macroReferences: IMacroReferences;
   private errorNamespace: RegExp;
   private conf: IConfiguration;
 
   public constructor(conf?: IConfiguration) {
     this.setConfig(conf ? conf : Config.getDefault());
+    this.clear();
+  }
+
+  /** clears all objects, keeping the configuration */
+  public clear() {
+    this.objects = {};
+    this.objectsByType = {};
+    this.dependencies = {};
     this.ddicReferences = new DDICReferences();
     this.msagReferences = new MSAGReferences();
     this.macroReferences = new MacroReferences();

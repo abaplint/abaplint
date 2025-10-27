@@ -11967,4 +11967,20 @@ DATA(ref) = REF #( <fs> ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, fs some offsets", () => {
+    const abap = `
+FIELD-SYMBOLS <fs>.
+WRITE <fs>+6(2).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, fs some offsets, simple", () => {
+    const abap = `
+FIELD-SYMBOLS <fs> TYPE simple.
+WRITE <fs>+6(2).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
