@@ -33,7 +33,7 @@ export class KeywordCaseConf extends BasicRuleConfig {
   public ignoreGlobalClassBoundaries: boolean = false;
 
   /** A list of keywords to be ignored */
-  public ignoreKeywords: string[] = [];
+  public ignoreKeywords?: string[] = [];
   public maxIssuesPerFile: number | undefined = 10;
 }
 
