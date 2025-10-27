@@ -12,11 +12,11 @@ export class SQLIn extends Expression {
     const listOld = seq(tok(WParenLeft), alt(ver(Version.v740sp05, short, Version.OpenABAP), val), starPrio(seq(",", val)), altPrio(tok(ParenRight), tok(ParenRightW), tok(WParenRightW)));
     const listNew = seq(tok(WParenLeftW), val, starPrio(seq(",", altPrio(short, val))), altPrio(tok(WParenRight), tok(WParenRightW)));
     // version is a guess, https://github.com/abaplint/abaplint/issues/2530
-    const list = alt(listOld, ver(Version.v740sp02, listNew, Version.OpenABAP));
+    const listNeww = ver(Version.v740sp02, listNew, Version.OpenABAP);
 
     const subSelect = seq("(", Select, ")");
 
-    const inn = seq("IN", altPrio(SQLSource, list, subSelect));
+    const inn = seq("IN", alt(SQLSource, subSelect, listOld, listNeww));
 
     return inn;
   }

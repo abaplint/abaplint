@@ -510,6 +510,11 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
   `SELECT ( arbgb ) FROM t100 INTO TABLE @DATA(sdf).`,
   `SELECT ( arbgb ) AS bar FROM t100 INTO TABLE @DATA(sdf).`,
   `SELECT ( arbgb ), text AS bar FROM t100 INTO TABLE @DATA(sdf).`,
+  `SELECT DISTINCT 'I' AS sign, 'EQ' AS option, werks AS low
+    FROM t001w
+    APPENDING CORRESPONDING FIELDS OF TABLE @r_drive[]
+    WHERE kunnr IN ( SELECT sdfsdf FROM ztab AS p
+                       JOIN t001w AS t ON t~kunnr = p~sdfsdf ).`,
 //  `SELECT ( 'F' && arbgb ) AS bar FROM t100 INTO TABLE @<tab>.`,
 ];
 
