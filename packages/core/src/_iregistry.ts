@@ -16,6 +16,8 @@ export interface IRegistry {
   parse(): IRegistry;
   parseAsync(input?: IRunInput): Promise<IRegistry>;
 
+  clear(): void;
+
   // dependency operations
   addDependencies(files: readonly IFile[]): IRegistry;
   addDependency(file: IFile): IRegistry;
