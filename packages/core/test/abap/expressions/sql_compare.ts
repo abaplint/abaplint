@@ -14,7 +14,7 @@ describe("Test expression, SQLCompare", () => {
   });
 
   it("test2", () => {
-    const abap = `kunnr IN ( SELECT field FROM ztab AS p JOIN t001w AS t ON kunnr = sdfdfs )`;
+    const abap = `dsf IN ( SELECT sdf FROM sdf AS sdfp JOIN sdf AS sdft ON sdf = sdfdfs )`;
     const tokens = getTokens(abap);
     const match = Combi.Combi.run(new SQLCompare().getRunnable(), tokens, Config.getDefault().getVersion());
 //    console.dir(match);

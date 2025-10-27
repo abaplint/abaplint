@@ -14,9 +14,9 @@ export class SQLIn extends Expression {
     // version is a guess, https://github.com/abaplint/abaplint/issues/2530
     const listNeww = ver(Version.v740sp02, listNew, Version.OpenABAP);
 
-    const subSelect = seq("(", Select, ")");
+    const subSelect = seq(tok(WParenLeftW), Select, tok(WParenRightW));
 
-    const inn = seq("IN", alt(SQLSource, subSelect, listOld, listNeww));
+    const inn = seq("IN", alt(subSelect, SQLSource, listOld, listNeww));
 
     return inn;
   }

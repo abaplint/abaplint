@@ -12,4 +12,12 @@ describe("Test expression, Select", () => {
 //    console.dir(match);
     expect(match).to.not.equal(undefined);
   });
+
+  it("test2", () => {
+    const abap = `SELECT sdf FROM sdf AS sdfp JOIN sdf AS sdft ON sdf = sdfdfs`;
+    const tokens = getTokens(abap);
+    const match = Combi.Combi.run(new Select().getRunnable(), tokens, Config.getDefault().getVersion());
+//    console.dir(match);
+    expect(match).to.not.equal(undefined);
+  });
 });
