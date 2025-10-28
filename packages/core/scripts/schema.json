@@ -5895,8 +5895,7 @@
         "ignoreGlobalClassDefinition",
         "ignoreGlobalInterface",
         "ignoreFunctionModuleName",
-        "ignoreGlobalClassBoundaries",
-        "ignoreKeywords"
+        "ignoreGlobalClassBoundaries"
       ],
       "type": "object"
     },
