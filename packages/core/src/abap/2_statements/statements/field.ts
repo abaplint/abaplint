@@ -14,7 +14,8 @@ export class Field implements IStatement {
 
     const cond = seq(FieldChain, "=", FieldChain);
     const where = seq(cond, starPrio(seq("AND", cond)));
-    const select = seq("SELECT * FROM", FieldChain, "WHERE", where, opt("INTO RESULT WHENEVER NOT FOUND SEND ERRORMESSAGE"));
+    const into = seq("INTO", FieldChain);
+    const select = seq("SELECT * FROM", FieldChain, "WHERE", where, opt(into), opt("WHENEVER NOT FOUND SEND ERRORMESSAGE"));
 
     const ret = seq("FIELD", FieldChain, opt(altPrio(module, values, wit, select)));
 
