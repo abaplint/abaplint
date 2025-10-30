@@ -13,7 +13,7 @@ function buildChips(json: any) {
   for (const tag in RuleTag) {
     let icon = "";
 
-    switch(tag) {
+    switch (tag) {
       case RuleTag.Experimental:
         icon = experimentalIcon;
         break;
@@ -134,7 +134,8 @@ function buildRulesJson() {
   const json: any = [];
 
   const sorted = abaplint.ArtifactsRules.getRules().sort((a, b) => {
-    return a.getMetadata().key.localeCompare(b.getMetadata().key); });
+    return a.getMetadata().key.localeCompare(b.getMetadata().key);
+  });
 
   for (const r of sorted) {
     const meta = r.getMetadata();

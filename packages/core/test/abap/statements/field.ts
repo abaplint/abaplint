@@ -14,6 +14,10 @@ const tests = [
                         send errormessage.`,
   `FIELD foo-bar MODULE moo AT CURSOR-SELECTION.`,
   `FIELD MARC-WERKS SELECT * FROM T001W WHERE WERKS = MARC-WERKS.`,
+  `field foo-bar select * from t001
+                       where bukrs = foo-bar into t001
+                       whenever not found
+                       send errormessage.`,
 ];
 
 statementType(tests, "FIELD", Statements.Field);
