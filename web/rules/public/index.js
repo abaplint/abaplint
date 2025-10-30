@@ -26,7 +26,7 @@ function clickChip(_event, chip) {
 
   for (const rule of document.getElementById("rules").children) {
     rule.classList.remove("hidden");
-    for(const v of search.values()) {
+    for (const v of search.values()) {
       if (rule.innerHTML.includes(v) === false) {
         rule.classList.add("hidden");
       }
@@ -56,7 +56,7 @@ function renderVisual(result) {
     rule.classList.add("hidden");
   }
 
-  for(const v of result) {
+  for (const v of result) {
     document.getElementById("rule-" + v.item.key).classList.remove("hidden");
   }
 
@@ -85,4 +85,10 @@ form.addEventListener("input", () => {
     clearTimeout(delayedSearch);
   }
   delayedSearch = setTimeout(doSearch, 150);
+});
+
+form.addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+  form.value = "";
+  resetSearch();
 });
