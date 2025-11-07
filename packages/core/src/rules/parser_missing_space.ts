@@ -225,6 +225,9 @@ This rule makes sure the spaces are consistently required across the language.`,
 
   private checkCond(cond: ExpressionNode): Position | undefined {
     const children = cond.getAllTokens();
+
+    const dynamic = cond.findAllExpressions(Expressions.Dynamic);
+
     for (let i = 0; i < children.length - 1; i++) {
       const current = children[i];
       const next = children[i + 1];
@@ -232,7 +235,19 @@ This rule makes sure the spaces are consistently required across the language.`,
       if (next.getStr().startsWith("'")
           && next.getRow() === current.getRow()
           && next.getCol() === current.getEnd().getCol()) {
-        return current.getEnd();
+
+        // skip if the token is part of a DYNAMIC expression
+        let isDynamic = false;
+        for (const d of dynamic) {
+          for (const t of d.getAllTokens()) {
+            if (t === next || t === current) {
+              isDynamic = true;
+            }
+          }
+        }
+        if (isDynamic === false) {
+          return current.getEnd();
+        }
       }
     }
 

@@ -36,6 +36,7 @@ const tests = [
   {abap: "DATA(ls_foo) = VALUE foo( tknum = '0000000001' ).", cnt: 0},
   {abap: "foo = CONV #('DEFAULT' ).", cnt: 1},
   {abap: "DATA(subrc) = CONV sy-subrc( syst-subrc ). ", cnt: 0},
+  {abap: "DATA(foo) = xsdbool( line_exists( positions[ ('MATERIAL') = <position>-material ] ) ).", cnt: 0},
 ];
 
 testRule(tests, ParserMissingSpace);
