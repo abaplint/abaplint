@@ -455,7 +455,7 @@ export class CurrentScope {
   }
 
   public findReturningParameter(): TypedIdentifier | undefined {
-    for (const v in this.current?.getData().vars || []) {
+    for (const v in this.current?.getData().vars || {}) {
       const variable = this.current!.getData().vars[v];
       if (variable.getMeta().includes(IdentifierMeta.MethodReturning)) {
         return variable;
