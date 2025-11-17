@@ -238,10 +238,11 @@ This rule makes sure the spaces are consistently required across the language.`,
 
         // skip if the token is part of a DYNAMIC expression
         let isDynamic = false;
-        for (const d of dynamic) {
+        outer: for (const d of dynamic) {
           for (const t of d.getAllTokens()) {
             if (t === next || t === current) {
               isDynamic = true;
+              break outer;
             }
           }
         }
