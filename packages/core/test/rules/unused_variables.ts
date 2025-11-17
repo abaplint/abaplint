@@ -1698,4 +1698,20 @@ data1 = CORRESPONDING #( BASE ( data3 ) data2 ).`;
     expect(issues.length).to.equal(0);
   });
 
+  it("RETURN value", async () => {
+    const abap = `
+CLASS lcl_demo DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS exist RETURNING VALUE(r_exist) TYPE abap_bool.
+ENDCLASS.
+
+CLASS lcl_demo IMPLEMENTATION.
+  METHOD exist.
+    RETURN abap_true.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

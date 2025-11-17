@@ -69,6 +69,7 @@ import {Concatenate} from "./statements/concatenate";
 import {CallFunction} from "./statements/call_function";
 import {Clear} from "./statements/clear";
 import {Refresh} from "./statements/refresh";
+import {Return} from "./statements/return";
 import {Free} from "./statements/free";
 import {Replace} from "./statements/replace";
 import {GetBit} from "./statements/get_bit";
@@ -202,6 +203,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Clear());
   addToMap(new Free());
   addToMap(new Refresh());
+  addToMap(new Return());
   addToMap(new Receive());
   addToMap(new GetBit());
   addToMap(new ClassLocalFriends());
