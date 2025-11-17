@@ -41,8 +41,8 @@ export class SQLFunction extends Expression {
     // dunno if the version for substring is correct
     const dats_is_valid = ver(Version.v754, seq(reg(/^dats_is_valid$/i), tok(ParenLeftW), SQLFunctionInput, tok(WParenRightW)));
     const dats_days_between = ver(Version.v754, seq(reg(/^dats_days_between$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
-    const dats_add_days = ver(Version.v754, seq(reg(/^dats_is_valid$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
-    const dats_add_months = ver(Version.v754, seq(reg(/^dats_is_valid$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
+    const dats_add_days = ver(Version.v754, seq(reg(/^dats_add_days$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
+    const dats_add_months = ver(Version.v754, seq(reg(/^dats_add_months$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
 
     const ltrim = ver(Version.v750, seq(reg(/^ltrim$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
     const rtrim = ver(Version.v750, seq(reg(/^rtrim$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));

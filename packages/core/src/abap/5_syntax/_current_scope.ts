@@ -1,4 +1,4 @@
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {IdentifierMeta, TypedIdentifier} from "../types/_typed_identifier";
 import {BuiltIn} from "./_builtin";
 import {DDIC} from "../../ddic";
 import {Position} from "../../position";
@@ -452,6 +452,17 @@ export class CurrentScope {
       return found;
     }
     return this.findTypePoolConstant(name);
+  }
+
+  public findReturningParameter(): TypedIdentifier | undefined {
+    for (const v in this.current?.getData().vars || {}) {
+      const variable = this.current!.getData().vars[v];
+      if (variable.getMeta().includes(IdentifierMeta.MethodReturning)) {
+        return variable;
+      }
+    }
+
+    return undefined;
   }
 
 ///////////////////////////
