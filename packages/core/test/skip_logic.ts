@@ -14,7 +14,7 @@ ENDINTERFACE.`;
     const file = new MemoryFile("zif_bar.ingf.abap", abap);
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(false);
   });
 
@@ -37,7 +37,7 @@ ENDINTERFACE.`;
     reg.setConfig(new Config(JSON.stringify(config)));
 
     await reg.parseAsync();
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
   });
 
@@ -69,7 +69,7 @@ ENDINTERFACE.`;
     reg.setConfig(new Config(JSON.stringify(config)));
 
     await reg.parseAsync();
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
   });
 
@@ -86,7 +86,7 @@ ENDINTERFACE.`;
     reg.setConfig(new Config(JSON.stringify(config)));
 
     await reg.parseAsync();
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
   });
 
@@ -108,7 +108,7 @@ ENDINTERFACE.`;
     reg.setConfig(new Config(JSON.stringify(config)));
 
     await reg.parseAsync();
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
   });
 
@@ -138,7 +138,7 @@ ENDINTERFACE.`;
     reg.addFile(new MemoryFile("zprog.prog.xml", xml));
 
     await reg.parseAsync();
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
   });
 
@@ -152,7 +152,7 @@ ENDINTERFACE.`;
     reg.addFile(new MemoryFile("zprog.prog.abap", abap));
 
     await reg.parseAsync();
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(false);
   });
 });

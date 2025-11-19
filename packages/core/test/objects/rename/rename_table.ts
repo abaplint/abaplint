@@ -271,7 +271,7 @@ describe("Rename TABL", () => {
       new MemoryFile("zabapgit_unit_t2.tabl.xml", xml),
     ]).parse();
     new Renamer(reg).rename("TABL", "zabapgit_unit_t2", "foo");
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     for (const f of reg.getFiles()) {
       expect(f.getFilename()).to.equal("foo.tabl.xml");
       expect(f.getRaw().includes("<TABNAME>FOO</TABNAME>")).to.equal(true);
@@ -287,7 +287,7 @@ DATA bar2 TYPE zabapgit_unit_t2-name.`;
     ]).parse();
     reg.findIssues(); // hmm, this builds the ddic references
     new Renamer(reg).rename("TABL", "zabapgit_unit_t2", "foo");
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "foo.tabl.xml") {
         expect(f.getFilename()).to.equal("foo.tabl.xml");
@@ -306,7 +306,7 @@ DATA bar2 TYPE foo-name.`);
       new MemoryFile("zexcel_s_converter_fcat.tabl.xml", foreign),
     ]).parse();
     new Renamer(reg).rename("TABL", "ZEXCEL_S_CONVERTER_FCAT", "YECB_S_CONVERTER_FCAT");
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     for (const f of reg.getFiles()) {
       expect(f.getFilename()).to.equal("yecb_s_converter_fcat.tabl.xml");
       expect(f.getRaw()).to.include("<FORTABLE>YECB_S_CONVERTER_FCAT</FORTABLE>");

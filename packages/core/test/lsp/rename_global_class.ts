@@ -120,7 +120,7 @@ ENDCLASS.`);
     expect(result).to.not.equal(undefined);
 
     new ApplyWorkSpaceEdit(reg).apply(result!);
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     const obj = reg.getFirstObject()! as Class;
     expect(obj.getType()).to.equal("CLAS");
 
@@ -175,7 +175,7 @@ ENDCLASS.`);
 
     new ApplyWorkSpaceEdit(reg).apply(result!);
 
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(reg.getFirstObject()!).to.be.instanceof(Class);
     const clas = reg.getFirstObject()! as Class;
     expect(clas.getName()).to.equal("/FOO/CL_BAR");

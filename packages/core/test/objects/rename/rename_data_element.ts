@@ -37,7 +37,7 @@ describe("Rename Data Element", () => {
 
     new Renamer(reg).rename("DTEL", "zbar", "foo");
 
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     for (const f of reg.getFiles()) {
       expect(f.getFilename()).to.equal("foo.dtel.xml");
       expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
@@ -76,7 +76,7 @@ describe("Rename Data Element", () => {
 
     new Renamer(reg).rename("DTEL", "/iwbep/med_anno_namespace", "zmed_anno_namespace");
 
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     for (const f of reg.getFiles()) {
       expect(f.getFilename()).to.equal("zmed_anno_namespace.dtel.xml");
       expect(f.getRaw().includes("<ROLLNAME>ZMED_ANNO_NAMESPACE</ROLLNAME>")).to.equal(true);
@@ -124,7 +124,7 @@ DATA bar2 TYPE zbarbar.`;
 
     new Renamer(reg).rename("DTEL", "zbarbar", "foo");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "foo.dtel.xml") {
         expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
@@ -198,7 +198,7 @@ DATA bar2 TYPE foo.`);
 
     new Renamer(reg).rename("DTEL", "zbar", "foo");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "foo.dtel.xml") {
         expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
@@ -265,7 +265,7 @@ DATA bar2 TYPE foo.`);
 
     new Renamer(reg).rename("DTEL", "zbar", "foo");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "foo.dtel.xml") {
         expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
@@ -323,7 +323,7 @@ ENDCLASS.`;
 
     new Renamer(reg).rename("DTEL", "zbarbar", "foo");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "foo.dtel.xml") {
         expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
@@ -412,7 +412,7 @@ ENDINTERFACE.`;
     renamer.rename("DTEL", "zfoofoo", "foo");
     renamer.rename("DTEL", "zbarbar", "bar");
 
-    expect(reg.getObjectCount()).to.equal(3);
+    expect(reg.getObjectCount().normal).to.equal(3);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "foo.dtel.xml") {
         expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);
@@ -476,7 +476,7 @@ ENDINTERFACE.`);
 
     new Renamer(reg).rename("DTEL", "zbarbar", "foo");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "zgroup.auth.xml") {
         expect(f.getRaw().includes("<ROLLNAME>FOO</ROLLNAME>")).to.equal(true);

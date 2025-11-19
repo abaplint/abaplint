@@ -35,7 +35,7 @@ ENDCLASS.`;
 
     new Renamer(reg).rename("CLAS", "zcl_foo", "cl_foo");
 
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "cl_foo.clas.abap") {
         const expected = `CLASS cl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
@@ -65,7 +65,7 @@ ENDCLASS.`;
 
     new Renamer(reg).rename("CLAS", "zcl_foo", "cl_foo");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "cl_foo.clas.abap") {
         const expected = `CLASS cl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
@@ -107,7 +107,7 @@ ENDCLASS.`;
 
     new Renamer(reg).rename("CLAS", "zcl_foo", "cl_foo");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "cl_foo.clas.abap") {
         continue;
@@ -134,7 +134,7 @@ foo = NEW #( ).`;
 
     new Renamer(reg).rename("CLAS", "zcl_foo", "cl_foo");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "cl_foo.clas.abap") {
         const expected = `CLASS cl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
@@ -195,7 +195,7 @@ ENDCLASS.`;
 
     new Renamer(reg).rename("CLAS", "zcl_foo", "cl_foo");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "cl_foo.clas.abap") {
         const expected = `CLASS cl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
@@ -227,7 +227,7 @@ ENDCLASS.`;
 
     new Renamer(reg).rename("CLAS", "zcl_foo", "cl_foo");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "cl_foo.clas.abap") {
         continue;
