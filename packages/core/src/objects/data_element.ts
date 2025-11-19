@@ -55,8 +55,10 @@ export class DataElement extends AbstractObject {
 
   public parseType(reg: IRegistry): AbstractType {
     const references: IObjectAndToken[] = [];
-
     let lookup: ILookupResult | undefined = undefined;
+
+    this.parse();
+
     if (this.parsedXML === undefined) {
       lookup = {type: new Types.UnknownType("Data Element " + this.getName() + ", parser error")};
     } else {
