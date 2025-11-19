@@ -31,7 +31,7 @@ describe("Rename MSAG", () => {
       new MemoryFile("zag_unit_test.msag.xml", xml),
     ]).parse();
     new Renamer(reg).rename("MSAG", "zag_unit_test", "foo");
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     for (const f of reg.getFiles()) {
       expect(f.getFilename()).to.equal("foo.msag.xml");
       expect(f.getRaw().includes("<ARBGB>FOO</ARBGB>")).to.equal(true);

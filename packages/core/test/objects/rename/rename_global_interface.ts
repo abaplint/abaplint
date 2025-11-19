@@ -32,7 +32,7 @@ ENDINTERFACE.`;
 
     new Renamer(reg).rename("INTF", "zif_abapgit_auth", "if_abapgit_auth");
 
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "if_abapgit_auth.intf.abap") {
         const expected = `INTERFACE if_abapgit_auth PUBLIC.
@@ -68,7 +68,7 @@ ENDCLASS.`;
 
     new Renamer(reg).rename("INTF", "zif_abapgit_auth", "if_abapgit_auth");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "if_abapgit_auth.intf.abap") {
         continue;
@@ -111,7 +111,7 @@ ENDCLASS.`;
 
     new Renamer(reg).rename("INTF", "zif_abapgit_auth", "if_abapgit_auth");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "if_abapgit_auth.intf.abap") {
         continue;
@@ -146,7 +146,7 @@ ENDCLASS.`;
 
     new Renamer(reg).rename("INTF", "zif_event", "if_event");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "if_event.intf.abap") {
         continue;
@@ -169,7 +169,7 @@ ENDINTERFACE.`;
 
     new Renamer(reg).rename("INTF", "zif_abapgit_auth", "/name/if_auth");
 
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "#name#if_auth.intf.abap") {
         const expected = `INTERFACE /name/if_auth PUBLIC.
@@ -206,7 +206,7 @@ ENDCLASS.`;
 
     const result = new Renamer(reg).rename("INTF", "zif_intf", "yif_foo");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "yif_foo.intf.abap") {
         continue;
@@ -242,7 +242,7 @@ ENDCLASS.`;
 
     const result = new Renamer(reg).rename("INTF", "zif_intf", "yif_foo");
 
-    expect(reg.getObjectCount()).to.equal(2);
+    expect(reg.getObjectCount().normal).to.equal(2);
     for (const f of reg.getFiles()) {
       if (f.getFilename() === "yif_foo.intf.abap") {
         continue;

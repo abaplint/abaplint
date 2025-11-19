@@ -78,7 +78,7 @@ ENDCLASS.`;
     files.push(new MemoryFile("zcl_foobar.clas.abap", clas));
 
     const reg = new Registry().addFiles(files).parse();
-    expect(reg.getObjectCount()).to.equal(4);
+    expect(reg.getObjectCount().normal).to.equal(4);
 
     const obj = reg.getObject("CLAS", "ZCL_FOOBAR") as Class;
     const scope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(new Position(2, 1), "zcl_foobar.clas.abap");

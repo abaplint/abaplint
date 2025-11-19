@@ -31,7 +31,7 @@ describe("Rename TTYP", () => {
 
     new Renamer(reg).rename("TTYP", "zag_unit_test_tt", "foo");
 
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     for (const f of reg.getFiles()) {
       expect(f.getFilename()).to.equal("foo.ttyp.xml");
       expect(f.getRaw().includes("<TYPENAME>FOO</TYPENAME>")).to.equal(true);

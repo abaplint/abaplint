@@ -149,13 +149,15 @@ export class Registry implements IRegistry {
     return undefined;
   }
 
-  public getObjectCount(skipDependencies = true): number {
-    let res = 0;
+  public getObjectCount() {
+    const res = {total: 0, normal: 0, dependencies: 0};
     for (const o of this.getObjects()) {
-      if (skipDependencies === true && this.isDependency(o)) {
-        continue;
+      res.total++;
+      if (this.isDependency(o)) {
+        res.dependencies++;
+      } else {
+        res.normal++;
       }
-      res = res + 1;
     }
     return res;
   }
@@ -346,7 +348,7 @@ export class Registry implements IRegistry {
     }
 
     ParsingPerformance.clear();
-    input?.progress?.set(this.getObjectCount(false), "Lexing and parsing");
+    input?.progress?.set(this.getObjectCount().normal, "Lexing and parsing");
 
     for (const o of this.getObjects()) {
       await input?.progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " + o.getType() + " " + o.getName());

@@ -28,7 +28,7 @@ describe("Rename Domain", () => {
 
     new Renamer(reg).rename("DOMA", "zbar", "foo");
 
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     for (const f of reg.getFiles()) {
       expect(f.getFilename()).to.equal("foo.doma.xml");
       expect(f.getRaw().includes("<DOMNAME>FOO</DOMNAME>")).to.equal(true);

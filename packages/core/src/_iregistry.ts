@@ -43,8 +43,8 @@ export interface IRegistry {
   getObjects(): Generator<IObject, void, undefined>;
   /** Get objects by type, including dependencies */
   getObjectsByType(type: string): Generator<IObject, void, undefined>;
-  /** Get number of objects in the registry, default is skipping dependencies */
-  getObjectCount(skipDependencies?: boolean): number;
+  /** Get number of objects in the registry */
+  getObjectCount(): {total: number, normal: number, dependencies: number};
   getFirstObject(): IObject | undefined;
   getObject(type: string | undefined, name: string | undefined): IObject | undefined;
 

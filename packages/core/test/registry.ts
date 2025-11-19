@@ -40,47 +40,47 @@ describe("Registry", () => {
     const reg = new Registry().addFile(first);
     await reg.parseAsync();
     expect(getABAPObjects(reg)[0].getABAPFiles().length).to.equal(1);
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
 
     const updated = new MemoryFile("zfoobar.prog.abap", "updated");
     reg.updateFile(updated);
     await reg.parseAsync();
     expect(getABAPObjects(reg)[0].getABAPFiles().length).to.equal(1);
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
 
     expect(getABAPObjects(reg)[0].getABAPFiles()[0].getRaw()).to.equal("updated");
   });
 
   it("filename with namespace", async () => {
     const reg = new Registry().addFile(new MemoryFile("#namesp#cl_foobar.clas.abap", "parser error"));
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(reg.getFirstObject()!.getType()).to.equal("CLAS");
     expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
   });
 
   it("foo.bar.", async () => {
     const reg = new Registry().addFile(new MemoryFile("foo.bar.", "something"));
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(reg.getFirstObject()!.getType()).to.equal("BAR");
   });
 
   it("filename with namespace, url encoded", async () => {
     const reg = new Registry().addFile(new MemoryFile("%23namesp%23cl_foobar.clas.abap", "parser error"));
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(reg.getFirstObject()!.getType()).to.equal("CLAS");
     expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
   });
 
   it("filename with namespace, url encoded, with folder", async () => {
     const reg = new Registry().addFile(new MemoryFile("/src/%23namesp%23cl_foobar.clas.abap", "parser error"));
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(reg.getFirstObject()!.getType()).to.equal("CLAS");
     expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
   });
 
   it("filename with namespace, with dash", async () => {
     const reg = new Registry().addFile(new MemoryFile("/src/%23name-sp%23cl_foobar.clas.abap", "parser error"));
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(reg.getFirstObject()!.getType()).to.equal("CLAS");
     expect(reg.getObject("CLAS", "/name-sp/cl_foobar")).to.not.equal(undefined);
   });
@@ -167,7 +167,7 @@ ENDINTERFACE.`;
     const file = new MemoryFile("C:\\Users\\foobar\\git\\transpiler\\packages\\abap-loader\\build\\test\\zprogram.prog.abap", "BREAK-POINT.");
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     const abap = reg.getFirstObject() as ABAPObject | undefined;
     expect(abap?.getName()).to.equal("ZPROGRAM");
     expect(abap?.getMainABAPFile()).to.not.equal(undefined);
@@ -175,14 +175,14 @@ ENDINTERFACE.`;
 
   it("Special name, character > escaped", async () => {
     const reg = new Registry().addFile(new MemoryFile("%3e6.msag.xml", "xml"));
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(reg.getFirstObject()!.getType()).to.equal("MSAG");
     expect(reg.getObject("MSAG", ">6")).to.not.equal(undefined);
   });
 
   it("Special name, <icon> program", async () => {
     const reg = new Registry().addFile(new MemoryFile("%3cicon%3e.prog.abap", "write 'hello'."));
-    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getObjectCount().normal).to.equal(1);
     expect(reg.getFirstObject()!.getType()).to.equal("PROG");
     expect(reg.getObject("PROG", "<icon>")).to.not.equal(undefined);
   });
@@ -215,7 +215,7 @@ describe("Registry, object types", () => {
     const registry = new Registry().addFile(file);
     const issues = registry.findIssues();
     expect(issues.length).to.equal(0);
-    expect(registry.getObjectCount()).to.equal(0);
+    expect(registry.getObjectCount().normal).to.equal(0);
   });
 
   it("Unknown object type, multi files", async () => {
@@ -230,14 +230,14 @@ describe("Registry, object types", () => {
   it("Object type = PROG", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file);
-    expect(registry.getObjectCount()).to.equal(1);
+    expect(registry.getObjectCount().normal).to.equal(1);
     expect(registry.getFirstObject()!.getType()).to.equal("PROG");
   });
 
   it("Object type = W3MI", async () => {
     const file = new MemoryFile("background.w3mi.data.png", "moo");
     const registry = new Registry().addFile(file);
-    expect(registry.getObjectCount()).to.equal(1);
+    expect(registry.getObjectCount().normal).to.equal(1);
     expect(registry.getFirstObject()!.getType()).to.equal("W3MI");
   });
 
@@ -246,7 +246,7 @@ describe("Registry, object types", () => {
     const file2 = new MemoryFile("file2.w3mi.data.png", "moo");
     const registry = new Registry().addFile(file1).addFile(file2);
 
-    expect(registry.getObjectCount()).to.equal(2);
+    expect(registry.getObjectCount().normal).to.equal(2);
 
     let ret = "";
     for (const a of registry.getObjects()) {
@@ -258,12 +258,12 @@ describe("Registry, object types", () => {
   it("add and remove", async () => {
     const file = new MemoryFile("background.w3mi.data.png", "moo");
     const registry = new Registry().addFile(file);
-    expect(registry.getObjectCount()).to.equal(1);
+    expect(registry.getObjectCount().normal).to.equal(1);
     const obj = registry.getFirstObject();
     expect(obj!.getType()).to.equal("W3MI");
 
     registry.removeFile(file);
-    expect(registry.getObjectCount()).to.equal(0);
+    expect(registry.getObjectCount().normal).to.equal(0);
   });
 
   it("add two with same name", async () => {
@@ -271,7 +271,7 @@ describe("Registry, object types", () => {
     const file2 = new MemoryFile("background.prog.xml", "moo");
     const registry = new Registry().addFile(file1).addFile(file2);
 
-    expect(registry.getObjectCount()).to.equal(2);
+    expect(registry.getObjectCount().normal).to.equal(2);
   });
 
   it("double add, first dependency next real", async () => {
@@ -281,7 +281,7 @@ describe("Registry, object types", () => {
     registry.addDependency(file);
     registry.addFile(file);
 
-    expect(registry.getObjectCount()).to.equal(1);
+    expect(registry.getObjectCount().normal).to.equal(1);
     expect(registry.isFileDependency(filename)).to.equal(false);
     expect(registry.isDependency(registry.getFirstObject()!)).to.equal(false);
   });
@@ -417,7 +417,7 @@ describe("exclude list", () => {
     const file2 = new MemoryFile("file2.w3mi.data.png", "moo");
     const registry = new Registry().addFile(file1).addFile(file2);
 
-    expect(registry.getObjectCount()).to.equal(2);
+    expect(registry.getObjectCount().normal).to.equal(2);
 
     let ret = "";
     for (const a of registry.getObjectsByType("W3MI")) {
@@ -440,12 +440,12 @@ describe("exclude list", () => {
 
     const file1 = new MemoryFile("/deps/zcl_class.clas.abap", "deps");
     registry.addDependency(file1);
-    expect(registry.getObjectCount()).to.equal(0);
+    expect(registry.getObjectCount().normal).to.equal(0);
 
     const file2 = new MemoryFile("/real/zcl_class.clas.abap", "real");
     registry.addFile(file2);
 
-    expect(registry.getObjectCount()).to.equal(1);
+    expect(registry.getObjectCount().normal).to.equal(1);
     const file = registry.getFirstObject()?.getFiles()[0];
     expect(file?.getFilename()).to.include("real");
     expect(file?.getRaw()).to.equal("real");
@@ -485,7 +485,7 @@ ENDCLASS.`);
     registry.addFile(file1);
     registry.parse();
 
-    expect(registry.getObjectCount()).to.equal(1);
+    expect(registry.getObjectCount().normal).to.equal(1);
     const file = (registry.getFirstObject() as Class).getABAPFiles()[0];
     const lcl = file.getInfo().getClassDefinitionByName("ltcl_test");
     expect(lcl?.riskLevel).to.equal(RiskLevel.critical);
