@@ -51,8 +51,8 @@ export class Target {
 
       if (current.get() instanceof Dash) {
         if (context instanceof UnknownType) {
-          const message = "Not a structure, type unknown, target";
-          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return VoidType.get(CheckSyntaxKey);
+        } else if (context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof UnknownType) {
           return VoidType.get(CheckSyntaxKey);
         } else if (!(context instanceof StructureType)
             && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof StructureType)

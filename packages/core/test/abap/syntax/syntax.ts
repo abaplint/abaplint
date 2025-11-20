@@ -11983,4 +11983,12 @@ WRITE <fs>+6(2).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("dont cascade unknown error", () => {
+    const abap = `
+DATA t_dest LIKE zdest OCCURS 0 WITH HEADER LINE.
+t_dest-mandt = sy-mandt.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

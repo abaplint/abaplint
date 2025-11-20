@@ -1714,4 +1714,17 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("INCLUDE STRUCTURE", async () => {
+    const abap = `
+DATA: BEGIN OF bar,
+        moo TYPE i,
+      END OF bar.
+
+TYPES BEGIN OF ty.
+        INCLUDE STRUCTURE bar.
+TYPES END OF ty.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
