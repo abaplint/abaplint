@@ -84,11 +84,13 @@ export class IncludeGraph implements IIncludeGraph {
   private readonly reg: IRegistry;
   private readonly issues: Issue[];
   private readonly graph: Graph;
+  private readonly severity: Severity;
 
-  public constructor(reg: IRegistry) {
+  public constructor(reg: IRegistry, severity: Severity = Severity.Error) {
     this.reg = reg;
     this.issues = [];
     this.graph = new Graph();
+    this.severity = severity;
     this.build();
   }
 
@@ -121,7 +123,7 @@ export class IncludeGraph implements IIncludeGraph {
       if (f === undefined) {
         throw new Error("findUnusedIncludes internal error");
       }
-      const issue = Issue.atPosition(f, new Position(1, 1), "INCLUDE not used anywhere", new CheckInclude().getMetadata().key, Severity.Error);
+      const issue = Issue.atPosition(f, new Position(1, 1), "INCLUDE not used anywhere", new CheckInclude().getMetadata().key, this.severity);
       ret.push(issue);
     }
 
@@ -154,11 +156,11 @@ export class IncludeGraph implements IIncludeGraph {
             if (found === undefined) {
               const ifFound = s.concatTokens().toUpperCase().includes("IF FOUND");
               if (ifFound === false) {
-                const issue = Issue.atStatement(f, s, "Include " + name + " not found", new CheckInclude().getMetadata().key, Severity.Error);
+                const issue = Issue.atStatement(f, s, "Include " + name + " not found", new CheckInclude().getMetadata().key, this.severity);
                 this.issues.push(issue);
               }
             } else if (found.include === false) {
-              const issue = Issue.atStatement(f, s, "Not possible to INCLUDE a main program, " + name, new CheckInclude().getMetadata().key, Severity.Error);
+              const issue = Issue.atStatement(f, s, "Not possible to INCLUDE a main program, " + name, new CheckInclude().getMetadata().key, this.severity);
               this.issues.push(issue);
             } else {
               this.graph.addEdge(found, f.getFilename());

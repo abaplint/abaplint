@@ -6,6 +6,7 @@ import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 import {Program} from "../objects";
+import {Severity} from "../severity";
 
 export class CheckIncludeConf extends BasicRuleConfig {
 }
@@ -39,7 +40,7 @@ export class CheckInclude implements IRule {
 
   public initialize(reg: IRegistry) {
     this.reg = reg;
-    this.graph = new IncludeGraph(this.reg);
+    this.graph = new IncludeGraph(this.reg, this.getConfig().severity || Severity.Error);
     return this;
   }
 
