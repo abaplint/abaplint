@@ -5,6 +5,7 @@ import {BasicTypes} from "../basic_types";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
+import {ReferenceType} from "../_reference";
 
 export class IncludeType {
   public runSyntax(node: StatementNode, input: SyntaxInput): IStructureComponent[] | VoidType | UnknownType {
@@ -14,17 +15,17 @@ export class IncludeType {
     if (iname === undefined) {
       throw new AssertError("IncludeType, unexpected node structure");
     }
-    const name = iname.getFirstToken().getStr();
+    const firstToken = iname.getFirstToken();
+    const name = firstToken.getStr();
     const isStructure = node.findDirectTokenByText("STRUCTURE") !== undefined;
 
     let ityp = new BasicTypes(input).parseType(iname);
-    if (ityp instanceof VoidType && isStructure) {
-      const found = input.scope.findVariable(name)?.getType();
+    if ((ityp instanceof VoidType && isStructure) || ityp instanceof UnknownType) {
+      const found = input.scope.findVariable(name);
       if (found) {
-        ityp = found;
+        input.scope.addReference(firstToken, found, ReferenceType.DataReadReference, input.filename);
+        ityp = found.getType();
       }
-    } else if (ityp instanceof UnknownType) {
-      ityp = input.scope.findVariable(name)?.getType() ?? ityp;
     }
 
     const as = node.findExpressionAfterToken("AS")?.concatTokens();
