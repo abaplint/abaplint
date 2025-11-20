@@ -391,6 +391,20 @@ EXPORT foo = <bar>
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("TABL referenced via INCLUDE STRUCTURE", async () => {
+    const abap = `
+TYPES BEGIN OF ty.
+INCLUDE STRUCTURE ztabl.
+TYPES END OF ty.`;
+
+    const files = [
+      new MemoryFile(`ztabl.tabl.xml`, tabl),
+      new MemoryFile(`zprogabc.prog.abap`, abap),
+    ];
+    const issues = await run(files);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("TABL referenced via SELECT", async () => {
     const abap = `SELECT SINGLE * FROM ztabl INTO @DATA(ls_sdfsd).`;
 
