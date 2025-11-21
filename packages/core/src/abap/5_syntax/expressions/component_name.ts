@@ -37,7 +37,7 @@ export class ComponentName {
       }
     }
 
-    input.issues.push(syntaxIssue(input, nameToken, "Not a structure, ComponentName, \"" + name + "\""));
+    input.issues.push(syntaxIssue(input, nameToken, "Not a structure, ComponentName, \"" + name + "\", (" + context?.constructor.name + ")"));
     return Basic.VoidType.get(CheckSyntaxKey);
   }
 
