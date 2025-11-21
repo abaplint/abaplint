@@ -53,7 +53,7 @@ export interface IRegistry {
   addFile(file: IFile): IRegistry;
   updateFile(file: IFile): IRegistry;
   removeFile(file: IFile): IRegistry;
-  addFiles(files: IFile[]): IRegistry;
+  addFiles(files: readonly IFile[]): IRegistry;
   getFileByName(filename: string): IFile | undefined;
   getFiles(): Generator<IFile, void, undefined>;
 }
