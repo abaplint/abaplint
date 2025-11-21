@@ -11996,7 +11996,6 @@ t_dest-mandt = sy-mandt.`;
 DATA foo TYPE STANDARD TABLE OF zunknown WITH HEADER LINE.
 WRITE foo-bar.`;
     const issues = runProgram(abap);
-    console.dir(issues[0]?.getMessage());
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
