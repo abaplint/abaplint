@@ -11991,4 +11991,13 @@ t_dest-mandt = sy-mandt.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("dont cascade unknown error 2", () => {
+    const abap = `
+DATA foo TYPE STANDARD TABLE OF zunknown WITH HEADER LINE.
+WRITE foo-bar.`;
+    const issues = runProgram(abap);
+    console.dir(issues[0]?.getMessage());
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
