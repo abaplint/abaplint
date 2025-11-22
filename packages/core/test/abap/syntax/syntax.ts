@@ -12007,4 +12007,16 @@ READ TABLE tab INDEX 1 TRANSPORTING NO FIELDS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECT, for all entries, dont cascade unknown error", () => {
+    const abap = `
+DATA: lt_fae TYPE zddicttyp.
+SELECT column FROM table INTO TABLE @DATA(lt_results)
+  FOR ALL ENTRIES IN @lt_fae
+  WHERE column = @lt_fae-field.
+
+DELETE TABLE lt_results FROM 10.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

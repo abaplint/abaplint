@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {Source} from "./source";
-import {VoidType, TableType} from "../../types/basic";
+import {VoidType, TableType, UnknownType} from "../../types/basic";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class SQLForAllEntries {
@@ -13,7 +13,7 @@ export class SQLForAllEntries {
     }
     if (s) {
       const type = Source.runSyntax(s, input);
-      if (type instanceof VoidType) {
+      if (type instanceof VoidType || type instanceof UnknownType) {
         return;
       }
       if (!(type instanceof TableType)) {
