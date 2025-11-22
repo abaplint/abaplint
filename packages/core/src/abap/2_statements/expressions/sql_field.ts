@@ -13,7 +13,7 @@ export class SQLField extends Expression {
 
     const as = seq("AS", SQLAsName);
 
-    const paren = seq(tok(WParenLeftW), SQLFieldName, altPrio(tok(WParenRightW), tok(WParenRight)));
+    const parenFieldName = seq(tok(WParenLeftW), SQLFieldName, altPrio(tok(WParenRightW), tok(WParenRight)));
 
     const field = altPrio(SQLAggregation,
                           SQLCase,
@@ -23,8 +23,11 @@ export class SQLField extends Expression {
                           SQLFieldName,
                           abap,
                           Constant,
-                          paren);
-    const sub = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), optPrio(tok(WParenLeftW)), field, optPrio(tok(WParenRightW))));
+                          parenFieldName);
+
+    const parenField = seq(tok(WParenLeftW), field, tok(WParenRightW));
+
+    const sub = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenField, field)));
     const arith = ver(Version.v740sp05, sub);
 
     return seq(field, optPrio(arith), optPrio(as));
