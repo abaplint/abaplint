@@ -23,6 +23,8 @@ export class ReadTable implements StatementSyntax {
       const message = "No source type determined, read table";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
+    } else if (sourceType instanceof UnknownType) {
+      // do nothing, ok
     } else if (!(sourceType instanceof TableType) && !(sourceType instanceof VoidType)) {
       const message = "Read table, not a table type";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));

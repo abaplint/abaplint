@@ -11999,7 +11999,7 @@ WRITE foo-bar.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("dont cascade unknown error 3", () => {
+  it("dont cascade unknown error 3", () => {
     const abap = `
 DATA tab TYPE ztytab.
 READ TABLE tab INDEX 1 TRANSPORTING NO FIELDS.`;
