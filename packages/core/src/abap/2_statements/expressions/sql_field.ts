@@ -30,6 +30,9 @@ export class SQLField extends Expression {
     const sub = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenField, field)));
     const arith = ver(Version.v740sp05, sub);
 
-    return seq(field, optPrio(arith), optPrio(as));
+    const arithSequence = seq(field, optPrio(arith));
+    const parenArithSequence = seq(tok(WParenLeftW), arithSequence, tok(WParenRightW));
+
+    return seq(altPrio(parenArithSequence, arithSequence), optPrio(as));
   }
 }

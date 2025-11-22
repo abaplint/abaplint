@@ -515,13 +515,13 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     APPENDING CORRESPONDING FIELDS OF TABLE @r_drive[]
     WHERE kunnr IN ( SELECT sdfsdf FROM ztab AS p
                        JOIN t001w AS t ON t~kunnr = p~sdfsdf ).`,
-/*
+
   `SELECT ( zzfoo && zzbar && 'XX' && zzmoo ) AS fieldname
     INTO TABLE @tab
     FROM ztab
     WHERE field = '01'
     ORDER BY field2.`,
-*/
+
 //  `SELECT ( 'F' && arbgb ) AS bar FROM t100 INTO TABLE @<tab>.`,
 ];
 
