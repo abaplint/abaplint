@@ -11,12 +11,13 @@ export class Convert implements IStatement {
     const intoDate = seq("DATE", Target);
     const into = seq("INTO", per(intoTime, intoDate));
 
-    const daylight = seq("DAYLIGHT SAVING TIME", Source);
+    const daylightSource = seq("DAYLIGHT SAVING TIME", Source);
+    const daylightTarget = seq("DAYLIGHT SAVING TIME", Target);
     const zone = seq("TIME ZONE", Source);
 
     const time = seq("TIME STAMP",
                      Source,
-                     per(zone, into, daylight));
+                     per(zone, into, daylightTarget));
 
     const dat = seq("DATE", Source);
     const tim = seq("TIME", Source);
@@ -26,11 +27,11 @@ export class Convert implements IStatement {
     const invert = seq("INTO INVERTED-DATE", Target);
 
     const date = seq(per(dat, tim),
-                     per(daylight, stamp, zone, invert, intoutc));
+                     per(daylightSource, stamp, zone, invert, intoutc));
 
     const inv = seq("INVERTED-DATE", Source, "INTO DATE", Target);
 
-    const utclong = ver(Version.v754, seq("UTCLONG", Source, per(zone, into, daylight)));
+    const utclong = ver(Version.v754, seq("UTCLONG", Source, per(zone, into, daylightSource)));
 
     return seq("CONVERT", alt(time, date, inv, utclong));
   }

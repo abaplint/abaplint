@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {InlineData} from "../expressions/inline_data";
-import {TimeType, DateType, PackedType} from "../../types/basic";
+import {TimeType, DateType, PackedType, CharacterType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
@@ -16,13 +16,20 @@ export class Convert implements StatementSyntax {
       Source.runSyntax(s, input);
     }
 
-    const timeTarget = node.findExpressionAfterToken("TIME");
-    if (timeTarget?.get() instanceof Expressions.Target) {
-      const inline = timeTarget?.findDirectExpression(Expressions.InlineData);
-      if (inline) {
-        InlineData.runSyntax(inline, input, new TimeType());
-      } else {
-        Target.runSyntax(timeTarget, input);
+    const timeTargets = node.findExpressionsAfterToken("TIME");
+    for (const timeTarget of timeTargets) {
+      const concat = node.concatTokens().toUpperCase();
+      if (timeTarget?.get() instanceof Expressions.Target) {
+        const inline = timeTarget?.findDirectExpression(Expressions.InlineData);
+        if (inline) {
+          let targetType = new TimeType();
+          if (concat.includes("DAYLIGHT SAVING TIME " + inline.concatTokens().toUpperCase())) {
+            targetType = new CharacterType(1);
+          }
+          InlineData.runSyntax(inline, input, targetType);
+        } else {
+          Target.runSyntax(timeTarget, input);
+        }
       }
     }
 
