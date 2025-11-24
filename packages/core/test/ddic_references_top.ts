@@ -43,7 +43,7 @@ describe("DDIC References, top via registry", () => {
     expect(ref.listUsing(prog!).length).to.equal(1);
   });
 
-  it.only("prog referencing tabl with like, and its unknown", async () => {
+  it("prog referencing tabl with like, and its unknown", async () => {
     const reg = new Registry();
 
     reg.addFile(new MemoryFile("zprog1.prog.abap", `REPORT ZPROG1.
@@ -99,8 +99,7 @@ DATA: BEGIN OF ztab OCCURS 0,
  </asx:abap>
 </abapGit>`));
 
-    console.dir(reg.findIssues());
-
+    reg.findIssues();
     const ref = reg.getDDICReferences();
     const prog = reg.getFirstObject();
     expect(ref.listUsing(prog!).length).to.equal(1);

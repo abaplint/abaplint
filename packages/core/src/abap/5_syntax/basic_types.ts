@@ -16,6 +16,7 @@ import {Field, FieldSub, TypeTableKey} from "../2_statements/expressions";
 import {BuiltIn} from "./_builtin";
 import {Position} from "../../position";
 import {SyntaxInput} from "./_syntax_input";
+import {IObjectAndToken} from "../../_iddic_references";
 
 export class BasicTypes {
   private readonly input: SyntaxInput;
@@ -155,7 +156,12 @@ export class BasicTypes {
       }
 
       if (type === undefined) {
-        type = this.input.scope.getDDIC().lookupNoVoid(name)?.type;
+        const found = this.input.scope.getDDIC().lookupNoVoid(name);
+        if (found !== undefined) {
+          const using: IObjectAndToken = {filename: this.input.filename, token: chain.getFirstToken(), object: found.object};
+          this.input.scope.getDDICReferences().addUsing(this.input.scope.getParentObj(), using);
+        }
+        type = found?.type;
       }
 
       if (type === undefined && this.input.scope.isAnyOO() === false && this.input.scope.getDDIC().inErrorNamespace(name) === false) {
