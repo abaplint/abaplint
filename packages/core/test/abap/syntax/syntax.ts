@@ -12019,4 +12019,20 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CONVERT TIME STAMP inlines", () => {
+    const abap = `
+DATA stamp TYPE timestamp.
+DATA tz TYPE c LENGTH 3.
+
+CONVERT TIME STAMP stamp TIME ZONE tz
+  INTO DATE DATA(dattmst) TIME DATA(tim)
+  DAYLIGHT SAVING TIME DATA(dst).
+
+WRITE / dattmst.
+WRITE / tim.
+WRITE / dst.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
