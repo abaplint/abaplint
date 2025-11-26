@@ -1,5 +1,5 @@
 import {plusPrio, seq, ver, tok, Expression, optPrio, altPrio} from "../combi";
-import {Constant, SQLFieldName, SQLAggregation, SQLCase, SQLAsName, SimpleFieldChain2, SQLCast} from ".";
+import {Constant, SQLFieldName, SQLAggregation, SQLCase, SQLAsName, SimpleFieldChain2} from ".";
 import {Version} from "../../../version";
 import {WAt, WParenLeftW, WParenRight, WParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -17,7 +17,6 @@ export class SQLField extends Expression {
 
     const field = altPrio(SQLAggregation,
                           SQLCase,
-                          SQLCast,
                           SQLFunction,
                           SQLPath,
                           SQLFieldName,

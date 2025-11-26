@@ -12,6 +12,7 @@ export class SQLFunction extends Expression {
       seq("CHAR", optPrio(seq(tok(ParenLeftW), Integer, tok(WParenRightW)))),
       seq("DEC", tok(ParenLeftW), Integer, ",", Integer, tok(WParenRightW)),
       seq("NUMC", optPrio(seq(tok(ParenLeftW), Integer, tok(WParenRightW)))),
+      "DATS",
       "FLTP",
       "INT2",
       "INT4",
