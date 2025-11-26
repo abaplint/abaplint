@@ -38,6 +38,7 @@ export abstract class AbstractObject implements IObject {
   }
 
   public setDirty(): void {
+    this.old = [];
     this.dirty = true;
   }
 

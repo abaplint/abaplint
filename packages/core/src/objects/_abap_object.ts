@@ -47,6 +47,7 @@ export abstract class ABAPObject extends AbstractObject {
   public setDirty(): void {
     this.syntaxResult = undefined;
     this.texts = undefined;
+    this.parsed = [];
     super.setDirty();
   }
 

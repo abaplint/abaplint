@@ -12,6 +12,7 @@ export class SQLFunction extends Expression {
       seq("CHAR", optPrio(seq(tok(ParenLeftW), Integer, tok(WParenRightW)))),
       seq("DEC", tok(ParenLeftW), Integer, ",", Integer, tok(WParenRightW)),
       seq("NUMC", optPrio(seq(tok(ParenLeftW), Integer, tok(WParenRightW)))),
+      "DATS",
       "FLTP",
       "INT2",
       "INT4",
@@ -21,6 +22,7 @@ export class SQLFunction extends Expression {
 
     // note: the function names are not keywords, they are usually in lower case
     const abs = ver(Version.v740sp05, seq(reg(/^abs$/i), tok(ParenLeftW), SQLFunctionInput, tok(WParenRightW)));
+    // yea, 750 is correct, but it also works technically in version v740sp05
     const cast = ver(Version.v750, seq(reg(/^cast$/i), tok(ParenLeftW), SQLFunctionInput, "AS", castTypes, tok(WParenRightW)));
     const ceil = ver(Version.v740sp05, seq(reg(/^ceil$/i), tok(ParenLeftW), SQLFunctionInput, tok(WParenRightW)));
     const coalesce = ver(Version.v740sp05, seq(reg(/^coalesce$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, optPrio(commaParam), tok(WParenRightW)));
