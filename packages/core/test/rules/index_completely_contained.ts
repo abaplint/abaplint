@@ -1,8 +1,8 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../src/files/memory_file";
-import {Registry} from "../../src/registry";
 import {IndexCompletelyContained} from "../../src/rules";
 import {Issue} from "../../src/issue";
+import {MemoryFile} from "../../src/files/memory_file";
+import {Registry} from "../../src/registry";
 
 async function findIssues(filename: string, contents: string): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile(filename, contents));
@@ -13,7 +13,7 @@ async function findIssues(filename: string, contents: string): Promise<Issue[]> 
 
 describe("Rule: index_completely_contained", () => {
 
-  it("Error", async () => {
+  it("Error, completely contained", async () => {
     const issues = await findIssues("zindexcomplete.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">

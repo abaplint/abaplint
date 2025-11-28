@@ -1,9 +1,9 @@
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {IObject} from "../objects/_iobject";
 import {IRule, RuleTag} from "./_irule";
 import {Issue} from "../issue";
-import * as Objects from "../objects";
-import {IObject} from "../objects/_iobject";
-import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
+import * as Objects from "../objects";
 
 export class IndexCompletelyContainedConf extends BasicRuleConfig {
 // todo, add option to not allow any void types?
