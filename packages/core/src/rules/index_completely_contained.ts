@@ -6,7 +6,6 @@ import {Position} from "../position";
 import * as Objects from "../objects";
 
 export class IndexCompletelyContainedConf extends BasicRuleConfig {
-// todo, add option to not allow any void types?
 }
 
 export class IndexCompletelyContained implements IRule {
