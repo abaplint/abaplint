@@ -67,6 +67,7 @@ export * from "./implement_methods";
 export * from "./implicit_start_of_selection";
 export * from "./in_statement_indentation";
 export * from "./indentation";
+export * from "./index_completely_contained";
 export * from "./inline_data_old_versions";
 export * from "./intf_referencing_clas";
 export * from "./invalid_table_index";

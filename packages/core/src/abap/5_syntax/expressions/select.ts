@@ -44,12 +44,9 @@ export class Select {
       return;
     }
 
-    const isSingle = node.getChildren()[1]?.concatTokens().toUpperCase() === "SINGLE"
-      || node.get() instanceof Expressions.SelectLoop;
-
     this.checkFields(fields, dbSources, input, node);
 
-    this.handleInto(node, input, fields, dbSources, isSingle);
+    const intoExpression = this.handleInto(node, input, fields, dbSources);
 
     const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
     if (fae) {
@@ -102,8 +99,19 @@ export class Select {
       SQLCompare.runSyntax(s, input, dbSources);
     }
 
-    for (const s of node.findDirectExpressions(Expressions.SQLOrderBy)) {
-      SQLOrderBy.runSyntax(s, input);
+    const orderBy = node.findDirectExpression(Expressions.SQLOrderBy);
+    if (orderBy) {
+      SQLOrderBy.runSyntax(orderBy, input);
+
+      const where = node.findDirectExpression(Expressions.SQLCond);
+      if (intoExpression
+          && where
+          && intoExpression.getFirstToken().getStart().isBefore(orderBy.getFirstToken().getStart())
+          && where.getFirstToken().getStart().isBefore(orderBy.getFirstToken().getStart())
+          && where.getFirstToken().getStart().isBefore(intoExpression.getFirstToken().getStart())) {
+        const message = `ORDER BY must be before INTO, after WHERE`;
+        input.issues.push(syntaxIssue(input, orderBy.getFirstToken(), message));
+      }
     }
 
     if (this.isStrictMode(node)) {
@@ -166,13 +174,14 @@ export class Select {
   private static handleInto(node: ExpressionNode,
                             input: SyntaxInput,
                             fields: FieldList,
-                            dbSources: DatabaseTableSource[], _isSingle: boolean) {
+                            dbSources: DatabaseTableSource[]): ExpressionNode | undefined {
     const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
     if (intoTable) {
       const inline = intoTable.findFirstExpression(Expressions.InlineData);
       if (inline) {
         InlineData.runSyntax(inline, input, this.buildTableType(fields, dbSources, input.scope));
       }
+      return intoTable;
     }
 
     const intoStructure = node.findDirectExpression(Expressions.SQLIntoStructure);
@@ -186,6 +195,7 @@ export class Select {
           InlineData.runSyntax(inline, input, VoidType.get("SELECT_todo1"));
         }
       }
+      return intoStructure;
     }
 
     const intoList = node.findDirectExpression(Expressions.SQLIntoList);
@@ -231,7 +241,10 @@ export class Select {
           InlineData.runSyntax(inline, input, type);
         }
       }
+      return intoList;
     }
+
+    return undefined;
   }
 
   private static checkFields(fields: FieldList, dbSources: DatabaseTableSource[], input: SyntaxInput, node: ExpressionNode) {
