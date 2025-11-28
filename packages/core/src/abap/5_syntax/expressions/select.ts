@@ -102,8 +102,9 @@ export class Select {
       SQLCompare.runSyntax(s, input, dbSources);
     }
 
-    for (const s of node.findDirectExpressions(Expressions.SQLOrderBy)) {
-      SQLOrderBy.runSyntax(s, input);
+    const orderBy = node.findDirectExpression(Expressions.SQLOrderBy);
+    if (orderBy) {
+      SQLOrderBy.runSyntax(orderBy, input);
     }
 
     if (this.isStrictMode(node)) {
