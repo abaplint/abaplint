@@ -12035,4 +12035,35 @@ WRITE / dst.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECT: ORDER BY ok1", () => {
+    const abap = `
+SELECT * FROM t100
+  INTO TABLE @DATA(foobar)
+  WHERE arbgb = 'FOO'
+  ORDER BY arbgb.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT: ORDER BY ok2", () => {
+    const abap = `
+SELECT * FROM t100
+  INTO TABLE @DATA(lt_tab1)
+  UP TO 5 ROWS
+  ORDER BY arbgb.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT: ORDER BY must be before INTO, after WHERE", () => {
+    const abap = `
+SELECT * FROM t100
+  WHERE arbgb = 'FOO'
+  INTO TABLE @DATA(lt_tab1)
+  UP TO 5 ROWS
+  ORDER BY arbgb.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("ORDER BY must be before INTO");
+  });
+
 });

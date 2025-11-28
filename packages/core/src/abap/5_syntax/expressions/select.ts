@@ -46,8 +46,7 @@ export class Select {
 
     this.checkFields(fields, dbSources, input, node);
 
-    // const _intoExpression =
-    this.handleInto(node, input, fields, dbSources);
+    const intoExpression = this.handleInto(node, input, fields, dbSources);
 
     const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
     if (fae) {
@@ -103,6 +102,16 @@ export class Select {
     const orderBy = node.findDirectExpression(Expressions.SQLOrderBy);
     if (orderBy) {
       SQLOrderBy.runSyntax(orderBy, input);
+
+      const where = node.findDirectExpression(Expressions.SQLCond);
+      if (intoExpression
+          && where
+          && intoExpression.getFirstToken().getStart().isBefore(orderBy.getFirstToken().getStart())
+          && where.getFirstToken().getStart().isBefore(orderBy.getFirstToken().getStart())
+          && where.getFirstToken().getStart().isBefore(intoExpression.getFirstToken().getStart())) {
+        const message = `ORDER BY must be before INTO, after WHERE`;
+        input.issues.push(syntaxIssue(input, orderBy.getFirstToken(), message));
+      }
     }
 
     if (this.isStrictMode(node)) {
