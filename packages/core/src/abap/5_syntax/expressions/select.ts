@@ -46,6 +46,7 @@ export class Select {
 
     this.checkFields(fields, dbSources, input, node);
 
+    // const _intoExpression =
     this.handleInto(node, input, fields, dbSources);
 
     const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
@@ -164,13 +165,14 @@ export class Select {
   private static handleInto(node: ExpressionNode,
                             input: SyntaxInput,
                             fields: FieldList,
-                            dbSources: DatabaseTableSource[]) {
+                            dbSources: DatabaseTableSource[]): ExpressionNode | undefined {
     const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
     if (intoTable) {
       const inline = intoTable.findFirstExpression(Expressions.InlineData);
       if (inline) {
         InlineData.runSyntax(inline, input, this.buildTableType(fields, dbSources, input.scope));
       }
+      return intoTable;
     }
 
     const intoStructure = node.findDirectExpression(Expressions.SQLIntoStructure);
@@ -184,6 +186,7 @@ export class Select {
           InlineData.runSyntax(inline, input, VoidType.get("SELECT_todo1"));
         }
       }
+      return intoStructure;
     }
 
     const intoList = node.findDirectExpression(Expressions.SQLIntoList);
@@ -229,7 +232,10 @@ export class Select {
           InlineData.runSyntax(inline, input, type);
         }
       }
+      return intoList;
     }
+
+    return undefined;
   }
 
   private static checkFields(fields: FieldList, dbSources: DatabaseTableSource[], input: SyntaxInput, node: ExpressionNode) {
