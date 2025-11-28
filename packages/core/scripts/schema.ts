@@ -69,6 +69,7 @@ import {ImplementMethodsConf} from "../src/rules/implement_methods";
 import {ImplicitStartOfSelectionConf} from "../src/rules/implicit_start_of_selection";
 import {InStatementIndentationConf} from "../src/rules/in_statement_indentation";
 import {IndentationConf} from "../src/rules/indentation";
+import {IndexCompletelyContainedConf} from "../src/rules/index_completely_contained";
 import {InlineDataOldVersionsConf} from "../src/rules/inline_data_old_versions";
 import {IntfReferencingClasConf} from "../src/rules/intf_referencing_clas";
 import {InvalidTableIndexConf} from "../src/rules/invalid_table_index";
@@ -254,6 +255,7 @@ export interface IConfig {
     "implicit_start_of_selection"?: ImplicitStartOfSelectionConf | boolean,
     "in_statement_indentation"?: InStatementIndentationConf | boolean,
     "indentation"?: IndentationConf | boolean,
+    "index_completely_contained"?: IndexCompletelyContainedConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
     "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "invalid_table_index"?: InvalidTableIndexConf | boolean,
@@ -428,6 +430,7 @@ export interface IConfig {
     "implicit_start_of_selection"?: ImplicitStartOfSelectionConf | boolean,
     "in_statement_indentation"?: InStatementIndentationConf | boolean,
     "indentation"?: IndentationConf | boolean,
+    "index_completely_contained"?: IndexCompletelyContainedConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
     "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "invalid_table_index"?: InvalidTableIndexConf | boolean,

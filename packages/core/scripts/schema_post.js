@@ -18,7 +18,7 @@ function run() {
     }
   }
 
-  for(const rule of abaplint.ArtifactsRules.getRules()) {
+  for (const rule of abaplint.ArtifactsRules.getRules()) {
     const meta = rule.getMetadata();
     if (meta.shortDescription !== undefined) {
       const extra = meta.tags && meta.tags.length > 0 ? "\nTags: " + meta.tags.join(", ") : "";

@@ -2359,6 +2359,17 @@
               ],
               "description": "Checks indentation\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/indentation"
             },
+            "index_completely_contained": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IndexCompletelyContainedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "If indexes are completely contained in other indexes, they can be removed to improve performance.\nTags: Performance\nhttps://rules.abaplint.org/index_completely_contained"
+            },
             "inline_data_old_versions": {
               "anyOf": [
                 {
@@ -4251,6 +4262,17 @@
               ],
               "description": "Checks indentation\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/indentation"
             },
+            "index_completely_contained": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IndexCompletelyContainedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "If indexes are completely contained in other indexes, they can be removed to improve performance.\nTags: Performance\nhttps://rules.abaplint.org/index_completely_contained"
+            },
             "inline_data_old_versions": {
               "anyOf": [
                 {
@@ -5753,6 +5775,23 @@
         "ignoreGlobalClassDefinition",
         "ignoreGlobalInterface"
       ],
+      "type": "object"
+    },
+    "IndexCompletelyContainedConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "InlineDataOldVersionsConf": {
