@@ -44,12 +44,9 @@ export class Select {
       return;
     }
 
-    const isSingle = node.getChildren()[1]?.concatTokens().toUpperCase() === "SINGLE"
-      || node.get() instanceof Expressions.SelectLoop;
-
     this.checkFields(fields, dbSources, input, node);
 
-    this.handleInto(node, input, fields, dbSources, isSingle);
+    this.handleInto(node, input, fields, dbSources);
 
     const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
     if (fae) {
@@ -167,7 +164,7 @@ export class Select {
   private static handleInto(node: ExpressionNode,
                             input: SyntaxInput,
                             fields: FieldList,
-                            dbSources: DatabaseTableSource[], _isSingle: boolean) {
+                            dbSources: DatabaseTableSource[]) {
     const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
     if (intoTable) {
       const inline = intoTable.findFirstExpression(Expressions.InlineData);
