@@ -11,7 +11,7 @@ async function findIssues(filename: string, contents: string): Promise<Issue[]> 
   return rule.run(reg.getFirstObject()!);
 }
 
-describe.only("Rule: index_completely_contained", () => {
+describe("Rule: index_completely_contained", () => {
 
   it("Error", async () => {
     const issues = await findIssues("zindexcomplete.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>

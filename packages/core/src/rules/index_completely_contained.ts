@@ -3,6 +3,7 @@ import {Issue} from "../issue";
 import * as Objects from "../objects";
 import {IObject} from "../objects/_iobject";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {Position} from "../position";
 
 export class IndexCompletelyContainedConf extends BasicRuleConfig {
 // todo, add option to not allow any void types?
@@ -37,9 +38,36 @@ export class IndexCompletelyContained implements IRule {
       return [];
     }
 
-// todo
+    const indexes = obj.getSecondaryIndexes();
+    if (indexes === undefined || indexes.length === 0) {
+      return [];
+    }
 
-    return [];
+    const issues: Issue[] = [];
+    for (let i = 0; i < indexes.length; i++) {
+      const indexA = indexes[i];
+      for (let j = 0; j < indexes.length; j++) {
+        if (i === j) {
+          continue;
+        }
+        const indexB = indexes[j];
+
+        let contained = true;
+        for (const field of indexA.fields) {
+          if (indexB.fields.indexOf(field) === -1) {
+            contained = false;
+            break;
+          }
+        }
+        if (contained) {
+          const position = new Position(1, 1);
+          const message = `Index "${indexA.name}" is completely contained in index "${indexB.name}"`;
+          issues.push(Issue.atPosition(obj.getFiles()[0], position, message, this.getMetadata().key, this.conf.severity));
+        }
+      }
+    }
+
+    return issues;
   }
 
 }

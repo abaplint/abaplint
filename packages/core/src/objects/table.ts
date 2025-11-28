@@ -27,12 +27,18 @@ export enum TableCategory {
   Append = "APPEND",
 }
 
+export type SecondaryIndex = {
+  name: string,
+  fields: string[],
+};
+
 export class Table extends AbstractObject {
   private parsedData: {
     tableCategory?: TableCategory | undefined,
     dataClass?: string,
     enhancementCategory?: EnhancementCategory,
     description?: string,
+    secondaryIndexes?: SecondaryIndex[],
     fields: {
       FIELDNAME: string,
       ROLLNAME?: string,
@@ -60,6 +66,14 @@ export class Table extends AbstractObject {
     }
 
     return this.parsedData?.description;
+  }
+
+  public getSecondaryIndexes(): SecondaryIndex[] | undefined {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+
+    return this.parsedData?.secondaryIndexes;
   }
 
   public getAllowedNaming(): IAllowedNaming {
@@ -323,6 +337,25 @@ export class Table extends AbstractObject {
         CHECKTABLE: field.CHECKTABLE,
         REFTYPE: field.REFTYPE,
         DDTEXT: field.DDTEXT,
+      });
+    }
+
+// secondary indexes
+    const indexes = parsed.abapGit["asx:abap"]["asx:values"]?.DD12V;;
+    this.parsedData.secondaryIndexes = [];
+    for (const index of xmlToArray(indexes?.DD12V)) {
+      const indexName = index.INDEXNAME;
+      const indexFields: string[] = [];
+      const indexFieldsXml = parsed.abapGit["asx:abap"]["asx:values"]?.DD17V;
+      for (const indexField of xmlToArray(indexFieldsXml?.DD17V)) {
+        if (indexField.INDEXNAME === indexName) {
+          // assumption: fields are listed by POSITION in the xml
+          indexFields.push(indexField.FIELDNAME);
+        }
+      }
+      this.parsedData.secondaryIndexes.push({
+        name: indexName,
+        fields: indexFields,
       });
     }
   }
