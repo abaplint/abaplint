@@ -56,7 +56,7 @@ ENDTRY.`,
     for (const statNode of file.getStatements()) {
       const statement = statNode.get();
       if (statement instanceof Statements.CallTransaction && !statNode.concatTokensWithoutStringsAndComments().toUpperCase().includes("WITH AUTHORITY-CHECK")) {
-        issues.push(Issue.atStatement(file, statNode, this.getMessage(), this.getMetadata().key));
+        issues.push(Issue.atStatement(file, statNode, this.getMessage(), this.getMetadata().key, this.getConfig().severity));
       }
     }
     return issues;
