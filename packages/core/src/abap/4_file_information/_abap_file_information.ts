@@ -118,9 +118,12 @@ export interface InfoFormDefinition {
 export interface IABAPFileInformation {
   listInterfaceDefinitions(): readonly InfoInterfaceDefinition[];
   getInterfaceDefinitionByName(name: string): InfoInterfaceDefinition | undefined;
+
   listClassDefinitions(): readonly InfoClassDefinition[];
   getClassDefinitionByName(name: string): InfoClassDefinition | undefined;
+
   listFormDefinitions(): readonly InfoFormDefinition[];
+
   listClassImplementations(): readonly InfoClassImplementation[];
   getClassImplementationByName(name: string): InfoClassImplementation | undefined;
 }
