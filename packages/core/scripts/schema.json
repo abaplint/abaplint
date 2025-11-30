@@ -504,6 +504,9 @@
     "CheckIncludeConf": {
       "additionalProperties": false,
       "properties": {
+        "allowUnused": {
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -516,6 +519,9 @@
           "description": "Problem severity"
         }
       },
+      "required": [
+        "allowUnused"
+      ],
       "type": "object"
     },
     "CheckSubrcConf": {
@@ -2368,7 +2374,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "If indexes are completely contained in other indexes, they can be removed to improve performance.\nTags: Performance\nhttps://rules.abaplint.org/index_completely_contained"
+              "description": "If indexes are completely contained in other indexes, they can be removed to improve performance.\nTags: Performance, SingleFile\nhttps://rules.abaplint.org/index_completely_contained"
             },
             "inline_data_old_versions": {
               "anyOf": [
@@ -4271,7 +4277,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "If indexes are completely contained in other indexes, they can be removed to improve performance.\nTags: Performance\nhttps://rules.abaplint.org/index_completely_contained"
+              "description": "If indexes are completely contained in other indexes, they can be removed to improve performance.\nTags: Performance, SingleFile\nhttps://rules.abaplint.org/index_completely_contained"
             },
             "inline_data_old_versions": {
               "anyOf": [

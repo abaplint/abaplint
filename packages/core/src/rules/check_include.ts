@@ -9,6 +9,7 @@ import {Program} from "../objects";
 import {Severity} from "../severity";
 
 export class CheckIncludeConf extends BasicRuleConfig {
+  public allowUnused: boolean = false;
 }
 
 export class CheckInclude implements IRule {
@@ -40,7 +41,7 @@ export class CheckInclude implements IRule {
 
   public initialize(reg: IRegistry) {
     this.reg = reg;
-    this.graph = new IncludeGraph(this.reg, this.getConfig().severity || Severity.Error);
+    this.graph = new IncludeGraph(this.reg, this.getConfig().severity || Severity.Error, this.getConfig().allowUnused || false);
     return this;
   }
 

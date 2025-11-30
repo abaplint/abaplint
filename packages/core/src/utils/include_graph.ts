@@ -85,12 +85,14 @@ export class IncludeGraph implements IIncludeGraph {
   private readonly issues: Issue[];
   private readonly graph: Graph;
   private readonly severity: Severity;
+  private readonly allowUnused: boolean;
 
-  public constructor(reg: IRegistry, severity: Severity = Severity.Error) {
+  public constructor(reg: IRegistry, severity: Severity = Severity.Error, allowUnused: boolean = false) {
     this.reg = reg;
     this.issues = [];
     this.graph = new Graph();
     this.severity = severity;
+    this.allowUnused = allowUnused;
     this.build();
   }
 
@@ -117,6 +119,7 @@ export class IncludeGraph implements IIncludeGraph {
 
     const v = this.graph.findVertexByFilename(file.getFilename());
     if (v !== undefined
+        && this.allowUnused === false
         && v.include === true
         && this.listMainForInclude(v.filename).length === 0) {
       const f = this.reg.getFileByName(v.filename);

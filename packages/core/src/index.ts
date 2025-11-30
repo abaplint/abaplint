@@ -30,6 +30,7 @@ import * as Tokens from "./abap/1_lexer/tokens";
 import {IConfig, IDependency, IRenameSettings, IConfiguration} from "./_config";
 import {IRegistry} from "./_iregistry";
 import {IFile} from "./files/_ifile";
+import {IABAPFile} from "./abap/iabap_file";
 import {Position} from "./position";
 import {VirtualPosition} from "./virtual_position";
 import {AbstractFile} from "./files/_abstract_file";
@@ -77,7 +78,7 @@ export {Issue, Config, Version, CyclomaticComplexityStats,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, AbstractToken as Token, IEdit,
   IDependency, SpaghettiScopeNode, MacroCall, MacroContent, NativeSQL, ReferenceType,
   Edits, MemoryFile,
-  ABAPFile,
+  ABAPFile, IABAPFile,
   AbstractFile,
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,

@@ -27,6 +27,8 @@ export class FunctionGroup extends ABAPObject {
     super.setDirty();
     this.includes = undefined;
     this.modules = undefined;
+    this.description = undefined;
+    this.dynpros = undefined;
   }
 
   public getAllowedNaming() {

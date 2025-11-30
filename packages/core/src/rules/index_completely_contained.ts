@@ -16,7 +16,7 @@ export class IndexCompletelyContained implements IRule {
       key: "index_completely_contained",
       title: "Check if database table indexes are completely contained",
       shortDescription: `If indexes are completely contained in other indexes, they can be removed to improve performance.`,
-      tags: [RuleTag.Performance],
+      tags: [RuleTag.Performance, RuleTag.SingleFile],
     };
   }
 
