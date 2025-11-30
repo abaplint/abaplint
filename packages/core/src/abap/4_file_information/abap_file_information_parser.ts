@@ -1,18 +1,12 @@
 import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
-import {InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeLevel, InfoMethodParameter, MethodParameterDirection, InfoFormDefinition, InfoImplementing, InfoConstant, Duration, RiskLevel} from "./_abap_file_information";
 import {StructureNode, StatementNode} from "../nodes";
 import {Identifier} from "./_identifier";
 import * as Tokens from "../1_lexer/tokens";
 import {Visibility} from "./visibility";
-
-export interface ParsedFileInformation {
-  interfaces: InfoInterfaceDefinition[];
-  classes: InfoClassDefinition[];
-  forms: InfoFormDefinition[];
-  implementations: InfoClassImplementation[];
-}
+import {ParsedFileInformation} from "./parsed_file_information";
+import {InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeLevel, InfoMethodParameter, MethodParameterDirection, InfoFormDefinition, InfoImplementing, InfoConstant, Duration, RiskLevel} from "./_abap_file_information";
 
 export class ABAPFileInformationParser {
   private readonly filename: string;

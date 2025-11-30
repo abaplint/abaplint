@@ -1,28 +1,22 @@
 import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition, InfoFormDefinition} from "./_abap_file_information";
 import {StructureNode} from "../nodes";
 import {ABAPFileInformationParser} from "./abap_file_information_parser";
+import {ParsedFileInformation} from "./parsed_file_information";
 
 export class ABAPFileInformation implements IABAPFileInformation {
-  private readonly interfaces: InfoInterfaceDefinition[];
-  private readonly classes: InfoClassDefinition[];
-  private readonly forms: InfoFormDefinition[];
-  private readonly implementations: InfoClassImplementation[];
+  private readonly parsed: ParsedFileInformation;
 
   public constructor(structure: StructureNode | undefined, filename: string) {
     const parser = new ABAPFileInformationParser(filename);
-    const parsed = parser.parse(structure);
-    this.forms = parsed.forms;
-    this.implementations = parsed.implementations;
-    this.interfaces = parsed.interfaces;
-    this.classes = parsed.classes;
+    this.parsed = parser.parse(structure);
   }
 
   public listClassImplementations(): readonly InfoClassImplementation[] {
-    return this.implementations;
+    return this.parsed.implementations;
   }
 
   public listInterfaceDefinitions(): readonly InfoInterfaceDefinition[] {
-    return this.interfaces;
+    return this.parsed.interfaces;
   }
 
   public getInterfaceDefinitionByName(name: string): InfoInterfaceDefinition | undefined {
@@ -36,7 +30,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
   }
 
   public listClassDefinitions(): readonly InfoClassDefinition[] {
-    return this.classes;
+    return this.parsed.classes;
   }
 
   public getClassDefinitionByName(name: string): InfoClassDefinition | undefined {
@@ -60,7 +54,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
   }
 
   public listFormDefinitions(): InfoFormDefinition[] {
-    return this.forms;
+    return this.parsed.forms;
   }
 
 }
