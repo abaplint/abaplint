@@ -4,8 +4,9 @@ import {AbstractFile} from "../files/_abstract_file";
 import {IFile} from "../files/_ifile";
 import {StructureNode, StatementNode} from "./nodes";
 import {IABAPFileInformation} from "./4_file_information/_abap_file_information";
+import {IABAPFile} from "./iabap_file";
 
-export class ABAPFile extends AbstractFile {
+export class ABAPFile extends AbstractFile implements IABAPFile {
   private readonly tokens: readonly AbstractToken[];
   private readonly statements: readonly StatementNode[];
   private readonly structure: StructureNode | undefined;
@@ -30,12 +31,12 @@ export class ABAPFile extends AbstractFile {
     return this.file.getRaw();
   }
 
-  public getInfo(): IABAPFileInformation {
-    return this.info;
-  }
-
   public getRawRows(): string[] {
     return this.file.getRawRows();
+  }
+
+  public getInfo(): IABAPFileInformation {
+    return this.info;
   }
 
   public getStructure(): StructureNode | undefined {
