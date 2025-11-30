@@ -1,13 +1,14 @@
+import {ABAPFile} from "./abap_file";
+import {ABAPFileInformation} from "./4_file_information/abap_file_information";
+import {ABAPFileInformationParser} from "./4_file_information/abap_file_information_parser";
+import {IABAPLexerResult} from "./1_lexer/lexer_result";
 import {IFile} from "../files/_ifile";
+import {IRegistry} from "../_iregistry";
 import {Issue} from "../issue";
-import {Version, defaultVersion} from "../version";
 import {Lexer} from "./1_lexer/lexer";
 import {StatementParser} from "./2_statements/statement_parser";
 import {StructureParser} from "./3_structures/structure_parser";
-import {IABAPLexerResult} from "./1_lexer/lexer_result";
-import {ABAPFileInformation} from "./4_file_information/abap_file_information";
-import {ABAPFile} from "./abap_file";
-import {IRegistry} from "../_iregistry";
+import {Version, defaultVersion} from "../version";
 
 export interface IABAPParserResult {
   issues: readonly Issue[],
@@ -51,7 +52,9 @@ export class ABAPParser {
       const result = StructureParser.run(f);
 
 // 4: file information
-      const info = new ABAPFileInformation(result.node, f.file.getFilename());
+      const parser = new ABAPFileInformationParser(f.file.getFilename());
+      const parsed = parser.parse(result.node);
+      const info = new ABAPFileInformation(parsed);
 
       output.push(new ABAPFile(f.file, f.tokens, f.statements, result.node, info));
       issues.push(...result.issues);

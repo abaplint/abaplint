@@ -1,14 +1,11 @@
 import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition, InfoFormDefinition} from "./_abap_file_information";
-import {StructureNode} from "../nodes";
-import {ABAPFileInformationParser} from "./abap_file_information_parser";
 import {ParsedFileInformation} from "./parsed_file_information";
 
 export class ABAPFileInformation implements IABAPFileInformation {
   private readonly parsed: ParsedFileInformation;
 
-  public constructor(structure: StructureNode | undefined, filename: string) {
-    const parser = new ABAPFileInformationParser(filename);
-    this.parsed = parser.parse(structure);
+  public constructor(parsed: ParsedFileInformation) {
+    this.parsed = parsed;
   }
 
   public listClassImplementations(): readonly InfoClassImplementation[] {
