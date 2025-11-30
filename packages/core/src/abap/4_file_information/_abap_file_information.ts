@@ -53,8 +53,6 @@ export interface InfoInterfaceDefinition {
   methods: readonly InfoMethodDefinition[];
   aliases: readonly InfoAlias[],
   constants: readonly InfoConstant[],
-// todo, constants
-// todo, types
   attributes: readonly InfoAttribute[];
 }
 
