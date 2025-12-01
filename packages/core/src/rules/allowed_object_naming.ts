@@ -44,7 +44,7 @@ export class AllowedObjectNaming implements IRule {
       message = "Namespace not allowed for object type";
     } else if (allowed.customRegex !== undefined) {
       if (name.match(allowed.customRegex) === null) {
-        message = "Name not allowed";
+        message = "Name not allowed, expected to match " + allowed.customRegex.toString();
       }
     } else if (name.match(NAME_REGEX) === null) {
       message = "Name not allowed";
