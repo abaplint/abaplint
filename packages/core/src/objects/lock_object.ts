@@ -4,6 +4,7 @@ import {DDIC} from "../ddic";
 import {IObjectAndToken} from "../_iddic_references";
 import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
+import {IAllowedNaming} from "./_iobject";
 
 export class LockObject extends AbstractObject {
   private parsedXML: {
@@ -15,9 +16,10 @@ export class LockObject extends AbstractObject {
     return "ENQU";
   }
 
-  public getAllowedNaming() {
+  public getAllowedNaming(): IAllowedNaming {
     return {
       maxLength: 16,
+      customRegex: /^(\/[A-Z_\d]{3,8}\/)?E[A-Z0-9_]+$/i,
       allowNamespace: true,
     };
   }

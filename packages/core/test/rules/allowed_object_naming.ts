@@ -158,4 +158,9 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("ENQU, ok", async () => {
+    const issues = await findIssues("eysdf.enqu.xml");
+    expect(issues.length).to.equal(0);
+  });
+
 });
