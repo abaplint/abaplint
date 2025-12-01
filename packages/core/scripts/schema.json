@@ -519,9 +519,6 @@
           "description": "Problem severity"
         }
       },
-      "required": [
-        "allowUnused"
-      ],
       "type": "object"
     },
     "CheckSubrcConf": {

@@ -9,7 +9,7 @@ import {Program} from "../objects";
 import {Severity} from "../severity";
 
 export class CheckIncludeConf extends BasicRuleConfig {
-  public allowUnused: boolean = false;
+  public allowUnused?: boolean = false;
 }
 
 export class CheckInclude implements IRule {
