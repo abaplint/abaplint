@@ -519,9 +519,6 @@
           "description": "Problem severity"
         }
       },
-      "required": [
-        "allowUnused"
-      ],
       "type": "object"
     },
     "CheckSubrcConf": {
@@ -1780,7 +1777,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "CDS parsing\nTags: Syntax\nhttps://rules.abaplint.org/cds_parser_error"
+              "description": "CDS parsing\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/cds_parser_error"
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -3683,7 +3680,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "CDS parsing\nTags: Syntax\nhttps://rules.abaplint.org/cds_parser_error"
+              "description": "CDS parsing\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/cds_parser_error"
             },
             "chain_mainly_declarations": {
               "anyOf": [

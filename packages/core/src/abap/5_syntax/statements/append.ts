@@ -52,7 +52,7 @@ export class Append implements StatementSyntax {
           && !(targetType instanceof TableType)
           && dataTarget !== target
           && !(targetType instanceof VoidType)) {
-        const message = "Append, target not a table type";
+        const message = `Append, target not a table type (${targetType.constructor.name})`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }

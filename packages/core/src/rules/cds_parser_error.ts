@@ -17,7 +17,7 @@ export class CDSParserError implements IRule {
       title: "CDS Parser Error",
       shortDescription: `CDS parsing`,
       extendedInformation: `Parses CDS and issues parser errors`,
-      tags: [RuleTag.Syntax],
+      tags: [RuleTag.Syntax, RuleTag.SingleFile],
     };
   }
 
