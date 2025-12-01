@@ -12019,7 +12019,7 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("APPEND, dont cascade unknown error", () => {
+  it("APPEND, dont cascade unknown error", () => {
     const abap = `
 DATA tab TYPE zunknown.
 APPEND VALUE #( ) TO tab.`;
