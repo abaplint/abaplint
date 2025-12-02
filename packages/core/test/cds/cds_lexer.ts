@@ -122,4 +122,12 @@ define view zhvamfoocust as select from zhvam_cust
     expect(result[1]).to.be.instanceof(Comment);
   });
 
+  it("simple string", () => {
+    const cds = `'hello'`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const result = CDSLexer.run(file);
+    expect(result.length).to.equal(1);
+    expect(result[0]).to.be.instanceof(Identifier);
+  });
+
 });

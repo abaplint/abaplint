@@ -57,7 +57,7 @@ define view ZAG_UNIT_TEST
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
-  it.only("more annotations, label with double quote", () => {
+  it("more annotations, label with double quote", () => {
     const cds = `@AbapCatalog.sqlViewName: 'ZAG_UNIT_TEST_V'
 @AbapCatalog.compiler.compareFilter: true
 @AccessControl.authorizationCheck: #CHECK
