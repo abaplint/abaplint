@@ -2735,6 +2735,15 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues.length).to.equals(0);
   });
 
+  it.skip("UPDATE database table with bad field reference", () => {
+    const prog = `UPDATE ztab SET value1 = value1 + 1 WHERE badfield = 'abc'.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: ztab},
+      {filename: "zfoobar.prog.abap", contents: prog},
+    ]);
+    expect(issues[0]?.getMessage()).to.include("not found");
+  });
+
   it("concat_lines_of", () => {
     const abap = `
     DATA tab TYPE STANDARD TABLE OF string.
