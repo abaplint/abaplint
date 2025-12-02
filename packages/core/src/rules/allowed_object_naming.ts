@@ -39,12 +39,12 @@ export class AllowedObjectNaming implements IRule {
     let message = "";
 
     if (name.length > allowed.maxLength) {
-      message = "Name exceeds max length";
+      message = "Name exceeds max length, allowed is " + allowed.maxLength;
     } else if (allowed.allowNamespace === false && name.indexOf("/") >= 0) {
       message = "Namespace not allowed for object type";
     } else if (allowed.customRegex !== undefined) {
       if (name.match(allowed.customRegex) === null) {
-        message = "Name not allowed";
+        message = "Name not allowed, expected to match " + allowed.customRegex.toString();
       }
     } else if (name.match(NAME_REGEX) === null) {
       message = "Name not allowed";

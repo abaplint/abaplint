@@ -50,6 +50,7 @@ export class Append implements StatementSyntax {
     if (source) {
       if (targetType !== undefined
           && !(targetType instanceof TableType)
+          && !(targetType instanceof UnknownType)
           && dataTarget !== target
           && !(targetType instanceof VoidType)) {
         const message = `Append, target not a table type (${targetType.constructor.name})`;
