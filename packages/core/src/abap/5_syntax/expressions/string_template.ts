@@ -1,5 +1,5 @@
 import {ExpressionNode} from "../../nodes";
-import {AnyType, CLikeType, CharacterType, NumericGenericType, NumericType, StringType, StructureType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, CLikeType, CharacterType, NumericGenericType, NumericType, StringType, StructureType, UTCLongType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Expressions from "../../2_statements/expressions";
 import {Source} from "./source";
@@ -18,7 +18,9 @@ export class StringTemplate {
         const message = "No target type determined";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return VoidType.get(CheckSyntaxKey);
-      } else if ((typeUtils.isCharLike(type) === false && typeUtils.isHexLike(type) === false)
+      } else if ((typeUtils.isCharLike(type) === false
+          && typeUtils.isHexLike(type) === false
+          && !(type instanceof UTCLongType))
           || type instanceof StructureType) {
         const message = "String template, not character like, " + type.constructor.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));

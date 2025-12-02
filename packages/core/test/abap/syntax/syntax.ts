@@ -12074,4 +12074,13 @@ SELECT * FROM t100
     expect(issues[0]?.getMessage()).to.include("ORDER BY must be before INTO");
   });
 
+  it("string template, utclong", () => {
+    const abap = `
+DATA lv_created_at TYPE utclong.
+DATA(data_to_write) = |at { lv_created_at }|.
+WRITE / data_to_write.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
