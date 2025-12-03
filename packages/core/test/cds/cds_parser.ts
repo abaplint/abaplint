@@ -57,6 +57,23 @@ define view ZAG_UNIT_TEST
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("more annotations, label with double quote", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZAG_UNIT_TEST_V'
+@AbapCatalog.compiler.compareFilter: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Hel''lo'
+define view ZAG_UNIT_TEST
+  as select from tadir
+{
+  pgmid,
+  object,
+  obj_name
+} `;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("element annotation", () => {
     const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
     define view zhvamfoocust as select from zhvam_cust {

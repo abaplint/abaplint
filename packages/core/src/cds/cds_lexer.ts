@@ -76,7 +76,11 @@ export class CDSLexer {
 // string handling
       if (mode === Mode.String) {
         build += next;
-        if (next === "'") {
+        if (next === "'" && nextNext === "'") {
+          // escaped single quote, continue string
+          build += stream.takeNext();
+          col++;
+        } else if (next === "'") {
           build = result.add(build, row, col, mode);
           mode = Mode.Default;
         }
