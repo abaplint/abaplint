@@ -3152,7 +3152,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Escape SQL host variables, from 740sp05\nTags: Upport, Styleguide, Quickfix, Syntax\nhttps://rules.abaplint.org/sql_escape_host_variables"
+              "description": "Escape SQL host variables, from 740sp05 and in open-abap\nTags: Upport, Styleguide, Quickfix, Syntax\nhttps://rules.abaplint.org/sql_escape_host_variables"
             },
             "sql_value_conversion": {
               "anyOf": [
@@ -5055,7 +5055,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Escape SQL host variables, from 740sp05\nTags: Upport, Styleguide, Quickfix, Syntax\nhttps://rules.abaplint.org/sql_escape_host_variables"
+              "description": "Escape SQL host variables, from 740sp05 and in open-abap\nTags: Upport, Styleguide, Quickfix, Syntax\nhttps://rules.abaplint.org/sql_escape_host_variables"
             },
             "sql_value_conversion": {
               "anyOf": [

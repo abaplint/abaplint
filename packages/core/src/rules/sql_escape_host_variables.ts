@@ -19,7 +19,7 @@ export class SQLEscapeHostVariables extends ABAPRule {
     return {
       key: "sql_escape_host_variables",
       title: "Escape SQL host variables",
-      shortDescription: `Escape SQL host variables, from 740sp05`,
+      shortDescription: `Escape SQL host variables, from 740sp05 and in open-abap`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-obsolete-language-elements`,
       tags: [RuleTag.Upport, RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.Syntax],
       badExample: `SELECT * FROM tab INTO TABLE res WHERE field = val.`,
@@ -44,7 +44,8 @@ export class SQLEscapeHostVariables extends ABAPRule {
     }
 
     if (this.reg.getConfig().getVersion() < Version.v740sp02
-        && this.reg.getConfig().getVersion() !== Version.Cloud) {
+        && this.reg.getConfig().getVersion() !== Version.Cloud
+        && this.reg.getConfig().getVersion() !== Version.OpenABAP) {
       return [];
     }
 
