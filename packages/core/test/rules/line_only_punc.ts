@@ -9,6 +9,7 @@ const tests = [
   {abap: "WRITE 'bar'\n. \" comment", cnt: 1},
   {abap: "*", cnt: 0},
   {abap: "*  ", cnt: 0},
+  {abap: ".", cnt: 1},
   {abap: "* comment", cnt: 0},
   {abap: "\" comment", cnt: 0},
   {abap: `WRITE 2
