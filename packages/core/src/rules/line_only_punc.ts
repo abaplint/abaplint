@@ -72,10 +72,10 @@ https://docs.abapopenchecks.org/checks/16/`,
           rowContent = " " + rowContent;
         }
         let offset = 0;
-        if (rows[i - 1].endsWith("\r")) {
+        if (rows[i - 1]?.endsWith("\r")) {
           offset = -1;
         }
-        const startPos = new Position(i, rows[i - 1].length + 1 + offset);
+        const startPos = new Position(i, rows[i - 1]?.length + 1 + offset);
         const endPos = new Position(i + 1, rows[i].length + 1);
         let fix: IEdit | undefined = EditHelper.replaceRange(file, startPos, endPos, rowContent);
 
