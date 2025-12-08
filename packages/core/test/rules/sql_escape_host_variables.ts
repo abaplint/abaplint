@@ -1,8 +1,18 @@
+import {expect} from "chai";
+import {Config, Issue, MemoryFile, Registry, Version} from "../../src";
 import {SQLEscapeHostVariables} from "../../src/rules";
 import {testRule, testRuleFixSingle} from "./_utils";
 
 function testFix(input: string, expected: string, noIssuesAfter = true) {
   testRuleFixSingle(input, expected, new SQLEscapeHostVariables(), undefined, undefined, noIssuesAfter);
+}
+
+async function findIssues(abap: string, version?: Version): Promise<readonly Issue[]> {
+  const config = Config.getDefault(version);
+  const reg = new Registry(config).addFile(new MemoryFile("zfoo.prog.abap", abap));
+  await reg.parseAsync();
+  const rule = new SQLEscapeHostVariables();
+  return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
 const tests = [
@@ -30,17 +40,23 @@ const tests = [
   {abap: "DELETE (iv_name) FROM TABLE <lg_del>.", cnt: 1},
   {abap: "DELETE (iv_name) FROM TABLE @<lg_del>.", cnt: 0},
   {abap: "modify et_table from ls_row.", cnt: 0},
+  {abap: `DELETE FROM kernel_locks WHERE table_name = ls_lock-table_name AND lock_key = ls_lock-lock_key.`, cnt: 1},
 ];
 
 testRule(tests, SQLEscapeHostVariables);
 
-
-describe("Rule: sql_escape_host_variables, quick fixes", () => {
+describe("Rule: sql_escape_host_variables", () => {
 
   it("quick fix 1", async () => {
     const abap = `SELECT SINGLE bname FROM usr02 INTO lv_bname.`;
     const expected = `SELECT SINGLE bname FROM usr02 INTO @lv_bname.`;
     testFix(abap, expected);
+  });
+
+  it("Open ABAP", async () => {
+    const abap = `DELETE FROM kernel_locks WHERE table_name = ls_lock-table_name AND lock_key = ls_lock-lock_key.`;
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(1);
   });
 
 });
