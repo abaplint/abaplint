@@ -530,6 +530,9 @@
         "authorityCheck": {
           "type": "boolean"
         },
+        "deleteDatabase": {
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -574,6 +577,7 @@
         "updateDatabase",
         "insertDatabase",
         "modifyDatabase",
+        "deleteDatabase",
         "readTable",
         "assign",
         "find"
