@@ -37,7 +37,7 @@ describe("Rename SICF", () => {
 
   it("SICF", () => {
     const reg = new Registry().addFiles([
-      new MemoryFile("z2ui5_local.xml", xml),
+      new MemoryFile("z2ui5_local.sicf.xml", xml),
     ]).parse();
     new Renamer(reg).rename("SICF", "z2ui5_local", "foo");
     expect(reg.getObjectCount().normal).to.equal(1);
