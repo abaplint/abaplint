@@ -126,6 +126,8 @@ ENDIF.`, cnt: 0},
 DATA foo TYPE i.
 FIELD-SYMBOLS <bar> TYPE any.
 ASSIGN foo TO <bar>.`, cnt: 0},
+
+  {abap: `DELETE FROM kernel_locks WHERE table_name = @ls_lock-table_name AND lock_key = @ls_lock-lock_key.`, cnt: 1},
 ];
 
 testRule(tests, CheckSubrc);
