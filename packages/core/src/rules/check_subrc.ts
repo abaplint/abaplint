@@ -17,6 +17,7 @@ export class CheckSubrcConf extends BasicRuleConfig {
   public updateDatabase: boolean = true;
   public insertDatabase: boolean = true;
   public modifyDatabase: boolean = true;
+  public deleteDatabase: boolean = true;
   public readTable: boolean = true;
   public assign: boolean = true;
   public find: boolean = true;
@@ -107,6 +108,12 @@ FIND statement with MATCH COUNT is considered okay if subrc is not checked`,
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, undefined, [fix]));
       } else if (config.updateDatabase === true
           && statement.get() instanceof Statements.UpdateDatabase
+          && this.isChecked(i, statements) === false
+          && this.checksDbcnt(i, statements) === false) {
+        const fix = this.buildFix(file, statement);
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, undefined, [fix]));
+      } else if (config.deleteDatabase === true
+          && statement.get() instanceof Statements.DeleteDatabase
           && this.isChecked(i, statements) === false
           && this.checksDbcnt(i, statements) === false) {
         const fix = this.buildFix(file, statement);
