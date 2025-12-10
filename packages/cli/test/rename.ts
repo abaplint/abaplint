@@ -71,4 +71,62 @@ ENDINTERFACE.`;
     expect(intfNew).to.include("INTERFACE yif_sdfsdf1");
   });
 
+  it("renames class, icf service and handler inside the icf service", async () => {
+    const clas = `CLASS zcl_handler DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+ENDCLASS.
+CLASS zcl_handler IMPLEMENTATION.
+ENDCLASS.`;
+
+    const sicf = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_SICF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <URL>/sap/example/</URL>
+   <ICFSERVICE>
+    <ICF_NAME>Z_SVC</ICF_NAME>
+    <ORIG_NAME>z_svc</ORIG_NAME>
+   </ICFSERVICE>
+   <ICFHANDLER_TABLE>
+    <ICFHANDLER>
+     <ICF_NAME>Z_SVC</ICF_NAME>
+     <ICFORDER>01</ICFORDER>
+     <ICFTYP>A</ICFTYP>
+     <ICFHANDLER>ZCL_HANDLER</ICFHANDLER>
+    </ICFHANDLER>
+   </ICFHANDLER_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const fileClass = new MemoryFile("zcl_handler.clas.abap", clas);
+    const fileSicf = new MemoryFile("z_svc.sicf.xml", sicf);
+    const reg = new Registry().addFiles([fileClass, fileSicf]).parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[fileClass.getFilename()] = fileClass.getRaw();
+    jsonFiles[fileSicf.getFilename()] = fileSicf.getRaw();
+
+    const volume = memfs.Volume.fromJSON(jsonFiles);
+    const mockFS = memfs.createFsFromVolume(volume);
+
+    const config = reg.getConfig().get();
+    config.rename = {"patterns": [
+      {"type": "CLAS", "oldName": "zcl_handler", "newName": "zcl_handler_new"},
+      {"type": "SICF", "oldName": "z_svc", "newName": "z_new"},
+    ]};
+
+    new Rename(reg).run(config, "base", mockFS, true);
+
+    // class file renamed and content updated
+    const classNew = mockFS.readFileSync("zcl_handler_new.clas.abap").toString();
+    expect(classNew).to.include("CLASS zcl_handler_new");
+
+    // sicf file renamed and content updated (ICF_NAME and ICFHANDLER)
+    const sicfNew = mockFS.readFileSync("z_new.sicf.xml").toString();
+    expect(sicfNew).to.include("<ICF_NAME>S_NEW</ICF_NAME>");
+    expect(sicfNew).to.include("<ICFHANDLER>ZCL_HANDLER_NEW</ICFHANDLER>");
+  });
+
+
 });

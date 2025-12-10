@@ -10,6 +10,7 @@ import {ABAPObject} from "../_abap_object";
 import {AbstractObject} from "../_abstract_object";
 import {IObject} from "../_iobject";
 import {DataElement} from "../data_element";
+import {ICFService} from "../icf_service";
 import {ReferenceType} from "../../abap/5_syntax/_reference";
 
 export class RenamerHelper {
@@ -212,4 +213,18 @@ export class RenamerHelper {
     return ret;
   }
 
+  public renameICFServiceHandlerReferences(oldName: string, newName: string): TextDocumentEdit[] {
+    const changes: TextDocumentEdit[] = [];
+    const icfServices = this.reg.getObjectsByType("SICF");
+
+    for (const service of icfServices) {
+      const ICFService = service as ICFService;
+      const xmlFile = service.getXMLFile();
+      if (xmlFile === undefined) {
+        continue;
+      }
+      changes.push(...this.buildXMLFileEdits(ICFService, "ICFHANDLER", oldName, newName));
+    }
+    return changes;
+  }
 }
