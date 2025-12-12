@@ -100,6 +100,7 @@ import {NestingConf} from "../src/rules/nesting";
 import {NewlineBetweenMethodsConf} from "../src/rules/newline_between_methods";
 import {NoAliasesConf} from "../src/rules/no_aliases";
 import {NoChainedAssignmentConf} from "../src/rules/no_chained_assignment";
+import {NoCommentsBetweenMethodsConf} from "../src/rules/no_comments_between_methods";
 import {NoExternalFormCallsConf} from "../src/rules/no_external_form_calls";
 import {NoInlineInOptionalBranchesConf} from "../src/rules/no_inline_in_optional_branches";
 import {NoPrefixesConf} from "../src/rules/no_prefixes";
@@ -286,6 +287,7 @@ export interface IConfig {
     "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
     "no_aliases"?: NoAliasesConf | boolean,
     "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
+    "no_comments_between_methods"?: NoCommentsBetweenMethodsConf | boolean,
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
     "no_prefixes"?: NoPrefixesConf | boolean,
@@ -461,6 +463,7 @@ export interface IConfig {
     "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
     "no_aliases"?: NoAliasesConf | boolean,
     "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
+    "no_comments_between_methods"?: NoCommentsBetweenMethodsConf | boolean,
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
     "no_prefixes"?: NoPrefixesConf | boolean,
