@@ -1,10 +1,12 @@
 import {IFile} from "../files/_ifile";
+import {xmlToArray} from "../xml_utils";
 import {AbstractObject} from "./_abstract_object";
 import {IAllowedNaming} from "./_iobject";
 
 export class WebMIME extends AbstractObject {
   private parsedXML: {
     description?: string,
+    params: {[key: string]: string},
   } | undefined;
 
   public getType(): string {
@@ -22,6 +24,16 @@ export class WebMIME extends AbstractObject {
   public getDescription(): string | undefined {
     this.parse();
     return this.parsedXML?.description;
+  }
+
+  public getParameter(name: string): string | undefined {
+    this.parse();
+    return this.parsedXML?.params[name.toLowerCase()];
+  }
+
+  public getParameters(): {[key: string]: string} {
+    this.parse();
+    return this.parsedXML?.params ?? {};
   }
 
   public setDirty(): void {
@@ -44,7 +56,7 @@ export class WebMIME extends AbstractObject {
     }
 
     const start = Date.now();
-    this.parsedXML = {};
+    this.parsedXML = {params: {}};
     const parsed = super.parseRaw2();
 
     if (parsed === undefined
@@ -54,6 +66,10 @@ export class WebMIME extends AbstractObject {
     }
 
     this.parsedXML.description = parsed.abapGit["asx:abap"]["asx:values"].TEXT;
+
+    for (const param of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].PARAMS?.WWWPARAMS)) {
+      this.parsedXML.params[param.NAME.toLowerCase()] = param.VALUE;
+    }
 
     const end = Date.now();
     return {updated: true, runtime: end - start};
