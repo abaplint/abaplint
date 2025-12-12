@@ -416,4 +416,37 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("Uncaught exception CX_SALV_ERROR");
   });
 
+  it("uncaught exception in second CATCH block (chained)", async () => {
+    const progabap = `
+CLASS lcx_error1 DEFINITION INHERITING FROM cx_static_check.
+ENDCLASS.
+CLASS lcx_error1 IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcx_error2 DEFINITION INHERITING FROM cx_static_check.
+ENDCLASS.
+CLASS lcx_error2 IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    TRY.
+        RETURN.
+      CATCH lcx_error1.
+        RETURN.
+      CATCH lcx_error2.
+        RAISE EXCEPTION TYPE cx_salv_error.
+    ENDTRY.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "chained.prog.abap");
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("Uncaught exception CX_SALV_ERROR");
+  });
+
 });

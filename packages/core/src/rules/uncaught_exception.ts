@@ -99,13 +99,14 @@ export class UncaughtException extends ABAPRule {
           this.traverse(c, file);
         }
         this.sinked = previous;
-        for (const c of n.findDirectStructure(Structures.Catch)?.getChildren() || []) {
-          this.traverse(c, file);
+        for (const catchStructure of n.findDirectStructures(Structures.Catch)) {
+          for (const c of catchStructure.getChildren()) {
+            this.traverse(c, file);
+          }
         }
         for (const c of n.findDirectStructure(Structures.Cleanup)?.getChildren() || []) {
           this.traverse(c, file);
         }
-        return;
       } else {
         for (const c of n.getChildren()) {
           this.traverse(c, file);
