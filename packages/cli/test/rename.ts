@@ -71,7 +71,7 @@ ENDINTERFACE.`;
     expect(intfNew).to.include("INTERFACE yif_sdfsdf1");
   });
 
-  it.skip("renames class, icf service and handler inside the icf service", async () => {
+  it("renames class, icf service and handler inside the icf service", async () => {
     const clas = `CLASS zcl_handler DEFINITION PUBLIC FINAL CREATE PUBLIC.
   PUBLIC SECTION.
 ENDCLASS.
@@ -124,9 +124,8 @@ ENDCLASS.`;
 
     // sicf file renamed and content updated (ICF_NAME and ICFHANDLER)
     const sicfNew = mockFS.readFileSync("z_new.sicf.xml").toString();
-    expect(sicfNew).to.include("<ICF_NAME>S_NEW</ICF_NAME>");
+    expect(sicfNew).to.include("<ICF_NAME>Z_NEW</ICF_NAME>");
     expect(sicfNew).to.include("<ICFHANDLER>ZCL_HANDLER_NEW</ICFHANDLER>");
   });
-
 
 });
