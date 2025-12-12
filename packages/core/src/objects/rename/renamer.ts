@@ -9,6 +9,7 @@ import {RenameTable} from "./rename_table";
 import {RenameTableType} from "./rename_table_type";
 import {ObjectRenamer} from "./_object_renamer";
 import {RenameMessageClass} from "./rename_message_class";
+import {RenameICFService} from "./rename_icf_service";
 
 export interface IRenameResult {
   deletedFiles: Set<string>;
@@ -74,6 +75,8 @@ export class Renamer {
         return new RenameGlobalInterface(this.reg);
       case "MSAG":
         return new RenameMessageClass(this.reg);
+      case "SICF":
+        return new RenameICFService(this.reg);
       default:
         throw new Error("Renaming of " + type + " not yet supported");
     }
