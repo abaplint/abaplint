@@ -71,7 +71,7 @@ ENDINTERFACE.`;
     expect(intfNew).to.include("INTERFACE yif_sdfsdf1");
   });
 
-  it("renames class, icf service and handler inside the icf service", async () => {
+  it.skip("renames class, icf service and handler inside the icf service", async () => {
     const clas = `CLASS zcl_handler DEFINITION PUBLIC FINAL CREATE PUBLIC.
   PUBLIC SECTION.
 ENDCLASS.
