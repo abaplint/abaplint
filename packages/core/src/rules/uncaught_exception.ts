@@ -105,7 +105,6 @@ export class UncaughtException extends ABAPRule {
         for (const c of n.findDirectStructure(Structures.Cleanup)?.getChildren() || []) {
           this.traverse(c, file);
         }
-        return;
       } else {
         for (const c of n.getChildren()) {
           this.traverse(c, file);
