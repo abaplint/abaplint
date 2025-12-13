@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
-import {StringType, TableType, UnknownType, VoidType, XStringType} from "../../types/basic";
+import {StringType, StructureType, TableType, UnknownType, VoidType, XStringType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
 import {StatementSyntax} from "../_statement_syntax";
 import {TypeUtils} from "../_type_utils";
@@ -36,6 +36,12 @@ export class Concatenate implements StatementSyntax {
         const type = Source.runSyntax(s, input);
         if (!(type instanceof UnknownType) && !(type instanceof VoidType) && !(type instanceof TableType)) {
           const message = "Source must be an internal table";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
+        }
+
+        if (linesMode === true && byteMode === true && type instanceof TableType && type.getRowType() instanceof StructureType) {
+          const message = "Source row type must not be a structure in BYTE mode";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return;
         }

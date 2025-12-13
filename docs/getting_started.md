@@ -39,6 +39,7 @@ Suggest starting by running only the syntax check relevant rules, having this wo
     "check_ddic": true,
     "check_include": true,
     "check_syntax": true,
+    "identical_form_names": true,
     "global_class": true,
     "implement_methods": true,
     "method_implemented_twice": true,

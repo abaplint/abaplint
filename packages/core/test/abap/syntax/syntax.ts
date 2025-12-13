@@ -12074,6 +12074,18 @@ SELECT * FROM t100
     expect(issues[0]?.getMessage()).to.include("ORDER BY must be before INTO");
   });
 
+  it("CONCATENATE: error, structure is not bytelike", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         hex TYPE x LENGTH 100,
+       END OF ty.
+DATA tab TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+DATA xstr TYPE xstring.
+CONCATENATE LINES OF tab INTO xstr IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Source row type must not be a structure in BYTE mode");
+  });
+
   it("string template, utclong", () => {
     const abap = `
 DATA lv_created_at TYPE utclong.
