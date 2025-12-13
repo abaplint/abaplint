@@ -2311,6 +2311,17 @@
               ],
               "description": "Detects identically named FORMs\nTags: Syntax\nhttps://rules.abaplint.org/identical_form_names"
             },
+            "identical_move": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IdenticalMoveConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Moving the same value from left to right or right to left is redundant.\nTags: SingleFile\nhttps://rules.abaplint.org/identical_move"
+            },
             "if_in_if": {
               "anyOf": [
                 {
@@ -2706,6 +2717,17 @@
                 }
               ],
               "description": "Find chained assingments and reports issues\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/no_chained_assignment"
+            },
+            "no_comments_between_methods": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoCommentsBetweenMethodsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Its not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
             },
             "no_external_form_calls": {
               "anyOf": [
@@ -4214,6 +4236,17 @@
               ],
               "description": "Detects identically named FORMs\nTags: Syntax\nhttps://rules.abaplint.org/identical_form_names"
             },
+            "identical_move": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IdenticalMoveConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Moving the same value from left to right or right to left is redundant.\nTags: SingleFile\nhttps://rules.abaplint.org/identical_move"
+            },
             "if_in_if": {
               "anyOf": [
                 {
@@ -4609,6 +4642,17 @@
                 }
               ],
               "description": "Find chained assingments and reports issues\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/no_chained_assignment"
+            },
+            "no_comments_between_methods": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoCommentsBetweenMethodsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Its not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
             },
             "no_external_form_calls": {
               "anyOf": [
@@ -5655,6 +5699,23 @@
       },
       "type": "object"
     },
+    "IdenticalMoveConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "IfInIfConf": {
       "additionalProperties": false,
       "properties": {
@@ -6595,6 +6656,23 @@
       "type": "object"
     },
     "NoChainedAssignmentConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "NoCommentsBetweenMethodsConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

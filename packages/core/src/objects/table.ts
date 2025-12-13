@@ -134,6 +134,11 @@ export class Table extends AbstractObject {
       return new Types.UnknownType("Data class = USER3 not allowed in cloud");
     }
 
+    if (this.getTableCategory() === TableCategory.Transparent
+        && this.listKeys(reg).length === 0) {
+      return new Types.UnknownType("Table " + this.getName() + " has no key fields");
+    }
+
     if (this.parsedType) {
       return this.parsedType;
     }
