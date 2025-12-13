@@ -73,6 +73,7 @@ export * from "./intf_referencing_clas";
 export * from "./invalid_table_index";
 export * from "./keep_single_parameter_on_one_line";
 export * from "./keyword_case";
+export * from "./identical_move";
 export * from "./line_break_multiple_parameters";
 export * from "./line_break_style";
 export * from "./line_length";
