@@ -6,7 +6,6 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IObject} from "../objects/_iobject";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-import {Class} from "../objects";
 
 export class IdenticalMoveConf extends BasicRuleConfig {
 }
@@ -36,14 +35,8 @@ lv_value = 5.`,
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, obj: IObject) {
+  public runParsed(file: ABAPFile, _obj: IObject) {
     const issues: Issue[] = [];
-
-    if (!(obj instanceof Class)) {
-      return [];
-    } else if (file !== obj.getMainABAPFile()) {
-      return [];
-    }
 
     for (const statement of file.getStatements()) {
       const statementType = statement.get();
