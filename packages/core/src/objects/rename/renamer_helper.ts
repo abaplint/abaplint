@@ -164,6 +164,47 @@ export class RenamerHelper {
     return changes;
   }
 
+  public buildURLFileEdits(
+    object: AbstractObject,
+    oldName: string,
+    newName: string
+  ): TextDocumentEdit[] {
+    const changes: TextDocumentEdit[] = [];
+    const xml = object.getXMLFile();
+
+    if (xml === undefined) {
+      return [];
+    }
+
+    const oldNameLower = oldName.toLowerCase();
+    const newNameLower = newName.toLowerCase();
+    const rows = xml.getRawRows();
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const urlTagStart = row.indexOf("<URL>");
+      if (urlTagStart === -1) {
+        continue;
+      }
+
+      const urlTagEnd = row.indexOf("</URL>");
+      if (urlTagEnd === -1) {
+        continue;
+      }
+
+      const urlContent = row.substring(urlTagStart + 5, urlTagEnd);
+      const updatedUrl = urlContent.replace(oldNameLower, newNameLower);
+
+      if (updatedUrl !== urlContent) {
+        const range = Range.create(i, urlTagStart + 5, i, urlTagEnd);
+        changes.push(
+          TextDocumentEdit.create({uri: xml.getFilename(), version: 1}, [TextEdit.replace(range, updatedUrl)]));
+      }
+    }
+
+    return changes;
+  }
+
   public renameFiles(obj: IObject, oldName: string, name: string): RenameFile[] {
     const list: RenameFile[] = [];
 

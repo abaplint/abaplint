@@ -82,7 +82,7 @@ ENDCLASS.`;
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_SICF" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
-   <URL>/sap/example/</URL>
+   <URL>/sap/example/z_svc/</URL>
    <ICFSERVICE>
     <ICF_NAME>Z_SVC</ICF_NAME>
     <ORIG_NAME>z_svc</ORIG_NAME>
@@ -100,7 +100,7 @@ ENDCLASS.`;
 </abapGit>`;
 
     const fileClass = new MemoryFile("zcl_handler.clas.abap", clas);
-    const fileSicf = new MemoryFile("z_svc.sicf.xml", sicf);
+    const fileSicf = new MemoryFile("z_svc 9def6c78d0beedf8d5b04ba6c.sicf.xml", sicf);
     const reg = new Registry().addFiles([fileClass, fileSicf]).parse();
 
     const jsonFiles: any = {};
@@ -123,8 +123,10 @@ ENDCLASS.`;
     expect(classNew).to.include("CLASS zcl_handler_new");
 
     // sicf file renamed and content updated (ICF_NAME and ICFHANDLER)
-    const sicfNew = mockFS.readFileSync("z_new.sicf.xml").toString();
+    const sicfNew = mockFS.readFileSync("z_new 9def6c78d0beedf8d5b04ba6c.sicf.xml").toString();
+    console.log("SICF content:", sicfNew); // Add this line to debug
     expect(sicfNew).to.include("<ICF_NAME>Z_NEW</ICF_NAME>");
+    expect(sicfNew).to.include("<ORIG_NAME>z_new</ORIG_NAME>");
     expect(sicfNew).to.include("<ICFHANDLER>ZCL_HANDLER_NEW</ICFHANDLER>");
   });
 
