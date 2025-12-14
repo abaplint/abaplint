@@ -112,7 +112,7 @@ describe("Proxy Object", () => {
     const generateObjects = await proxy.generateABAPObjects();
     expect(generateObjects.length).to.equal(1);
 
-    const intfCode = `INTERFACE zpo_ii_si_trigger_file_info_in public.
+    const intfCode = `INTERFACE zpo_ii_si_trigger_file_info_in PUBLIC.
   METHODS si_trigger_file_info_in
     IMPORTING
       input TYPE zpo_mt_info_file .
