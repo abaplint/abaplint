@@ -6,7 +6,7 @@ import {ProxyObject} from "../../src/objects";
 
 describe("Proxy Object", () => {
 
-  it("basic INTF", async () => {
+  it.only("basic INTF", async () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_SPRX" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -111,13 +111,16 @@ describe("Proxy Object", () => {
     const proxy = reg.getFirstObject() as ProxyObject;
     const generateObjects = await proxy.generateABAPObjects();
     expect(generateObjects.length).to.equal(1);
+    expect(generateObjects[0].getType()).to.equal("INTF");
+    const intfName = generateObjects[0].getName();
+    expect(intfName).to.equal("ZPO_II_SI_TRIGGER_FILE_INFO_IN");
 
     const intfCode = `INTERFACE zpo_ii_si_trigger_file_info_in PUBLIC.
   METHODS si_trigger_file_info_in
     IMPORTING
       input TYPE zpo_mt_info_file .
 ENDINTERFACE.`;
-    expect(intfCode).to.not.equal(undefined);
+    expect(generateObjects[0].getFiles()[0].getRaw().trim()).to.equal(intfCode);
   });
 
 });

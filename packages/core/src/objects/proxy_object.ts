@@ -118,7 +118,7 @@ export class ProxyObject extends AbstractObject {
     code += `ENDINTERFACE.`;
 
     // Create the interface object
-    const intf = new Interface(intfName);
+    const intf = new Interface(intfName.toUpperCase());
     intf.addFile(new MemoryFile(`${intfName}.intf.abap`, code));
 
     result.push(intf);
