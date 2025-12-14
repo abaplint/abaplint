@@ -17,4 +17,9 @@ export class ProxyObject extends AbstractObject {
     // todo
     return undefined;
   }
+
+  public async generateABAPObjects(): Promise<AbstractObject[]> {
+    // todo
+    return [];
+  }
 }
