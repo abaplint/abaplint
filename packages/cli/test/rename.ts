@@ -124,7 +124,7 @@ ENDCLASS.`;
 
     // sicf file renamed and content updated (ICF_NAME and ICFHANDLER)
     const sicfNew = mockFS.readFileSync("z_new 9def6c78d0beedf8d5b04ba6c.sicf.xml").toString();
-    console.log("SICF content:", sicfNew); // Add this line to debug
+
     expect(sicfNew).to.include("<ICF_NAME>Z_NEW</ICF_NAME>");
     expect(sicfNew).to.include("<ORIG_NAME>z_new</ORIG_NAME>");
     expect(sicfNew).to.include("<ICFHANDLER>ZCL_HANDLER_NEW</ICFHANDLER>");
