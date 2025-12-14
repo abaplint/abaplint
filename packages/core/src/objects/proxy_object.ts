@@ -50,7 +50,7 @@ export class ProxyObject extends AbstractObject {
     super.setDirty();
   }
 
-  public parse(_version?: Version, _globalMacros?: readonly string[], _reg?: IRegistry) {
+  public parse(_version?: Version, _globalMacros?: readonly string[], reg?: IRegistry) {
     if (this.parsedXML) {
       return {updated: false, runtime: 0};
     }
@@ -59,7 +59,10 @@ export class ProxyObject extends AbstractObject {
     this.parsedXML = this.parseXML();
     const end = Date.now();
 
-
+    const objects = this.generateABAPObjects();
+    for (const obj of objects) {
+      reg?.addDependencies(obj.getFiles());
+    }
 
     return {updated: true, runtime: end - start};
   }
@@ -80,7 +83,7 @@ export class ProxyObject extends AbstractObject {
     return result;
   }
 
-  public async generateABAPObjects(): Promise<AbstractObject[]> {
+  public generateABAPObjects(): AbstractObject[] {
     this.parse();
     const result: AbstractObject[] = [];
 

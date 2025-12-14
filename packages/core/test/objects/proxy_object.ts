@@ -109,7 +109,7 @@ describe("Proxy Object", () => {
     const reg = new Registry().addFile(new MemoryFile("intfzpo_ii_si_trigger_file_info_in.sprx.xml", xml));
     await reg.parseAsync();
     const proxy = reg.getFirstObject() as ProxyObject;
-    const generateObjects = await proxy.generateABAPObjects();
+    const generateObjects = proxy.generateABAPObjects();
     expect(generateObjects.length).to.equal(1);
     expect(generateObjects[0].getType()).to.equal("INTF");
     const intfName = generateObjects[0].getName();
