@@ -121,6 +121,9 @@ describe("Proxy Object", () => {
       input TYPE zpo_mt_info_file .
 ENDINTERFACE.`;
     expect(generateObjects[0].getFiles()[0].getRaw().trim()).to.equal(intfCode);
+
+// try triggering parse again, to check it doesnt crash
+    await reg.parseAsync();
   });
 
 });

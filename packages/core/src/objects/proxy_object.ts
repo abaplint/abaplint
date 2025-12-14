@@ -2,6 +2,8 @@ import {xmlToArray} from "../xml_utils";
 import {AbstractObject} from "./_abstract_object";
 import {Interface} from "./interface";
 import {MemoryFile} from "../files/memory_file";
+import {IRegistry} from "../_iregistry";
+import {Version} from "../version";
 
 interface ProxyDataItem {
   OBJECT?: string;
@@ -48,26 +50,34 @@ export class ProxyObject extends AbstractObject {
     super.setDirty();
   }
 
-  public parse() {
+  public parse(_version?: Version, _globalMacros?: readonly string[], _reg?: IRegistry) {
     if (this.parsedXML) {
       return {updated: false, runtime: 0};
     }
 
     const start = Date.now();
-    this.parsedXML = {proxyData: []};
+    this.parsedXML = this.parseXML();
+    const end = Date.now();
+
+
+
+    return {updated: true, runtime: end - start};
+  }
+
+  private parseXML(): ParsedProxy {
+    const result: ParsedProxy = {proxyData: []};
     const parsed = super.parseRaw2();
 
     if (parsed === undefined
         || parsed.abapGit === undefined
         || parsed.abapGit["asx:abap"]?.["asx:values"] === undefined) {
-      return {updated: false, runtime: 0};
+      return result;
     }
 
     const values = parsed.abapGit["asx:abap"]["asx:values"];
-    this.parsedXML.proxyData = xmlToArray(values.PROXY_DATA?.item);
+    result.proxyData = xmlToArray(values.PROXY_DATA?.item);
 
-    const end = Date.now();
-    return {updated: true, runtime: end - start};
+    return result;
   }
 
   public async generateABAPObjects(): Promise<AbstractObject[]> {
