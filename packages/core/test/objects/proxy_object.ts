@@ -6,7 +6,7 @@ import {ProxyObject} from "../../src/objects";
 
 describe("Proxy Object", () => {
 
-  it.only("basic INTF", async () => {
+  it("basic INTF", async () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_SPRX" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
