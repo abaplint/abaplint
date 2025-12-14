@@ -19,8 +19,9 @@ export class RenameICFService implements ObjectRenamer {
 
     let changes: (TextDocumentEdit | CreateFile | RenameFile | DeleteFile)[] = [];
     const helper = new RenamerHelper(this.reg);
+    changes = changes.concat(helper.buildXMLFileEdits(obj, "URL", oldName, newName, true));
     changes = changes.concat(helper.buildXMLFileEdits(obj, "ICF_NAME", oldName, newName));
-    changes = changes.concat(helper.buildXMLFileEdits(obj, "ORIG_NAME", oldName, newName));
+    changes = changes.concat(helper.buildXMLFileEdits(obj, "ORIG_NAME", oldName, newName, true));
     changes = changes.concat(helper.renameFiles(obj, oldName, newName));
     return {
       documentChanges: changes,

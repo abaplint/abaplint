@@ -132,24 +132,32 @@ export class RenamerHelper {
     return changes;
   }
 
-  public buildXMLFileEdits(object: AbstractObject, xmlTag: string, oldName: string, newName: string): TextDocumentEdit[] {
+  public buildXMLFileEdits(
+    object: AbstractObject,
+    xmlTag: string,
+    oldName: string,
+    newName: string,
+    useLowerCase: boolean = false
+  ): TextDocumentEdit[] {
     const changes: TextDocumentEdit[] = [];
     const xml = object.getXMLFile();
 
     if (xml === undefined) {
       return [];
     }
+    const originalValue = useLowerCase ? oldName.toLowerCase() : oldName.toUpperCase();
+    const replacementValue = useLowerCase ? newName.toLowerCase() : newName.toUpperCase();
 
     const tag = xmlTag.toUpperCase();
-    const search = "<" + tag + ">" + oldName.toUpperCase() + "</" + tag + ">";
+    const search = "<" + tag + ">" + originalValue + "</" + tag + ">";
     const length = tag.length + 2;
     const rows = xml.getRawRows();
     for (let i = 0; i < rows.length; i++) {
       const index = rows[i].indexOf(search);
       if (index >= 0) {
-        const range = Range.create(i, index + length, i, index + oldName.length + length);
+        const range = Range.create(i, index + length, i, index + originalValue.length + length);
         changes.push(
-          TextDocumentEdit.create({uri: xml.getFilename(), version: 1}, [TextEdit.replace(range, newName.toUpperCase())]));
+          TextDocumentEdit.create({uri: xml.getFilename(), version: 1}, [TextEdit.replace(range, replacementValue)]));
       }
     }
 
