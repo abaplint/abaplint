@@ -120,10 +120,12 @@ export class ProxyObject extends AbstractObject {
 
       if (params.length > 0) {
         code += `    IMPORTING\n`;
-        for (const param of params) {
+        for (let i = 0; i < params.length; i++) {
+          const param = params[i];
           const paramName = param.OBJ_NAME2?.toLowerCase();
           const paramType = param.OBJ_NAME_R?.toLowerCase();
-          code += `      ${paramName} TYPE ${paramType} .\n`;
+          const isLast = i === params.length - 1;
+          code += `      ${paramName} TYPE ${paramType}${isLast ? "." : ""}\n`;
         }
       }
     }

@@ -118,7 +118,7 @@ describe("Proxy Object", () => {
     const intfCode = `INTERFACE zpo_ii_si_trigger_file_info_in PUBLIC.
   METHODS si_trigger_file_info_in
     IMPORTING
-      input TYPE zpo_mt_info_file .
+      input TYPE zpo_mt_info_file.
 ENDINTERFACE.`;
     expect(generateObjects[0].getFiles()[0].getRaw().trim()).to.equal(intfCode);
 
