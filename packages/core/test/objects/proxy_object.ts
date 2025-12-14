@@ -116,7 +116,7 @@ describe("Proxy Object", () => {
   METHODS si_trigger_file_info_in
     IMPORTING
       input TYPE zpo_mt_info_file .
-ENDINTERFACE. `;
+ENDINTERFACE.`;
     expect(intfCode).to.not.equal(undefined);
   });
 
