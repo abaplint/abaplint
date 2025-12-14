@@ -44,7 +44,8 @@ lv_value = 5.`,
         const source = statement.findDirectExpression(Expressions.Source)?.concatTokens().toUpperCase();
         const target = statement.findDirectExpression(Expressions.Target)?.concatTokens().toUpperCase();
         if (source === target && source !== undefined) {
-          issues.push(Issue.atStatement(file, statement, "Comment between methods in global class implementation", this.getMetadata().key, this.conf.severity));
+          const message = `Identical MOVE from "${source}" to "${target}"`;
+          issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
         }
       }
     }
