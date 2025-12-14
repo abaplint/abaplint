@@ -44,6 +44,7 @@ describe("Rename SICF", () => {
     for (const f of reg.getFiles()) {
       expect(f.getFilename()).to.equal("foo.sicf.xml");
       expect(f.getRaw().includes("<ICF_NAME>FOO</ICF_NAME>")).to.equal(true);
+      expect(f.getRaw().includes("<ORIG_NAME>foo</ORIG_NAME>")).to.equal(true);
     }
   });
 });
