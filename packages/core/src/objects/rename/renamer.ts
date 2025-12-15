@@ -44,16 +44,21 @@ export class Renamer {
   public buildEdits(type: string, oldName: string, newName: string): WorkspaceEdit | undefined {
     this.reg.parse(); // the registry must be parsed to dermine references
 
-    const obj = this.reg.getObject(type, oldName);
+    let obj = this.reg.getObject(type, oldName);
+
+    if (obj === undefined && type === "SICF") {
+      obj = Array.from(this.reg.getObjects()).find(o =>
+        o.getType() === "SICF" && o.getName().toUpperCase().startsWith(oldName.toUpperCase() + " "));
+    }
+
     if (obj === undefined) {
       throw new Error("rename, object not found");
     } else if (newName.length > obj.getAllowedNaming().maxLength) {
-      // todo, also do not allow strange characters and spaces
+     // todo, also do not allow strange characters and spaces
       throw new Error("Name not allowed");
     }
 
     const r = this.factory(type);
-
     return r.buildEdits(obj, oldName.toUpperCase(), newName);
   }
 

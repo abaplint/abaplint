@@ -37,12 +37,13 @@ describe("Rename SICF", () => {
 
   it("SICF", () => {
     const reg = new Registry().addFiles([
-      new MemoryFile("z2ui5_local.sicf.xml", xml),
+      new MemoryFile("z2ui5_local 9def6c78d0beedf8d5b04ba6c.sicf.xml", xml),
     ]).parse();
     new Renamer(reg).rename("SICF", "z2ui5_local", "foo");
     expect(reg.getObjectCount().normal).to.equal(1);
     for (const f of reg.getFiles()) {
-      expect(f.getFilename()).to.equal("foo.sicf.xml");
+      expect(f.getFilename()).to.equal("foo 9def6c78d0beedf8d5b04ba6c.sicf.xml");
+      expect(f.getRaw().includes("<URL>/sap/bc/foo/</URL>")).to.equal(true);
       expect(f.getRaw().includes("<ICF_NAME>FOO</ICF_NAME>")).to.equal(true);
       expect(f.getRaw().includes("<ORIG_NAME>foo</ORIG_NAME>")).to.equal(true);
     }
