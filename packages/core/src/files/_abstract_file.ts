@@ -47,6 +47,6 @@ export abstract class AbstractFile implements IFile {
     return split[0];
   }
 
-  public abstract getRaw(): string;
+  public abstract getRaw(): string | ArrayBuffer;
   public abstract getRawRows(): string[];
 }
