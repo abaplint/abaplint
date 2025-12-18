@@ -12095,7 +12095,7 @@ WRITE / data_to_write.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("INSERT, ok", () => {
+  it("INSERT, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_cedi,
              werks TYPE werks_d,
@@ -12113,6 +12113,27 @@ DATA lt_cedi TYPE tt_cedi.
 
 INSERT VALUE ty_t001l( werks = 22
                        lgort = 22 ) INTO TABLE lt_cedi.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("Moveable, ok", () => {
+    const abap = `
+TYPES: BEGIN OF ty_cedi,
+         werks TYPE werks_d,
+         lgort TYPE lgort_d,
+       END OF ty_cedi.
+
+TYPES: BEGIN OF ty_t001l,
+         werks TYPE werks_d,
+         lgort TYPE lgort_d,
+         lgobe TYPE lgobe,
+       END OF ty_t001l.
+
+DATA foo1 TYPE ty_cedi.
+DATA foo2 TYPE ty_t001l.
+
+foo1 = foo2.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });

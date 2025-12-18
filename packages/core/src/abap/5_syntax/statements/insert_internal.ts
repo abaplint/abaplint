@@ -5,7 +5,7 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {AnyType, CharacterType, DataReference, StringType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, CharacterType, DataReference, Integer8Type, IntegerType, StringType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
 import {TypeUtils} from "../_type_utils";
@@ -59,12 +59,17 @@ export class InsertInternal implements StatementSyntax {
     }
 
     if (node.findDirectTokenByText("INITIAL") === undefined) {
-      if (new TypeUtils(input.scope).isAssignableStrict(sourceType, targetType) === false) {
-        const message = "Types not compatible";
-        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return;
+      let error = false;
+      if (sourceType instanceof IntegerType && targetType instanceof Integer8Type) {
+        error = true;
+      } else if (new TypeUtils(input.scope).isAssignable(sourceType, targetType) === false) {
+        error = true;
       } else if (sourceType instanceof CharacterType && targetType instanceof StringType) {
         // yea, well, INSERT doesnt convert the values automatically, like everything else?
+        error = true;
+      }
+
+      if (error === true) {
         const message = "Types not compatible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
