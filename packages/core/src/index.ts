@@ -44,6 +44,7 @@ import {IObject} from "./objects/_iobject";
 import {BuiltIn} from "./abap/5_syntax/_builtin";
 import {ABAPFile} from "./abap/abap_file";
 import {MemoryFile} from "./files/memory_file";
+import {BinaryFile} from "./files/binary_file";
 import {Renamer} from "./objects/rename/renamer";
 import * as Info from "./abap/4_file_information/_abap_file_information";
 import {Visibility} from "./abap/4_file_information/visibility";
@@ -77,7 +78,7 @@ export {Issue, Config, Version, CyclomaticComplexityStats,
   IClassDefinition, IInterfaceDefinition, IMethodLengthResult, VirtualPosition, IObject,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, AbstractToken as Token, IEdit,
   IDependency, SpaghettiScopeNode, MacroCall, MacroContent, NativeSQL, ReferenceType,
-  Edits, MemoryFile,
+  Edits, MemoryFile, BinaryFile,
   ABAPFile, IABAPFile,
   AbstractFile,
   IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
