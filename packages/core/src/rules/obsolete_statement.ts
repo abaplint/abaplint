@@ -360,12 +360,12 @@ ENDIF.`,
         }
       }
 
-      if (this.conf.loopExtract && sta instanceof Statements.Loop && staNode.getChildren().length === 1) {
+      if (this.conf.loopExtract && sta instanceof Statements.LoopExtract) {
         const issue = Issue.atStatement(file, staNode, "LOOP extract", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 
-      if (this.conf.sortExtract && sta instanceof Statements.Sort && staNode.getChildren().length === 1) {
+      if (this.conf.sortExtract && sta instanceof Statements.SortDataset && staNode.getChildren().length === 2) {
         const issue = Issue.atStatement(file, staNode, "SORT extract", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
