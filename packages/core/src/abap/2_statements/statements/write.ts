@@ -55,7 +55,8 @@ export class Write implements IStatement {
                         "RESET",
                         "NO-SIGN");
 
-    const ret = seq("WRITE", alt("AT /",
+    // Need to refactor all this sometime,
+    const ret = seq("WRITE", alt(seq("AT /", opt(Source), opt("NO-GAP")),
                                  seq(opt(WriteOffsetLength),
                                      alt(Source, Dynamic, "/"),
                                      opt(options))));
