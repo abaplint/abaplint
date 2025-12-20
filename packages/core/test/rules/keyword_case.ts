@@ -125,6 +125,7 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`, cnt: 0},
 
+  {abap: `WRITE : AT / '|' NO-GAP.`, cnt: 1},
 ];
 
 testRule(tests, KeywordCase);
