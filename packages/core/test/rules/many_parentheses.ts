@@ -49,6 +49,7 @@ ENDLOOP.`, cnt: 0, fix: false},
   NEXT result = result + 1 ).`, cnt: 0, fix: false},
   {abap: `IF iv_show_progress = abap_true AND ( sy-tabix MOD 100 ) = 0.
 ENDIF.`, cnt: 1, fix: false},
+  {abap: `c = a + ( b ).`, cnt: 1, fix: false},
 ];
 
 testRule(tests, ManyParentheses);

@@ -7061,6 +7061,9 @@
           "description": "Checks for addition LOAD",
           "type": "boolean"
         },
+        "loopExtract": {
+          "type": "boolean"
+        },
         "move": {
           "description": "Check for MOVE statement",
           "type": "boolean"
@@ -7121,6 +7124,9 @@
           "description": "Checks for SORT itab BY <fs>",
           "type": "boolean"
         },
+        "sortExtract": {
+          "type": "boolean"
+        },
         "subtract": {
           "description": "Check for SUBTRACT statement",
           "type": "boolean"
@@ -7165,7 +7171,9 @@
         "formImplementation",
         "commonPart",
         "fieldGroups",
-        "replaceInto"
+        "replaceInto",
+        "loopExtract",
+        "sortExtract"
       ],
       "type": "object"
     },
