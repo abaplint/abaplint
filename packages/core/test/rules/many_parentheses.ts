@@ -51,6 +51,7 @@ ENDLOOP.`, cnt: 0, fix: false},
 ENDIF.`, cnt: 1, fix: false},
   {abap: `c = a + ( b ).`, cnt: 1, fix: false},
   {abap: `lv_b = 2 * ( lv_maxint + 1 ).`, cnt: 0, fix: false},
+  {abap: `semaitem-col_cur = semaitem-col_cur * ( -1 ).`, cnt: 0, fix: false},
 ];
 
 testRule(tests, ManyParentheses);
