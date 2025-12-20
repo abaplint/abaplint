@@ -77,6 +77,9 @@ END OF li_order.`, cnt: 1, fix: false},
     source xml lv_xml
     result xml rv_res.`, cnt: 0},
 
+  {abap: "LOOP.", cnt: 1},
+  {abap: "SORT.", cnt: 1},
+
   {abap: "INSERT zfoo CLIENT SPECIFIED.", cnt: 1},
   {abap: "FORM foo DEFINITION.", cnt: 1},
   {abap: "FORM foo IMPLEMENTATION. ENDFORM.", cnt: 1},
