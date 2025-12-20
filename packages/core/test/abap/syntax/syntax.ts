@@ -3546,6 +3546,13 @@ WRITE / timestamp.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("error cannot define length and decimals for date", () => {
+    const abap = `
+TYPES ty TYPE d LENGTH 5 DECIMALS 2.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.include("not possible");
+  });
+
   it("multiple inline field symbols, okay", () => {
     const abap = `
   TYPES ty_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
