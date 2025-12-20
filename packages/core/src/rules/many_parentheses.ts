@@ -123,6 +123,7 @@ ENDIF.
       const lastChildren = source.getChildren();
       if (lastChildren.length === 3
           && lastChildren[0].getFirstToken().getStr() === "("
+          && lastChildren[1].getChildren().length === 1
           && lastChildren[2].getFirstToken().getStr() === ")") {
         const issue = Issue.atToken(file, lastChildren[0].getFirstToken(), "Too many parentheses", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
