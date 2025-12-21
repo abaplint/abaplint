@@ -72,8 +72,22 @@ export class DDIC {
       case "XSTRING":
         return Types.XStringType.get({qualifiedName: qualifiedName || name});
       case "D":
+        /*
+        if (length && length > 0) {
+          throw new Error("Length for type D not possible");
+        } else if (decimals && decimals > 0) {
+          throw new Error("Decimals for type D not possible");
+        }
+        */
         return new Types.DateType({qualifiedName: qualifiedName || name});
       case "T":
+        /*
+        if (length && length > 0) {
+          throw new Error("Length for type T not possible");
+        } else if (decimals && decimals > 0) {
+          throw new Error("Decimals for type T not possible");
+        }
+        */
         return new Types.TimeType({qualifiedName: qualifiedName || name});
       case "XSEQUENCE":
         return new Types.XSequenceType({qualifiedName: qualifiedName});
@@ -106,6 +120,13 @@ export class DDIC {
       case "INT8": // todo, take version into account
         return new Types.Integer8Type({qualifiedName: qualifiedName || name});
       case "F":
+        /*
+        if (length && length > 0) {
+          throw new Error("Length for type F not possible");
+        } else if (decimals && decimals > 0) {
+          throw new Error("Decimals for type F not possible");
+        }
+        */
         return new Types.FloatType({qualifiedName: qualifiedName || name});
       case "P":
         if (length && decimals) {

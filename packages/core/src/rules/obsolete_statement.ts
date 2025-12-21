@@ -76,6 +76,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public fieldGroups: boolean = true;
   /** Check for REPLACE INTO */
   public replaceInto: boolean = true;
+  public loopExtract: boolean = true;
+  public sortExtract: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -356,6 +358,16 @@ ENDIF.`,
           const issue = Issue.atStatement(file, staNode, "FORM IMPLEMENTATION", this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
+      }
+
+      if (this.conf.loopExtract && sta instanceof Statements.LoopExtract) {
+        const issue = Issue.atStatement(file, staNode, "LOOP extract", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
+      if (this.conf.sortExtract && sta instanceof Statements.SortDataset && staNode.getChildren().length === 2) {
+        const issue = Issue.atStatement(file, staNode, "SORT extract", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
       }
 
       if (configVersion >= Version.v754 && this.conf.clientSpecified

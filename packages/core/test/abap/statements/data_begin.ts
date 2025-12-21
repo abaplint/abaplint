@@ -9,6 +9,7 @@ const tests = [
   "DATA BEGIN OF status_/foo/bar.",
   "DATA BEGIN OF /foo/bar.",
   "DATA BEGIN OF foo-bar.",
+  "DATA BEGIN OF stru OCCURS const.",
 ];
 
 statementType(tests, "DATA BEGIN", Statements.DataBegin);

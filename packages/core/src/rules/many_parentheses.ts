@@ -53,7 +53,7 @@ ENDIF.
     }
 
     for (const cond of structure.findAllExpressionsMulti([Expressions.Cond, Expressions.ComponentCond])) {
-      issues.push(...this.analyze(file, cond));
+      issues.push(...this.analyzeCondition(file, cond));
     }
 
     for (const sub of structure.findAllExpressionsMulti([Expressions.CondSub, Expressions.ComponentCondSub])) {
@@ -119,20 +119,22 @@ ENDIF.
   private analyzeMove(file: ABAPFile, m: StatementNode): Issue[] {
     const issues: Issue[] = [];
 
-    const children = m.getChildren();
-    const last = children[ children.length - 2];
-    const lastChildren = last.getChildren();
-    if (lastChildren.length === 3
-        && lastChildren[0].getFirstToken().getStr() === "("
-        && lastChildren[2].getFirstToken().getStr() === ")") {
-      const issue = Issue.atToken(file, last.getFirstToken(), "Too many parentheses", this.getMetadata().key, this.conf.severity);
-      issues.push(issue);
+    for (const source of m.findAllExpressionsRecursive(Expressions.Source)) {
+      const lastChildren = source.getChildren();
+      if (lastChildren.length === 3
+          && lastChildren[0].getFirstToken().getStr() === "("
+          && lastChildren[1].getChildren().length === 1
+          && lastChildren[1].getFirstToken().getStr().startsWith("-") === false
+          && lastChildren[2].getFirstToken().getStr() === ")") {
+        const issue = Issue.atToken(file, lastChildren[0].getFirstToken(), "Too many parentheses", this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
     }
 
     return issues;
   }
 
-  private analyze(file: ABAPFile, cond: ExpressionNode): Issue[] {
+  private analyzeCondition(file: ABAPFile, cond: ExpressionNode): Issue[] {
     const issues: Issue[] = [];
     let comparator = "";
     let found = false;
