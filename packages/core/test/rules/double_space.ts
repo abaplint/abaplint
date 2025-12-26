@@ -89,7 +89,10 @@ const fixes = [
   {input: `IF ( foo = bar AND
        moo IS NOT INITIAL                    ) OR
      boo IS INITIAL.
-ENDIF.`, output: "todo"},
+ENDIF.`, output: `IF ( foo = bar AND
+       moo IS NOT INITIAL ) OR
+     boo IS INITIAL.
+ENDIF.`},
 ];
 
 testRuleFix(fixes, DoubleSpace);

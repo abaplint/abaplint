@@ -76,7 +76,15 @@ export class DoubleSpace extends ABAPRule {
 
     issues = issues.concat(this.checkAfterColon(file));
 
-    return issues;
+    // remove issues with the same starting position
+    const uniqueIssues: Issue[] = [];
+    for (const issue of issues) {
+      if (uniqueIssues.findIndex(i => i.getStart().equals(issue.getStart())) === -1) {
+        uniqueIssues.push(issue);
+      }
+    }
+
+    return uniqueIssues;
   }
 
   private checkAfterColon(file: ABAPFile): Issue[] {
