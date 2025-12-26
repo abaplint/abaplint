@@ -86,6 +86,10 @@ const fixes = [
   {input: "call(     var ).", output: "call( var )."},
   // after keyword
   {input: "REPORT     zfoobar.", output: "REPORT zfoobar."},
+  {input: `IF ( foo = bar AND
+       moo IS NOT INITIAL                    ) OR
+     boo IS INITIAL.
+ENDIF.`, output: "todo"},
 ];
 
 testRuleFix(fixes, DoubleSpace);
