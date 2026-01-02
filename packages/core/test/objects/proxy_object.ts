@@ -6,6 +6,19 @@ import {ProxyObject} from "../../src/objects";
 
 describe("Proxy Object", () => {
 
+  it.skip("adhoc", async () => {
+    const xml = `xml`;
+    const reg = new Registry().addFile(new MemoryFile("intfzpo_ii_si_glo_holis_create_hol.sprx.xml", xml));
+    await reg.parseAsync();
+    const proxy = reg.getFirstObject() as ProxyObject;
+    const generateObjects = proxy.generateABAPObjects();
+    expect(generateObjects.length).to.equal(1);
+    expect(generateObjects[0].getType()).to.equal("INTF");
+
+    const intfCode = `hello`;
+    expect(generateObjects[0].getFiles()[0].getRaw().trim()).to.equal(intfCode);
+  });
+
   it("basic INTF", async () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_SPRX" serializer_version="v1.0.0">
