@@ -12156,6 +12156,30 @@ CLEAR r_ekorg.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.skip("COMMON PART, SELECT-OPTIONS", () => {
+    const abap = `
+TABLES eine.
+
+DATA BEGIN OF COMMON PART foobar.
+SELECT-OPTIONS i_esokz FOR eine-esokz.
+DATA END OF COMMON PART.
+
+CLEAR i_esokz.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it.skip("COMMON PART, PARAMETERS", () => {
+    const abap = `
+DATA BEGIN OF COMMON PART foobar.
+PARAMETERS ppp TYPE i.
+DATA END OF COMMON PART.
+
+CLEAR ppp.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it.skip("UPDATE database table with bad WHERE field reference", () => {
     const prog = `UPDATE ztab SET value1 = value1 + 1 WHERE badfield = 'abc'.`;
     const issues = runMulti([

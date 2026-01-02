@@ -60,6 +60,22 @@ const cases = [
   DATA foo TYPE c.
   DATA END OF bar VALID BETWEEN foo AND foo.`},
 
+  {abap: `
+DATA BEGIN OF COMMON PART foobar.
+SELECT-OPTIONS i_esokz FOR eine-esokz.
+DATA END OF COMMON PART.`},
+
+  {abap: `
+DATA BEGIN OF COMMON PART foobar.
+selection-screen skip 1.
+SELECT-OPTIONS i_esokz FOR eine-esokz.
+DATA END OF COMMON PART.`},
+
+  {abap: `
+DATA BEGIN OF COMMON PART foobar.
+PARAMETERS ppp TYPE i.
+DATA END OF COMMON PART.`},
+
 ];
 
 structureType(cases, new Data());
