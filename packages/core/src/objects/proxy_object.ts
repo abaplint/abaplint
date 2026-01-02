@@ -112,19 +112,33 @@ export class ProxyObject extends AbstractObject {
       }
 
       // Find parameters for this method
-      const params = this.parsedXML.proxyData.filter(
+      const importingParameters = this.parsedXML.proxyData.filter(
         i => i.R3_TYPE === "PAIM" && i.OBJ_NAME1 === method.OBJ_NAME1
+      );
+      const exportingParameters = this.parsedXML.proxyData.filter(
+        i => i.R3_TYPE === "PAEX" && i.OBJ_NAME1 === method.OBJ_NAME1
       );
 
       code += `  METHODS ${methodName}\n`;
 
-      if (params.length > 0) {
+      if (importingParameters.length > 0) {
         code += `    IMPORTING\n`;
-        for (let i = 0; i < params.length; i++) {
-          const param = params[i];
+        for (let i = 0; i < importingParameters.length; i++) {
+          const param = importingParameters[i];
           const paramName = param.OBJ_NAME2?.toLowerCase();
           const paramType = param.OBJ_NAME_R?.toLowerCase();
-          const isLast = i === params.length - 1;
+          const isLast = i === importingParameters.length - 1 && exportingParameters.length === 0;
+          code += `      ${paramName} TYPE ${paramType}${isLast ? "." : ""}\n`;
+        }
+      }
+
+      if (exportingParameters.length > 0) {
+        code += `    EXPORTING\n`;
+        for (let i = 0; i < exportingParameters.length; i++) {
+          const param = exportingParameters[i];
+          const paramName = param.OBJ_NAME2?.toLowerCase();
+          const paramType = param.OBJ_NAME_R?.toLowerCase();
+          const isLast = i === exportingParameters.length - 1;
           code += `      ${paramName} TYPE ${paramType}${isLast ? "." : ""}\n`;
         }
       }
