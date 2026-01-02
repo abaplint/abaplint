@@ -22,6 +22,9 @@ export class Data implements IStructure {
                              sub(Enhancement),
                              sub(Define),
                              sta(Statements.IncludeType),
+                             sta(Statements.Parameter),
+                             sta(Statements.SelectionScreen),
+                             sta(Statements.SelectOption),
                              sta(Statements.TypePools),
                              sta(Statements.EnhancementPoint))),
                     sta(Statements.DataEnd));

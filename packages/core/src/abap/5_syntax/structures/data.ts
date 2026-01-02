@@ -13,6 +13,8 @@ import {IncludeType} from "../statements/include_type";
 import {Constant} from "../statements/constant";
 import {Constants} from "./constants";
 import {Ranges} from "../statements/ranges";
+import {SelectOption} from "../statements/selectoption";
+import {Parameter} from "../statements/parameter";
 
 export class Data {
   public static runSyntax(node: StructureNode, input: SyntaxInput): TypedIdentifier | undefined {
@@ -106,6 +108,10 @@ export class Data {
         }
       } else if (c instanceof StatementNode && ctyp instanceof Statements.Ranges) {
         new Ranges().runSyntax(c, input);
+      } else if (c instanceof StatementNode && ctyp instanceof Statements.SelectOption) {
+        new SelectOption().runSyntax(c, input);
+      } else if (c instanceof StatementNode && ctyp instanceof Statements.Parameter) {
+        new Parameter().runSyntax(c, input);
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Constants) {
         const {type: found, values: _} = new Constants().runSyntax(c, input);
         if (found) {
