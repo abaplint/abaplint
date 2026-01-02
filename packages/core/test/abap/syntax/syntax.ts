@@ -12156,7 +12156,7 @@ CLEAR r_ekorg.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("COMMON PART, SELECT-OPTIONS", () => {
+  it("COMMON PART, SELECT-OPTIONS", () => {
     const abap = `
 TABLES eine.
 
@@ -12169,7 +12169,7 @@ CLEAR i_esokz.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.skip("COMMON PART, PARAMETERS", () => {
+  it("COMMON PART, PARAMETERS", () => {
     const abap = `
 DATA BEGIN OF COMMON PART foobar.
 PARAMETERS ppp TYPE i.
