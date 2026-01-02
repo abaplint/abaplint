@@ -12,6 +12,7 @@ import * as Structures from "../../3_structures/structures";
 import {IncludeType} from "../statements/include_type";
 import {Constant} from "../statements/constant";
 import {Constants} from "./constants";
+import { Ranges } from "../statements/ranges";
 
 export class Data {
   public static runSyntax(node: StructureNode, input: SyntaxInput): TypedIdentifier | undefined {
@@ -103,6 +104,8 @@ export class Data {
         if (found) {
           input.scope.addIdentifier(found);
         }
+      } else if (c instanceof StatementNode && ctyp instanceof Statements.Ranges) {
+        new Ranges().runSyntax(c, input);
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Constants) {
         const {type: found, values: _} = new Constants().runSyntax(c, input);
         if (found) {

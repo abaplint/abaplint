@@ -12145,6 +12145,17 @@ foo1 = foo2.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("COMMON PART, RANGES", () => {
+    const abap = `
+DATA BEGIN OF COMMON PART foobar.
+RANGES r_ekorg FOR eine-ekorg.
+DATA END OF COMMON PART.
+
+CLEAR r_ekorg.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it.skip("UPDATE database table with bad WHERE field reference", () => {
     const prog = `UPDATE ztab SET value1 = value1 + 1 WHERE badfield = 'abc'.`;
     const issues = runMulti([
