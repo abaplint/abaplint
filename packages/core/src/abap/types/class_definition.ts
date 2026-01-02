@@ -67,6 +67,10 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     const events = node.findAllStatements(Statements.Events);
     for (const e of events) {
+      const eventName = e.findDirectExpression(Expressions.EventName)?.concatTokens().toUpperCase();
+      if (this.events.find(ev => ev.getName().toUpperCase() === eventName) !== undefined) {
+        throw new Error("Event " + eventName + " already defined");
+      }
       this.events.push(new EventDefinition(e, Visibility.Public, input)); // todo, all these are not Public
     }
 

@@ -8,6 +8,7 @@ const tests = [
   "field foo-bar.", // used in CHAINs
   "FIELD foo-bar MODULE check_matnr ON CHAIN-REQUEST.",
   `FIELD foo-bar WITH bar-moo.`,
+  `FIELD foo-bar WITH '0001'.`,
   `field foo-bar select * from ztab
                         where field = foo-bar into result
                         whenever not found
@@ -18,6 +19,9 @@ const tests = [
                        where bukrs = foo-bar into t001
                        whenever not found
                        send errormessage.`,
+  `FIELD foo-bar MODULE modulename ON CHAIN-INPUT.`,
+  // yea, well, apparently this is valid too:
+  `FIELD foo-bar ON REQUEST MODULE fill_table.`,
 ];
 
 statementType(tests, "FIELD", Statements.Field);
