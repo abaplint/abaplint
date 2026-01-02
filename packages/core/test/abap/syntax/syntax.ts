@@ -12180,6 +12180,20 @@ CLEAR ppp.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("identical EVENTS name", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS foo.
+    EVENTS foo.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
   it.skip("UPDATE database table with bad WHERE field reference", () => {
     const prog = `UPDATE ztab SET value1 = value1 + 1 WHERE badfield = 'abc'.`;
     const issues = runMulti([
