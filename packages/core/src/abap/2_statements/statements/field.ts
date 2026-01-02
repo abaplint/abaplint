@@ -8,7 +8,9 @@ import {ParenRightW, WParenLeft} from "../../1_lexer/tokens";
 export class Field implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const module = seq("MODULE", FormName, opt(alt("ON INPUT", "ON REQUEST", "ON CHAIN-REQUEST", "ON CHAIN-INPUT", "AT CURSOR-SELECTION")));
+    const moduleOptions = alt("ON INPUT", "ON REQUEST", "ON CHAIN-REQUEST", "ON CHAIN-INPUT", "AT CURSOR-SELECTION");
+    const module = seq("MODULE", FormName, opt(moduleOptions));
+    const moduleStrange = seq(moduleOptions, "MODULE", FormName);
     const values = seq("VALUES", tok(WParenLeft), "BETWEEN", Constant, "AND", Constant, tok(ParenRightW));
     const wit = seq("WITH", altPrio(FieldChain, Constant));
 
@@ -17,7 +19,7 @@ export class Field implements IStatement {
     const into = seq("INTO", FieldChain);
     const select = seq("SELECT * FROM", FieldChain, "WHERE", where, opt(into), opt("WHENEVER NOT FOUND SEND ERRORMESSAGE"));
 
-    const ret = seq("FIELD", FieldChain, opt(altPrio(module, values, wit, select)));
+    const ret = seq("FIELD", FieldChain, opt(altPrio(module, moduleStrange, values, wit, select)));
 
     return verNot(Version.Cloud, ret);
   }

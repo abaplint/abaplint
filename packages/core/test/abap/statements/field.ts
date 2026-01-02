@@ -20,6 +20,7 @@ const tests = [
                        whenever not found
                        send errormessage.`,
   `FIELD foo-bar MODULE modulename ON CHAIN-INPUT.`,
+  // yea, well, apparently this is valid too:
   `FIELD foo-bar ON REQUEST MODULE fill_table.`,
 ];
 
