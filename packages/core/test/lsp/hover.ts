@@ -1700,4 +1700,15 @@ WRITE / res-field-foo.`;
     expect(hover?.value).to.contain("Inferred");
   });
 
+  it("SELECT COUNT, infer type", () => {
+    const abap = `
+SELECT COUNT(*) FROM ztab INTO @DATA(count).`;
+    const tabl = new MemoryFile("ztab.tabl.xml", ztab);
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file, tabl]).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 1, 40));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("int8");
+  });
+
 });

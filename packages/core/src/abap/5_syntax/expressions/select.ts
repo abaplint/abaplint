@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {IStructureComponent, StructureType, TableKeyType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {Integer8Type, IntegerType, IStructureComponent, StructureType, TableKeyType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {InlineData} from "./inline_data";
 import {Target} from "./target";
 import {SQLFrom} from "./sql_from";
@@ -15,6 +15,7 @@ import {SQLOrderBy} from "./sql_order_by";
 import {Dynamic} from "./dynamic";
 import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {Version} from "../../../version";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 const isSimple = /^\w+$/;
@@ -299,6 +300,14 @@ export class Select {
           const field = dbType.getComponentByName(fields[0].code);
           if (field) {
             return field;
+          } else if (fields[0].code === "COUNT(*)") {
+            if (scope.getVersion() >= Version.v750
+                || scope.getVersion() === Version.OpenABAP
+                || scope.getVersion() === Version.Cloud) {
+              return new Integer8Type();
+            } else {
+              return IntegerType.get();
+            }
           } else {
             // todo: aggregated/calculated values
             return VoidType.get("SELECT_todo11");
