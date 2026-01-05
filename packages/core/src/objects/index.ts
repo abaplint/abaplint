@@ -48,6 +48,7 @@ export * from "./customizing_transaction";
 export * from "./data_control";
 export * from "./data_definition";
 export * from "./data_element";
+export * from "./datastore_object";
 export * from "./dialog_module";
 export * from "./documentation";
 export * from "./domain";
