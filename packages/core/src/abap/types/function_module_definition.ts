@@ -64,8 +64,6 @@ export class FunctionModuleDefinition {
       this.moduleType = FunctionModuleType.update;
     }
 
-    if (data.REMOTE_CALL === "R") {
-
     if (data.IMPORT) {
       for (const param of xmlToArray(data.IMPORT.RSIMP)) {
         if (param.PARAMETER === undefined) {
