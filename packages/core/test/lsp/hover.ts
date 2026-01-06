@@ -1711,7 +1711,7 @@ SELECT COUNT(*) FROM ztab INTO @DATA(count).`;
     expect(hover?.value).to.contain("int8");
   });
 
-  it.only("Constructor reference, voided", () => {
+  it("Constructor reference, voided", () => {
     const abap = `
 DATA lr_foobar TYPE REF TO cl_voided.
 CREATE OBJECT lr_foobar.`;
@@ -1720,7 +1720,6 @@ CREATE OBJECT lr_foobar.`;
     const reg = new Registry().addFiles([file, tabl]).parse();
     const hover = new Hover(reg).find(buildPosition(file, 2, 20));
     expect(hover).to.not.equal(undefined);
-    console.dir(hover);
     expect(hover?.value).to.contain(`Extra: {"ooName":"CL_VOIDED"}`);
   });
 
