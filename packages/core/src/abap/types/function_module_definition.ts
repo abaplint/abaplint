@@ -15,10 +15,17 @@ export interface IFunctionModuleParameter {
   defaultValue: string | undefined;
 }
 
+export enum FunctionModuleType {
+  regular = "regular",
+  remote = "remoteEnabled",
+  update = "update",
+}
+
 export class FunctionModuleDefinition {
   private name: string;
   private description: string | undefined;
   private parameters: IFunctionModuleParameter[];
+  private moduleType: FunctionModuleType | undefined;
 
   public constructor(data: any) {
     this.parse(data);
@@ -26,6 +33,10 @@ export class FunctionModuleDefinition {
 
   public getParameters(): readonly IFunctionModuleParameter[] {
     return this.parameters;
+  }
+
+  public getModuleType(): FunctionModuleType | undefined {
+    return this.moduleType;
   }
 
   public getDescription(): string | undefined {
@@ -45,6 +56,13 @@ export class FunctionModuleDefinition {
     this.name = data.FUNCNAME;
     this.description = data.SHORT_TEXT;
     this.parameters = [];
+
+    this.moduleType = FunctionModuleType.regular;
+    if (data.REMOTE_CALL === "R") {
+      this.moduleType = FunctionModuleType.remote;
+    } else if (data.UPDATE_TASK !== undefined) {
+      this.moduleType = FunctionModuleType.update;
+    }
 
     if (data.IMPORT) {
       for (const param of xmlToArray(data.IMPORT.RSIMP)) {
