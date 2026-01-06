@@ -50,8 +50,9 @@ export class CreateObject implements StatementSyntax {
     }
 
     const t = node.findDirectExpression(Expressions.Target);
+    let found = undefined;
     if (t) {
-      const found = Target.runSyntax(t, input);
+      found = Target.runSyntax(t, input);
       if (found instanceof VoidType) {
         // do nothing
       } else if (found instanceof UnknownType) {
@@ -100,8 +101,13 @@ export class CreateObject implements StatementSyntax {
       Dynamic.runSyntax(t, input);
     }
 
+    let ooName = cdef?.getName();
+    if (ooName === undefined && found instanceof VoidType) {
+      ooName = found.getVoided();
+    }
+
     input.scope.addReference(t?.getFirstToken(), cdef, ReferenceType.ConstructorReference, input.filename,
-                             {ooName: cdef?.getName()});
+                             {ooName: ooName});
 
     this.validateParameters(cdef, node, input);
   }

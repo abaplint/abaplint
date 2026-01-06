@@ -1711,4 +1711,16 @@ SELECT COUNT(*) FROM ztab INTO @DATA(count).`;
     expect(hover?.value).to.contain("int8");
   });
 
+  it("Constructor reference, voided", () => {
+    const abap = `
+DATA lr_foobar TYPE REF TO cl_voided.
+CREATE OBJECT lr_foobar.`;
+    const tabl = new MemoryFile("ztab.tabl.xml", ztab);
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file, tabl]).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 2, 20));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain(`Extra: {"ooName":"CL_VOIDED"}`);
+  });
+
 });

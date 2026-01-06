@@ -522,7 +522,7 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     WHERE field = '01'
     ORDER BY field2.`,
 
-//  `SELECT ( 'F' && arbgb ) AS bar FROM t100 INTO TABLE @<tab>.`,
+  `SELECT name INTO TABLE @data(lt_icon) FROM icon WHERE ( name = 'sdf' ) ORDER BY name.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
