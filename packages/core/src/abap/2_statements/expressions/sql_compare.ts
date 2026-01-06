@@ -19,7 +19,7 @@ export class SQLCompare extends Expression {
 
     const sub = seq(optPrio(altPrio("ALL", "ANY", "SOME")), altPrio(subSelect, subSelectDouble));
 
-    const arith = ver(Version.v750, plusPrio(seq(altPrio("+", "-", "*", "/"), SQLFieldName)));
+    const arith = ver(Version.v750, plusPrio(seq(altPrio("+", "-", "*", "/"), SQLFieldName)), Version.OpenABAP);
 
     const paren = seq(tok(ParenLeftW), Source, tok(WParenRightW));
     const at = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, paren)), Version.OpenABAP);
