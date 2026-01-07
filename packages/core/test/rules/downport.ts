@@ -5947,7 +5947,7 @@ SELECT SINGLE belnr FROM /foo/bar INTO @ls_duplicate
     testFix(abap, expected);
   });
 
-  it.only("SELECT, another2", async () => {
+  it("SELECT, another2", async () => {
     const abap = `
 FIELD-SYMBOLS <fs_data_100> TYPE voided.
 SELECT SINGLE belnr FROM /foo/bar INTO @DATA(ls_duplicate)
@@ -5955,7 +5955,11 @@ SELECT SINGLE belnr FROM /foo/bar INTO @DATA(ls_duplicate)
   rejection = 'sdf'.`;
 
     const expected = `
-sdf`;
+FIELD-SYMBOLS <fs_data_100> TYPE voided.
+DATA ls_duplicate TYPE /foo/bar-belnr.
+SELECT SINGLE belnr FROM /foo/bar INTO @ls_duplicate
+  WHERE bukrs = @<fs_data_100>-object->_ms_ks_inv-bukrs AND
+  rejection = 'sdf'.`;
 
     testFix(abap, expected);
   });

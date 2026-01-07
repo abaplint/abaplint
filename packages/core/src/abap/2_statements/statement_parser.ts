@@ -143,13 +143,14 @@ export class StatementParser {
     const result: StatementNode[] = [];
 
     for (let statement of wa.statements) {
-      // dont use CALL METHOD, when executing lazy, it easily gives a Move for the last statment if lazy logic is evaluated
+      // dont use CALL METHOD, when executing lazy, it easily gives a Move for the last statement if lazy logic is evaluated
       if (statement.get() instanceof Unknown) {
         const concat = statement.concatTokens().toUpperCase();
         if (concat.startsWith("CALL METHOD ") === false
             && concat.startsWith("RAISE EXCEPTION TYPE ") === false
             && concat.startsWith("READ TABLE ") === false
             && concat.startsWith("LOOP AT ") === false
+            && concat.startsWith("SELECT SINGLE ") === false
             && concat.startsWith("CALL FUNCTION ") === false) {
           for (const {first, second} of this.buildSplits(statement.getTokens())) {
             if (second.length === 1) {
