@@ -5932,6 +5932,38 @@ SELECT devclass object
     testFix(abap, expected);
   });
 
+  it("SELECT, another1", async () => {
+    const abap = `
+FIELD-SYMBOLS <fs_data_100> TYPE voided.
+SELECT SINGLE belnr FROM /foo/bar INTO @DATA(ls_duplicate)
+  WHERE rejection = 'sdf'.`;
+
+    const expected = `
+FIELD-SYMBOLS <fs_data_100> TYPE voided.
+DATA ls_duplicate TYPE /foo/bar-belnr.
+SELECT SINGLE belnr FROM /foo/bar INTO @ls_duplicate
+  WHERE rejection = 'sdf'.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT, another2", async () => {
+    const abap = `
+FIELD-SYMBOLS <fs_data_100> TYPE voided.
+SELECT SINGLE belnr FROM /foo/bar INTO @DATA(ls_duplicate)
+  WHERE bukrs = @<fs_data_100>-object->_ms_ks_inv-bukrs AND
+  rejection = 'sdf'.`;
+
+    const expected = `
+FIELD-SYMBOLS <fs_data_100> TYPE voided.
+DATA ls_duplicate TYPE /foo/bar-belnr.
+SELECT SINGLE belnr FROM /foo/bar INTO @ls_duplicate
+  WHERE bukrs = @<fs_data_100>-object->_ms_ks_inv-bukrs AND
+  rejection = 'sdf'.`;
+
+    testFix(abap, expected);
+  });
+
   it("any table, generic", async () => {
     const abap = `
   FIELD-SYMBOLS <itab> TYPE ANY TABLE.
