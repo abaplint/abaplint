@@ -12180,6 +12180,32 @@ CLEAR ppp.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("inline with generic fs", () => {
+    const abap = `
+FIELD-SYMBOLS <any> TYPE any.
+DATA foo TYPE i.
+DATA(val) = foo * <any>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("inline with generic fs, other way around", () => {
+    const abap = `
+FIELD-SYMBOLS <any> TYPE any.
+DATA foo TYPE i.
+DATA(val) = <any> * foo.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error if using generic", () => {
+    const abap = `
+FIELD-SYMBOLS <any> TYPE any.
+DATA(val) = <any>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("generic");
+  });
+
   it("identical EVENTS name", () => {
     const abap = `
 CLASS lcl DEFINITION.
