@@ -12220,6 +12220,33 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("already defined");
   });
 
+  it("Compare is not compatible, its calculated", () => {
+    const abap = `
+DATA lv_byte TYPE x LENGTH 1.
+IF lv_byte BIT-AND lv_byte <> 0.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Incompatible types for comparison");
+  });
+
+  it("Compare is not compatible, its calculated, other way around", () => {
+    const abap = `
+DATA lv_byte TYPE x LENGTH 1.
+IF 0 <> lv_byte BIT-AND lv_byte.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Incompatible types for comparison");
+  });
+
+  it("Compare is compatbile", () => {
+    const abap = `
+DATA lv_byte TYPE x LENGTH 1.
+IF lv_byte <> 0.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok string template format", () => {
     const abap = `write |\\\\\\n\\r\\t|.
 write |\\\\xC2|.`;
