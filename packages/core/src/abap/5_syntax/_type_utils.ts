@@ -274,6 +274,18 @@ export class TypeUtils {
     return calculated;
   }
 
+  public isAssignableNew(source: AbstractType | undefined,
+                         target: AbstractType | undefined,
+                         node?: ExpressionNode): boolean {
+    const calculated = node ? this.isCalculated(node) : false;
+
+    if (calculated && source instanceof HexType && target instanceof IntegerType) {
+      return false;
+    }
+
+    return this.isAssignable(source, target);
+  }
+
   public isAssignableStrict(source: AbstractType | undefined,
                             target: AbstractType | undefined,
                             node?: ExpressionNode): boolean {

@@ -12220,6 +12220,15 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("already defined");
   });
 
+  it("Move is not compatible, its calculated", () => {
+    const abap = `
+DATA lv_bits TYPE i.
+DATA lv_byte TYPE x LENGTH 1.
+lv_bits = lv_byte BIT-AND lv_byte.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Incompatible types");
+  });
+
   it("Compare is not compatible, its calculated", () => {
     const abap = `
 DATA lv_byte TYPE x LENGTH 1.
