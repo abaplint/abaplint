@@ -122,6 +122,9 @@ export class Procedural {
     if (definition === undefined) {
       throw new Error("Function module definition \"" + name + "\" not found");
     }
+    if (definition.isGlobalParameters() === true) {
+      return; // already added at global level
+    }
 
     this.addFunctionScope(definition, nameToken, filename);
   }
