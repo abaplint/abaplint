@@ -8578,6 +8578,26 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("method call, compatible", () => {
+    const abap = `
+CLASS lcl_stream DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_hex1 TYPE x LENGTH 1.
+    CLASS-METHODS byte RETURNING VALUE(hex) TYPE ty_hex1.
+ENDCLASS.
+
+CLASS lcl_stream IMPLEMENTATION.
+  METHOD byte.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_offset TYPE i.
+  lv_offset = lcl_stream=>byte( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("calculated float to integer, move, ok", () => {
     const abap = `
 DATA val TYPE f.
@@ -12218,6 +12238,55 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
+  it("Move is not compatible, its calculated", () => {
+    const abap = `
+DATA lv_bits TYPE i.
+DATA lv_byte TYPE x LENGTH 1.
+lv_bits = lv_byte BIT-AND lv_byte.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Incompatible types");
+  });
+
+  it("Compare is not compatible, its calculated", () => {
+    const abap = `
+DATA lv_byte TYPE x LENGTH 1.
+IF lv_byte BIT-AND lv_byte <> 0.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Incompatible types for comparison");
+  });
+
+  it("Compare is not compatible, its calculated, other way around", () => {
+    const abap = `
+DATA lv_byte TYPE x LENGTH 1.
+IF 0 <> lv_byte BIT-AND lv_byte.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Incompatible types for comparison");
+  });
+
+  it("Compare is compatbile", () => {
+    const abap = `
+DATA lv_byte TYPE x LENGTH 1.
+IF lv_byte <> 0.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok string template format", () => {
+    const abap = `write |\\\\\\n\\r\\t|.
+write |\\\\xC2|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("bad string template format", () => {
+    const abap = `write |\\xC2|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Invalid escape sequence");
   });
 
   it.skip("UPDATE database table with bad WHERE field reference", () => {

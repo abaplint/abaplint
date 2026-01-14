@@ -45,7 +45,7 @@ export class Move implements StatementSyntax {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
-    } else if (new TypeUtils(input.scope).isAssignable(sourceType, targetType) === false) {
+    } else if (new TypeUtils(input.scope).isAssignableNew(sourceType, targetType, source) === false) {
       const message = "Incompatible types";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;

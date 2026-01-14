@@ -222,6 +222,26 @@ export class TypeUtils {
     return true;
   }
 
+  public isCompareable(source1: AbstractType | undefined, source2: AbstractType | undefined,
+                       node1: ExpressionNode, node2: ExpressionNode): boolean {
+    /*
+    console.dir(source1);
+    console.dir(source2);
+    */
+    if (source1 === undefined || source2 === undefined) {
+      return true;
+    }
+
+    if (source1 instanceof HexType && this.isCalculated(node1) && source2 instanceof IntegerType) {
+      return false;
+    }
+    if (source2 instanceof HexType && this.isCalculated(node2) && source1 instanceof IntegerType) {
+      return false;
+    }
+
+    return true;
+  }
+
   private structureContainsString(structure: StructureType): boolean {
     for (const c of structure.getComponents()) {
       if (c.type instanceof StringType) {
@@ -252,6 +272,18 @@ export class TypeUtils {
       || node.findFirstExpression(Expressions.StringTemplate) !== undefined
       || node.findFirstExpression(Expressions.ArithOperator) !== undefined;
     return calculated;
+  }
+
+  public isAssignableNew(source: AbstractType | undefined,
+                         target: AbstractType | undefined,
+                         node: ExpressionNode | undefined): boolean {
+    const calculated = node?.findFirstExpression(Expressions.ArithOperator) !== undefined;
+
+    if (calculated && source instanceof HexType && target instanceof IntegerType) {
+      return false;
+    }
+
+    return this.isAssignable(source, target);
   }
 
   public isAssignableStrict(source: AbstractType | undefined,
