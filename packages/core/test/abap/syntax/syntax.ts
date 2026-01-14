@@ -8578,6 +8578,26 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("method call, compatible", () => {
+    const abap = `
+CLASS lcl_stream DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_hex1 TYPE x LENGTH 1.
+    CLASS-METHODS byte RETURNING VALUE(hex) TYPE ty_hex1.
+ENDCLASS.
+
+CLASS lcl_stream IMPLEMENTATION.
+  METHOD byte.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_offset TYPE i.
+  lv_offset = lcl_stream=>byte( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("calculated float to integer, move, ok", () => {
     const abap = `
 DATA val TYPE f.

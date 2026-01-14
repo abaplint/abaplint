@@ -276,8 +276,8 @@ export class TypeUtils {
 
   public isAssignableNew(source: AbstractType | undefined,
                          target: AbstractType | undefined,
-                         node?: ExpressionNode): boolean {
-    const calculated = node ? this.isCalculated(node) : false;
+                         node: ExpressionNode | undefined): boolean {
+    const calculated = node?.findFirstExpression(Expressions.ArithOperator) !== undefined;
 
     if (calculated && source instanceof HexType && target instanceof IntegerType) {
       return false;
