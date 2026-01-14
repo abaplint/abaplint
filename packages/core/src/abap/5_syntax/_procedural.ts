@@ -105,7 +105,7 @@ export class Procedural {
       if (nameToken === undefined) {
         continue;
       }
-      this.addFunctionScope(module, nameToken, fmFile.getFilename());
+      this.addFunctionScope(module, nameToken, fmFile.getFilename(), true);
     }
   }
 
@@ -129,7 +129,8 @@ export class Procedural {
     this.addFunctionScope(definition, nameToken, filename);
   }
 
-  private addFunctionScope(definition: FunctionModuleDefinition, nameToken: AbstractToken, filename: string) {
+  private addFunctionScope(definition: FunctionModuleDefinition, nameToken: AbstractToken, filename: string,
+                           ignoreIfAlreadyExists = false) {
     const ddic = new DDIC(this.reg);
 
     const allNames = new Set<string>();
@@ -217,7 +218,14 @@ export class Procedural {
         continue;
       } else {
         const type = new TypedIdentifier(nameToken, filename, found);
-        this.scope.addNamedIdentifier(param.name, type);
+        if (ignoreIfAlreadyExists === true) {
+          const exists = this.scope.findVariable(param.name);
+          if (exists === undefined) {
+            this.scope.addNamedIdentifier(param.name, type);
+          }
+        } else {
+          this.scope.addNamedIdentifier(param.name, type);
+        }
         allNames.add(param.name.toUpperCase());
       }
     }
