@@ -12220,17 +12220,17 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("already defined");
   });
 
-  it.only("ok string template format", () => {
+  it("ok string template format", () => {
     const abap = `write |\\\\\\n\\r\\t|.
 write |\\\\xC2|.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("bad string template format", () => {
+  it("bad string template format", () => {
     const abap = `write |\\xC2|.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.include("already defined");
+    expect(issues[0]?.getMessage()).to.include("Invalid escape sequence");
   });
 
   it.skip("UPDATE database table with bad WHERE field reference", () => {

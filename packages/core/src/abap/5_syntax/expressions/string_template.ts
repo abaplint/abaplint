@@ -1,10 +1,11 @@
-import {ExpressionNode} from "../../nodes";
+import {ExpressionNode, TokenNode} from "../../nodes";
 import {AnyType, CLikeType, CharacterType, NumericGenericType, NumericType, StringType, StructureType, UTCLongType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Expressions from "../../2_statements/expressions";
 import {Source} from "./source";
 import {TypeUtils} from "../_type_utils";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import * as Tokens from "../../1_lexer/tokens";
 
 export class StringTemplate {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType {
@@ -48,12 +49,37 @@ export class StringTemplate {
           input.issues.push(syntaxIssue(input, format.getFirstToken(), message));
           return VoidType.get(CheckSyntaxKey);
         }
-      } else {
-        // only valid
-        console.dir(child);
+      } else if (child instanceof TokenNode) {
+        const token = child.get();
+        if (token instanceof Tokens.StringTemplate
+          || token instanceof Tokens.StringTemplateBegin
+          || token instanceof Tokens.StringTemplateMiddle
+          || token instanceof Tokens.StringTemplateEnd) {
+          const issue = this.validateEscapeSequences(token.getStr(), input, child);
+          if (issue) {
+            input.issues.push(issue);
+            return VoidType.get(CheckSyntaxKey);
+          }
+        }
       }
     }
 
     return ret;
+  }
+
+  private static validateEscapeSequences(str: string, input: SyntaxInput, node: TokenNode) {
+    // Valid escape sequences in ABAP string templates: \|, \{, \}, \\, \n, \r, \t
+    const validEscapes = new Set(["\\|", "\\{", "\\}", "\\\\", "\\n", "\\r", "\\t"]);
+
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === "\\") {
+        const escape = str.substring(i, i + 2);
+        if (!validEscapes.has(escape)) {
+          return syntaxIssue(input, node.getFirstToken(), `Invalid escape sequence "${escape}" in string template`);
+        }
+        i++; // skip the next character as it's part of the escape sequence
+      }
+    }
+    return undefined;
   }
 }
