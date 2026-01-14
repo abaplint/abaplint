@@ -371,7 +371,12 @@ export class SyntaxLogic {
         if (this.object instanceof FunctionGroup) {
           stype = ScopeType.FunctionGroup;
         }
+
         this.scope.push(stype, this.object.getName(), new Position(1, 1), main.getFilename());
+
+        if (this.object instanceof FunctionGroup) {
+          this.helpers.proc.findFunctionGroupScope(this.object);
+        }
       }
     } else if (this.object instanceof TypePool) {
       const main = this.object.getMainABAPFile();

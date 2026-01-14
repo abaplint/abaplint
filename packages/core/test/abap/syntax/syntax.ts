@@ -12238,7 +12238,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("not found");
   });
 
-  it.only("function module global parameters", () => {
+  it("function module global parameters", () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
