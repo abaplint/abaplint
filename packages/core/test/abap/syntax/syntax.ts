@@ -12238,4 +12238,132 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("not found");
   });
 
+  it("function module global parameters", () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>global</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LZGLOBALFMF01</SOBJ_NAME>
+    <SOBJ_NAME>LZGLOBALFMTOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZGLOBALFM</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>ZGLOBALPARAM</FUNCNAME>
+     <GLOBAL_FLAG>X</GLOBAL_FLAG>
+     <SHORT_TEXT>sdfsdsdf</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>INPUT</PARAMETER>
+       <TYP>STRING</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>INPUT</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const code = `FUNCTION zglobalparam.
+*"----------------------------------------------------------------------
+*"*"Global Interface:
+*"  IMPORTING
+*"     VALUE(INPUT) TYPE  STRING
+*"----------------------------------------------------------------------
+
+  PERFORM foobar.
+
+ENDFUNCTION.`;
+
+    const xml2 = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>SAPLZGLOBALFM</NAME>
+    <DBAPL>S</DBAPL>
+    <DBNA>D$</DBNA>
+    <SUBC>F</SUBC>
+    <APPL>S</APPL>
+    <RLOAD>E</RLOAD>
+    <FIXPT>X</FIXPT>
+    <LDBNAME>D$S</LDBNAME>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const toptop = `
+INCLUDE LZGLOBALFMTOP.
+INCLUDE LZGLOBALFMUXX.
+
+INCLUDE lzglobalfmf01.`;
+
+    const topxml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>LZGLOBALFMTOP</NAME>
+    <DBAPL>S</DBAPL>
+    <DBNA>D$</DBNA>
+    <SUBC>I</SUBC>
+    <APPL>S</APPL>
+    <FIXPT>X</FIXPT>
+    <LDBNAME>D$S</LDBNAME>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const toptopabap = `FUNCTION-POOL ZGLOBALFM.`;
+
+    const localxml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>LZGLOBALFMF01</NAME>
+    <SUBC>I</SUBC>
+    <APPL>S</APPL>
+    <RLOAD>E</RLOAD>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+   <TPOOL>
+    <item>
+     <ID>R</ID>
+     <ENTRY>Include LZGLOBALFMF01</ENTRY>
+     <LENGTH>21</LENGTH>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const localabap = `FORM foobar.
+  CLEAR input.
+ENDFORM.`;
+
+    const issues = runMulti([
+      {filename: "zglobalfm.fugr.xml", contents: xml},
+      {filename: "zglobalfm.fugr.lzglobalfmf01.abap", contents: localabap},
+      {filename: "zglobalfm.fugr.lzglobalfmf01.xml", contents: localxml},
+      {filename: "zglobalfm.fugr.saplzglobalfm.abap", contents: toptop},
+      {filename: "zglobalfm.fugr.lzglobalfmtop.abap", contents: toptopabap},
+      {filename: "zglobalfm.fugr.lzglobalfmtop.xml", contents: topxml},
+      {filename: "zglobalfm.fugr.saplzglobalfm.xml", contents: xml2},
+      {filename: "zglobalfm.fugr.zglobalparam.abap", contents: code}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });

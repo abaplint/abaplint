@@ -51,6 +51,7 @@ import {EmptyStructureConf} from "../src/rules/empty_structure";
 import {ExitOrCheckConf} from "../src/rules/exit_or_check";
 import {ExpandMacrosConf} from "../src/rules/expand_macros";
 import {ExportingConf} from "../src/rules/exporting";
+import {FMGlobalParametersObsoleteConf} from "../src/rules/fm_global_parameters_obsolete";
 import {ForbiddenIdentifierConf} from "../src/rules/forbidden_identifier";
 import {ForbiddenPseudoAndPragmaConf} from "../src/rules/forbidden_pseudo_and_pragma";
 import {ForbiddenVoidTypeConf} from "../src/rules/forbidden_void_type";
@@ -239,6 +240,7 @@ export interface IConfig {
     "exit_or_check"?: ExitOrCheckConf | boolean,
     "expand_macros"?: ExpandMacrosConf | boolean,
     "exporting"?: ExportingConf | boolean,
+    "fm_global_parameters_obsolete"?: FMGlobalParametersObsoleteConf | boolean,
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
     "forbidden_pseudo_and_pragma"?: ForbiddenPseudoAndPragmaConf | boolean,
     "forbidden_void_type"?: ForbiddenVoidTypeConf | boolean,
@@ -416,6 +418,7 @@ export interface IConfig {
     "exit_or_check"?: ExitOrCheckConf | boolean,
     "expand_macros"?: ExpandMacrosConf | boolean,
     "exporting"?: ExportingConf | boolean,
+    "fm_global_parameters_obsolete"?: FMGlobalParametersObsoleteConf | boolean,
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
     "forbidden_pseudo_and_pragma"?: ForbiddenPseudoAndPragmaConf | boolean,
     "forbidden_void_type"?: ForbiddenVoidTypeConf | boolean,

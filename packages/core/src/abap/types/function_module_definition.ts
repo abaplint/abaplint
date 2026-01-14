@@ -25,6 +25,7 @@ export class FunctionModuleDefinition {
   private name: string;
   private description: string | undefined;
   private parameters: IFunctionModuleParameter[];
+  private globalParameters: boolean;
   private moduleType: FunctionModuleType | undefined;
 
   public constructor(data: any) {
@@ -47,6 +48,10 @@ export class FunctionModuleDefinition {
     return this.name;
   }
 
+  public isGlobalParameters(): boolean {
+    return this.globalParameters;
+  }
+
 ///////////////
 
   private parse(data: any) {
@@ -56,6 +61,7 @@ export class FunctionModuleDefinition {
     this.name = data.FUNCNAME;
     this.description = data.SHORT_TEXT;
     this.parameters = [];
+    this.globalParameters = data.GLOBAL_FLAG === "X";
 
     this.moduleType = FunctionModuleType.regular;
     if (data.REMOTE_CALL === "R") {

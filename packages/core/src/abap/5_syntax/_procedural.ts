@@ -3,7 +3,7 @@ import * as Statements from "../2_statements/statements";
 import * as Structures from "../3_structures/structures";
 import {StatementNode} from "../nodes";
 import {ABAPObject} from "../../objects/_abap_object";
-import {FormDefinition, FunctionModuleParameterDirection} from "../types";
+import {FormDefinition, FunctionModuleDefinition, FunctionModuleParameterDirection} from "../types";
 import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
 import {FunctionGroup} from "../../objects";
@@ -15,6 +15,7 @@ import {AbstractType} from "../types/basic/_abstract_type";
 import {ABAPFile} from "../abap_file";
 import {ObjectOriented} from "./_object_oriented";
 import {ReferenceType} from "./_reference";
+import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 
 export class Procedural {
   private readonly scope: CurrentScope;
@@ -87,6 +88,27 @@ export class Procedural {
     return undefined;
   }
 
+  public findFunctionGroupScope(fg: FunctionGroup) {
+    for (const module of fg.getModules()) {
+      if (module.isGlobalParameters() === false) {
+        continue;
+      }
+      // console.dir(fg.getSequencedFiles());
+
+      const fmFile = fg.getSequencedFiles().find((f) => { return f.getFilename().endsWith(".fugr." + module.getName().toLowerCase().replace(/\//g, "#") + ".abap"); });
+      if (fmFile === undefined) {
+        continue;
+      }
+
+      const nameToken = fmFile.getStructure()?.findFirstStatement(Statements.FunctionModule
+      )?.findFirstExpression(Expressions.Field)?.getFirstToken();
+      if (nameToken === undefined) {
+        continue;
+      }
+      this.addFunctionScope(module, nameToken, fmFile.getFilename(), true);
+    }
+  }
+
   public findFunctionScope(obj: ABAPObject, node: StatementNode, filename: string) {
     if (!(obj instanceof FunctionGroup)) {
       throw new Error("findFunctionScope, expected function group input");
@@ -100,7 +122,15 @@ export class Procedural {
     if (definition === undefined) {
       throw new Error("Function module definition \"" + name + "\" not found");
     }
+    if (definition.isGlobalParameters() === true) {
+      return; // already added at global level
+    }
 
+    this.addFunctionScope(definition, nameToken, filename);
+  }
+
+  private addFunctionScope(definition: FunctionModuleDefinition, nameToken: AbstractToken, filename: string,
+                           ignoreIfAlreadyExists = false) {
     const ddic = new DDIC(this.reg);
 
     const allNames = new Set<string>();
@@ -188,7 +218,14 @@ export class Procedural {
         continue;
       } else {
         const type = new TypedIdentifier(nameToken, filename, found);
-        this.scope.addNamedIdentifier(param.name, type);
+        if (ignoreIfAlreadyExists === true) {
+          const exists = this.scope.findVariable(param.name);
+          if (exists === undefined) {
+            this.scope.addNamedIdentifier(param.name, type);
+          }
+        } else {
+          this.scope.addNamedIdentifier(param.name, type);
+        }
         allNames.add(param.name.toUpperCase());
       }
     }

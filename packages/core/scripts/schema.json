@@ -1345,6 +1345,23 @@
       },
       "type": "object"
     },
+    "FMGlobalParametersObsoleteConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "ForbiddenIdentifierConf": {
       "additionalProperties": false,
       "properties": {
@@ -2167,6 +2184,17 @@
                 }
               ],
               "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
+            },
+            "fm_global_parameters_obsolete": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FMGlobalParametersObsoleteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Check for function modules with global parameteers\nhttps://rules.abaplint.org/fm_global_parameters_obsolete"
             },
             "forbidden_identifier": {
               "anyOf": [
@@ -4092,6 +4120,17 @@
                 }
               ],
               "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
+            },
+            "fm_global_parameters_obsolete": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FMGlobalParametersObsoleteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Check for function modules with global parameteers\nhttps://rules.abaplint.org/fm_global_parameters_obsolete"
             },
             "forbidden_identifier": {
               "anyOf": [
