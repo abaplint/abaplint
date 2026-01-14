@@ -12220,6 +12220,19 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("already defined");
   });
 
+  it.only("ok string template format", () => {
+    const abap = `write |\\\\\\n\\r\\t|.
+write |\\\\xC2|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it.only("bad string template format", () => {
+    const abap = `write |\\xC2|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
   it.skip("UPDATE database table with bad WHERE field reference", () => {
     const prog = `UPDATE ztab SET value1 = value1 + 1 WHERE badfield = 'abc'.`;
     const issues = runMulti([

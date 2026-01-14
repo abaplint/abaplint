@@ -11,29 +11,30 @@ export class StringTemplate {
     const typeUtils = new TypeUtils(input.scope);
     const ret = StringType.get();
 
-    for (const templateSource of node.findAllExpressions(Expressions.StringTemplateSource)) {
-      const s = templateSource.findDirectExpression(Expressions.Source);
-      const type = Source.runSyntax(s, input, ret);
-      if (type === undefined) {
-        const message = "No target type determined";
-        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return VoidType.get(CheckSyntaxKey);
-      } else if ((typeUtils.isCharLike(type) === false
+    for (const child of node.getChildren()) {
+      if (child instanceof ExpressionNode && child.get() instanceof Expressions.StringTemplateSource) {
+        const s = child.findDirectExpression(Expressions.Source);
+        const type = Source.runSyntax(s, input, ret);
+        if (type === undefined) {
+          const message = "No target type determined";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return VoidType.get(CheckSyntaxKey);
+        } else if ((typeUtils.isCharLike(type) === false
           && typeUtils.isHexLike(type) === false
           && !(type instanceof UTCLongType))
           || type instanceof StructureType) {
-        const message = "String template, not character like, " + type.constructor.name;
-        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return VoidType.get(CheckSyntaxKey);
-      }
+          const message = "String template, not character like, " + type.constructor.name;
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return VoidType.get(CheckSyntaxKey);
+        }
 
-      const format = templateSource.findDirectExpression(Expressions.StringTemplateFormatting);
-      const formatConcat = format?.concatTokens();
-      for (const formatSource of format?.findAllExpressions(Expressions.Source) || []) {
-        Source.runSyntax(formatSource, input);
-      }
+        const format = child.findDirectExpression(Expressions.StringTemplateFormatting);
+        const formatConcat = format?.concatTokens();
+        for (const formatSource of format?.findAllExpressions(Expressions.Source) || []) {
+          Source.runSyntax(formatSource, input);
+        }
 
-      if (format
+        if (format
           && formatConcat?.includes("ALPHA = ")
           && !(type instanceof UnknownType)
           && !(type instanceof VoidType)
@@ -43,9 +44,13 @@ export class StringTemplate {
           && !(type instanceof NumericGenericType)
           && !(type instanceof NumericType)
           && !(type instanceof AnyType)) {
-        const message = `Cannot apply ALPHA to this type (${type.constructor.name})`;
-        input.issues.push(syntaxIssue(input, format.getFirstToken(), message));
-        return VoidType.get(CheckSyntaxKey);
+          const message = `Cannot apply ALPHA to this type (${type.constructor.name})`;
+          input.issues.push(syntaxIssue(input, format.getFirstToken(), message));
+          return VoidType.get(CheckSyntaxKey);
+        }
+      } else {
+        // only valid
+        console.dir(child);
       }
     }
 
