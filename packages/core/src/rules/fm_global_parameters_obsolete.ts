@@ -1,4 +1,4 @@
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata} from "./_irule";
 import {Issue} from "../issue";
 import * as Objects from "../objects";
 import {IObject} from "../objects/_iobject";
@@ -12,11 +12,12 @@ export class FMGlobalParametersObsoleteConf extends BasicRuleConfig {
 export class FMGlobalParametersObsolete implements IRule {
   private conf = new FMGlobalParametersObsoleteConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "fm_global_parameters_obsolete",
       title: "FM Global Parameters Obsolete",
-      shortDescription: `https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenglobal_parameters_obsolete.htm`,
+      shortDescription: `Check for function modules with global parameteers`,
+      extendedInformation: `https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenglobal_parameters_obsolete.htm`,
       tags: [],
     };
   }
