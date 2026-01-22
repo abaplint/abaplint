@@ -5,6 +5,7 @@ import {Unknown} from "../../src/abap/2_statements/statements/_statement";
 import {defaultVersion} from "../../src/version";
 import {ABAPFile} from "../../src/abap/abap_file";
 import {MemoryFile} from "../../src/files/memory_file";
+import {Registry} from "../../src";
 
 function expectNoUnknown(output: readonly ABAPFile[]) {
   for (const file of output) {
@@ -133,6 +134,29 @@ PROCESS AFTER INPUT.
     const files = [new MemoryFile("zfoobar.fugr.screen_0500.abap", abap)];
 
     new ABAPParser(defaultVersion, []).parse(files);
+  });
+
+  it.skip("macro via top include other", async () => {
+    const zprogram = `
+REPORT zprogram.
+INCLUDE zincl1.
+INCLUDE zincl2.`;
+
+    const zincl1 = `
+  DEFINE _macro.
+  END-OF-DEFINITION.`;
+
+    const zincl2 = `
+  _macro.`;
+
+    const files = [
+      new MemoryFile("zprogram.prog.abap", zprogram),
+      new MemoryFile("zincl1.prog.abap", zincl1),
+      new MemoryFile("zincl2.prog.abap", zincl2),
+    ];
+
+    const issues = new Registry().addFiles(files).parse().findIssues();
+    console.dir(issues);
   });
 
 });
