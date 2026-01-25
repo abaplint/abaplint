@@ -348,7 +348,7 @@ export class Registry implements IRegistry {
     }
 
     ParsingPerformance.clear();
-    input?.progress?.set(this.getObjectCount().normal, "Lexing and parsing");
+    input?.progress?.set(this.getObjectCount().total, "Lexing and parsing");
 
     for (const o of this.getObjects()) {
       await input?.progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " + o.getType() + " " + o.getName());
