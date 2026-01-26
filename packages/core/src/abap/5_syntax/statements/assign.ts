@@ -12,6 +12,7 @@ import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const assignSource = node.findDirectExpression(Expressions.AssignSource);
+    const isComponent = assignSource?.getFirstChild()?.concatTokens().toUpperCase() === "COMPONENT";
     const sources: ExpressionNode[] = assignSource?.findDirectExpressionsMulti([Expressions.Source, Expressions.SimpleSource3]) || [];
     const theSource = sources[sources.length - 1];
 
@@ -29,11 +30,11 @@ export class Assign implements StatementSyntax {
       }
       sourceType = VoidType.get("Dynamic");
     } else {
-      sourceType = Source.runSyntax(theSource, input, undefined, false, true);
+      sourceType = Source.runSyntax(theSource, input, undefined, false, isComponent === false);
     }
 
     if (assignSource?.getChildren().length === 5
-        && assignSource?.getFirstChild()?.concatTokens().toUpperCase() === "COMPONENT") {
+        && isComponent) {
       const componentSource = sources[sources.length - 2];
       const componentType = Source.runSyntax(componentSource, input);
       if (new TypeUtils(input.scope).isAssignable(componentType, new CharacterType(30)) === false) {
@@ -52,7 +53,7 @@ export class Assign implements StatementSyntax {
 
     const target = node.findDirectExpression(Expressions.FSTarget);
     if (target) {
-      if (assignSource?.getFirstChild()?.concatTokens().toUpperCase() === "COMPONENT") {
+      if (isComponent) {
         FSTarget.runSyntax(target, input, AnyType.get());
       } else {
         FSTarget.runSyntax(target, input, sourceType);
