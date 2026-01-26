@@ -1723,4 +1723,61 @@ CREATE OBJECT lr_foobar.`;
     expect(hover?.value).to.contain(`Extra: {"ooName":"CL_VOIDED"}`);
   });
 
+  it("Hover method shows PUBLIC visibility", () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS public_method
+      IMPORTING bar TYPE string.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD public_method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_bar TYPE REF TO lcl_bar.
+  CREATE OBJECT lo_bar.
+  lo_bar->public_method( ).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 13, 12));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("PUBLIC");
+    expect(hover?.value).to.contain("bar");
+  });
+
+  it("Hover method shows PRIVATE visibility", () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+  PRIVATE SECTION.
+    METHODS private_method
+      RETURNING VALUE(ret) TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD private_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 2, 15));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("PRIVATE");
+  });
+
+  it("Hover method shows PROTECTED visibility", () => {
+    const abap = `CLASS lcl_bar DEFINITION.
+  PROTECTED SECTION.
+    METHODS protected_method
+      CHANGING val TYPE string.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD protected_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFiles([file]).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 2, 17));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("PROTECTED");
+  });
+
 });
