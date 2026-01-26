@@ -304,13 +304,13 @@ export class LSPLookup {
 
   private static methodParameters(methodDef: IMethodDefinition) {
     let ret = "";
-    
+
     // Add visibility information
     const visibilityStr = this.visibilityToString(methodDef.getVisibility());
     if (visibilityStr) {
       ret += visibilityStr + "\n\n";
     }
-    
+
     const parameters = methodDef.getParameters();
 
     const importing = parameters.getImporting();
