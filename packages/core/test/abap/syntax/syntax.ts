@@ -11443,6 +11443,15 @@ CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MOD
     expect(issues[0]?.getMessage()).to.include("A generic reference cannot be dereferenced");
   });
 
+  it("generic dereference not possible until 756, another", () => {
+    const abap = `
+DATA mr_service_binding TYPE REF TO data.
+FIELD-SYMBOLS <lv_field> TYPE any.
+ASSIGN COMPONENT 'PUBLISHED' OF STRUCTURE mr_service_binding->* TO <lv_field>.`;
+    const issues = runProgram(abap, [], Version.v740sp05);
+    expect(issues[0]?.getMessage()).to.include("A generic reference cannot be dereferenced");
+  });
+
   it("hashed table expect error", () => {
     const abap = `
 TYPES: BEGIN OF ty,
