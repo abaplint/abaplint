@@ -101,11 +101,10 @@ export class LSPLookup {
     if (method !== undefined && method.getStart().equals(cursor.token.getStart())) {
       const found = LSPUtils.identiferToLocation(method);
       let hover = "Method Definition \"" + method.getName() + "\"";
-      // Check if method is a MethodDefinition with getVisibility
-      if ("getVisibility" in method && typeof method.getVisibility === "function") {
-        const visibilityStr = this.visibilityToString(method.getVisibility());
-        hover += "\n\n" + visibilityStr;
-      }
+      // Method definitions have getVisibility()
+      const methodDef = method as IMethodDefinition;
+      const visibilityStr = this.visibilityToString(methodDef.getVisibility());
+      hover += "\n\n" + visibilityStr;
       return {hover, definition: found, definitionId: method, scope: bottomScope};
     }
 
