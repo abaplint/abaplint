@@ -2,8 +2,14 @@ import {AbstractObject} from "./_abstract_object";
 import {Message} from "../abap/types/message";
 import {xmlToArray, unescape} from "../xml_utils";
 
+export type parsedMessageClass = {
+  topName: string | undefined,
+  description: string | undefined,
+  parsedMessages: Message[] | undefined
+};
+
 export class MessageClass extends AbstractObject {
-  private parsedMessages: Message[] | undefined = undefined;
+  private xml: parsedMessageClass | undefined = undefined;
 
   public getType(): string {
     return "MSAG";
@@ -11,8 +17,7 @@ export class MessageClass extends AbstractObject {
 
   public getDescription(): string | undefined {
     this.parseXML();
-    // todo
-    return undefined;
+    return this.xml?.description;
   }
 
   public getAllowedNaming() {
@@ -22,14 +27,19 @@ export class MessageClass extends AbstractObject {
     };
   }
 
+  public getParsed(): parsedMessageClass | undefined {
+    this.parseXML();
+    return this.xml;
+  }
+
   public setDirty(): void {
-    this.parsedMessages = undefined;
+    this.xml = undefined;
     super.setDirty();
   }
 
   public getMessages(): readonly Message[] {
     this.parseXML();
-    const msg = this.parsedMessages;
+    const msg = this.xml?.parsedMessages;
     return msg ? msg : [];
   }
 
@@ -47,23 +57,30 @@ export class MessageClass extends AbstractObject {
 /////////////////////////////////
 
   private parseXML() {
-    if (this.parsedMessages !== undefined) {
+    if (this.xml !== undefined) {
       return;
     }
 
-    this.parsedMessages = [];
+    this.xml = {
+      topName: undefined,
+      description: undefined,
+      parsedMessages: [],
+    };
 
     const parsed = super.parseRaw2();
     if (parsed === undefined) {
       return;
     }
 
+    this.xml.topName = parsed?.abapGit?.["asx:abap"]["asx:values"]?.T100A?.ARBGB;
+    this.xml.description = parsed?.abapGit?.["asx:abap"]["asx:values"]?.T100A?.STEXT;
+
     const t100 = parsed?.abapGit?.["asx:abap"]["asx:values"]?.T100;
     if (t100 === undefined) {
       return;
     }
     for (const msg of xmlToArray(t100.T100)) {
-      this.parsedMessages.push(new Message(msg.MSGNR, unescape(msg.TEXT)));
+      this.xml!.parsedMessages!.push(new Message(msg.MSGNR, unescape(msg.TEXT), msg.ARBGB));
     }
   }
 
