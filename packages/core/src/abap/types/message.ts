@@ -20,7 +20,7 @@ export class Message {
   }
 
   public getMessageClass(): string {
-    return "";
+    return this.className;
   }
 
   public getNumber(): string {

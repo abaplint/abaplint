@@ -35,7 +35,7 @@ describe("Message rule", () => {
     const xml = `sdfsdfsd`;
 
     const issues = await run(new MemoryFile("zagtest_empty.msag.xml", xml));
-    expect(issues.length).to.equal(0);
+    expect(issues.length).to.equal(1);
   });
 
   it("no number", async () => {
@@ -52,7 +52,7 @@ describe("Message rule", () => {
    <T100>
     <T100>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZAG_UNIT_TEST</ARBGB>
+     <ARBGB>ZAGTEST_EMPTY</ARBGB>
      <TEXT>hello world</TEXT>
     </T100>
    </T100>
@@ -78,13 +78,13 @@ describe("Message rule", () => {
    <T100>
     <T100>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZAG_UNIT_TEST</ARBGB>
+     <ARBGB>ZAGTEST_EMPTY</ARBGB>
      <MSGNR>002</MSGNR>
      <TEXT>hello world</TEXT>
     </T100>
     <T100>
      <SPRSL>E</SPRSL>
-     <ARBGB>ZAG_UNIT_TEST</ARBGB>
+     <ARBGB>ZAGTEST_EMPTY</ARBGB>
      <MSGNR>002</MSGNR>
      <TEXT>hello world</TEXT>
     </T100>
