@@ -523,6 +523,12 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     ORDER BY field2.`,
 
   `SELECT name INTO TABLE @data(lt_icon) FROM icon WHERE ( name = 'sdf' ) ORDER BY name.`,
+
+  `SELECT @( foo-head-bar-boo ) AS sdfsd,
+     wakh~aktnr         AS moo
+     FROM wakh
+     WHERE wakh~aktnr IN @lr_aktnr
+     INTO TABLE @tab.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
