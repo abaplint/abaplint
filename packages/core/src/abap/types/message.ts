@@ -2,8 +2,9 @@ export class Message {
   private readonly number: string;
   // the actual text,
   private readonly message: string;
+  private readonly className: string;
 
-  public constructor(number: string, message: string) {
+  public constructor(number: string, message: string, className: string) {
     this.number = number;
     if (this.number === undefined) {
       this.number = "";
@@ -12,6 +13,14 @@ export class Message {
     if (this.message === undefined) {
       this.message = "";
     }
+    this.className = className;
+    if (this.className === undefined) {
+      this.className = "";
+    }
+  }
+
+  public getMessageClass(): string {
+    return this.className;
   }
 
   public getNumber(): string {

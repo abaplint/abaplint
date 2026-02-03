@@ -94,6 +94,21 @@ export class MSAGConsistency implements IRule {
           }
         }
       }
+
+      if (message.getMessageClass() !== obj.getName()) {
+        const text = `Message class "${message.getMessageClass()}" does not match filename "${
+          obj.getName()}" for message ${message.getNumber()}`;
+        const position = new Position(1, 1);
+        const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+    }
+
+    if (obj.getParsed()?.topName !== obj.getName()) {
+      const text = `Message class name "${obj.getParsed()?.topName}" does not match filename "${obj.getName()}"`;
+      const position = new Position(1, 1);
+      const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key, this.conf.severity);
+      issues.push(issue);
     }
 
     return issues;
