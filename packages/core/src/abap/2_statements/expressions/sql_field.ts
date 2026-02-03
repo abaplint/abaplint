@@ -1,7 +1,7 @@
 import {plusPrio, seq, ver, tok, Expression, optPrio, altPrio} from "../combi";
 import {Constant, SQLFieldName, SQLAggregation, SQLCase, SQLAsName, SimpleFieldChain2} from ".";
 import {Version} from "../../../version";
-import {WAt, WParenLeftW, WParenRight, WParenRightW} from "../../1_lexer/tokens";
+import {ParenLeftW, WAt, WParenLeftW, WParenRight, WParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLFunction} from "./sql_function";
 import {SQLPath} from "./sql_path";
@@ -9,7 +9,8 @@ import {SQLPath} from "./sql_path";
 export class SQLField extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const abap = ver(Version.v740sp05, seq(tok(WAt), SimpleFieldChain2), Version.OpenABAP);
+    const atParen = seq(tok(ParenLeftW), SimpleFieldChain2, tok(WParenRightW));
+    const abap = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleFieldChain2, atParen)), Version.OpenABAP);
 
     const as = seq("AS", SQLAsName);
 
