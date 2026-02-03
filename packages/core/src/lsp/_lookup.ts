@@ -21,6 +21,7 @@ import {IMethodDefinition} from "..";
 import {FormDefinition} from "../abap/types";
 import {MacroCall} from "../abap/2_statements/statements/_statement";
 import {IncludeGraph} from "../utils/include_graph";
+import {Visibility} from "../abap/4_file_information/visibility";
 
 export interface LSPLookupResult {
   /** in markdown */
@@ -99,7 +100,11 @@ export class LSPLookup {
     const method = this.findMethodDefinition(cursor, bottomScope.getParent());
     if (method !== undefined && method.getStart().equals(cursor.token.getStart())) {
       const found = LSPUtils.identiferToLocation(method);
-      const hover = "Method Definition \"" + method.getName() + "\"";
+      let hover = "Method Definition \"" + method.getName() + "\"";
+      // Method definitions have getVisibility()
+      const methodDef = method as IMethodDefinition;
+      const visibilityStr = this.visibilityToString(methodDef.getVisibility());
+      hover += "\n\n" + visibilityStr;
       return {hover, definition: found, definitionId: method, scope: bottomScope};
     }
 
@@ -284,8 +289,28 @@ export class LSPLookup {
     return this.methodParameters(methodDef);
   }
 
+  private static visibilityToString(visibility: Visibility): string {
+    switch (visibility) {
+      case Visibility.Public:
+        return "PUBLIC";
+      case Visibility.Protected:
+        return "PROTECTED";
+      case Visibility.Private:
+        return "PRIVATE";
+      default:
+        return "";
+    }
+  }
+
   private static methodParameters(methodDef: IMethodDefinition) {
     let ret = "";
+
+    // Add visibility information
+    const visibilityStr = this.visibilityToString(methodDef.getVisibility());
+    if (visibilityStr) {
+      ret += visibilityStr + "\n\n";
+    }
+
     const parameters = methodDef.getParameters();
 
     const importing = parameters.getImporting();
