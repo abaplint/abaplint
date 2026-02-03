@@ -113,7 +113,6 @@ describe("Message rule", () => {
 </abapGit>`;
 
     const issues = await run(new MemoryFile("zagtest_empty.msag.xml", xml));
-    console.dir(issues);
     expect(issues.length).to.equal(1);
   });
 
