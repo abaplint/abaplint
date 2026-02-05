@@ -288,6 +288,25 @@ CALLING mr_th_manager->receive_result ON END OF TASK.`,
 
   `CALL FUNCTION foo-bar
       EXCEPTION-TABLE gt_excptab.`,
+
+  `CALL FUNCTION 'BDC_OPEN_GROUP'
+    EXPORTING
+      client              = sy-mandt
+      group               = binam
+      user                = usnam
+      keep                = xkeep
+      holddate            = start
+    EXCEPTIONS
+      client_invalid
+      destination_invalid
+      group_invalid
+      group_is_locked
+      holddate_invalid
+      internal_error
+      queue_error
+      running
+      system_lock_error
+      user_invalid.`,
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);
