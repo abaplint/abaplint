@@ -113,6 +113,7 @@ export * from "./omit_parameter_name";
 export * from "./omit_preceding_zeros";
 export * from "./omit_receiving";
 export * from "./parser_702_chaining";
+export * from "./parser_bad_exceptions";
 export * from "./parser_error";
 export * from "./parser_missing_space";
 export * from "./pragma_style";

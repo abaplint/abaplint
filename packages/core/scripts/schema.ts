@@ -115,6 +115,7 @@ import {OmitParameterNameConf} from "../src/rules/omit_parameter_name";
 import {OmitPrecedingZerosConf} from "../src/rules/omit_preceding_zeros";
 import {OmitReceivingConf} from "../src/rules/omit_receiving";
 import {Parser702ChainingConf} from "../src/rules/parser_702_chaining";
+import {ParserBadExceptionsConf} from "../src/rules/parser_bad_exceptions";
 import {ParserErrorConf} from "../src/rules/parser_error";
 import {ParserMissingSpaceConf} from "../src/rules/parser_missing_space";
 import {PragmaStyleConf} from "../src/rules/pragma_style";
@@ -304,6 +305,7 @@ export interface IConfig {
     "omit_preceding_zeros"?: OmitPrecedingZerosConf | boolean,
     "omit_receiving"?: OmitReceivingConf | boolean,
     "parser_702_chaining"?: Parser702ChainingConf | boolean,
+    "parser_bad_exceptions"?: ParserBadExceptionsConf | boolean,
     "parser_error"?: ParserErrorConf | boolean,
     "parser_missing_space"?: ParserMissingSpaceConf | boolean,
     "pragma_style"?: PragmaStyleConf | boolean,
@@ -482,6 +484,7 @@ export interface IConfig {
     "omit_preceding_zeros"?: OmitPrecedingZerosConf | boolean,
     "omit_receiving"?: OmitReceivingConf | boolean,
     "parser_702_chaining"?: Parser702ChainingConf | boolean,
+    "parser_bad_exceptions"?: ParserBadExceptionsConf | boolean,
     "parser_error"?: ParserErrorConf | boolean,
     "parser_missing_space"?: ParserMissingSpaceConf | boolean,
     "pragma_style"?: PragmaStyleConf | boolean,

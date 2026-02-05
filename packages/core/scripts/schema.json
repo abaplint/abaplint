@@ -2889,6 +2889,17 @@
               ],
               "description": "ABAP on 702 does not allow for method chaining with IMPORTING/EXPORTING/CHANGING keywords,\nthis rule finds these and reports errors.\nOnly active on target version 702 and below.\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/parser_702_chaining"
             },
+            "parser_bad_exceptions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ParserBadExceptionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for syntax not recognized by abaplint, related to EXCEPTIONS in CALL FUNCTION.\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/parser_bad_exceptions"
+            },
             "parser_error": {
               "anyOf": [
                 {
@@ -4824,6 +4835,17 @@
                 }
               ],
               "description": "ABAP on 702 does not allow for method chaining with IMPORTING/EXPORTING/CHANGING keywords,\nthis rule finds these and reports errors.\nOnly active on target version 702 and below.\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/parser_702_chaining"
+            },
+            "parser_bad_exceptions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ParserBadExceptionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for syntax not recognized by abaplint, related to EXCEPTIONS in CALL FUNCTION.\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/parser_bad_exceptions"
             },
             "parser_error": {
               "anyOf": [
@@ -7268,6 +7290,23 @@
       "type": "object"
     },
     "Parser702ChainingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "ParserBadExceptionsConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
