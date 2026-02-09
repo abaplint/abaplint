@@ -11,7 +11,7 @@ export class InterfaceDef implements IStatement {
 
     const dataValues = seq("DATA VALUES", plus(val));
 
-    const options = alt(AbstractMethods,
+    const options = alt(seq(AbstractMethods, opt(FinalMethods)),
                         FinalMethods,
                         "ALL METHODS ABSTRACT",
                         "ALL METHODS FINAL",
