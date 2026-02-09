@@ -22,7 +22,6 @@ const repos = [
   "abaplint/deps",
   "dominikpanzer/cacamber-BDD-for-ABAP",
   "exercism/abap",
-  "FreHu/abap-turtle-graphics",
   "heliconialabs/abap-opentelemetry",
   "heliconialabs/abap-protobuf",
   "heliconialabs/abap-pulsar",
