@@ -12292,6 +12292,18 @@ write |\\\\xC2|.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("ok, deref", () => {
+    const abap = `TYPES: BEGIN OF row,
+         bind_type TYPE string,
+       END OF row.
+TYPES tty TYPE STANDARD TABLE OF row WITH DEFAULT KEY.
+DATA mt_attri TYPE REF TO tty.
+DATA(lt_attri) = mt_attri->*.
+DELETE lt_attri WHERE bind_type IS INITIAL.`;
+    const issues = runProgram(abap, [], Version.v740sp08);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("bad string template format", () => {
     const abap = `write |\\xC2|.`;
     const issues = runProgram(abap);
