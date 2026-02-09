@@ -5,6 +5,7 @@ import * as Objects from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {ClassCategory} from "../objects";
 
 export class GlobalClassConf extends BasicRuleConfig {
 }
@@ -25,7 +26,9 @@ export class GlobalClass extends ABAPRule {
 
 * global classes must be global definitions
 
-* global interfaces must be global definitions`,
+* global interfaces must be global definitions
+
+* global FOR TESTING, must have CATEGORY = 05 in the XML`,
       tags: [RuleTag.Syntax],
     };
   }
@@ -55,6 +58,18 @@ export class GlobalClass extends ABAPRule {
       if (definition.isGlobal && !(obj instanceof Objects.Class)) {
         const issue = Issue.atIdentifier(definition.identifier, "Class must be local", this.getMetadata().key, this.conf.severity);
         output.push(issue);
+      }
+
+      if (definition.isGlobal && obj instanceof Objects.Class) {
+        if (definition.isForTesting === true && obj instanceof Objects.Class && obj.getCategory() !== ClassCategory.Test) {
+          const message = "Class is marked as FOR TESTING, but CATEGORY is not 05 in the XML";
+          const issue = Issue.atIdentifier(definition.identifier, message, this.getMetadata().key, this.conf.severity);
+          output.push(issue);
+        } else if (definition.isForTesting === false && obj instanceof Objects.Class && obj.getCategory() === ClassCategory.Test) {
+          const message = "Class has CATEGORY 05 in the XML, but is not marked as FOR TESTING";
+          const issue = Issue.atIdentifier(definition.identifier, message, this.getMetadata().key, this.conf.severity);
+          output.push(issue);
+        }
       }
     }
 

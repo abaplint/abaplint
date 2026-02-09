@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, tok, ver, seq, alt, altPrio, star, opt} from "../combi";
-import {Target, Source} from "../expressions";
+import {Target, Source, Dereference} from "../expressions";
 import {Version} from "../../../version";
 import {WPlus, WDash} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -31,8 +31,9 @@ export class Move implements IStatement {
 
 // todo, move "?=" to CAST?
     const eq = seq(Target, equals, Source);
+    const eqd = seq(Target, equals, Source, Dereference);
 
-    return altPrio(move, eq);
+    return alt(move, eq, eqd);
   }
 
 }

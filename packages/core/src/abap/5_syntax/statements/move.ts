@@ -7,6 +7,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {StatementSyntax} from "../_statement_syntax";
 import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {Dereference} from "../expressions/dereference";
 
 export class Move implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -27,11 +28,15 @@ export class Move implements StatementSyntax {
     }
 
     const source = node.findDirectExpression(Expressions.Source);
-    const sourceType = source ? Source.runSyntax(source, input, targetType) : undefined;
+    let sourceType = source ? Source.runSyntax(source, input, targetType) : undefined;
     if (sourceType === undefined) {
       const message = "No source type determined";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
+    }
+
+    if (node.findDirectExpression(Expressions.Dereference)) {
+      sourceType = Dereference.runSyntax(node, sourceType, input);
     }
 
     if (inline) {
@@ -50,5 +55,6 @@ export class Move implements StatementSyntax {
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
     }
+
   }
 }
