@@ -30,9 +30,10 @@ export class Move implements IStatement {
     const equals = altPrio(altPrio(chained, "?="), calcAssign);
 
 // todo, move "?=" to CAST?
-    const eq = seq(Target, equals, Source, opt(Dereference));
+    const eq = seq(Target, equals, Source);
+    const eqd = seq(Target, equals, Source, Dereference);
 
-    return altPrio(move, eq);
+    return alt(move, eq, eqd);
   }
 
 }

@@ -12304,6 +12304,16 @@ DELETE lt_attri WHERE bind_type IS INITIAL.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, deref hex", () => {
+    const abap = `
+TYPES ty TYPE x LENGTH 1.
+DATA ix_ TYPE x LENGTH 1.
+DATA lr_ TYPE REF TO ty.
+DATA(lx_) = ix_ BIT-XOR lr_->*.`;
+    const issues = runProgram(abap, [], Version.v740sp08);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("bad string template format", () => {
     const abap = `write |\\xC2|.`;
     const issues = runProgram(abap);
