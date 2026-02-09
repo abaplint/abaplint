@@ -453,12 +453,14 @@ const versions = [
     ( _tabname ) ).`, ver: Version.v740sp08},
 
   {abap: "lv_foo *= 2.", ver: Version.OpenABAP},
+
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);
 
 const ok = [
   {abap: `lv_ref_bgqc_name->* = me->ms_item-obj_name.`, ver: Version.v756},
+  {abap: `DATA(sdf1) = CAST ty( val )->*.`, ver: Version.v740sp08}, // at least, maybe lower
 ];
 
 statementVersionOk(ok, "MOVE", Statements.Move);
