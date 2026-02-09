@@ -12292,7 +12292,7 @@ write |\\\\xC2|.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, deref", () => {
+  it("ok, deref", () => {
     const abap = `TYPES: BEGIN OF row,
          bind_type TYPE string,
        END OF row.
