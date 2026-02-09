@@ -62,11 +62,11 @@ export class GlobalClass extends ABAPRule {
 
       if (definition.isGlobal && obj instanceof Objects.Class) {
         if (definition.isForTesting === true && obj instanceof Objects.Class && obj.getCategory() !== ClassCategory.Test) {
-          const message = "Class is marked as FOR TESTING, but CATEGORY is not 05 (Test)";
+          const message = "Class is marked as FOR TESTING, but CATEGORY is not 05 in the XML";
           const issue = Issue.atIdentifier(definition.identifier, message, this.getMetadata().key, this.conf.severity);
           output.push(issue);
         } else if (definition.isForTesting === false && obj instanceof Objects.Class && obj.getCategory() === ClassCategory.Test) {
-          const message = "Class has CATEGORY 05 (Test), but is not marked as FOR TESTING";
+          const message = "Class has CATEGORY 05 in the XML, but is not marked as FOR TESTING";
           const issue = Issue.atIdentifier(definition.identifier, message, this.getMetadata().key, this.conf.severity);
           output.push(issue);
         }
