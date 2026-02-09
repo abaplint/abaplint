@@ -127,6 +127,14 @@ ENDCLASS.`, cnt: 0},
 
   {abap: `WRITE : AT / '|' NO-GAP.`, cnt: 0},
   {abap: `WRITE AT / 'hello'.`, cnt: 0},
+  {abap: `CLASS lcl_foo DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES lif
+      ABSTRACT METHODS
+      meth1
+      FINAL METHODS
+      meth2.
+ENDCLASS.`, cnt: 0},
 ];
 
 testRule(tests, KeywordCase);
