@@ -28,7 +28,7 @@ export class GlobalClass extends ABAPRule {
 
 * global interfaces must be global definitions
 
-* FOR TESTING, must have CATEGORY = 05`,
+* global FOR TESTING, must have CATEGORY = 05 in the XML`,
       tags: [RuleTag.Syntax],
     };
   }
