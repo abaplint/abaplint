@@ -4027,6 +4027,24 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("instantiate abstract, 5, global", () => {
+    const cls = `
+  CLASS cl_vehicle DEFINITION ABSTRACT.
+  ENDCLASS.
+  CLASS cl_vehicle IMPLEMENTATION.
+  ENDCLASS.`;
+
+    const abap = `START-OF-SELECTION.
+  DATA: BEGIN OF foo,
+          bar TYPE REF TO cl_vehicle,
+        END OF foo.
+  CREATE OBJECT foo-bar.`;
+    const issues = runMulti([
+      {contents: cls, filename: "cl_vehicle.clas.abap"},
+      {contents: abap, filename: "zprogram.prog.abap"}]);
+    expect(issues.length).to.equals(1);
+  });
+
   it("ADD", () => {
     const abap = `
   DATA int TYPE i.

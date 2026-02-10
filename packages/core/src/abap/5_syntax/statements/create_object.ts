@@ -71,8 +71,9 @@ export class CreateObject implements StatementSyntax {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       } else if (found instanceof ObjectReferenceType) {
-        const id = found.getIdentifier();
-        if (id instanceof InterfaceDefinition && type === undefined) {
+        const identifier = found.getIdentifier();
+        const idFound = input.scope.findObjectDefinition(identifier.getName());
+        if (idFound instanceof InterfaceDefinition && type === undefined) {
           const message = "Interface reference, cannot be instantiated";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return;
@@ -82,11 +83,11 @@ export class CreateObject implements StatementSyntax {
           const message = "Interface reference, cannot be instantiated";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return;
-        } else if (id instanceof ClassDefinition && cdef === undefined) {
-          cdef = id;
+        } else if (idFound instanceof ClassDefinition && cdef === undefined) {
+          cdef = idFound;
         }
-        if (type === undefined && id instanceof ClassDefinition && id.isAbstract() === true) {
-          const message = id.getName() + " is abstract, cannot be instantiated";
+        if (type === undefined && idFound instanceof ClassDefinition && idFound.isAbstract() === true) {
+          const message = identifier.getName() + " is abstract, cannot be instantiated";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return;
         }

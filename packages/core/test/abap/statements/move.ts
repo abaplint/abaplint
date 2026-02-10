@@ -461,6 +461,7 @@ statementVersion(versions, "MOVE", Statements.Move);
 const ok = [
   {abap: `lv_ref_bgqc_name->* = me->ms_item-obj_name.`, ver: Version.v756},
   {abap: `DATA(sdf1) = CAST ty( val )->*.`, ver: Version.v740sp08}, // at least, maybe lower
+  {abap: `DATA(sdf) = VALUE tystru( sdf = CAST tynumc( foo )->* ).`, ver: Version.v740sp08}, // at least, maybe lower
 ];
 
 statementVersionOk(ok, "MOVE", Statements.Move);
