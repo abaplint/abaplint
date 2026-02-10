@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, tok, ver, seq, alt, altPrio, star, opt} from "../combi";
-import {Target, Source, Dereference} from "../expressions";
+import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {WPlus, WDash} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -17,7 +17,6 @@ export class Move implements IStatement {
                        seq(Source, altPrio("?TO", "TO"), Target)),
                      opt(seq("PERCENTAGE", Source, opt(alt("LEFT", "RIGHT")))));
 
-
     const calcAssign = ver(Version.v754,
                            alt(seq(tok(WPlus), "="),
                                seq(tok(WDash), "="),
@@ -31,9 +30,8 @@ export class Move implements IStatement {
 
 // todo, move "?=" to CAST?
     const eq = seq(Target, equals, Source);
-    const eqd = seq(Target, equals, Source, Dereference);
 
-    return alt(move, eq, eqd);
+    return alt(move, eq);
   }
 
 }
