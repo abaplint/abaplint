@@ -4027,7 +4027,7 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(1);
   });
 
-  it.only("instantiate abstract, 5, global", () => {
+  it("instantiate abstract, 5, global", () => {
     const cls = `
   CLASS cl_vehicle DEFINITION ABSTRACT.
   ENDCLASS.
