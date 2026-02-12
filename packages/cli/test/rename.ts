@@ -130,4 +130,8 @@ ENDCLASS.`;
     expect(sicfNew).to.include("<ICFHANDLER>ZCL_HANDLER_NEW</ICFHANDLER>");
   });
 
+    CLASS-METHODS create
+      IMPORTING
+        iv_sci_result  TYPE zif_abapgit_definitions=>ty DEFAULT zif_abapgit_definitions=>c_value.
+
 });
