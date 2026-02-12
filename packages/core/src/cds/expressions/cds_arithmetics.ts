@@ -9,10 +9,14 @@ export class CDSArithmetics extends Expression {
     const val = altPrio(CDSInteger, CDSFunction, CDSCase, CDSCast, CDSString, CDSAggregate, name);
     const operator = altPrio("+", "-", "*", "/");
 
+    // Support unary operators (e.g., "- field" in CASE expressions)
+    const unary = altPrio("-", "+");
+    const unaryExpression = seq(unary, val);
+
     const operatorValue = seq(operator, val);
     const paren = seq("(", val, plusPrio(operatorValue), ")");
     const noParen = seq(val, plusPrio(operatorValue));
     // todo: this is pretty bad, it needs a rewrite
-    return altPrio(seq(paren, starPrio(operatorValue)), noParen);
+    return altPrio(unaryExpression, seq(paren, starPrio(operatorValue)), noParen);
   }
 }

@@ -1331,4 +1331,104 @@ define view zhvam as select from t100
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("field annotation with colon and boolean value", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
+define view zhvamfoocust as select from zhvam_cust {
+  @Semantics.businessDate.from:true
+  key valid_from as ValidityStartDate,
+  @Semantics.businessDate.to:false
+  valid_to as ValidityEndDate
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("field annotation with colon and enum value", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZSDF'
+define view zhvamfoocust as select from zhvam_cust {
+  @Consumption.filter.mandatory:true
+  @Consumption.filter.selectionType:#SINGLE
+  key mandt
+};`;
+    const file = new MemoryFile("foobar.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("SAP standard view with field annotations", () => {
+    const cds = `@EndUserText.label: 'Business Partner Default Address'
+@AbapCatalog.sqlViewName: 'IBPDEFADDR'
+define view I_BusinessPartnerDefaultAddr
+  as select from but020
+    inner join   but021_fs on  but020.partner       = but021_fs.partner
+                           and but020.addrnumber    = but021_fs.addrnumber
+{
+  key but020.partner as BusinessPartner,
+      @Semantics.businessDate.from:true
+      but020.addr_valid_from as ValidityStartDate,
+      @Semantics.businessDate.to:true
+      but020.addr_valid_to as ValidityEndDate
+}`;
+    const file = new MemoryFile("i_businesspartnerdefaultaddr.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("unary minus operator in CASE expression", () => {
+    const cds = `define view Test as select from tab {
+  cast( case when flag = 'X' then - amount else 0 end as mytype ) as result
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("unary plus operator in CASE expression", () => {
+    const cds = `define view Test as select from tab {
+  case when flag = 'X' then + amount else 0 end as result
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("complex CASE with unary minus and preserving type", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'ZTEST'
+define view Test as select from tab1 as T1
+  inner join tab2 as T2 on T2.id = T1.id
+{
+  @Semantics.currencyCode: true
+  T1.currency,
+  @Semantics: { amount : { currencyCode: 'currency'} }
+  cast( case when T2.flag = 'X' and T1.run is not initial and T1.run is not null
+    then - T1.amount
+    else 0
+  end as mytype preserving type ) as CutbackAmount
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("unary minus with field path expression", () => {
+    const cds = `define view Test as select from tab {
+  case when 1 = 1 then - tab.field1 else tab.field2 end as result
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("multiple unary operators in same view", () => {
+    const cds = `define view Test as select from tab {
+  case when flag = 'X' then - amount1 else 0 end as result1,
+  case when flag = 'Y' then + amount2 else 0 end as result2,
+  case when flag = 'Z' then - amount3 else + amount4 end as result3
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
