@@ -130,8 +130,46 @@ ENDCLASS.`;
     expect(sicfNew).to.include("<ICFHANDLER>ZCL_HANDLER_NEW</ICFHANDLER>");
   });
 
+  it("renames interface referenced in DEFAULT value", async () => {
+    const intf = `INTERFACE zif_abapgit_definitions PUBLIC.
+  TYPES ty TYPE i.
+  CONSTANTS c_value TYPE i VALUE 1.
+ENDINTERFACE.`;
+
+    const clas = `CLASS zcl_example DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
     CLASS-METHODS create
       IMPORTING
         iv_sci_result  TYPE zif_abapgit_definitions=>ty DEFAULT zif_abapgit_definitions=>c_value.
+ENDCLASS.
+CLASS zcl_example IMPLEMENTATION.
+  METHOD create.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const file1 = new MemoryFile("zif_abapgit_definitions.intf.abap", intf);
+    const file2 = new MemoryFile("zcl_example.clas.abap", clas);
+    const reg = new Registry().addFiles([file1, file2]).parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[file1.getFilename()] = file1.getRaw();
+    jsonFiles[file2.getFilename()] = file2.getRaw();
+
+    const volume = memfs.Volume.fromJSON(jsonFiles);
+    const mockFS = memfs.createFsFromVolume(volume);
+
+    const config = reg.getConfig().get();
+    config.rename = {"patterns": [{"type": "INTF", "oldName": "zif_abapgit_definitions", "newName": "yif_definitions"}]};
+
+    new Rename(reg).run(config, "base", mockFS, true);
+
+    const intfNew = mockFS.readFileSync("yif_definitions.intf.abap").toString();
+    expect(intfNew).to.include("INTERFACE yif_definitions");
+
+    const clasNew = mockFS.readFileSync(file2.getFilename()).toString();
+    expect(clasNew).to.include("TYPE yif_definitions=>ty");
+    expect(clasNew).to.include("DEFAULT yif_definitions=>c_value");
+    expect(clasNew).to.include("CLASS-METHODS create");
+  });
 
 });
