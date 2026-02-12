@@ -7,14 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-    - name: npm run install
-      run: npm run install
-    - name: npm test
-      run: npm test
-    - name: npm run web.syntax
-      run: npm run web.syntax
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
+    - run: npm run install
+    - run: npm test
+    - run: npm run web.syntax
     - name: deploy syntax.abaplint.org
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main' && github.repository == 'abaplint/abaplint'

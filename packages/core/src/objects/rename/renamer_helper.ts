@@ -35,7 +35,15 @@ export class RenamerHelper {
     }
 
     // start with the last reference in the file first, if there are multiple refs per line
-    return this.replaceRefs(refs, oldName, newName).reverse();
+    // sort refs by position descending (row desc, then col desc) so edits don't corrupt positions
+    refs.sort((a, b) => {
+      const rowDiff = b.getStart().getRow() - a.getStart().getRow();
+      if (rowDiff !== 0) {
+        return rowDiff;
+      }
+      return b.getStart().getCol() - a.getStart().getCol();
+    });
+    return this.replaceRefs(refs, oldName, newName);
   }
 
   public renameDDICCodeReferences(obj: IObject, oldName: string, newName: string): TextDocumentEdit[] {

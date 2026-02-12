@@ -7,14 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-    - name: npm run install
-      run: npm run install
-    - name: npm test
-      run: npm test
-    - name: npm run web.playground
-      run: npm run web.playground
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
+    - run: npm run install
+    - run: npm test
+    - run: npm run web.playground
     - name: Dump GitHub context
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
