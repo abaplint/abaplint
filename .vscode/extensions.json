@@ -1,12 +1,10 @@
 {
-	"recommendations": [
+  "recommendations": [
     "mrmlnc.vscode-duplicate",
     "dbaeumer.vscode-eslint",
-	"pflannery.vscode-versionlens",
-	"hbenl.vscode-mocha-test-adapter",
-	"hbenl.vscode-test-explorer"
-	],
-	"unwantedRecommendations": [
-
-	]
+    "legalfina.npm-version-lens",
+    "hbenl.vscode-mocha-test-adapter",
+    "hbenl.vscode-test-explorer"
+  ],
+  "unwantedRecommendations": []
 }
