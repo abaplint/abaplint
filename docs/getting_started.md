@@ -127,3 +127,47 @@ Note: `select_single_full_key` to give all findings, abaplint must know the data
   }
 }
 ```
+
+## open-abap
+
+```json
+{
+  "global": {
+    "files": "/src/**/*.*"
+  },
+  "dependencies": [
+    {
+      "url": "https://github.com/open-abap/open-abap-core",
+      "files": "/src/**/*.*"
+    }
+  ],
+  "syntax": {
+    "version": "open-abap",
+    "errorNamespace": "."
+  },
+  "rules": {
+    "begin_end_names": true,
+    "cds_parser_error": true,
+    "check_ddic": true,
+    "check_include": true,
+    "check_syntax": true,
+    "check_transformation_exists": true,
+    "dynpro_checks": true,
+    "global_class": true,
+    "identical_form_names": true,
+    "implement_methods": true,
+    "local_testclass_consistency": true,
+    "message_exists": true,
+    "method_implemented_twice": true,
+    "mix_returning": true,
+    "no_comments_between_methods": true,
+    "parser_bad_exceptions": true,
+    "parser_error": true,
+    "parser_missing_space": true,
+    "sql_escape_host_variables": true,
+    "superclass_final": true,
+    "unknown_types": true,
+    "xml_consistency": true
+  }
+}
+```
