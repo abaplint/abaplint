@@ -7,8 +7,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = ({mode} = {mode: "development"}) => ({
   entry: {
     "app": "./src/index.ts",
-    "editor.worker": "monaco-editor/esm/vs/editor/editor.worker.js",
-    "json.worker": "monaco-editor/esm/vs/language/json/json.worker.js",
   },
   mode,
   output: {
@@ -24,6 +22,9 @@ module.exports = ({mode} = {mode: "development"}) => ({
     hot: true,
   },
   resolve: {
+    alias: {
+      "monaco-editor$": path.resolve(__dirname, "node_modules/monaco-editor/esm/vs/editor/editor.main.js"),
+    },
     fallback: {
       "buffer": require.resolve("buffer/"),
       "path": require.resolve("path-browserify"),

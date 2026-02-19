@@ -1,11 +1,13 @@
 // @ts-ignore
-global.MonacoEnvironment = {
+self.MonacoEnvironment = {
   globalAPI: true,
-  getWorkerUrl: function (_moduleId: any, label: any) {
+  getWorker: function (_moduleId: string, label: string) {
     if (label === "json") {
-      return "./json.worker.bundle.js";
+      // @ts-ignore
+      return new Worker(new URL("monaco-editor/esm/vs/language/json/json.worker.js", import.meta.url));
     }
-    return "./editor.worker.bundle.js";
+    // @ts-ignore
+    return new Worker(new URL("monaco-editor/esm/vs/editor/editor.worker.js", import.meta.url));
   },
 };
 
@@ -55,7 +57,7 @@ function main(): void {
 function registerMonacoSettings(reg: IRegistry) {
   monacoABAP.registerABAP(reg);
 
-  monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+  monaco.json.jsonDefaults.setDiagnosticsOptions({
     validate: true,
     schemas: [{
       uri: "https://schema.abaplint.org/schema.json",
