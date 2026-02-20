@@ -232,9 +232,15 @@ export class RenamerHelper {
 
   private replaceRefs(refs: Identifier[], oldName: string, newName: string): TextDocumentEdit[] {
     const changes: TextDocumentEdit[] = [];
+    const seen = new Set<string>();
 
     // "zif_abapgit_auth~is_allowed" is a single token so only replace the first part of a token
     for (const r of refs) {
+      const key = r.getFilename() + ":" + r.getStart().getRow() + ":" + r.getStart().getCol();
+      if (seen.has(key)) {
+        continue;
+      }
+      seen.add(key);
       const range = Range.create(
         r.getStart().getRow() - 1,
         r.getStart().getCol() - 1,
