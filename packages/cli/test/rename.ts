@@ -172,4 +172,55 @@ ENDCLASS.`;
     expect(clasNew).to.include("CLASS-METHODS create");
   });
 
+  it("renames top interface with method, enclosed interface, and implementing class", async () => {
+    const top = `INTERFACE zif_top PUBLIC.
+  METHODS do_something.
+ENDINTERFACE.`;
+
+    const wrapper = `INTERFACE zif_wrapper PUBLIC.
+  INTERFACES zif_top.
+ENDINTERFACE.`;
+
+    const clas = `CLASS zcl_impl DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_wrapper.
+ENDCLASS.
+
+CLASS zcl_impl IMPLEMENTATION.
+  METHOD zif_top~do_something.
+    rv_result = iv_value.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const file1 = new MemoryFile("zif_top.intf.abap", top);
+    const file2 = new MemoryFile("zif_wrapper.intf.abap", wrapper);
+    const file3 = new MemoryFile("zcl_impl.clas.abap", clas);
+    const reg = new Registry().addFiles([file1, file2, file3]).parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[file1.getFilename()] = file1.getRaw();
+    jsonFiles[file2.getFilename()] = file2.getRaw();
+    jsonFiles[file3.getFilename()] = file3.getRaw();
+
+    const volume = memfs.Volume.fromJSON(jsonFiles);
+    const mockFS = memfs.createFsFromVolume(volume);
+
+    const config = reg.getConfig().get();
+    config.rename = {"patterns": [{"type": "INTF", "oldName": "zif_top", "newName": "ZIF_AA"}]};
+
+    new Rename(reg).run(config, "base", mockFS, true);
+
+    // top interface file renamed and content updated
+    const topNew = mockFS.readFileSync("zif_aa.intf.abap").toString();
+    expect(topNew).to.include("INTERFACE zif_aa");
+
+    // wrapper interface references updated
+    const wrapperNew = mockFS.readFileSync(file2.getFilename()).toString();
+    expect(wrapperNew).to.include("INTERFACES zif_aa");
+
+    // class references updated
+    const clasNew = mockFS.readFileSync(file3.getFilename()).toString();
+    expect(clasNew).to.include("METHOD zif_aa~do_something");
+  });
+
 });
