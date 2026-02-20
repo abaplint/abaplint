@@ -10,6 +10,7 @@ jobs:
     - uses: actions/checkout@v6
     - uses: actions/setup-node@v6
     - run: npm run install
+    - run: npm run link-local
     - run: npm test
     - run: npm run web.playground
     - name: Dump GitHub context
