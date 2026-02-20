@@ -222,7 +222,6 @@ ENDCLASS.`;
 
     // class references updated
     const clasNew = mockFS.readFileSync(file3.getFilename()).toString();
-    console.log(clasNew);
     expect(clasNew).to.include("METHOD zif_aa~do_something");
   });
 
