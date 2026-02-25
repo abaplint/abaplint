@@ -1791,8 +1791,8 @@ SELECT SINGLE sprsl, arbgb
     const reg = new Registry().addFiles([file, t100]).parse();
     const hover = new Hover(reg).find(buildPosition(file, 3, 17));
     expect(hover).to.not.equal(undefined);
-    console.dir(hover);
     expect(hover?.value).to.not.contain("SELECT_todo");
+    expect(hover?.value).to.contain("inline");
   });
 
 });
