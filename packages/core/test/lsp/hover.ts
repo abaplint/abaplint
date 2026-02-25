@@ -6,6 +6,7 @@ import {IFile} from "../../src/files/_ifile";
 import {ITextDocumentPositionParams} from "../../src/lsp/_interfaces";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Config} from "../../src";
+import {tabl_t100xml} from "../rules/sql_value_conversion";
 
 function buildPosition(file: IFile, row: number, column: number): ITextDocumentPositionParams {
   return {
@@ -1778,6 +1779,19 @@ ENDCLASS.`;
     const hover = new Hover(reg).find(buildPosition(file, 2, 17));
     expect(hover).to.not.equal(undefined);
     expect(hover?.value).to.contain("PROTECTED");
+  });
+
+  it("ls_afko, inline data type", () => {
+    const abap = `
+SELECT SINGLE stlty, stlnr, stlal, sdatv
+  FROM afko
+  INTO @DATA(ls_afko).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const t100 = new MemoryFile("t100.tabl.xml", tabl_t100xml);
+    const reg = new Registry().addFiles([file, t100]).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 3, 17));
+    expect(hover).to.not.equal(undefined);
+    console.dir(hover);
   });
 
 });
