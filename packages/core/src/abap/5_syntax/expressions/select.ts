@@ -327,7 +327,7 @@ export class Select {
         }
       }
       if (!(dbType instanceof StructureType)) {
-        return VoidType.get("SELECT_todo10");
+        return VoidType.get("SELECT_todo14");
       }
       const allFieldsSimple = fields.every(f => isSimple.test(f.code));
       if (allFieldsSimple === true) {
