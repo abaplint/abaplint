@@ -316,8 +316,34 @@ export class Select {
           return VoidType.get("SELECT_todo10");
         }
       }
+    } else if (dbSources.length === 1) {
+      const dbType = dbSources[0]?.parseType(scope.getRegistry());
+      if (dbType === undefined) {
+        const name = dbSources[0]?.getName() || "buildStructureTypeError";
+        if (scope.getRegistry().inErrorNamespace(name) === true) {
+          return new UnknownType("Select, " + name + " not found");
+        } else {
+          return VoidType.get(dbSources[0]?.getName());
+        }
+      }
+      if (!(dbType instanceof StructureType)) {
+        return VoidType.get("SELECT_todo10");
+      }
+      const allFieldsSimple = fields.every(f => isSimple.test(f.code));
+      if (allFieldsSimple === true) {
+        const components: IStructureComponent[] = [];
+        for (const field of fields) {
+          const type = dbType.getComponentByName(field.code);
+          if (type === undefined) {
+            return VoidType.get("SELECT_todo9");
+          }
+          components.push({name: field.as || field.code, type});
+        }
+        return new StructureType(components);
+      }
+      return VoidType.get("SELECT_todo12");
     } else {
-      return VoidType.get("SELECT_todo9");
+      return VoidType.get("SELECT_todo13");
     }
   }
 
