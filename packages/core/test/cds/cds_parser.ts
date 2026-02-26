@@ -1721,6 +1721,39 @@ where active = #icl_active.'A'`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("aggregate with string literal argument (max(''))", () => {
+    const cds = `define view Test as select from tab {
+  max('') as EmptyStr,
+  max('X') as FlagField
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("aggregate with inline type cast (avg(field AS type))", () => {
+    const cds = `define view Test as select from tab {
+  avg(Field as abap.dec(21, 6)) as AvgField,
+  sum(OtherField as abap.dec(21, 6)) as SumField
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("nested parenthesized join as data source", () => {
+    const cds = `define view Test as select from(
+    (
+      T1 as t1 inner join T2 as t2 on t2.id = t1.id
+    )
+    inner join T3 on T3.id = t1.id
+  )
+{ key Field }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("table function with annotations on return fields", () => {
     const cds = `define table function P_Test
   with parameters
