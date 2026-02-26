@@ -1721,6 +1721,90 @@ where active = #icl_active.'A'`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("table function with annotations on return fields", () => {
+    const cds = `define table function P_Test
+  with parameters
+    @Environment.systemField: #CLIENT
+    P_Client : abap.clnt
+returns {
+  SAPClient : abap.clnt;
+  @Semantics.quantity.unitOfMeasure: 'Unit'
+  @DefaultAggregation: #SUM
+  Reading   : abap.dec( 28, 5 );
+  @Semantics.unitOfMeasure: true
+  Unit      : myunit;
+}
+implemented by method CL_TEST=>METHOD;`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("double operator in arithmetic (A + + B, A + -B)", () => {
+    const cds = `define view Test as select from t {
+  cast(A + + B as mytype) as F1,
+  cast(A + -B as mytype) as F2
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("composition of exact one to many", () => {
+    const cds = `define root view entity Test as select from tab
+  composition of exact one to many I_Text as _Text
+{ key Field }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("composition of one to many", () => {
+    const cds = `define view Test as select from tab
+  composition of one to many I_Text as _Text
+{ key Field }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("composition of numeric cardinality [0..*]", () => {
+    const cds = `define view Test as select from tab
+  composition of [0..*] I_Text as _Text
+{ key Field }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("LIKE ESCAPE in WHERE clause", () => {
+    const cds = `define view Test as select from t { key Field }
+where Field like 'ACDOC@_%' escape '@'`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("aggregate with path filter argument (max(assoc[filter].field))", () => {
+    const cds = `define view Test as select from a {
+  max(a._Item[FinancialAccountType = 'D'].Customer) as Customer,
+  max(a._Item[1: FinancialAccountType = 'D'].PaymentTerms) as PaymentTerms
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("zero-argument function utcl_current()", () => {
+    const cds = `define view Test as select from tab {
+  key Field,
+  utcl_current() as UtclTimestamp
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("condition comparison with parenthesized function call on right side (field >= (function()))", () => {
     const cds = `define view Test as select from src {
   case when src.Qty >= (division(src.A, 100, 3))

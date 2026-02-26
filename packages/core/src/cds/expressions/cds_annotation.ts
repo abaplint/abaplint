@@ -7,8 +7,8 @@ export class CDSAnnotation extends Expression {
   public getRunnable(): IStatementRunnable {
     const nameWithSlash = seq(regex(/^\w+$/), star(seq("/", regex(/^\w+$/))));
 
-    // Support both "@Name" (single token) and "@ Name" (two tokens with space)
-    const annotationStart = alt(regex(/^@\w+$/), seq("@", regex(/^\w+$/)));
+    // Support both "@Name" (single token), "@ Name" (two tokens), and "@< Name" (inline backward annotation)
+    const annotationStart = alt(regex(/^@\w+$/), seq("@", regex(/^\w+$/)), seq("@", "<", regex(/^\w+$/)));
 
     return seq(annotationStart, star(seq(".", nameWithSlash)),
                opt(seq(":", alt(CDSAnnotationArray, CDSAnnotationObject, CDSAnnotationSimple))));

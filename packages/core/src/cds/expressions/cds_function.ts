@@ -33,6 +33,7 @@ export class CDSFunction extends Expression {
 
     const tstmp_is_valid = seq("TSTMP_IS_VALID", "(", CDSFunctionInput, ")");
     const tstmp_current_utctimestamp = seq("TSTMP_CURRENT_UTCTIMESTAMP", "(", ")");
+    const utcl_current = seq("UTCL_CURRENT", "(", ")");
     const tstmp_seconds_between = seq("TSTMP_SECONDS_BETWEEN", "(", CDSFunctionInput, ",", CDSFunctionInput, ",", CDSFunctionInput, ")");
     const tstmp_add_seconds = seq("TSTMP_ADD_SECONDS", "(", CDSFunctionInput, ",", CDSFunctionInput, ",", CDSFunctionInput, ")");
 
@@ -65,7 +66,7 @@ export class CDSFunction extends Expression {
     return altPrio(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
                    upper, lower, abs, ceil, floor, round, div, division,
                    concat_with_space, dats_is_valid, dats_days_between, tstmp_add_seconds,
-                   tstmp_seconds_between, tstmp_current_utctimestamp, tstmp_is_valid,
+                   tstmp_seconds_between, tstmp_current_utctimestamp, tstmp_is_valid, utcl_current,
                    abap_system_timezone, abap_user_timezone, bintohex, hextobin,
                    dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp, mod,
                    left, right, lpad, rpad, instr, length, ltrim, rtrim, replace,
