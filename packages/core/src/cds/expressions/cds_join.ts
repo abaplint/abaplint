@@ -9,6 +9,7 @@ export class CDSJoin extends Expression {
       "LEFT OUTER MANY TO EXACT ONE", "LEFT OUTER ONE TO EXACT ONE", "LEFT OUTER ONE TO MANY",
       "LEFT OUTER TO ONE", "LEFT OUTER TO MANY", "LEFT OUTER",
       "INNER ONE TO MANY", "INNER MANY TO ONE", "INNER ONE TO EXACT ONE", "INNER MANY TO EXACT ONE",
+      "INNER TO MANY", "INNER TO ONE", "INNER TO EXACT ONE",
       "INNER", "CROSS", "RIGHT OUTER",
     ));
     const cond = seq(CDSSource, "ON", CDSCondition);

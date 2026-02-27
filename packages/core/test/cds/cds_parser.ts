@@ -2234,10 +2234,101 @@ define view I_Test
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("backslash-escaped single quote in annotation string (lexer fix)", () => {
+    const cds = `@EndUserText.label: 'Days\\' Supply'
+define view Test as select from src { key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("block comment starting with /* immediately before content (cds_lexer fix)", () => {
+    const cds = `/*! comment */
+define view Test as select from src { key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy with MULTIPLE PARENTS NOT ALLOWED", () => {
+    const cds = `define hierarchy Test as parent child hierarchy (
+  source src
+  child to parent association _Parent
+  start where Id = '1'
+  siblings order by Id
+  multiple parents not allowed
+) { key Id }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("association with text cardinality (to exact one)", () => {
+    const cds = `define view Test as select from src
+  association to exact one Target as _Assoc on _Assoc.Id = src.Id
+{ key A, _Assoc }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("composition of many", () => {
+    const cds = `define view Test as select from src
+  composition of many Child as _Child
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("triply nested parenthesized JOIN source", () => {
+    const cds = `define view Test as select from (((t1 join t2 on t1.id = t2.id) join t3 on t3.id = t1.id) join t4 on t4.id = t1.id) {
+  key t1.Id
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("LIKE ESCAPE in condition", () => {
     const cds = `define view Test as select from tab {
   key Id
 } where Name like '%foo%' escape '#'`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("define transient view entity as projection on with parameters and pre-body association", () => {
+    const cds = `define transient view entity TestProj
+  with parameters P1: type1
+  as projection on Base
+  association [0..1] to Target as _Assoc on _Assoc.Id = Base.Id
+{
+  key A,
+  _Assoc
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("inner to many join type", () => {
+    const cds = `define view Test as select from t1
+  inner to many join t2 on t1.Id = t2.Id {
+  key t1.Id
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("define custom entity with namespace types and semicolon-terminated fields", () => {
+    const cds = `@ObjectModel.query.implementedBy: 'ABAP:CL_MY_QUERY'
+define custom entity TestCustom {
+  key KeyField: /ns/my_type;
+  ValueField: /ns/other_type;
+}`;
     const file = new MemoryFile("test.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
     expect(parsed).to.be.instanceof(ExpressionNode);
