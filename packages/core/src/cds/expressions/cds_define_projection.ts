@@ -1,6 +1,6 @@
 import {CDSAnnotation, CDSAs, CDSAssociation, CDSElement, CDSName, CDSProviderContract, CDSWhere, CDSWithParameters} from ".";
 import {Version} from "../..";
-import {Expression, seq, star, plus, opt, str, ver} from "../../abap/2_statements/combi";
+import {Expression, seq, star, opt, str, ver} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSDefineProjection extends Expression {
@@ -19,8 +19,7 @@ export class CDSDefineProjection extends Expression {
                opt(CDSAs),
                star(CDSAssociation),
                str("{"),
-               plus(CDSElement),
-               star(seq(",", CDSElement)),
+               seq(CDSElement, star(seq(",", CDSElement)), opt(",")),
                str("}"),
                opt(CDSWhere),
                opt(";"));

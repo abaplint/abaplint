@@ -9,8 +9,8 @@ export class CDSSelect extends Expression {
     const fields = seq(star(seq(CDSElement, ",")), CDSElement);
     const distinct = str("DISTINCT");
 
-    // trailing-comma pattern: (elem ,)* elem — handles both separator and trailing commas
-    const elementList = seq(star(seq(CDSElement, ",")), CDSElement);
+    // elem (,elem)* [,] — handles separator commas and optional trailing comma
+    const elementList = seq(CDSElement, star(seq(",", CDSElement)), opt(","));
 
     const elements = seq(str("{"), altPrio("*", elementList), str("}"));
 

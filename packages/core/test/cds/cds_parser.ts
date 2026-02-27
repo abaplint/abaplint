@@ -2334,4 +2334,38 @@ define custom entity TestCustom {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("annotation value with #(dotted.path) expression", () => {
+    const cds = `define view Test as select from src {
+  @UI: { lineItem: [{ hidden: #(_Header.PartnerCnsldtnUnitIsHidden) }] }
+  key A
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy with CACHE OFF", () => {
+    const cds = `define hierarchy Test as parent child hierarchy (
+  source src
+  child to parent association _Parent
+  start where Id = '1'
+  siblings order by Id
+  cache off
+) { key Id }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("trailing comma after last field in element list", () => {
+    const cds = `define view Test as select from src {
+  key A,
+  B,
+  C,
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

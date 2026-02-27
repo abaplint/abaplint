@@ -20,7 +20,7 @@ export class CDSDefineHierarchy extends Expression {
       opt(seq("MULTIPLE", "PARENTS", altPrio("NOT ALLOWED", "ALLOWED"))),
       opt(seq("ORPHANS", altPrio("IGNORE", "ROOT"))),
       opt(seq("CYCLES", "BREAKUP")),
-      opt(seq("CACHE", altPrio("FORCE", "NONE", "EMPTY"))),
+      opt(seq("CACHE", altPrio("FORCE", "NONE", "EMPTY", "OFF"))),
     );
 
     return seq(
