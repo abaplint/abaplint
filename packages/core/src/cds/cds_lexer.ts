@@ -147,6 +147,7 @@ export class CDSLexer {
         case ")":
         case "[":
         case "]":
+        case "!":
         case "=":
         case "<":
         case ">":
