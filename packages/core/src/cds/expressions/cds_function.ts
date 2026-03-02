@@ -57,11 +57,14 @@ export class CDSFunction extends Expression {
 
     const fltp_to_dec = seq("FLTP_TO_DEC", "(", CDSFunctionInput, "AS", CDSType, ")");
 
+    const curr_to_decfloat_amount = seq("CURR_TO_DECFLOAT_AMOUNT", "(", CDSFunctionInput, ")");
+
     const conversionInput = seq(CDSName, "=", ">", CDSFunctionInput);
     const conversionInputs = seq(conversionInput, starPrio(seq(",", conversionInput)));
     const unitConversion = seq("UNIT_CONVERSION", "(", conversionInputs, ")");
     const currencyConversion = seq("CURRENCY_CONVERSION", "(", conversionInputs, ")");
     const decimalShift = seq("DECIMAL_SHIFT", "(", conversionInputs, ")");
+    const ratioOf = seq("RATIO_OF", "(", conversionInputs, ")");
 
     return altPrio(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
                    upper, lower, abs, ceil, floor, round, div, division,
@@ -70,6 +73,7 @@ export class CDSFunction extends Expression {
                    abap_system_timezone, abap_user_timezone, bintohex, hextobin,
                    dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp, mod,
                    left, right, lpad, rpad, instr, length, ltrim, rtrim, replace,
-                   unitConversion, currencyConversion, decimalShift, fltp_to_dec);
+                   unitConversion, currencyConversion, decimalShift, fltp_to_dec, ratioOf,
+                   curr_to_decfloat_amount);
   }
 }

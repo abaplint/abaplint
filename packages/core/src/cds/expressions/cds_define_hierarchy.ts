@@ -1,4 +1,4 @@
-import {CDSAnnotation, CDSAs, CDSCondition, CDSName, CDSParametersSelect, CDSPrefixedName, CDSWithParameters} from ".";
+import {CDSAnnotation, CDSAs, CDSCondition, CDSInteger, CDSName, CDSParametersSelect, CDSPrefixedName, CDSWithParameters} from ".";
 import {Expression, opt, seq, star, altPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
@@ -17,6 +17,7 @@ export class CDSDefineHierarchy extends Expression {
       opt(seq("START", "WHERE", CDSCondition)),
       opt(siblingsOrder),
       opt(seq("NODETYPE", CDSName)),
+      opt(seq("DEPTH", CDSInteger)),
       opt(seq("MULTIPLE", "PARENTS", altPrio("NOT ALLOWED", "ALLOWED"))),
       opt(seq("ORPHANS", altPrio("IGNORE", "ROOT"))),
       opt(seq("CYCLES", "BREAKUP")),

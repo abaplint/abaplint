@@ -2368,4 +2368,84 @@ define custom entity TestCustom {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("view without DEFINE keyword (deprecated form)", () => {
+    const cds = `@AbapCatalog.sqlViewName: 'CEFDITMAAAPPRVL'
+view C_EarmarkedFundsItemA_Apprvl
+  as select from C_EarmarkedFundsDocItemApprvl
+{
+  key EarmarkedFundsDocument,
+  key EarmarkedFundsDocumentItem,
+      CompanyCode
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy with DEPTH clause", () => {
+    const cds = `define hierarchy I_FMEASuprordStrucHier
+  with parameters
+    P_HeaderUUID : plmt_fmea_node_guid
+  as parent child hierarchy (
+    source I_FMEASuprordStrucHierNode
+    child to parent association _Parent
+    start where FMEANodeReferenceUUID = $parameters.P_HeaderUUID
+    siblings order by FMEANode
+    depth 11
+    multiple parents allowed
+  )
+{
+  key FMEAHeaderUUID,
+  key FMEANodeUUID,
+  FMEANode
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("projection with parameter call on source (AS PROJECTION ON Src(P: $params.P))", () => {
+    const cds = `define transient view entity C_Foo
+  provider contract analytical_query
+  with parameters
+    P_A : sometype,
+    P_B : sometype
+  as projection on I_Bar(P_A: $parameters.P_A,
+                         P_B: $parameters.P_B)
+{
+  key FieldA,
+  FieldB
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("cast with alias and : localized annotation", () => {
+    const cds = `define view entity C_Foo as projection on I_Bar {
+  cast (Field as sometype preserving type) as AliasName : localized
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("RATIO_OF function with named arguments", () => {
+    const cds = `define view C_Foo as select from Bar {
+  cast( ratio_of(portion => NmbrInProcess, total => NmbrTotal) * HundredInPercent as sometype) as Result
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("CURR_TO_DECFLOAT_AMOUNT function", () => {
+    const cds = `define view C_Foo as select from Bar {
+  cast(curr_to_decfloat_amount(Amount) / Count as sometype preserving type) as Result
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

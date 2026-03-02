@@ -10,7 +10,7 @@ export class CDSDefineView extends Expression {
   public getRunnable(): IStatementRunnable {
     const columnAlias = seq("(", CDSName, star(seq(",", CDSName)), ")");
     return seq(star(CDSAnnotation),
-               "DEFINE",
+               opt("DEFINE"),
                opt("ROOT"),
                "VIEW",
                ver(Version.v755, opt("ENTITY")),
