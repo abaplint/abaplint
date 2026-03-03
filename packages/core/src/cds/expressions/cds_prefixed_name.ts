@@ -1,4 +1,4 @@
-import {altPrio, Expression, opt, seq, star} from "../../abap/2_statements/combi";
+import {altPrio, Expression, opt, seq, starPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSName} from "./cds_name";
 import {CDSParameters} from "./cds_parameters";
@@ -24,6 +24,6 @@ export class CDSPrefixedName extends Expression {
     // The final segment may also be a string literal: #enum.'value'
     // A segment may have a parameterized call: _Assoc( P_Key : value ) or _Assoc[filter]
     const segment = seq(".", altPrio(CDSString, CDSName), opt(altPrio(CDSParametersSelect, CDSParameters)), opt(pathFilter));
-    return seq(CDSName, opt(altPrio(CDSParameters, CDSParametersSelect)), opt(pathFilter), star(segment));
+    return seq(CDSName, opt(altPrio(CDSParameters, CDSParametersSelect)), opt(pathFilter), starPrio(segment));
   }
 }

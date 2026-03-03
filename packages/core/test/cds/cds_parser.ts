@@ -2106,4 +2106,24 @@ define view I_Test
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("long dotted path traversal does not OOM (star → starPrio regression)", () => {
+    // CDSPrefixedName used star(segment) which caused exponential parser states for
+    // long association paths. This test guards against regression to O(2^N) behaviour.
+    const cds = `define view Test as select from tab {
+  _A._B._C._D._E._F._G._H._I._J._K._L._M._N._O._P as LongPath
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("LIKE ESCAPE in condition", () => {
+    const cds = `define view Test as select from tab {
+  key Id
+} where Name like '%foo%' escape '#'`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
