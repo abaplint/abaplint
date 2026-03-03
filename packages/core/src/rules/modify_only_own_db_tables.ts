@@ -24,6 +24,8 @@ export class ModifyOnlyOwnDBTables implements IRule {
       key: "modify_only_own_db_tables",
       title: "Modify only own DB tables",
       shortDescription: `Modify only own DB tables`,
+      badExample: `DELETE FROM mara WHERE matnr = '123456'.`,
+      goodExample: `DELETE FROM yflight WHERE carrid = 'LH'.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/26/`,
       tags: [RuleTag.Security],
     };
