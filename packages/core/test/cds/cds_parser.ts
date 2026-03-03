@@ -2448,4 +2448,17 @@ view C_EarmarkedFundsItemA_Apprvl
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("TIMS_IS_VALID function in case expression inside cast", () => {
+    const cds = `define view C_Foo as select from Bar {
+  cast(
+    case tims_is_valid(CreationTime)
+      when 1 then dats_tims_to_tstmp(Date, CreationTime, abap_system_timezone($session.client,'NULL'), $session.client, 'NULL')
+      else dats_tims_to_tstmp(Date, FallbackTime, abap_system_timezone($session.client,'NULL'), $session.client, 'NULL')
+    end as sometype) as Result
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

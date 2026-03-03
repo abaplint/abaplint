@@ -1,5 +1,5 @@
 import {CDSElement, CDSComposition, CDSGroupBy, CDSSource, CDSWhere, CDSHaving} from ".";
-import {Expression, seq, str, opt, optPrio, starPrio, star, altPrio} from "../../abap/2_statements/combi";
+import {Expression, seq, str, opt, optPrio, star, altPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSAssociation} from "./cds_association";
 import {CDSJoin} from "./cds_join";

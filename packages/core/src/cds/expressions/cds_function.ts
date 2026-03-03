@@ -11,6 +11,7 @@ export class CDSFunction extends Expression {
     const dats_add_months = seq("DATS_ADD_MONTHS", "(", CDSFunctionInput, ",", CDSFunctionInput, ",", CDSFunctionInput, ")");
     const dats_days_between = seq("DATS_DAYS_BETWEEN", "(", CDSFunctionInput, ",", CDSFunctionInput, ")");
     const dats_is_valid = seq("DATS_IS_VALID", "(", CDSFunctionInput, ")");
+    const tims_is_valid = seq("TIMS_IS_VALID", "(", CDSFunctionInput, ")");
     const substring = seq("SUBSTRING", "(", CDSFunctionInput, ",", CDSFunctionInput, ",", CDSFunctionInput, ")");
 
     const bintohex = seq("BINTOHEX", "(", CDSFunctionInput, ")");
@@ -68,7 +69,7 @@ export class CDSFunction extends Expression {
 
     return altPrio(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
                    upper, lower, abs, ceil, floor, round, div, division,
-                   concat_with_space, dats_is_valid, dats_days_between, tstmp_add_seconds,
+                   concat_with_space, dats_is_valid, tims_is_valid, dats_days_between, tstmp_add_seconds,
                    tstmp_seconds_between, tstmp_current_utctimestamp, tstmp_is_valid, utcl_current,
                    abap_system_timezone, abap_user_timezone, bintohex, hextobin,
                    dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp, mod,
