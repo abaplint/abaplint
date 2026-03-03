@@ -6,11 +6,13 @@ import {CDSInteger} from "./cds_integer";
 export class CDSCondition extends Expression {
   public getRunnable(): IStatementRunnable {
     const left = altPrio(CDSString, CDSFunction, CDSAggregate, CDSPrefixedName);
-    const operators = altPrio("=", seq("!", "="), seq("<", ">"), seq(">", "="), seq("<", "="), "<", ">", "LIKE", "NOT LIKE");
+    const nonLikeOperators = altPrio("=", seq("!", "="), seq("<", ">"), seq(">", "="), seq("<", "="), "<", ">");
+    const likeOperators = altPrio("LIKE", "NOT LIKE");
     // Right side of comparison: simple values first, then parenthesized, then full arithmetic last.
     // CDSArithmetics is last to avoid triggering CDSPrefixedName→CDSCondition→CDSArithmetics cycle.
     const right = altPrio(CDSArithParen, left, CDSInteger, CDSArithmetics);
-    const compare = seq(operators, right, opt(seq("ESCAPE", CDSString)));
+    // ESCAPE is only valid with LIKE/NOT LIKE, not with other comparison operators.
+    const compare = altPrio(seq(likeOperators, right, opt(seq("ESCAPE", CDSString))), seq(nonLikeOperators, right));
     const is = seq("IS", optPrio("NOT"), altPrio("INITIAL", "NULL"));
     const between = seq("BETWEEN", left, "AND", left);
     const condition = seq(optPrio("NOT"), left, altPrio(compare, is, between));
