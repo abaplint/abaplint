@@ -34,11 +34,11 @@ export class DefinitionsTop extends ABAPRule {
       shortDescription: `Checks that definitions are placed at the beginning of METHODs, FORMs and FUNCTIONs.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/17/`,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
-      badExample: `FROM foo.
+      badExample: `FORM foo.
   WRITE 'hello'.
   DATA int TYPE i.
 ENDFORM.`,
-      goodExample: `FROM foo.
+      goodExample: `FORM foo.
   DATA int TYPE i.
   WRITE 'hello'.
 ENDFORM.`,
