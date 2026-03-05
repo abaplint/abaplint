@@ -29,10 +29,11 @@ export class CDSArithmetics extends Expression {
     const unary = altPrio("-", "+");
     const unaryExpression = seq(unary, val);
 
-    // An operand is either a parenthesized sub-expression (any depth) or a bare value.
+    // An operand is a paren, unary-prefixed value, or bare value.
+    // Including unaryExpression allows "A + + B" and "A + -B" patterns.
     // CDSArithParen = "(" altPrio(CDSArithmetics, CDSArithParen, val) ")" — separate singleton that
     // can recursively contain itself, enabling deeply nested parentheses without infinite recursion.
-    const operand = altPrio(CDSArithParen, val);
+    const operand = altPrio(CDSArithParen, unaryExpression, val);
     const operatorValue = seq(operator, operand);
 
     // Main form: operand op operand op ... (leading term may itself be a paren)

@@ -64,7 +64,7 @@ export class CDSLexer {
     let col = 1;
     let build = "";
 
-    const stream = new Stream(file.getRaw().replace(/\r/g, "").replace(/\u00a0/g, " "));
+    const stream = new Stream(file.getRaw().replace(/\r/g, "").replace(/\u00a0/g, " ").replace(/\u000b/g, " "));
 
     let next = "";
     while (stream.length() > 0) {
@@ -77,7 +77,11 @@ export class CDSLexer {
       if (mode === Mode.String) {
         build += next;
         if (next === "'" && nextNext === "'") {
-          // escaped single quote, continue string
+          // escaped single quote (doubled), continue string
+          build += stream.takeNext();
+          col++;
+        } else if (next === "\\" && nextNext === "'") {
+          // backslash-escaped single quote, continue string
           build += stream.takeNext();
           col++;
         } else if (next === "'") {
@@ -119,6 +123,8 @@ export class CDSLexer {
       } else if (mode === Mode.Default && next === "/" && nextNext === "*") {
         mode = Mode.MultiLineComment;
         build = result.add(build, row, col, mode);
+        stream.takeNext(); // consume the '*' so it doesn't become prev for '*/' detection
+        col++;
         continue;
       }
 
@@ -147,6 +153,7 @@ export class CDSLexer {
         case ")":
         case "[":
         case "]":
+        case "!":
         case "=":
         case "<":
         case ">":
