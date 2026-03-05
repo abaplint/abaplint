@@ -2461,4 +2461,39 @@ view C_EarmarkedFundsItemA_Apprvl
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("string with standalone backslash (e.g. path-like value)", () => {
+    const cds = `define view Test as select from src { key A }
+where Path like 'C:\\\\temp'`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("association OF cardinality TO target form", () => {
+    const cds = `define view Test as select from src
+  association of [0..1] to Target as _Assoc on _Assoc.Id = src.Id
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("cast alias with dotted type (CDSType before CDSName in colonType)", () => {
+    const cds = `define view Test as select from src {
+  cast(Amount as abap.dec(21,6)) as MyAmount : abap.dec(21,6)
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("composition with numeric cardinality before OF", () => {
+    const cds = `define view Test as select from src
+  composition [0..*] of Child as _Child
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
