@@ -3,6 +3,7 @@ import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings, IAbaplintA
 import {SevenBitAsciiConf} from "../src/rules/7bit_ascii";
 import {AbapdocConf} from "../src/rules/abapdoc";
 import {AddTestAttributesConf} from "../src/rules/add_test_attributes";
+import {AFFAndXMLConf} from "../src/rules/aff_and_xml";
 import {AlignParametersConf} from "../src/rules/align_parameters";
 import {AlignPseudoCommentsConf} from "../src/rules/align_pseudo_comments";
 import {AlignTypeExpressionsConf} from "../src/rules/align_type_expressions";
@@ -193,6 +194,7 @@ export interface IConfig {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
+    "aff_and_xml"?: AFFAndXMLConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
     "align_pseudo_comments"?: AlignPseudoCommentsConf | boolean,
     "align_type_expressions"?: AlignTypeExpressionsConf | boolean,
@@ -372,6 +374,7 @@ export interface IConfig {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
+    "aff_and_xml"?: AFFAndXMLConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
     "align_pseudo_comments"?: AlignPseudoCommentsConf | boolean,
     "align_type_expressions"?: AlignTypeExpressionsConf | boolean,
