@@ -1,6 +1,7 @@
 export * from "./7bit_ascii";
 export * from "./abapdoc";
 export * from "./add_test_attributes";
+export * from "./aff_and_xml";
 export * from "./align_parameters";
 export * from "./align_pseudo_comments";
 export * from "./align_type_expressions";

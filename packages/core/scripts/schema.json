@@ -2,6 +2,23 @@
   "$ref": "#/definitions/IConfig",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
+    "AFFAndXMLConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AbapdocConf": {
       "additionalProperties": false,
       "properties": {
@@ -1656,6 +1673,17 @@
                 }
               ],
               "description": "Add test attributes DURATION and RISK LEVEL for tests classes with test methods\nTags: SingleFile\nhttps://rules.abaplint.org/add_test_attributes"
+            },
+            "aff_and_xml": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AFFAndXMLConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for objects that have both AFF (.json) and XML (.xml) files\nTags: Syntax\nhttps://rules.abaplint.org/aff_and_xml"
             },
             "align_parameters": {
               "anyOf": [
@@ -3603,6 +3631,17 @@
                 }
               ],
               "description": "Add test attributes DURATION and RISK LEVEL for tests classes with test methods\nTags: SingleFile\nhttps://rules.abaplint.org/add_test_attributes"
+            },
+            "aff_and_xml": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AFFAndXMLConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for objects that have both AFF (.json) and XML (.xml) files\nTags: Syntax\nhttps://rules.abaplint.org/aff_and_xml"
             },
             "align_parameters": {
               "anyOf": [
