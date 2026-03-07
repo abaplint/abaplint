@@ -929,6 +929,26 @@ where
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("EXCEPT set operator between selects", () => {
+    const cds = `define view entity Test as select from SrcA
+  association [1..1] to I_X as _X on SrcA.ID = _X.ID
+{ key _X.UUID, key Material, key StorageLocation }
+except select from SrcB
+  association [1..1] to I_X as _X on SrcB.ID = _X.ID
+{ key _X.UUID, key _Y.Material, key _Y.StorageLocation }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("INTERSECT set operator between selects", () => {
+    const cds = `define view Test as select from SrcA { key A }
+intersect select from SrcB { key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("division and arithmetics", () => {
     const cds = `define view zsdfds as select from zaaaa {
   key mandt,
@@ -2591,6 +2611,16 @@ where Path like 'C:\\\\temp'`;
   it("association of text cardinality form (one to many)", () => {
     const cds = `define view entity Test as projection on Src
   association of one to many Target as _T on $projection.ID = _T.ID
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("association of text cardinality with EXACT ONE (many to exact one, one to exact one)", () => {
+    const cds = `define view entity Test as select from Src
+  association of many to exact one I_CurrencyRole as _Role on $projection.CurrencyRole = _Role.CurrencyRole
+  association of one to exact one I_Other as _Other on $projection.ID = _Other.ID
 { key A }`;
     const file = new MemoryFile("test.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);

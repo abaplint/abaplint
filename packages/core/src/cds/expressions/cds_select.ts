@@ -25,6 +25,10 @@ export class CDSSelect extends Expression {
                optPrio(CDSWhere),
                optPrio(CDSGroupBy),
                optPrio(CDSHaving),
-               optPrio(seq("UNION", optPrio("ALL"), CDSSelect)));
+               optPrio(altPrio(
+                 seq("UNION", optPrio("ALL"), CDSSelect),
+                 seq("EXCEPT", CDSSelect),
+                 seq("INTERSECT", CDSSelect),
+               )));
   }
 }
