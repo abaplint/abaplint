@@ -1297,6 +1297,17 @@ define view entity /foo/moo
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("abap typed literals (abap.int4'1', abap.char(10)'hello')", () => {
+    const cds = `define view Test as select from src {
+  abap.int4'1' as CountField,
+  abap.char'X' as FlagField,
+  abap.char(10)'hello' as TextLiteral
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("abap.char", () => {
     const cds = `
 define view entity moo
@@ -2061,6 +2072,17 @@ group by
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("inner one to one join cardinality", () => {
+    const cds = `define view entity Test as select from SrcA
+  inner one to one join SrcB as Alias on SrcA.id = SrcB.id
+{
+  key SrcA.Field1
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("parenthesized join sub-expression as join target", () => {
     const cds = `define view Test
   as select from Src left outer join (SubA as s join SubB b on s.id = b.id and s.type = b.type)
@@ -2449,6 +2471,19 @@ view C_EarmarkedFundsItemA_Apprvl
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("REPLACE_REGEXPR function with named arguments (pcre => ..., value => ..., with => ..., result_length => ...)", () => {
+    const cds = `define view Test as select from t100 {
+  replace_regexpr( pcre => '&1|&2|&3|&4|:|=',
+                   value => text,
+                   with => '',
+                   result_length => 100
+                 ) as ErrorMessageText
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("CURR_TO_DECFLOAT_AMOUNT function", () => {
     const cds = `define view C_Foo as select from Bar {
   cast(curr_to_decfloat_amount(Amount) / Count as sometype preserving type) as Result
@@ -2578,6 +2613,24 @@ where Path like 'C:\\\\temp'`;
     when Flag = 'I' and Field not between $parameters.P_From and $parameters.P_To then 'E'
     else coalesce(Flag, '')
   end as Result
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("arithmetic expressions as CASE WHEN condition operands (A - B > C - D)", () => {
+    const cds = `define view Test as select from src {
+  case
+    when ReorderThreshold - SafetyStock > MaxStock - ReorderThreshold
+    then MaxStock - ReorderThreshold
+    else ReorderThreshold - SafetyStock
+  end as CurrentGreenZone,
+  case
+    when A - B > C - D or (X = 0 or Y = 0)
+    then (2 * A) - B - C
+    else cast(0 as mabst)
+  end as OtherField
 }`;
     const file = new MemoryFile("test.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);

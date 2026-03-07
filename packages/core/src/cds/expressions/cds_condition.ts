@@ -5,7 +5,8 @@ import {CDSInteger} from "./cds_integer";
 
 export class CDSCondition extends Expression {
   public getRunnable(): IStatementRunnable {
-    const left = altPrio(CDSString, CDSCast, CDSFunction, CDSAggregate, CDSPrefixedName);
+    // CDSArithmetics before CDSPrefixedName so A - B > C is handled as arithmetic comparison
+    const left = altPrio(CDSString, CDSCast, CDSFunction, CDSAggregate, CDSArithmetics, CDSArithParen, CDSPrefixedName);
     const nonLikeOperators = altPrio("=", seq("!", "="), seq("<", ">"), seq(">", "="), seq("<", "="), "<", ">");
     const likeOperators = altPrio("LIKE", "NOT LIKE");
     // Right side of comparison: simple values first, then parenthesized, then full arithmetic last.

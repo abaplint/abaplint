@@ -66,6 +66,11 @@ export class CDSFunction extends Expression {
     const currencyConversion = seq("CURRENCY_CONVERSION", "(", conversionInputs, ")");
     const decimalShift = seq("DECIMAL_SHIFT", "(", conversionInputs, ")");
     const ratioOf = seq("RATIO_OF", "(", conversionInputs, ")");
+    const replaceRegexpr = seq("REPLACE_REGEXPR", "(", conversionInputs, ")");
+    const matchesRegexpr = seq("MATCHES_REGEXPR", "(", conversionInputs, ")");
+    const occurrencesRegexpr = seq("OCCURRENCES_REGEXPR", "(", conversionInputs, ")");
+    const substrRegexpr = seq("SUBSTR_REGEXPR", "(", conversionInputs, ")");
+    const locate_regexpr = seq("LOCATE_REGEXPR", "(", conversionInputs, ")");
 
     return altPrio(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
                    upper, lower, abs, ceil, floor, round, div, division,
@@ -75,6 +80,7 @@ export class CDSFunction extends Expression {
                    dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp, mod,
                    left, right, lpad, rpad, instr, length, ltrim, rtrim, replace,
                    unitConversion, currencyConversion, decimalShift, fltp_to_dec, ratioOf,
+                   replaceRegexpr, matchesRegexpr, occurrencesRegexpr, substrRegexpr, locate_regexpr,
                    curr_to_decfloat_amount);
   }
 }
