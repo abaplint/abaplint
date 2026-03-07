@@ -1,5 +1,5 @@
 import {CDSAnnotationObject, CDSAnnotationSimple} from ".";
-import {alt, Expression, opt, regex, seq, star} from "../../abap/2_statements/combi";
+import {alt, Expression, optPrio, regex, seq, star} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSAnnotationArray} from "./cds_annotation_array";
 
@@ -11,6 +11,6 @@ export class CDSAnnotation extends Expression {
     const annotationStart = alt(regex(/^@\w+$/), seq("@", regex(/^\w+$/)), seq("@", "<", regex(/^\w+$/)));
 
     return seq(annotationStart, star(seq(".", nameWithSlash)),
-               opt(seq(":", alt(CDSAnnotationArray, CDSAnnotationObject, CDSAnnotationSimple))));
+               optPrio(seq(":", alt(CDSAnnotationArray, CDSAnnotationObject, CDSAnnotationSimple))));
   }
 }
