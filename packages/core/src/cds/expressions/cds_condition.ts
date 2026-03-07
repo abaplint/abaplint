@@ -14,7 +14,7 @@ export class CDSCondition extends Expression {
     // ESCAPE is only valid with LIKE/NOT LIKE, not with other comparison operators.
     const compare = altPrio(seq(likeOperators, right, optPrio(seq("ESCAPE", CDSString))), seq(nonLikeOperators, right));
     const is = seq("IS", optPrio("NOT"), altPrio("INITIAL", "NULL"));
-    const between = seq("BETWEEN", left, "AND", left);
+    const between = seq(altPrio("NOT BETWEEN", "BETWEEN"), left, "AND", left);
     const condition = seq(optPrio("NOT"), left, altPrio(compare, is, between));
     const paren = seq("(", CDSCondition, ")");
     const notParen = seq("NOT", paren);

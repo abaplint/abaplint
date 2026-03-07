@@ -1828,6 +1828,16 @@ where Field like 'ACDOC@_%' escape '@'`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("aggregate with ALL keyword (sum( all Field ))", () => {
+    const cds = `define view Test as select from a {
+  key cast(sum( all ErrorCounter ) as abap.int8) as ErrorCount,
+  cast(count( distinct A ) as abap.int8) as ACount
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("zero-argument function utcl_current()", () => {
     const cds = `define view Test as select from tab {
   key Field,
@@ -2490,6 +2500,93 @@ where Path like 'C:\\\\temp'`;
   it("composition with numeric cardinality before OF", () => {
     const cds = `define view Test as select from src
   composition [0..*] of Child as _Child
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("element alias with redirected to composition child", () => {
+    const cds = `define view Test as select from src {
+  key _Text as _Text : redirected to composition child I_SomeTextTP
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("element alias with redirected to parent", () => {
+    const cds = `define view Test as select from src {
+  key _Assoc as _Alias : redirected to parent I_ParentView
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("annotation with negative float value", () => {
+    const cds = `define view Test as select from src {
+  @Semantics.valueRange.minimum: -100.000000
+  key Amount
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("ltrim/rtrim with escaped backslash string argument", () => {
+    const cds = `define view Test as select from src {
+  ltrim ( rtrim( Field, '\\\\' ), '\\\\' ) as Alias
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("annotation #() with concatenation expression", () => {
+    const cds = `define view Test as select from src {
+  @Consumption.semanticObject: #(SOME + 'WEIRD_EXPRESSION')
+  key Field
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("association of text cardinality form (one to many)", () => {
+    const cds = `define view entity Test as projection on Src
+  association of one to many Target as _T on $projection.ID = _T.ID
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("path filter with join type and WHERE condition", () => {
+    const cds = `define view Test as select from src {
+  key _Equipment._TimeSeg[left outer where ValidityEnd = '99991231']._Account.SalesOrg
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("case expression with NOT BETWEEN in WHEN condition", () => {
+    const cds = `define view Test as select from src {
+  case
+    when Field = '99991231' then 'E'
+    when Flag = 'I' and Field not between $parameters.P_From and $parameters.P_To then 'E'
+    else coalesce(Flag, '')
+  end as Result
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("association with numeric cardinality beyond 0/1 (e.g. [1..2])", () => {
+    const cds = `define view Test as select from src
+  association [1..2] to Target as _T on _T.ID = src.ID
 { key A }`;
     const file = new MemoryFile("test.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);

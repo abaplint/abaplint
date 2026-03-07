@@ -80,6 +80,10 @@ export class CDSLexer {
           // escaped single quote (doubled), continue string
           build += stream.takeNext();
           col++;
+        } else if (next === "\\" && nextNext === "\\") {
+          // escaped backslash (e.g. '\\' in ltrim/rtrim calls), consume both chars
+          build += stream.takeNext();
+          col++;
         } else if (next === "\\" && nextNext === "'") {
           // backslash-escaped single quote, continue string
           build += stream.takeNext();
