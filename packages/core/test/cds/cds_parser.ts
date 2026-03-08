@@ -2769,4 +2769,18 @@ where Path like 'C:\\\\temp'`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("scientific notation float literal in CASE WHEN (0.0000000000000000E+00)", () => {
+    const cds = `define view Test as select from src {
+  cast (
+    case MaintCallCntrRdng
+        when 0.0000000000000000E+00 then cast ( '' as dzeieh)
+        else MaintenanceTaskPerformanceUnit
+    end
+  as dzeieh) as F
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
