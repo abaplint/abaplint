@@ -10,9 +10,10 @@ export class CDSAnnotationSimple extends Expression {
                       "true",
                       "false",
                       "null",
+                      seq("-", regex(/^\d+$/), ".", regex(/^\d+$/)),
                       seq("-", regex(/^\d+$/)),
-                      regex(/^\d+$/),
                       seq(regex(/^\d+$/), ".", regex(/^\d+$/)),
+                      regex(/^\d+$/),
                       seq("#", "(", CDSString, ")"),
                       // #(_Header.Field) — dotted path inside #(...)
                       seq("#", "(", CDSPrefixedName, ")"),
