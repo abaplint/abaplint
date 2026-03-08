@@ -2792,4 +2792,22 @@ where Path like 'C:\\\\temp'`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("path filter with text cardinality [to one: cond]", () => {
+    const cds = `define view Test as select from src {
+  _Order._Status[ to one: StatusIsActive = 'X' and StatusCode = 'I0045' ].StatusCode as F
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("path filter with numeric range cardinality [0..1: cond]", () => {
+    const cds = `define view Test as select from src {
+  _Assoc[ 0..1: Language = $session.system_language ].Name as F
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

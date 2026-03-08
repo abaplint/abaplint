@@ -21,7 +21,19 @@ export class CDSPrefixedName extends Expression {
     const cardinalityJoinWhere = seq("[", CDSInteger, ":", joinType, "WHERE", CDSCondition, "]");
     // [left outer where condition] — join-type + WHERE filter (no cardinality prefix)
     const joinWhere = seq("[", joinType, "WHERE", CDSCondition, "]");
-    const pathFilter = altPrio(cardinalityJoinWhere, joinWhere, cardinalityJoin, joinRedirect, seq("[", CDSInteger, ":", CDSCondition, "]"), seq("[", CDSCondition, "]"));
+    // Text cardinality forms: [to one: cond], [to many: cond]
+    const textCard = altPrio("TO ONE", "TO MANY");
+    const textCardFilter = seq("[", textCard, ":", CDSCondition, "]");
+    // Numeric range cardinality: [0..1: cond], [1..1: cond], [0..*: cond], [n..m: cond]
+    const cardNum = altPrio(CDSInteger, "*");
+    const rangeCard = seq(CDSInteger, ".", ".", cardNum);
+    const rangeCardFilter = seq("[", rangeCard, ":", CDSCondition, "]");
+    const pathFilter = altPrio(
+      cardinalityJoinWhere, joinWhere, cardinalityJoin, joinRedirect,
+      textCardFilter, rangeCardFilter,
+      seq("[", CDSInteger, ":", CDSCondition, "]"),
+      seq("[", CDSCondition, "]"),
+    );
     // Each dotted segment may have its own path filter: A[cond].B[cond].C
     // The final segment may also be a string literal: #enum.'value'
     // A segment may have a parameterized call: _Assoc( P_Key : value ) or _Assoc[filter]
