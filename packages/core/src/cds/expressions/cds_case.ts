@@ -7,7 +7,7 @@ export class CDSCase extends Expression {
     // CDSArithmetics first: handles cast()*n, sum()*n, field+n, etc. before standalone alternatives
     const value = altPrio(CDSString, CDSCase, CDSArithmetics, CDSCast,
                           CDSAggregate, CDSArithParen, CDSFunction, CDSInteger, CDSPrefixedName);
-    const simple = seq(altPrio(CDSArithmetics, CDSArithParen, CDSFunction, CDSPrefixedName), plusPrio(seq("WHEN", value, "THEN", value)));
+    const simple = seq(altPrio(CDSArithmetics, CDSArithParen, CDSAggregate, CDSFunction, CDSPrefixedName), plusPrio(seq("WHEN", value, "THEN", value)));
     const complex = plusPrio(seq("WHEN", CDSCondition, "THEN", value));
     return seq("CASE", altPrio(complex, simple), optPrio(seq("ELSE", value)), "END");
   }

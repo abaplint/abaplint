@@ -404,6 +404,30 @@ define view entity ZI_Header
     expect(ddls.listKeys().length).to.equal(3);
   });
 
+  it("association with namespace-prefixed target", async () => {
+    const source = `
+define view entity ZI_NamespacedAssoc
+  as select from I_JournalEntry
+  association [0..1] to /PF1/C_VH_TRANSTYPE as _transType on $projection.TransactionType = _transType.TransactionType
+  association [0..1] to ZI_Regular           as _regular   on $projection.Id = _regular.Id
+  {
+    key CompanyCode,
+        TransactionType,
+        Id
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_namespacedassoc.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    const parsed = ddls.getParsedData();
+    expect(parsed?.associations.length).to.equal(2);
+    expect(parsed?.associations[0].name).to.equal("/PF1/C_VH_TRANSTYPE");
+    expect(parsed?.associations[0].as).to.equal("_transType");
+    expect(parsed?.associations[1].name).to.equal("ZI_Regular");
+    expect(parsed?.associations[1].as).to.equal("_regular");
+  });
+
   it("association via voided", async () => {
     const source = `
 define view entity ZI_FIPositionBseg

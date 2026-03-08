@@ -22,6 +22,8 @@ export class CDSJoin extends Expression {
     // Parenthesized join sub-expression: JOIN (src innerJOIN src ON cond) ON outerCond
     const innerJoin = seq(joinTypes, "JOIN", altPrio(seq("(", cond, ")"), cond));
     const parenJoinChain = seq("(", CDSSource, star(innerJoin), ")", "ON", CDSCondition);
-    return seq(joinTypes, "JOIN", altPrio(parenJoinChain, foo, CDSSource));
+    // Inline nested join: JOIN src [JOIN src ON cond]* ON outerCond
+    const inlineChain = seq(CDSSource, star(seq(joinTypes, "JOIN", CDSSource, "ON", CDSCondition)), "ON", CDSCondition);
+    return seq(joinTypes, "JOIN", altPrio(parenJoinChain, inlineChain, foo, CDSSource));
   }
 }

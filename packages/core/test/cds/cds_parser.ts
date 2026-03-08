@@ -2724,4 +2724,49 @@ where Path like 'C:\\\\temp'`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("searched case with aggregate as searched expression (case min(A) when ... end)", () => {
+    const cds = `define view Test as select from src {
+  key case min(ValidityStartDate)
+        when '99991231' then '99991231'
+        else dats_add_days( min(ValidityStartDate), -1, 'UNCHANGED')
+      end as ValidityEndDate
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("cast arithmetic expression as condition operand (cast(A)-cast(B) > 0)", () => {
+    const cds = `define view Test as select from src {
+  case when cast(NetBookValue as abap.dec(23,2)) - cast(AssetNetValue as abap.dec(23,2)) > 0
+       then cast(GainOrLoss as abap.dec(23,2))
+       else cast(0 as abap.curr(23,2))
+       end as AssetGain
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("inline nested join (JOIN src LEFT OUTER JOIN src ON cond1 ON outerCond)", () => {
+    const cds = `define view Test as select from Src as ILot
+  inner join X as UD
+     left outer to one join Y as CanceledILot
+       on UD.InspectionLot = CanceledILot.InspectionLot
+  on ILot.InspectionLot = UD.InspectionLot
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("static where filter in FROM clause (select from Table [Field = 'Value'])", () => {
+    const cds = `define view Test
+  as select from I_SomeTable [SomeField = 'VAL']
+{ key Field1 }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
