@@ -1,12 +1,12 @@
 import {CDSAnnotation, CDSAs, CDSCondition, CDSInteger, CDSName, CDSParametersSelect, CDSPrefixedName, CDSWithParameters} from ".";
-import {Expression, opt, seq, star, altPrio} from "../../abap/2_statements/combi";
+import {Expression, opt, optPrio, seq, star, altPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSDefineHierarchy extends Expression {
   public getRunnable(): IStatementRunnable {
-    const field = seq(star(CDSAnnotation), opt("KEY"), CDSPrefixedName, opt(CDSAs));
+    const field = seq(star(CDSAnnotation), optPrio("KEY"), CDSPrefixedName, optPrio(CDSAs));
     const sortDirection = altPrio("ASCENDING", "DESCENDING");
-    const siblingsOrderField = seq(CDSPrefixedName, opt(sortDirection));
+    const siblingsOrderField = seq(CDSPrefixedName, optPrio(sortDirection));
     const siblingsOrder = seq("SIBLINGS", "ORDER", "BY", siblingsOrderField, star(seq(",", siblingsOrderField)));
 
     const directory = seq("DIRECTORY", CDSName, "FILTER", "BY", CDSCondition);

@@ -1642,6 +1642,14 @@ define view Test as select from tab { Field }`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("annotation with negative float value", () => {
+    const cds = `@Semantics.valueRange.minimum: -100.000000
+define view Test as select from tab { Field }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("string with em-dash (U+2013) in annotation label", () => {
     const cds = "@EndUserText.label: 'Billing Item \u2013 Cube'\ndefine view Test as select from tab { Field }";
     const file = new MemoryFile("test.ddls.asddls", cds);
