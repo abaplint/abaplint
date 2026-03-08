@@ -16,9 +16,11 @@ export class CDSPrefixedName extends Expression {
     //   [condition]                                 — filter condition only
     const joinType = altPrio("LEFT OUTER", "INNER", "CROSS");
     const joinRedirect = seq("[", joinType, "]");
-    const cardinalityJoin = seq("[", CDSInteger, ":", joinType, "]");
+    // Cardinality spec: integer or * (e.g. [*:inner], [1:inner])
+    const cardSpec = altPrio(CDSInteger, "*");
+    const cardinalityJoin = seq("[", cardSpec, ":", joinType, "]");
     // [1: left outer where condition] — cardinality + join-type + WHERE filter
-    const cardinalityJoinWhere = seq("[", CDSInteger, ":", joinType, "WHERE", CDSCondition, "]");
+    const cardinalityJoinWhere = seq("[", cardSpec, ":", joinType, "WHERE", CDSCondition, "]");
     // [left outer where condition] — join-type + WHERE filter (no cardinality prefix)
     const joinWhere = seq("[", joinType, "WHERE", CDSCondition, "]");
     // Text cardinality forms: [to one: cond], [to many: cond]
@@ -31,7 +33,7 @@ export class CDSPrefixedName extends Expression {
     const pathFilter = altPrio(
       cardinalityJoinWhere, joinWhere, cardinalityJoin, joinRedirect,
       textCardFilter, rangeCardFilter,
-      seq("[", CDSInteger, ":", CDSCondition, "]"),
+      seq("[", cardSpec, ":", CDSCondition, "]"),
       seq("[", CDSCondition, "]"),
     );
     // Each dotted segment may have its own path filter: A[cond].B[cond].C

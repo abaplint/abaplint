@@ -2810,4 +2810,14 @@ where Path like 'C:\\\\temp'`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("path filter with wildcard cardinality and join type [*:inner]", () => {
+    const cds = `define view Test as select from src {
+  _Network[*:inner].NetworkID,
+  _Network[*:inner].NetworkName
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
