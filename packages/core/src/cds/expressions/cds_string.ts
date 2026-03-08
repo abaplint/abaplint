@@ -11,7 +11,7 @@ export class CDSString extends Expression {
     const reg = regex(/^'(?:[^'\\]|''|\\'|\\\\|\\(?!'))*'$/);
     // Typed literal: abap.int4'1', abap.char'X', abap.numc(3)'123', etc.
     // Lexed as tokens: abap, ., typename, 'value'
-    const abapTypeName = regex(/^(?:int[1-9]|sstring|char|numc|dats|tims|fltp|decfloat\d+|string|raw|xstring|clnt|lang|unit|cuky|curr|quan|d|t|p|n|c|x|f)$/i);
+    const abapTypeName = regex(/^(?:int[1-9]|sstring|char|numc|dats|tims|fltp|decfloat\d+|dec|string|raw|xstring|clnt|lang|unit|cuky|curr|quan|d|t|p|n|c|x|f)$/i);
     const abap = seq("abap", ".", abapTypeName, optPrio(seq("(", regex(/^\d+$/), ")")), reg);
     return altPrio(abap, reg);
   }

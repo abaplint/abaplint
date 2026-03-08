@@ -2783,4 +2783,13 @@ where Path like 'C:\\\\temp'`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("abap.dec typed literal in cast (abap.dec'000' as type preserving type)", () => {
+    const cds = `define view Test as select from src {
+  cast( abap.dec'000' as farp_dzbd3t preserving type ) as RefInvcNetPaymentDays
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
