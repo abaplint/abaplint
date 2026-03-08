@@ -1,5 +1,5 @@
 import {CDSFunctionInput, CDSName, CDSType} from ".";
-import {altPrio, Expression, seq, starPrio} from "../../abap/2_statements/combi";
+import {altPrio, Expression, regex, seq, starPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSFunction extends Expression {
@@ -72,6 +72,13 @@ export class CDSFunction extends Expression {
     const substrRegexpr = seq("SUBSTR_REGEXPR", "(", conversionInputs, ")");
     const locate_regexpr = seq("LOCATE_REGEXPR", "(", conversionInputs, ")");
 
+    // Generic fallback: user-defined/extension functions like GET_NUMERIC_VALUE(arg).
+    // Use a regex that excludes CDS keywords that would otherwise be matched by CDSName.
+    // Must contain at least one underscore to distinguish from keywords (e.g. GET_NUMERIC_VALUE).
+    const extFuncName = regex(/^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+$/i);
+    const genericArgs = seq(CDSFunctionInput, starPrio(seq(",", CDSFunctionInput)));
+    const genericFunc = seq(extFuncName, "(", genericArgs, ")");
+
     return altPrio(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
                    upper, lower, abs, ceil, floor, round, div, division,
                    concat_with_space, dats_is_valid, tims_is_valid, dats_days_between, tstmp_add_seconds,
@@ -81,6 +88,7 @@ export class CDSFunction extends Expression {
                    left, right, lpad, rpad, instr, length, ltrim, rtrim, replace,
                    unitConversion, currencyConversion, decimalShift, fltp_to_dec, ratioOf,
                    replaceRegexpr, matchesRegexpr, occurrencesRegexpr, substrRegexpr, locate_regexpr,
-                   curr_to_decfloat_amount);
+                   curr_to_decfloat_amount,
+                   genericFunc);
   }
 }

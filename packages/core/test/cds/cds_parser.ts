@@ -2820,4 +2820,13 @@ where Path like 'C:\\\\temp'`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("generic user-defined function call in cast (GET_NUMERIC_VALUE(arg) as type)", () => {
+    const cds = `define view Test as select from src {
+  cast(GET_NUMERIC_VALUE(_Assoc.Amount) as abap.dec(23,6)) as ConvertedAmount
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });
