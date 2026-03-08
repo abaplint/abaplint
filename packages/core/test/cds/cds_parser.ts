@@ -1317,11 +1317,13 @@ define view entity /foo/moo
     expect(parsed).to.not.equal(undefined);
   });
 
-  it("abap typed literals (abap.int4'1', abap.char(10)'hello')", () => {
+  it("abap typed literals (abap.int4'1', abap.char(10)'hello', abap.sstring'...')", () => {
     const cds = `define view Test as select from src {
   abap.int4'1' as CountField,
   abap.char'X' as FlagField,
-  abap.char(10)'hello' as TextLiteral
+  abap.char(10)'hello' as TextLiteral,
+  abap.sstring'[A-Za-z0-9]' as PatternLiteral,
+  replace_regexpr( pcre => abap.sstring'X', value => A, with => abap.char'Z', result_length => abap.int1'15' ) as F
 }`;
     const file = new MemoryFile("test.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
@@ -2103,6 +2105,17 @@ group by
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("left outer many to one / one to one / many to many join cardinalities", () => {
+    const cds = `define view entity Test as select from SrcA
+  left outer many to one join SrcB as _B on SrcA.id = SrcB.id
+  left outer one to one join SrcC as _C on SrcA.id = SrcC.id
+  left outer many to many join SrcD as _D on SrcA.id = SrcD.id
+{ key SrcA.Field1 }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("parenthesized join sub-expression as join target", () => {
     const cds = `define view Test
   as select from Src left outer join (SubA as s join SubB b on s.id = b.id and s.type = b.type)
@@ -2671,6 +2684,33 @@ where Path like 'C:\\\\temp'`;
     const cds = `define view Test as select from src
   association [1..2] to Target as _T on _T.ID = src.ID
 { key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("composition with numeric cardinality [0..3]", () => {
+    const cds = `define root view entity Test
+  as select from src
+  composition [0..3] of ChildView as _Child
+  composition [0..*] of OtherView as _Other
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("nested case expression on right side of condition (A <> case when ... then ... else ... end)", () => {
+    const cds = `define view Test as select from src {
+  cast( case
+        when ( CtrlObjForCostCenter <> case when CostCenter = AddrCostCenter
+                                            then ltrim( CostCenter, '0' )
+                                           else CostCenter
+                                       end )
+          then 'I'
+        else 'V'
+        end as mytype preserving type ) as Status
+}`;
     const file = new MemoryFile("test.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
     expect(parsed).to.be.instanceof(ExpressionNode);

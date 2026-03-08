@@ -1,4 +1,4 @@
-import {CDSAggregate, CDSArithParen, CDSArithmetics, CDSCast, CDSFunction, CDSPrefixedName, CDSString} from ".";
+import {CDSAggregate, CDSArithParen, CDSArithmetics, CDSCase, CDSCast, CDSFunction, CDSPrefixedName, CDSString} from ".";
 import {altPrio, Expression, optPrio, seq, star} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSInteger} from "./cds_integer";
@@ -6,7 +6,8 @@ import {CDSInteger} from "./cds_integer";
 export class CDSCondition extends Expression {
   public getRunnable(): IStatementRunnable {
     // CDSArithmetics before CDSPrefixedName so A - B > C is handled as arithmetic comparison
-    const left = altPrio(CDSString, CDSCast, CDSFunction, CDSAggregate, CDSArithmetics, CDSArithParen, CDSPrefixedName);
+    // CDSCase allows nested case expressions on either side of a comparison
+    const left = altPrio(CDSString, CDSCast, CDSFunction, CDSAggregate, CDSCase, CDSArithmetics, CDSArithParen, CDSPrefixedName);
     const nonLikeOperators = altPrio("=", seq("!", "="), seq("<", ">"), seq(">", "="), seq("<", "="), "<", ">");
     const likeOperators = altPrio("LIKE", "NOT LIKE");
     // Right side of comparison: simple values first, then parenthesized, then full arithmetic last.
