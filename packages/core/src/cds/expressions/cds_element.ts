@@ -30,8 +30,6 @@ export class CDSElement extends Expression {
     // - This gives exactly 1 state in all cases (no exponential blowup from opt()).
     const elementBody = altPrio(seq(altPrio("KEY", "VIRTUAL"), body), body);
 
-    // After the optional alias, allow ": redirected to" or ": Type" (for CAST/arithmetic aliases).
-    // redirected is tried first so "AS alias : redirected to..." doesn't mis-parse : as colonThing.
-    return seq(starPrio(CDSAnnotation), elementBody, optPrio(CDSAs), optPrio(altPrio(redirected, colonThing)));
+    return seq(starPrio(CDSAnnotation), elementBody, optPrio(CDSAs));
   }
 }
