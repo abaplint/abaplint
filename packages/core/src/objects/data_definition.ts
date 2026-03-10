@@ -206,8 +206,17 @@ export class DataDefinition extends AbstractObject {
     }
 
     for (const e of tree.findAllExpressions(CDSRelation)) {
-      const name = e.getFirstToken().getStr();
-      const as = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName)?.getFirstToken().getStr();
+      // For namespace-prefixed names like /PF1/C_VH_TRANSTYPE, getFirstToken() only yields "/".
+      // Collect all tokens NOT part of the CDSAs child to reconstruct the full name.
+      const asNode = e.findDirectExpression(CDSAs);
+      const asTokenSet = new Set(
+        asNode ? asNode.getTokens().map(t => `${t.getStart().getRow()}:${t.getStart().getCol()}`) : [],
+      );
+      const name = e.getTokens()
+        .filter(t => !asTokenSet.has(`${t.getStart().getRow()}:${t.getStart().getCol()}`))
+        .map(t => t.getStr())
+        .join("") || "ERROR";
+      const as = asNode?.findDirectExpression(CDSName)?.getFirstToken().getStr();
       this.parsedData!.relations.push({name, as});
     }
 

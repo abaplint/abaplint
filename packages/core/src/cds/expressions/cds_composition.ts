@@ -11,6 +11,6 @@ export class CDSComposition extends Expression {
     // Numeric cardinality [n..m] before OF: any non-negative integer or *
     const cardNum = altPrio(regex(/^\d+$/), "*");
     const numericCardinality = seq("[", cardNum, optPrio(seq(".", ".", cardNum)), "]");
-    return seq("COMPOSITION", opt(numericCardinality), "OF", opt(altPrio(CDSCardinality, textCardinality)), CDSRelation);
+    return seq("COMPOSITION", optPrio(numericCardinality), "OF", opt(altPrio(CDSCardinality, textCardinality)), CDSRelation);
   }
 }

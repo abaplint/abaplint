@@ -16,7 +16,7 @@ export class CDSAssociation extends Expression {
     // Numeric OF form: "association of [0..1] to Target on ..."
     const ofNumericForm = seq("ASSOCIATION", "OF", numericCardinality, "TO", CDSRelation, "ON", CDSCondition);
     // "association [0..1] to Target as _Alias on condition" — standard form
-    const standardForm = seq("ASSOCIATION", opt(CDSCardinality), "TO", opt(altPrio(textCardinality, "PARENT")), CDSRelation, "ON", CDSCondition,
+    const standardForm = seq("ASSOCIATION", optPrio(CDSCardinality), "TO", opt(altPrio(textCardinality, "PARENT")), CDSRelation, "ON", CDSCondition,
                              opt(seq("WITH", "DEFAULT", "FILTER", CDSCondition)));
     return altPrio(ofTextForm, ofNumericForm, standardForm);
   }

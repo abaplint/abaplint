@@ -70,7 +70,7 @@ export class CDSFunction extends Expression {
     const matchesRegexpr = seq("MATCHES_REGEXPR", "(", conversionInputs, ")");
     const occurrencesRegexpr = seq("OCCURRENCES_REGEXPR", "(", conversionInputs, ")");
     const substrRegexpr = seq("SUBSTR_REGEXPR", "(", conversionInputs, ")");
-    const locate_regexpr = seq("LOCATE_REGEXPR", "(", conversionInputs, ")");
+    const locateRegexpr = seq("LOCATE_REGEXPR", "(", conversionInputs, ")");
 
     // Generic fallback: user-defined/extension functions like GET_NUMERIC_VALUE(arg).
     // Use a regex that excludes CDS keywords that would otherwise be matched by CDSName.
@@ -87,7 +87,7 @@ export class CDSFunction extends Expression {
                    dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp, mod,
                    left, right, lpad, rpad, instr, length, ltrim, rtrim, replace,
                    unitConversion, currencyConversion, decimalShift, fltp_to_dec, ratioOf,
-                   replaceRegexpr, matchesRegexpr, occurrencesRegexpr, substrRegexpr, locate_regexpr,
+                   replaceRegexpr, matchesRegexpr, occurrencesRegexpr, substrRegexpr, locateRegexpr,
                    curr_to_decfloat_amount,
                    genericFunc);
   }
