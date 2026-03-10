@@ -1609,6 +1609,31 @@ define view ZTestView as select from ztable {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("deeply nested parenthesized CASE in ELSE clause (8 levels)", () => {
+    const cds = `define view Test as select from tab {
+  case when A = '00' and B = '00' and C = '00' and D = 0 then '00' else
+  ( case when A <> '00' then A else
+  ( case when B <> '00' then B else
+  ( case when C <> '00' then C else
+  ( case when D < 7 then '05' else
+  ( case when D >= 7 and D < 14 then '10' else
+  ( case when D >= 14 and D < 21 then '11' else
+  ( case when D >= 21 and D < 28 then '12' else
+  ( case when D >= 28 then '13' else '00' end )
+  end )
+  end )
+  end )
+  end )
+  end )
+  end )
+  end )
+  end as Status
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("fltp_to_dec function with AS type argument", () => {
     const cds = `define view Test as select from tab {
   fltp_to_dec( Quantity as abap.dec(13,3) ) as Quantity
