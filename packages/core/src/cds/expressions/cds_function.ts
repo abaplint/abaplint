@@ -1,5 +1,5 @@
 import {CDSFunctionInput, CDSName, CDSType} from ".";
-import {altPrio, Expression, seq, starPrio} from "../../abap/2_statements/combi";
+import {altPrio, Expression, regex, seq, starPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSFunction extends Expression {
@@ -66,6 +66,18 @@ export class CDSFunction extends Expression {
     const currencyConversion = seq("CURRENCY_CONVERSION", "(", conversionInputs, ")");
     const decimalShift = seq("DECIMAL_SHIFT", "(", conversionInputs, ")");
     const ratioOf = seq("RATIO_OF", "(", conversionInputs, ")");
+    const replaceRegexpr = seq("REPLACE_REGEXPR", "(", conversionInputs, ")");
+    const matchesRegexpr = seq("MATCHES_REGEXPR", "(", conversionInputs, ")");
+    const occurrencesRegexpr = seq("OCCURRENCES_REGEXPR", "(", conversionInputs, ")");
+    const substrRegexpr = seq("SUBSTR_REGEXPR", "(", conversionInputs, ")");
+    const locateRegexpr = seq("LOCATE_REGEXPR", "(", conversionInputs, ")");
+
+    // Generic fallback: user-defined/extension functions like GET_NUMERIC_VALUE(arg).
+    // Use a regex that excludes CDS keywords that would otherwise be matched by CDSName.
+    // Must contain at least one underscore to distinguish from keywords (e.g. GET_NUMERIC_VALUE).
+    const extFuncName = regex(/^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+$/i);
+    const genericArgs = seq(CDSFunctionInput, starPrio(seq(",", CDSFunctionInput)));
+    const genericFunc = seq(extFuncName, "(", genericArgs, ")");
 
     return altPrio(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
                    upper, lower, abs, ceil, floor, round, div, division,
@@ -75,6 +87,8 @@ export class CDSFunction extends Expression {
                    dats_add_days, dats_add_months, tstmp_to_dst, dats_tims_to_tstmp, mod,
                    left, right, lpad, rpad, instr, length, ltrim, rtrim, replace,
                    unitConversion, currencyConversion, decimalShift, fltp_to_dec, ratioOf,
-                   curr_to_decfloat_amount);
+                   replaceRegexpr, matchesRegexpr, occurrencesRegexpr, substrRegexpr, locateRegexpr,
+                   curr_to_decfloat_amount,
+                   genericFunc);
   }
 }

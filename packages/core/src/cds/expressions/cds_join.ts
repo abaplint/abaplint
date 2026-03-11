@@ -5,18 +5,25 @@ import {CDSCondition} from "./cds_condition";
 
 export class CDSJoin extends Expression {
   public getRunnable(): IStatementRunnable {
+    const cardSide = altPrio("EXACT ONE", "ONE", "MANY");
+    // LEFT OUTER [card TO card] — structured to cover all combinations
+    const leftOuterCard = seq("LEFT OUTER", cardSide, "TO", cardSide);
+    const leftOuterToCard = seq("LEFT OUTER TO", altPrio("EXACT ONE", "ONE", "MANY"));
+    // INNER [card TO card]
+    const innerCard = seq("INNER", cardSide, "TO", cardSide);
+    const innerToCard = seq("INNER TO", altPrio("EXACT ONE", "ONE", "MANY"));
     const joinTypes = optPrio(altPrio(
-      "LEFT OUTER MANY TO EXACT ONE", "LEFT OUTER ONE TO EXACT ONE", "LEFT OUTER ONE TO MANY",
-      "LEFT OUTER TO ONE", "LEFT OUTER TO MANY", "LEFT OUTER",
-      "INNER ONE TO MANY", "INNER MANY TO ONE", "INNER ONE TO EXACT ONE", "INNER MANY TO EXACT ONE",
-      "INNER TO MANY", "INNER TO ONE", "INNER TO EXACT ONE",
-      "INNER", "CROSS", "RIGHT OUTER",
+      leftOuterCard, leftOuterToCard, "LEFT OUTER",
+      innerCard, innerToCard, "INNER",
+      "CROSS", "RIGHT OUTER",
     ));
     const cond = seq(CDSSource, "ON", CDSCondition);
     const foo = altPrio(seq("(", cond, ")"), cond);
     // Parenthesized join sub-expression: JOIN (src innerJOIN src ON cond) ON outerCond
     const innerJoin = seq(joinTypes, "JOIN", altPrio(seq("(", cond, ")"), cond));
     const parenJoinChain = seq("(", CDSSource, star(innerJoin), ")", "ON", CDSCondition);
-    return seq(joinTypes, "JOIN", altPrio(parenJoinChain, foo, CDSSource));
+    // Inline nested join: JOIN src [JOIN src ON cond]* ON outerCond
+    const inlineChain = seq(CDSSource, star(seq(joinTypes, "JOIN", CDSSource, "ON", CDSCondition)), "ON", CDSCondition);
+    return seq(joinTypes, "JOIN", altPrio(parenJoinChain, inlineChain, foo, CDSSource));
   }
 }

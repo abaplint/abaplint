@@ -929,6 +929,26 @@ where
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("EXCEPT set operator between selects", () => {
+    const cds = `define view entity Test as select from SrcA
+  association [1..1] to I_X as _X on SrcA.ID = _X.ID
+{ key _X.UUID, key Material, key StorageLocation }
+except select from SrcB
+  association [1..1] to I_X as _X on SrcB.ID = _X.ID
+{ key _X.UUID, key _Y.Material, key _Y.StorageLocation }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("INTERSECT set operator between selects", () => {
+    const cds = `define view Test as select from SrcA { key A }
+intersect select from SrcB { key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("division and arithmetics", () => {
     const cds = `define view zsdfds as select from zaaaa {
   key mandt,
@@ -1297,6 +1317,19 @@ define view entity /foo/moo
     expect(parsed).to.not.equal(undefined);
   });
 
+  it("abap typed literals (abap.int4'1', abap.char(10)'hello', abap.sstring'...')", () => {
+    const cds = `define view Test as select from src {
+  abap.int4'1' as CountField,
+  abap.char'X' as FlagField,
+  abap.char(10)'hello' as TextLiteral,
+  abap.sstring'[A-Za-z0-9]' as PatternLiteral,
+  replace_regexpr( pcre => abap.sstring'X', value => A, with => abap.char'Z', result_length => abap.int1'15' ) as F
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("abap.char", () => {
     const cds = `
 define view entity moo
@@ -1576,6 +1609,31 @@ define view ZTestView as select from ztable {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("deeply nested parenthesized CASE in ELSE clause (8 levels)", () => {
+    const cds = `define view Test as select from tab {
+  case when A = '00' and B = '00' and C = '00' and D = 0 then '00' else
+  ( case when A <> '00' then A else
+  ( case when B <> '00' then B else
+  ( case when C <> '00' then C else
+  ( case when D < 7 then '05' else
+  ( case when D >= 7 and D < 14 then '10' else
+  ( case when D >= 14 and D < 21 then '11' else
+  ( case when D >= 21 and D < 28 then '12' else
+  ( case when D >= 28 then '13' else '00' end )
+  end )
+  end )
+  end )
+  end )
+  end )
+  end )
+  end )
+  end as Status
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("fltp_to_dec function with AS type argument", () => {
     const cds = `define view Test as select from tab {
   fltp_to_dec( Quantity as abap.dec(13,3) ) as Quantity
@@ -1836,6 +1894,16 @@ where Field like 'ACDOC@_%' escape '@'`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("aggregate with ALL keyword (sum( all Field ))", () => {
+    const cds = `define view Test as select from a {
+  key cast(sum( all ErrorCounter ) as abap.int8) as ErrorCount,
+  cast(count( distinct A ) as abap.int8) as ACount
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("zero-argument function utcl_current()", () => {
     const cds = `define view Test as select from tab {
   key Field,
@@ -2054,6 +2122,28 @@ group by
 {
   key SrcA.Field1
 }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("inner one to one join cardinality", () => {
+    const cds = `define view entity Test as select from SrcA
+  inner one to one join SrcB as Alias on SrcA.id = SrcB.id
+{
+  key SrcA.Field1
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("left outer many to one / one to one / many to many join cardinalities", () => {
+    const cds = `define view entity Test as select from SrcA
+  left outer many to one join SrcB as _B on SrcA.id = SrcB.id
+  left outer one to one join SrcC as _C on SrcA.id = SrcC.id
+  left outer many to many join SrcD as _D on SrcA.id = SrcD.id
+{ key SrcA.Field1 }`;
     const file = new MemoryFile("test.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
     expect(parsed).to.be.instanceof(ExpressionNode);
@@ -2447,6 +2537,19 @@ view C_EarmarkedFundsItemA_Apprvl
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("REPLACE_REGEXPR function with named arguments (pcre => ..., value => ..., with => ..., result_length => ...)", () => {
+    const cds = `define view Test as select from t100 {
+  replace_regexpr( pcre => '&1|&2|&3|&4|:|=',
+                   value => text,
+                   with => '',
+                   result_length => 100
+                 ) as ErrorMessageText
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
   it("CURR_TO_DECFLOAT_AMOUNT function", () => {
     const cds = `define view C_Foo as select from Bar {
   cast(curr_to_decfloat_amount(Amount) / Count as sometype preserving type) as Result
@@ -2499,6 +2602,253 @@ where Path like 'C:\\\\temp'`;
     const cds = `define view Test as select from src
   composition [0..*] of Child as _Child
 { key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("element alias with redirected to composition child", () => {
+    const cds = `define view Test as select from src {
+  key _Text as _Text : redirected to composition child I_SomeTextTP
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("element alias with redirected to parent", () => {
+    const cds = `define view Test as select from src {
+  key _Assoc as _Alias : redirected to parent I_ParentView
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("annotation with negative float value", () => {
+    const cds = `define view Test as select from src {
+  @Semantics.valueRange.minimum: -100.000000
+  key Amount
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("ltrim/rtrim with escaped backslash string argument", () => {
+    const cds = `define view Test as select from src {
+  ltrim ( rtrim( Field, '\\\\' ), '\\\\' ) as Alias
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("annotation #() with concatenation expression", () => {
+    const cds = `define view Test as select from src {
+  @Consumption.semanticObject: #(SOME + 'WEIRD_EXPRESSION')
+  key Field
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("association of text cardinality form (one to many)", () => {
+    const cds = `define view entity Test as projection on Src
+  association of one to many Target as _T on $projection.ID = _T.ID
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("association of text cardinality with EXACT ONE (many to exact one, one to exact one)", () => {
+    const cds = `define view entity Test as select from Src
+  association of many to exact one I_CurrencyRole as _Role on $projection.CurrencyRole = _Role.CurrencyRole
+  association of one to exact one I_Other as _Other on $projection.ID = _Other.ID
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("path filter with join type and WHERE condition", () => {
+    const cds = `define view Test as select from src {
+  key _Equipment._TimeSeg[left outer where ValidityEnd = '99991231']._Account.SalesOrg
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("case expression with NOT BETWEEN in WHEN condition", () => {
+    const cds = `define view Test as select from src {
+  case
+    when Field = '99991231' then 'E'
+    when Flag = 'I' and Field not between $parameters.P_From and $parameters.P_To then 'E'
+    else coalesce(Flag, '')
+  end as Result
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("arithmetic expressions as CASE WHEN condition operands (A - B > C - D)", () => {
+    const cds = `define view Test as select from src {
+  case
+    when ReorderThreshold - SafetyStock > MaxStock - ReorderThreshold
+    then MaxStock - ReorderThreshold
+    else ReorderThreshold - SafetyStock
+  end as CurrentGreenZone,
+  case
+    when A - B > C - D or (X = 0 or Y = 0)
+    then (2 * A) - B - C
+    else cast(0 as mabst)
+  end as OtherField
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("association with numeric cardinality beyond 0/1 (e.g. [1..2])", () => {
+    const cds = `define view Test as select from src
+  association [1..2] to Target as _T on _T.ID = src.ID
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("composition with numeric cardinality [0..3]", () => {
+    const cds = `define root view entity Test
+  as select from src
+  composition [0..3] of ChildView as _Child
+  composition [0..*] of OtherView as _Other
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("nested case expression on right side of condition (A <> case when ... then ... else ... end)", () => {
+    const cds = `define view Test as select from src {
+  cast( case
+        when ( CtrlObjForCostCenter <> case when CostCenter = AddrCostCenter
+                                            then ltrim( CostCenter, '0' )
+                                           else CostCenter
+                                       end )
+          then 'I'
+        else 'V'
+        end as mytype preserving type ) as Status
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("searched case with aggregate as searched expression (case min(A) when ... end)", () => {
+    const cds = `define view Test as select from src {
+  key case min(ValidityStartDate)
+        when '99991231' then '99991231'
+        else dats_add_days( min(ValidityStartDate), -1, 'UNCHANGED')
+      end as ValidityEndDate
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("cast arithmetic expression as condition operand (cast(A)-cast(B) > 0)", () => {
+    const cds = `define view Test as select from src {
+  case when cast(NetBookValue as abap.dec(23,2)) - cast(AssetNetValue as abap.dec(23,2)) > 0
+       then cast(GainOrLoss as abap.dec(23,2))
+       else cast(0 as abap.curr(23,2))
+       end as AssetGain
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("inline nested join (JOIN src LEFT OUTER JOIN src ON cond1 ON outerCond)", () => {
+    const cds = `define view Test as select from Src as ILot
+  inner join X as UD
+     left outer to one join Y as CanceledILot
+       on UD.InspectionLot = CanceledILot.InspectionLot
+  on ILot.InspectionLot = UD.InspectionLot
+{ key A }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("static where filter in FROM clause (select from Table [Field = 'Value'])", () => {
+    const cds = `define view Test
+  as select from I_SomeTable [SomeField = 'VAL']
+{ key Field1 }`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("scientific notation float literal in CASE WHEN (0.0000000000000000E+00)", () => {
+    const cds = `define view Test as select from src {
+  cast (
+    case MaintCallCntrRdng
+        when 0.0000000000000000E+00 then cast ( '' as dzeieh)
+        else MaintenanceTaskPerformanceUnit
+    end
+  as dzeieh) as F
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("abap.dec typed literal in cast (abap.dec'000' as type preserving type)", () => {
+    const cds = `define view Test as select from src {
+  cast( abap.dec'000' as farp_dzbd3t preserving type ) as RefInvcNetPaymentDays
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("path filter with text cardinality [to one: cond]", () => {
+    const cds = `define view Test as select from src {
+  _Order._Status[ to one: StatusIsActive = 'X' and StatusCode = 'I0045' ].StatusCode as F
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("path filter with numeric range cardinality [0..1: cond]", () => {
+    const cds = `define view Test as select from src {
+  _Assoc[ 0..1: Language = $session.system_language ].Name as F
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("path filter with wildcard cardinality and join type [*:inner]", () => {
+    const cds = `define view Test as select from src {
+  _Network[*:inner].NetworkID,
+  _Network[*:inner].NetworkName
+}`;
+    const file = new MemoryFile("test.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("generic user-defined function call in cast (GET_NUMERIC_VALUE(arg) as type)", () => {
+    const cds = `define view Test as select from src {
+  cast(GET_NUMERIC_VALUE(_Assoc.Amount) as abap.dec(23,6)) as ConvertedAmount
+}`;
     const file = new MemoryFile("test.ddls.asddls", cds);
     const parsed = new CDSParser().parse(file);
     expect(parsed).to.be.instanceof(ExpressionNode);

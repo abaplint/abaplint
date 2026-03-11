@@ -1,5 +1,5 @@
 import {CDSArithmetics, CDSCase, CDSCast, CDSFunction, CDSPrefixedName, CDSString, CDSType} from ".";
-import {altPrio, Expression, opt, seq} from "../../abap/2_statements/combi";
+import {altPrio, Expression, optPrio, seq} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSAggregate extends Expression {
@@ -9,6 +9,6 @@ export class CDSAggregate extends Expression {
     // fieldAsType handles avg(field AS type) / sum(field AS type) — SAP inline type coercion
     const fieldAsType = seq(CDSPrefixedName, "AS", CDSType);
     const value = altPrio(CDSArithmetics, CDSCast, CDSCase, CDSFunction, fieldAsType, CDSPrefixedName, CDSString, "*");
-    return seq(altPrio("MAX", "MIN", "SUM", "AVG", "COUNT"), "(", opt("DISTINCT"), value, ")");
+    return seq(altPrio("MAX", "MIN", "SUM", "AVG", "COUNT"), "(", optPrio(altPrio("DISTINCT", "ALL")), value, ")");
   }
 }

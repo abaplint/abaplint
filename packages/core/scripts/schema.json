@@ -2222,7 +2222,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check for function modules with global parameteers\nhttps://rules.abaplint.org/fm_global_parameters_obsolete"
+              "description": "Check for function modules with global parameters\nhttps://rules.abaplint.org/fm_global_parameters_obsolete"
             },
             "forbidden_identifier": {
               "anyOf": [
@@ -4180,7 +4180,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check for function modules with global parameteers\nhttps://rules.abaplint.org/fm_global_parameters_obsolete"
+              "description": "Check for function modules with global parameters\nhttps://rules.abaplint.org/fm_global_parameters_obsolete"
             },
             "forbidden_identifier": {
               "anyOf": [
