@@ -1,15 +1,13 @@
 import {IRule, IRuleMetadata} from "./_irule";
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {ABAPObject, ITextElements} from "../objects/_abap_object";
+import {ITextElements} from "../objects/_abap_object";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {Parameter, SelectOption, Include} from "../abap/2_statements/statements";
 import {FieldSub, IncludeName} from "../abap/2_statements/expressions";
 import {Program} from "../objects";
 import {ABAPFile} from "../abap/abap_file";
-import {XMLParser} from "fast-xml-parser";
-import {xmlToArray, unescape} from "../xml_utils";
 
 export class SelectionScreenTextsMissingConf extends BasicRuleConfig {
 }
@@ -49,7 +47,7 @@ export class SelectionScreenTextsMissing implements IRule {
       return [];
     }
 
-    const selTexts = this.findSelectionTexts(obj);
+    const selTexts = obj.getSelectionTexts();
     const output: Issue[] = [];
     const checked = new Set<string>();
 
@@ -94,36 +92,5 @@ export class SelectionScreenTextsMissing implements IRule {
         }
       }
     }
-  }
-
-  private findSelectionTexts(obj: ABAPObject): ITextElements {
-    const selTexts: ITextElements = {};
-    const raw = obj.getXML();
-    if (raw === undefined) {
-      return selTexts;
-    }
-
-    let parsed: any;
-    try {
-      parsed = new XMLParser({parseTagValue: false, ignoreAttributes: true, trimValues: false}).parse(raw);
-    } catch {
-      return selTexts;
-    }
-
-    if (parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.TPOOL?.item === undefined) {
-      return selTexts;
-    }
-
-    for (const t of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].TPOOL.item)) {
-      if (t?.ID === "S") {
-        const key = t.KEY;
-        if (key === undefined) {
-          continue;
-        }
-        selTexts[key.toUpperCase()] = t.ENTRY ? unescape(t.ENTRY) : "";
-      }
-    }
-
-    return selTexts;
   }
 }
