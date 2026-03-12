@@ -3159,6 +3159,17 @@
               ],
               "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/selection_screen_naming"
             },
+            "selection_screen_texts_missing": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SelectionScreenTextsMissingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that selection screen parameters and select-options have selection texts\nhttps://rules.abaplint.org/selection_screen_texts_missing"
+            },
             "sequential_blank": {
               "anyOf": [
                 {
@@ -5116,6 +5127,17 @@
                 }
               ],
               "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/selection_screen_naming"
+            },
+            "selection_screen_texts_missing": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SelectionScreenTextsMissingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that selection screen parameters and select-options have selection texts\nhttps://rules.abaplint.org/selection_screen_texts_missing"
             },
             "sequential_blank": {
               "anyOf": [
@@ -7948,6 +7970,23 @@
         "selectOption",
         "screenElement"
       ],
+      "type": "object"
+    },
+    "SelectionScreenTextsMissingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "SequentialBlankConf": {
