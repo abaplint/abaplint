@@ -1,4 +1,4 @@
-import {ABAPObject} from "./_abap_object";
+import {ABAPObject, ITextElements} from "./_abap_object";
 import {ABAPFile} from "../abap/abap_file";
 import {DynproList, parseDynpros} from "./_dynpros";
 import {xmlToArray, unescape} from "../xml_utils";
@@ -9,6 +9,7 @@ export class Program extends ABAPObject {
     isModulePool: boolean,
     description: string | undefined,
     dynpros: DynproList,
+    selectionTexts: ITextElements,
   } | undefined;
 
   public getType(): string {
@@ -55,6 +56,11 @@ export class Program extends ABAPObject {
     return this.parsedXML!.dynpros || [];
   }
 
+  public getSelectionTexts(): ITextElements {
+    this.parseXML();
+    return this.parsedXML!.selectionTexts;
+  }
+
 ////////////////////////////
 
   private parseXML() {
@@ -70,14 +76,18 @@ export class Program extends ABAPObject {
         isModulePool: false,
         description: undefined,
         dynpros: [],
+        selectionTexts: {},
       };
       return;
     }
 
     let description = "";
+    const selectionTexts: ITextElements = {};
     for (const t of xmlToArray(parsed.abapGit?.["asx:abap"]["asx:values"]?.TPOOL?.item)) {
       if (t?.ID === "R") {
         description = t.ENTRY ? unescape(t.ENTRY) : "";
+      } else if (t?.ID === "S" && t.KEY !== undefined) {
+        selectionTexts[t.KEY.toUpperCase()] = t.ENTRY ? unescape(t.ENTRY) : "";
       }
     }
 
@@ -88,6 +98,7 @@ export class Program extends ABAPObject {
       isModulePool: file ? file.getRaw().includes("<SUBC>M</SUBC>") : false,
       dynpros: dynpros,
       description: description,
+      selectionTexts: selectionTexts,
     };
   }
 }
