@@ -12,7 +12,6 @@ export interface ITextElements {[key: string]: string}
 export abstract class ABAPObject extends AbstractObject {
   private parsed: readonly ABAPFile[];
   protected texts: ITextElements | undefined;
-  protected selectionTexts: ITextElements | undefined;
   public syntaxResult: ISyntaxResult | undefined; // do not use this outside of SyntaxLogic class, todo: refactor
   public [Symbol.for("debug.description")](){
     return `${this.constructor.name} ${this.getName()}`;
@@ -48,7 +47,6 @@ export abstract class ABAPObject extends AbstractObject {
   public setDirty(): void {
     this.syntaxResult = undefined;
     this.texts = undefined;
-    this.selectionTexts = undefined;
     this.parsed = [];
     super.setDirty();
   }
@@ -92,13 +90,6 @@ export abstract class ABAPObject extends AbstractObject {
     return this.texts!;
   }
 
-  public getSelectionTexts(): ITextElements {
-    if (this.selectionTexts === undefined) {
-      this.findSelectionTexts(this.parseRaw2());
-    }
-    return this.selectionTexts!;
-  }
-
   protected findTexts(parsed: any) {
     this.texts = {};
 
@@ -116,24 +107,6 @@ export abstract class ABAPObject extends AbstractObject {
           continue;
         }
         this.texts[key.toUpperCase()] = t.ENTRY ? unescape(t.ENTRY) : "";
-      }
-    }
-  }
-
-  protected findSelectionTexts(parsed: any) {
-    this.selectionTexts = {};
-
-    if (parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.TPOOL?.item === undefined) {
-      return;
-    }
-
-    for (const t of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].TPOOL.item)) {
-      if (t?.ID === "S") {
-        const key = t.KEY;
-        if (key === undefined) {
-          continue;
-        }
-        this.selectionTexts[key.toUpperCase()] = t.ENTRY ? unescape(t.ENTRY) : "";
       }
     }
   }
