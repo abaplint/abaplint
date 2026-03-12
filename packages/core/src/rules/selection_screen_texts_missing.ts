@@ -35,7 +35,8 @@ export class SelectionScreenTextsMissing extends ABAPRule {
     const selTexts = obj.getSelectionTexts();
 
     for (const stat of file.getStatements()) {
-      if (stat.get() instanceof Parameter || stat.get() instanceof SelectOption) {
+      const s = stat.get();
+      if (s instanceof Parameter || s instanceof SelectOption) {
         const fieldNode = stat.findFirstExpression(FieldSub);
         if (fieldNode) {
           const fieldName = fieldNode.getFirstToken().getStr().toUpperCase();
