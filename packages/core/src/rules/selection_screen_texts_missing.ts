@@ -1,20 +1,23 @@
-import {ABAPRule} from "./_abap_rule";
+import {IRule, IRuleMetadata} from "./_irule";
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRuleMetadata} from "./_irule";
-import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject, ITextElements} from "../objects/_abap_object";
+import {IObject} from "../objects/_iobject";
+import {IRegistry} from "../_iregistry";
 import {Parameter, SelectOption} from "../abap/2_statements/statements";
 import {FieldSub} from "../abap/2_statements/expressions";
+import {IncludeGraph} from "../utils/include_graph";
 import {XMLParser} from "fast-xml-parser";
 import {xmlToArray, unescape} from "../xml_utils";
 
 export class SelectionScreenTextsMissingConf extends BasicRuleConfig {
 }
 
-export class SelectionScreenTextsMissing extends ABAPRule {
+export class SelectionScreenTextsMissing implements IRule {
 
+  private reg: IRegistry;
   private conf = new SelectionScreenTextsMissingConf();
+  private graph: IncludeGraph;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -32,29 +35,51 @@ export class SelectionScreenTextsMissing extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, obj: ABAPObject) {
-    const issues: Issue[] = [];
-    const selTexts = this.findSelectionTexts(obj);
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    this.graph = new IncludeGraph(this.reg);
+    return this;
+  }
 
-    for (const stat of file.getStatements()) {
-      const s = stat.get();
-      if (s instanceof Parameter || s instanceof SelectOption) {
-        const fieldNode = stat.findFirstExpression(FieldSub);
-        if (fieldNode) {
-          const fieldName = fieldNode.getFirstToken().getStr().toUpperCase();
-          if (selTexts[fieldName] === undefined) {
-            issues.push(Issue.atToken(
-              file,
-              fieldNode.getFirstToken(),
-              `Selection text missing for "${fieldName}"`,
-              this.getMetadata().key,
-              this.conf.severity));
+  public run(obj: IObject): Issue[] {
+    if (!(obj instanceof ABAPObject)) {
+      return [];
+    }
+
+    const output: Issue[] = [];
+
+    for (const file of obj.getABAPFiles()) {
+      let selTexts: ITextElements;
+
+      const mains = this.graph.listMainForInclude(file.getFilename());
+      if (mains.length === 1) {
+        const mainFile = this.reg.getFileByName(mains[0]);
+        const mainObj = mainFile ? this.reg.findObjectForFile(mainFile) as ABAPObject | undefined : undefined;
+        selTexts = this.findSelectionTexts(mainObj ?? obj);
+      } else {
+        selTexts = this.findSelectionTexts(obj);
+      }
+
+      for (const stat of file.getStatements()) {
+        const s = stat.get();
+        if (s instanceof Parameter || s instanceof SelectOption) {
+          const fieldNode = stat.findFirstExpression(FieldSub);
+          if (fieldNode) {
+            const fieldName = fieldNode.getFirstToken().getStr().toUpperCase();
+            if (selTexts[fieldName] === undefined) {
+              output.push(Issue.atToken(
+                file,
+                fieldNode.getFirstToken(),
+                `Selection text missing for "${fieldName}"`,
+                this.getMetadata().key,
+                this.conf.severity));
+            }
           }
         }
       }
     }
 
-    return issues;
+    return output;
   }
 
   private findSelectionTexts(obj: ABAPObject): ITextElements {
