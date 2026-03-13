@@ -4,6 +4,9 @@ export type DynproField = {
   name: string,
   type: string,
   length: number,
+  line: number,
+  column: number,
+  height: number,
 };
 export type DynproHeader = {
   number: string,
@@ -13,6 +16,14 @@ export type DynproHeader = {
   fields: DynproField[],
 };
 export type DynproList = DynproHeader[];
+
+function parseNumber(value: string | undefined): number {
+  if (value === undefined) {
+    return 0;
+  }
+
+  return parseInt(value, 10);
+}
 
 export function parseDynpros(parsed: any): DynproList {
   const dynpros: DynproList = [];
@@ -24,7 +35,10 @@ export function parseDynpros(parsed: any): DynproList {
         fields.push({
           name: f.NAME,
           type: f.TYPE,
-          length: f.LENGTH,
+          length: parseNumber(f.LENGTH),
+          line: parseNumber(f.LINE),
+          column: parseNumber(f.COLUMN),
+          height: parseNumber(f.HEIGHT),
         });
       }
       dynpros.push({

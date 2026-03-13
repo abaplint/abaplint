@@ -107,7 +107,7 @@ describe("Rule: dynpro_checks", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it.only("overlapping dynpro fields", async () => {
+  it("overlapping dynpro fields", async () => {
     const issues = await findIssuesMulti([
       {filename: "zdynprooverlap.prog.abap", contents: `REPORT zdynprooverlap.
 
