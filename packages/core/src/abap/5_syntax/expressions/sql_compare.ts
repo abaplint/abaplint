@@ -43,7 +43,7 @@ export class SQLCompare {
       SQLIn.runSyntax(sqlin, input);
     }
 
-    const fieldName = node.findDirectExpression(Expressions.SQLFieldName)?.concatTokens();
+    const fieldName = node.findDirectExpression(Expressions.SQLFieldName)?.concatTokens().toUpperCase();
     if (fieldName && sourceType && token) {
 // check compatibility for rule sql_value_conversion
       const targetType = this.findType(fieldName, tables, input.scope);
