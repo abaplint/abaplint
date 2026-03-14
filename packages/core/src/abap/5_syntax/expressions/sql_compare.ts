@@ -43,7 +43,7 @@ export class SQLCompare {
       SQLIn.runSyntax(sqlin, input);
     }
 
-    const fieldName = node.findDirectExpression(Expressions.SQLFieldName)?.concatTokens();
+    const fieldName = node.findDirectExpression(Expressions.SQLFieldName)?.concatTokens().toUpperCase();
     if (fieldName && sourceType && token) {
 // check compatibility for rule sql_value_conversion
       const targetType = this.findType(fieldName, tables, input.scope);
@@ -51,24 +51,24 @@ export class SQLCompare {
       let message = "";
       if (sourceType instanceof IntegerType
           && targetType instanceof CharacterType) {
-        message = "Integer to CHAR conversion";
+        message = `${fieldName}: Integer to CHAR conversion`;
       } else if (sourceType instanceof IntegerType
           && targetType instanceof NumericType) {
-        message = "Integer to NUMC conversion";
+        message = `${fieldName}: Integer to NUMC conversion`;
       } else if (sourceType instanceof NumericType
           && targetType instanceof IntegerType) {
-        message = "NUMC to Integer conversion";
+        message = `${fieldName}: NUMC to Integer conversion`;
       } else if (sourceType instanceof CharacterType
           && targetType instanceof IntegerType) {
-        message = "CHAR to Integer conversion";
+        message = `${fieldName}: CHAR to Integer conversion`;
       } else if (sourceType instanceof CharacterType
           && targetType instanceof CharacterType
           && sourceType.getLength() > targetType.getLength()) {
-        message = "Source field longer than database field, CHAR -> CHAR";
+        message = `${fieldName}: Source field longer than database field, CHAR -> CHAR`;
       } else if (sourceType instanceof NumericType
           && targetType instanceof NumericType
           && sourceType.getLength() > targetType.getLength()) {
-        message = "Source field longer than database field, NUMC -> NUMC";
+        message = `${fieldName}: Source field longer than database field, NUMC -> NUMC`;
       }
       if (message !== "") {
         input.scope.addSQLConversion(fieldName, message, token);
