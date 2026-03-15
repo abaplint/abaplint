@@ -108,6 +108,7 @@ export default [...fixupConfigRules(compat.extends(
     "@typescript-eslint/triple-slash-reference": "error",
 
     "@typescript-eslint/unified-signatures": "error",
+    "no-useless-assignment": "off",
     camelcase: "off",
     "capitalized-comments": ["off", "never"],
     "comma-dangle": ["error", "always-multiline"],
