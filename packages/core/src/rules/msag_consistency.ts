@@ -19,7 +19,8 @@ export class MSAGConsistency implements IRule {
       key: "msag_consistency",
       title: "MSAG consistency check",
       shortDescription: `Checks the validity of messages in message classes`,
-      extendedInformation: `Message numbers must be 3 digits, message text must not be empty, no message number duplicates`,
+      extendedInformation: `Message numbers must be 3 digits, message text must not be empty,\n` +
+        `message text must not exceed 73 characters, no message number duplicates`,
     };
   }
 
@@ -64,6 +65,13 @@ export class MSAGConsistency implements IRule {
         issues.push(issue);
       }
 
+      if (message.getMessage().length > 73) {
+        const text = `Message text too long (max 73 characters): message ${message.getNumber()}`;
+        const position = new Position(1, 1);
+        const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+
       const num = message.getNumber();
       if (numbers.has(num)) {
         const text = "Duplicate message number " + num;
@@ -77,7 +85,7 @@ export class MSAGConsistency implements IRule {
       if (this.getConfig().numericParameters === true) {
         const placeholderCount = message.getPlaceholderCount();
         if (placeholderCount > 4) {
-          const text = `More than 4 placeholders in mesasge ${message.getNumber()}` ;
+          const text = `More than 4 placeholders in message ${message.getNumber()}` ;
           const position = new Position(1, 1);
           const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key, this.conf.severity);
           issues.push(issue);
