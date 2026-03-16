@@ -67,17 +67,17 @@ export class DynproChecks implements IRule {
 
     for (let index = 0; index < dynpro.fields.length; index++) {
       const current = dynpro.fields[index];
-      if (current.name === undefined) {
+      if (current.name === undefined || current.type === "FRAME") {
         continue;
       }
 
       for (let compare = index + 1; compare < dynpro.fields.length; compare++) {
         const other = dynpro.fields[compare];
-        if (other.name === undefined || this.overlaps(current, other) === false) {
+        if (other.name === undefined || other.type === "FRAME" || this.overlaps(current, other) === false) {
           continue;
         }
 
-        const message = `Screen ${dynpro.number}, fields ${current.name} and ${other.name} are overlapping`;
+        const message = `Screen ${dynpro.number}, ${current.type} ${current.name} and ${other.type} ${other.name} are overlapping`;
         ret.push(Issue.atPosition(file, new Position(1, 1), message, this.getMetadata().key, this.getConfig().severity));
       }
     }
@@ -98,8 +98,8 @@ export class DynproChecks implements IRule {
       return false;
     }
 
-    const firstLastColumn = first.column + Math.max(first.length, 1) - 1;
-    const secondLastColumn = second.column + Math.max(second.length, 1) - 1;
+    const firstLastColumn = first.column + Math.max(first.vislength || first.length, 1) - 1;
+    const secondLastColumn = second.column + Math.max(second.vislength || second.length, 1) - 1;
     return first.column <= secondLastColumn && second.column <= firstLastColumn;
   }
 
