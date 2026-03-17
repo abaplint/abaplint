@@ -18,7 +18,7 @@ export class SMIMConsistency implements IRule {
       key: "smim_consistency",
       title: "SMIM consistency check",
       shortDescription: `SMIM consistency check`,
-      extendedInformation: "Check folders exists",
+      extendedInformation: "Checks that the parent folder of each MIME object exists in the registry. The SAP system folder /SAP/PUBLIC is always allowed as a parent even if not present in the repository.",
     };
   }
 
@@ -43,7 +43,7 @@ export class SMIMConsistency implements IRule {
     }
 
     const base = this.base(obj.getURL() || "");
-    if (base !== "" && this.findFolder(base) === false) {
+    if (base !== "" && base !== "/SAP/PUBLIC" && this.findFolder(base) === false) {
       const message = `Parent folder "${base}" not found`;
       const position = new Position(1, 1);
       const issue = Issue.atPosition(obj.getFiles()[0], position, message, this.getMetadata().key, this.conf.severity);
