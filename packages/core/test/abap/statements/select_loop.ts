@@ -1,4 +1,4 @@
-import {statementType, statementVersion} from "../_utils";
+import {statementType, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -180,8 +180,9 @@ statementType(tests, "SELECT loop", Statements.SelectLoop);
 
 const versions = [
   {abap: `SELECT FROM ztable FIELDS field1 WHERE field2 = @lv_val INTO @DATA(ls_row).`, ver: Version.v750},
-  {abap: `SELECT FROM ztable FIELDS field1, field2
-    WHERE status = @lv_status INTO @DATA(ls_result).`, ver: Version.v750},
+  {abap: `SELECT FROM ztable FIELDS field1, field2 WHERE status = @lv_status INTO @DATA(ls_result).`, ver: Version.v750},
+  {abap: `SELECT a~field1 b~field2 INTO ( lv_val1, lv_val2 ) FROM ztab1 AS a INNER JOIN ztab2 AS b ON a~id = b~id
+    WHERE a~type = '035' AND b~spras EQ sy-langu.`, ver: Version.v750},
 ];
 
 statementVersionOk(versions, "SELECT loop", Statements.SelectLoop);
