@@ -290,6 +290,23 @@
       },
       "type": "object"
     },
+    "CDSAssociationNameConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CDSCommentStyleConf": {
       "additionalProperties": false,
       "properties": {
@@ -1794,6 +1811,17 @@
                 }
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
+            },
+            "cds_association_name": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSAssociationNameConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "CDS association names should start with an underscore\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_association_name"
             },
             "cds_comment_style": {
               "anyOf": [
@@ -3763,6 +3791,17 @@
                 }
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
+            },
+            "cds_association_name": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSAssociationNameConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "CDS association names should start with an underscore\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_association_name"
             },
             "cds_comment_style": {
               "anyOf": [

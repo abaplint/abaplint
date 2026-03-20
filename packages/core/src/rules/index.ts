@@ -12,6 +12,7 @@ export * from "./avoid_use";
 export * from "./begin_end_names";
 export * from "./begin_single_include";
 export * from "./call_transaction_authority_check";
+export * from "./cds_association_name";
 export * from "./cds_comment_style";
 export * from "./cds_legacy_view";
 export * from "./cds_parser_error";
