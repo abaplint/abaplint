@@ -183,6 +183,8 @@ const versions = [
   {abap: `SELECT FROM ztable FIELDS field1, field2 WHERE status = @lv_status INTO @DATA(ls_result).`, ver: Version.v750},
   {abap: `SELECT a~field1 b~field2 INTO ( lv_val1, lv_val2 ) FROM ztab1 AS a INNER JOIN ztab2 AS b ON a~id = b~id
     WHERE a~type = '035' AND b~spras EQ sy-langu.`, ver: Version.v750},
+  {abap: `SELECT a~field1 b~field2 INTO ( lv_val1, lv_val2 ) FROM ztab1 AS a INNER JOIN ztab2 AS b ON a~id = b~id
+    WHERE a~type = '035' AND b~spras EQ sy-langu.`, ver: Version.OpenABAP},
 ];
 
 statementVersionOk(versions, "SELECT loop", Statements.SelectLoop);
