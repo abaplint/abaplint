@@ -7,7 +7,7 @@ import {Version} from "../../../version";
 
 export class SQLIntoList extends Expression {
   public getRunnable(): IStatementRunnable {
-    const intoList = seq(altPrio(tok(WParenLeft), ver(Version.v740sp02, tok(WParenLeftW))),
+    const intoList = seq(altPrio(tok(WParenLeft), ver(Version.v740sp02, tok(WParenLeftW), Version.OpenABAP)),
                          starPrio(seq(SQLTarget, ",")),
                          SQLTarget,
                          ")");

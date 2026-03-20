@@ -290,7 +290,41 @@
       },
       "type": "object"
     },
+    "CDSAssociationNameConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CDSCommentStyleConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "CDSFieldOrderConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -322,6 +356,80 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "CDSNamingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "abstractEntity": {
+          "description": "Expected prefix for abstract entities",
+          "type": "string"
+        },
+        "basicInterfaceView": {
+          "description": "Expected prefix for basic interface views",
+          "type": "string"
+        },
+        "basicRestrictedReuseView": {
+          "description": "Expected prefix for basic restricted reuse views",
+          "type": "string"
+        },
+        "compositeInterfaceView": {
+          "description": "Expected prefix for composite interface views",
+          "type": "string"
+        },
+        "compositeRestrictedReuseView": {
+          "description": "Expected prefix for composite restricted reuse views",
+          "type": "string"
+        },
+        "consumptionView": {
+          "description": "Expected prefix for consumption views",
+          "type": "string"
+        },
+        "derivationFunction": {
+          "description": "Expected prefix for derivation functions",
+          "type": "string"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "extensionIncludeView": {
+          "description": "Expected prefix for extension include views",
+          "type": "string"
+        },
+        "privateView": {
+          "description": "Expected prefix for private views",
+          "type": "string"
+        },
+        "remoteAPIView": {
+          "description": "Expected prefix for remote API views",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "viewExtend": {
+          "description": "Expected prefix for view extends",
+          "type": "string"
+        }
+      },
+      "required": [
+        "basicInterfaceView",
+        "compositeInterfaceView",
+        "consumptionView",
+        "basicRestrictedReuseView",
+        "compositeRestrictedReuseView",
+        "privateView",
+        "remoteAPIView",
+        "viewExtend",
+        "extensionIncludeView",
+        "derivationFunction",
+        "abstractEntity"
+      ],
       "type": "object"
     },
     "CDSParserErrorConf": {
@@ -1795,6 +1903,17 @@
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
             },
+            "cds_association_name": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSAssociationNameConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "CDS association names should start with an underscore\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_association_name"
+            },
             "cds_comment_style": {
               "anyOf": [
                 {
@@ -1806,6 +1925,17 @@
               ],
               "description": "Check for obsolete comment style\nTags: SingleFile\nhttps://rules.abaplint.org/cds_comment_style"
             },
+            "cds_field_order": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSFieldOrderConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that CDS key fields are listed first and associations last in the field list\nTags: SingleFile\nhttps://rules.abaplint.org/cds_field_order"
+            },
             "cds_legacy_view": {
               "anyOf": [
                 {
@@ -1816,6 +1946,17 @@
                 }
               ],
               "description": "Identify CDS Legacy Views\nTags: SingleFile, Upport\nhttps://rules.abaplint.org/cds_legacy_view"
+            },
+            "cds_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks CDS naming conventions based on the VDM prefix rules\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_naming"
             },
             "cds_parser_error": {
               "anyOf": [
@@ -3764,6 +3905,17 @@
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
             },
+            "cds_association_name": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSAssociationNameConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "CDS association names should start with an underscore\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_association_name"
+            },
             "cds_comment_style": {
               "anyOf": [
                 {
@@ -3775,6 +3927,17 @@
               ],
               "description": "Check for obsolete comment style\nTags: SingleFile\nhttps://rules.abaplint.org/cds_comment_style"
             },
+            "cds_field_order": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSFieldOrderConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that CDS key fields are listed first and associations last in the field list\nTags: SingleFile\nhttps://rules.abaplint.org/cds_field_order"
+            },
             "cds_legacy_view": {
               "anyOf": [
                 {
@@ -3785,6 +3948,17 @@
                 }
               ],
               "description": "Identify CDS Legacy Views\nTags: SingleFile, Upport\nhttps://rules.abaplint.org/cds_legacy_view"
+            },
+            "cds_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks CDS naming conventions based on the VDM prefix rules\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_naming"
             },
             "cds_parser_error": {
               "anyOf": [
