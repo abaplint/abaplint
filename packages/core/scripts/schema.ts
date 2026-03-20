@@ -16,6 +16,7 @@ import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
 import {CallTransactionAuthorityCheckConf} from "../src/rules/call_transaction_authority_check";
 import {CDSAssociationNameConf} from "../src/rules/cds_association_name";
 import {CDSCommentStyleConf} from "../src/rules/cds_comment_style";
+import {CDSFieldOrderConf} from "../src/rules/cds_field_order";
 import {CDSLegacyViewConf} from "../src/rules/cds_legacy_view";
 import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
@@ -209,6 +210,7 @@ export interface IConfig {
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
     "cds_comment_style"?: CDSCommentStyleConf | boolean,
+    "cds_field_order"?: CDSFieldOrderConf | boolean,
     "cds_legacy_view"?: CDSLegacyViewConf | boolean,
     "cds_parser_error"?: CDSParserErrorConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
@@ -391,6 +393,7 @@ export interface IConfig {
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
     "cds_comment_style"?: CDSCommentStyleConf | boolean,
+    "cds_field_order"?: CDSFieldOrderConf | boolean,
     "cds_legacy_view"?: CDSLegacyViewConf | boolean,
     "cds_parser_error"?: CDSParserErrorConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,

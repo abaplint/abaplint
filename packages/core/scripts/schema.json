@@ -324,6 +324,23 @@
       },
       "type": "object"
     },
+    "CDSFieldOrderConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CDSLegacyViewConf": {
       "additionalProperties": false,
       "properties": {
@@ -1833,6 +1850,17 @@
                 }
               ],
               "description": "Check for obsolete comment style\nTags: SingleFile\nhttps://rules.abaplint.org/cds_comment_style"
+            },
+            "cds_field_order": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSFieldOrderConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that CDS key fields are listed first and associations last in the field list\nTags: SingleFile\nhttps://rules.abaplint.org/cds_field_order"
             },
             "cds_legacy_view": {
               "anyOf": [
@@ -3813,6 +3841,17 @@
                 }
               ],
               "description": "Check for obsolete comment style\nTags: SingleFile\nhttps://rules.abaplint.org/cds_comment_style"
+            },
+            "cds_field_order": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSFieldOrderConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that CDS key fields are listed first and associations last in the field list\nTags: SingleFile\nhttps://rules.abaplint.org/cds_field_order"
             },
             "cds_legacy_view": {
               "anyOf": [
