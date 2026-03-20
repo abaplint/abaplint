@@ -18,6 +18,7 @@ import {CDSAssociationNameConf} from "../src/rules/cds_association_name";
 import {CDSCommentStyleConf} from "../src/rules/cds_comment_style";
 import {CDSFieldOrderConf} from "../src/rules/cds_field_order";
 import {CDSLegacyViewConf} from "../src/rules/cds_legacy_view";
+import {CDSNamingConf} from "../src/rules/cds_naming";
 import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
 import {ChangeIfToCaseConf} from "../src/rules/change_if_to_case";
@@ -212,6 +213,7 @@ export interface IConfig {
     "cds_comment_style"?: CDSCommentStyleConf | boolean,
     "cds_field_order"?: CDSFieldOrderConf | boolean,
     "cds_legacy_view"?: CDSLegacyViewConf | boolean,
+    "cds_naming"?: CDSNamingConf | boolean,
     "cds_parser_error"?: CDSParserErrorConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
@@ -395,6 +397,7 @@ export interface IConfig {
     "cds_comment_style"?: CDSCommentStyleConf | boolean,
     "cds_field_order"?: CDSFieldOrderConf | boolean,
     "cds_legacy_view"?: CDSLegacyViewConf | boolean,
+    "cds_naming"?: CDSNamingConf | boolean,
     "cds_parser_error"?: CDSParserErrorConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,

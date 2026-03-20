@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Version} from "../../../src/version";
 
 const tests = [
   "SELECT foo FROM ztable.",
@@ -176,3 +177,12 @@ const tests = [
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
+
+const versions = [
+  {abap: `SELECT FROM ztable FIELDS field1 WHERE field2 = @lv_val INTO @DATA(ls_row).`, ver: Version.v750},
+  {abap: `SELECT FROM ztable FIELDS field1, field2
+    WHERE status = @lv_status INTO @DATA(ls_result).`, ver: Version.v750},
+];
+
+statementVersionOk(versions, "SELECT loop", Statements.SelectLoop);
+

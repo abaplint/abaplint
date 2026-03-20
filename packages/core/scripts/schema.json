@@ -358,6 +358,80 @@
       },
       "type": "object"
     },
+    "CDSNamingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "abstractEntity": {
+          "description": "Expected prefix for abstract entities",
+          "type": "string"
+        },
+        "basicInterfaceView": {
+          "description": "Expected prefix for basic interface views",
+          "type": "string"
+        },
+        "basicRestrictedReuseView": {
+          "description": "Expected prefix for basic restricted reuse views",
+          "type": "string"
+        },
+        "compositeInterfaceView": {
+          "description": "Expected prefix for composite interface views",
+          "type": "string"
+        },
+        "compositeRestrictedReuseView": {
+          "description": "Expected prefix for composite restricted reuse views",
+          "type": "string"
+        },
+        "consumptionView": {
+          "description": "Expected prefix for consumption views",
+          "type": "string"
+        },
+        "derivationFunction": {
+          "description": "Expected prefix for derivation functions",
+          "type": "string"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "extensionIncludeView": {
+          "description": "Expected prefix for extension include views",
+          "type": "string"
+        },
+        "privateView": {
+          "description": "Expected prefix for private views",
+          "type": "string"
+        },
+        "remoteAPIView": {
+          "description": "Expected prefix for remote API views",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "viewExtend": {
+          "description": "Expected prefix for view extends",
+          "type": "string"
+        }
+      },
+      "required": [
+        "basicInterfaceView",
+        "compositeInterfaceView",
+        "consumptionView",
+        "basicRestrictedReuseView",
+        "compositeRestrictedReuseView",
+        "privateView",
+        "remoteAPIView",
+        "viewExtend",
+        "extensionIncludeView",
+        "derivationFunction",
+        "abstractEntity"
+      ],
+      "type": "object"
+    },
     "CDSParserErrorConf": {
       "additionalProperties": false,
       "properties": {
@@ -1872,6 +1946,17 @@
                 }
               ],
               "description": "Identify CDS Legacy Views\nTags: SingleFile, Upport\nhttps://rules.abaplint.org/cds_legacy_view"
+            },
+            "cds_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks CDS naming conventions based on the VDM prefix rules\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_naming"
             },
             "cds_parser_error": {
               "anyOf": [
@@ -3863,6 +3948,17 @@
                 }
               ],
               "description": "Identify CDS Legacy Views\nTags: SingleFile, Upport\nhttps://rules.abaplint.org/cds_legacy_view"
+            },
+            "cds_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks CDS naming conventions based on the VDM prefix rules\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_naming"
             },
             "cds_parser_error": {
               "anyOf": [
