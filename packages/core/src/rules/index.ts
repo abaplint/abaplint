@@ -16,6 +16,7 @@ export * from "./cds_association_name";
 export * from "./cds_comment_style";
 export * from "./cds_field_order";
 export * from "./cds_legacy_view";
+export * from "./cds_naming";
 export * from "./cds_parser_error";
 export * from "./chain_mainly_declarations";
 export * from "./change_if_to_case";
