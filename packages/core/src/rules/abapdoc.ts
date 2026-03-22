@@ -101,12 +101,12 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#abap-doc-on
           issues.push(issue);
         }
         if (rowText.trim().match(regexEmptyAbapdoc) === null && previousRowsTexts.indexOf(rowText) === previousRowsTexts.length - 1) {
-          const message = "Missing ABAP Doc for method " + method.identifier.getToken().getStr() + " (" + rowText + ")";
+          const message = "Missing ABAP Doc for method " + method.identifier.getToken().getStr();
           const issue = Issue.atIdentifier(method.identifier, message, this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
         if (rowText.trim().match(regexEmptyParameterName) !== null) {
-          const message = "Missing ABAP Doc parameter name for method " + method.identifier.getToken().getStr() + " (" + rowText + ")";
+          const message = "Missing ABAP Doc parameter name for method " + method.identifier.getToken().getStr();
           const issue = Issue.atIdentifier(method.identifier, message, this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }

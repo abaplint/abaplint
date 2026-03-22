@@ -347,7 +347,7 @@ testRule(ignoreTestClassesInactiveTests, Abapdoc, ignoreTestClassesConfig, `rule
 
 describe("Rule: abapdoc", () => {
 
-  it.only("basic intf", async () => {
+  it("basic intf", async () => {
     const abap = `
     INTERFACE zif_foo PUBLIC.
       " hello world
