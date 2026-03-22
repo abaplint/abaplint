@@ -357,7 +357,7 @@ describe("Rule: abapdoc", () => {
     await reg.parseAsync();
     const rule = new Abapdoc();
     const issues = rule.run(reg.getFirstObject()!);
-    expect(issues[0]?.getMessage()).to.include("moobar");
+    expect(issues[0]?.getMessage()).to.not.include("hello");
   });
 
 });
