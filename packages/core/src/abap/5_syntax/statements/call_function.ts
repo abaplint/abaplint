@@ -1,12 +1,12 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {Source} from "../expressions/source";
-import {Target} from "../expressions/target";
 import {FieldChain} from "../expressions/field_chain";
 import {ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
 import {Version} from "../../../version";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {FunctionParameters} from "../expressions/function_parameters";
 
 export class CallFunction implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -26,23 +26,16 @@ export class CallFunction implements StatementSyntax {
       }
     }
 
-    // just recurse
-    for (const s of node.findAllExpressions(Expressions.Source)) {
-      Source.runSyntax(s, input);
-    }
-    for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
-      Source.runSyntax(s, input);
-    }
-    for (const t of node.findAllExpressions(Expressions.Target)) {
-      Target.runSyntax(t, input);
-    }
     for (const s of node.findDirectExpressions(Expressions.SimpleSource2)) {
       Source.runSyntax(s, input);
     }
+    for (const s of node.findDirectExpressions(Expressions.Source)) {
+      Source.runSyntax(s, input);
+    }
 
-    const exceptions = node.findFirstExpression(Expressions.ParameterException);
-    for (const s of exceptions?.findAllExpressions(Expressions.SimpleFieldChain) || []) {
-      FieldChain.runSyntax(s, input, ReferenceType.DataReadReference);
+    const fp = node.findDirectExpression(Expressions.FunctionParameters);
+    if (fp) {
+      FunctionParameters.runSyntax(fp, input);
     }
   }
 }
