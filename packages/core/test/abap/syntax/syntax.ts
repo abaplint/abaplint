@@ -12348,6 +12348,24 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("cannot be modified");
   });
 
+  it("error, cannot be modified, fm call", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    CALL FUNCTION 'BAR'
+      CHANGING
+        moo = bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.v740sp08);
+    expect(issues[0]?.getMessage()).to.contain("cannot be modified");
+  });
+
   it("ok, its VALUEd", () => {
     const abap = `
 CLASS lcl DEFINITION.
