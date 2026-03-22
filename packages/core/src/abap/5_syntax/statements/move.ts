@@ -8,6 +8,7 @@ import {StatementSyntax} from "../_statement_syntax";
 import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Dereference} from "../expressions/dereference";
+import {IdentifierMeta} from "../../types/_typed_identifier";
 
 export class Move implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -24,6 +25,16 @@ export class Move implements StatementSyntax {
           continue;
         }
         Target.runSyntax(t, input);
+      }
+    }
+
+    if (inline === undefined && firstTarget !== undefined) {
+// hmm, does this do the scoping correctly? handle constants etc? todo
+      const found = input.scope.findVariable(firstTarget.concatTokens());
+      if (found && found.getMeta().includes(IdentifierMeta.ReadOnly)) {
+        const message = `"${firstTarget.concatTokens()}" cannot be modified, it is readonly`;
+        input.issues.push(syntaxIssue(input, firstTarget.getFirstToken(), message));
+        return;
       }
     }
 
