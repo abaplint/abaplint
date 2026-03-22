@@ -12332,6 +12332,38 @@ DATA(lx_) = ix_ BIT-XOR lr_->*.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("error, cannot be modified", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.v740sp08);
+    expect(issues[0]?.getMessage()).to.contain("cannot be modified");
+  });
+
+  it("ok, its VALUEd", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING VALUE(bar) TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    bar = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Version.v740sp08);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("bad string template format", () => {
     const abap = `write |\\xC2|.`;
     const issues = runProgram(abap);
