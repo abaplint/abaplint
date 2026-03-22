@@ -1,5 +1,7 @@
 import {testRule} from "./_utils";
 import {Abapdoc, AbapdocConf} from "../../src/rules/abapdoc";
+import {expect} from "chai";
+import {MemoryFile, Registry} from "../../src";
 
 const defaultConfigTests = [
   // all public methods have abapdoc
@@ -342,3 +344,20 @@ ignoreTestClassesConfig.ignoreTestClasses = false;
 ignoreTestClassesConfig.classDefinition = true;
 
 testRule(ignoreTestClassesInactiveTests, Abapdoc, ignoreTestClassesConfig, `rule: abapdoc, ignoreTestClassesInactive`);
+
+describe("Rule: abapdoc", () => {
+
+  it.only("basic intf", async () => {
+    const abap = `
+    INTERFACE zif_foo PUBLIC.
+      " hello world
+      METHODS moobar RETURNING VALUE(rv_string) TYPE string.
+    ENDINTERFACE.`;
+    const reg = new Registry().addFile(new MemoryFile("zif_foo.intf.abap", abap));
+    await reg.parseAsync();
+    const rule = new Abapdoc();
+    const issues = rule.run(reg.getFirstObject()!);
+    expect(issues[0]?.getMessage()).to.include("moobar");
+  });
+
+});
