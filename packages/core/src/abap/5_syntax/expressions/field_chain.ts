@@ -45,6 +45,7 @@ export class FieldChain {
     const children = node.getChildren();
     context = this.findTop(children[0], input, refType);
 
+    let prev = children[0].concatTokens();
     for (let i = 1; i < children.length; i++) {
       const current = children[i];
       if (current === undefined) {
@@ -82,7 +83,7 @@ export class FieldChain {
               return VoidType.get(CheckSyntaxKey);
             }
           } else {
-            const message = "Not a structure, FieldChain, " + context?.constructor.name + ", " + current.concatTokens();
+            const message = prev.toUpperCase() + " is not structured (" + context?.constructor.name + ")";
             input.issues.push(syntaxIssue(input, current.getFirstToken(), message));
             return VoidType.get(CheckSyntaxKey);
           }
@@ -141,6 +142,7 @@ export class FieldChain {
         }
       }
 
+      prev = current.concatTokens();
     }
 
     return context;

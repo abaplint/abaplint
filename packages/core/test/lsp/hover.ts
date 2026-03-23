@@ -1795,4 +1795,17 @@ SELECT SINGLE sprsl, arbgb
     expect(hover?.value).to.contain("inline");
   });
 
+  it("hover from star'ed table", () => {
+    const abap = `
+TABLES zmmvef.
+SELECT SINGLE * FROM *zmmvef.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const t100 = new MemoryFile("t100.tabl.xml", tabl_t100xml);
+    const reg = new Registry().addFiles([file, t100]).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 2, 25));
+    if (hover !== undefined) {
+      expect(hover?.value).to.not.contain("Void");
+    }
+  });
+
 });

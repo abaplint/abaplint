@@ -8,7 +8,9 @@ export type DatabaseTableSource = Table | DataDefinition | View | undefined;
 export class DatabaseTable {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput): DatabaseTableSource {
     const token = node.getFirstToken();
-    const name = token.getStr();
+    const rawName = token.getStr();
+    const starPrefixed = rawName.startsWith("*");
+    const name = starPrefixed ? rawName.substring(1) : rawName;
     if (name === "(") {
       // dynamic
       return undefined;
