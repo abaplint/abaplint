@@ -12366,6 +12366,17 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("cannot be modified");
   });
 
+  it("foo is not structured", () => {
+    const abap = `
+DATA foo TYPE i.
+DATA: BEGIN OF structure,
+        field TYPE i,
+      END OF structure.
+structure-field = foo-nonfield.`;
+    const issues = runProgram(abap, [], Version.v740sp08);
+    expect(issues[0]?.getMessage()).to.contain("FOO is not structured");
+  });
+
   it("ok, its VALUEd", () => {
     const abap = `
 CLASS lcl DEFINITION.
