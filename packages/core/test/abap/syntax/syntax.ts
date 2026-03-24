@@ -12332,6 +12332,20 @@ DATA(lx_) = ix_ BIT-XOR lr_->*.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, WRITE ENUM", () => {
+    const abap = `
+TYPES: BEGIN OF ENUM ty_cache_policy STRUCTURE cache_policies,
+         use_all,
+         use_none,
+       END OF ENUM ty_cache_policy STRUCTURE cache_policies.
+
+DATA foo TYPE ty_cache_policy.
+WRITE / cache_policies-use_all.
+WRITE / foo.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("error, cannot be modified", () => {
     const abap = `
 CLASS lcl DEFINITION.

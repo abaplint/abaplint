@@ -1,5 +1,6 @@
 import {ClassDefinition, InterfaceDefinition} from "../types";
 import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DataType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
+import {EnumType} from "../types/basic/enum_type";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {CGenericType} from "../types/basic/cgeneric_type";
 import {CurrentScope} from "./_current_scope";
@@ -79,7 +80,8 @@ export class TypeUtils {
         || type instanceof DataType
         || type instanceof CLikeType
         || type instanceof PackedType
-        || type instanceof TimeType) {
+        || type instanceof TimeType
+        || type instanceof EnumType) {
       return true;
     }
     return false;
