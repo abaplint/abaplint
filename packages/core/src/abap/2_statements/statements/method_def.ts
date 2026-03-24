@@ -8,7 +8,7 @@ export class MethodDef implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const def = ver(Version.v740sp08, seq("DEFAULT", altPrio("FAIL", "IGNORE")));
+    const def = ver(Version.v740sp08, seq("DEFAULT", altPrio("FAIL", "IGNORE")), Version.OpenABAP);
 
     const parameters = seq(optPrio(altPrio("FINAL", def, Abstract)),
                            optPrio(MethodDefImporting),

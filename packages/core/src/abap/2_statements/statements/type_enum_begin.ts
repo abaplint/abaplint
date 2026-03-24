@@ -13,7 +13,7 @@ export class TypeEnumBegin implements IStatement {
 
     const em = seq("ENUM", NamespaceSimpleName, opt(structure), opt(base));
 
-    const ret = ver(Version.v751, seq("TYPES", "BEGIN OF", em));
+    const ret = ver(Version.v751, seq("TYPES", "BEGIN OF", em), Version.OpenABAP);
 
     return ret;
   }
