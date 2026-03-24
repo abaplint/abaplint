@@ -12332,6 +12332,15 @@ DATA(lx_) = ix_ BIT-XOR lr_->*.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("error, the zif_foo not found", () => {
+    const abap = `
+INTERFACE lif.
+  ALIASES foo FOR zif_foo~bar.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not found");
+  });
+
   it("ok, WRITE ENUM", () => {
     const abap = `
 TYPES: BEGIN OF ENUM ty_cache_policy STRUCTURE cache_policies,
