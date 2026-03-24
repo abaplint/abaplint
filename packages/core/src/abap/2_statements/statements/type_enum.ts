@@ -9,7 +9,7 @@ export class TypeEnum implements IStatement {
   public getMatcher(): IStatementRunnable {
 
 // it is also possible to define without Value, this is covered by normal type
-    const ret = ver(Version.v751, seq("TYPES", NamespaceSimpleName, Value));
+    const ret = ver(Version.v751, seq("TYPES", NamespaceSimpleName, Value), Version.OpenABAP);
 
     return ret;
   }

@@ -9,7 +9,7 @@ export class TypeEnumEnd implements IStatement {
   public getMatcher(): IStatementRunnable {
     const structure = seq("STRUCTURE", NamespaceSimpleName);
 
-    const ret = ver(Version.v751, seq("TYPES", "END OF", "ENUM", NamespaceSimpleName, opt(structure)));
+    const ret = ver(Version.v751, seq("TYPES", "END OF", "ENUM", NamespaceSimpleName, opt(structure)), Version.OpenABAP);
 
     return ret;
   }
