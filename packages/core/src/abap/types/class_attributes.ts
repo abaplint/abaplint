@@ -237,6 +237,10 @@ export class Attributes implements IAttributes {
         if (foundAttribute) {
           input.scope.addNamedIdentifier(aliasName.getStr(), foundAttribute);
         }
+      } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
+        input.scope.addReference(compToken, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename);
+      } else {
+        throw new Error("Interface " + name + " not found");
       }
     }
   }

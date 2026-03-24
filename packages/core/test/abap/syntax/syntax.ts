@@ -12332,7 +12332,7 @@ DATA(lx_) = ix_ BIT-XOR lr_->*.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("error, the zif_foo not found", () => {
+  it("error, the zif_foo not found", () => {
     const abap = `
 INTERFACE lif.
   ALIASES foo FOR zif_foo~bar.
