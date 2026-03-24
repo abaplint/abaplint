@@ -12332,7 +12332,7 @@ DATA(lx_) = ix_ BIT-XOR lr_->*.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, WRITE ENUM", () => {
+  it("ok, WRITE ENUM", () => {
     const abap = `
 TYPES: BEGIN OF ENUM ty_cache_policy STRUCTURE cache_policies,
          use_all,

@@ -9,6 +9,7 @@ export * from "./date_type";
 export * from "./decfloat_type";
 export * from "./decfloat16_type";
 export * from "./decfloat34_type";
+export * from "./enum_type";
 export * from "./float_type";
 export * from "./floating_point_type";
 export * from "./generic_object_reference_type";
