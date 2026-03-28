@@ -35,6 +35,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly globalValue: boolean;
   private readonly sharedMemory: boolean;
   private readonly aliases: Alias[];
+  private readonly createVisibilityValue: Visibility;
 
   public constructor(node: StructureNode, input: SyntaxInput) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
@@ -83,6 +84,13 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.testing = concat.includes(" FOR TESTING");
     this.sharedMemory = concat.includes(" SHARED MEMORY ENABLED");
     this.abstract = def?.findDirectTokenByText("ABSTRACT") !== undefined;
+    if (concat.includes(" CREATE PRIVATE")) {
+      this.createVisibilityValue = Visibility.Private;
+    } else if (concat.includes(" CREATE PROTECTED")) {
+      this.createVisibilityValue = Visibility.Protected;
+    } else {
+      this.createVisibilityValue = Visibility.Public;
+    }
 
     // perform checks after everything has been initialized
     this.checkMethodsFromSuperClasses(input.scope);
@@ -139,6 +147,10 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
   public isSharedMemory(): boolean {
     return this.sharedMemory;
+  }
+
+  public getCreateVisibility(): Visibility {
+    return this.createVisibilityValue;
   }
 
 /*

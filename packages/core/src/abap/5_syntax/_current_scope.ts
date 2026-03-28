@@ -540,6 +540,17 @@ export class CurrentScope {
     return false;
   }
 
+  public getEnclosingClassName(): string | undefined {
+    let curr = this.current;
+    while (curr !== undefined) {
+      if (curr.getIdentifier().stype === ScopeType.ClassImplementation) {
+        return curr.getIdentifier().sname;
+      }
+      curr = curr.getParent();
+    }
+    return undefined;
+  }
+
   public isGlobalOO(): boolean {
     return this.parentObj.getType() === "INTF" || this.parentObj.getType() === "CLAS";
   }

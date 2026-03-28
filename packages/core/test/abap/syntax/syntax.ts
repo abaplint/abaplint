@@ -12171,7 +12171,7 @@ INSERT VALUE ty_t001l( werks = 22
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("instantiation outside of private", () => {
+  it("instantiation outside of private", () => {
     const abap = `
 CLASS lcl_test DEFINITION CREATE PRIVATE.
   PUBLIC SECTION.
@@ -12192,7 +12192,7 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("class is defined as private");
   });
 
-  it.only("instantiation private ok", () => {
+  it("instantiation private ok", () => {
     const abap = `
 CLASS lcl_test DEFINITION CREATE PRIVATE.
   PUBLIC SECTION.
