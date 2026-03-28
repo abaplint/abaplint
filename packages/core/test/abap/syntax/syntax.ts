@@ -12210,6 +12210,51 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("instantiation private ok, friends deferred", () => {
+    const abap = `
+CLASS something DEFINITION DEFERRED.
+
+CLASS priv DEFINITION CREATE PRIVATE FRIENDS something.
+ENDCLASS.
+CLASS priv IMPLEMENTATION.
+ENDCLASS.
+
+CLASS something DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+CLASS something IMPLEMENTATION.
+  METHOD bar.
+    DATA ref TYPE REF TO priv.
+    CREATE OBJECT ref.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("instantiation private ok, friends sequenced defs", () => {
+    const abap = `
+CLASS something DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+
+CLASS priv DEFINITION CREATE PRIVATE FRIENDS something.
+ENDCLASS.
+CLASS priv IMPLEMENTATION.
+ENDCLASS.
+
+CLASS something IMPLEMENTATION.
+  METHOD bar.
+    DATA ref TYPE REF TO priv.
+    CREATE OBJECT ref.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("Moveable, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_cedi,
