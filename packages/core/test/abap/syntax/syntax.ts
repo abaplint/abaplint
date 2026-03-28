@@ -4270,7 +4270,7 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.only("testclass referencing friended type, create object", () => {
+  it("testclass referencing friended type, create object", () => {
     const test = `
     CLASS ltcl_syntax_cases DEFINITION DEFERRED.
     CLASS zcl_sdfsdf DEFINITION LOCAL FRIENDS ltcl_syntax_cases.

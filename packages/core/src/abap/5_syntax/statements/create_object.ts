@@ -135,7 +135,8 @@ export class CreateObject implements StatementSyntax {
     if (enclosingClass.toUpperCase() === cdef.getName().toUpperCase()) {
       return undefined;
     }
-    if (cdef.getFriends().some(f => f.toUpperCase() === enclosingClass.toUpperCase())) {
+    if (cdef.getFriends().some(f => f.toUpperCase() === enclosingClass.toUpperCase()) ||
+        input.scope.isLocalFriend(cdef.getName(), enclosingClass)) {
       return undefined;
     }
     if (createVis === Visibility.Protected) {
