@@ -12171,6 +12171,27 @@ INSERT VALUE ty_t001l( werks = 22
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("instantiation outside of private", () => {
+    const abap = `
+CLASS lcl_test DEFINITION CREATE PRIVATE.
+  PUBLIC SECTION.
+    METHODS get_data RETURNING VALUE(re_data) TYPE string.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD get_data.
+    re_data = 'Hello'.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_obj_instance TYPE REF TO lcl_test.
+*-------->> below object instantiation should give a syntax error, as class is defined as private.
+  CREATE OBJECT lo_obj_instance.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("class is defined as private");
+  });
+
   it("Moveable, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_cedi,
