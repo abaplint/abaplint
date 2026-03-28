@@ -12192,6 +12192,24 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("class is defined as private");
   });
 
+  it.only("instantiation private ok", () => {
+    const abap = `
+CLASS lcl_test DEFINITION CREATE PRIVATE.
+  PUBLIC SECTION.
+    METHODS get_data RETURNING VALUE(re_data) TYPE string.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD get_data.
+    DATA lo_obj_instance TYPE REF TO lcl_test.
+    re_data = 'Hello'.
+    CREATE OBJECT lo_obj_instance.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("Moveable, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_cedi,
