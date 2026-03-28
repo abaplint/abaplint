@@ -4270,6 +4270,32 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it.only("testclass referencing friended type, create object", () => {
+    const test = `
+    CLASS ltcl_syntax_cases DEFINITION DEFERRED.
+    CLASS zcl_sdfsdf DEFINITION LOCAL FRIENDS ltcl_syntax_cases.
+
+    CLASS ltcl_syntax_cases DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+      PUBLIC SECTION.
+        METHODS BAR.
+    ENDCLASS.
+    CLASS ltcl_syntax_cases IMPLEMENTATION.
+      METHOD bar.
+        DATA ref TYPE REF TO zcl_sdfsdf.
+        CREATE OBJECT ref.
+      endmethod.
+    ENDCLASS.`;
+    const clas = `
+    CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PRIVATE.
+    ENDCLASS.
+    CLASS zcl_sdfsdf IMPLEMENTATION.
+    ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
   it("CONCATENATE, use before decl", () => {
     const abap = `CONCATENATE lv_str 'foobar' INTO DATA(lv_str) SEPARATED BY space.`;
     const issues = runProgram(abap);
