@@ -12809,4 +12809,21 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("ok, lines() on table attribute with empty key as method parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA mt_items TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    CLASS-METHODS foo IMPORTING iv TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+DATA(lo_obj) = NEW lcl( ).
+lcl=>foo( lines( lo_obj->mt_items ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });

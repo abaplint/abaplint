@@ -267,7 +267,7 @@ export class BuiltIn {
     "CONCAT_LINES_OF": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "table": new TableType(AnyType.get(), {withHeader: false, keyType: TableKeyType.default}),
+        "table": new TableType(AnyType.get(), {withHeader: false, keyType: TableKeyType.user}),
       },
       optional: {
         "sep": CLikeType.get(),
@@ -589,7 +589,7 @@ export class BuiltIn {
     "LINES": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new TableType(AnyType.get(), {withHeader: false, keyType: TableKeyType.default}),
+        "val": new TableType(AnyType.get(), {withHeader: false, keyType: TableKeyType.user}),
       },
       return: IntegerType.get(),
     },
