@@ -12826,7 +12826,7 @@ lcl=>foo( lines( lo_obj->mt_items ) ).`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it.only("ok, standard table", () => {
+  it("ok, standard table", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
