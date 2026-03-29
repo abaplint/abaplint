@@ -18,7 +18,7 @@ import {ObjectOriented} from "../5_syntax/_object_oriented";
 import {IImplementing} from "./_interface_definition";
 import {ReferenceType} from "../5_syntax/_reference";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
-import {SyntaxInput} from "../5_syntax/_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 import {Alias} from "./alias";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
@@ -211,8 +211,15 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     const result: string[] = [];
     for (const n of def?.findDirectExpression(Expressions.ClassFriends)?.findDirectExpressions(Expressions.ClassName) || []) {
       const token = n.getFirstToken();
-      this.addReference(token, input);
       const name = token.getStr();
+      const s = input.scope.findClassDefinition(name);
+      if (s) {
+        input.scope.addReference(token, s, ReferenceType.ObjectOrientedReference, input.filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
+      } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
+        input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename);
+      } else {
+        input.issues.push(syntaxIssue(input, token, name.toUpperCase() + " does not exist"));
+      }
       result.push(name);
     }
     return result;

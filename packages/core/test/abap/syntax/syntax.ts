@@ -4575,7 +4575,7 @@ DATA(sdf) = CONV clike( foo ).`;
     expect(issues[0].getMessage()).to.contain("generic");
   });
 
-  it.only("error if friend class does not exist", () => {
+  it("error if friend class does not exist", () => {
     const abap = `
 CLASS lcl DEFINITION FRIENDS ycsdf.
 ENDCLASS.
