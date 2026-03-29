@@ -4638,6 +4638,30 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("ok, deferred friend in error namespace", () => {
+    const test = `
+CLASS zcl_friend DEFINITION DEFERRED.
+
+CLASS zcl_concrete DEFINITION FOR TESTING INHERITING FROM zcl_super FRIENDS zcl_friend.
+ENDCLASS.
+CLASS zcl_concrete IMPLEMENTATION.
+ENDCLASS.
+
+CLASS zcl_friend DEFINITION.
+ENDCLASS.
+CLASS zcl_friend IMPLEMENTATION.
+ENDCLASS.`;
+    const clas = `
+    CLASS zcl_super DEFINITION PUBLIC.
+    ENDCLASS.
+    CLASS zcl_super IMPLEMENTATION.
+    ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_super.clas.abap", contents: clas},
+      {filename: "zcl_super.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("error if friend class does not exist", () => {
     const abap = `
 CLASS lcl DEFINITION FRIENDS ycsdf.

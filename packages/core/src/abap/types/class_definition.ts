@@ -215,6 +215,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       const s = input.scope.findClassDefinition(name);
       if (s) {
         input.scope.addReference(token, s, ReferenceType.ObjectOrientedReference, input.filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
+      } else if (input.scope.existsObject(name) !== undefined) {
+        // DEFINITION DEFERRED friend
       } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename);
       } else {
