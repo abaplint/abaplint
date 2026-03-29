@@ -1757,7 +1757,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Only allow characters from the 7bit ASCII set.\nTags: SingleFile\nhttps://rules.abaplint.org/7bit_ascii"
             },
             "abapdoc": {
               "anyOf": [
@@ -1767,7 +1768,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
             },
             "add_test_attributes": {
               "anyOf": [
@@ -1777,7 +1779,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Add test attributes DURATION and RISK LEVEL for tests classes with test methods\nTags: SingleFile\nhttps://rules.abaplint.org/add_test_attributes"
             },
             "aff_and_xml": {
               "anyOf": [
@@ -1787,7 +1790,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for objects that have both AFF (.json) and XML (.xml) files\nTags: Syntax\nhttps://rules.abaplint.org/aff_and_xml"
             },
             "align_parameters": {
               "anyOf": [
@@ -1797,7 +1801,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for vertially aligned parameters\nTags: SingleFile, Whitespace, Styleguide, Quickfix\nhttps://rules.abaplint.org/align_parameters"
             },
             "align_pseudo_comments": {
               "anyOf": [
@@ -1807,7 +1812,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Align code inspector pseudo comments in statements\nTags: SingleFile, Whitespace, Quickfix\nhttps://rules.abaplint.org/align_pseudo_comments"
             },
             "align_type_expressions": {
               "anyOf": [
@@ -1817,7 +1823,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Align TYPE expressions in statements\nTags: SingleFile, Whitespace, Quickfix\nhttps://rules.abaplint.org/align_type_expressions"
             },
             "allowed_object_naming": {
               "anyOf": [
@@ -1827,7 +1834,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Enforces basic name length and namespace restrictions, see note SAP 104010\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/allowed_object_naming"
             },
             "allowed_object_types": {
               "anyOf": [
@@ -1837,7 +1845,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Restricts the set of allowed object types.\nTags: SingleFile\nhttps://rules.abaplint.org/allowed_object_types"
             },
             "ambiguous_statement": {
               "anyOf": [
@@ -1847,7 +1856,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for ambiguity between deleting or modifying from internal and database table\nAdd \"TABLE\" keyword or \"@\" for escaping SQL variables\n\nOnly works if the target version is 740sp05 or above\nTags: SingleFile\nhttps://rules.abaplint.org/ambiguous_statement"
             },
             "avoid_use": {
               "anyOf": [
@@ -1857,7 +1867,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/avoid_use"
             },
             "begin_end_names": {
               "anyOf": [
@@ -1867,7 +1878,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check BEGIN OF and END OF names match, plus there must be statements between BEGIN and END\nTags: Syntax, Quickfix, SingleFile\nhttps://rules.abaplint.org/begin_end_names"
             },
             "begin_single_include": {
               "anyOf": [
@@ -1877,7 +1889,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE\nTags: SingleFile\nhttps://rules.abaplint.org/begin_single_include"
             },
             "call_transaction_authority_check": {
               "anyOf": [
@@ -1887,7 +1900,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
             },
             "cds_association_name": {
               "anyOf": [
@@ -1897,7 +1911,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "CDS association names should start with an underscore\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_association_name"
             },
             "cds_comment_style": {
               "anyOf": [
@@ -1907,7 +1922,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check for obsolete comment style\nTags: SingleFile\nhttps://rules.abaplint.org/cds_comment_style"
             },
             "cds_field_order": {
               "anyOf": [
@@ -1917,7 +1933,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that CDS key fields are listed first and associations last in the field list\nTags: SingleFile\nhttps://rules.abaplint.org/cds_field_order"
             },
             "cds_legacy_view": {
               "anyOf": [
@@ -1927,7 +1944,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Identify CDS Legacy Views\nTags: SingleFile, Upport\nhttps://rules.abaplint.org/cds_legacy_view"
             },
             "cds_naming": {
               "anyOf": [
@@ -1937,7 +1955,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks CDS naming conventions based on the VDM prefix rules\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_naming"
             },
             "cds_parser_error": {
               "anyOf": [
@@ -1947,7 +1966,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "CDS parsing\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/cds_parser_error"
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -1957,7 +1977,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Chain mainly declarations, allows chaining for the configured statements, reports errors for other statements.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/chain_mainly_declarations"
             },
             "change_if_to_case": {
               "anyOf": [
@@ -1967,7 +1988,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds IF constructs that can be changed to CASE\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/change_if_to_case"
             },
             "check_abstract": {
               "anyOf": [
@@ -1977,7 +1999,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks abstract methods and classes:\n- class defined as abstract and final,\n- non-abstract class contains abstract methods\nTags: SingleFile\nhttps://rules.abaplint.org/check_abstract"
             },
             "check_comments": {
               "anyOf": [
@@ -1987,7 +2010,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "\nVarious checks for comment usage.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/check_comments"
             },
             "check_ddic": {
               "anyOf": [
@@ -1997,7 +2021,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\" \nTags: Syntax\nhttps://rules.abaplint.org/check_ddic"
             },
             "check_include": {
               "anyOf": [
@@ -2007,7 +2032,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks INCLUDE statements\nTags: Syntax\nhttps://rules.abaplint.org/check_include"
             },
             "check_subrc": {
               "anyOf": [
@@ -2017,7 +2043,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check sy-subrc\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/check_subrc"
             },
             "check_syntax": {
               "anyOf": [
@@ -2027,7 +2054,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Enables syntax check and variable resolution\nTags: Syntax\nhttps://rules.abaplint.org/check_syntax"
             },
             "check_text_elements": {
               "anyOf": [
@@ -2037,7 +2065,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check text elements exists or matches code\nhttps://rules.abaplint.org/check_text_elements"
             },
             "check_transformation_exists": {
               "anyOf": [
@@ -2047,7 +2076,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that used XSLT transformations exist.\nTags: Syntax\nhttps://rules.abaplint.org/check_transformation_exists"
             },
             "class_attribute_names": {
               "anyOf": [
@@ -2057,7 +2087,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for class variable names.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/class_attribute_names"
             },
             "classic_exceptions_overlap": {
               "anyOf": [
@@ -2067,7 +2098,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Find overlapping classic exceptions\nTags: SingleFile\nhttps://rules.abaplint.org/classic_exceptions_overlap"
             },
             "cloud_types": {
               "anyOf": [
@@ -2077,7 +2109,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that the package does not contain any object types unsupported in cloud ABAP.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/cloud_types"
             },
             "colon_missing_space": {
               "anyOf": [
@@ -2087,7 +2120,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for missing spaces after colons in chained statements.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/colon_missing_space"
             },
             "commented_code": {
               "anyOf": [
@@ -2097,7 +2131,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usage of commented out code.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/commented_code"
             },
             "constant_classes": {
               "anyOf": [
@@ -2107,7 +2142,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that constants classes are in sync with domain fixed values\nhttps://rules.abaplint.org/constant_classes"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -2117,7 +2153,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/constructor_visibility_public"
             },
             "contains_tab": {
               "anyOf": [
@@ -2127,7 +2164,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace, Quickfix, Styleguide, SingleFile\nhttps://rules.abaplint.org/contains_tab"
             },
             "cyclic_oo": {
               "anyOf": [
@@ -2137,7 +2175,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds cyclic/circular OO references\nhttps://rules.abaplint.org/cyclic_oo"
             },
             "cyclomatic_complexity": {
               "anyOf": [
@@ -2147,7 +2186,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Cyclomatic complexity, only reported for methods\nTags: SingleFile\nhttps://rules.abaplint.org/cyclomatic_complexity"
             },
             "dangerous_statement": {
               "anyOf": [
@@ -2157,7 +2197,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects potentially dangerous statements\nTags: SingleFile, Security\nhttps://rules.abaplint.org/dangerous_statement"
             },
             "db_operation_in_loop": {
               "anyOf": [
@@ -2167,7 +2208,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Database operation in LOOP/DO/WHILE\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/db_operation_in_loop"
             },
             "definitions_top": {
               "anyOf": [
@@ -2177,7 +2219,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that definitions are placed at the beginning of METHODs, FORMs and FUNCTIONs.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/definitions_top"
             },
             "description_empty": {
               "anyOf": [
@@ -2187,7 +2230,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Ensures descriptions in class metadata exist.\nhttps://rules.abaplint.org/description_empty"
             },
             "double_space": {
               "anyOf": [
@@ -2197,7 +2241,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that only a single space follows certain common statements.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/double_space"
             },
             "downport": {
               "anyOf": [
@@ -2207,7 +2252,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Downport functionality\nTags: Downport, Quickfix\nhttps://rules.abaplint.org/downport"
             },
             "dynpro_checks": {
               "anyOf": [
@@ -2217,7 +2263,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Various Dynpro checks\nTags: Syntax\nhttps://rules.abaplint.org/dynpro_checks"
             },
             "easy_to_find_messages": {
               "anyOf": [
@@ -2227,7 +2274,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Make messages easy to find\nTags: Styleguide\nhttps://rules.abaplint.org/easy_to_find_messages"
             },
             "empty_event": {
               "anyOf": [
@@ -2237,7 +2285,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Empty selection screen or list processing event block\nTags: SingleFile\nhttps://rules.abaplint.org/empty_event"
             },
             "empty_line_in_statement": {
               "anyOf": [
@@ -2247,7 +2296,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that statements do not contain empty lines.\nTags: Quickfix, Whitespace, SingleFile, Styleguide\nhttps://rules.abaplint.org/empty_line_in_statement"
             },
             "empty_statement": {
               "anyOf": [
@@ -2257,7 +2307,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for empty statements (an empty statement is a single dot)\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/empty_statement"
             },
             "empty_structure": {
               "anyOf": [
@@ -2267,7 +2318,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that the code does not contain empty blocks.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/empty_structure"
             },
             "exit_or_check": {
               "anyOf": [
@@ -2277,7 +2329,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usages of EXIT or CHECK statements outside of loops.\nUse RETURN to leave procesing blocks instead.\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/exit_or_check"
             },
             "expand_macros": {
               "anyOf": [
@@ -2287,7 +2340,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows expanding macro calls with quick fixes\nTags: Styleguide, Quickfix, Upport\nhttps://rules.abaplint.org/expand_macros"
             },
             "exporting": {
               "anyOf": [
@@ -2297,7 +2351,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
             },
             "fm_global_parameters_obsolete": {
               "anyOf": [
@@ -2307,7 +2362,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check for function modules with global parameters\nhttps://rules.abaplint.org/fm_global_parameters_obsolete"
             },
             "forbidden_identifier": {
               "anyOf": [
@@ -2317,7 +2373,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Forbid use of specified identifiers, list of regex.\nTags: SingleFile\nhttps://rules.abaplint.org/forbidden_identifier"
             },
             "forbidden_pseudo_and_pragma": {
               "anyOf": [
@@ -2327,7 +2384,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unwanted pseudo comments and pragma\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/forbidden_pseudo_and_pragma"
             },
             "forbidden_void_type": {
               "anyOf": [
@@ -2337,7 +2395,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Avoid usage of specified void types.\nhttps://rules.abaplint.org/forbidden_void_type"
             },
             "form_tables_obsolete": {
               "anyOf": [
@@ -2347,7 +2406,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for TABLES parameters in forms.\nTags: SingleFile\nhttps://rules.abaplint.org/form_tables_obsolete"
             },
             "fully_type_constants": {
               "anyOf": [
@@ -2357,7 +2417,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks constants for full typing - no implicit typing allowed.\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_constants"
             },
             "fully_type_itabs": {
               "anyOf": [
@@ -2367,7 +2428,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "No implict table types or table keys\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_itabs"
             },
             "function_module_recommendations": {
               "anyOf": [
@@ -2377,7 +2439,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Suggests replacements for various function modules\nTags: SingleFile\nhttps://rules.abaplint.org/function_module_recommendations"
             },
             "functional_writing": {
               "anyOf": [
@@ -2387,7 +2450,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usage of call method when functional style calls can be used.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/functional_writing"
             },
             "global_class": {
               "anyOf": [
@@ -2397,7 +2461,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks related to global classes\nTags: Syntax\nhttps://rules.abaplint.org/global_class"
             },
             "identical_conditions": {
               "anyOf": [
@@ -2407,7 +2472,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Find identical conditions in IF + CASE + WHILE etc\n\nPrerequsites: code is pretty printed with identical cAsE\nTags: SingleFile\nhttps://rules.abaplint.org/identical_conditions"
             },
             "identical_contents": {
               "anyOf": [
@@ -2417,7 +2483,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Find identical contents in blocks inside IFs, both in the beginning and in the end.\nTags: SingleFile\nhttps://rules.abaplint.org/identical_contents"
             },
             "identical_descriptions": {
               "anyOf": [
@@ -2427,7 +2494,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Searches for objects with the same type and same description\nhttps://rules.abaplint.org/identical_descriptions"
             },
             "identical_form_names": {
               "anyOf": [
@@ -2437,7 +2505,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects identically named FORMs\nTags: Syntax\nhttps://rules.abaplint.org/identical_form_names"
             },
             "identical_move": {
               "anyOf": [
@@ -2447,7 +2516,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Moving the same value from left to right or right to left is redundant.\nTags: SingleFile\nhttps://rules.abaplint.org/identical_move"
             },
             "if_in_if": {
               "anyOf": [
@@ -2457,7 +2527,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects nested ifs which can be refactored.\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/if_in_if"
             },
             "implement_methods": {
               "anyOf": [
@@ -2467,7 +2538,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for abstract methods and methods from interfaces which need implementing.\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/implement_methods"
             },
             "implicit_start_of_selection": {
               "anyOf": [
@@ -2477,7 +2549,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Add explicit selection screen event handling\nTags: SingleFile\nhttps://rules.abaplint.org/implicit_start_of_selection"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -2487,7 +2560,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks alignment within statements which span multiple lines.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/in_statement_indentation"
             },
             "indentation": {
               "anyOf": [
@@ -2497,7 +2571,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks indentation\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/indentation"
             },
             "index_completely_contained": {
               "anyOf": [
@@ -2507,7 +2582,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "If indexes are completely contained in other indexes, they can be removed to improve performance.\nTags: Performance, SingleFile\nhttps://rules.abaplint.org/index_completely_contained"
             },
             "inline_data_old_versions": {
               "anyOf": [
@@ -2517,7 +2593,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
             },
             "intf_referencing_clas": {
               "anyOf": [
@@ -2527,7 +2604,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Interface contains references to class\nhttps://rules.abaplint.org/intf_referencing_clas"
             },
             "invalid_table_index": {
               "anyOf": [
@@ -2537,7 +2615,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Issues error for constant table index zero, as ABAP starts from 1\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/invalid_table_index"
             },
             "keep_single_parameter_on_one_line": {
               "anyOf": [
@@ -2547,7 +2626,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Keep single parameter calls on one line\nTags: Whitespace, Styleguide, SingleFile\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
             },
             "keyword_case": {
               "anyOf": [
@@ -2557,7 +2637,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that keywords have the same case. Non-keywords must be lower case.\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/keyword_case"
             },
             "line_break_multiple_parameters": {
               "anyOf": [
@@ -2567,7 +2648,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Line break multiple parameters\nTags: Whitespace, Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/line_break_multiple_parameters"
             },
             "line_break_style": {
               "anyOf": [
@@ -2577,7 +2659,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Enforces LF as newlines in ABAP files\n\nabapGit does not work with CRLF\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/line_break_style"
             },
             "line_length": {
               "anyOf": [
@@ -2587,7 +2670,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects lines exceeding the provided maximum length.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/line_length"
             },
             "line_only_punc": {
               "anyOf": [
@@ -2597,7 +2681,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects lines containing only punctuation.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/line_only_punc"
             },
             "local_class_naming": {
               "anyOf": [
@@ -2607,7 +2692,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for local class names.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/local_class_naming"
             },
             "local_testclass_consistency": {
               "anyOf": [
@@ -2617,7 +2703,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that local test classes are placed in the test include, and class unit test flag is set\nTags: Syntax\nhttps://rules.abaplint.org/local_testclass_consistency"
             },
             "local_variable_names": {
               "anyOf": [
@@ -2627,7 +2714,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "\nAllows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nRegexes are case-insensitive.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/local_variable_names"
             },
             "macro_naming": {
               "anyOf": [
@@ -2637,7 +2725,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern for macro definitions\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/macro_naming"
             },
             "main_file_contents": {
               "anyOf": [
@@ -2647,7 +2736,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks related to report declarations.\nhttps://rules.abaplint.org/main_file_contents"
             },
             "many_parentheses": {
               "anyOf": [
@@ -2657,7 +2747,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Searches for expressions where extra parentheses can safely be removed\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/many_parentheses"
             },
             "max_one_method_parameter_per_line": {
               "anyOf": [
@@ -2667,7 +2758,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Keep max one method parameter description per line\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/max_one_method_parameter_per_line"
             },
             "max_one_statement": {
               "anyOf": [
@@ -2677,7 +2769,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that each line contains only a single statement.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/max_one_statement"
             },
             "message_exists": {
               "anyOf": [
@@ -2687,7 +2780,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "In message statements, check that the message class + id exist\nTags: Syntax\nhttps://rules.abaplint.org/message_exists"
             },
             "method_implemented_twice": {
               "anyOf": [
@@ -2697,7 +2791,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Reports an error if a method is implemented or defined twice\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/method_implemented_twice"
             },
             "method_length": {
               "anyOf": [
@@ -2707,7 +2802,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks relating to method/form length.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/method_length"
             },
             "method_overwrites_builtin": {
               "anyOf": [
@@ -2717,7 +2813,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks Method names that overwrite builtin SAP functions\nTags: Naming, SingleFile, Styleguide\nhttps://rules.abaplint.org/method_overwrites_builtin"
             },
             "method_parameter_names": {
               "anyOf": [
@@ -2727,7 +2824,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for method parameter names\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/method_parameter_names"
             },
             "mix_returning": {
               "anyOf": [
@@ -2737,7 +2835,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\nTags: Styleguide, SingleFile, Syntax\nhttps://rules.abaplint.org/mix_returning"
             },
             "modify_only_own_db_tables": {
               "anyOf": [
@@ -2747,7 +2846,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Modify only own DB tables\nTags: Security\nhttps://rules.abaplint.org/modify_only_own_db_tables"
             },
             "msag_consistency": {
               "anyOf": [
@@ -2757,7 +2857,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the validity of messages in message classes\nhttps://rules.abaplint.org/msag_consistency"
             },
             "names_no_dash": {
               "anyOf": [
@@ -2767,7 +2868,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for a \"-\" in FORM, DATA, PARAMETER and SELECT-OPTION names\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/names_no_dash"
             },
             "nesting": {
               "anyOf": [
@@ -2777,7 +2879,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for methods exceeding a maximum nesting depth\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/nesting"
             },
             "newline_between_methods": {
               "anyOf": [
@@ -2787,7 +2890,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for newlines between method implementations.\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
             },
             "no_aliases": {
               "anyOf": [
@@ -2797,7 +2901,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects use of the ALIAS statement\nTags: SingleFile\nhttps://rules.abaplint.org/no_aliases"
             },
             "no_chained_assignment": {
               "anyOf": [
@@ -2807,7 +2912,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Find chained assingments and reports issues\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/no_chained_assignment"
             },
             "no_comments_between_methods": {
               "anyOf": [
@@ -2817,7 +2923,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Its not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
             },
             "no_external_form_calls": {
               "anyOf": [
@@ -2827,7 +2934,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detect external form calls\nTags: SingleFile\nhttps://rules.abaplint.org/no_external_form_calls"
             },
             "no_inline_in_optional_branches": {
               "anyOf": [
@@ -2837,7 +2945,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Don't declare inline in optional branches\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/no_inline_in_optional_branches"
             },
             "no_prefixes": {
               "anyOf": [
@@ -2847,7 +2956,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Dont use hungarian notation\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/no_prefixes"
             },
             "no_public_attributes": {
               "anyOf": [
@@ -2857,7 +2967,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that classes and interfaces don't contain any public attributes.\nExceptions are excluded from this rule.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/no_public_attributes"
             },
             "no_yoda_conditions": {
               "anyOf": [
@@ -2867,7 +2978,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds Yoda conditions and reports issues\nTags: SingleFile\nhttps://rules.abaplint.org/no_yoda_conditions"
             },
             "nrob_consistency": {
               "anyOf": [
@@ -2877,7 +2989,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Consistency checks for number ranges\nTags: SingleFile\nhttps://rules.abaplint.org/nrob_consistency"
             },
             "object_naming": {
               "anyOf": [
@@ -2887,7 +3000,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for object names\nTags: Naming\nhttps://rules.abaplint.org/object_naming"
             },
             "obsolete_statement": {
               "anyOf": [
@@ -2897,7 +3011,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for usages of certain obsolete statements\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/obsolete_statement"
             },
             "omit_parameter_name": {
               "anyOf": [
@@ -2907,7 +3022,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Omit the parameter name in single parameter calls\nTags: Styleguide, Quickfix\nhttps://rules.abaplint.org/omit_parameter_name"
             },
             "omit_preceding_zeros": {
               "anyOf": [
@@ -2917,7 +3033,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Omit preceding zeros from integer constants\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/omit_preceding_zeros"
             },
             "omit_receiving": {
               "anyOf": [
@@ -2927,7 +3044,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Omit RECEIVING\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/omit_receiving"
             },
             "parser_702_chaining": {
               "anyOf": [
@@ -2937,7 +3055,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "ABAP on 702 does not allow for method chaining with IMPORTING/EXPORTING/CHANGING keywords,\nthis rule finds these and reports errors.\nOnly active on target version 702 and below.\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/parser_702_chaining"
             },
             "parser_bad_exceptions": {
               "anyOf": [
@@ -2947,7 +3066,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for syntax not recognized by abaplint, related to EXCEPTIONS in CALL FUNCTION.\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/parser_bad_exceptions"
             },
             "parser_error": {
               "anyOf": [
@@ -2957,7 +3077,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for syntax not recognized by abaplint.\n\nSee recognized syntax at https://syntax.abaplint.org\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/parser_error"
             },
             "parser_missing_space": {
               "anyOf": [
@@ -2967,7 +3088,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "In special cases the ABAP language allows for not having spaces before or after string literals.\nThis rule makes sure the spaces are consistently required across the language.\nTags: Syntax, Whitespace, SingleFile\nhttps://rules.abaplint.org/parser_missing_space"
             },
             "pragma_style": {
               "anyOf": [
@@ -2977,7 +3099,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check pragmas placement and case\nTags: SingleFile\nhttps://rules.abaplint.org/pragma_style"
             },
             "prefer_corresponding": {
               "anyOf": [
@@ -2987,7 +3110,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Prefer corresponding( ) to MOVE-CORRESPONDING, from v740sp05 and up\nTags: SingleFile, Upport, Styleguide\nhttps://rules.abaplint.org/prefer_corresponding"
             },
             "prefer_inline": {
               "anyOf": [
@@ -2997,7 +3121,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Prefer inline to up-front declarations.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
             },
             "prefer_is_not": {
               "anyOf": [
@@ -3007,7 +3132,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Prefer IS NOT to NOT IS\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_is_not"
             },
             "prefer_pragmas": {
               "anyOf": [
@@ -3017,7 +3143,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "prefer pragmas over pseudo comments \nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/prefer_pragmas"
             },
             "prefer_raise_exception_new": {
               "anyOf": [
@@ -3027,7 +3154,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile, Quickfix, Upport\nhttps://rules.abaplint.org/prefer_raise_exception_new"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -3037,7 +3165,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Prefer RETURNING to EXPORTING. Generic types cannot be RETURNING.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/prefer_returning_to_exporting"
             },
             "prefer_xsdbool": {
               "anyOf": [
@@ -3047,7 +3176,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Prefer xsdbool over boolc\nTags: Styleguide, Upport, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_xsdbool"
             },
             "preferred_compare_operator": {
               "anyOf": [
@@ -3057,7 +3187,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Configure undesired operator variants\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/preferred_compare_operator"
             },
             "prefix_is_current_class": {
               "anyOf": [
@@ -3067,7 +3198,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefix_is_current_class"
             },
             "reduce_procedural_code": {
               "anyOf": [
@@ -3077,7 +3209,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks FORM and FUNCTION-MODULE have few statements\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/reduce_procedural_code"
             },
             "reduce_string_templates": {
               "anyOf": [
@@ -3087,7 +3220,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for string templates\nTags: SingleFile\nhttps://rules.abaplint.org/reduce_string_templates"
             },
             "release_idoc": {
               "anyOf": [
@@ -3097,7 +3231,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks idoc types and segments are set to status released\nhttps://rules.abaplint.org/release_idoc"
             },
             "remove_descriptions": {
               "anyOf": [
@@ -3107,7 +3242,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Ensures you have no descriptions in metadata of methods, parameters, etc.\n\nClass descriptions are required, see rule description_empty.\n\nConsider using ABAP Doc for documentation.\nhttps://rules.abaplint.org/remove_descriptions"
             },
             "rfc_error_handling": {
               "anyOf": [
@@ -3117,7 +3253,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls\nTags: SingleFile\nhttps://rules.abaplint.org/rfc_error_handling"
             },
             "select_add_order_by": {
               "anyOf": [
@@ -3127,7 +3264,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "SELECTs add ORDER BY clause\nTags: SingleFile\nhttps://rules.abaplint.org/select_add_order_by"
             },
             "select_performance": {
               "anyOf": [
@@ -3137,7 +3275,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Various checks regarding SELECT performance.\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/select_performance"
             },
             "select_single_full_key": {
               "anyOf": [
@@ -3147,7 +3286,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detect SELECT SINGLE which are possibily not unique\nTags: Quickfix\nhttps://rules.abaplint.org/select_single_full_key"
             },
             "selection_screen_naming": {
               "anyOf": [
@@ -3157,7 +3297,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/selection_screen_naming"
             },
             "selection_screen_texts_missing": {
               "anyOf": [
@@ -3167,7 +3308,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that selection screen parameters and select-options have selection texts\nhttps://rules.abaplint.org/selection_screen_texts_missing"
             },
             "sequential_blank": {
               "anyOf": [
@@ -3177,7 +3319,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/sequential_blank"
             },
             "short_case": {
               "anyOf": [
@@ -3187,7 +3330,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for CASE statements which have fewer than the specified number of branches\nTags: SingleFile\nhttps://rules.abaplint.org/short_case"
             },
             "sicf_consistency": {
               "anyOf": [
@@ -3197,7 +3341,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the validity of ICF services\nhttps://rules.abaplint.org/sicf_consistency"
             },
             "slow_parameter_passing": {
               "anyOf": [
@@ -3207,7 +3352,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects slow pass by value passing for methods where parameter is not changed\nTags: Performance\nhttps://rules.abaplint.org/slow_parameter_passing"
             },
             "smim_consistency": {
               "anyOf": [
@@ -3217,7 +3363,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "SMIM consistency check\nhttps://rules.abaplint.org/smim_consistency"
             },
             "space_before_colon": {
               "anyOf": [
@@ -3227,7 +3374,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that there are no spaces in front of colons in chained statements.\nTags: Whitespace, SingleFile, Quickfix\nhttps://rules.abaplint.org/space_before_colon"
             },
             "space_before_dot": {
               "anyOf": [
@@ -3237,7 +3385,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for extra spaces before dots at the ends of statements\nTags: Whitespace, Quickfix, Styleguide, SingleFile\nhttps://rules.abaplint.org/space_before_dot"
             },
             "sql_escape_host_variables": {
               "anyOf": [
@@ -3247,7 +3396,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Escape SQL host variables, from 740sp05 and in open-abap\nTags: Upport, Styleguide, Quickfix, Syntax\nhttps://rules.abaplint.org/sql_escape_host_variables"
             },
             "sql_value_conversion": {
               "anyOf": [
@@ -3257,7 +3407,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Ensure types match when selecting from database\nhttps://rules.abaplint.org/sql_value_conversion"
             },
             "start_at_tab": {
               "anyOf": [
@@ -3267,7 +3418,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that statements start at tabstops.\nTags: Whitespace, Styleguide, SingleFile\nhttps://rules.abaplint.org/start_at_tab"
             },
             "static_call_via_instance": {
               "anyOf": [
@@ -3277,7 +3429,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Static method call via instance variable\nTags: Styleguide\nhttps://rules.abaplint.org/static_call_via_instance"
             },
             "strict_sql": {
               "anyOf": [
@@ -3287,7 +3440,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Strict SQL\nTags: Upport, Quickfix\nhttps://rules.abaplint.org/strict_sql"
             },
             "superclass_final": {
               "anyOf": [
@@ -3297,7 +3451,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that classes which are inherited from are not declared as FINAL.\nTags: Syntax\nhttps://rules.abaplint.org/superclass_final"
             },
             "superfluous_value": {
               "anyOf": [
@@ -3307,7 +3462,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Find superfluous VALUE expressions\nTags: SingleFile\nhttps://rules.abaplint.org/superfluous_value"
             },
             "sy_modification": {
               "anyOf": [
@@ -3317,7 +3473,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds modification of sy fields\nTags: SingleFile\nhttps://rules.abaplint.org/sy_modification"
             },
             "tabl_enhancement_category": {
               "anyOf": [
@@ -3327,7 +3484,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that tables do not have the enhancement category 'not classified'.\nhttps://rules.abaplint.org/tabl_enhancement_category"
             },
             "tables_declared_locally": {
               "anyOf": [
@@ -3337,7 +3495,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "TABLES are always global, so declare them globally\nTags: SingleFile\nhttps://rules.abaplint.org/tables_declared_locally"
             },
             "try_without_catch": {
               "anyOf": [
@@ -3347,7 +3506,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for TRY blocks without a CATCH and CLEANUP block\nTags: SingleFile\nhttps://rules.abaplint.org/try_without_catch"
             },
             "type_form_parameters": {
               "anyOf": [
@@ -3357,7 +3517,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for untyped FORM parameters\nTags: SingleFile\nhttps://rules.abaplint.org/type_form_parameters"
             },
             "types_naming": {
               "anyOf": [
@@ -3367,7 +3528,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern for TYPES definitions\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/types_naming"
             },
             "uncaught_exception": {
               "anyOf": [
@@ -3377,7 +3539,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for uncaught static exception\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
             },
             "unknown_types": {
               "anyOf": [
@@ -3387,7 +3550,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Enables check for unknown data types, respects errorNamespace\nTags: Syntax\nhttps://rules.abaplint.org/unknown_types"
             },
             "unnecessary_chaining": {
               "anyOf": [
@@ -3397,7 +3561,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Find unnecessary chaining, all statements are checked\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_chaining"
             },
             "unnecessary_pragma": {
               "anyOf": [
@@ -3407,7 +3572,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds pragmas which can be removed\nTags: SingleFile\nhttps://rules.abaplint.org/unnecessary_pragma"
             },
             "unnecessary_return": {
               "anyOf": [
@@ -3417,7 +3583,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds unnecessary RETURN statements\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_return"
             },
             "unreachable_code": {
               "anyOf": [
@@ -3427,7 +3594,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unreachable code.\nTags: SingleFile\nhttps://rules.abaplint.org/unreachable_code"
             },
             "unsecure_fae": {
               "anyOf": [
@@ -3437,7 +3605,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unsecure FAE\nTags: Experimental, Performance\nhttps://rules.abaplint.org/unsecure_fae"
             },
             "unused_ddic": {
               "anyOf": [
@@ -3447,7 +3616,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the usage of DDIC objects\nhttps://rules.abaplint.org/unused_ddic"
             },
             "unused_macros": {
               "anyOf": [
@@ -3457,7 +3627,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unused macro definitions definitions\nTags: Quickfix\nhttps://rules.abaplint.org/unused_macros"
             },
             "unused_methods": {
               "anyOf": [
@@ -3467,7 +3638,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unused methods\nTags: Quickfix\nhttps://rules.abaplint.org/unused_methods"
             },
             "unused_types": {
               "anyOf": [
@@ -3477,7 +3649,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unused TYPE definitions\nTags: Quickfix\nhttps://rules.abaplint.org/unused_types"
             },
             "unused_variables": {
               "anyOf": [
@@ -3487,7 +3660,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unused variables and constants\nTags: Quickfix\nhttps://rules.abaplint.org/unused_variables"
             },
             "use_bool_expression": {
               "anyOf": [
@@ -3497,7 +3671,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Use boolean expression, xsdbool from 740sp08 and up, boolc from 702 and up\nTags: Upport, Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/use_bool_expression"
             },
             "use_class_based_exceptions": {
               "anyOf": [
@@ -3507,7 +3682,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Use class based exceptions, checks interface and class definitions\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/use_class_based_exceptions"
             },
             "use_line_exists": {
               "anyOf": [
@@ -3517,7 +3693,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Use line_exists, from 740sp02 and up\nTags: Upport, Styleguide, SingleFile\nhttps://rules.abaplint.org/use_line_exists"
             },
             "use_new": {
               "anyOf": [
@@ -3527,7 +3704,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for deprecated CREATE OBJECT statements.\nTags: Upport, Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/use_new"
             },
             "when_others_last": {
               "anyOf": [
@@ -3537,7 +3715,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that WHEN OTHERS is placed the last within a CASE statement.\nTags: SingleFile\nhttps://rules.abaplint.org/when_others_last"
             },
             "whitespace_end": {
               "anyOf": [
@@ -3547,7 +3726,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for redundant whitespace at the end of each line.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/whitespace_end"
             },
             "xml_consistency": {
               "anyOf": [
@@ -3557,7 +3737,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the consistency of main XML files, eg. naming for CLAS and INTF objects\nTags: Naming, Syntax\nhttps://rules.abaplint.org/xml_consistency"
             }
           },
           "type": "object"
@@ -3578,7 +3759,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Only allow characters from the 7bit ASCII set.\nTags: SingleFile\nhttps://rules.abaplint.org/7bit_ascii"
             },
             "abapdoc": {
               "anyOf": [
@@ -3588,7 +3770,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
             },
             "add_test_attributes": {
               "anyOf": [
@@ -3598,7 +3781,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Add test attributes DURATION and RISK LEVEL for tests classes with test methods\nTags: SingleFile\nhttps://rules.abaplint.org/add_test_attributes"
             },
             "aff_and_xml": {
               "anyOf": [
@@ -3608,7 +3792,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for objects that have both AFF (.json) and XML (.xml) files\nTags: Syntax\nhttps://rules.abaplint.org/aff_and_xml"
             },
             "align_parameters": {
               "anyOf": [
@@ -3618,7 +3803,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for vertially aligned parameters\nTags: SingleFile, Whitespace, Styleguide, Quickfix\nhttps://rules.abaplint.org/align_parameters"
             },
             "align_pseudo_comments": {
               "anyOf": [
@@ -3628,7 +3814,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Align code inspector pseudo comments in statements\nTags: SingleFile, Whitespace, Quickfix\nhttps://rules.abaplint.org/align_pseudo_comments"
             },
             "align_type_expressions": {
               "anyOf": [
@@ -3638,7 +3825,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Align TYPE expressions in statements\nTags: SingleFile, Whitespace, Quickfix\nhttps://rules.abaplint.org/align_type_expressions"
             },
             "allowed_object_naming": {
               "anyOf": [
@@ -3648,7 +3836,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Enforces basic name length and namespace restrictions, see note SAP 104010\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/allowed_object_naming"
             },
             "allowed_object_types": {
               "anyOf": [
@@ -3658,7 +3847,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Restricts the set of allowed object types.\nTags: SingleFile\nhttps://rules.abaplint.org/allowed_object_types"
             },
             "ambiguous_statement": {
               "anyOf": [
@@ -3668,7 +3858,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for ambiguity between deleting or modifying from internal and database table\nAdd \"TABLE\" keyword or \"@\" for escaping SQL variables\n\nOnly works if the target version is 740sp05 or above\nTags: SingleFile\nhttps://rules.abaplint.org/ambiguous_statement"
             },
             "avoid_use": {
               "anyOf": [
@@ -3678,7 +3869,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/avoid_use"
             },
             "begin_end_names": {
               "anyOf": [
@@ -3688,7 +3880,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check BEGIN OF and END OF names match, plus there must be statements between BEGIN and END\nTags: Syntax, Quickfix, SingleFile\nhttps://rules.abaplint.org/begin_end_names"
             },
             "begin_single_include": {
               "anyOf": [
@@ -3698,7 +3891,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE\nTags: SingleFile\nhttps://rules.abaplint.org/begin_single_include"
             },
             "call_transaction_authority_check": {
               "anyOf": [
@@ -3708,7 +3902,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
             },
             "cds_association_name": {
               "anyOf": [
@@ -3718,7 +3913,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "CDS association names should start with an underscore\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_association_name"
             },
             "cds_comment_style": {
               "anyOf": [
@@ -3728,7 +3924,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check for obsolete comment style\nTags: SingleFile\nhttps://rules.abaplint.org/cds_comment_style"
             },
             "cds_field_order": {
               "anyOf": [
@@ -3738,7 +3935,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that CDS key fields are listed first and associations last in the field list\nTags: SingleFile\nhttps://rules.abaplint.org/cds_field_order"
             },
             "cds_legacy_view": {
               "anyOf": [
@@ -3748,7 +3946,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Identify CDS Legacy Views\nTags: SingleFile, Upport\nhttps://rules.abaplint.org/cds_legacy_view"
             },
             "cds_naming": {
               "anyOf": [
@@ -3758,7 +3957,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks CDS naming conventions based on the VDM prefix rules\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_naming"
             },
             "cds_parser_error": {
               "anyOf": [
@@ -3768,7 +3968,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "CDS parsing\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/cds_parser_error"
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -3778,7 +3979,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Chain mainly declarations, allows chaining for the configured statements, reports errors for other statements.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/chain_mainly_declarations"
             },
             "change_if_to_case": {
               "anyOf": [
@@ -3788,7 +3990,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds IF constructs that can be changed to CASE\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/change_if_to_case"
             },
             "check_abstract": {
               "anyOf": [
@@ -3798,7 +4001,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks abstract methods and classes:\n- class defined as abstract and final,\n- non-abstract class contains abstract methods\nTags: SingleFile\nhttps://rules.abaplint.org/check_abstract"
             },
             "check_comments": {
               "anyOf": [
@@ -3808,7 +4012,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "\nVarious checks for comment usage.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/check_comments"
             },
             "check_ddic": {
               "anyOf": [
@@ -3818,7 +4023,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\" \nTags: Syntax\nhttps://rules.abaplint.org/check_ddic"
             },
             "check_include": {
               "anyOf": [
@@ -3828,7 +4034,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks INCLUDE statements\nTags: Syntax\nhttps://rules.abaplint.org/check_include"
             },
             "check_subrc": {
               "anyOf": [
@@ -3838,7 +4045,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check sy-subrc\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/check_subrc"
             },
             "check_syntax": {
               "anyOf": [
@@ -3848,7 +4056,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Enables syntax check and variable resolution\nTags: Syntax\nhttps://rules.abaplint.org/check_syntax"
             },
             "check_text_elements": {
               "anyOf": [
@@ -3858,7 +4067,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check text elements exists or matches code\nhttps://rules.abaplint.org/check_text_elements"
             },
             "check_transformation_exists": {
               "anyOf": [
@@ -3868,7 +4078,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that used XSLT transformations exist.\nTags: Syntax\nhttps://rules.abaplint.org/check_transformation_exists"
             },
             "class_attribute_names": {
               "anyOf": [
@@ -3878,7 +4089,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for class variable names.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/class_attribute_names"
             },
             "classic_exceptions_overlap": {
               "anyOf": [
@@ -3888,7 +4100,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Find overlapping classic exceptions\nTags: SingleFile\nhttps://rules.abaplint.org/classic_exceptions_overlap"
             },
             "cloud_types": {
               "anyOf": [
@@ -3898,7 +4111,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that the package does not contain any object types unsupported in cloud ABAP.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/cloud_types"
             },
             "colon_missing_space": {
               "anyOf": [
@@ -3908,7 +4122,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for missing spaces after colons in chained statements.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/colon_missing_space"
             },
             "commented_code": {
               "anyOf": [
@@ -3918,7 +4133,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usage of commented out code.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/commented_code"
             },
             "constant_classes": {
               "anyOf": [
@@ -3928,7 +4144,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that constants classes are in sync with domain fixed values\nhttps://rules.abaplint.org/constant_classes"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -3938,7 +4155,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/constructor_visibility_public"
             },
             "contains_tab": {
               "anyOf": [
@@ -3948,7 +4166,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace, Quickfix, Styleguide, SingleFile\nhttps://rules.abaplint.org/contains_tab"
             },
             "cyclic_oo": {
               "anyOf": [
@@ -3958,7 +4177,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds cyclic/circular OO references\nhttps://rules.abaplint.org/cyclic_oo"
             },
             "cyclomatic_complexity": {
               "anyOf": [
@@ -3968,7 +4188,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Cyclomatic complexity, only reported for methods\nTags: SingleFile\nhttps://rules.abaplint.org/cyclomatic_complexity"
             },
             "dangerous_statement": {
               "anyOf": [
@@ -3978,7 +4199,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects potentially dangerous statements\nTags: SingleFile, Security\nhttps://rules.abaplint.org/dangerous_statement"
             },
             "db_operation_in_loop": {
               "anyOf": [
@@ -3988,7 +4210,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Database operation in LOOP/DO/WHILE\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/db_operation_in_loop"
             },
             "definitions_top": {
               "anyOf": [
@@ -3998,7 +4221,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that definitions are placed at the beginning of METHODs, FORMs and FUNCTIONs.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/definitions_top"
             },
             "description_empty": {
               "anyOf": [
@@ -4008,7 +4232,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Ensures descriptions in class metadata exist.\nhttps://rules.abaplint.org/description_empty"
             },
             "double_space": {
               "anyOf": [
@@ -4018,7 +4243,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that only a single space follows certain common statements.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/double_space"
             },
             "downport": {
               "anyOf": [
@@ -4028,7 +4254,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Downport functionality\nTags: Downport, Quickfix\nhttps://rules.abaplint.org/downport"
             },
             "dynpro_checks": {
               "anyOf": [
@@ -4038,7 +4265,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Various Dynpro checks\nTags: Syntax\nhttps://rules.abaplint.org/dynpro_checks"
             },
             "easy_to_find_messages": {
               "anyOf": [
@@ -4048,7 +4276,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Make messages easy to find\nTags: Styleguide\nhttps://rules.abaplint.org/easy_to_find_messages"
             },
             "empty_event": {
               "anyOf": [
@@ -4058,7 +4287,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Empty selection screen or list processing event block\nTags: SingleFile\nhttps://rules.abaplint.org/empty_event"
             },
             "empty_line_in_statement": {
               "anyOf": [
@@ -4068,7 +4298,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that statements do not contain empty lines.\nTags: Quickfix, Whitespace, SingleFile, Styleguide\nhttps://rules.abaplint.org/empty_line_in_statement"
             },
             "empty_statement": {
               "anyOf": [
@@ -4078,7 +4309,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for empty statements (an empty statement is a single dot)\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/empty_statement"
             },
             "empty_structure": {
               "anyOf": [
@@ -4088,7 +4320,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that the code does not contain empty blocks.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/empty_structure"
             },
             "exit_or_check": {
               "anyOf": [
@@ -4098,7 +4331,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usages of EXIT or CHECK statements outside of loops.\nUse RETURN to leave procesing blocks instead.\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/exit_or_check"
             },
             "expand_macros": {
               "anyOf": [
@@ -4108,7 +4342,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows expanding macro calls with quick fixes\nTags: Styleguide, Quickfix, Upport\nhttps://rules.abaplint.org/expand_macros"
             },
             "exporting": {
               "anyOf": [
@@ -4118,7 +4353,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
             },
             "fm_global_parameters_obsolete": {
               "anyOf": [
@@ -4128,7 +4364,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check for function modules with global parameters\nhttps://rules.abaplint.org/fm_global_parameters_obsolete"
             },
             "forbidden_identifier": {
               "anyOf": [
@@ -4138,7 +4375,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Forbid use of specified identifiers, list of regex.\nTags: SingleFile\nhttps://rules.abaplint.org/forbidden_identifier"
             },
             "forbidden_pseudo_and_pragma": {
               "anyOf": [
@@ -4148,7 +4386,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unwanted pseudo comments and pragma\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/forbidden_pseudo_and_pragma"
             },
             "forbidden_void_type": {
               "anyOf": [
@@ -4158,7 +4397,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Avoid usage of specified void types.\nhttps://rules.abaplint.org/forbidden_void_type"
             },
             "form_tables_obsolete": {
               "anyOf": [
@@ -4168,7 +4408,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for TABLES parameters in forms.\nTags: SingleFile\nhttps://rules.abaplint.org/form_tables_obsolete"
             },
             "fully_type_constants": {
               "anyOf": [
@@ -4178,7 +4419,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks constants for full typing - no implicit typing allowed.\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_constants"
             },
             "fully_type_itabs": {
               "anyOf": [
@@ -4188,7 +4430,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "No implict table types or table keys\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_itabs"
             },
             "function_module_recommendations": {
               "anyOf": [
@@ -4198,7 +4441,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Suggests replacements for various function modules\nTags: SingleFile\nhttps://rules.abaplint.org/function_module_recommendations"
             },
             "functional_writing": {
               "anyOf": [
@@ -4208,7 +4452,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usage of call method when functional style calls can be used.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/functional_writing"
             },
             "global_class": {
               "anyOf": [
@@ -4218,7 +4463,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks related to global classes\nTags: Syntax\nhttps://rules.abaplint.org/global_class"
             },
             "identical_conditions": {
               "anyOf": [
@@ -4228,7 +4474,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Find identical conditions in IF + CASE + WHILE etc\n\nPrerequsites: code is pretty printed with identical cAsE\nTags: SingleFile\nhttps://rules.abaplint.org/identical_conditions"
             },
             "identical_contents": {
               "anyOf": [
@@ -4238,7 +4485,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Find identical contents in blocks inside IFs, both in the beginning and in the end.\nTags: SingleFile\nhttps://rules.abaplint.org/identical_contents"
             },
             "identical_descriptions": {
               "anyOf": [
@@ -4248,7 +4496,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Searches for objects with the same type and same description\nhttps://rules.abaplint.org/identical_descriptions"
             },
             "identical_form_names": {
               "anyOf": [
@@ -4258,7 +4507,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects identically named FORMs\nTags: Syntax\nhttps://rules.abaplint.org/identical_form_names"
             },
             "identical_move": {
               "anyOf": [
@@ -4268,7 +4518,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Moving the same value from left to right or right to left is redundant.\nTags: SingleFile\nhttps://rules.abaplint.org/identical_move"
             },
             "if_in_if": {
               "anyOf": [
@@ -4278,7 +4529,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects nested ifs which can be refactored.\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/if_in_if"
             },
             "implement_methods": {
               "anyOf": [
@@ -4288,7 +4540,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for abstract methods and methods from interfaces which need implementing.\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/implement_methods"
             },
             "implicit_start_of_selection": {
               "anyOf": [
@@ -4298,7 +4551,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Add explicit selection screen event handling\nTags: SingleFile\nhttps://rules.abaplint.org/implicit_start_of_selection"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -4308,7 +4562,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks alignment within statements which span multiple lines.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/in_statement_indentation"
             },
             "indentation": {
               "anyOf": [
@@ -4318,7 +4573,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks indentation\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/indentation"
             },
             "index_completely_contained": {
               "anyOf": [
@@ -4328,7 +4584,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "If indexes are completely contained in other indexes, they can be removed to improve performance.\nTags: Performance, SingleFile\nhttps://rules.abaplint.org/index_completely_contained"
             },
             "inline_data_old_versions": {
               "anyOf": [
@@ -4338,7 +4595,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
             },
             "intf_referencing_clas": {
               "anyOf": [
@@ -4348,7 +4606,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Interface contains references to class\nhttps://rules.abaplint.org/intf_referencing_clas"
             },
             "invalid_table_index": {
               "anyOf": [
@@ -4358,7 +4617,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Issues error for constant table index zero, as ABAP starts from 1\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/invalid_table_index"
             },
             "keep_single_parameter_on_one_line": {
               "anyOf": [
@@ -4368,7 +4628,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Keep single parameter calls on one line\nTags: Whitespace, Styleguide, SingleFile\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
             },
             "keyword_case": {
               "anyOf": [
@@ -4378,7 +4639,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that keywords have the same case. Non-keywords must be lower case.\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/keyword_case"
             },
             "line_break_multiple_parameters": {
               "anyOf": [
@@ -4388,7 +4650,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Line break multiple parameters\nTags: Whitespace, Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/line_break_multiple_parameters"
             },
             "line_break_style": {
               "anyOf": [
@@ -4398,7 +4661,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Enforces LF as newlines in ABAP files\n\nabapGit does not work with CRLF\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/line_break_style"
             },
             "line_length": {
               "anyOf": [
@@ -4408,7 +4672,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects lines exceeding the provided maximum length.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/line_length"
             },
             "line_only_punc": {
               "anyOf": [
@@ -4418,7 +4683,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects lines containing only punctuation.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/line_only_punc"
             },
             "local_class_naming": {
               "anyOf": [
@@ -4428,7 +4694,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for local class names.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/local_class_naming"
             },
             "local_testclass_consistency": {
               "anyOf": [
@@ -4438,7 +4705,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that local test classes are placed in the test include, and class unit test flag is set\nTags: Syntax\nhttps://rules.abaplint.org/local_testclass_consistency"
             },
             "local_variable_names": {
               "anyOf": [
@@ -4448,7 +4716,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "\nAllows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nRegexes are case-insensitive.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/local_variable_names"
             },
             "macro_naming": {
               "anyOf": [
@@ -4458,7 +4727,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern for macro definitions\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/macro_naming"
             },
             "main_file_contents": {
               "anyOf": [
@@ -4468,7 +4738,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks related to report declarations.\nhttps://rules.abaplint.org/main_file_contents"
             },
             "many_parentheses": {
               "anyOf": [
@@ -4478,7 +4749,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Searches for expressions where extra parentheses can safely be removed\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/many_parentheses"
             },
             "max_one_method_parameter_per_line": {
               "anyOf": [
@@ -4488,7 +4760,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Keep max one method parameter description per line\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/max_one_method_parameter_per_line"
             },
             "max_one_statement": {
               "anyOf": [
@@ -4498,7 +4771,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that each line contains only a single statement.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/max_one_statement"
             },
             "message_exists": {
               "anyOf": [
@@ -4508,7 +4782,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "In message statements, check that the message class + id exist\nTags: Syntax\nhttps://rules.abaplint.org/message_exists"
             },
             "method_implemented_twice": {
               "anyOf": [
@@ -4518,7 +4793,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Reports an error if a method is implemented or defined twice\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/method_implemented_twice"
             },
             "method_length": {
               "anyOf": [
@@ -4528,7 +4804,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks relating to method/form length.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/method_length"
             },
             "method_overwrites_builtin": {
               "anyOf": [
@@ -4538,7 +4815,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks Method names that overwrite builtin SAP functions\nTags: Naming, SingleFile, Styleguide\nhttps://rules.abaplint.org/method_overwrites_builtin"
             },
             "method_parameter_names": {
               "anyOf": [
@@ -4548,7 +4826,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for method parameter names\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/method_parameter_names"
             },
             "mix_returning": {
               "anyOf": [
@@ -4558,7 +4837,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\nTags: Styleguide, SingleFile, Syntax\nhttps://rules.abaplint.org/mix_returning"
             },
             "modify_only_own_db_tables": {
               "anyOf": [
@@ -4568,7 +4848,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Modify only own DB tables\nTags: Security\nhttps://rules.abaplint.org/modify_only_own_db_tables"
             },
             "msag_consistency": {
               "anyOf": [
@@ -4578,7 +4859,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the validity of messages in message classes\nhttps://rules.abaplint.org/msag_consistency"
             },
             "names_no_dash": {
               "anyOf": [
@@ -4588,7 +4870,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for a \"-\" in FORM, DATA, PARAMETER and SELECT-OPTION names\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/names_no_dash"
             },
             "nesting": {
               "anyOf": [
@@ -4598,7 +4881,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for methods exceeding a maximum nesting depth\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/nesting"
             },
             "newline_between_methods": {
               "anyOf": [
@@ -4608,7 +4892,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for newlines between method implementations.\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
             },
             "no_aliases": {
               "anyOf": [
@@ -4618,7 +4903,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects use of the ALIAS statement\nTags: SingleFile\nhttps://rules.abaplint.org/no_aliases"
             },
             "no_chained_assignment": {
               "anyOf": [
@@ -4628,7 +4914,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Find chained assingments and reports issues\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/no_chained_assignment"
             },
             "no_comments_between_methods": {
               "anyOf": [
@@ -4638,7 +4925,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Its not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
             },
             "no_external_form_calls": {
               "anyOf": [
@@ -4648,7 +4936,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detect external form calls\nTags: SingleFile\nhttps://rules.abaplint.org/no_external_form_calls"
             },
             "no_inline_in_optional_branches": {
               "anyOf": [
@@ -4658,7 +4947,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Don't declare inline in optional branches\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/no_inline_in_optional_branches"
             },
             "no_prefixes": {
               "anyOf": [
@@ -4668,7 +4958,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Dont use hungarian notation\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/no_prefixes"
             },
             "no_public_attributes": {
               "anyOf": [
@@ -4678,7 +4969,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that classes and interfaces don't contain any public attributes.\nExceptions are excluded from this rule.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/no_public_attributes"
             },
             "no_yoda_conditions": {
               "anyOf": [
@@ -4688,7 +4980,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds Yoda conditions and reports issues\nTags: SingleFile\nhttps://rules.abaplint.org/no_yoda_conditions"
             },
             "nrob_consistency": {
               "anyOf": [
@@ -4698,7 +4991,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Consistency checks for number ranges\nTags: SingleFile\nhttps://rules.abaplint.org/nrob_consistency"
             },
             "object_naming": {
               "anyOf": [
@@ -4708,7 +5002,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for object names\nTags: Naming\nhttps://rules.abaplint.org/object_naming"
             },
             "obsolete_statement": {
               "anyOf": [
@@ -4718,7 +5013,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for usages of certain obsolete statements\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/obsolete_statement"
             },
             "omit_parameter_name": {
               "anyOf": [
@@ -4728,7 +5024,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Omit the parameter name in single parameter calls\nTags: Styleguide, Quickfix\nhttps://rules.abaplint.org/omit_parameter_name"
             },
             "omit_preceding_zeros": {
               "anyOf": [
@@ -4738,7 +5035,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Omit preceding zeros from integer constants\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/omit_preceding_zeros"
             },
             "omit_receiving": {
               "anyOf": [
@@ -4748,7 +5046,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Omit RECEIVING\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/omit_receiving"
             },
             "parser_702_chaining": {
               "anyOf": [
@@ -4758,7 +5057,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "ABAP on 702 does not allow for method chaining with IMPORTING/EXPORTING/CHANGING keywords,\nthis rule finds these and reports errors.\nOnly active on target version 702 and below.\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/parser_702_chaining"
             },
             "parser_bad_exceptions": {
               "anyOf": [
@@ -4768,7 +5068,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for syntax not recognized by abaplint, related to EXCEPTIONS in CALL FUNCTION.\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/parser_bad_exceptions"
             },
             "parser_error": {
               "anyOf": [
@@ -4778,7 +5079,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for syntax not recognized by abaplint.\n\nSee recognized syntax at https://syntax.abaplint.org\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/parser_error"
             },
             "parser_missing_space": {
               "anyOf": [
@@ -4788,7 +5090,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "In special cases the ABAP language allows for not having spaces before or after string literals.\nThis rule makes sure the spaces are consistently required across the language.\nTags: Syntax, Whitespace, SingleFile\nhttps://rules.abaplint.org/parser_missing_space"
             },
             "pragma_style": {
               "anyOf": [
@@ -4798,7 +5101,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check pragmas placement and case\nTags: SingleFile\nhttps://rules.abaplint.org/pragma_style"
             },
             "prefer_corresponding": {
               "anyOf": [
@@ -4808,7 +5112,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Prefer corresponding( ) to MOVE-CORRESPONDING, from v740sp05 and up\nTags: SingleFile, Upport, Styleguide\nhttps://rules.abaplint.org/prefer_corresponding"
             },
             "prefer_inline": {
               "anyOf": [
@@ -4818,7 +5123,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Prefer inline to up-front declarations.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
             },
             "prefer_is_not": {
               "anyOf": [
@@ -4828,7 +5134,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Prefer IS NOT to NOT IS\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_is_not"
             },
             "prefer_pragmas": {
               "anyOf": [
@@ -4838,7 +5145,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "prefer pragmas over pseudo comments \nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/prefer_pragmas"
             },
             "prefer_raise_exception_new": {
               "anyOf": [
@@ -4848,7 +5156,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile, Quickfix, Upport\nhttps://rules.abaplint.org/prefer_raise_exception_new"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -4858,7 +5167,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Prefer RETURNING to EXPORTING. Generic types cannot be RETURNING.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/prefer_returning_to_exporting"
             },
             "prefer_xsdbool": {
               "anyOf": [
@@ -4868,7 +5178,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Prefer xsdbool over boolc\nTags: Styleguide, Upport, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_xsdbool"
             },
             "preferred_compare_operator": {
               "anyOf": [
@@ -4878,7 +5189,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Configure undesired operator variants\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/preferred_compare_operator"
             },
             "prefix_is_current_class": {
               "anyOf": [
@@ -4888,7 +5200,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefix_is_current_class"
             },
             "reduce_procedural_code": {
               "anyOf": [
@@ -4898,7 +5211,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks FORM and FUNCTION-MODULE have few statements\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/reduce_procedural_code"
             },
             "reduce_string_templates": {
               "anyOf": [
@@ -4908,7 +5222,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for string templates\nTags: SingleFile\nhttps://rules.abaplint.org/reduce_string_templates"
             },
             "release_idoc": {
               "anyOf": [
@@ -4918,7 +5233,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks idoc types and segments are set to status released\nhttps://rules.abaplint.org/release_idoc"
             },
             "remove_descriptions": {
               "anyOf": [
@@ -4928,7 +5244,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Ensures you have no descriptions in metadata of methods, parameters, etc.\n\nClass descriptions are required, see rule description_empty.\n\nConsider using ABAP Doc for documentation.\nhttps://rules.abaplint.org/remove_descriptions"
             },
             "rfc_error_handling": {
               "anyOf": [
@@ -4938,7 +5255,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls\nTags: SingleFile\nhttps://rules.abaplint.org/rfc_error_handling"
             },
             "select_add_order_by": {
               "anyOf": [
@@ -4948,7 +5266,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "SELECTs add ORDER BY clause\nTags: SingleFile\nhttps://rules.abaplint.org/select_add_order_by"
             },
             "select_performance": {
               "anyOf": [
@@ -4958,7 +5277,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Various checks regarding SELECT performance.\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/select_performance"
             },
             "select_single_full_key": {
               "anyOf": [
@@ -4968,7 +5288,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detect SELECT SINGLE which are possibily not unique\nTags: Quickfix\nhttps://rules.abaplint.org/select_single_full_key"
             },
             "selection_screen_naming": {
               "anyOf": [
@@ -4978,7 +5299,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/selection_screen_naming"
             },
             "selection_screen_texts_missing": {
               "anyOf": [
@@ -4988,7 +5310,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that selection screen parameters and select-options have selection texts\nhttps://rules.abaplint.org/selection_screen_texts_missing"
             },
             "sequential_blank": {
               "anyOf": [
@@ -4998,7 +5321,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/sequential_blank"
             },
             "short_case": {
               "anyOf": [
@@ -5008,7 +5332,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for CASE statements which have fewer than the specified number of branches\nTags: SingleFile\nhttps://rules.abaplint.org/short_case"
             },
             "sicf_consistency": {
               "anyOf": [
@@ -5018,7 +5343,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the validity of ICF services\nhttps://rules.abaplint.org/sicf_consistency"
             },
             "slow_parameter_passing": {
               "anyOf": [
@@ -5028,7 +5354,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects slow pass by value passing for methods where parameter is not changed\nTags: Performance\nhttps://rules.abaplint.org/slow_parameter_passing"
             },
             "smim_consistency": {
               "anyOf": [
@@ -5038,7 +5365,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "SMIM consistency check\nhttps://rules.abaplint.org/smim_consistency"
             },
             "space_before_colon": {
               "anyOf": [
@@ -5048,7 +5376,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that there are no spaces in front of colons in chained statements.\nTags: Whitespace, SingleFile, Quickfix\nhttps://rules.abaplint.org/space_before_colon"
             },
             "space_before_dot": {
               "anyOf": [
@@ -5058,7 +5387,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for extra spaces before dots at the ends of statements\nTags: Whitespace, Quickfix, Styleguide, SingleFile\nhttps://rules.abaplint.org/space_before_dot"
             },
             "sql_escape_host_variables": {
               "anyOf": [
@@ -5068,7 +5398,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Escape SQL host variables, from 740sp05 and in open-abap\nTags: Upport, Styleguide, Quickfix, Syntax\nhttps://rules.abaplint.org/sql_escape_host_variables"
             },
             "sql_value_conversion": {
               "anyOf": [
@@ -5078,7 +5409,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Ensure types match when selecting from database\nhttps://rules.abaplint.org/sql_value_conversion"
             },
             "start_at_tab": {
               "anyOf": [
@@ -5088,7 +5420,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that statements start at tabstops.\nTags: Whitespace, Styleguide, SingleFile\nhttps://rules.abaplint.org/start_at_tab"
             },
             "static_call_via_instance": {
               "anyOf": [
@@ -5098,7 +5431,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Static method call via instance variable\nTags: Styleguide\nhttps://rules.abaplint.org/static_call_via_instance"
             },
             "strict_sql": {
               "anyOf": [
@@ -5108,7 +5442,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Strict SQL\nTags: Upport, Quickfix\nhttps://rules.abaplint.org/strict_sql"
             },
             "superclass_final": {
               "anyOf": [
@@ -5118,7 +5453,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that classes which are inherited from are not declared as FINAL.\nTags: Syntax\nhttps://rules.abaplint.org/superclass_final"
             },
             "superfluous_value": {
               "anyOf": [
@@ -5128,7 +5464,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Find superfluous VALUE expressions\nTags: SingleFile\nhttps://rules.abaplint.org/superfluous_value"
             },
             "sy_modification": {
               "anyOf": [
@@ -5138,7 +5475,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds modification of sy fields\nTags: SingleFile\nhttps://rules.abaplint.org/sy_modification"
             },
             "tabl_enhancement_category": {
               "anyOf": [
@@ -5148,7 +5486,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that tables do not have the enhancement category 'not classified'.\nhttps://rules.abaplint.org/tabl_enhancement_category"
             },
             "tables_declared_locally": {
               "anyOf": [
@@ -5158,7 +5497,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "TABLES are always global, so declare them globally\nTags: SingleFile\nhttps://rules.abaplint.org/tables_declared_locally"
             },
             "try_without_catch": {
               "anyOf": [
@@ -5168,7 +5508,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for TRY blocks without a CATCH and CLEANUP block\nTags: SingleFile\nhttps://rules.abaplint.org/try_without_catch"
             },
             "type_form_parameters": {
               "anyOf": [
@@ -5178,7 +5519,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for untyped FORM parameters\nTags: SingleFile\nhttps://rules.abaplint.org/type_form_parameters"
             },
             "types_naming": {
               "anyOf": [
@@ -5188,7 +5530,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern for TYPES definitions\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/types_naming"
             },
             "uncaught_exception": {
               "anyOf": [
@@ -5198,7 +5541,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for uncaught static exception\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
             },
             "unknown_types": {
               "anyOf": [
@@ -5208,7 +5552,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Enables check for unknown data types, respects errorNamespace\nTags: Syntax\nhttps://rules.abaplint.org/unknown_types"
             },
             "unnecessary_chaining": {
               "anyOf": [
@@ -5218,7 +5563,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Find unnecessary chaining, all statements are checked\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_chaining"
             },
             "unnecessary_pragma": {
               "anyOf": [
@@ -5228,7 +5574,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds pragmas which can be removed\nTags: SingleFile\nhttps://rules.abaplint.org/unnecessary_pragma"
             },
             "unnecessary_return": {
               "anyOf": [
@@ -5238,7 +5585,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds unnecessary RETURN statements\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_return"
             },
             "unreachable_code": {
               "anyOf": [
@@ -5248,7 +5596,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unreachable code.\nTags: SingleFile\nhttps://rules.abaplint.org/unreachable_code"
             },
             "unsecure_fae": {
               "anyOf": [
@@ -5258,7 +5607,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unsecure FAE\nTags: Experimental, Performance\nhttps://rules.abaplint.org/unsecure_fae"
             },
             "unused_ddic": {
               "anyOf": [
@@ -5268,7 +5618,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the usage of DDIC objects\nhttps://rules.abaplint.org/unused_ddic"
             },
             "unused_macros": {
               "anyOf": [
@@ -5278,7 +5629,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unused macro definitions definitions\nTags: Quickfix\nhttps://rules.abaplint.org/unused_macros"
             },
             "unused_methods": {
               "anyOf": [
@@ -5288,7 +5640,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unused methods\nTags: Quickfix\nhttps://rules.abaplint.org/unused_methods"
             },
             "unused_types": {
               "anyOf": [
@@ -5298,7 +5651,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unused TYPE definitions\nTags: Quickfix\nhttps://rules.abaplint.org/unused_types"
             },
             "unused_variables": {
               "anyOf": [
@@ -5308,7 +5662,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unused variables and constants\nTags: Quickfix\nhttps://rules.abaplint.org/unused_variables"
             },
             "use_bool_expression": {
               "anyOf": [
@@ -5318,7 +5673,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Use boolean expression, xsdbool from 740sp08 and up, boolc from 702 and up\nTags: Upport, Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/use_bool_expression"
             },
             "use_class_based_exceptions": {
               "anyOf": [
@@ -5328,7 +5684,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Use class based exceptions, checks interface and class definitions\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/use_class_based_exceptions"
             },
             "use_line_exists": {
               "anyOf": [
@@ -5338,7 +5695,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Use line_exists, from 740sp02 and up\nTags: Upport, Styleguide, SingleFile\nhttps://rules.abaplint.org/use_line_exists"
             },
             "use_new": {
               "anyOf": [
@@ -5348,7 +5706,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for deprecated CREATE OBJECT statements.\nTags: Upport, Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/use_new"
             },
             "when_others_last": {
               "anyOf": [
@@ -5358,7 +5717,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that WHEN OTHERS is placed the last within a CASE statement.\nTags: SingleFile\nhttps://rules.abaplint.org/when_others_last"
             },
             "whitespace_end": {
               "anyOf": [
@@ -5368,7 +5728,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for redundant whitespace at the end of each line.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/whitespace_end"
             },
             "xml_consistency": {
               "anyOf": [
@@ -5378,7 +5739,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the consistency of main XML files, eg. naming for CLAS and INTF objects\nTags: Naming, Syntax\nhttps://rules.abaplint.org/xml_consistency"
             }
           },
           "type": "object"
@@ -8542,4 +8904,3 @@
     }
   }
 }
-
