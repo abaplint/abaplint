@@ -4682,7 +4682,7 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Incompatible");
   });
 
-  it.only("types not compatilbe, DEFAULT vs EMPTY KEY", () => {
+  it("types not compatilbe, DEFAULT vs EMPTY KEY", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -4703,7 +4703,7 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
-    expect(issues[0].getMessage()).to.contain("Incompatible");
+    expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
   it("Ok move, header line", () => {
