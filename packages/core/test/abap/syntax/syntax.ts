@@ -12855,4 +12855,42 @@ result = strings.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("ok another, split", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_str TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    METHODS bar IMPORTING foo TYPE ty_str.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA cards TYPE string.
+    SPLIT cards AT space INTO TABLE DATA(strings).
+    bar( strings ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("ok another more, split", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_str TYPE STANDARD TABLE OF string.
+    METHODS bar IMPORTING foo TYPE ty_str.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA cards TYPE string.
+    SPLIT cards AT space INTO TABLE DATA(strings).
+    bar( strings ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });
