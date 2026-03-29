@@ -4592,6 +4592,28 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, deferred friend exists, inherit", () => {
+    const abap = `
+CLASS ltcl_xml DEFINITION DEFERRED.
+
+CLASS ltcl_base DEFINITION.
+ENDCLASS.
+CLASS ltcl_base IMPLEMENTATION.
+ENDCLASS.
+
+CLASS ltcl_xml_concrete DEFINITION FOR TESTING INHERITING FROM ltcl_base FRIENDS ltcl_xml.
+ENDCLASS.
+CLASS ltcl_xml_concrete IMPLEMENTATION.
+ENDCLASS.
+
+CLASS ltcl_xml DEFINITION.
+ENDCLASS.
+CLASS ltcl_xml IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("error if friend class does not exist", () => {
     const abap = `
 CLASS lcl DEFINITION FRIENDS ycsdf.
