@@ -12826,4 +12826,22 @@ lcl=>foo( lines( lo_obj->mt_items ) ).`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it.only("ok, standard table", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar
+      IMPORTING foo TYPE STANDARD TABLE.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA lt_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    bar( lt_tab ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });
