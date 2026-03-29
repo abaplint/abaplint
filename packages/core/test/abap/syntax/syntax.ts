@@ -4682,6 +4682,30 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Incompatible");
   });
 
+  it.only("types not compatilbe, DEFAULT vs EMPTY KEY", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             foo TYPE c LENGTH 4,
+           END OF ty1.
+    TYPES tt1 TYPE STANDARD TABLE OF ty1 WITH DEFAULT KEY.
+    TYPES tt2 TYPE STANDARD TABLE OF ty1 WITH EMPTY KEY.
+
+    METHODS foo IMPORTING bar TYPE tt2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA tab TYPE tt1.
+    foo( tab ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("Incompatible");
+  });
+
   it("Ok move, header line", () => {
     const abap = `
   DATA tab TYPE STANDARD TABLE OF i WITH HEADER LINE.
