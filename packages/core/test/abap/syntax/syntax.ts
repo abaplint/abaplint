@@ -12844,7 +12844,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it.only("ok, split", () => {
+  it("ok, split", () => {
     const abap = `
 TYPES ty_stack TYPE STANDARD TABLE OF i WITH EMPTY KEY.
 DATA result TYPE ty_stack.

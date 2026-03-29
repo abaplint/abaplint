@@ -12,7 +12,7 @@ export class Split implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     const intoTable = node.findTokenSequencePosition("INTO", "TABLE") !== undefined;
-    const type = intoTable ? new TableType(StringType.get(), {withHeader: false, keyType: TableKeyType.default}) : StringType.get();
+    const type = intoTable ? new TableType(StringType.get(), {withHeader: false, keyType: TableKeyType.empty}) : StringType.get();
 
     for (const target of node.findAllExpressions(Expressions.Target)) {
       const inline = target.findDirectExpression(Expressions.InlineData);
