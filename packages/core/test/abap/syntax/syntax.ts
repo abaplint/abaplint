@@ -4575,6 +4575,24 @@ DATA(sdf) = CONV clike( foo ).`;
     expect(issues[0].getMessage()).to.contain("generic");
   });
 
+  it.only("ok, deferred friend exists", () => {
+    const abap = `
+CLASS ltcl_xml DEFINITION DEFERRED.
+
+CLASS ltcl_xml_concrete DEFINITION FOR TESTING FRIENDS ltcl_xml.
+ENDCLASS.
+CLASS ltcl_xml_concrete IMPLEMENTATION.
+ENDCLASS.
+
+CLASS ltcl_xml DEFINITION.
+ENDCLASS.
+CLASS ltcl_xml IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal(undefined);
+  });
+
   it("error if friend class does not exist", () => {
     const abap = `
 CLASS lcl DEFINITION FRIENDS ycsdf.
