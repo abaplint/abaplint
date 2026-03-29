@@ -12844,4 +12844,15 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it.only("ok, split", () => {
+    const abap = `
+TYPES ty_stack TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+DATA result TYPE ty_stack.
+DATA cards TYPE string.
+SPLIT cards AT space INTO TABLE DATA(strings).
+result = strings.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });
