@@ -125,6 +125,10 @@ export class Source {
             const message = `CONV: Types not compatible, ${foundType?.constructor.name}, ${bodyType?.constructor.name}`;
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
             return VoidType.get(CheckSyntaxKey);
+          } else if (foundType?.isGeneric()) {
+            const message = "Cannot CONV to generic type";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return VoidType.get(CheckSyntaxKey);
           }
           this.addIfInferred(node, input, foundType);
           return foundType;

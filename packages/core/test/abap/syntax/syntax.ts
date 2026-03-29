@@ -4566,6 +4566,15 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Incompatible");
   });
 
+  it("CONV to generic", () => {
+    const abap = `
+DATA foo TYPE i.
+DATA(sdf) = CONV clike( foo ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("generic");
+  });
+
   it("Cannot move char into ref", () => {
     const abap = `
     DATA ref TYPE REF TO object.
