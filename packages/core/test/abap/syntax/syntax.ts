@@ -4575,6 +4575,17 @@ DATA(sdf) = CONV clike( foo ).`;
     expect(issues[0].getMessage()).to.contain("generic");
   });
 
+  it.only("error if friend class does not exist", () => {
+    const abap = `
+CLASS lcl DEFINITION FRIENDS ycsdf.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("YCSDF does not exist");
+  });
+
   it("Cannot move char into ref", () => {
     const abap = `
     DATA ref TYPE REF TO object.
