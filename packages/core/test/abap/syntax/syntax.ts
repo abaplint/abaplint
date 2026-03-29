@@ -4614,6 +4614,30 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("testclass referencing friended type with super", () => {
+    const test = `
+CLASS ltcl_xml DEFINITION DEFERRED.
+
+CLASS ltcl_xml_concrete DEFINITION FOR TESTING INHERITING FROM zcl_sdfsdf FRIENDS ltcl_xml.
+ENDCLASS.
+CLASS ltcl_xml_concrete IMPLEMENTATION.
+ENDCLASS.
+
+CLASS ltcl_xml DEFINITION.
+ENDCLASS.
+CLASS ltcl_xml IMPLEMENTATION.
+ENDCLASS.`;
+    const clas = `
+    CLASS zcl_sdfsdf DEFINITION PUBLIC.
+    ENDCLASS.
+    CLASS zcl_sdfsdf IMPLEMENTATION.
+    ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues.length).to.equals(0);
+  });
+
   it("error if friend class does not exist", () => {
     const abap = `
 CLASS lcl DEFINITION FRIENDS ycsdf.
