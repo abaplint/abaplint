@@ -1039,7 +1039,9 @@ DATA moo TYPE REF TO lif_bar=>type.`;
     const abap = `SELECT * FROM sdfsd INTO TABLE @DATA(lt_tab).`;
     const type = resolveVariable(abap, "lt_tab");
     expect(type).to.not.equal(undefined);
-    expect(type!.getType()).to.be.instanceof(Basic.VoidType);
+    const tt = type!.getType();
+    expect(tt).to.be.instanceof(Basic.TableType);
+    expect((tt as Basic.TableType).getRowType()).to.be.instanceof(Basic.VoidType);
   });
 
   it("SELECT SINGLE, voided", () => {

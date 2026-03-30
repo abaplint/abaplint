@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {Integer8Type, IntegerType, IStructureComponent, StructureType, TableKeyType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {Integer8Type, IntegerType, IStructureComponent, ITableOptions, StructureType, TableKeyType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {InlineData} from "./inline_data";
 import {Target} from "./target";
 import {SQLFrom} from "./sql_from";
@@ -352,9 +352,11 @@ export class Select {
       return VoidType.get("SELECT_todo3");
     }
 
+    const tableOptions: ITableOptions = {withHeader: false, keyType: TableKeyType.empty};
+
     if (dbSources[0] === undefined) {
       // then its a voided table
-      return new TableType(VoidType.get("SELECT_todo4"), {withHeader: false, keyType: TableKeyType.empty}, undefined);
+      return new TableType(VoidType.get("SELECT_todo4"), tableOptions, undefined);
     }
     const dbType = dbSources[0].parseType(scope.getRegistry());
     if (!(dbType instanceof StructureType)) {
@@ -362,7 +364,7 @@ export class Select {
     }
 
     if (fields.length === 1 && fields[0].code === "*") {
-      return new TableType(dbType, {withHeader: false, keyType: TableKeyType.empty}, undefined);
+      return new TableType(dbType, tableOptions, undefined);
     }
 
     const allFieldsSimple = fields.every(f => isSimple.test(f.code));
@@ -375,7 +377,7 @@ export class Select {
         }
         components.push({name: field.code, type});
       }
-      return new TableType(new StructureType(components), {withHeader: false, keyType: TableKeyType.empty}, undefined);
+      return new TableType(new StructureType(components), tableOptions, undefined);
     }
 
     return VoidType.get("SELECT_todo7");
