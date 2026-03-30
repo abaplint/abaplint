@@ -74,6 +74,22 @@ COVER TEXT  text
 NEW LIST IDENTIFICATION 'X'
 WITHOUT SPOOL DYNPRO
 AND RETURN.`,
+
+  `SUBMIT zfoobarboo TO SAP-SPOOL WITHOUT SPOOL DYNPRO
+            WITH s_zzdate-low = 1
+            WITH s_zzuser-low = 2
+            WITH s_zztcod-low = 2
+            DESTINATION          'SDF'
+            COPIES               001
+            IMMEDIATELY          'X'
+            KEEP IN SPOOL        ' '
+            ARCHIVE MODE         '1'
+            LAYOUT               'X_90_120'
+            LINE-COUNT            120
+            LINE-SIZE             90
+            SAP COVER PAGE        'X'
+            RECEIVER              'SDF'
+            AND RETURN.`,
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);
