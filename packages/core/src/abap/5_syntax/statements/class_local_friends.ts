@@ -40,6 +40,11 @@ export class ClassLocalFriends implements StatementSyntax {
         const message = `Class ${className.toUpperCase()} not found`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
+      } else {
+        const befriendedName = classNames[0]?.getFirstToken().getStr();
+        if (befriendedName) {
+          input.scope.addLocalFriend(befriendedName, className);
+        }
       }
     }
 

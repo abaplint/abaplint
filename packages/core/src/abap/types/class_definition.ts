@@ -18,7 +18,7 @@ import {ObjectOriented} from "../5_syntax/_object_oriented";
 import {IImplementing} from "./_interface_definition";
 import {ReferenceType} from "../5_syntax/_reference";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
-import {SyntaxInput} from "../5_syntax/_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 import {Alias} from "./alias";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
@@ -35,6 +35,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly globalValue: boolean;
   private readonly sharedMemory: boolean;
   private readonly aliases: Alias[];
+  private readonly createVisibilityValue: Visibility;
 
   public constructor(node: StructureNode, input: SyntaxInput) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
@@ -83,6 +84,13 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.testing = concat.includes(" FOR TESTING");
     this.sharedMemory = concat.includes(" SHARED MEMORY ENABLED");
     this.abstract = def?.findDirectTokenByText("ABSTRACT") !== undefined;
+    if (concat.includes(" CREATE PRIVATE")) {
+      this.createVisibilityValue = Visibility.Private;
+    } else if (concat.includes(" CREATE PROTECTED")) {
+      this.createVisibilityValue = Visibility.Protected;
+    } else {
+      this.createVisibilityValue = Visibility.Public;
+    }
 
     // perform checks after everything has been initialized
     this.checkMethodsFromSuperClasses(input.scope);
@@ -139,6 +147,10 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
   public isSharedMemory(): boolean {
     return this.sharedMemory;
+  }
+
+  public getCreateVisibility(): Visibility {
+    return this.createVisibilityValue;
   }
 
 /*
@@ -199,8 +211,17 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     const result: string[] = [];
     for (const n of def?.findDirectExpression(Expressions.ClassFriends)?.findDirectExpressions(Expressions.ClassName) || []) {
       const token = n.getFirstToken();
-      this.addReference(token, input);
       const name = token.getStr();
+      const s = input.scope.findClassDefinition(name);
+      if (s) {
+        input.scope.addReference(token, s, ReferenceType.ObjectOrientedReference, input.filename, {ooName: name.toUpperCase(), ooType: "CLAS"});
+      } else if (input.scope.existsObject(name) !== undefined) {
+        // DEFINITION DEFERRED friend
+      } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
+        input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename);
+      } else {
+        input.issues.push(syntaxIssue(input, token, name.toUpperCase() + " does not exist"));
+      }
       result.push(name);
     }
     return result;

@@ -12,6 +12,7 @@ import {TypeUtils} from "../_type_utils";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 import {TypedIdentifier} from "../../types/_typed_identifier";
+import {CreateObject} from "../statements/create_object";
 
 export class NewObject {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType {
@@ -49,6 +50,13 @@ export class NewObject {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return VoidType.get(CheckSyntaxKey);
       }
+      if (clas) {
+        const err = CreateObject.checkInstantiationAllowed(clas, input);
+        if (err) {
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), err));
+          return VoidType.get(CheckSyntaxKey);
+        }
+      }
     } else if (typeName === "#" && targetType) {
       ret = targetType;
     } else if (typeName === "#") {
@@ -70,6 +78,13 @@ export class NewObject {
           const message = clas.getName() + " is abstract, cannot be instantiated";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return VoidType.get(CheckSyntaxKey);
+        }
+        if (clas) {
+          const err = CreateObject.checkInstantiationAllowed(clas, input);
+          if (err) {
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), err));
+            return VoidType.get(CheckSyntaxKey);
+          }
         }
         ret = objref;
       }

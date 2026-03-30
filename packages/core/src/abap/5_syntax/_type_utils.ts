@@ -1,5 +1,6 @@
 import {ClassDefinition, InterfaceDefinition} from "../types";
 import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DataType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
+import {TableKeyType} from "../types/basic/table_type";
 import {EnumType} from "../types/basic/enum_type";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {CGenericType} from "../types/basic/cgeneric_type";
@@ -432,6 +433,13 @@ export class TypeUtils {
       }
     } else if (source instanceof TableType) {
       if (target instanceof TableType) {
+        const sourceKeyType = source.getOptions().keyType;
+        const targetKeyType = target.getOptions().keyType;
+        if (sourceKeyType !== targetKeyType
+            && sourceKeyType !== TableKeyType.user
+            && targetKeyType !== TableKeyType.user) {
+          return false;
+        }
         return this.isAssignableStrict(source.getRowType(), target.getRowType());
       } else if (target instanceof UnknownType
           || target instanceof AnyType
@@ -484,6 +492,13 @@ export class TypeUtils {
           && this.structureContainsVoid(targetRowType) === false) {
             return false;
           }
+        }
+        const sourceKeyType = source.getOptions().keyType;
+        const targetKeyType = target.getOptions().keyType;
+        if (sourceKeyType !== targetKeyType
+            && sourceKeyType !== TableKeyType.user
+            && targetKeyType !== TableKeyType.user) {
+          return false;
         }
         return true;
       }

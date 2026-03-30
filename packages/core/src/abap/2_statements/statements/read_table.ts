@@ -23,13 +23,12 @@ export class ReadTable implements IStatement {
 
     const from = seq("FROM", Source);
 
-    const perm = per(alt(index, key, from),
-                     ReadTableTarget,
-                     using,
-                     comparing,
-                     "CASTING",
-                     seq("TRANSPORTING", altPrio("ALL FIELDS", "NO FIELDS", TransportingFields)),
-                     "BINARY SEARCH");
+    const transporting = seq("TRANSPORTING", altPrio("ALL FIELDS", "NO FIELDS", TransportingFields));
+    const common = [ReadTableTarget, comparing, "CASTING", transporting, "BINARY SEARCH"] as const;
+
+    const perm = alt(per(alt(index, from), using, ...common),
+                     per(key, ...common),
+                     per(...common));
 
     return seq("READ TABLE",
                alt(SimpleSource2, ver(Version.v740sp02, Source, Version.OpenABAP)),

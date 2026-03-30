@@ -4270,6 +4270,32 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("testclass referencing friended type, create object", () => {
+    const test = `
+    CLASS ltcl_syntax_cases DEFINITION DEFERRED.
+    CLASS zcl_sdfsdf DEFINITION LOCAL FRIENDS ltcl_syntax_cases.
+
+    CLASS ltcl_syntax_cases DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+      PUBLIC SECTION.
+        METHODS BAR.
+    ENDCLASS.
+    CLASS ltcl_syntax_cases IMPLEMENTATION.
+      METHOD bar.
+        DATA ref TYPE REF TO zcl_sdfsdf.
+        CREATE OBJECT ref.
+      endmethod.
+    ENDCLASS.`;
+    const clas = `
+    CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PRIVATE.
+    ENDCLASS.
+    CLASS zcl_sdfsdf IMPLEMENTATION.
+    ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
   it("CONCATENATE, use before decl", () => {
     const abap = `CONCATENATE lv_str 'foobar' INTO DATA(lv_str) SEPARATED BY space.`;
     const issues = runProgram(abap);
@@ -4540,6 +4566,113 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Incompatible");
   });
 
+  it("CONV to generic", () => {
+    const abap = `
+DATA foo TYPE i.
+DATA(sdf) = CONV clike( foo ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("generic");
+  });
+
+  it("ok, deferred friend exists", () => {
+    const abap = `
+CLASS ltcl_xml DEFINITION DEFERRED.
+
+CLASS ltcl_xml_concrete DEFINITION FOR TESTING FRIENDS ltcl_xml.
+ENDCLASS.
+CLASS ltcl_xml_concrete IMPLEMENTATION.
+ENDCLASS.
+
+CLASS ltcl_xml DEFINITION.
+ENDCLASS.
+CLASS ltcl_xml IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, deferred friend exists, inherit", () => {
+    const abap = `
+CLASS ltcl_xml DEFINITION DEFERRED.
+
+CLASS ltcl_base DEFINITION.
+ENDCLASS.
+CLASS ltcl_base IMPLEMENTATION.
+ENDCLASS.
+
+CLASS ltcl_xml_concrete DEFINITION FOR TESTING INHERITING FROM ltcl_base FRIENDS ltcl_xml.
+ENDCLASS.
+CLASS ltcl_xml_concrete IMPLEMENTATION.
+ENDCLASS.
+
+CLASS ltcl_xml DEFINITION.
+ENDCLASS.
+CLASS ltcl_xml IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("testclass referencing friended type with super", () => {
+    const test = `
+CLASS ltcl_xml DEFINITION DEFERRED.
+
+CLASS ltcl_xml_concrete DEFINITION FOR TESTING INHERITING FROM zcl_sdfsdf FRIENDS ltcl_xml.
+ENDCLASS.
+CLASS ltcl_xml_concrete IMPLEMENTATION.
+ENDCLASS.
+
+CLASS ltcl_xml DEFINITION.
+ENDCLASS.
+CLASS ltcl_xml IMPLEMENTATION.
+ENDCLASS.`;
+    const clas = `
+    CLASS zcl_sdfsdf DEFINITION PUBLIC.
+    ENDCLASS.
+    CLASS zcl_sdfsdf IMPLEMENTATION.
+    ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, deferred friend in error namespace", () => {
+    const test = `
+CLASS zcl_friend DEFINITION DEFERRED.
+
+CLASS zcl_concrete DEFINITION FOR TESTING INHERITING FROM zcl_super FRIENDS zcl_friend.
+ENDCLASS.
+CLASS zcl_concrete IMPLEMENTATION.
+ENDCLASS.
+
+CLASS zcl_friend DEFINITION.
+ENDCLASS.
+CLASS zcl_friend IMPLEMENTATION.
+ENDCLASS.`;
+    const clas = `
+    CLASS zcl_super DEFINITION PUBLIC.
+    ENDCLASS.
+    CLASS zcl_super IMPLEMENTATION.
+    ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_super.clas.abap", contents: clas},
+      {filename: "zcl_super.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error if friend class does not exist", () => {
+    const abap = `
+CLASS lcl DEFINITION FRIENDS ycsdf.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("YCSDF does not exist");
+  });
+
   it("Cannot move char into ref", () => {
     const abap = `
     DATA ref TYPE REF TO object.
@@ -4547,6 +4680,30 @@ ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.contain("Incompatible");
+  });
+
+  it("types not compatilbe, DEFAULT vs EMPTY KEY", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty1,
+             foo TYPE c LENGTH 4,
+           END OF ty1.
+    TYPES tt1 TYPE STANDARD TABLE OF ty1 WITH DEFAULT KEY.
+    TYPES tt2 TYPE STANDARD TABLE OF ty1 WITH EMPTY KEY.
+
+    METHODS foo IMPORTING bar TYPE tt2.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA tab TYPE tt1.
+    foo( tab ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("not compatible");
   });
 
   it("Ok move, header line", () => {
@@ -12171,6 +12328,90 @@ INSERT VALUE ty_t001l( werks = 22
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("instantiation outside of private", () => {
+    const abap = `
+CLASS lcl_test DEFINITION CREATE PRIVATE.
+  PUBLIC SECTION.
+    METHODS get_data RETURNING VALUE(re_data) TYPE string.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD get_data.
+    re_data = 'Hello'.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_obj_instance TYPE REF TO lcl_test.
+*-------->> below object instantiation should give a syntax error, as class is defined as private.
+  CREATE OBJECT lo_obj_instance.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("class is defined as private");
+  });
+
+  it("instantiation private ok", () => {
+    const abap = `
+CLASS lcl_test DEFINITION CREATE PRIVATE.
+  PUBLIC SECTION.
+    METHODS get_data RETURNING VALUE(re_data) TYPE string.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD get_data.
+    DATA lo_obj_instance TYPE REF TO lcl_test.
+    re_data = 'Hello'.
+    CREATE OBJECT lo_obj_instance.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("instantiation private ok, friends deferred", () => {
+    const abap = `
+CLASS something DEFINITION DEFERRED.
+
+CLASS priv DEFINITION CREATE PRIVATE FRIENDS something.
+ENDCLASS.
+CLASS priv IMPLEMENTATION.
+ENDCLASS.
+
+CLASS something DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+CLASS something IMPLEMENTATION.
+  METHOD bar.
+    DATA ref TYPE REF TO priv.
+    CREATE OBJECT ref.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("instantiation private ok, friends sequenced defs", () => {
+    const abap = `
+CLASS something DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+
+CLASS priv DEFINITION CREATE PRIVATE FRIENDS something.
+ENDCLASS.
+CLASS priv IMPLEMENTATION.
+ENDCLASS.
+
+CLASS something IMPLEMENTATION.
+  METHOD bar.
+    DATA ref TYPE REF TO priv.
+    CREATE OBJECT ref.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("Moveable, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_cedi,
@@ -12330,6 +12571,15 @@ DATA lr_ TYPE REF TO ty.
 DATA(lx_) = ix_ BIT-XOR lr_->*.`;
     const issues = runProgram(abap, [], Version.v740sp08);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, the zif_foo not found", () => {
+    const abap = `
+INTERFACE lif.
+  ALIASES foo FOR zif_foo~bar.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not found");
   });
 
   it("ok, WRITE ENUM", () => {
@@ -12556,6 +12806,90 @@ ENDFORM.`;
       {filename: "zglobalfm.fugr.lzglobalfmtop.xml", contents: topxml},
       {filename: "zglobalfm.fugr.saplzglobalfm.xml", contents: xml2},
       {filename: "zglobalfm.fugr.zglobalparam.abap", contents: code}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("ok, lines() on table attribute with empty key as method parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA mt_items TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    CLASS-METHODS foo IMPORTING iv TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+DATA(lo_obj) = NEW lcl( ).
+lcl=>foo( lines( lo_obj->mt_items ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("ok, standard table", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar
+      IMPORTING foo TYPE STANDARD TABLE.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA lt_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    bar( lt_tab ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("ok, split", () => {
+    const abap = `
+TYPES ty_stack TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+DATA result TYPE ty_stack.
+DATA cards TYPE string.
+SPLIT cards AT space INTO TABLE DATA(strings).
+result = strings.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("ok another, split", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_str TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    METHODS bar IMPORTING foo TYPE ty_str.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA cards TYPE string.
+    SPLIT cards AT space INTO TABLE DATA(strings).
+    bar( strings ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("ok another more, split", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_str TYPE STANDARD TABLE OF string.
+    METHODS bar IMPORTING foo TYPE ty_str.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA cards TYPE string.
+    SPLIT cards AT space INTO TABLE DATA(strings).
+    bar( strings ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 

@@ -11,6 +11,7 @@ import {IClassDefinition} from "../../types/_class_definition";
 import {ObjectOriented} from "../_object_oriented";
 import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {Visibility} from "../../4_file_information/visibility";
 
 export class CreateObject implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -110,7 +111,46 @@ export class CreateObject implements StatementSyntax {
     input.scope.addReference(t?.getFirstToken(), cdef, ReferenceType.ConstructorReference, input.filename,
                              {ooName: ooName});
 
+    if (cdef !== undefined) {
+      const err = CreateObject.checkInstantiationAllowed(cdef, input);
+      if (err) {
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), err));
+        return;
+      }
+    }
+
     this.validateParameters(cdef, node, input);
+  }
+
+  public static checkInstantiationAllowed(cdef: IClassDefinition, input: SyntaxInput): string | undefined {
+    const createVis = cdef.getCreateVisibility();
+    if (createVis === Visibility.Public) {
+      return undefined;
+    }
+    const enclosingClass = input.scope.getEnclosingClassName();
+    if (enclosingClass === undefined) {
+      return cdef.getName() + " cannot be instantiated, class is defined as " +
+        (createVis === Visibility.Private ? "private" : "protected");
+    }
+    if (enclosingClass.toUpperCase() === cdef.getName().toUpperCase()) {
+      return undefined;
+    }
+    if (cdef.getFriends().some(f => f.toUpperCase() === enclosingClass.toUpperCase()) ||
+        input.scope.isLocalFriend(cdef.getName(), enclosingClass)) {
+      return undefined;
+    }
+    if (createVis === Visibility.Protected) {
+      // subclasses are also allowed
+      let sup = input.scope.findClassDefinition(enclosingClass)?.getSuperClass();
+      while (sup !== undefined) {
+        if (sup.toUpperCase() === cdef.getName().toUpperCase()) {
+          return undefined;
+        }
+        sup = input.scope.findClassDefinition(sup)?.getSuperClass();
+      }
+    }
+    return cdef.getName() + " cannot be instantiated, class is defined as " +
+      (createVis === Visibility.Private ? "private" : "protected");
   }
 
   private validateParameters(cdef: IClassDefinition | undefined, node: StatementNode, input: SyntaxInput): void {

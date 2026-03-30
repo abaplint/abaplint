@@ -28,6 +28,7 @@ export class CurrentScope {
   protected current: SpaghettiScopeNode | undefined;
   protected allowHeaderUse: string | undefined;
   protected parentObj: IObject;
+  private readonly localFriends: Map<string, string[]> = new Map();
 
   public static buildDefault(reg: IRegistry, obj: IObject): CurrentScope {
     const s = new CurrentScope(reg, obj);
@@ -538,6 +539,28 @@ export class CurrentScope {
       curr = curr.getParent();
     }
     return false;
+  }
+
+  public addLocalFriend(className: string, friendName: string): void {
+    const key = className.toUpperCase();
+    const list = this.localFriends.get(key) ?? [];
+    list.push(friendName.toUpperCase());
+    this.localFriends.set(key, list);
+  }
+
+  public isLocalFriend(className: string, friendName: string): boolean {
+    return this.localFriends.get(className.toUpperCase())?.includes(friendName.toUpperCase()) === true;
+  }
+
+  public getEnclosingClassName(): string | undefined {
+    let curr = this.current;
+    while (curr !== undefined) {
+      if (curr.getIdentifier().stype === ScopeType.ClassImplementation) {
+        return curr.getIdentifier().sname;
+      }
+      curr = curr.getParent();
+    }
+    return undefined;
   }
 
   public isGlobalOO(): boolean {

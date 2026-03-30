@@ -29,12 +29,14 @@ export class Attributes implements IAttributes {
   private readonly tlist: {type: TypedIdentifier, visibility: Visibility}[];
   private readonly filename: string;
   private readonly aliases: Alias[];
+  private readonly declaredInterfaces: string[];
 
   public constructor(node: StructureNode, input: SyntaxInput) {
     this.static = [];
     this.instance = [];
     this.constants = [];
     this.aliases = [];
+    this.declaredInterfaces = [];
     this.tlist = [];
     this.filename = input.filename;
     this.parse(node, input);
@@ -124,6 +126,12 @@ export class Attributes implements IAttributes {
   private parse(node: StructureNode, input: SyntaxInput): void {
     const cdef = node.findDirectStructure(Structures.ClassDefinition);
     if (cdef) {
+      for (const i of cdef.findAllStatements(Statements.InterfaceDef)) {
+        const name = i.findFirstExpression(Expressions.InterfaceName)?.getFirstToken().getStr();
+        if (name) {
+          this.declaredInterfaces.push(name.toUpperCase());
+        }
+      }
       this.parseSection(cdef.findDirectStructure(Structures.PublicSection), Visibility.Public, input);
       this.parseSection(cdef.findDirectStructure(Structures.ProtectedSection), Visibility.Protected, input);
       this.parseSection(cdef.findDirectStructure(Structures.PrivateSection), Visibility.Private, input);
@@ -132,6 +140,12 @@ export class Attributes implements IAttributes {
 
     const idef = node.findDirectStructure(Structures.Interface);
     if (idef) {
+      for (const i of idef.findAllStatements(Statements.InterfaceDef)) {
+        const name = i.findFirstExpression(Expressions.InterfaceName)?.getFirstToken().getStr();
+        if (name) {
+          this.declaredInterfaces.push(name.toUpperCase());
+        }
+      }
       this.parseSection(idef.findDirectStructure(Structures.SectionContents), Visibility.Public, input);
       return;
     }
@@ -237,6 +251,10 @@ export class Attributes implements IAttributes {
         if (foundAttribute) {
           input.scope.addNamedIdentifier(aliasName.getStr(), foundAttribute);
         }
+      } else if (this.declaredInterfaces.includes(name.toUpperCase()) || input.scope.getDDIC().inErrorNamespace(name) === false) {
+        input.scope.addReference(compToken, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename);
+      } else {
+        throw new Error("Interface " + name + " not found");
       }
     }
   }

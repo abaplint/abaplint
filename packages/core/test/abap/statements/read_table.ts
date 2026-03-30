@@ -1,5 +1,5 @@
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
+import {statementExpectFail, statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 import {Version} from "../../../src/version";
 
 const tests = [
@@ -75,3 +75,9 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "READ TABLE");
+
+const fail = [
+  "READ TABLE lt_objects INTO ls_object USING KEY sha WITH KEY sha1 = ls_remote-remote_sha1.",
+];
+
+statementExpectFail(fail, "READ TABLE");
