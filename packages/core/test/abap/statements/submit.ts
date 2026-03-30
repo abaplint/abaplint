@@ -53,13 +53,11 @@ const tests = [
   "SUBMIT zfoobar WITH rang-low EQ low AND RETURN.",
   `submit zffoo# with record = tbtco and return.`,
 
-  /* todo
   `SUBMIT zsdfsd
   WITH foo = bar
   WITH layout = layout EXPORTING LIST TO MEMORY
   WITH bar IN moo
   AND RETURN.`,
-  */
 
   `SUBMIT zmoo VIA SELECTION-SCREEN
     WITH  p_werks  = go->werk

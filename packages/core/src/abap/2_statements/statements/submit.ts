@@ -41,6 +41,7 @@ export class Submit implements IStatement {
     const perm = per(plus(awith),
                      selectionTable,
                      plus(awith),
+                     plus(awith),
                      spool,
                      lineSize,
                      lineCount,
