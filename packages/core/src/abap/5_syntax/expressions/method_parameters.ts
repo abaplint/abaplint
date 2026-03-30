@@ -125,7 +125,7 @@ export class MethodParameters {
         const message = "Could not determine target type";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
-      } else if (item.targetType && new TypeUtils(input.scope).isAssignable(parameterType, item.targetType) === false) {
+      } else if (item.targetType && new TypeUtils(input.scope).isAssignableStrict(parameterType, item.targetType) === false) {
         const message = "Method parameter type not compatible, " + item.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;

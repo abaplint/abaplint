@@ -13035,6 +13035,19 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, move different types", () => {
+    const abap = `
+DATA var1 TYPE STANDARD TABLE OF bapiret2 WITH EMPTY KEY.
+DATA var2 TYPE STANDARD TABLE OF bapiret2 WITH DEFAULT KEY.
+DATA var3 TYPE STANDARD TABLE OF bapiret2.
+DATA var4 TYPE TABLE OF bapiret2.
+var4 = var1.
+var4 = var2.
+var4 = var3.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("error, TYPE TABLE", () => {
     const abap = `
 CLASS lcl DEFINITION.
