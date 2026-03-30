@@ -354,7 +354,7 @@ export class Select {
 
     if (dbSources[0] === undefined) {
       // then its a voided table
-      return VoidType.get("SELECT_todo4");
+      return new TableType(VoidType.get("SELECT_todo4"), {withHeader: false, keyType: TableKeyType.empty}, undefined);
     }
     const dbType = dbSources[0].parseType(scope.getRegistry());
     if (!(dbType instanceof StructureType)) {

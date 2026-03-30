@@ -12893,7 +12893,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it.only("SELECT INLINE, expect error", () => {
+  it("SELECT INLINE, expect error", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -12908,10 +12908,10 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.contain("incompatible");
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
-  it.only("SELECT INLINE, ok", () => {
+  it("SELECT INLINE, ok", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
