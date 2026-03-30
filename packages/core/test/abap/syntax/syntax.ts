@@ -12893,4 +12893,40 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it.only("SELECT INLINE, expect error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tytt TYPE STANDARD TABLE OF t100 WITH DEFAULT KEY.
+    METHODS bar IMPORTING foo TYPE tytt.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    SELECT * FROM t100 INTO TABLE @DATA(lt_t100) UP TO 100 ROWS.
+    bar( lt_t100 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("incompatible");
+  });
+
+  it.only("SELECT INLINE, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tytt TYPE STANDARD TABLE OF t100 WITH EMPTY KEY.
+    METHODS bar IMPORTING foo TYPE tytt.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    SELECT * FROM t100 INTO TABLE @DATA(lt_t100) UP TO 100 ROWS.
+    bar( lt_t100 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
