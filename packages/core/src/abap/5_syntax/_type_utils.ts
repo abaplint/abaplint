@@ -493,6 +493,7 @@ export class TypeUtils {
             return false;
           }
         }
+        /*
         const sourceKeyType = source.getOptions().keyType;
         const targetKeyType = target.getOptions().keyType;
         if (sourceKeyType !== targetKeyType
@@ -500,6 +501,7 @@ export class TypeUtils {
             && targetKeyType !== TableKeyType.user) {
           return false;
         }
+        */
         return true;
       }
       return false;
