@@ -12844,7 +12844,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it("ok, split", () => {
+  it.only("ok, split", () => {
     const abap = `
 TYPES ty_stack TYPE STANDARD TABLE OF i WITH EMPTY KEY.
 DATA result TYPE ty_stack.
@@ -12872,6 +12872,25 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("SPLIT, expect error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_str TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    METHODS bar IMPORTING foo TYPE ty_str.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA cards TYPE string.
+    SPLIT cards AT space INTO TABLE DATA(strings).
+    bar( strings ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
   it("ok another more, split", () => {
