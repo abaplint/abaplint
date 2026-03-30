@@ -362,7 +362,7 @@ export class Select {
     }
 
     if (fields.length === 1 && fields[0].code === "*") {
-      return new TableType(dbType, {withHeader: false, keyType: TableKeyType.default}, undefined);
+      return new TableType(dbType, {withHeader: false, keyType: TableKeyType.empty}, undefined);
     }
 
     const allFieldsSimple = fields.every(f => isSimple.test(f.code));
@@ -375,7 +375,7 @@ export class Select {
         }
         components.push({name: field.code, type});
       }
-      return new TableType(new StructureType(components), {withHeader: false, keyType: TableKeyType.default}, undefined);
+      return new TableType(new StructureType(components), {withHeader: false, keyType: TableKeyType.empty}, undefined);
     }
 
     return VoidType.get("SELECT_todo7");
