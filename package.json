@@ -35,10 +35,10 @@
         "@typescript-eslint/eslint-plugin": "^8.55.0",
         "@typescript-eslint/parser": "^8.55.0",
         "chai": "^4.5.0",
-        "eslint": "^9.39.2",
+        "eslint": "^9.39.4",
         "globals": "^16.5.0",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.2",
         "vscode-languageserver-types": "^3.17.5",
         "xml-js": "^1.6.11"
     }
