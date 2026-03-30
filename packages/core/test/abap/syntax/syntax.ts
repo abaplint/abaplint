@@ -13070,6 +13070,28 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("error, TYPE TABLE CHANGING", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tytt TYPE STANDARD TABLE OF bapiret2 WITH EMPTY KEY.
+    CLASS-METHODS get
+      CHANGING
+        !e_return TYPE tytt.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lt_return TYPE STANDARD TABLE OF bapiret2 WITH DEFAULT KEY.
+  lcl=>get( CHANGING e_return = lt_return ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
   it("ok, TYPE STANDARD TABLE", () => {
     const abap = `
 CLASS lcl DEFINITION.

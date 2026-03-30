@@ -154,7 +154,7 @@ export class MethodParameters {
         parameterType = parameter.getType();
       }
 
-      if (item.targetType && new TypeUtils(input.scope).isAssignable(parameterType, item.targetType) === false) {
+      if (item.targetType && new TypeUtils(input.scope).isAssignableStrict(parameterType, item.targetType) === false) {
         const message = "Method parameter type not compatible, " + item.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
