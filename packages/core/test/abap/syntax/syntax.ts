@@ -12874,6 +12874,25 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("SPLIT, expect error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_str TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    METHODS bar IMPORTING foo TYPE ty_str.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA cards TYPE string.
+    SPLIT cards AT space INTO TABLE DATA(strings).
+    bar( strings ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
   it("ok another more, split", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -12891,6 +12910,207 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("SELECT INLINE, expect error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tytt TYPE STANDARD TABLE OF t100 WITH DEFAULT KEY.
+    METHODS bar IMPORTING foo TYPE tytt.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    SELECT * FROM t100 INTO TABLE @DATA(lt_t100) UP TO 100 ROWS.
+    bar( lt_t100 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("SELECT INLINE, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tytt TYPE STANDARD TABLE OF t100 WITH EMPTY KEY.
+    METHODS bar IMPORTING foo TYPE tytt.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    SELECT * FROM t100 INTO TABLE @DATA(lt_t100) UP TO 100 ROWS.
+    bar( lt_t100 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, TYPE TABLE", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get
+      EXPORTING
+        !e_return TYPE bapiret2_t.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lt_return TYPE TABLE OF bapiret2.
+  lcl=>get( IMPORTING e_return = lt_return ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, TYPE TABLE 2", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tytt TYPE TABLE OF bapiret2.
+    CLASS-METHODS get
+      EXPORTING
+        !e_return TYPE tytt.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lt_return TYPE TABLE OF bapiret2.
+  lcl=>get( IMPORTING e_return = lt_return ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, TYPE TABLE 3", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tytt TYPE STANDARD TABLE OF bapiret2.
+    CLASS-METHODS get
+      EXPORTING
+        !e_return TYPE tytt.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lt_return TYPE TABLE OF bapiret2.
+  lcl=>get( IMPORTING e_return = lt_return ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, TYPE TABLE 4", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tytt TYPE STANDARD TABLE OF bapiret2 WITH DEFAULT KEY.
+    CLASS-METHODS get
+      EXPORTING
+        !e_return TYPE tytt.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lt_return TYPE TABLE OF bapiret2.
+  lcl=>get( IMPORTING e_return = lt_return ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, move different types", () => {
+    const abap = `
+DATA var1 TYPE STANDARD TABLE OF bapiret2 WITH EMPTY KEY.
+DATA var2 TYPE STANDARD TABLE OF bapiret2 WITH DEFAULT KEY.
+DATA var3 TYPE STANDARD TABLE OF bapiret2.
+DATA var4 TYPE TABLE OF bapiret2.
+var4 = var1.
+var4 = var2.
+var4 = var3.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, TYPE TABLE", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tytt TYPE STANDARD TABLE OF bapiret2 WITH EMPTY KEY.
+    CLASS-METHODS get
+      EXPORTING
+        !e_return TYPE tytt.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lt_return TYPE TABLE OF bapiret2.
+  lcl=>get( IMPORTING e_return = lt_return ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("error, TYPE TABLE CHANGING", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tytt TYPE STANDARD TABLE OF bapiret2 WITH EMPTY KEY.
+    CLASS-METHODS get
+      CHANGING
+        !e_return TYPE tytt.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lt_return TYPE STANDARD TABLE OF bapiret2 WITH DEFAULT KEY.
+  lcl=>get( CHANGING e_return = lt_return ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("ok, TYPE STANDARD TABLE", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get
+      EXPORTING
+        !e_return TYPE bapiret2_t.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lt_return TYPE STANDARD TABLE OF bapiret2.
+  lcl=>get( IMPORTING e_return = lt_return ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
 });

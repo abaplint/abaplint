@@ -440,6 +440,10 @@ export class TypeUtils {
             && targetKeyType !== TableKeyType.user) {
           return false;
         }
+        if (sourceKeyType === TableKeyType.empty && targetKeyType !== TableKeyType.empty
+            && !(target.getRowType() instanceof AnyType)) {
+          return false;
+        }
         return this.isAssignableStrict(source.getRowType(), target.getRowType());
       } else if (target instanceof UnknownType
           || target instanceof AnyType
@@ -492,13 +496,6 @@ export class TypeUtils {
           && this.structureContainsVoid(targetRowType) === false) {
             return false;
           }
-        }
-        const sourceKeyType = source.getOptions().keyType;
-        const targetKeyType = target.getOptions().keyType;
-        if (sourceKeyType !== targetKeyType
-            && sourceKeyType !== TableKeyType.user
-            && targetKeyType !== TableKeyType.user) {
-          return false;
         }
         return true;
       }
