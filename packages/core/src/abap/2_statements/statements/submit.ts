@@ -18,6 +18,8 @@ export class Submit implements IStatement {
     const exporting = str("EXPORTING LIST TO MEMORY");
     const spool = seq("SPOOL PARAMETERS", Source);
     const archive = seq("ARCHIVE PARAMETERS", Source);
+    const archiveMode = seq("ARCHIVE MODE", Source);
+    const receiver = seq("RECEIVER", Source);
     const lineSize = seq("LINE-SIZE", Source);
     const lineCount = seq("LINE-COUNT", Source);
     const user = seq("USER", Source);
@@ -41,10 +43,13 @@ export class Submit implements IStatement {
     const perm = per(plus(awith),
                      selectionTable,
                      plus(awith),
+                     plus(awith),
                      spool,
                      lineSize,
                      lineCount,
                      archive,
+                     archiveMode,
+                     receiver,
                      user,
                      sset,
                      ssetp,

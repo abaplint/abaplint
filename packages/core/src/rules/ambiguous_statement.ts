@@ -61,9 +61,13 @@ MODIFY TABLE foo FROM bar.`,
       } else if (statement.get() instanceof Statements.DeleteInternal) {
         match = this.tryMatch(statement, this.reg, Statements.DeleteDatabase);
       } else if (statement.get() instanceof Statements.ModifyInternal) {
-        match = this.tryMatch(statement, this.reg, Statements.ModifyDatabase);
+        match = this.tryMatch(statement, this.reg, Statements.ModifyDatabase) || this.isBareStatement(statement);
       } else if (statement.get() instanceof Statements.ModifyDatabase) {
         match = this.tryMatch(statement, this.reg, Statements.ModifyInternal);
+      } else if (statement.get() instanceof Statements.InsertDatabase) {
+        match = this.isBareStatement(statement);
+      } else if (statement.get() instanceof Statements.UpdateDatabase) {
+        match = this.isBareStatement(statement);
       }
 
       if (match) {
@@ -74,6 +78,12 @@ MODIFY TABLE foo FROM bar.`,
     }
 
     return issues;
+  }
+
+  private isBareStatement(st: StatementNode): boolean {
+    const tokens = st.getTokens().slice(0);
+    tokens.pop();
+    return tokens.length === 2;
   }
 
   private tryMatch(st: StatementNode, reg: IRegistry, type1: new () => IStatement): boolean {
