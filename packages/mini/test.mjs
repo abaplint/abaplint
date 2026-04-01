@@ -4,10 +4,11 @@ import {initializeABAP} from "./output/init.mjs";
 
 await initializeABAP();
 
+/*
 const bundle = fs.readFileSync("bundle.js", "utf-8");
 const result = await zcl_mjs.eval({iv_source: new abap.types.String().set(bundle)});
-/*
-const foo = "console.log(2);";
-const result = await zcl_mjs.eval({iv_source: new abap.types.String().set(foo)});
 */
+const foo = `const str = "hello"; str.something();`;
+const result = await zcl_mjs.eval({iv_source: new abap.types.String().set(foo)});
+
 console.dir(result);
