@@ -1816,7 +1816,7 @@ TYPES bool TYPE ty_char1.`;
     const t100 = new MemoryFile("t100.tabl.xml", tabl_t100xml);
     const reg = new Registry().addFiles([file, t100]).parse();
     const hover = new Hover(reg).find(buildPosition(file, 2, 8));
-    expect(hover?.value).to.contain("Qualified Type Name: bool");
+    expect(hover?.value).to.contain("Qualified Type Name: ```bool```");
   });
 
 });
