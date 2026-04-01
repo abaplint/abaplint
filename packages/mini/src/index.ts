@@ -7,3 +7,5 @@ export function main(filename: string, code: string) {
   const result = lexer.run(file);
   return JSON.stringify(result);
 }
+
+console.log(main("test.abap", "WRITE 'Hello World'."));
