@@ -139,6 +139,15 @@ export class CreateObject implements StatementSyntax {
         input.scope.isLocalFriend(cdef.getName(), enclosingClass)) {
       return undefined;
     }
+    // subclasses of friends also have friendship
+    let enclosingSup = input.scope.findClassDefinition(enclosingClass)?.getSuperClass();
+    while (enclosingSup !== undefined) {
+      if (cdef.getFriends().some(f => f.toUpperCase() === enclosingSup!.toUpperCase()) ||
+          input.scope.isLocalFriend(cdef.getName(), enclosingSup)) {
+        return undefined;
+      }
+      enclosingSup = input.scope.findClassDefinition(enclosingSup)?.getSuperClass();
+    }
     if (createVis === Visibility.Protected) {
       // subclasses are also allowed
       let sup = input.scope.findClassDefinition(enclosingClass)?.getSuperClass();
