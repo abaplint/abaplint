@@ -276,7 +276,7 @@ export class BasicTypes {
       }
 
       this.input.scope.addReference(token, typ, ReferenceType.TypeReference, this.input.filename);
-      return typ.getType();
+      return this.cloneType(typ.getType(), qualifiedName);
     }
 
     const type = this.input.scope.findTypePoolType(chainText)?.getType();
