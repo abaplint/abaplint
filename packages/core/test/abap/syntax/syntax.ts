@@ -4714,6 +4714,55 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("super and friends instantiation", () => {
+    const abap = `
+CLASS lcl_super_factory DEFINITION.
+  PUBLIC SECTION.
+ENDCLASS.
+
+CLASS lcl_super_factory IMPLEMENTATION.
+
+ENDCLASS.
+
+CLASS lcl_class DEFINITION
+  CREATE PRIVATE
+  FRIENDS lcl_super_factory.
+
+  PUBLIC SECTION.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+
+ENDCLASS.
+
+CLASS lcl_class IMPLEMENTATION.
+
+
+ENDCLASS.
+
+CLASS lcl_sub_factory DEFINITION
+  INHERITING FROM lcl_super_factory
+  CREATE PUBLIC.
+
+  PUBLIC SECTION.
+    METHODS get_instance
+      RETURNING
+        VALUE(result) TYPE REF TO lcl_class.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+
+ENDCLASS.
+
+CLASS lcl_sub_factory IMPLEMENTATION.
+
+  METHOD get_instance.
+    CREATE OBJECT result TYPE lcl_class.
+  ENDMETHOD.
+
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("FORM, untyped USING parameter, ok", () => {
     const abap = `
     FORM sdfsd USING p_sdfsd.
