@@ -11,9 +11,9 @@
   "author": "Lars Hvam",
   "license": "MIT",
   "devDependencies": {
-    "esbuild": "^0.27.4",
-    "@abaplint/runtime": "^2.13.3",
-    "@abaplint/transpiler-cli": "^2.13.3",
+    "esbuild": "^0.27.7",
+    "@abaplint/runtime": "^2.13.5",
+    "@abaplint/transpiler-cli": "^2.13.5",
     "typescript": "^5.9.3"
   }
 }
