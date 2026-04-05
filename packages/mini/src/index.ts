@@ -6,7 +6,7 @@ export function main(filename: string, code: string) {
   console.log("Running lexer...");
   const lexer = new Lexer();
   const result = lexer.run(file);
-  return result.file.getFilename();
+  return JSON.stringify(result.tokens);
 }
 
 console.log(main("test.abap", "WRITE 'Hello World'."));
