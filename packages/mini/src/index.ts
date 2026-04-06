@@ -13,6 +13,7 @@ export function main(filename: string, code: string) {
   const statementParser = new StatementParser(Version.v750);
   const result = statementParser.run([lexerResult], []);
 
+  console.log("number of tokens: " + result[0]?.statements[0]?.getTokens().length);
   for (const statement of result[0].statements) {
     console.log("tokens: " + statement.concatTokens());
   }
