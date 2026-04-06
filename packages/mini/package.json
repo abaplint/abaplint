@@ -9,6 +9,7 @@
     "test": "tsc && npm run esbuild && npm run zmjs"
   },
   "author": "Lars Hvam",
+  "type": "module",
   "license": "MIT",
   "devDependencies": {
     "esbuild": "^0.27.7",

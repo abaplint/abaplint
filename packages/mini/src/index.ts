@@ -13,7 +13,10 @@ export function main(filename: string, code: string) {
   const statementParser = new StatementParser(Version.v750);
   const result = statementParser.run([lexerResult], []);
 
-  return JSON.stringify(result[0].statements);
+  for (const statement of result[0].statements) {
+    console.log("tokens: " + statement.concatTokens());
+  }
 }
 
-console.log(main("test.abap", "WRITE 'Hello World'."));
+main("test.prog.abap", "WRITE 'Hello World'.");
+console.log("Done");
