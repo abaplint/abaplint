@@ -4,28 +4,11 @@ import {initializeABAP} from "./output/init.mjs";
 
 await initializeABAP();
 
-const bundle = fs.readFileSync("bundle.js", "utf-8");
+let bundle = fs.readFileSync("bundle.js", "utf-8");
+
+bundle = bundle.replace(`export {
+  main
+};`, "");
+
 const result = await zcl_mjs.eval({iv_source: new abap.types.String().set(bundle)});
 console.dir(result);
-
-/*
-const foo = `console.log(foobar);`;
-const result = await zcl_mjs.eval({iv_source: new abap.types.String().set(foo)});
-console.dir(result);
-*/
-
-/*
-const foo = `var FileFile = class {
-  constructor(filename) {
-    this.filename = filename;
-  }
-  getFilename() {
-    return this.filename;
-  }
-};
-
-new FileFile("foo.txt");
-console.log("Done");`;
-const result = await zcl_mjs.eval({iv_source: new abap.types.String().set(foo)});
-console.dir(result);
-*/
