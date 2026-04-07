@@ -13,8 +13,8 @@
   "license": "MIT",
   "devDependencies": {
     "esbuild": "^0.28.0",
-    "@abaplint/runtime": "^2.13.7",
-    "@abaplint/transpiler-cli": "^2.13.7",
+    "@abaplint/runtime": "^2.13.9",
+    "@abaplint/transpiler-cli": "^2.13.9",
     "typescript": "^5.9.3"
   }
 }
