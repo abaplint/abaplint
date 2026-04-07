@@ -2,6 +2,7 @@ import {MemoryFile} from "../../core/src/files/memory_file";
 import {Lexer} from "../../core/src/abap/1_lexer/lexer";
 import {StatementParser} from "../../core/src/abap/2_statements/statement_parser";
 import {Version} from "../../core/src/version";
+import {KeywordCase} from "../../core/src/rules/keyword_case";
 
 export function main(filename: string, code: string) {
   const file = new MemoryFile(filename, code);
@@ -17,7 +18,9 @@ export function main(filename: string, code: string) {
   for (const statement of result[0].statements) {
     console.log("tokens: " + statement.concatTokens());
   }
+
+  new KeywordCase().run(result);
 }
 
-main("test.prog.abap", "WRITE 'Hello World'.");
+main("test.prog.abap", "WRITE 'Hello World'. DATA foo TYPE i. foo = 2 + 3.");
 console.log("Done");
