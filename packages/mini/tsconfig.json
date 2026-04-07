@@ -14,9 +14,9 @@
     "strictFunctionTypes": true,
     "forceConsistentCasingInFileNames": true,
     "alwaysStrict": true,
-    "target": "es2017",
+    "target": "es2019",
     "lib": [
-      "ES2017",
+      "ES2019",
       "DOM"
     ],
     "sourceMap": true
