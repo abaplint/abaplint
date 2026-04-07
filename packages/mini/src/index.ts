@@ -116,5 +116,5 @@ export function main(filename: string, code: string) {
   console.log("Issues: " + issues.length);
 }
 
-main("test.prog.abap", "WRITE 'Hello World'. DATA foo TYPE i. foo = 2 + 3.");
+main("test.prog.abap", "var1 = var2 = var3.");
 console.log("Done");
