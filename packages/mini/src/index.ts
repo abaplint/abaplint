@@ -13,7 +13,12 @@ import {Program} from "../../core/src/objects/program";
 class DummyRegistry implements IRegistry {
   private objects: IObject[] = [];
 
-  public parse(): IRegistry { return this; }
+  public parse(): IRegistry {
+    for (const obj of this.objects) {
+      obj.parse();
+    }
+    return this;
+  }
   public async parseAsync(_input?: IRunInput): Promise<IRegistry> { return this; }
   public clear(): void { this.objects = []; }
   public addDependencies(_files: readonly IFile[]): IRegistry { return this; }
