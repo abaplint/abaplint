@@ -98,7 +98,7 @@ class Token implements IStatementRunnable {
   private readonly name: string;
 
   public constructor(s: string) {
-    this.name = s.toUpperCase();
+    this.name = s;
   }
 
   public listKeywords(): string[] {
@@ -114,7 +114,7 @@ class Token implements IStatementRunnable {
 
     for (const input of r) {
       if (input.remainingLength() !== 0
-          && input.peek().constructor.name.toUpperCase() === this.name) {
+          && input.peek().constructor.name === this.name) {
         result.push(input.shift(new TokenNode(input.peek())));
       }
     }
