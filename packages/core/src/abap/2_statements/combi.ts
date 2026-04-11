@@ -72,7 +72,7 @@ class Word implements IStatementRunnable {
 
     for (const input of r) {
       if (input.remainingLength() !== 0
-          && input.peek().getStr().toUpperCase() === this.s) {
+          && input.peek().getUpperStr() === this.s) {
 //        console.log("match, " + this.s + result.length);
         result.push(input.shift(new TokenNode(input.peek())));
       }
