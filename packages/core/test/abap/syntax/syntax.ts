@@ -12461,6 +12461,17 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("error if friend class does not exist, CREATE PRIVATE", () => {
+    const abap = `
+CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE FRIENDS ycsdf.
+ENDCLASS.
+CLASS cl_http_entity IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("YCSDF does not exist");
+  });
+
   it("Moveable, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_cedi,
