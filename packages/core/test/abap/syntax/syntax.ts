@@ -13108,6 +13108,19 @@ var4 = var3.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("ok, dashed begin of", () => {
+    const abap = `
+DATA BEGIN OF s_tab.
+DATA foo TYPE i.
+DATA END OF s_tab.
+
+DATA BEGIN OF s_tab-old.
+DATA foo TYPE i.
+DATA END OF s_tab-old.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("error, TYPE TABLE", () => {
     const abap = `
 CLASS lcl DEFINITION.
