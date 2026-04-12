@@ -2,6 +2,7 @@ import {SyntaxInput} from "../_syntax_input";
 import {Data as DataSyntax} from "../statements/data";
 import {IStructureComponent} from "../../types/basic";
 import {StatementNode, StructureNode, TokenNode} from "../../nodes";
+import {Identifier as TokenIdentifier} from "../../1_lexer/tokens/identifier";
 import {Type} from "../statements/type";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {Types} from "./types";
@@ -25,7 +26,11 @@ export class Data {
       return undefined;
     }
 
-    const name = node.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
+    const nameExpr = node.findFirstExpression(Expressions.DefinitionName)!;
+    let name = nameExpr.getFirstToken();
+    if (nameExpr.countTokens() > 1) { // workaround for names with dashes
+      name = new TokenIdentifier(name.getStart(), nameExpr.concatTokens());
+    }
     let table: boolean = false;
     const values: {[index: string]: string} = {};
 
