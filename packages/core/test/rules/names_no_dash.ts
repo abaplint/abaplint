@@ -11,6 +11,9 @@ const tests = [
   {abap: "DATA foo-bar TYPE c LENGTH 1.", cnt: 1},
   {abap: "SELECT-OPTIONS foo-bar FOR foobar-asdf.", cnt: 1},
   {abap: "PARAMETERS moo-boo LIKE foo-bar.", cnt: 1},
+  {abap: `DATA BEGIN OF s_tab-old.
+DATA foo TYPE i.
+DATA END OF s_tab-old.`, cnt: 2},
 ];
 
 testRule(tests, NamesNoDash);

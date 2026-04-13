@@ -72,7 +72,7 @@ class Word implements IStatementRunnable {
 
     for (const input of r) {
       if (input.remainingLength() !== 0
-          && input.peek().getStr().toUpperCase() === this.s) {
+          && input.peek().getUpperStr() === this.s) {
 //        console.log("match, " + this.s + result.length);
         result.push(input.shift(new TokenNode(input.peek())));
       }
@@ -98,7 +98,7 @@ class Token implements IStatementRunnable {
   private readonly name: string;
 
   public constructor(s: string) {
-    this.name = s.toUpperCase();
+    this.name = s;
   }
 
   public listKeywords(): string[] {
@@ -114,7 +114,7 @@ class Token implements IStatementRunnable {
 
     for (const input of r) {
       if (input.remainingLength() !== 0
-          && input.peek().constructor.name.toUpperCase() === this.name) {
+          && input.peek().constructor.name === this.name) {
         result.push(input.shift(new TokenNode(input.peek())));
       }
     }
@@ -1048,7 +1048,7 @@ const expressionSingletons: {[index: string]: Expression} = {};
 const stringSingletons: {[index: string]: IStatementRunnable} = {};
 type InputType = (new () => Expression) | string | IStatementRunnable;
 
-function map(s: InputType): IStatementRunnable {
+function mapInput(s: InputType): IStatementRunnable {
   const type = typeof s;
   if (type === "string") {
     if (stringSingletons[s as string] === undefined) {
@@ -1068,48 +1068,48 @@ function map(s: InputType): IStatementRunnable {
   }
 }
 export function seq(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
-  const list = [map(first), map(second)];
-  list.push(...rest.map(map));
+  const list = [mapInput(first), mapInput(second)];
+  list.push(...rest.map(mapInput));
   return new Sequence(list);
 }
 export function alt(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
-  const list = [map(first), map(second)];
-  list.push(...rest.map(map));
+  const list = [mapInput(first), mapInput(second)];
+  list.push(...rest.map(mapInput));
   return new Alternative(list);
 }
 export function altPrio(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
-  const list = [map(first), map(second)];
-  list.push(...rest.map(map));
+  const list = [mapInput(first), mapInput(second)];
+  list.push(...rest.map(mapInput));
   return new AlternativePriority(list);
 }
 export function opt(first: InputType): IStatementRunnable {
-  return new Optional(map(first));
+  return new Optional(mapInput(first));
 }
 export function optPrio(first: InputType): IStatementRunnable {
-  return new OptionalPriority(map(first));
+  return new OptionalPriority(mapInput(first));
 }
 export function per(first: InputType, second: InputType, ...rest: InputType[]): IStatementRunnable {
-  const list = [map(first), map(second)];
-  list.push(...rest.map(map));
+  const list = [mapInput(first), mapInput(second)];
+  list.push(...rest.map(mapInput));
   return new Permutation(list);
 }
 export function star(first: InputType): IStatementRunnable {
-  return new Star(map(first));
+  return new Star(mapInput(first));
 }
 export function starPrio(first: InputType): IStatementRunnable {
-  return new StarPriority(map(first));
+  return new StarPriority(mapInput(first));
 }
 export function plus(first: InputType): IStatementRunnable {
-  return new Plus(map(first));
+  return new Plus(mapInput(first));
 }
 export function plusPrio(first: InputType): IStatementRunnable {
-  return new PlusPriority(map(first));
+  return new PlusPriority(mapInput(first));
 }
 export function ver(version: Version, first: InputType, or?: Version): IStatementRunnable {
-  return new Vers(version, map(first), or);
+  return new Vers(version, mapInput(first), or);
 }
 export function verNot(version: Version, first: InputType): IStatementRunnable {
-  return new VersNot(version, map(first));
+  return new VersNot(version, mapInput(first));
 }
 export function failCombinator(): IStatementRunnable {
   return new FailCombinator();

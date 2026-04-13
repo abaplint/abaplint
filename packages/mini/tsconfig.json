@@ -6,7 +6,7 @@
     "pretty": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noUnusedLocals": true,
     "noImplicitAny": true,
     "declaration": true,
@@ -14,9 +14,9 @@
     "strictFunctionTypes": true,
     "forceConsistentCasingInFileNames": true,
     "alwaysStrict": true,
-    "target": "es2017",
+    "target": "es2019",
     "lib": [
-      "ES2017",
+      "ES2019",
       "DOM"
     ],
     "sourceMap": true
