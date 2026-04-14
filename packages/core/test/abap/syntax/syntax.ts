@@ -13186,7 +13186,7 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("TEXT used as default value", () => {
+  it("TEXT used as default value", () => {
     const abap = `
 CLASS zfoo DEFINITION.
   PUBLIC SECTION.
