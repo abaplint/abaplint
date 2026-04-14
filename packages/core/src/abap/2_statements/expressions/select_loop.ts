@@ -1,5 +1,5 @@
 import {seq, per, alt, Expression, optPrio, altPrio, ver, plusPrio} from "../combi";
-import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLClient, SQLForAllEntries, SQLIntoList, SQLAggregation} from ".";
+import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLClient, SQLForAllEntries, SQLIntoList, SQLAggregation, DatabaseConnection} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLOrderBy} from "./sql_order_by";
 import {SQLHaving} from "./sql_having";
@@ -34,6 +34,7 @@ export class SelectLoop extends Expression {
                      bypass,
                      SQLGroupBy,
                      SQLForAllEntries,
+                     DatabaseConnection,
                      alt(tab, SQLIntoStructure, SQLIntoList, packTab));
 
     const strict = seq(SQLFrom,
