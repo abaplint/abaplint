@@ -13186,4 +13186,20 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("TEXT used as default value", () => {
+    const abap = `
+CLASS zfoo DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS:
+      foo IMPORTING bar TYPE csequence DEFAULT TEXT-001.
+ENDCLASS.
+
+CLASS zfoo IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

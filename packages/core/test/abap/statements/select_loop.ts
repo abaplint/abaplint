@@ -174,6 +174,18 @@ const tests = [
     INTO (var1, var2)
     FROM mardh
     GROUP BY matnr.`,
+
+  `SELECT mkpf~bldat mseg~mblnr mseg~mjahr mseg~bwart
+     INTO CORRESPONDING FIELDS OF wa_mov
+     FROM mkpf INNER JOIN mseg
+     ON mkpf~mandt = mseg~mandt
+     AND mkpf~mjahr = mseg~mjahr
+     CONNECTION (dbcon)
+     WHERE mkpf~bldat IN s_bldat
+     AND mseg~bwart IN s_bwart
+     AND mkpf~mjahr IN s_mjahr
+     AND mseg~werks EQ i_werks
+     AND (gwc_werks_mseg) %_HINTS ORACLE 'HELLO'.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
