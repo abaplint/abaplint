@@ -2,6 +2,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {expect} from "chai";
 import {SlowParameterPassing} from "../../src/rules";
+import {testRuleFix} from "./_utils";
 
 async function findIssues(abap: string, filename: string) {
   const reg = new Registry().addFile(new MemoryFile(filename, abap));
@@ -126,4 +127,28 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  const fixes = [
+    {
+      input: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING VALUE(sdf) TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE sdf.
+  ENDMETHOD.
+ENDCLASS.`,
+      output: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING sdf TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE sdf.
+  ENDMETHOD.
+ENDCLASS.`,
+    },
+  ];
+
+  testRuleFix(fixes, SlowParameterPassing);
 });

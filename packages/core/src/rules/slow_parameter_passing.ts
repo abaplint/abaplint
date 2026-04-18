@@ -10,6 +10,7 @@ import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 import {Position} from "../position";
 import {ReferenceType} from "../abap/5_syntax/_reference";
+import {EditHelper, IEdit} from "../edit_helper";
 
 export class SlowParameterPassingConf extends BasicRuleConfig {
 }
@@ -24,7 +25,7 @@ export class SlowParameterPassing implements IRule {
       title: "Slow Parameter Passing",
       shortDescription: `Detects slow pass by value passing for methods where parameter is not changed`,
       extendedInformation: `Method parameters defined in interfaces is not checked`,
-      tags: [RuleTag.Performance],
+      tags: [RuleTag.Performance, RuleTag.Quickfix],
       badExample: `CLASS lcl DEFINITION.
   PUBLIC SECTION.
     METHODS bar IMPORTING VALUE(sdf) TYPE string.
@@ -86,8 +87,28 @@ ENDCLASS.`,
         const writes = this.listWritePositions(m, id);
         if (writes.length === 0) {
           const message = "Parameter " + id.getName() + " passed by VALUE but not changed";
+          let fix: IEdit | undefined = undefined;
 
-          issues.push(Issue.atIdentifier(id, message, this.getMetadata().key, this.getConfig().severity));
+          const file = obj.getABAPFiles().find(f => f.getFilename() === id.getFilename());
+          if (file) {
+            const tokens = file.getTokens();
+            for (let i = 0; i < tokens.length; i++) {
+              if (tokens[i].getStart().equals(id.getToken().getStart())) {
+                const prev1 = tokens[i - 1];
+                const prev2 = tokens[i - 2];
+                const next1 = tokens[i + 1];
+
+                if (prev1?.getStr() === "("
+                    && prev2?.getStr().toUpperCase() === "VALUE"
+                    && next1?.getStr() === ")") {
+                  fix = EditHelper.replaceRange(file, prev2.getStart(), next1.getEnd(), id.getToken().getStr());
+                }
+                break;
+              }
+            }
+          }
+
+          issues.push(Issue.atIdentifier(id, message, this.getMetadata().key, this.getConfig().severity, fix));
         }
       }
     }
