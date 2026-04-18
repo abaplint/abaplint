@@ -6,8 +6,8 @@ export class ParameterException extends Expression {
   public getRunnable(): IStatementRunnable {
     const name = altPrio("OTHERS", ParameterName);
     return seq(name,
-               "=",
-               altPrio(Integer, SimpleFieldChain),
-               optPrio(seq("MESSAGE", Target)));
+               optPrio(seq("=",
+                           altPrio(Integer, SimpleFieldChain),
+                           optPrio(seq("MESSAGE", Target)))));
   }
 }

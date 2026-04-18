@@ -41,7 +41,7 @@ CALL FUNCTION 'BDC_OPEN_GROUP'
       running
       system_lock_error
       user_invalid.`);
-    expect(issues.length).to.equal(1);
+    expect(issues.length).to.equal(10);
   });
 
 });
