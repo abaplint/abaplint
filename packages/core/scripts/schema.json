@@ -3381,7 +3381,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects slow pass by value passing for methods where parameter is not changed\nTags: Performance\nhttps://rules.abaplint.org/slow_parameter_passing"
+              "description": "Detects slow pass by value passing for methods where parameter is not changed\nTags: Performance, Quickfix\nhttps://rules.abaplint.org/slow_parameter_passing"
             },
             "smim_consistency": {
               "anyOf": [
@@ -5394,7 +5394,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects slow pass by value passing for methods where parameter is not changed\nTags: Performance\nhttps://rules.abaplint.org/slow_parameter_passing"
+              "description": "Detects slow pass by value passing for methods where parameter is not changed\nTags: Performance, Quickfix\nhttps://rules.abaplint.org/slow_parameter_passing"
             },
             "smim_consistency": {
               "anyOf": [
