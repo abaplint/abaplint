@@ -2954,6 +2954,17 @@
               ],
               "description": "Its not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
             },
+            "no_exclamation_escape": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoExclamationEscapeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects and removes exclamation marks (!) used to escape identifiers\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/no_exclamation_escape"
+            },
             "no_external_form_calls": {
               "anyOf": [
                 {
@@ -4966,6 +4977,17 @@
                 }
               ],
               "description": "Its not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
+            },
+            "no_exclamation_escape": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoExclamationEscapeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects and removes exclamation marks (!) used to escape identifiers\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/no_exclamation_escape"
             },
             "no_external_form_calls": {
               "anyOf": [
@@ -7008,6 +7030,23 @@
       "type": "object"
     },
     "NoCommentsBetweenMethodsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "NoExclamationEscapeConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
