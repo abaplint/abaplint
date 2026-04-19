@@ -15,6 +15,7 @@ const tests = [
   "AT SELECTION-SCREEN ON END OF foo.",
   "AT SELECTION-SCREEN ON foo-bar.",
   "AT SELECTION-SCREEN ON BLOCK 1.",
+  `AT SELECTION-SCREEN ON BLOCK block-mail.`,
 ];
 
 statementType(tests, "AT SELECTION-SCREEN", Statements.AtSelectionScreen);

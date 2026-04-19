@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, opt, regex as reg} from "../combi";
-import {FieldSub, Field} from "../expressions";
+import {verNot, seq, alt, opt} from "../combi";
+import {FieldSub, Field, BlockName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -19,7 +19,7 @@ export class AtSelectionScreen implements IStatement {
 
     const radio = seq("ON RADIOBUTTON GROUP", Field);
 
-    const block = seq("ON BLOCK", reg(/^\w+$/));
+    const block = seq("ON BLOCK", BlockName);
 
     const help = seq("ON HELP-REQUEST FOR", FieldSub);
 
