@@ -307,6 +307,12 @@ CALLING mr_th_manager->receive_result ON END OF TASK.`,
       running
       system_lock_error
       user_invalid.`,
+
+  `CALL FUNCTION 'ALSM_EXCEL_TO_INTERNAL_TABLE'
+      EXCEPTIONS
+        inconsistent_parameters = 1
+        upload_ole              = 2
+                                  OTHERS.`,
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

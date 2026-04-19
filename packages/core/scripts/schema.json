@@ -2954,6 +2954,17 @@
               ],
               "description": "Its not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
             },
+            "no_exclamation_escape": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoExclamationEscapeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects and removes exclamation marks (!) used to escape identifiers\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/no_exclamation_escape"
+            },
             "no_external_form_calls": {
               "anyOf": [
                 {
@@ -3381,7 +3392,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects slow pass by value passing for methods where parameter is not changed\nTags: Performance\nhttps://rules.abaplint.org/slow_parameter_passing"
+              "description": "Detects slow pass by value passing for methods where parameter is not changed\nTags: Performance, Quickfix\nhttps://rules.abaplint.org/slow_parameter_passing"
             },
             "smim_consistency": {
               "anyOf": [
@@ -4967,6 +4978,17 @@
               ],
               "description": "Its not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
             },
+            "no_exclamation_escape": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoExclamationEscapeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects and removes exclamation marks (!) used to escape identifiers\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/no_exclamation_escape"
+            },
             "no_external_form_calls": {
               "anyOf": [
                 {
@@ -5394,7 +5416,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects slow pass by value passing for methods where parameter is not changed\nTags: Performance\nhttps://rules.abaplint.org/slow_parameter_passing"
+              "description": "Detects slow pass by value passing for methods where parameter is not changed\nTags: Performance, Quickfix\nhttps://rules.abaplint.org/slow_parameter_passing"
             },
             "smim_consistency": {
               "anyOf": [
@@ -7008,6 +7030,23 @@
       "type": "object"
     },
     "NoCommentsBetweenMethodsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "NoExclamationEscapeConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

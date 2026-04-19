@@ -1,14 +1,14 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, per, tok} from "../combi";
+import {verNot, str, seq, opt, per, tok, alt} from "../combi";
 import {Integer, MessageClass, Field, ReportName} from "../expressions";
 import {Version} from "../../../version";
-import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
+import {ParenLeft, ParenRight, ParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Report implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const more = seq(tok(ParenLeft), Integer, tok(ParenRightW));
+    const more = seq(tok(ParenLeft), Integer, alt(tok(ParenRightW), tok(ParenRight)));
     const heading = str("NO STANDARD PAGE HEADING");
     const size = seq("LINE-SIZE", Integer);
     const count = seq("LINE-COUNT", Integer, opt(more));

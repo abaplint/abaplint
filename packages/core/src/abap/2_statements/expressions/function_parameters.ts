@@ -1,5 +1,5 @@
-import {seq, optPrio, altPrio, Expression, plus} from "../combi";
-import {ParameterListT, ParameterListExceptions, Field, FunctionExporting} from ".";
+import {seq, optPrio, Expression} from "../combi";
+import {ParameterListT, ParameterListExceptions, FunctionExporting} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class FunctionParameters extends Expression {
@@ -9,7 +9,7 @@ export class FunctionParameters extends Expression {
     const importing = seq("IMPORTING", ParameterListT);
     const changing = seq("CHANGING", ParameterListT);
     const tables = seq("TABLES", ParameterListT);
-    const exceptions = seq("EXCEPTIONS", altPrio(ParameterListExceptions, plus(Field)));
+    const exceptions = seq("EXCEPTIONS", ParameterListExceptions);
     const long = seq(optPrio(exporting),
                      optPrio(importing),
                      optPrio(tables),

@@ -20,6 +20,7 @@ const tests = [
   `REPORT zmoo MESSAGE-ID W+.`,
   `REPORT zmoo LINE-SIZE 200 NO STANDARD PAGE HEADING MESSAGE-ID Y<.`,
   `report ztips&tricks.`,
+  `REPORT AQSDFSD======= LINE-SIZE 253 NO STANDARD PAGE HEADING LINE-COUNT 000(001).`,
 ];
 
 statementType(tests, "REPORT", Statements.Report);

@@ -42,13 +42,12 @@ export class ParserBadExceptions extends ABAPRule {
       if (!(statement.get() instanceof Statements.CallFunction)) {
         continue;
       }
-      const found = statement.findDirectExpression(Expressions.FunctionParameters)?.findDirectExpression(Expressions.Field);
-      if (found === undefined) {
-        continue;
+      for (const e of statement.findAllExpressions(Expressions.ParameterException)) {
+        if (e.findDirectTokenByText("=") === undefined) {
+          const message = "Bad EXCEPTIONS syntax in CALL FUNCTION";
+          issues.push(Issue.atToken(file, e.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
+        }
       }
-
-      const message = "Bad EXCEPTIONS syntax in CALL FUNCTION";
-      issues.push(Issue.atToken(file, found.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
     }
 
     return issues;

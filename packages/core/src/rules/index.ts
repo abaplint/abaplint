@@ -179,4 +179,5 @@ export * from "./use_line_exists";
 export * from "./use_new";
 export * from "./when_others_last";
 export * from "./whitespace_end";
-export * from "./xml_consistency";
+export * from "./xml_consistency";export * from "./no_exclamation_escape";
+export * from "./no_exclamation_escape";

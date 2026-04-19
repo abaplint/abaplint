@@ -7,6 +7,7 @@ const tests = [
   "CLASS-METHODS get_message RETURNING VALUE(rv_message) TYPE string RAISING lcx_exception.",
   "CLASS-METHODS expo IMPORTING io_rep TYPE REF TO lcl_repo it_fil TYPE scts_tadir OPTIONAL.",
   "methods read IMPORTING iv_name TYPE clike CHANGING  cg_data TYPE any RAISING lcx_exception.",
+  "METHODS create_dynpro IMPORTING !dynp_node TYPE REF TO if_ixml_element RAISING !zcx_zg_link.",
   "methods show IMPORTING iv_key            TYPE string VALUE(iv_current) TYPE i.",
   "CLASS-METHODS export IMPORTING iv_zip    TYPE abap_bool DEFAULT abap_true.",
   "METHODS convert_int FOR TESTING RAISING lcx_exception.",

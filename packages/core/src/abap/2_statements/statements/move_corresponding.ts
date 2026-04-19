@@ -7,8 +7,8 @@ import {IStatementRunnable} from "../statement_runnable";
 export class MoveCorresponding implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const keeping = ver(Version.v740sp05, "KEEPING TARGET LINES");
-    const expanding = ver(Version.v740sp05, "EXPANDING NESTED TABLES");
+    const keeping = ver(Version.v740sp05, "KEEPING TARGET LINES", Version.OpenABAP);
+    const expanding = ver(Version.v740sp05, "EXPANDING NESTED TABLES", Version.OpenABAP);
 
     const move = seq("MOVE-CORRESPONDING",
                      optPrio("EXACT"),
