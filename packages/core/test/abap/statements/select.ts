@@ -529,6 +529,17 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
      FROM wakh
      WHERE wakh~aktnr IN @lr_aktnr
      INTO TABLE @tab.`,
+
+  `SELECT DISTINCT knvp~kunn2 kna1~name1
+  INTO TABLE out
+  FROM knvp
+  INNER JOIN *knvp
+  ON knvp~kunnr = *knvp~kunnr
+  AND *knvp~parvw = 'RG'
+  INNER JOIN kna1
+  ON kna1~kunnr = *knvp~kunn2
+  WHERE knvp~parvw = 'RE'
+  AND knvp~kunnr NE knvp~kunn2.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
