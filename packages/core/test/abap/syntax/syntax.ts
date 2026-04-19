@@ -13121,6 +13121,16 @@ DATA END OF s_tab-old.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, generic", () => {
+    const abap = `
+FORM format CHANGING p_imp_net TYPE c.
+  IF p_imp_net+11(1) = '-'.
+  ENDIF.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("error, TYPE TABLE", () => {
     const abap = `
 CLASS lcl DEFINITION.
