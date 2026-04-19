@@ -36,7 +36,7 @@
         "@typescript-eslint/parser": "^8.55.0",
         "chai": "^4.5.0",
         "eslint": "^9.39.2",
-        "globals": "^17.4.0",
+        "globals": "^17.5.0",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
         "typescript": "^5.9.3",
         "vscode-languageserver-types": "^3.17.5",
