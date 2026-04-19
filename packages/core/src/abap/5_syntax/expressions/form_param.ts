@@ -1,7 +1,7 @@
 import {ExpressionNode} from "../../nodes";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {AnyType, UnknownType} from "../../types/basic";
-import {FormParamName, SimpleFieldChain} from "../../2_statements/expressions";
+import {AnyType, CGenericType, CharacterType, UnknownType} from "../../types/basic";
+import {ConstantFieldLength, FormParamName, Length, SimpleFieldChain, TypeName} from "../../2_statements/expressions";
 import {BasicTypes} from "../basic_types";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput} from "../_syntax_input";
@@ -41,7 +41,14 @@ export class FormParam {
       return new TypedIdentifier(nameToken, input.filename, AnyType.get(), [IdentifierMeta.FormParameter]);
     }
 
-    const bfound = new BasicTypes(input).parseType(node);
+    let bfound = new BasicTypes(input).parseType(node);
+    const isTypeC = node.findFirstExpression(TypeName)?.concatTokens().toUpperCase() === "C";
+    const hasExplicitLength = node.findFirstExpression(Length) !== undefined
+      || node.findFirstExpression(ConstantFieldLength) !== undefined;
+    if (isTypeC && hasExplicitLength === false && bfound instanceof CharacterType) {
+      bfound = CGenericType.get();
+    }
+
     if (nameToken && bfound) {
       return new TypedIdentifier(nameToken, input.filename, bfound, [IdentifierMeta.FormParameter]);
     }
