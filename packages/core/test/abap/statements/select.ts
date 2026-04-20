@@ -540,6 +540,13 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
   ON kna1~kunnr = *knvp~kunn2
   WHERE knvp~parvw = 'RE'
   AND knvp~kunnr NE knvp~kunn2.`,
+
+  `SELECT *
+    FROM /foo/bar
+    WHERE right( field, 12 ) IN @bar
+    AND status = 'E'
+    INTO TABLE @tab
+    UP TO @pack_size ROWS.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
