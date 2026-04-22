@@ -4,7 +4,7 @@ import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 import * as Objects from "../objects";
 import {ABAPObject} from "../objects/_abap_object";
-import {IRule, IRuleMetadata} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {Position} from "../position";
@@ -23,6 +23,7 @@ export class MainFileContents implements IRule {
       key: "main_file_contents",
       title: "Main file contents",
       shortDescription: `Checks related to report declarations.`,
+      tags: [RuleTag.Syntax],
       extendedInformation: `Does not run if the target version is Cloud
 
 * PROGs must begin with "REPORT <name>." or "PROGRAM <name>.
