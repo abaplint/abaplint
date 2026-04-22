@@ -13212,7 +13212,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, generic table input", () => {
+  it("ok, generic table input", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
