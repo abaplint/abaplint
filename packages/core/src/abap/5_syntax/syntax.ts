@@ -156,6 +156,8 @@ import {CommitEntities} from "./statements/commit_entities";
 import {CheckSyntaxKey, SyntaxInput} from "./_syntax_input";
 import {AssertError} from "./assert_error";
 import {FieldGroup} from "./statements/field_group";
+import {IStatement} from "../2_statements/statements/_statement";
+import {SELECTION_EVENTS} from "../../stuff";
 
 // -----------------------------------
 
@@ -482,6 +484,8 @@ export class SyntaxLogic {
     const filename = this.currentFile.getFilename();
     const s = node.get();
 
+    this.updateSelectionEventScope(node);
+
     const input: SyntaxInput = {
       scope: this.scope,
       filename,
@@ -525,6 +529,31 @@ export class SyntaxLogic {
         this.scope.pop(node.getLastToken().getEnd());
       }
     }
+  }
+
+  private updateSelectionEventScope(node: StatementNode): void {
+    const statement = node.get();
+
+    if (this.scope.getType() === ScopeType.SelectionEvent && this.isSelectionEventBoundary(statement)) {
+      this.scope.pop(node.getFirstToken().getStart());
+    }
+
+    if (this.opensSelectionEventScope(statement)) {
+      this.scope.push(ScopeType.SelectionEvent,
+                      statement.constructor.name,
+                      node.getFirstToken().getStart(),
+                      this.currentFile.getFilename());
+    }
+  }
+
+  private opensSelectionEventScope(statement: IStatement): boolean {
+    return statement instanceof Statements.AtSelectionScreen;
+  }
+
+  private isSelectionEventBoundary(statement: IStatement): boolean {
+    return SELECTION_EVENTS.some(event => statement instanceof event)
+      || statement instanceof Statements.Form
+      || statement instanceof Statements.FunctionModule;
   }
 
 }
