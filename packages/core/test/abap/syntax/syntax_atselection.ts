@@ -78,6 +78,27 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, cdef", () => {
+    const abap = `
+DATA gv_repo_name TYPE c LENGTH 60.
+
+AT SELECTION-SCREEN OUTPUT.
+  WRITE 'bar'.
+
+CLASS lcl_abapgit_ci DEFINITION.
+ENDCLASS.
+CLASS lcl_abapgit_ci IMPLEMENTATION.
+ENDCLASS.
+
+AT SELECTION-SCREEN.
+  NEW lcl_abapgit_ci( ).
+
+START-OF-SELECTION.
+  WRITE 'sdf'.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("expect error", () => {
     const abap = `
 AT SELECTION-SCREEN.

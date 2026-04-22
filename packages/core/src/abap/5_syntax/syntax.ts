@@ -157,6 +157,7 @@ import {CheckSyntaxKey, SyntaxInput} from "./_syntax_input";
 import {AssertError} from "./assert_error";
 import {FieldGroup} from "./statements/field_group";
 import {IStatement} from "../2_statements/statements/_statement";
+import {IStructure} from "../3_structures/structures/_structure";
 import {SELECTION_EVENTS} from "../../stuff";
 
 // -----------------------------------
@@ -448,6 +449,10 @@ export class SyntaxLogic {
     const filename = this.currentFile.getFilename();
     const stru = node.get();
 
+    if (this.scope.getType() === ScopeType.SelectionEvent && this.isSelectionEventBoundaryStructure(stru)) {
+      this.scope.pop(node.getFirstToken().getStart());
+    }
+
     const input: SyntaxInput = {
       scope: this.scope,
       filename,
@@ -554,6 +559,11 @@ export class SyntaxLogic {
     return SELECTION_EVENTS.some(event => statement instanceof event)
       || statement instanceof Statements.Form
       || statement instanceof Statements.FunctionModule;
+  }
+
+  private isSelectionEventBoundaryStructure(structure: IStructure): boolean {
+    return structure instanceof Structures.ClassDefinition
+      || structure instanceof Structures.Interface;
   }
 
 }
