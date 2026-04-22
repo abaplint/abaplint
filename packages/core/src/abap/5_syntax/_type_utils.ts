@@ -432,7 +432,10 @@ export class TypeUtils {
         return false;
       }
     } else if (source instanceof TableType) {
-      if (target instanceof TableType) {
+      if (source.getRowType() instanceof AnyType) {
+        // then its a generic table, todo: add top level generic table type?
+        return true;
+      } else if (target instanceof TableType) {
         const sourceKeyType = source.getOptions().keyType;
         const targetKeyType = target.getOptions().keyType;
         if (sourceKeyType !== targetKeyType
