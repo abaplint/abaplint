@@ -220,7 +220,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename);
       } else {
-        input.issues.push(syntaxIssue(input, token, name.toUpperCase() + " does not exist"));
+        input.issues.push(syntaxIssue(input, token, "Friend class " + name.toUpperCase() + " does not exist"));
       }
       result.push(name);
     }
