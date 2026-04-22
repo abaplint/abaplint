@@ -2765,7 +2765,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks related to report declarations.\nhttps://rules.abaplint.org/main_file_contents"
+              "description": "Checks related to report declarations.\nTags: Syntax\nhttps://rules.abaplint.org/main_file_contents"
             },
             "many_parentheses": {
               "anyOf": [
@@ -4789,7 +4789,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks related to report declarations.\nhttps://rules.abaplint.org/main_file_contents"
+              "description": "Checks related to report declarations.\nTags: Syntax\nhttps://rules.abaplint.org/main_file_contents"
             },
             "many_parentheses": {
               "anyOf": [
