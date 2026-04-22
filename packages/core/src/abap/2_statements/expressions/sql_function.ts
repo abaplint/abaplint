@@ -49,8 +49,11 @@ export class SQLFunction extends Expression {
     const ltrim = ver(Version.v750, seq(reg(/^ltrim$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
     const rtrim = ver(Version.v750, seq(reg(/^rtrim$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
 
+    const right = ver(Version.v750, seq(reg(/^right$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
+    const left = ver(Version.v751, seq(reg(/^left$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
+
     return altPrio(uuid, abs, ceil, floor, cast, div, mod, coalesce, concat, replace,
-                   length, lower, upper, round, concat_with_space, ltrim, rtrim, substring,
+                   length, lower, upper, round, concat_with_space, ltrim, rtrim, right, left, substring,
                    dats_is_valid, dats_days_between, dats_add_days, dats_add_months);
   }
 }
