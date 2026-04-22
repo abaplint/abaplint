@@ -2735,6 +2735,22 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("SELECT as, INLINED", () => {
+    const prog = `
+SELECT field1, value1 AS foobar
+    FROM ztab
+    INTO TABLE @DATA(lt_tab).
+loop at lt_tab into data(sdf).
+  write / sdf-field1.
+  write / sdf-foobar.
+endloop.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: ztab},
+      {filename: "zfoobar.prog.abap", contents: prog},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("concat_lines_of", () => {
     const abap = `
     DATA tab TYPE STANDARD TABLE OF string.
