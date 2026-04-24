@@ -1,6 +1,8 @@
 export enum ScopeType {
   BuiltIn = "_builtin",
   Dummy = "_dummy",
+  // definitions inside this one are local
+  SelectionEvent = "selection_event",
   Global = "_global",
   Program = "_program",
   TypePool = "_type_pool",

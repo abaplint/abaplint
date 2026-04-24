@@ -6,6 +6,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
+import {EditHelper} from "../edit_helper";
 
 export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
   /** Max line length, in characters */
@@ -21,7 +22,7 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
       title: "Keep single parameters on one line",
       shortDescription: `Keep single parameter calls on one line`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line`,
-      tags: [RuleTag.Whitespace, RuleTag.Styleguide, RuleTag.SingleFile],
+      tags: [RuleTag.Whitespace, RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `call_method(\n  2 ).`,
       goodExample: `call_method( 2 ).`,
     };
@@ -112,7 +113,8 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
       }
 
       const message = "Keep single parameter on one line";
-      return [Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity)];
+      const fix = EditHelper.replaceRange(file, c.getFirstToken().getStart(), c.getLastToken().getEnd(), c.concatTokens());
+      return [Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix)];
     }
     return [];
   }
