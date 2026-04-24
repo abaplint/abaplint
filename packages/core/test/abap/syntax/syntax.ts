@@ -2735,6 +2735,17 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("GET PF status inline", () => {
+    const prog = `
+    DATA gui_status_prog TYPE sy-repid.
+    GET PF-STATUS DATA(gui_status) PROGRAM gui_status_prog.
+    ASSERT gui_status IS NOT INITIAL.`;
+    const issues = runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("SELECT as, INLINED", () => {
     const prog = `
 SELECT field1, value1 AS foobar
