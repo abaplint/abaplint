@@ -4,6 +4,7 @@ import * as Statements from "../../../src/abap/2_statements/statements";
 const tests = [
   "GET PF-STATUS lv_stat.",
   "GET PF-STATUS vv_stat PROGRAM lv_prog EXCLUDING lt_fcode.",
+  "GET PF-STATUS DATA(gui_status) PROGRAM gui_status_prog.",
 ];
 
 statementType(tests, "GET PF-STATUS", Statements.GetPFStatus);
