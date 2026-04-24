@@ -2655,7 +2655,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Keep single parameter calls on one line\nTags: Whitespace, Styleguide, SingleFile\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
+              "description": "Keep single parameter calls on one line\nTags: Whitespace, Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
             },
             "keyword_case": {
               "anyOf": [
@@ -4679,7 +4679,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Keep single parameter calls on one line\nTags: Whitespace, Styleguide, SingleFile\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
+              "description": "Keep single parameter calls on one line\nTags: Whitespace, Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
             },
             "keyword_case": {
               "anyOf": [
