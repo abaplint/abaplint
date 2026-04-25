@@ -86,6 +86,7 @@ import {ReadReport} from "./statements/read_report";
 import {AuthorityCheck} from "./statements/authority_check";
 import {InsertReport} from "./statements/insert_report";
 import {GetReference} from "./statements/get_reference";
+import {GetPFStatus} from "./statements/get_pf_status";
 import {InsertDatabase} from "./statements/insert_database";
 import {DeleteDatabase} from "./statements/delete_database";
 import {ImportDynpro} from "./statements/import_dynpro";
@@ -246,6 +247,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new If());
   addToMap(new LogPoint());
   addToMap(new While());
+  addToMap(new GetPFStatus());
   addToMap(new With());
   addToMap(new WithLoop());
   addToMap(new CallTransformation());
