@@ -560,6 +560,7 @@ export class SyntaxLogic {
   private isSelectionEventBoundary(statement: IStatement): boolean {
     return SELECTION_EVENTS.some(event => statement instanceof event)
       || statement instanceof Statements.Form
+      || statement instanceof Statements.Module
       || statement instanceof Statements.FunctionModule;
   }
 

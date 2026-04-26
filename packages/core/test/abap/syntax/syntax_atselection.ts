@@ -110,7 +110,7 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not found");
   });
 
-  it.only("ok", () => {
+  it("ok", () => {
     const abap = `
 AT SELECTION-SCREEN OUTPUT.
   LOOP AT SCREEN.
