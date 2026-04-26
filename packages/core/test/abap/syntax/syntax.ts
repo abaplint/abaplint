@@ -13295,4 +13295,20 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, SELECT AS", () => {
+    const abap = `
+    select FIELD1, field1 as BAR
+      from ztab
+      into table @data(LT_tab)
+      where field1 = 'FOO'.
+    loop at lt_tab into data(ls_tab).
+      write: / ls_tab-field1, ls_tab-bar.
+    endloop.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: ztab},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });

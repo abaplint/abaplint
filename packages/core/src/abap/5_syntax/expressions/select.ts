@@ -375,7 +375,7 @@ export class Select {
         if (type === undefined) {
           return VoidType.get("SELECT_todo6");
         }
-        components.push({name: field.code, type});
+        components.push({name: field.as || field.code, type});
       }
       return new TableType(new StructureType(components), tableOptions, undefined);
     }
