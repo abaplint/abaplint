@@ -13268,7 +13268,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, generic table input 2", () => {
+  it("ok, generic table input 2", () => {
     const abap = `
 TYPES: BEGIN OF ty,
          bar TYPE i,
