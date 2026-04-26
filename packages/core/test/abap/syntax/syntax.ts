@@ -13268,4 +13268,31 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("ok, generic table input 2", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         bar TYPE i,
+       END OF ty.
+TYPES ty_tt TYPE STANDARD TABLE OF ty WITH EMPTY KEY .
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foobar
+      EXPORTING
+        VALUE(im) TYPE ty_tt.
+    METHODS another
+      CHANGING
+        VALUE(ch) TYPE table.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foobar.
+  ENDMETHOD.
+  METHOD another.
+    foobar( IMPORTING im = ch ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
