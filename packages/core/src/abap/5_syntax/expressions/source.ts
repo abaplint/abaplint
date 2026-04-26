@@ -121,11 +121,12 @@ export class Source {
         {
           const foundType = this.determineType(node, input, targetType);
           const bodyType = ConvBody.runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input);
+          const inferred = node.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
           if (new TypeUtils(input.scope).isConvable(foundType, bodyType) === false) {
             const message = `CONV: Types not compatible, ${foundType?.constructor.name}, ${bodyType?.constructor.name}`;
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
             return VoidType.get(CheckSyntaxKey);
-          } else if (foundType?.isGeneric()) {
+          } else if (foundType?.isGeneric() && inferred !== "#") {
             const message = "Cannot CONV to generic type";
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
             return VoidType.get(CheckSyntaxKey);

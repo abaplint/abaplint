@@ -13311,4 +13311,24 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("ok, CONV to generic", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS log_add IMPORTING msgv2 TYPE any.
+    METHODS test.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD log_add.
+  ENDMETHOD.
+  METHOD test.
+    DATA bar TYPE c LENGTH 2.
+* just a warning about redundant conversion,
+    log_add( msgv2 = CONV #( bar ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
