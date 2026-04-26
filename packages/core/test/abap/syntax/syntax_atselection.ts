@@ -110,4 +110,21 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not found");
   });
 
+  it("ok", () => {
+    const abap = `
+AT SELECTION-SCREEN OUTPUT.
+  LOOP AT SCREEN.
+  ENDLOOP.
+
+MODULE sdfs OUTPUT.
+  DATA ls_style TYPE i.
+ENDMODULE.
+
+FORM foo.
+  CLEAR ls_style.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
