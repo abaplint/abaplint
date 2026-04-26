@@ -13295,7 +13295,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, SELECT AS", () => {
+  it("ok, SELECT AS", () => {
     const abap = `
     select FIELD1, field1 as BAR
       from ztab
@@ -13308,7 +13308,7 @@ ENDCLASS.`;
       {filename: "ztab.tabl.xml", contents: ztab},
       {filename: "zfoobar.prog.abap", contents: abap},
     ]);
-    expect(issues[0].getMessage()).to.equals(undefined);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
 });
