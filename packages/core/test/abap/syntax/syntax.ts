@@ -13311,7 +13311,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
-  it.only("ok, CONV to generic", () => {
+  it("ok, CONV to generic", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
