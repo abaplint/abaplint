@@ -13331,7 +13331,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, dashed parameter names", () => {
+  it("ok, dashed parameter names", () => {
     const abap = `
 PARAMETERS p-tcode LIKE syst-tcode DEFAULT 'ABC'.
 PARAMETERS p-clas AS CHECKBOX.`;

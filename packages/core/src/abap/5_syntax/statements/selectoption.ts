@@ -10,13 +10,21 @@ import {Identifier} from "../../1_lexer/tokens";
 
 export class SelectOption implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
-    const nameToken = node.findFirstExpression(Expressions.FieldSub)?.getFirstToken();
+    const nameExpression = node.findFirstExpression(Expressions.FieldSub);
+    if (nameExpression === undefined) {
+      return;
+    }
+
+    let nameToken = nameExpression.getFirstToken();
+    // FieldSub can include dashes and optional length, eg s-matnr or s_name(10).
+    if (nameExpression.getChildren().length > 1) {
+      const fullName = nameExpression.concatTokens().replace(/\(.+$/, "").replace(/\[\]$/, "");
+      nameToken = new Identifier(nameToken.getStart(), fullName);
+    }
 
     if (nameToken && nameToken.getStr().length > 8) {
       const message = "Select-option name too long, " + nameToken.getStr();
       input.issues.push(syntaxIssue(input, nameToken, message));
-      return;
-    } else if (nameToken === undefined) {
       return;
     }
 
@@ -27,8 +35,8 @@ export class SelectOption implements StatementSyntax {
       return;
     }
 
-    const nameExpression = node.findFirstExpression(Expressions.FieldChain);
-    let found = new BasicTypes(input).resolveLikeName(nameExpression);
+    const nameChain = node.findFirstExpression(Expressions.FieldChain);
+    let found = new BasicTypes(input).resolveLikeName(nameChain);
     if (found) {
       if (found instanceof StructureType) {
         let length = 0;
