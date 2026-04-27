@@ -186,6 +186,23 @@ const tests = [
      AND mkpf~mjahr IN s_mjahr
      AND mseg~werks EQ i_werks
      AND (gwc_werks_mseg) %_HINTS ORACLE 'HELLO'.`,
+
+  `SELECT
+    SUM( ztab_agg~value1 )
+    SUM( ztab_agg~value2 )
+      FROM ztab_agg
+      INTO ( ls_out-value1,
+       ls_out-value2 )
+     WHERE key1 = ls_in-key1
+       AND key2 = ls_in-key2
+       AND key3 = ls_in-key3
+       AND key4 = ls_in-key4
+       AND key5 = lv_key5
+       GROUP BY key1
+          key2
+          key3
+          key4
+          key5.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
