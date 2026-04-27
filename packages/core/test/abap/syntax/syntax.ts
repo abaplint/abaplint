@@ -13339,8 +13339,10 @@ PARAMETERS p-clas AS CHECKBOX.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, field list length", () => {
+  it("ok, field list length", () => {
     const abap = `
+DATA foo TYPE i.
+DATA bar TYPE i.
 SELECT MAX( foo ) MAX( bar )
        INTO (foo, bar)
        FROM tab
