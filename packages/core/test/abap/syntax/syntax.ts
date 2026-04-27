@@ -13331,4 +13331,26 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, dashed parameter names", () => {
+    const abap = `
+PARAMETERS p-tcode LIKE syst-tcode DEFAULT 'ABC'.
+PARAMETERS p-clas AS CHECKBOX.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, field list length", () => {
+    const abap = `
+DATA foo TYPE i.
+DATA bar TYPE i.
+SELECT MAX( foo ) MAX( bar )
+       INTO (foo, bar)
+       FROM tab
+       WHERE field EQ 2
+       GROUP BY foo.
+ENDSELECT.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

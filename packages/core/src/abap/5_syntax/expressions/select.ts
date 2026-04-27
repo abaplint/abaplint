@@ -389,6 +389,9 @@ export class Select {
 
     if (node.get() instanceof Expressions.SelectLoop) {
       expr = node.findFirstExpression(Expressions.SQLFieldListLoop);
+      if (expr === undefined) {
+        expr = node;
+      }
     } else {
       expr = node.findFirstExpression(Expressions.SQLFieldList);
     }
@@ -397,7 +400,8 @@ export class Select {
       Dynamic.runSyntax(expr.getFirstChild() as ExpressionNode, input);
     }
 
-    for (const field of expr?.findDirectExpressionsMulti([Expressions.SQLField, Expressions.SQLFieldName]) || []) {
+    // eslint-disable-next-line max-len
+    for (const field of expr?.findDirectExpressionsMulti([Expressions.SQLField, Expressions.SQLFieldName, Expressions.SQLAggregation]) || []) {
       let code = field.concatTokens().toUpperCase();
       const as = field.findDirectExpression(Expressions.SQLAsName)?.concatTokens() || "";
       if (as !== "") {

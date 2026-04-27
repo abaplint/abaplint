@@ -9,13 +9,21 @@ import {Identifier} from "../../1_lexer/tokens";
 
 export class Parameter implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
-    const nameToken = node.findFirstExpression(Expressions.FieldSub)?.getFirstToken();
+    const nameExpression = node.findFirstExpression(Expressions.FieldSub);
+    if (nameExpression === undefined) {
+      return;
+    }
+
+    let nameToken = nameExpression.getFirstToken();
+    // FieldSub can include dashes and optional length, eg p-tcode or p_table(4).
+    if (nameExpression.getChildren().length > 1) {
+      const fullName = nameExpression.concatTokens().replace(/\(.+$/, "").replace(/\[\]$/, "");
+      nameToken = new Identifier(nameToken.getStart(), fullName);
+    }
 
     if (nameToken && nameToken.getStr().length > 8) {
       const message = "Parameter name too long, " + nameToken.getStr();
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return;
-    } else if (nameToken === undefined) {
       return;
     }
 
