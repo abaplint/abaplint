@@ -13339,4 +13339,16 @@ PARAMETERS p-clas AS CHECKBOX.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("ok, field list length", () => {
+    const abap = `
+SELECT MAX( foo ) MAX( bar )
+       INTO (foo, bar)
+       FROM tab
+       WHERE field EQ 2
+       GROUP BY foo.
+ENDSELECT.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
