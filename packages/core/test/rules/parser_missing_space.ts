@@ -39,6 +39,7 @@ const tests = [
   {abap: "DATA(foo) = xsdbool( line_exists( positions[ ('MATERIAL') = <position>-material ] ) ).", cnt: 0},
   {abap: "IF is_abc( )= abap_true. ENDIF.", cnt: 1},
   {abap: "DATA(lv)= ( 1 + 2 ).", cnt: 1},
+  {abap: "DATA(lv)= 1 + 2.", cnt: 1},
 ];
 
 testRule(tests, ParserMissingSpace);

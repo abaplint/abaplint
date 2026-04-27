@@ -54,6 +54,20 @@ This rule makes sure the spaces are consistently required across the language.`,
 
   private missingSpace(statement: StatementNode): Position | undefined {
 
+    {
+      const tokens = statement.getTokens();
+      for (let i = 1; i < tokens.length; i++) {
+        const prev = tokens[i - 1];
+        const current = tokens[i];
+        if (prev.getStr() === ")"
+            && current.getStr() === "="
+            && prev.getRow() === current.getRow()
+            && prev.getEnd().getCol() === current.getStart().getCol()) {
+          return current.getStart();
+        }
+      }
+    }
+
     const found = statement.findAllExpressionsMulti([
       Expressions.CondSub, Expressions.SQLCond, Expressions.ValueBodyLine,
       Expressions.NewObject, Expressions.Cond, Expressions.ComponentCond,
