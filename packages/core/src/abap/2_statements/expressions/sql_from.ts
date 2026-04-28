@@ -11,7 +11,7 @@ export class SQLFrom extends Expression {
     // No opening parens
     const from0 = seq("FROM", SQLFromSource, joins);
 
-    // 1 to 6 opening parens, with up to that many closing parens at the end
+    // 1 to 7 opening parens, with up to that many closing parens at the end
     const from1 = seq("FROM", tok(WParenLeftW), SQLFromSource, joins, optPrio(tok(WParenRightW)));
 
     const from2 = seq("FROM", tok(WParenLeftW), tok(WParenLeftW), SQLFromSource, joins,
@@ -35,7 +35,13 @@ export class SQLFrom extends Expression {
                       optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
                       optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)));
 
-    const source = altPrio(from6, from5, from4, from3, from2, from1, from0);
+    const from7 = seq("FROM", tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW),
+                      tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), SQLFromSource, joins,
+                      optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
+                      optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
+                      optPrio(tok(WParenRightW)));
+
+    const source = altPrio(from7, from6, from5, from4, from3, from2, from1, from0);
 
     return source;
   }

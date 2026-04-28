@@ -547,6 +547,15 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     AND status = 'E'
     INTO TABLE @tab
     UP TO @pack_size ROWS.`,
+
+  `SELECT DISTINCT ( a~matnr ),( a~werks ), a~mmsta, a~lgfsb
+    INTO TABLE @pt_alv
+    FROM marc AS a INNER JOIN zfoobar AS b
+                           ON b~werks = a~werks
+    WHERE a~matnr IN @s_matnr
+      AND a~werks IN @s_cedi
+      AND a~mmsta IN @s_mmsta
+      AND a~lgfsb = @space.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
