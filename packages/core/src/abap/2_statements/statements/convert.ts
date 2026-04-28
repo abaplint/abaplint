@@ -31,7 +31,7 @@ export class Convert implements IStatement {
 
     const inv = seq("INVERTED-DATE", Source, "INTO DATE", Target);
 
-    const utclong = ver(Version.v754, seq("UTCLONG", Source, per(zone, into, daylightSource)));
+    const utclong = ver(Version.v754, seq("UTCLONG", Source, per(zone, into, daylightSource)), Version.OpenABAP);
 
     return seq("CONVERT", alt(time, date, inv, utclong));
   }
