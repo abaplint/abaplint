@@ -203,6 +203,53 @@ const tests = [
           key3
           key4
           key5.`,
+
+  `SELECT  t_hdr~id_main
+            t_hdr~id_item
+            t_attr~flag_a
+            t_attr~value_a
+            t_mat~text_a
+            t_qty~num_a
+            t_evt~counter_a
+            t_evt~date_a
+            t_evt~ref_a
+            t_evt~qty_check
+            t_qty~amount_a
+            t_qty~unit_a
+            t_vendor~id_vendor
+            INTO CORRESPONDING FIELDS OF ls_result
+            FROM ( ( ( ( ( ( ( zt_header AS t_hdr
+                   INNER JOIN zt_event AS t_evt
+                     ON  t_hdr~id_main = t_evt~id_main
+                     AND t_hdr~id_item = t_evt~id_item )
+                   INNER JOIN zt_attr AS t_attr
+                     ON  t_attr~id_main = t_hdr~id_main
+                     AND t_attr~id_item = t_hdr~id_item
+                     AND t_attr~key_a = t_hdr~key_a     )
+                   INNER JOIN zt_material  AS t_mat
+                     ON  t_hdr~id_item = t_mat~matnr    )
+                   INNER JOIN zt_link AS t_link
+                     ON  t_hdr~id_item = t_link~matnr
+                     AND t_hdr~id_main = t_link~id_main )
+                   INNER JOIN zt_map AS t_map
+                     ON  t_link~doc_no = t_map~doc_no
+                     AND t_link~doc_pos = t_map~doc_pos )
+                   INNER JOIN zt_qty AS t_qty
+                     ON  t_map~doc_no = t_qty~doc_no
+                     AND t_map~doc_pos = t_qty~doc_pos
+                     AND t_map~doc_sub = t_qty~doc_sub  )
+                   INNER JOIN zt_vendor AS t_vendor
+                     ON  t_hdr~id_main = t_vendor~id_main
+                     AND t_hdr~id_item = t_vendor~id_item
+                     AND t_hdr~key_a = t_vendor~key_a
+                     AND t_map~site_id = t_vendor~cust_id )
+            WHERE t_hdr~id_main EQ ls_input-id_main
+            AND   t_hdr~id_item IN lt_item_rng
+            AND   t_hdr~group_a EQ space
+            AND   t_evt~ref_a IN lt_ref_rng
+            AND   t_map~site_id IN lt_site_rng
+            AND   t_vendor~client_id = ls_input-client_id
+            AND   t_qty~amount_a IN lt_amt_rng.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
