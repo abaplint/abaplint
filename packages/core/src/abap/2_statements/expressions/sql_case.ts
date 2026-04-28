@@ -25,6 +25,6 @@ export class SQLCase extends Expression {
     const when = seq("WHEN", val, "THEN", sourc, starPrio(sub));
     const els = seq("ELSE", sourc);
 
-    return ver(Version.v740sp05, seq("CASE", opt(altPrio(SQLFieldName, abap)), plusPrio(when), optPrio(els), "END"));
+    return ver(Version.v740sp05, seq("CASE", opt(altPrio(SQLFieldName, abap)), plusPrio(when), optPrio(els), "END"), Version.OpenABAP);
   }
 }
