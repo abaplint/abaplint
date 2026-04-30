@@ -7,7 +7,7 @@ import {Source} from "../expressions";
 export class Return implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    return seq(str("RETURN"), optPrio(ver(Version.v758, Source)));
+    return seq(str("RETURN"), optPrio(ver(Version.v758, Source, Version.OpenABAP)));
   }
 
 }
