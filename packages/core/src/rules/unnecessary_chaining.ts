@@ -6,9 +6,14 @@ import {ABAPFile} from "../abap/abap_file";
 import {EditHelper} from "../edit_helper";
 import {Comment} from "../abap/2_statements/statements/_statement";
 import {StatementNode} from "../abap/nodes";
+import {ABAPObject} from "../objects/_abap_object";
+import {Class} from "../objects";
+import {DDIC} from "../ddic";
 
 export class UnnecessaryChainingConf extends BasicRuleConfig {
   public maxIssuesPerFile: number | undefined = 10;
+  /** Ignore global exception classes */
+  public ignoreExceptions: boolean = true;
 }
 
 export class UnnecessaryChaining extends ABAPRule {
@@ -35,8 +40,16 @@ export class UnnecessaryChaining extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     const issues: Issue[] = [];
+
+    if (obj instanceof Class) {
+      const definition = obj.getClassDefinition();
+      const ddic = new DDIC(this.reg);
+      if (this.conf.ignoreExceptions === true && ddic.isException(definition, obj)) {
+        return issues;
+      }
+    }
 
     let max = this.getConfig().maxIssuesPerFile;
     if (max === undefined || max < 1) {

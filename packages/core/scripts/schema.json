@@ -8636,6 +8636,10 @@
           },
           "type": "array"
         },
+        "ignoreExceptions": {
+          "description": "Ignore global exception classes",
+          "type": "boolean"
+        },
         "maxIssuesPerFile": {
           "type": "number"
         },
@@ -8644,6 +8648,9 @@
           "description": "Problem severity"
         }
       },
+      "required": [
+        "ignoreExceptions"
+      ],
       "type": "object"
     },
     "UnnecessaryPragmaConf": {
