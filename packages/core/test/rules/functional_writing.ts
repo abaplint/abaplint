@@ -21,6 +21,27 @@ const tests = [
 EXPORTING
   encoded = request->get_inner_rest_request( )->get_header_field( iv_name = 'Password' ).`, cnt: 1,
   },
+  {
+    abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo
+      RETURNING
+        VALUE(sdf) TYPE i
+      EXCEPTIONS
+        sdfds.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  CALL METHOD lcl=>foo
+    RECEIVING
+      sdf   = DATA(sdf)
+    EXCEPTIONS
+      sdfds = 1.`, cnt: 1,
+  },
 ];
 
 testRule(tests, FunctionalWriting);
