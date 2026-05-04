@@ -174,13 +174,14 @@ DATA ls_tadir TYPE ztadir.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.only("TABL, select abap_true", () => {
+  it("TABL, select abap_true", () => {
     const abap = `
 REPORT zfoobar.
 SELECT SINGLE @abap_true
        FROM ztadir
        WHERE OBJ_NAME = 'SE16N'
-       INTO @DATA(lv_exists).`;
+       INTO @DATA(lv_exists).
+WRITE / lv_exists.`;
 
     let issues = runMulti([
       {filename: "ztadir.tabl.xml", contents: ztadir},
