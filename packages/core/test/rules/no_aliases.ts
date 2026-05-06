@@ -15,7 +15,10 @@ const tests = [
             PUBLIC SECTION.
               ALIASES: foo FOR bar,
                        moo FOR loo.
-          ENDCLASS.`, cnt: 1},
+          ENDCLASS.`, cnt: 2},
+  {abap: `INTERFACE lif_abc.
+            ALIASES foo FOR bar.
+          ENDINTERFACE.`, cnt: 1},
 ];
 
 testRule(tests, NoAliases);
