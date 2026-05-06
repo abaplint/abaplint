@@ -7005,11 +7005,18 @@
           },
           "type": "array"
         },
+        "ignorePrivate": {
+          "description": "Skip reporting aliases in private sections.",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "ignorePrivate"
+      ],
       "type": "object"
     },
     "NoChainedAssignmentConf": {
