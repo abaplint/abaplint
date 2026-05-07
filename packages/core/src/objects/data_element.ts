@@ -3,6 +3,7 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {IRegistry} from "../_iregistry";
 import {DDIC, ILookupResult} from "../ddic";
 import * as Types from "../abap/types/basic";
+import {xmlToArray} from "../xml_utils";
 import {IObjectAndToken} from "../_iddic_references";
 
 export class DataElement extends AbstractObject {
@@ -168,17 +169,16 @@ export class DataElement extends AbstractObject {
       },
     };
 
-    const rawTexts = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD04_TEXTS?.item;
-    if (rawTexts !== undefined) {
-      const items = Array.isArray(rawTexts) ? rawTexts : [rawTexts];
-      this.parsedXML.translationTexts = items.map((item: any) => ({
+    this.parsedXML.translationTexts = [];
+    for (const item of xmlToArray(parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD04_TEXTS?.item)) {
+      this.parsedXML.translationTexts.push({
         language: item.DDLANGUAGE,
         description: item.DDTEXT,
         short: item.SCRTEXT_S,
         medium: item.SCRTEXT_M,
         long: item.SCRTEXT_L,
         heading: item.REPTEXT,
-      }));
+      });
     }
 
     const end = Date.now();

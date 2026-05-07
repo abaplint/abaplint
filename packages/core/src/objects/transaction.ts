@@ -1,4 +1,5 @@
 import {AbstractObject} from "./_abstract_object";
+import {xmlToArray} from "../xml_utils";
 
 export class Transaction extends AbstractObject {
   private parsedXML: {
@@ -62,13 +63,9 @@ export class Transaction extends AbstractObject {
     this.parsedXML.programName = parsed.abapGit["asx:abap"]["asx:values"].TSTC?.PGMNA;
     this.parsedXML.cinfo = parsed.abapGit["asx:abap"]["asx:values"].TSTC?.CINFO;
 
-    const rawTexts = parsed.abapGit["asx:abap"]["asx:values"].I18N_TPOOL?.TSTCT;
-    if (rawTexts !== undefined) {
-      const items = Array.isArray(rawTexts) ? rawTexts : [rawTexts];
-      this.parsedXML.translationTexts = items.map((item: any) => ({
-        language: item.SPRSL,
-        description: item.TTEXT,
-      }));
+    this.parsedXML.translationTexts = [];
+    for (const item of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].I18N_TPOOL?.TSTCT)) {
+      this.parsedXML.translationTexts.push({language: item.SPRSL, description: item.TTEXT});
     }
 
     const end = Date.now();
