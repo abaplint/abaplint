@@ -52,6 +52,13 @@ ENDCASE.`, cnt: 0},
   END-TEST-SEAM.
 ENDIF.`, cnt: 0},
 
+{abap: `DATA foo TYPE i.
+CASE foo.
+  WHEN OTHERS.
+    RAISE EXCEPTION TYPE zcx_error.
+    RETURN.
+ENDCASE.`, cnt: 1},
+
 ];
 
 testRule(tests, UnreachableCode);
