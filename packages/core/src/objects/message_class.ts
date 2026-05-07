@@ -5,7 +5,8 @@ import {xmlToArray, unescape} from "../xml_utils";
 export type parsedMessageClass = {
   topName: string | undefined,
   description: string | undefined,
-  parsedMessages: Message[] | undefined
+  parsedMessages: Message[] | undefined,
+  translationTexts: {language: string, number: string, text?: string}[] | undefined,
 };
 
 export class MessageClass extends AbstractObject {
@@ -30,6 +31,11 @@ export class MessageClass extends AbstractObject {
   public getParsed(): parsedMessageClass | undefined {
     this.parseXML();
     return this.xml;
+  }
+
+  public getTranslationTexts() {
+    this.parseXML();
+    return this.xml?.translationTexts;
   }
 
   public setDirty(): void {
@@ -65,6 +71,7 @@ export class MessageClass extends AbstractObject {
       topName: undefined,
       description: undefined,
       parsedMessages: [],
+      translationTexts: [],
     };
 
     const parsed = super.parseRaw2();
@@ -80,7 +87,15 @@ export class MessageClass extends AbstractObject {
       return;
     }
     for (const msg of xmlToArray(t100.T100)) {
-      this.xml!.parsedMessages!.push(new Message(msg.MSGNR, unescape(msg.TEXT), msg.ARBGB));
+      this.xml.parsedMessages!.push(new Message(msg.MSGNR, unescape(msg.TEXT), msg.ARBGB));
+    }
+
+    const t100_texts = parsed?.abapGit?.["asx:abap"]["asx:values"]?.T100_TEXTS;
+    if (t100_texts === undefined) {
+      return;
+    }
+    for (const item of xmlToArray(t100_texts?.item)) {
+      this.xml.translationTexts!.push({language: item.SPRSL, number: item.MSGNR, text: unescape(item.TEXT)});
     }
   }
 
