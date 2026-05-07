@@ -892,3 +892,188 @@ describe("rule, xml_consistency, MSAG message text length", () => {
   });
 
 });
+
+async function runClas(xml: string): Promise<Issue[]> {
+  const reg = new Registry().addFile(new MemoryFile("zcl_test.clas.xml", xml));
+  return run(reg);
+}
+
+describe("rule, xml_consistency, CLAS text element length", () => {
+
+  it("no issue when text element entry is within its LENGTH", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_TEST</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Test class</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>Short text</ENTRY>
+     <LENGTH>50</LENGTH>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runClas(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("text element entry exactly at LENGTH limit is ok", async () => {
+    const entry50 = "12345678901234567890123456789012345678901234567890";
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_TEST</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Test class</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>${entry50}</ENTRY>
+     <LENGTH>50</LENGTH>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runClas(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("text element entry exceeds its LENGTH", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_TEST</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Test class</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>This text is longer than ten chars</ENTRY>
+     <LENGTH>10</LENGTH>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runClas(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("ENTRY[001]");
+    expect(issues[0].getMessage()).to.include("10");
+  });
+
+  it("translation text element entry exceeds its LENGTH", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_TEST</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Test class</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>Short text</ENTRY>
+     <LENGTH>20</LENGTH>
+    </item>
+   </TPOOL>
+   <I18N_TPOOL>
+    <item>
+     <LANGUAGE>F</LANGUAGE>
+     <TEXTPOOL>
+      <item>
+       <ID>I</ID>
+       <KEY>001</KEY>
+       <ENTRY>Traduction beaucoup trop longue</ENTRY>
+       <LENGTH>20</LENGTH>
+      </item>
+     </TEXTPOOL>
+    </item>
+   </I18N_TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runClas(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("[F]");
+    expect(issues[0].getMessage()).to.include("ENTRY[001]");
+  });
+
+  it("translation text element within LENGTH has no issues", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_TEST</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Test class</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>Short text</ENTRY>
+     <LENGTH>50</LENGTH>
+    </item>
+   </TPOOL>
+   <I18N_TPOOL>
+    <item>
+     <LANGUAGE>D</LANGUAGE>
+     <TEXTPOOL>
+      <item>
+       <ID>I</ID>
+       <KEY>001</KEY>
+       <ENTRY>Kurzer Text</ENTRY>
+       <LENGTH>50</LENGTH>
+      </item>
+     </TEXTPOOL>
+    </item>
+   </I18N_TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runClas(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+});

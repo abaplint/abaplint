@@ -79,6 +79,19 @@ export class XMLConsistency implements IRule {
     } else if (obj.getMainABAPFile()?.getStructure() !== undefined && obj.getClassDefinition() === undefined) {
       issues.push(Issue.atRow(file, 1, "Class matching XML name not found in ABAP file", this.getMetadata().key, this.conf.severity));
     }
+
+    const push = (issue: Issue | undefined) => { if (issue) { issues.push(issue); } };
+
+    for (const textElement of obj.getTextElements()) {
+      push(this.checkTextLength(file, `ENTRY[${textElement.key}]`, textElement.entry, textElement.maxLength));
+    }
+
+    for (const translation of obj.getTranslationTextElements()) {
+      for (const textElement of translation.textElements) {
+        push(this.checkTextLength(file, `ENTRY[${textElement.key}]`, textElement.entry, textElement.maxLength, translation.language));
+      }
+    }
+
     return issues;
   }
 
