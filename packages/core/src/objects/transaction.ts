@@ -5,6 +5,7 @@ export class Transaction extends AbstractObject {
     description?: string,
     programName?: string,
     cinfo?: string,
+    translationTexts?: {language: string, description?: string}[],
   } | undefined;
 
   public getType(): string {
@@ -38,6 +39,11 @@ export class Transaction extends AbstractObject {
     return this.parsedXML?.description;
   }
 
+  public getTranslationTexts() {
+    this.parse();
+    return this.parsedXML?.translationTexts;
+  }
+
   public parse() {
     if (this.parsedXML) {
       return {updated: false, runtime: 0};
@@ -55,6 +61,15 @@ export class Transaction extends AbstractObject {
     this.parsedXML.description = parsed.abapGit["asx:abap"]["asx:values"].TSTCT?.TTEXT;
     this.parsedXML.programName = parsed.abapGit["asx:abap"]["asx:values"].TSTC?.PGMNA;
     this.parsedXML.cinfo = parsed.abapGit["asx:abap"]["asx:values"].TSTC?.CINFO;
+
+    const rawTexts = parsed.abapGit["asx:abap"]["asx:values"].I18N_TPOOL?.TSTCT;
+    if (rawTexts !== undefined) {
+      const items = Array.isArray(rawTexts) ? rawTexts : [rawTexts];
+      this.parsedXML.translationTexts = items.map((item: any) => ({
+        language: item.SPRSL,
+        description: item.TTEXT,
+      }));
+    }
 
     const end = Date.now();
     return {updated: true, runtime: end - start};

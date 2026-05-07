@@ -18,6 +18,20 @@ export class DataElement extends AbstractObject {
       long?: string,
       heading?: string,
     }
+    textMaxLengths?: {
+      short?: string,
+      medium?: string,
+      long?: string,
+      heading?: string,
+    }
+    translationTexts?: {
+      language: string,
+      description?: string,
+      short?: string,
+      medium?: string,
+      long?: string,
+      heading?: string,
+    }[]
     decimals?: string} | undefined = undefined;
   private parsedType: AbstractType | undefined = undefined;
 
@@ -51,6 +65,16 @@ export class DataElement extends AbstractObject {
   public getTexts() {
     this.parse();
     return this.parsedXML?.texts;
+  }
+
+  public getTextMaxLengths() {
+    this.parse();
+    return this.parsedXML?.textMaxLengths;
+  }
+
+  public getTranslationTexts() {
+    this.parse();
+    return this.parsedXML?.translationTexts;
   }
 
   public parseType(reg: IRegistry): AbstractType {
@@ -136,7 +160,26 @@ export class DataElement extends AbstractObject {
         long: dd04v?.SCRTEXT_L,
         heading: dd04v?.REPTEXT,
       },
+      textMaxLengths: {
+        short: dd04v?.SCRLEN1,
+        medium: dd04v?.SCRLEN2,
+        long: dd04v?.SCRLEN3,
+        heading: dd04v?.HEADLEN,
+      },
     };
+
+    const rawTexts = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD04_TEXTS?.item;
+    if (rawTexts !== undefined) {
+      const items = Array.isArray(rawTexts) ? rawTexts : [rawTexts];
+      this.parsedXML.translationTexts = items.map((item: any) => ({
+        language: item.DDLANGUAGE,
+        description: item.DDTEXT,
+        short: item.SCRTEXT_S,
+        medium: item.SCRTEXT_M,
+        long: item.SCRTEXT_L,
+        heading: item.REPTEXT,
+      }));
+    }
 
     const end = Date.now();
     return {updated: true, runtime: end - start};

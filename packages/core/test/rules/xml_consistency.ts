@@ -225,3 +225,486 @@ describe("xml consistency", () => {
     expect(issues.length).to.equals(1);
   });
 });
+
+async function runDtel(xml: string): Promise<Issue[]> {
+  const reg = new Registry().addFile(new MemoryFile("zdtel.dtel.xml", xml));
+  return run(reg);
+}
+
+describe("rule, xml_consistency, DTEL label lengths", () => {
+
+  it("no issues when all texts are within limits", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <HEADLEN>10</HEADLEN>
+    <SCRLEN1>05</SCRLEN1>
+    <SCRLEN2>10</SCRLEN2>
+    <SCRLEN3>20</SCRLEN3>
+    <DDTEXT>Short description</DDTEXT>
+    <REPTEXT>Heading</REPTEXT>
+    <SCRTEXT_S>Short</SCRTEXT_S>
+    <SCRTEXT_M>Medium txt</SCRTEXT_M>
+    <SCRTEXT_L>Long label text here</SCRTEXT_L>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDtel(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("DDTEXT exceeds 60 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <DDTEXT>This description is way too long and definitely exceeds sixty characters total</DDTEXT>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDtel(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("DDTEXT");
+  });
+
+  it("DDTEXT exactly 60 characters is ok", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <DDTEXT>123456789012345678901234567890123456789012345678901234567890</DDTEXT>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDtel(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("SCRTEXT_S exceeds SCRLEN1", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <SCRLEN1>05</SCRLEN1>
+    <SCRTEXT_S>TooLong</SCRTEXT_S>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDtel(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("SCRTEXT_S");
+  });
+
+  it("SCRTEXT_M exceeds SCRLEN2", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <SCRLEN2>10</SCRLEN2>
+    <SCRTEXT_M>Medium text too long</SCRTEXT_M>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDtel(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("SCRTEXT_M");
+  });
+
+  it("SCRTEXT_L exceeds SCRLEN3", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <SCRLEN3>10</SCRLEN3>
+    <SCRTEXT_L>Long label text exceeding limit</SCRTEXT_L>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDtel(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("SCRTEXT_L");
+  });
+
+  it("REPTEXT exceeds HEADLEN", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <HEADLEN>05</HEADLEN>
+    <REPTEXT>Heading too long</REPTEXT>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDtel(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("REPTEXT");
+  });
+
+  it("multiple violations reported", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <HEADLEN>03</HEADLEN>
+    <SCRLEN1>03</SCRLEN1>
+    <REPTEXT>Heading too long</REPTEXT>
+    <SCRTEXT_S>Short text too long</SCRTEXT_S>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDtel(xml);
+    expect(issues.length).to.equal(2);
+  });
+
+  it("no issue when label length fields are absent", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <SCRTEXT_S>Short</SCRTEXT_S>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDtel(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+
+  describe("Translation label lengths", () => {
+
+    it("translation SCRTEXT_M exceeds SCRLEN2", async () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>10</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <HEADLEN>55</HEADLEN>
+    <DDTEXT>Text</DDTEXT>
+    <SCRTEXT_S>Short</SCRTEXT_S>
+    <SCRTEXT_M>Medium</SCRTEXT_M>
+    <SCRTEXT_L>Long</SCRTEXT_L>
+   </DD04V>
+   <DD04_TEXTS>
+    <item>
+     <DDLANGUAGE>F</DDLANGUAGE>
+     <DDTEXT>Text</DDTEXT>
+     <SCRTEXT_S>Short</SCRTEXT_S>
+     <SCRTEXT_M>medium text too long</SCRTEXT_M>
+     <SCRTEXT_L>Long</SCRTEXT_L>
+    </item>
+   </DD04_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+      const issues = await runDtel(xml);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.include("[F]");
+      expect(issues[0].getMessage()).to.include("SCRTEXT_M");
+    });
+
+    it("translation SCRTEXT_S exceeds SCRLEN1", async () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <SCRLEN1>05</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <HEADLEN>55</HEADLEN>
+    <DDTEXT>Text</DDTEXT>
+    <SCRTEXT_S>Short</SCRTEXT_S>
+    <SCRTEXT_M>Medium</SCRTEXT_M>
+    <SCRTEXT_L>Long</SCRTEXT_L>
+   </DD04V>
+   <DD04_TEXTS>
+    <item>
+     <DDLANGUAGE>I</DDLANGUAGE>
+     <DDTEXT>Text</DDTEXT>
+     <SCRTEXT_S>toolong</SCRTEXT_S>
+     <SCRTEXT_M>Medium</SCRTEXT_M>
+     <SCRTEXT_L>Long</SCRTEXT_L>
+    </item>
+   </DD04_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+      const issues = await runDtel(xml);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.include("[I]");
+      expect(issues[0].getMessage()).to.include("SCRTEXT_S");
+    });
+
+    it("multiple translations, multiple violations", async () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <SCRLEN1>05</SCRLEN1>
+    <SCRLEN2>10</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <HEADLEN>55</HEADLEN>
+    <DDTEXT>Text</DDTEXT>
+   </DD04V>
+   <DD04_TEXTS>
+    <item>
+     <DDLANGUAGE>F</DDLANGUAGE>
+     <SCRTEXT_M>medium text too long</SCRTEXT_M>
+    </item>
+    <item>
+     <DDLANGUAGE>I</DDLANGUAGE>
+     <SCRTEXT_S>toolong</SCRTEXT_S>
+    </item>
+   </DD04_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+      const issues = await runDtel(xml);
+      expect(issues.length).to.equal(2);
+    });
+
+    it("translations within limits have no issues", async () => {
+      const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <HEADLEN>55</HEADLEN>
+    <DDTEXT>Text</DDTEXT>
+   </DD04V>
+   <DD04_TEXTS>
+    <item>
+     <DDLANGUAGE>D</DDLANGUAGE>
+     <SCRTEXT_S>Short val</SCRTEXT_S>
+     <SCRTEXT_M>Medium text value</SCRTEXT_M>
+     <SCRTEXT_L>Long label text value</SCRTEXT_L>
+    </item>
+   </DD04_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+      const issues = await runDtel(xml);
+      expect(issues.length).to.equal(0);
+    });
+
+  });
+
+
+});
+
+async function runTran(xml: string): Promise<Issue[]> {
+  const reg = new Registry().addFile(new MemoryFile("ztran.tran.xml", xml));
+  return run(reg);
+}
+
+describe("rule, xml_consistency, TRAN description length", () => {
+
+  it("no issue when description is within 36 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TRAN" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <TSTC>
+    <TCODE>ZTRAN</TCODE>
+    <PGMNA>ZTRAN</PGMNA>
+   </TSTC>
+   <TSTCT>
+    <SPRSL>E</SPRSL>
+    <TCODE>ZTRAN</TCODE>
+    <TTEXT>Short description</TTEXT>
+   </TSTCT>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runTran(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("description exactly 36 characters is ok", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TRAN" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <TSTC>
+    <TCODE>ZTRAN</TCODE>
+    <PGMNA>ZTRAN</PGMNA>
+   </TSTC>
+   <TSTCT>
+    <SPRSL>E</SPRSL>
+    <TCODE>ZTRAN</TCODE>
+    <TTEXT>123456789012345678901234567890123456</TTEXT>
+   </TSTCT>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runTran(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("description exceeds 36 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TRAN" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <TSTC>
+    <TCODE>ZTRAN</TCODE>
+    <PGMNA>ZTRAN</PGMNA>
+   </TSTC>
+   <TSTCT>
+    <SPRSL>E</SPRSL>
+    <TCODE>ZTRAN</TCODE>
+    <TTEXT>This description is way too long and exceeds 36 chars</TTEXT>
+   </TSTCT>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runTran(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("36");
+  });
+
+  it("translation description exceeds 36 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TRAN" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <TSTC>
+    <TCODE>ZTRAN</TCODE>
+    <PGMNA>ZTRAN</PGMNA>
+   </TSTC>
+   <TSTCT>
+    <SPRSL>E</SPRSL>
+    <TCODE>ZTRAN</TCODE>
+    <TTEXT>Short description</TTEXT>
+   </TSTCT>
+   <I18N_TPOOL>
+    <TSTCT>
+     <SPRSL>F</SPRSL>
+     <TTEXT>Extra long translation text that exceeds 36 characters</TTEXT>
+    </TSTCT>
+   </I18N_TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runTran(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("[F]");
+    expect(issues[0].getMessage()).to.include("36");
+  });
+
+  it("multiple translation descriptions exceed 36 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TRAN" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <TSTC>
+    <TCODE>ZTRAN</TCODE>
+    <PGMNA>ZTRAN</PGMNA>
+   </TSTC>
+   <TSTCT>
+    <SPRSL>E</SPRSL>
+    <TCODE>ZTRAN</TCODE>
+    <TTEXT>Short description</TTEXT>
+   </TSTCT>
+   <I18N_TPOOL>
+    <TSTCT>
+     <SPRSL>F</SPRSL>
+     <TTEXT>Extra long translation text that exceeds 36 characters</TTEXT>
+    </TSTCT>
+    <TSTCT>
+     <SPRSL>D</SPRSL>
+     <TTEXT>Sehr lange Beschreibung die 36 Zeichen überschreitet</TTEXT>
+    </TSTCT>
+   </I18N_TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runTran(xml);
+    expect(issues.length).to.equal(2);
+  });
+
+  it("translations within 36 characters have no issues", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TRAN" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <TSTC>
+    <TCODE>ZTRAN</TCODE>
+    <PGMNA>ZTRAN</PGMNA>
+   </TSTC>
+   <TSTCT>
+    <SPRSL>E</SPRSL>
+    <TCODE>ZTRAN</TCODE>
+    <TTEXT>Short description</TTEXT>
+   </TSTCT>
+   <I18N_TPOOL>
+    <TSTCT>
+     <SPRSL>D</SPRSL>
+     <TTEXT>Kurze Beschreibung</TTEXT>
+    </TSTCT>
+   </I18N_TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runTran(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+});
