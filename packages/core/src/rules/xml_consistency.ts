@@ -60,6 +60,8 @@ export class XMLConsistency implements IRule {
       issues.push(...this.runDataElement(obj, file));
     } else if (obj instanceof Objects.Transaction) {
       issues.push(...this.runTransaction(obj, file));
+    } else if (obj instanceof Objects.MessageClass) {
+      issues.push(...this.runMessageClass(obj, file));
     }
 
     return issues;
@@ -151,6 +153,23 @@ export class XMLConsistency implements IRule {
 
     for (const translation of obj.getTranslationTexts() ?? []) {
       push(this.checkTextLength(file, "TTEXT", translation.description, maxTextLength, translation.language));
+    }
+
+    return issues;
+  }
+
+  private runMessageClass(obj: Objects.MessageClass, file: IFile): Issue[] {
+    const maxTextLength = 73;
+    const issues: Issue[] = [];
+
+    const push = (issue: Issue | undefined) => { if (issue) { issues.push(issue); } };
+
+    for (const msg of obj.getMessages()) {
+      push(this.checkTextLength(file, `TEXT[${msg.getNumber()}]`, msg.getMessage(), maxTextLength));
+    }
+
+    for (const translation of obj.getTranslationTexts() ?? []) {
+      push(this.checkTextLength(file, `TEXT[${translation.number}]`, translation.text, maxTextLength, translation.language));
     }
 
     return issues;

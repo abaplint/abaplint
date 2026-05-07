@@ -708,3 +708,187 @@ describe("rule, xml_consistency, TRAN description length", () => {
   });
 
 });
+
+async function runMsag(xml: string): Promise<Issue[]> {
+  const reg = new Registry().addFile(new MemoryFile("zmsag.msag.xml", xml));
+  return run(reg);
+}
+
+describe("rule, xml_consistency, MSAG message text length", () => {
+
+  it("no issue when message text is within 73 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZMSAG</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>Message class</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZMSAG</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>This is a short message</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runMsag(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("message text exactly 73 characters is ok", async () => {
+    const text73 = "1234567890123456789012345678901234567890123456789012345678901234567890123";
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZMSAG</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>Message class</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZMSAG</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>${text73}</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runMsag(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("message text exceeds 73 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZMSAG</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>Message class</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZMSAG</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>This message text is way too long and definitively exceeds the seventy-three char limit</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runMsag(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("73");
+  });
+
+  it("multiple messages, one exceeds 73 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZMSAG</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>Message class</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZMSAG</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>Short message</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZMSAG</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>This message text is way too long and definitively exceeds the seventy-three char limit</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runMsag(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("TEXT[002]");
+  });
+
+  it("translation message text exceeds 73 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZMSAG</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>Message class</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZMSAG</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>Short message</TEXT>
+    </T100>
+   </T100>
+   <T100_TEXTS>
+    <item>
+     <SPRSL>F</SPRSL>
+     <MSGNR>001</MSGNR>
+     <TEXT>This translated text is way too long and definitively exceeds the seventy-three char limit</TEXT>
+    </item>
+   </T100_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runMsag(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("[F]");
+    expect(issues[0].getMessage()).to.include("73");
+  });
+
+  it("translation message texts within 73 characters have no issues", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZMSAG</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>Message class</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZMSAG</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>Short message</TEXT>
+    </T100>
+   </T100>
+   <T100_TEXTS>
+    <item>
+     <SPRSL>D</SPRSL>
+     <MSGNR>001</MSGNR>
+     <TEXT>Kurze Nachricht</TEXT>
+    </item>
+   </T100_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runMsag(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+});
