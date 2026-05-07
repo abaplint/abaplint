@@ -3,6 +3,7 @@ import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {IFile} from "../files/_ifile";
 import * as Objects from "../objects";
+import {ABAPObject} from "../objects/_abap_object";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {XMLValidator} from "fast-xml-parser";
@@ -64,6 +65,10 @@ export class XMLConsistency implements IRule {
       issues.push(...this.runMessageClass(obj, file));
     }
 
+    if (obj instanceof ABAPObject) {
+      issues.push(...this.runTextPool(obj, file));
+    }
+
     return issues;
   }
 
@@ -79,19 +84,20 @@ export class XMLConsistency implements IRule {
     } else if (obj.getMainABAPFile()?.getStructure() !== undefined && obj.getClassDefinition() === undefined) {
       issues.push(Issue.atRow(file, 1, "Class matching XML name not found in ABAP file", this.getMetadata().key, this.conf.severity));
     }
+    return issues;
+  }
 
+  private runTextPool(obj: ABAPObject, file: IFile): Issue[] {
+    const issues: Issue[] = [];
     const push = (issue: Issue | undefined) => { if (issue) { issues.push(issue); } };
-
-    for (const textElement of obj.getTextElements()) {
-      push(this.checkTextLength(file, `ENTRY[${textElement.key}]`, textElement.entry, textElement.maxLength));
+    for (const [key, el] of Object.entries(obj.getTextElements())) {
+      push(this.checkTextLength(file, `ENTRY[${key}]`, el.entry, el.maxLength));
     }
-
     for (const translation of obj.getTranslationTextElements()) {
-      for (const textElement of translation.textElements) {
-        push(this.checkTextLength(file, `ENTRY[${textElement.key}]`, textElement.entry, textElement.maxLength, translation.language));
+      for (const [key, el] of Object.entries(translation.textElements)) {
+        push(this.checkTextLength(file, `ENTRY[${key}]`, el.entry, el.maxLength, translation.language));
       }
     }
-
     return issues;
   }
 

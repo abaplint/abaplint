@@ -3,7 +3,6 @@ import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_informa
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ABAPFile} from "../abap/abap_file";
-import {xmlToArray} from "../xml_utils";
 
 export enum ClassCategory {
   Test = "05",
@@ -13,17 +12,12 @@ export enum ClassCategory {
   SharedObject = "45",
 }
 
-export type ParsedTextElement = {key: string, entry: string, maxLength: number};
-export type ParsedTranslationTextElements = {language: string, textElements: ParsedTextElement[]};
-
 export class Class extends ABAPObject {
   private def: IClassDefinition | undefined = undefined;
   private parsedXML: {
     name?: string,
     description?: string,
     category?: string,
-    textElements?: ParsedTextElement[],
-    translationTextElements?: ParsedTranslationTextElements[],
   } | undefined = undefined;
 
   public getType(): string {
@@ -87,16 +81,6 @@ export class Class extends ABAPObject {
     return this.parsedXML?.category;
   }
 
-  public getTextElements(): ParsedTextElement[] {
-    this.parseXML();
-    return this.parsedXML?.textElements ?? [];
-  }
-
-  public getTranslationTextElements(): ParsedTranslationTextElements[] {
-    this.parseXML();
-    return this.parsedXML?.translationTextElements ?? [];
-  }
-
   public getLocalsImpFile(): ABAPFile | undefined {
     for (const file of this.getABAPFiles()) {
       if (file.getFilename().endsWith(".clas.locals_imp.abap")) {
@@ -141,20 +125,6 @@ export class Class extends ABAPObject {
     this.parsedXML.category = vseo.CATEGORY;
     this.parsedXML.description = vseo.DESCRIPT ? vseo.DESCRIPT : "";
     this.parsedXML.name = vseo.CLSNAME ? vseo.CLSNAME : "";
-
-    this.parsedXML.textElements = [];
-    for (const item of xmlToArray(values.TPOOL?.item)) {
-      this.parsedXML.textElements.push({key: item.KEY, entry: item.ENTRY ?? "", maxLength: parseInt(item.LENGTH, 10)});
-    }
-
-    this.parsedXML.translationTextElements = [];
-    for (const langItem of xmlToArray(values.I18N_TPOOL?.item)) {
-      const elements: ParsedTextElement[] = [];
-      for (const item of xmlToArray(langItem.TEXTPOOL?.item)) {
-        elements.push({key: item.KEY, entry: item.ENTRY ?? "", maxLength: parseInt(item.LENGTH, 10)});
-      }
-      this.parsedXML.translationTextElements.push({language: langItem.LANGUAGE, textElements: elements});
-    }
   }
 
 }

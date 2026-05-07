@@ -87,7 +87,7 @@ export class Program extends ABAPObject {
       if (t?.ID === "R") {
         description = t.ENTRY ? unescape(t.ENTRY) : "";
       } else if (t?.ID === "S" && t.KEY !== undefined) {
-        selectionTexts[t.KEY.toUpperCase()] = t.ENTRY ? unescape(t.ENTRY) : "";
+        selectionTexts[t.KEY.toUpperCase()] = {entry: t.ENTRY ? unescape(t.ENTRY) : "", maxLength: parseInt(t.LENGTH, 10)};
       }
     }
 

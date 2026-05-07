@@ -1077,3 +1077,152 @@ describe("rule, xml_consistency, CLAS text element length", () => {
   });
 
 });
+
+async function runProg(xml: string): Promise<Issue[]> {
+  const reg = new Registry().addFile(new MemoryFile("zprog.prog.xml", xml));
+  return run(reg);
+}
+
+describe("rule, xml_consistency, PROG text element length", () => {
+
+  it("no issue when all entries are within their LENGTH", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>ZPROG</NAME>
+    <SUBC>1</SUBC>
+    <FIXPT>X</FIXPT>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>Short text</ENTRY>
+     <LENGTH>50</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_PARAM</KEY>
+     <ENTRY>Parameter</ENTRY>
+     <LENGTH>20</LENGTH>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runProg(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("text symbol entry exceeds its LENGTH", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>ZPROG</NAME>
+    <SUBC>1</SUBC>
+    <FIXPT>X</FIXPT>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>This text is longer than ten chars</ENTRY>
+     <LENGTH>10</LENGTH>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runProg(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("ENTRY[001]");
+    expect(issues[0].getMessage()).to.include("10");
+  });
+
+  it("translation text entry exceeds its LENGTH", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>ZPROG</NAME>
+    <SUBC>1</SUBC>
+    <FIXPT>X</FIXPT>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>Short text</ENTRY>
+     <LENGTH>20</LENGTH>
+    </item>
+   </TPOOL>
+   <I18N_TPOOL>
+    <item>
+     <LANGUAGE>F</LANGUAGE>
+     <TEXTPOOL>
+      <item>
+       <ID>I</ID>
+       <KEY>001</KEY>
+       <ENTRY>Translated text that is way too long</ENTRY>
+       <LENGTH>20</LENGTH>
+      </item>
+     </TEXTPOOL>
+    </item>
+   </I18N_TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runProg(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("[F]");
+    expect(issues[0].getMessage()).to.include("ENTRY[001]");
+  });
+
+  it("translation text entry within LENGTH has no issues", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>ZPROG</NAME>
+    <SUBC>1</SUBC>
+    <FIXPT>X</FIXPT>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>Short text</ENTRY>
+     <LENGTH>50</LENGTH>
+    </item>
+   </TPOOL>
+   <I18N_TPOOL>
+    <item>
+     <LANGUAGE>D</LANGUAGE>
+     <TEXTPOOL>
+      <item>
+       <ID>I</ID>
+       <KEY>001</KEY>
+       <ENTRY>Kurzer Text</ENTRY>
+       <LENGTH>50</LENGTH>
+      </item>
+     </TEXTPOOL>
+    </item>
+   </I18N_TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runProg(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+});
