@@ -52,7 +52,7 @@ ENDCASE.`, cnt: 0},
   END-TEST-SEAM.
 ENDIF.`, cnt: 0},
 
-{abap: `DATA foo TYPE i.
+  {abap: `DATA foo TYPE i.
 CASE foo.
   WHEN OTHERS.
     RAISE EXCEPTION TYPE zcx_error.
