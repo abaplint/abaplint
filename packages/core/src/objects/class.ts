@@ -14,11 +14,7 @@ export enum ClassCategory {
 
 export class Class extends ABAPObject {
   private def: IClassDefinition | undefined = undefined;
-  private parsedXML: {
-    name?: string,
-    description?: string,
-    category?: string,
-  } | undefined = undefined;
+  private parsedXML: {name?: string, description?: string, category?: string} | undefined = undefined;
 
   public getType(): string {
     return "CLAS";
@@ -115,9 +111,7 @@ export class Class extends ABAPObject {
       return;
     }
 
-    const values = parsed.abapGit["asx:abap"]["asx:values"];
-
-    const vseo = values.VSEOCLASS;
+    const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOCLASS;
     if (vseo === undefined) {
       return;
     }
