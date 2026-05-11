@@ -13,7 +13,7 @@ export interface ITranslationTextElements {language: string, textElements: IText
 export abstract class ABAPObject extends AbstractObject {
   private parsed: readonly ABAPFile[];
   protected texts: {[id: string]: ITextElements} | undefined;
-  private translationTextElements: ITranslationTextElements[] | undefined;
+  private textsTranslations: ITranslationTextElements[] | undefined;
   public syntaxResult: ISyntaxResult | undefined; // do not use this outside of SyntaxLogic class, todo: refactor
   public [Symbol.for("debug.description")](){
     return `${this.constructor.name} ${this.getName()}`;
@@ -49,7 +49,7 @@ export abstract class ABAPObject extends AbstractObject {
   public setDirty(): void {
     this.syntaxResult = undefined;
     this.texts = undefined;
-    this.translationTextElements = undefined;
+    this.textsTranslations = undefined;
     this.parsed = [];
     super.setDirty();
   }
@@ -104,11 +104,11 @@ export abstract class ABAPObject extends AbstractObject {
     return result;
   }
 
-  public getTranslationTextElements(): ITranslationTextElements[] {
-    if (this.translationTextElements === undefined) {
-      this.parseTranslationTextElements();
+  public getTextElementsTranslations(): ITranslationTextElements[] {
+    if (this.textsTranslations === undefined) {
+      this.parseTextElementsTranslations();
     }
-    return this.translationTextElements!;
+    return this.textsTranslations!;
   }
 
   protected findTexts(parsed: any) {
@@ -136,8 +136,8 @@ export abstract class ABAPObject extends AbstractObject {
     }
   }
 
-  private parseTranslationTextElements(): void {
-    this.translationTextElements = [];
+  private parseTextElementsTranslations(): void {
+    this.textsTranslations = [];
 
     const values = this.parseRaw2()?.abapGit?.["asx:abap"]?.["asx:values"];
     if (values === undefined) {
@@ -152,7 +152,7 @@ export abstract class ABAPObject extends AbstractObject {
           textElements[key] = {entry: unescape(item.ENTRY), maxLength: parseInt(item.LENGTH, 10)};
         }
       }
-      this.translationTextElements.push({language: langItem.LANGUAGE, textElements});
+      this.textsTranslations.push({language: langItem.LANGUAGE, textElements});
     }
   }
 

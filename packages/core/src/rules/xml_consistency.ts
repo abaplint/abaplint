@@ -99,7 +99,7 @@ export class XMLConsistency implements IRule {
     for (const [key, el] of Object.entries(obj.getTextElements())) {
       push(this.checkTextLength(file, `ENTRY[${key}]`, el.entry, el.maxLength));
     }
-    for (const translation of obj.getTranslationTextElements()) {
+    for (const translation of obj.getTextElementsTranslations()) {
       for (const [key, el] of Object.entries(translation.textElements)) {
         push(this.checkTextLength(file, `ENTRY[${key}]`, el.entry, el.maxLength, translation.language));
       }
@@ -152,7 +152,7 @@ export class XMLConsistency implements IRule {
       if (issue) {issues.push(issue);}
     }
 
-    for (const translation of obj.getTranslationTexts() ?? []) {
+    for (const translation of obj.getTextsTranslations() ?? []) {
       const lang = translation.language;
       for (const issue of [
         this.checkTextLength(file, "DDTEXT", translation.description, 60, lang),
@@ -194,7 +194,7 @@ export class XMLConsistency implements IRule {
 
     push(this.checkTextLength(file, "TTEXT", obj.getDescription(), maxTextLength));
 
-    for (const translation of obj.getTranslationTexts() ?? []) {
+    for (const translation of obj.getTextsTranslations() ?? []) {
       push(this.checkTextLength(file, "TTEXT", translation.description, maxTextLength, translation.language));
     }
 
@@ -211,7 +211,7 @@ export class XMLConsistency implements IRule {
       push(this.checkTextLength(file, `TEXT[${msg.getNumber()}]`, msg.getMessage(), maxTextLength));
     }
 
-    for (const translation of obj.getTranslationTexts() ?? []) {
+    for (const translation of obj.getTextsTranslations() ?? []) {
       push(this.checkTextLength(file, `TEXT[${translation.number}]`, translation.text, maxTextLength, translation.language));
     }
 

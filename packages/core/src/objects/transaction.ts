@@ -6,7 +6,7 @@ export class Transaction extends AbstractObject {
     description?: string,
     programName?: string,
     cinfo?: string,
-    translationTexts?: {language: string, description?: string}[],
+    textsTranslations?: {language: string, description?: string}[],
   } | undefined;
 
   public getType(): string {
@@ -40,9 +40,9 @@ export class Transaction extends AbstractObject {
     return this.parsedXML?.description;
   }
 
-  public getTranslationTexts() {
+  public getTextsTranslations() {
     this.parse();
-    return this.parsedXML?.translationTexts;
+    return this.parsedXML?.textsTranslations;
   }
 
   public parse() {
@@ -63,9 +63,9 @@ export class Transaction extends AbstractObject {
     this.parsedXML.programName = parsed.abapGit["asx:abap"]["asx:values"].TSTC?.PGMNA;
     this.parsedXML.cinfo = parsed.abapGit["asx:abap"]["asx:values"].TSTC?.CINFO;
 
-    this.parsedXML.translationTexts = [];
+    this.parsedXML.textsTranslations = [];
     for (const item of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].I18N_TPOOL?.TSTCT)) {
-      this.parsedXML.translationTexts.push({language: item.SPRSL, description: item.TTEXT});
+      this.parsedXML.textsTranslations.push({language: item.SPRSL, description: item.TTEXT});
     }
 
     const end = Date.now();

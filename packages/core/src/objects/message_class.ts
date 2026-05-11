@@ -6,7 +6,7 @@ export type parsedMessageClass = {
   topName: string | undefined,
   description: string | undefined,
   parsedMessages: Message[] | undefined,
-  translationTexts: {language: string, number: string, text?: string}[] | undefined,
+  textsTranslations: {language: string, number: string, text?: string}[] | undefined,
 };
 
 export class MessageClass extends AbstractObject {
@@ -33,9 +33,9 @@ export class MessageClass extends AbstractObject {
     return this.xml;
   }
 
-  public getTranslationTexts() {
+  public getTextsTranslations() {
     this.parseXML();
-    return this.xml?.translationTexts;
+    return this.xml?.textsTranslations;
   }
 
   public setDirty(): void {
@@ -71,7 +71,7 @@ export class MessageClass extends AbstractObject {
       topName: undefined,
       description: undefined,
       parsedMessages: [],
-      translationTexts: [],
+      textsTranslations: [],
     };
 
     const parsed = super.parseRaw2();
@@ -95,7 +95,7 @@ export class MessageClass extends AbstractObject {
       return;
     }
     for (const item of xmlToArray(t100_texts?.item)) {
-      this.xml.translationTexts!.push({language: item.SPRSL, number: item.MSGNR, text: unescape(item.TEXT)});
+      this.xml.textsTranslations!.push({language: item.SPRSL, number: item.MSGNR, text: unescape(item.TEXT)});
     }
   }
 

@@ -25,7 +25,7 @@ export class DataElement extends AbstractObject {
       long?: string,
       heading?: string,
     }
-    translationTexts?: {
+    textsTranslations?: {
       language: string,
       description?: string,
       short?: string,
@@ -73,9 +73,9 @@ export class DataElement extends AbstractObject {
     return this.parsedXML?.textMaxLengths;
   }
 
-  public getTranslationTexts() {
+  public getTextsTranslations() {
     this.parse();
-    return this.parsedXML?.translationTexts;
+    return this.parsedXML?.textsTranslations;
   }
 
   public parseType(reg: IRegistry): AbstractType {
@@ -169,9 +169,9 @@ export class DataElement extends AbstractObject {
       },
     };
 
-    this.parsedXML.translationTexts = [];
+    this.parsedXML.textsTranslations = [];
     for (const item of xmlToArray(parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD04_TEXTS?.item)) {
-      this.parsedXML.translationTexts.push({
+      this.parsedXML.textsTranslations.push({
         language: item.DDLANGUAGE,
         description: item.DDTEXT,
         short: item.SCRTEXT_S,
