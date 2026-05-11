@@ -19,7 +19,11 @@ export class XMLConsistency implements IRule {
     return {
       key: "xml_consistency",
       title: "XML consistency",
-      shortDescription: `Checks the consistency of main XML files, eg. naming for CLAS and INTF objects`,
+      shortDescription: `Checks the consistency of main XML files`,
+      extendedInformation: `Checks:
+* XML is well-formed and parseable
+* Naming for CLAS and INTF objects
+* Texts and translations do not exceed maximum allowed length.`,
       tags: [RuleTag.Naming, RuleTag.Syntax],
     };
   }
