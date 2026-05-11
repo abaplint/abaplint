@@ -1226,3 +1226,198 @@ describe("rule, xml_consistency, PROG text element length", () => {
   });
 
 });
+
+async function runDoma(xml: string): Promise<Issue[]> {
+  const reg = new Registry().addFile(new MemoryFile("zdoma.doma.xml", xml));
+  return run(reg);
+}
+
+describe("rule, xml_consistency, DOMA text lengths", () => {
+
+  it("no issues when all texts are within 60 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZDOMA</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <DDTEXT>Short description</DDTEXT>
+   </DD01V>
+   <DD07V_TAB>
+    <DD07V>
+     <VALPOS>0001</VALPOS>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DDTEXT>Not Checked</DDTEXT>
+    </DD07V>
+   </DD07V_TAB>
+   <DD07_TEXTS>
+    <item>
+     <VALPOS>0001</VALPOS>
+     <DDLANGUAGE>D</DDLANGUAGE>
+     <DDTEXT>Nicht geprüft</DDTEXT>
+    </item>
+   </DD07_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDoma(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("DD01V DDTEXT exceeds 60 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZDOMA</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <DDTEXT>This description is way too long and definitely exceeds sixty characters total</DDTEXT>
+   </DD01V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDoma(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("DDTEXT");
+  });
+
+  it("DD01V DDTEXT exactly 60 characters is ok", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZDOMA</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <DDTEXT>123456789012345678901234567890123456789012345678901234567890</DDTEXT>
+   </DD01V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDoma(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("DD07V fixed value DDTEXT exceeds 60 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZDOMA</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <DDTEXT>Short description</DDTEXT>
+   </DD01V>
+   <DD07V_TAB>
+    <DD07V>
+     <VALPOS>0001</VALPOS>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DDTEXT>This fixed value description is way too long and exceeds the sixty character limit</DDTEXT>
+    </DD07V>
+   </DD07V_TAB>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDoma(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("DDTEXT");
+  });
+
+  it("DD07_TEXTS translation DDTEXT exceeds 60 characters", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZDOMA</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <DDTEXT>Short description</DDTEXT>
+   </DD01V>
+   <DD07V_TAB>
+    <DD07V>
+     <VALPOS>0001</VALPOS>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DDTEXT>Not Checked</DDTEXT>
+    </DD07V>
+   </DD07V_TAB>
+   <DD07_TEXTS>
+    <item>
+     <VALPOS>0001</VALPOS>
+     <DDLANGUAGE>F</DDLANGUAGE>
+     <DDTEXT>Ce texte de traduction est beaucoup trop long et dépasse la limite de soixante caractères</DDTEXT>
+    </item>
+   </DD07_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDoma(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("[F]");
+    expect(issues[0].getMessage()).to.include("DDTEXT");
+  });
+
+  it("multiple violations across DD01V, DD07V_TAB and DD07_TEXTS", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZDOMA</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <DDTEXT>This description is way too long and definitely exceeds sixty characters total</DDTEXT>
+   </DD01V>
+   <DD07V_TAB>
+    <DD07V>
+     <VALPOS>0001</VALPOS>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DDTEXT>This fixed value description is way too long and exceeds the sixty character limit</DDTEXT>
+    </DD07V>
+   </DD07V_TAB>
+   <DD07_TEXTS>
+    <item>
+     <VALPOS>0001</VALPOS>
+     <DDLANGUAGE>D</DDLANGUAGE>
+     <DDTEXT>Dieser Übersetzungstext ist viel zu lang und überschreitet das Limit von sechzig Zeichen</DDTEXT>
+    </item>
+   </DD07_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDoma(xml);
+    expect(issues.length).to.equal(3);
+  });
+
+  it("no issues when no fixed values or translations present", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZDOMA</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+    <DDTEXT>Short description</DDTEXT>
+   </DD01V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDoma(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+});

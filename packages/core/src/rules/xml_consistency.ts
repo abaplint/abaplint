@@ -63,6 +63,8 @@ export class XMLConsistency implements IRule {
       issues.push(...this.runInterface(obj, file));
     } else if (obj instanceof Objects.DataElement) {
       issues.push(...this.runDataElement(obj, file));
+    } else if (obj instanceof Objects.Domain) {
+      issues.push(...this.runDomain(obj, file));
     } else if (obj instanceof Objects.Transaction) {
       issues.push(...this.runTransaction(obj, file));
     } else if (obj instanceof Objects.MessageClass) {
@@ -161,6 +163,24 @@ export class XMLConsistency implements IRule {
       ]) {
         if (issue) {issues.push(issue);}
       }
+    }
+
+    return issues;
+  }
+
+  private runDomain(obj: Objects.Domain, file: IFile): Issue[] {
+    const maxTextLength = 60;
+    const issues: Issue[] = [];
+
+    const push = (issue: Issue | undefined) => { if (issue) { issues.push(issue); } };
+
+    push(this.checkTextLength(file, "DDTEXT", obj.getDescription(), maxTextLength));
+
+    for (const fixedValue of obj.getFixedValues() ?? []) {
+      push(this.checkTextLength(file, "DDTEXT", fixedValue.description, maxTextLength, fixedValue.language));
+    }
+    for (const translationFixedValue of obj.getFixedValuesTranslations() ?? []) {
+      push(this.checkTextLength(file, "DDTEXT", translationFixedValue.description, maxTextLength, translationFixedValue.language));
     }
 
     return issues;
