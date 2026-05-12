@@ -12595,6 +12595,22 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("already defined");
   });
 
+  it("identical EVENTS name in interface", () => {
+    const abap = `
+INTERFACE zif_foobar PUBLIC.
+  EVENTS button_click
+    EXPORTING
+      VALUE(es_col_id) TYPE lvc_s_col OPTIONAL
+      VALUE(es_row_no) TYPE lvc_s_roid OPTIONAL.
+  EVENTS button_click
+    EXPORTING
+      VALUE(es_col_id) TYPE lvc_s_col OPTIONAL
+      VALUE(es_row_no) TYPE lvc_s_roid OPTIONAL.
+ENDINTERFACE.`;
+    const issues = runInterface(abap);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
   it("Move is not compatible, its calculated", () => {
     const abap = `
 DATA lv_bits TYPE i.
