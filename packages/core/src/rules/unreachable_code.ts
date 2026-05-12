@@ -46,9 +46,6 @@ export class UnreachableCode extends ABAPRule {
           || node.get() instanceof MacroContent
           || node.get() instanceof Empty) {
         continue;
-      } else if (this.isExit(node)) {
-        exit = true;
-        continue;
       } else if (this.isStructure(node.get())) {
         exit = false;
         continue;
@@ -57,6 +54,10 @@ export class UnreachableCode extends ABAPRule {
         const issue = Issue.atStatement(file, node, this.getMessage(), this.getMetadata().key, this.conf.severity);
         output.push(issue);
         exit = false;
+        continue;
+      } else if (this.isExit(node)) {
+        exit = true;
+        continue;
       }
     }
 
