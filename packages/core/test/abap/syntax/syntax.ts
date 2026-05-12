@@ -9785,6 +9785,31 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("already declared");
   });
 
+  it("Method redefinition visibility cannot be changed", () => {
+    const abap = `CLASS sup DEFINITION.
+  PROTECTED SECTION.
+    METHODS bar.
+ENDCLASS.
+
+CLASS sup IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_test DEFINITION INHERITING FROM sup.
+  PUBLIC SECTION.
+    METHODS bar REDEFINITION.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("visibility cannot be changed");
+  });
+
   it("ok, REDUCE, INIT 2nd", () => {
     const abap = `
 TYPES string_table TYPE STANDARD TABLE OF string WITH DEFAULT KEY.

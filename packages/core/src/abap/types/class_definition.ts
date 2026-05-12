@@ -179,6 +179,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private checkMethodsFromSuperClasses(scope: CurrentScope) {
     let sup = this.getSuperClass();
     const names: Set<string> = new Set();
+    const methods: Map<string, Visibility> = new Map();
 
     while (sup !== undefined) {
       const cdef = scope.findClassDefinition(sup);
@@ -192,6 +193,9 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
           continue;
         }
         names.add(name);
+        if (methods.has(name) === false) {
+          methods.set(name, m.getVisibility());
+        }
       }
       for (const a of cdef?.getAliases() || []) {
         names.add(a.getName().toUpperCase());
@@ -203,6 +207,12 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       if (names.has(m.getName().toUpperCase())
           && m.isRedefinition() === false) {
         throw new Error(`${m.getName().toUpperCase()} already declared in superclass`);
+      }
+      const superVisibility = methods.get(m.getName().toUpperCase());
+      if (m.isRedefinition() === true
+          && superVisibility !== undefined
+          && m.getVisibility() !== superVisibility) {
+        throw new Error(`${m.getName().toUpperCase()} redefinition visibility cannot be changed`);
       }
     }
   }
