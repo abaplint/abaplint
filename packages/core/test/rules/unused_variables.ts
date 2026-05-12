@@ -209,6 +209,43 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("CALL FUNCTION DESTINATION variable", async () => {
+    const abap = `
+    DATA rfc_dest TYPE string.
+    CALL FUNCTION 'RFC_FUNCTION' DESTINATION rfc_dest.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CALL FUNCTION DESTINATION with params", async () => {
+    const abap = `
+    DATA rfc_dest TYPE string.
+    DATA jobname TYPE string.
+    DATA result TYPE string.
+    CALL FUNCTION 'ZFOO' DESTINATION rfc_dest
+      EXPORTING
+        jobname = jobname
+      IMPORTING
+        result = result
+      EXCEPTIONS
+        communication_failure = 1
+        system_failure = 2
+        OTHERS = 3.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("FETCH NEXT CURSOR PACKAGE SIZE", async () => {
+    const abap = `
+    DATA lt_table TYPE STANDARD TABLE OF voided.
+    DATA lv_cursor TYPE cursor.
+    DATA lv_size TYPE i.
+    OPEN CURSOR WITH HOLD lv_cursor FOR SELECT * FROM voided.
+    FETCH NEXT CURSOR lv_cursor INTO TABLE lt_table PACKAGE SIZE lv_size.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("DATA with dashes", async () => {
     const abap = `DATA dummy-name TYPE i.`;
     const issues = await runSingle(abap);

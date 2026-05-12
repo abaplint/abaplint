@@ -33,6 +33,13 @@ export class CallFunction implements StatementSyntax {
       Source.runSyntax(s, input);
     }
 
+    const dest = node.findDirectExpression(Expressions.Destination);
+    if (dest) {
+      for (const s of dest.findAllExpressions(Expressions.Source)) {
+        Source.runSyntax(s, input);
+      }
+    }
+
     const fp = node.findDirectExpression(Expressions.FunctionParameters);
     if (fp) {
       FunctionParameters.runSyntax(fp, input);

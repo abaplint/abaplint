@@ -1,6 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {Target} from "../expressions/target";
+import {SQLSource} from "../expressions/sql_source";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput} from "../_syntax_input";
 
@@ -9,6 +10,10 @@ export class FetchNextCursor implements StatementSyntax {
 
     for (const t of node.findAllExpressions(Expressions.Target)) {
       Target.runSyntax(t, input);
+    }
+
+    for (const s of node.findAllExpressions(Expressions.SQLSourceSimple)) {
+      SQLSource.runSyntax(s, input);
     }
 
   }
