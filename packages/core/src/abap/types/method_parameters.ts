@@ -47,9 +47,12 @@ export class MethodParameters implements IMethodParameters {
     // need the scope for LIKE typing inside method parameters
     const parentName = input.scope.getName();
     input.scope.push(ScopeType.MethodDefinition, "method definition", node.getStart(), input.filename);
-    this.parse(node, input, parentName, abstractMethod);
-    this.checkDuplicateNames();
-    input.scope.pop(node.getEnd());
+    try {
+      this.parse(node, input, parentName, abstractMethod);
+      this.checkDuplicateNames();
+    } finally {
+      input.scope.pop(node.getEnd());
+    }
   }
 
   public getFilename(): string {
