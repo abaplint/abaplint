@@ -12611,6 +12611,19 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.include("already defined");
   });
 
+  it("identical method parameter name in interface", () => {
+    const abap = `
+INTERFACE lif.
+  METHODS get_header_field
+    IMPORTING
+      VALUE(rv_value) TYPE string
+    RETURNING
+      VALUE(rv_value) TYPE string.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
   it("Move is not compatible, its calculated", () => {
     const abap = `
 DATA lv_bits TYPE i.

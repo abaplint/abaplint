@@ -48,6 +48,7 @@ export class MethodParameters implements IMethodParameters {
     const parentName = input.scope.getName();
     input.scope.push(ScopeType.MethodDefinition, "method definition", node.getStart(), input.filename);
     this.parse(node, input, parentName, abstractMethod);
+    this.checkDuplicateNames();
     input.scope.pop(node.getEnd());
   }
 
@@ -202,6 +203,17 @@ export class MethodParameters implements IMethodParameters {
     }
 
     this.workaroundRAP(node, input, parentName);
+  }
+
+  private checkDuplicateNames(): void {
+    const names = new Set<string>();
+    for (const parameter of this.getAll()) {
+      const name = parameter.getName().toUpperCase();
+      if (names.has(name)) {
+        throw new Error(`Method parameter "${name}" already defined`);
+      }
+      names.add(name);
+    }
   }
 
   private workaroundRAP(node: StatementNode, input: SyntaxInput, parentName: string): void {
