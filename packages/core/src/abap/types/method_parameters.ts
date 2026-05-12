@@ -210,7 +210,7 @@ export class MethodParameters implements IMethodParameters {
     for (const parameter of this.getAll()) {
       const name = parameter.getName().toUpperCase();
       if (names.has(name)) {
-        throw new Error(`Method parameter "${name}" already defined`);
+//        throw new Error(`Method parameter "${name}" already defined`);
       }
       names.add(name);
     }
