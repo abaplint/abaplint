@@ -313,6 +313,14 @@ CALLING mr_th_manager->receive_result ON END OF TASK.`,
         inconsistent_parameters = 1
         upload_ole              = 2
                                   OTHERS.`,
+
+  `CALL FUNCTION 'DDIF_FIELDINFO_GET'
+       EXPORTING
+            tabname   = 'ZMM_CONGELATO'
+       EXCEPTIONS
+            not_found = 1
+            if
+            SY-SUBRC  = 0.`,
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

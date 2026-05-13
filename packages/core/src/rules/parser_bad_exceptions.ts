@@ -42,6 +42,19 @@ export class ParserBadExceptions extends ABAPRule {
       if (!(statement.get() instanceof Statements.CallFunction)) {
         continue;
       }
+
+      const exceptionTokens = this.findExceptionTokens(statement);
+      if (exceptionTokens !== undefined
+          && statement.findAllExpressions(Expressions.ParameterException)
+            .some(e => e.findDirectTokenByText("=") === undefined
+              && e.getFirstToken().getStr().toUpperCase() === "IF")) {
+        const message = "Bad EXCEPTIONS syntax in CALL FUNCTION";
+        for (const token of exceptionTokens) {
+          issues.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
+        }
+        continue;
+      }
+
       for (const e of statement.findAllExpressions(Expressions.ParameterException)) {
         if (e.findDirectTokenByText("=") === undefined) {
           const message = "Bad EXCEPTIONS syntax in CALL FUNCTION";
@@ -51,6 +64,15 @@ export class ParserBadExceptions extends ABAPRule {
     }
 
     return issues;
+  }
+
+  private findExceptionTokens(statement: ReturnType<ABAPFile["getStatements"]>[number]) {
+    const tokens = statement.getTokens();
+    const index = tokens.findIndex(t => t.getStr().toUpperCase() === "EXCEPTIONS");
+    if (index === -1) {
+      return undefined;
+    }
+    return tokens.slice(index).filter(t => t.getStr() !== ".");
   }
 
 }
