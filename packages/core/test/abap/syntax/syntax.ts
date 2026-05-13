@@ -12122,7 +12122,7 @@ _foo.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("Macro, sy-repid, another", () => {
+  it("Macro, sy-repid, another", () => {
     const abap = `
 DEFINE _foo.
 WRITE / sy-repid(1).
