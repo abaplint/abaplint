@@ -12122,6 +12122,17 @@ _foo.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("Macro, sy-repid, another", () => {
+    const abap = `
+DEFINE _foo.
+WRITE / sy-repid(1).
+END-OF-DEFINITION.
+
+_foo.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("Move, not compatible", () => {
     const abap = `
 TYPES: BEGIN OF ty_branch,
