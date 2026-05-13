@@ -5,6 +5,7 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {ExpressionNode} from "../abap/nodes/expression_node";
 
 // todo: this rule needs refactoring
 
@@ -20,10 +21,6 @@ export class ParserBadExceptions extends ABAPRule {
       title: "Parser Error, bad EXCEPTIONS in CALL FUNCTION",
       shortDescription: `Checks for syntax not recognized by abaplint, related to EXCEPTIONS in CALL FUNCTION.`,
       tags: [RuleTag.Syntax, RuleTag.SingleFile],
-      /*
-      badExample: `IF ( foo = 'bar').`,
-      goodExample: `IF ( foo = 'bar' ).`,
-      */
     };
   }
 
@@ -45,9 +42,7 @@ export class ParserBadExceptions extends ABAPRule {
 
       const exceptionTokens = this.findExceptionTokens(statement);
       if (exceptionTokens !== undefined
-          && statement.findAllExpressions(Expressions.ParameterException)
-            .some(e => e.findDirectTokenByText("=") === undefined
-              && e.getFirstToken().getStr().toUpperCase() === "IF")) {
+          && this.containsMixedExceptionSyntax(statement.findAllExpressions(Expressions.ParameterException))) {
         const message = "Bad EXCEPTIONS syntax in CALL FUNCTION";
         for (const token of exceptionTokens) {
           issues.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
@@ -64,6 +59,11 @@ export class ParserBadExceptions extends ABAPRule {
     }
 
     return issues;
+  }
+
+  private containsMixedExceptionSyntax(exceptions: readonly ExpressionNode[]) {
+    return exceptions.some(e => e.findDirectTokenByText("=") === undefined)
+      && exceptions.some(e => e.findDirectTokenByText("=") !== undefined);
   }
 
   private findExceptionTokens(statement: ReturnType<ABAPFile["getStatements"]>[number]) {
