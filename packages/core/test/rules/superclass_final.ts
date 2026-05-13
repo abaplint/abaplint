@@ -113,7 +113,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("superclass final, superclass in different program include", async () => {
+  it("superclass final, superclass in different program include", async () => {
     const main = `INCLUDE zbase.
 INCLUDE zchild.`;
     const base = `CLASS lcl_base DEFINITION.
