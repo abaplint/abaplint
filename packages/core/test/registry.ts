@@ -305,6 +305,28 @@ describe("Registry, object types", () => {
     expect(() => registry.addFile(file2)).to.throw("Duplicate filename");
   });
 
+  it("throws for duplicate filenames in dependencies if configured", async () => {
+    const config = Config.getDefault();
+    config.getGlobal().errorOnDuplicateFilenames = true;
+
+    const file1 = new MemoryFile("/deps1/zcl_class.clas.abap", "deps1");
+    const file2 = new MemoryFile("/deps2/zcl_class.clas.abap", "deps2");
+    const registry = new Registry(config).addDependency(file1);
+
+    expect(() => registry.addDependency(file2)).to.throw("Duplicate filename");
+  });
+
+  it("throws for duplicate dependency and normal filenames if configured", async () => {
+    const config = Config.getDefault();
+    config.getGlobal().errorOnDuplicateFilenames = true;
+
+    const file1 = new MemoryFile("/deps/zcl_class.clas.abap", "deps");
+    const file2 = new MemoryFile("/real/zcl_class.clas.abap", "real");
+    const registry = new Registry(config).addDependency(file1);
+
+    expect(() => registry.addFile(file2)).to.throw("Duplicate filename");
+  });
+
   it("ignores package.devc.xml when checking duplicate filenames", async () => {
     const config = Config.getDefault();
     config.getGlobal().errorOnDuplicateFilenames = true;

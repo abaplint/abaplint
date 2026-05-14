@@ -238,14 +238,15 @@ export class Registry implements IRegistry {
       }
       let found = this.findOrCreate(f.getObjectName(), f.getObjectType());
 
+      if (this.conf.getGlobal().errorOnDuplicateFilenames === true) {
+        this.checkDuplicateFilename(filename, found.getFiles());
+      }
+
       if (dependency === false && found && this.isDependency(found)) {
         this.removeDependency(found);
         found = this.findOrCreate(f.getObjectName(), f.getObjectType());
       }
 
-      if (this.conf.getGlobal().errorOnDuplicateFilenames === true) {
-        this.checkDuplicateFilename(filename, found.getFiles());
-      }
       found.addFile(f);
     }
     return this;
