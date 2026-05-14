@@ -278,6 +278,13 @@ export class TypeUtils {
       return true;
     }
 
+    if (node.getChildren().length >= 3) {
+      const second = node.getChildren()[1];
+      if (second.getFirstToken().getStr() === "&&") {
+        return true;
+      }
+    }
+
     const calculated = node.findFirstExpression(Expressions.MethodCallChain) !== undefined
       || node.findFirstExpression(Expressions.StringTemplate) !== undefined
       || node.findFirstExpression(Expressions.ArithOperator) !== undefined;
