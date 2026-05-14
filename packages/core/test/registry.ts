@@ -286,6 +286,36 @@ describe("Registry, object types", () => {
     expect(registry.isDependency(registry.getFirstObject()!)).to.equal(false);
   });
 
+  it("allows duplicate filenames by default", async () => {
+    const file1 = new MemoryFile("/deps/zcl_class.clas.abap", "deps");
+    const file2 = new MemoryFile("/real/zcl_class.clas.abap", "real");
+    const registry = new Registry().addFile(file1).addFile(file2);
+
+    expect(registry.getObjectCount().normal).to.equal(1);
+  });
+
+  it("throws for duplicate filenames if configured", async () => {
+    const config = Config.getDefault();
+    config.getGlobal().errorOnDuplicateFilenames = true;
+
+    const file1 = new MemoryFile("/deps/zcl_class.clas.abap", "deps");
+    const file2 = new MemoryFile("/real/zcl_class.clas.abap", "real");
+    const registry = new Registry(config).addFile(file1);
+
+    expect(() => registry.addFile(file2)).to.throw("Duplicate filename");
+  });
+
+  it("ignores package.devc.xml when checking duplicate filenames", async () => {
+    const config = Config.getDefault();
+    config.getGlobal().errorOnDuplicateFilenames = true;
+
+    const file1 = new MemoryFile("/deps/package.devc.xml", "deps");
+    const file2 = new MemoryFile("/real/package.devc.xml", "real");
+    const registry = new Registry(config).addFile(file1).addFile(file2);
+
+    expect(registry.getObjectCount().normal).to.equal(1);
+  });
+
 });
 
 
