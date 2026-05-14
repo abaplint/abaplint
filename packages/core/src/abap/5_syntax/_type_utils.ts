@@ -6,7 +6,7 @@ import {AbstractType} from "../types/basic/_abstract_type";
 import {CGenericType} from "../types/basic/cgeneric_type";
 import {CurrentScope} from "./_current_scope";
 import * as Expressions from "../2_statements/expressions";
-import {ExpressionNode} from "../nodes";
+import {ExpressionNode, TokenNodeRegex} from "../nodes";
 
 // todo: refactor to static? for performance
 export class TypeUtils {
@@ -271,6 +271,13 @@ export class TypeUtils {
       return false;
     }
     */
+
+    if (node.getChildren().length === 4
+        && node.getFirstChild() instanceof TokenNodeRegex
+        && node.getFirstChild()?.concatTokens().toUpperCase() === "BOOLC") {
+      return true;
+    }
+
     const calculated = node.findFirstExpression(Expressions.MethodCallChain) !== undefined
       || node.findFirstExpression(Expressions.StringTemplate) !== undefined
       || node.findFirstExpression(Expressions.ArithOperator) !== undefined;
