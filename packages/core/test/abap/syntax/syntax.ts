@@ -13045,6 +13045,23 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("Method string into char", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE c LENGTH 4.
+    METHODS update IMPORTING foo TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD update.
+    DATA str TYPE string.
+    update( str ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
   it("ok another more, split", () => {
     const abap = `
 CLASS lcl DEFINITION.
