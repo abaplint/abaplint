@@ -288,6 +288,28 @@ CALL FUNCTION 'RFC_FUNCTION' DESTINATION rfc_dest.
     expect(issues.length).to.equal(0);
   });
 
+  it("database cursor with package size", async () => {
+    const abap = `
+CONSTANTS package_size TYPE i VALUE 5000.
+
+DATA documents TYPE STANDARD TABLE OF bkpf WITH KEY bukrs belnr gjahr.
+DATA db_cursor TYPE cursor.
+
+START-OF-SELECTION.
+
+  OPEN CURSOR WITH HOLD db_cursor FOR
+      SELECT * FROM bkpf.
+
+  DO.
+    FETCH NEXT CURSOR cursor
+        INTO TABLE documents
+        PACKAGE SIZE package_size.
+  ENDDO.
+  `;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("INCLUDE, two unused in the include", async () => {
     const abap1 = `INCLUDE zabapgit_forms.`;
     const abap2 = `
