@@ -4,6 +4,7 @@ import {Expression, ver, seq, tok, altPrio, optPrio, regex as reg} from "../comb
 import {IStatementRunnable} from "../statement_runnable";
 import {Integer} from "./integer";
 import {SQLFunctionInput} from "./sql_function_input";
+import {SQLCase} from "./sql_case";
 
 export class SQLFunction extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -23,7 +24,8 @@ export class SQLFunction extends Expression {
     // note: the function names are not keywords, they are usually in lower case
     const abs = ver(Version.v740sp05, seq(reg(/^abs$/i), tok(ParenLeftW), SQLFunctionInput, tok(WParenRightW)));
     // yea, 750 is correct, but it also works technically in version v740sp05
-    const cast = ver(Version.v750, seq(reg(/^cast$/i), tok(ParenLeftW), SQLFunctionInput, "AS", castTypes, tok(WParenRightW)));
+    const castInput = altPrio(SQLCase, SQLFunctionInput);
+    const cast = ver(Version.v750, seq(reg(/^cast$/i), tok(ParenLeftW), castInput, "AS", castTypes, tok(WParenRightW)));
     const ceil = ver(Version.v740sp05, seq(reg(/^ceil$/i), tok(ParenLeftW), SQLFunctionInput, tok(WParenRightW)));
     const coalesce = ver(Version.v740sp05, seq(reg(/^coalesce$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, optPrio(commaParam), tok(WParenRightW)));
     const concat = ver(Version.v750, seq(reg(/^concat$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
