@@ -29,8 +29,8 @@ export class FieldChain {
         && node.findDirectExpression(Expressions.ComponentName)) {
       // workaround for names with dashes, eg. "sy-repid"
       const concat = node.concatTokens().replace(/ /g, "");
-      const offset = node.findDirectExpression(Expressions.FieldOffset)?.concatTokens() || "";
-      const length = node.findDirectExpression(Expressions.FieldLength)?.concatTokens() || "";
+      const offset = node.findDirectExpression(Expressions.FieldOffset)?.concatTokens().replace(/ /g, "") || "";
+      const length = node.findDirectExpression(Expressions.FieldLength)?.concatTokens().replace(/ /g, "") || "";
       const found = input.scope.findVariable(concat.replace(offset, "").replace(length, ""));
       if (found) {
         if (refType) {

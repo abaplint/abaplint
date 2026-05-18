@@ -113,4 +113,22 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("superclass final, superclass in different program include", async () => {
+    const main = `INCLUDE zbase.
+INCLUDE zchild.`;
+    const base = `CLASS lcl_base DEFINITION.
+ENDCLASS.`;
+    const child = `CLASS lcl_child DEFINITION INHERITING FROM lcl_base.
+ENDCLASS.
+CLASS lcl_child IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zmain.prog.abap", contents: main},
+      {filename: "zbase.prog.abap", contents: base},
+      {filename: "zbase.prog.xml", contents: `<SUBC>I</SUBC>`},
+      {filename: "zchild.prog.abap", contents: child},
+      {filename: "zchild.prog.xml", contents: `<SUBC>I</SUBC>`}]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

@@ -5,6 +5,7 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {ExpressionNode} from "../abap/nodes/expression_node";
 
 // todo: this rule needs refactoring
 
@@ -20,10 +21,6 @@ export class ParserBadExceptions extends ABAPRule {
       title: "Parser Error, bad EXCEPTIONS in CALL FUNCTION",
       shortDescription: `Checks for syntax not recognized by abaplint, related to EXCEPTIONS in CALL FUNCTION.`,
       tags: [RuleTag.Syntax, RuleTag.SingleFile],
-      /*
-      badExample: `IF ( foo = 'bar').`,
-      goodExample: `IF ( foo = 'bar' ).`,
-      */
     };
   }
 
@@ -42,6 +39,17 @@ export class ParserBadExceptions extends ABAPRule {
       if (!(statement.get() instanceof Statements.CallFunction)) {
         continue;
       }
+
+      const exceptionTokens = this.findExceptionTokens(statement);
+      if (exceptionTokens !== undefined
+          && this.containsMixedExceptionSyntax(statement.findAllExpressions(Expressions.ParameterException))) {
+        const message = "Bad EXCEPTIONS syntax in CALL FUNCTION";
+        for (const token of exceptionTokens) {
+          issues.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
+        }
+        continue;
+      }
+
       for (const e of statement.findAllExpressions(Expressions.ParameterException)) {
         if (e.findDirectTokenByText("=") === undefined) {
           const message = "Bad EXCEPTIONS syntax in CALL FUNCTION";
@@ -51,6 +59,20 @@ export class ParserBadExceptions extends ABAPRule {
     }
 
     return issues;
+  }
+
+  private containsMixedExceptionSyntax(exceptions: readonly ExpressionNode[]) {
+    return exceptions.some(e => e.findDirectTokenByText("=") === undefined)
+      && exceptions.some(e => e.findDirectTokenByText("=") !== undefined);
+  }
+
+  private findExceptionTokens(statement: ReturnType<ABAPFile["getStatements"]>[number]) {
+    const tokens = statement.getTokens();
+    const index = tokens.findIndex(t => t.getStr().toUpperCase() === "EXCEPTIONS");
+    if (index === -1) {
+      return undefined;
+    }
+    return tokens.slice(index).filter(t => t.getStr() !== ".");
   }
 
 }

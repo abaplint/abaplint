@@ -39,6 +39,7 @@ export class Config implements IConfiguration {
         skipGeneratedProxyInterfaces: false,
         useApackDependencies: false,
         skipIncludesWithoutMain: false,
+        errorOnDuplicateFilenames: false,
       },
       dependencies: [{
         url: "https://github.com/abaplint/deps",
@@ -103,6 +104,9 @@ export class Config implements IConfiguration {
     }
     if (this.config.global.skipIncludesWithoutMain === undefined) {
       this.config.global.skipIncludesWithoutMain = false;
+    }
+    if (this.config.global.errorOnDuplicateFilenames === undefined) {
+      this.config.global.errorOnDuplicateFilenames = false;
     }
     this.checkVersion();
   }

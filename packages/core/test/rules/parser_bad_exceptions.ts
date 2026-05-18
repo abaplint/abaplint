@@ -44,6 +44,17 @@ CALL FUNCTION 'BDC_OPEN_GROUP'
     expect(issues.length).to.equal(10);
   });
 
+  it("another issue", async () => {
+    const issues = await findIssues(`CALL FUNCTION 'DDIF_FIELDINFO_GET'
+       EXPORTING
+            tabname   = 'ZMM_CONGELATO'
+       EXCEPTIONS
+            not_found = 1
+            if
+            SY-SUBRC  = 0.`);
+    expect(issues.length).to.equal(10);
+  });
+
   it("ok", async () => {
     const issues = await findIssues(
       "CALL FUNCTION 'GUI_UPLOAD'\n" +

@@ -6,7 +6,6 @@ import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import {Attributes} from "./class_attributes";
 import {Identifier} from "../4_file_information/_identifier";
-import {CurrentScope} from "../5_syntax/_current_scope";
 import {IClassDefinition} from "./_class_definition";
 import {TypeDefinitions} from "./type_definitions";
 import {ScopeType} from "../5_syntax/_scope_type";
@@ -70,7 +69,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     for (const e of events) {
       const eventName = e.findDirectExpression(Expressions.EventName)?.concatTokens().toUpperCase();
       if (this.events.find(ev => ev.getName().toUpperCase() === eventName) !== undefined) {
-        throw new Error("Event " + eventName + " already defined");
+        input.issues.push(syntaxIssue(input, e.getFirstToken(), "Event " + eventName + " already defined"));
+        continue;
       }
       this.events.push(new EventDefinition(e, Visibility.Public, input)); // todo, all these are not Public
     }
@@ -93,8 +93,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
 
     // perform checks after everything has been initialized
-    this.checkMethodsFromSuperClasses(input.scope);
-    this.checkMethodNameLength();
+    this.checkMethodsFromSuperClasses(input);
+    this.checkMethodNameLength(input);
   }
 
   public getFriends() {
@@ -167,18 +167,20 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     return name;
   }
 
-  private checkMethodNameLength() {
+  private checkMethodNameLength(input: SyntaxInput) {
     for (const m of this.methodDefs.getAll()) {
       if (m.getName().length > 30 && m.getName().includes("~") === false) {
         const message = `Method name "${m.getName()}" is too long, maximum length is 30 characters`;
-        throw new Error(message);
+        input.issues.push(syntaxIssue(input, m.getToken(), message));
       }
     }
   }
 
-  private checkMethodsFromSuperClasses(scope: CurrentScope) {
+  private checkMethodsFromSuperClasses(input: SyntaxInput) {
+    const scope = input.scope;
     let sup = this.getSuperClass();
     const names: Set<string> = new Set();
+    const methods: Map<string, Visibility> = new Map();
 
     while (sup !== undefined) {
       const cdef = scope.findClassDefinition(sup);
@@ -192,6 +194,9 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
           continue;
         }
         names.add(name);
+        if (methods.has(name) === false) {
+          methods.set(name, m.getVisibility());
+        }
       }
       for (const a of cdef?.getAliases() || []) {
         names.add(a.getName().toUpperCase());
@@ -202,7 +207,13 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     for (const m of this.getMethodDefinitions().getAll()) {
       if (names.has(m.getName().toUpperCase())
           && m.isRedefinition() === false) {
-        throw new Error(`${m.getName().toUpperCase()} already declared in superclass`);
+        input.issues.push(syntaxIssue(input, m.getToken(), `${m.getName().toUpperCase()} already declared in superclass`));
+      }
+      const superVisibility = methods.get(m.getName().toUpperCase());
+      if (m.isRedefinition() === true
+          && superVisibility !== undefined
+          && m.getVisibility() !== superVisibility) {
+        input.issues.push(syntaxIssue(input, m.getToken(), `${m.getName().toUpperCase()} redefinition visibility cannot be changed`));
       }
     }
   }

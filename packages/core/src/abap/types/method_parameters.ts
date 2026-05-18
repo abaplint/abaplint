@@ -47,8 +47,12 @@ export class MethodParameters implements IMethodParameters {
     // need the scope for LIKE typing inside method parameters
     const parentName = input.scope.getName();
     input.scope.push(ScopeType.MethodDefinition, "method definition", node.getStart(), input.filename);
-    this.parse(node, input, parentName, abstractMethod);
-    input.scope.pop(node.getEnd());
+    try {
+      this.parse(node, input, parentName, abstractMethod);
+      this.checkDuplicateNames();
+    } finally {
+      input.scope.pop(node.getEnd());
+    }
   }
 
   public getFilename(): string {
@@ -202,6 +206,17 @@ export class MethodParameters implements IMethodParameters {
     }
 
     this.workaroundRAP(node, input, parentName);
+  }
+
+  private checkDuplicateNames(): void {
+    const names = new Set<string>();
+    for (const parameter of this.getAll()) {
+      const name = parameter.getName().toUpperCase();
+      if (names.has(name)) {
+        throw new Error(`Method parameter "${name}" already defined`);
+      }
+      names.add(name);
+    }
   }
 
   private workaroundRAP(node: StatementNode, input: SyntaxInput, parentName: string): void {

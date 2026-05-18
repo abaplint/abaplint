@@ -238,6 +238,10 @@ export class Registry implements IRegistry {
       }
       let found = this.findOrCreate(f.getObjectName(), f.getObjectType());
 
+      if (this.conf.getGlobal().errorOnDuplicateFilenames === true) {
+        this.checkDuplicateFilename(filename, found.getFiles());
+      }
+
       if (dependency === false && found && this.isDependency(found)) {
         this.removeDependency(found);
         found = this.findOrCreate(f.getObjectName(), f.getObjectType());
@@ -246,6 +250,25 @@ export class Registry implements IRegistry {
       found.addFile(f);
     }
     return this;
+  }
+
+  private checkDuplicateFilename(filename: string, files: readonly IFile[]): void {
+    const basename = Registry.filenameBasename(filename);
+    if (basename === "PACKAGE.DEVC.XML") {
+      return;
+    }
+
+    for (const existingFile of files) {
+      if (Registry.filenameBasename(existingFile.getFilename()) === basename) {
+        throw new Error("Duplicate filename: " + filename + " already exists as " + existingFile.getFilename());
+      }
+    }
+  }
+
+  private static filenameBasename(filename: string): string {
+    const normalized = filename.replace(/\\/g, "/");
+    const last = normalized.split("/").pop();
+    return (last ?? normalized).toUpperCase();
   }
 
   public addFiles(files: readonly IFile[]): IRegistry {

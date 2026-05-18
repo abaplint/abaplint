@@ -17,6 +17,8 @@ export interface IGlobalConfig {
   useApackDependencies?: boolean;
   /** Do not report any issues for includes without main programs */
   skipIncludesWithoutMain?: boolean;
+  /** Throw an error if multiple files with the same filename are added to the registry, ignores package.devc.xml */
+  errorOnDuplicateFilenames?: boolean;
   /** list of files to exclude, these files are not added when running syntax check or any other rules, case insensitive regex
    * @uniqueItems true
   */

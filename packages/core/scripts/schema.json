@@ -5842,6 +5842,10 @@
     "IGlobalConfig": {
       "additionalProperties": false,
       "properties": {
+        "errorOnDuplicateFilenames": {
+          "description": "Throw an error if multiple files with the same filename are added to the registry, ignores package.devc.xml",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "list of files to exclude, these files are not added when running syntax check or any other rules, case insensitive regex",
           "items": {

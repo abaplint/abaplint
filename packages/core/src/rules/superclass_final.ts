@@ -7,12 +7,14 @@ import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_informa
 import {RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
+import {IncludeGraph} from "../utils/include_graph";
 
 export class SuperclassFinalConf extends BasicRuleConfig {
 }
 
 export class SuperclassFinal extends ABAPRule {
   private conf = new SuperclassFinalConf();
+  private graph: IncludeGraph | undefined = undefined;
 
   public getMetadata() {
     return {
@@ -56,6 +58,9 @@ export class SuperclassFinal extends ABAPRule {
           }
         }
       }
+      if (found === undefined && obj instanceof Objects.Program) {
+        found = this.findInRelatedProgramIncludes(file, sup);
+      }
       if (found === undefined) {
         const clas = this.reg.getObject("CLAS", sup) as Class;
         if (clas) {
@@ -75,5 +80,39 @@ export class SuperclassFinal extends ABAPRule {
     }
 
     return output;
+  }
+
+  private findInRelatedProgramIncludes(file: ABAPFile, superClassName: string): InfoClassDefinition | undefined {
+    if (this.graph === undefined) {
+      this.graph = new IncludeGraph(this.reg);
+    }
+
+    const mainFilenames = this.graph.listMainForInclude(file.getFilename());
+    if (mainFilenames.length === 0) {
+      return undefined;
+    }
+
+    for (const object of this.reg.getObjectsByType("PROG")) {
+      if (!(object instanceof Objects.Program)) {
+        continue;
+      }
+
+      const programFile = object.getMainABAPFile();
+      if (programFile === undefined) {
+        continue;
+      }
+
+      const programMainFilenames = this.graph.listMainForInclude(programFile.getFilename());
+      if (mainFilenames.some(filename => programMainFilenames.includes(filename)) === false) {
+        continue;
+      }
+
+      const found = programFile.getInfo().getClassDefinitionByName(superClassName);
+      if (found !== undefined) {
+        return found;
+      }
+    }
+
+    return undefined;
   }
 }

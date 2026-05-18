@@ -14,7 +14,7 @@ import {EventDefinition} from "./event_definition";
 import {IMethodDefinitions} from "./_method_definitions";
 import {MethodDefinitions} from "./method_definitions";
 import {ReferenceType} from "../5_syntax/_reference";
-import {SyntaxInput} from "../5_syntax/_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 import {Alias} from "./alias";
 import {ObjectOriented} from "../5_syntax/_object_oriented";
 
@@ -46,7 +46,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     input.scope.pop(node.getLastToken().getEnd());
 
     // perform checks after everything has been initialized
-    this.checkMethodNameLength();
+    this.checkMethodNameLength(input);
   }
 
   public getSuperClass(): undefined {
@@ -87,11 +87,11 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
 /////////////////
 
-  private checkMethodNameLength() {
+  private checkMethodNameLength(input: SyntaxInput) {
     for (const m of this.methodDefinitions.getAll()) {
       if (m.getName().length > 30) {
         const message = `Method name "${m.getName()}" is too long, maximum length is 30 characters`;
-        throw new Error(message);
+        input.issues.push(syntaxIssue(input, m.getToken(), message));
       }
     }
   }
@@ -129,12 +129,18 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
     const events = node.findAllStatements(Statements.Events);
     for (const e of events) {
+      const eventName = e.findDirectExpression(Expressions.EventName)?.concatTokens().toUpperCase();
+      if (this.events.find(ev => ev.getName().toUpperCase() === eventName) !== undefined) {
+        input.issues.push(syntaxIssue(input, e.getFirstToken(), "Event " + eventName + " already defined"));
+        continue;
+      }
       this.events.push(new EventDefinition(e, Visibility.Public, input));
     }
 
     this.methodDefinitions = new MethodDefinitions(node, input);
     if (this.methodDefinitions.getByName("CONSTRUCTOR") !== undefined) {
-      throw new Error("Interfaces cannot have constructor methods");
+      const constructor = this.methodDefinitions.getByName("CONSTRUCTOR")!;
+      input.issues.push(syntaxIssue(input, constructor.getToken(), "Interfaces cannot have constructor methods"));
     }
 
   }

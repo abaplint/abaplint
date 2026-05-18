@@ -664,4 +664,151 @@ TYPES END OF ty.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("TTYP referenced after syntax error in local class definition", async () => {
+    const ttyp = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZAOC_SEOCMPNAME_RANGE_TT</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWKIND></ROWKIND>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000030</LENG>
+    <ACCESSMODE>S</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <DDTEXT>SEO component name range table</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const abap = `CLASS lcl_check DEFINITION.
+  PUBLIC SECTION.
+    METHODS duplicate_parameter
+      IMPORTING
+        VALUE(rv_value) TYPE string
+      RETURNING
+        VALUE(rv_value) TYPE string.
+    METHODS use_ttyp
+      IMPORTING
+        VALUE(range) TYPE zaoc_seocmpname_range_tt.
+ENDCLASS.
+
+CLASS lcl_check IMPLEMENTATION.
+  METHOD duplicate_parameter.
+  ENDMETHOD.
+
+  METHOD use_ttyp.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const files = [
+      new MemoryFile(`zaoc_seocmpname_range_tt.ttyp.xml`, ttyp),
+      new MemoryFile(`zunused_ddic_ttyp.prog.abap`, abap),
+    ];
+    const issues = await run(files);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("TTYP referenced after duplicate event in local class definition", async () => {
+    const ttyp = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZAOC_SEOCMPNAME_RANGE_TT</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWKIND></ROWKIND>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000030</LENG>
+    <ACCESSMODE>S</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <DDTEXT>SEO component name range table</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const abap = `CLASS lcl_check DEFINITION.
+  PUBLIC SECTION.
+    EVENTS button_click.
+    EVENTS button_click.
+    METHODS use_ttyp
+      IMPORTING
+        VALUE(range) TYPE zaoc_seocmpname_range_tt.
+ENDCLASS.
+
+CLASS lcl_check IMPLEMENTATION.
+  METHOD use_ttyp.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const files = [
+      new MemoryFile(`zaoc_seocmpname_range_tt.ttyp.xml`, ttyp),
+      new MemoryFile(`zunused_ddic_ttyp.prog.abap`, abap),
+    ];
+    const issues = await run(files);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("TTYP referenced after redefinition visibility error", async () => {
+    const ttyp = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZAOC_SEOCMPNAME_RANGE_TT</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWKIND></ROWKIND>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000030</LENG>
+    <ACCESSMODE>S</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <DDTEXT>SEO component name range table</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const abap = `CLASS lcl_super DEFINITION.
+  PROTECTED SECTION.
+    METHODS bar.
+ENDCLASS.
+
+CLASS lcl_super IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_bad DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    METHODS bar REDEFINITION.
+ENDCLASS.
+
+CLASS lcl_bad IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_use DEFINITION.
+  PUBLIC SECTION.
+    METHODS use_ttyp
+      IMPORTING
+        VALUE(range) TYPE zaoc_seocmpname_range_tt.
+ENDCLASS.
+
+CLASS lcl_use IMPLEMENTATION.
+  METHOD use_ttyp.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const files = [
+      new MemoryFile(`zaoc_seocmpname_range_tt.ttyp.xml`, ttyp),
+      new MemoryFile(`zunused_ddic_ttyp.prog.abap`, abap),
+    ];
+    const issues = await run(files);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
