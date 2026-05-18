@@ -11,6 +11,10 @@ export interface DomainValue {
   high: string,
   description: string
 }
+export interface DomainValueTranslation {
+  language: string,
+  description: string
+}
 
 export class Domain extends AbstractObject {
 
@@ -21,6 +25,7 @@ export class Domain extends AbstractObject {
     decimals?: string,
     conversionExit?: string,
     values?: DomainValue[],
+    valuesTranslations?: DomainValueTranslation[],
   } | undefined;
 
   public getType(): string {
@@ -94,6 +99,16 @@ export class Domain extends AbstractObject {
       values.push(value);
     }
 
+    const dd07v_texts = xmlToArray(parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD07_TEXTS?.item);
+    const translationValues: DomainValueTranslation[] = [];
+    for (const dd07v of dd07v_texts) {
+      const value: DomainValueTranslation = {
+        language: dd07v?.DDLANGUAGE,
+        description: dd07v?.DDTEXT,
+      };
+      translationValues.push(value);
+    }
+
     this.parsedXML = {
       description: dd01v?.DDTEXT,
       datatype: dd01v?.DATATYPE,
@@ -101,6 +116,7 @@ export class Domain extends AbstractObject {
       conversionExit: dd01v?.CONVEXIT,
       decimals: dd01v?.DECIMALS,
       values: values,
+      valuesTranslations: translationValues,
     };
     const end = Date.now();
     return {updated: true, runtime: end - start};
@@ -108,6 +124,10 @@ export class Domain extends AbstractObject {
 
   public getFixedValues() {
     return this.parsedXML?.values ?? [];
+  }
+
+  public getFixedValuesTranslations() {
+    return this.parsedXML?.valuesTranslations ?? [];
   }
 
 }

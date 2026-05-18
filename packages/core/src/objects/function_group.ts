@@ -147,7 +147,7 @@ export class FunctionGroup extends ABAPObject {
     return undefined;
   }
 
-  public getTexts(): ITextElements {
+  public getTextSymbols(): ITextElements {
     if (this.texts === undefined) {
       const found = this.findTextFile();
       if (found === undefined) {
@@ -158,7 +158,7 @@ export class FunctionGroup extends ABAPObject {
       this.findTexts(parsed);
     }
 
-    return this.texts!;
+    return this.texts!["I"] ?? {};
   }
 
 /////////////////////////////////
