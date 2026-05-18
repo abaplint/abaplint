@@ -105,10 +105,10 @@ describe("Program, isInclude", () => {
 
     await reg.parseAsync();
     const prog = getABAPObjects(reg)[0] as Program;
-    const texts = prog.getTexts();
+    const texts = prog.getTextSymbols();
     expect(Object.keys(texts).length).to.equal(2);
-    expect(texts["001"]).to.equal("hello world 1");
-    expect(texts["ABC"]).to.equal("hello world 2");
+    expect(texts["001"]?.entry).to.equal("hello world 1");
+    expect(texts["ABC"]?.entry).to.equal("hello world 2");
     expect(texts["bar"]).to.equal(undefined);
 
     expect(prog.getDescription()).to.equal("Program ZFOOBAR");
@@ -124,7 +124,7 @@ describe("Program, isInclude", () => {
     await reg.parseAsync();
     const prog = getABAPObjects(reg)[0] as Program;
     // just check it does not crash,
-    prog.getTexts();
+    prog.getTextSymbols();
   });
 
 });

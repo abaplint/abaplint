@@ -62,9 +62,9 @@ export class CheckTextElements implements IRule {
 // todo, this only checks the first main
           mainName = mains[0];
           const main1 = this.reg.findObjectForFile(this.reg.getFileByName(mains[0])!)! as ABAPObject;
-          texts = main1.getTexts();
+          texts = main1.getTextSymbols();
         } else {
-          texts = obj.getTexts();
+          texts = obj.getTextSymbols();
         }
       }
 
@@ -81,8 +81,8 @@ export class CheckTextElements implements IRule {
           const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
           const code = e.getFirstToken().getStr();
           const key = token.getStr().toUpperCase();
-          let found = texts![key];
-          if (found && code.startsWith("'")) {
+          let found = texts![key]?.entry;
+          if (found !== undefined && code.startsWith("'")) {
             found = found.replace(/'/g, "''");
           }
           if (found === undefined) {
