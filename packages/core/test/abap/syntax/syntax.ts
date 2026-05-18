@@ -13062,6 +13062,28 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("not possible to have name with only digits", () => {
+    const abap = `DATA 2345 TYPE c LENGTH 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not possible to have a name with only digits");
+  });
+
+  it("not possible to have name with only digits, constants", () => {
+    const abap = `CONSTANTS 9034 TYPE abap_bool VALUE abap_true.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not possible to have a name with only digits");
+  });
+
+  it("but this is okay", () => {
+    const abap = `
+CONSTANTS: BEGIN OF foo,
+             0 TYPE string VALUE '0',
+             3 TYPE string VALUE '3',
+           END OF foo.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, boolc result into char", () => {
     const abap = `
 CLASS lcl DEFINITION.
