@@ -54,6 +54,7 @@ const repos = [
   "open-abap/open-abap-seo",
   "open-abap/open-abap-xco",
   "open-abap/open-table-maintenance",
+  "open-abap/express-icf-shim",
   "SAP/abap-file-formats-tools",
   "SAP/abap-file-formats",
   "sbcgua/abap-string-map",

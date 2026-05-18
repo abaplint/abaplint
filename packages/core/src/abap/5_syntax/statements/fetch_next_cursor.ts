@@ -3,12 +3,16 @@ import {StatementNode} from "../../nodes";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput} from "../_syntax_input";
+import {SQLSource} from "../expressions/sql_source";
 
 export class FetchNextCursor implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const t of node.findAllExpressions(Expressions.Target)) {
       Target.runSyntax(t, input);
+    }
+    for (const s of node.findAllExpressions(Expressions.SQLSourceSimple)) {
+      SQLSource.runSyntax(s, input);
     }
 
   }
