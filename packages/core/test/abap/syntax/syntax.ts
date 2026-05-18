@@ -13084,6 +13084,18 @@ CONSTANTS: BEGIN OF foo,
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("but error in OO context", () => {
+    const abap = `
+INTERFACE lif.
+  CONSTANTS: BEGIN OF foo,
+               0 TYPE string VALUE '0',
+               3 TYPE string VALUE '3',
+             END OF foo.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not possible to have a name with only digits");
+  });
+
   it("ok, boolc result into char", () => {
     const abap = `
 CLASS lcl DEFINITION.

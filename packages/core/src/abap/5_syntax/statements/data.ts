@@ -13,6 +13,11 @@ export class Data {
     const dd = node.findFirstExpression(Expressions.DataDefinition);
     if (dd) {
       const id = DataDefinition.runSyntax(dd, input);
+      if (id && this.isOnlyDigits(id.getName())) {
+        const message = "not possible to have a name with only digits";
+        input.issues.push(syntaxIssue(input, id.getToken(), message));
+        return new TypedIdentifier(id.getToken(), input.filename, VoidType.get(CheckSyntaxKey));
+      }
       if (id?.getType().isGeneric() === true
           && id?.getType().containsVoid() === false) {
         const message = "DATA definition cannot be generic, " + name?.concatTokens();
@@ -23,9 +28,17 @@ export class Data {
     }
 
     if (name) {
+      if (this.isOnlyDigits(name.concatTokens())) {
+        const message = "not possible to have a name with only digits";
+        input.issues.push(syntaxIssue(input, name.getFirstToken(), message));
+      }
       return new TypedIdentifier(name.getFirstToken(), input.filename, new UnknownType("data, fallback"));
     }
 
     return undefined;
+  }
+
+  private isOnlyDigits(name: string): boolean {
+    return /^[0-9]+$/.test(name);
   }
 }
