@@ -14,7 +14,9 @@ export abstract class ABAPObject extends AbstractObject {
   private parsed: readonly ABAPFile[];
   protected texts: {[id: string]: ITextElements} | undefined;
   private textsTranslations: ITranslationTextElements[] | undefined;
+  private rawXMLCache: any | undefined;
   public syntaxResult: ISyntaxResult | undefined; // do not use this outside of SyntaxLogic class, todo: refactor
+
   public [Symbol.for("debug.description")](){
     return `${this.constructor.name} ${this.getName()}`;
   }
@@ -25,6 +27,7 @@ export abstract class ABAPObject extends AbstractObject {
     super(name);
     this.parsed = [];
     this.texts = undefined;
+    this.rawXMLCache = undefined;
   }
 
   public static is(x: any): x is ABAPObject {
@@ -50,8 +53,16 @@ export abstract class ABAPObject extends AbstractObject {
     this.syntaxResult = undefined;
     this.texts = undefined;
     this.textsTranslations = undefined;
+    this.rawXMLCache = undefined;
     this.parsed = [];
     super.setDirty();
+  }
+
+  private getParsedXML(): any | undefined {
+    if (this.rawXMLCache === undefined) {
+      this.rawXMLCache = this.parseRaw2() ?? null;
+    }
+    return this.rawXMLCache ?? undefined;
   }
 
   public getABAPFiles(): readonly ABAPFile[] {
@@ -88,14 +99,14 @@ export abstract class ABAPObject extends AbstractObject {
 
   public getTextSymbols(): ITextElements {
     if (this.texts === undefined) {
-      this.findTexts(this.parseRaw2());
+      this.findTexts(this.getParsedXML());
     }
     return this.texts!["I"] ?? {};
   }
 
   public getTextElements(): ITextElements {
     if (this.texts === undefined) {
-      this.findTexts(this.parseRaw2());
+      this.findTexts(this.getParsedXML());
     }
     const result: ITextElements = {};
     for (const elements of Object.values(this.texts!)) {
@@ -106,7 +117,7 @@ export abstract class ABAPObject extends AbstractObject {
 
   public getTextElementsTranslations(): ITranslationTextElements[] {
     if (this.textsTranslations === undefined) {
-      this.parseTextElementsTranslations();
+      this.findTextsTranslations(this.getParsedXML());
     }
     return this.textsTranslations!;
   }
@@ -136,15 +147,15 @@ export abstract class ABAPObject extends AbstractObject {
     }
   }
 
-  private parseTextElementsTranslations(): void {
+  private findTextsTranslations(parsed: any): void {
     this.textsTranslations = [];
 
-    const values = this.parseRaw2()?.abapGit?.["asx:abap"]?.["asx:values"];
+    const values = parsed?.abapGit?.["asx:abap"]?.["asx:values"].I18N_TPOOL?.item;
     if (values === undefined) {
       return;
     }
 
-    for (const langItem of xmlToArray(values.I18N_TPOOL?.item)) {
+    for (const langItem of xmlToArray(values)) {
       const textElements: ITextElements = {};
       for (const item of xmlToArray(langItem.TEXTPOOL?.item)) {
         const key = (item.KEY ?? item.ID)?.toUpperCase();
