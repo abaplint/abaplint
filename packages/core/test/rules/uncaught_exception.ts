@@ -416,6 +416,48 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("Uncaught exception CX_SALV_ERROR");
   });
 
+  it("constructor exception, CREATE OBJECT", async () => {
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor RAISING cx_static_check.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM foo.
+  DATA lo TYPE REF TO lcl.
+  CREATE OBJECT lo.
+ENDFORM.`;
+    const issues = await findIssues(progabap, "create_object.prog.abap");
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("Uncaught exception cx_static_check");
+  });
+
+  it("constructor exception, NEW inferred type", async () => {
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor RAISING cx_static_check.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM foo.
+  DATA lo TYPE REF TO lcl.
+  lo = NEW #( ).
+ENDFORM.`;
+    const issues = await findIssues(progabap, "new_object.prog.abap");
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("Uncaught exception cx_static_check");
+  });
+
   it("uncaught exception in second CATCH block (chained)", async () => {
     const progabap = `
 CLASS lcx_error1 DEFINITION INHERITING FROM cx_static_check.

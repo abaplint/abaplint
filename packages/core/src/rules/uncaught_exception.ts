@@ -12,9 +12,10 @@ import {Class, Program} from "../objects";
 import {DDIC} from "../ddic";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
-import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
+import {ISpaghettiScopeNode, ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
-import {MethodDefinition} from "../abap/types";
+import {ClassDefinition, MethodDefinition} from "../abap/types";
+import {IClassDefinition} from "../abap/types/_class_definition";
 
 export class UncaughtExceptionConf extends BasicRuleConfig {
   public reportDynamic = false;
@@ -170,8 +171,31 @@ export class UncaughtException extends ABAPRule {
         for (const name of r.resolved.getRaising()) {
           this.check(name, n, file);
         }
+      } else if (r.referenceType === ReferenceType.ConstructorReference
+          && r.position.getStart().isAfter(start)
+          && r.position.getEnd().isBefore(end)
+          && r.resolved instanceof ClassDefinition) {
+        const method = this.findConstructor(r.resolved, scope);
+        for (const name of method?.getRaising() || []) {
+          this.check(name, n, file);
+        }
       }
     }
+  }
+
+  private findConstructor(def: IClassDefinition, scope: ISpaghettiScopeNode | undefined): MethodDefinition | undefined {
+    for (const method of def.getMethodDefinitions().getAll()) {
+      if (method instanceof MethodDefinition && method.getName().toUpperCase() === "CONSTRUCTOR") {
+        return method;
+      }
+    }
+
+    const sup = def.getSuperClass();
+    if (sup === undefined) {
+      return undefined;
+    }
+    const superDefinition = scope?.findClassDefinition(sup);
+    return superDefinition ? this.findConstructor(superDefinition, scope) : undefined;
   }
 
   private addFromTryStructure(s: StructureNode) {
