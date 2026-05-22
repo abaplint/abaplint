@@ -7,7 +7,12 @@ import {Issue} from "../../src/issue";
 
 async function run(reg: IRegistry): Promise<Issue[]> {
   await reg.parseAsync();
-  return new CheckTextElements().initialize(reg).run(reg.getFirstObject()!);
+  const rule = new CheckTextElements().initialize(reg);
+  let issues: Issue[] = [];
+  for (const obj of reg.getObjects()) {
+    issues = issues.concat(rule.run(obj));
+  }
+  return issues;
 }
 
 describe("Rule: check_text_elements", () => {
@@ -143,6 +148,7 @@ describe("Rule: check_text_elements", () => {
     reg.addFile(new MemoryFile("zfoobar.prog.xml", prog));
     const issues = await run(reg);
     expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal(`Text element "003" not found`);
   });
 
   it("test 6, prog", async () => {
@@ -213,6 +219,33 @@ SELECTION-SCREEN PUSHBUTTON 60(30) text-003 USER-COMMAND btn.
     reg.addFile(new MemoryFile("zfoobar.prog.xml", prog));
     const issues = await run(reg);
     expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal(`Text element "003" not found`);
+  });
+
+  it("include references main program in message", async () => {
+    const main = "INCLUDE zfoobar_include.";
+    const include = "WRITE 'sdfsd'(003).";
+    const includeXml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>ZFOOBAR_INCLUDE</NAME>
+    <SUBC>I</SUBC>
+    <RLOAD>E</RLOAD>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zfoobar.prog.abap", main));
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", prog));
+    reg.addFile(new MemoryFile("zfoobar_include.prog.abap", include));
+    reg.addFile(new MemoryFile("zfoobar_include.prog.xml", includeXml));
+    const issues = await run(reg);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal(`Text element "003" not found, zfoobar.prog.abap`);
   });
 
   it("test 13, clas", async () => {
