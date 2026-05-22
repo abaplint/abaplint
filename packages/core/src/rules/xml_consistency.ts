@@ -7,8 +7,11 @@ import {ABAPObject} from "../objects/_abap_object";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {XMLValidator} from "fast-xml-parser";
+import {Severity} from "../severity";
 
 export class XMLConsistencyConf extends BasicRuleConfig {
+  /** Problem severity for text and translation length checks */
+  public textAndTranslationLengthSeverity?: Severity = Severity.Error;
 }
 
 export class XMLConsistency implements IRule {
@@ -132,7 +135,7 @@ export class XMLConsistency implements IRule {
       const prefix = lang ? `[${lang}] ` : "";
       return Issue.atRow(file, 1,
                          `${prefix}${fieldName} "${text}" exceeds maximum length of ${max} characters (actual: ${text.length})`,
-                         this.getMetadata().key, this.conf.severity);
+                         this.getMetadata().key, this.conf.textAndTranslationLengthSeverity);
     }
     return undefined;
   }

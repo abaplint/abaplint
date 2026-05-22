@@ -1,13 +1,17 @@
 import {Registry} from "../../src/registry";
-import {XMLConsistency} from "../../src/rules";
+import {XMLConsistency, XMLConsistencyConf} from "../../src/rules";
 import {expect} from "chai";
 import {IRegistry} from "../../src/_iregistry";
 import {Issue} from "../../src/issue";
 import {MemoryFile} from "../../src/files/memory_file";
+import {Severity} from "../../src/severity";
 
-async function run(reg: IRegistry): Promise<Issue[]> {
+async function run(reg: IRegistry, conf?: XMLConsistencyConf): Promise<Issue[]> {
   await reg.parseAsync();
   const rule = new XMLConsistency();
+  if (conf) {
+    rule.setConfig(conf);
+  }
   return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
@@ -226,9 +230,9 @@ describe("xml consistency", () => {
   });
 });
 
-async function runDtel(xml: string): Promise<Issue[]> {
+async function runDtel(xml: string, conf?: XMLConsistencyConf): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zdtel.dtel.xml", xml));
-  return run(reg);
+  return run(reg, conf);
 }
 
 describe("rule, xml_consistency, DTEL label lengths", () => {
@@ -314,6 +318,32 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
     const issues = await runDtel(xml);
     expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.include("SCRTEXT_S");
+  });
+
+  it("defaults and uses separate severity for text and translation length checks", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <DDTEXT>This description is way too long and definitely exceeds sixty characters total</DDTEXT>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const conf = new XMLConsistencyConf();
+    conf.severity = Severity.Info;
+    let issues = await runDtel(xml, conf);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getSeverity()).to.equal(Severity.Error);
+
+    conf.textAndTranslationLengthSeverity = Severity.Warning;
+    issues = await runDtel(xml, conf);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getSeverity()).to.equal(Severity.Warning);
   });
 
   it("SCRTEXT_M exceeds SCRLEN2", async () => {

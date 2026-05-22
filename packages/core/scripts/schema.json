@@ -8994,6 +8994,10 @@
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        },
+        "textAndTranslationLengthSeverity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity for text and translation length checks"
         }
       },
       "type": "object"
