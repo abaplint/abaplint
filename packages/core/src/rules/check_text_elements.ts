@@ -69,11 +69,12 @@ export class CheckTextElements implements IRule {
       }
 
       for (const e of expressions) {
+        const mainNameSuffix = mainName !== undefined && mainName.toLowerCase() !== file.getFilename().toLowerCase() ? ", " + mainName : "";
         if (e.get() instanceof Expressions.TextElement) {
           const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
           const key = token.getStr().toUpperCase();
           if (texts![key] === undefined) {
-            const message = `Text element "${key}" not found` + (mainName ? ", " + mainName : "");
+            const message = `Text element "${key}" not found` + mainNameSuffix;
             output.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
           }
         } else {
@@ -86,7 +87,7 @@ export class CheckTextElements implements IRule {
             found = found.replace(/'/g, "''");
           }
           if (found === undefined) {
-            const message = `Text element "${key}" not found` + (mainName ? ", " + mainName : "");
+            const message = `Text element "${key}" not found` + mainNameSuffix;
             output.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
           } else if (code !== "'" + found + "'"
               && code !== "`" + found + "`") {
