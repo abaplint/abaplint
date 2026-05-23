@@ -7,6 +7,10 @@ import {MemoryFile} from "../../src/files/memory_file";
 
 const tests = [
   {abap: "CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'.", cnt: 1},
+  {abap: "CALL FUNCTION 'GUI_EXEC'.", cnt: 1},
+  {abap: "CALL FUNCTION 'POPUP_TO_CONFIRM_WITH_VALUE_2'.", cnt: 1},
+  {abap: "CALL FUNCTION 'SYSTEM_UUID_C_CREATE'.", cnt: 1},
+  {abap: "CALL FUNCTION 'MD5_CALCULATE_HASH_FOR_CHAR'.", cnt: 1},
   {abap: "DATA fm_name TYPE string. fm_name = 'REUSE_ALV_GRID_DISPLAY'. CALL FUNCTION fm_name.", cnt: 0},
   {abap: "DATA round TYPE string. fm_name = 'FOO_BAR'. CALL FUNCTION round.", cnt: 0},
   {abap: "CALL FUNCTION 'FOO_BAR'.", cnt: 0},
