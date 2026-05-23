@@ -150,7 +150,7 @@ export abstract class ABAPObject extends AbstractObject {
   private findTextsTranslations(parsed: any): void {
     this.textsTranslations = [];
 
-    const values = parsed?.abapGit?.["asx:abap"]?.["asx:values"].I18N_TPOOL?.item;
+    const values = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.I18N_TPOOL?.item;
     if (values === undefined) {
       return;
     }

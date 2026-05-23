@@ -53,18 +53,17 @@ export class Transaction extends AbstractObject {
     const start = Date.now();
     this.parsedXML = {};
     const parsed = super.parseRaw2();
-    if (parsed === undefined
-        || parsed.abapGit === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+    const values = parsed?.abapGit?.["asx:abap"]?.["asx:values"];
+    if (values === undefined) {
       return {updated: false, runtime: 0};
     }
 
-    this.parsedXML.description = parsed.abapGit["asx:abap"]["asx:values"].TSTCT?.TTEXT;
-    this.parsedXML.programName = parsed.abapGit["asx:abap"]["asx:values"].TSTC?.PGMNA;
-    this.parsedXML.cinfo = parsed.abapGit["asx:abap"]["asx:values"].TSTC?.CINFO;
+    this.parsedXML.description = values.TSTCT?.TTEXT;
+    this.parsedXML.programName = values.TSTC?.PGMNA;
+    this.parsedXML.cinfo = values.TSTC?.CINFO;
 
     this.parsedXML.textsTranslations = [];
-    for (const item of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].I18N_TPOOL?.TSTCT)) {
+    for (const item of xmlToArray(values.I18N_TPOOL?.TSTCT)) {
       this.parsedXML.textsTranslations.push({language: item.SPRSL, description: item.TTEXT});
     }
 

@@ -38,4 +38,18 @@ describe("Transaction, parse XML", () => {
     expect(tran.getProgramName()).to.equal("ZTRANSACTION_REPORT");
   });
 
+  it("missing asx values", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TRAN" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry().addFile(new MemoryFile("ztransaction_report.tran.xml", xml));
+    await reg.parseAsync();
+    const tran = reg.getFirstObject()! as Transaction;
+
+    expect(tran.getTextsTranslations()).to.deep.equal(undefined);
+  });
+
 });
