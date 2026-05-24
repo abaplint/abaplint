@@ -13084,6 +13084,20 @@ CONSTANTS: BEGIN OF foo,
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("and this, but this is okay", () => {
+    const abap = `
+DATA: BEGIN OF hex,
+        01 TYPE x LENGTH 1,
+        11 TYPE x LENGTH 1,
+      END   OF hex.
+CLEAR hex-01.
+CLEAR hex-11.
+WRITE hex-01.
+WRITE hex-11.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("but error in OO context", () => {
     const abap = `
 INTERFACE lif.
