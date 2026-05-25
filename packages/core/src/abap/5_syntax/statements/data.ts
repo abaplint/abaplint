@@ -13,7 +13,7 @@ export class Data {
     const dd = node.findFirstExpression(Expressions.DataDefinition);
     if (dd) {
       const id = DataDefinition.runSyntax(dd, input);
-      if (id && this.isOnlyDigits(id.getName())) {
+      if (id && this.isOnlyDigits(id.getName()) && this.allowOnlyDigitsName(node, input) === false) {
         const message = "not possible to have a name with only digits";
         input.issues.push(syntaxIssue(input, id.getToken(), message));
         return new TypedIdentifier(id.getToken(), input.filename, VoidType.get(CheckSyntaxKey));
@@ -28,7 +28,7 @@ export class Data {
     }
 
     if (name) {
-      if (this.isOnlyDigits(name.concatTokens())) {
+      if (this.isOnlyDigits(name.concatTokens()) && this.allowOnlyDigitsName(node, input) === false) {
         const message = "not possible to have a name with only digits";
         input.issues.push(syntaxIssue(input, name.getFirstToken(), message));
       }
@@ -40,5 +40,9 @@ export class Data {
 
   private isOnlyDigits(name: string): boolean {
     return /^[0-9]+$/.test(name);
+  }
+
+  private allowOnlyDigitsName(node: StatementNode, input: SyntaxInput): boolean {
+    return input.scope.isAnyOO() === false && node.getColon() !== undefined;
   }
 }

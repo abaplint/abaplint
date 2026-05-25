@@ -127,4 +127,44 @@ describe("Program, isInclude", () => {
     prog.getTextSymbols();
   });
 
+  it("ignores malformed textpool entries", async () => {
+    const abap = "WRITE hello.";
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap));
+
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>hello world 1</ENTRY>
+     <LENGTH>22</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <ENTRY>missing key</ENTRY>
+     <LENGTH>11</LENGTH>
+    </item>
+    <item>
+     <ID>R</ID>
+     <ENTRY>Program ZFOOBAR</ENTRY>
+     <LENGTH>28</LENGTH>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
+
+    await reg.parseAsync();
+    const prog = getABAPObjects(reg)[0] as Program;
+    const texts = prog.getTextSymbols();
+
+    expect(texts["001"]?.entry).to.equal("hello world 1");
+    expect(Object.keys(texts)).to.deep.equal(["001"]);
+    expect(prog.getDescription()).to.equal("Program ZFOOBAR");
+  });
+
 });
