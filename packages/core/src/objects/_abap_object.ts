@@ -131,11 +131,14 @@ export abstract class ABAPObject extends AbstractObject {
 
     for (const t of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].TPOOL.item)) {
       const id = t.ID?.toUpperCase();
-      if (id === undefined
-        || (id !== "R" && t.KEY === undefined)
-      ) {
-        throw new Error("findTexts, undefined");
+      if (id === undefined) {
+        continue;
       }
+
+      if (id !== "R" && t.KEY === undefined) {
+        continue;
+      }
+
       const key = (t.KEY ?? t.ID)?.toUpperCase();
       if (key === undefined) {
         continue;
