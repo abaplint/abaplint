@@ -926,6 +926,56 @@ ENDTRY.`;
     expect(type).to.be.instanceof(Basic.VoidType);
   });
 
+  it("CATCH multiple void classes into DATA, should be void", () => {
+    const abap = `
+TRY.
+  CATCH cx_foo cx_bar INTO DATA(lx_error).
+ENDTRY.`;
+    const identifier = resolveVariable(abap, "lx_error");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("CATCH multiple local classes with common superclass, infer superclass", () => {
+    const abap = `
+CLASS lcx_base DEFINITION.
+ENDCLASS.
+CLASS lcx_base IMPLEMENTATION.
+ENDCLASS.
+CLASS lcx_child1 DEFINITION INHERITING FROM lcx_base.
+ENDCLASS.
+CLASS lcx_child1 IMPLEMENTATION.
+ENDCLASS.
+CLASS lcx_child2 DEFINITION INHERITING FROM lcx_base.
+ENDCLASS.
+CLASS lcx_child2 IMPLEMENTATION.
+ENDCLASS.
+TRY.
+  CATCH lcx_child1 lcx_child2 INTO DATA(lx_error).
+ENDTRY.`;
+    const identifier = resolveVariable(abap, "lx_error");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.ObjectReferenceType);
+    expect((type as Basic.ObjectReferenceType).getIdentifierName().toUpperCase()).to.equal("LCX_BASE");
+  });
+
+  it("CATCH mixed void and local class, infer void", () => {
+    const abap = `
+CLASS lcx_local DEFINITION.
+ENDCLASS.
+CLASS lcx_local IMPLEMENTATION.
+ENDCLASS.
+TRY.
+  CATCH lcx_local cx_void INTO DATA(lx_error).
+ENDTRY.`;
+    const identifier = resolveVariable(abap, "lx_error");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+  });
+
   it("Anything from voided type should give void", () => {
     const abap = `
   DATA lo_void TYPE REF TO cl_voided.

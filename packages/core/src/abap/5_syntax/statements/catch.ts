@@ -7,6 +7,47 @@ import {Target} from "../expressions/target";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {CurrentScope} from "../_current_scope";
+
+function getAncestors(className: string, scope: CurrentScope): string[] {
+  const ancestors: string[] = [className.toUpperCase()];
+  let current = className.toUpperCase();
+  const visited = new Set<string>([current]);
+  while (true) {
+    const classDef = scope.findClassDefinition(current);
+    if (!classDef) {
+      break;
+    }
+    const superClass = classDef.getSuperClass();
+    if (!superClass) {
+      break;
+    }
+    const superUpper = superClass.toUpperCase();
+    if (visited.has(superUpper)) {
+      break;
+    }
+    visited.add(superUpper);
+    ancestors.push(superUpper);
+    current = superUpper;
+  }
+  return ancestors;
+}
+
+function findCommonSuperClass(classNames: string[], scope: CurrentScope): string | undefined {
+  if (classNames.length === 0) {
+    return undefined;
+  }
+  if (classNames.length === 1) {
+    return classNames[0].toUpperCase();
+  }
+  const allAncestors = classNames.map(name => getAncestors(name, scope));
+  for (const ancestor of allAncestors[0]) {
+    if (allAncestors.slice(1).every(list => list.includes(ancestor))) {
+      return ancestor;
+    }
+  }
+  return undefined;
+}
 
 export class Catch implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -36,24 +77,31 @@ export class Catch implements StatementSyntax {
     }
 
     const target = node.findDirectExpression(Expressions.Target);
-    const firstClassName = node.findDirectExpression(Expressions.ClassName)?.getFirstToken().getStr();
 
     if (target?.findDirectExpression(Expressions.InlineData)) {
       const token = target.findFirstExpression(Expressions.TargetField)?.getFirstToken();
-      const found = input.scope.existsObject(firstClassName);
-      if (token && firstClassName && found?.id) {
-        const identifier = new TypedIdentifier(token, input.filename, new ObjectReferenceType(found.id), [IdentifierMeta.InlineDefinition]);
-        input.scope.addIdentifier(identifier);
-        input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
-      } else if (token && input.scope.getDDIC().inErrorNamespace(firstClassName) === false) {
-        const identifier = new TypedIdentifier(token, input.filename, VoidType.get(firstClassName), [IdentifierMeta.InlineDefinition]);
-        input.scope.addIdentifier(identifier);
-        input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
-      } else if (token) {
-        const message = "Catch, could not determine type for \"" + token.getStr() + "\"";
-        const identifier = new TypedIdentifier(token, input.filename, new UnknownType(message), [IdentifierMeta.InlineDefinition]);
-        input.scope.addIdentifier(identifier);
-        input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
+      if (token) {
+        const classNames = node.findDirectExpressions(Expressions.ClassName).map(e => e.getFirstToken().getStr().toUpperCase());
+        const anyVoid = classNames.some(cn => !input.scope.existsObject(cn)?.id);
+        if (anyVoid) {
+          const voidName = classNames.find(cn => !input.scope.existsObject(cn)?.id) ?? classNames[0];
+          const identifier = new TypedIdentifier(token, input.filename, VoidType.get(voidName), [IdentifierMeta.InlineDefinition]);
+          input.scope.addIdentifier(identifier);
+          input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
+        } else {
+          const commonClassName = findCommonSuperClass(classNames, input.scope);
+          const found = commonClassName ? input.scope.existsObject(commonClassName) : undefined;
+          if (found?.id) {
+            const identifier = new TypedIdentifier(token, input.filename, new ObjectReferenceType(found.id), [IdentifierMeta.InlineDefinition]);
+            input.scope.addIdentifier(identifier);
+            input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
+          } else {
+            const message = "Catch, could not determine type for \"" + token.getStr() + "\"";
+            const identifier = new TypedIdentifier(token, input.filename, new UnknownType(message), [IdentifierMeta.InlineDefinition]);
+            input.scope.addIdentifier(identifier);
+            input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
+          }
+        }
       }
     } else if (target) {
       Target.runSyntax(target, input);
