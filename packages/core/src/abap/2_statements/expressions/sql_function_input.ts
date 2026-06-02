@@ -9,13 +9,15 @@ import {SimpleSource3} from "./simple_source3";
 import {Source} from "./source";
 import {SQLAggregation} from "./sql_aggregation";
 import {SQLFunction} from "./sql_function";
+import {SQLCase} from "./sql_case";
 
 export class SQLFunctionInput extends Expression {
   public getRunnable(): IStatementRunnable {
-    const paren = seq(tok(ParenLeftW), Source, tok(WParenRightW));
-    const at = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, paren)));
+    const hostParen = seq(tok(ParenLeftW), Source, tok(WParenRightW));
+    const at = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, hostParen)));
+    const parenInput = seq("(", SQLFunctionInput, ")");
 
-    const param = altPrio(SQLFunction, SQLAggregation, SQLFieldName, SQLAliasField, Constant, at);
+    const param = altPrio(parenInput, SQLCase, SQLFunction, SQLAggregation, SQLFieldName, SQLAliasField, Constant, at);
 
     const operator = altPrio("+", "-", "*", "/", "&&");
 

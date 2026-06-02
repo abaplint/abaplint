@@ -7,7 +7,6 @@ import {Constant} from "./constant";
 import {SQLCond} from "./sql_cond";
 import {SQLFieldName} from "./sql_field_name";
 import {SQLSource} from "./sql_source";
-
 export class SQLCase extends Expression {
   public getRunnable(): IStatementRunnable {
     const abap = seq(tok(WAt), SimpleFieldChain2);

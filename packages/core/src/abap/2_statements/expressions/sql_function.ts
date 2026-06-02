@@ -54,8 +54,10 @@ export class SQLFunction extends Expression {
     const right = ver(Version.v750, seq(reg(/^right$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
     const left = ver(Version.v751, seq(reg(/^left$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
 
+    const division = ver(Version.v751, seq(reg(/^division$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, commaParam, tok(WParenRightW)));
+
     return altPrio(uuid, abs, ceil, floor, cast, div, mod, coalesce, concat, replace,
                    length, lower, upper, round, concat_with_space, ltrim, rtrim, right, left, substring,
-                   dats_is_valid, dats_days_between, dats_add_days, dats_add_months);
+                   dats_is_valid, dats_days_between, dats_add_days, dats_add_months, division);
   }
 }
