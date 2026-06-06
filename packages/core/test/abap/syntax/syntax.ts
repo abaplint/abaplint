@@ -6733,7 +6733,7 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, calc with fs", () => {
+  it("ok, calc with fs", () => {
     const abap = `
 TYPES: BEGIN OF ty,
          fieldname TYPE i,
