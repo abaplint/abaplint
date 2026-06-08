@@ -106,6 +106,16 @@ jobs:
             exit 1
           fi
 
+      - name: Check npm package versions
+        run: |
+          VERSION="${{ steps.bump.outputs.version }}"
+          for PACKAGE in @abaplint/core @abaplint/cli @abaplint/monaco; do
+            if npm view "${PACKAGE}@${VERSION}" version >/dev/null 2>&1; then
+              echo "Package ${PACKAGE}@${VERSION} already exists"
+              exit 1
+            fi
+          done
+
       - name: Clean core build
         run: rm -rf build
         working-directory: packages/core
@@ -142,7 +152,50 @@ jobs:
         run: npm run test
         working-directory: packages/monaco
 
-      - name: Commit and tag release
+      - name: Publish dry-run core
+        run: npm publish --access public --dry-run
+        working-directory: packages/core
+
+      - name: Publish dry-run CLI
+        run: npm publish --access public --dry-run
+        working-directory: packages/cli
+
+      - name: Publish dry-run Monaco
+        run: npm publish --access public --dry-run
+        working-directory: packages/monaco
+
+      # Publish core before refreshing downstream lockfiles that resolve it from npm.
+      - name: Publish core
+        if: ${{ inputs.dry_run == false }}
+        run: npm publish --access public
+        working-directory: packages/core
+
+      - name: Update CLI lockfile
+        if: ${{ inputs.dry_run == false }}
+        run: npm install --package-lock-only --ignore-scripts
+        working-directory: packages/cli
+
+      - name: Update Monaco lockfile
+        if: ${{ inputs.dry_run == false }}
+        run: npm install --package-lock-only --ignore-scripts
+        working-directory: packages/monaco
+
+      - name: Publish CLI
+        if: ${{ inputs.dry_run == false }}
+        run: npm publish --access public
+        working-directory: packages/cli
+
+      - name: Publish Monaco
+        if: ${{ inputs.dry_run == false }}
+        run: npm publish --access public
+        working-directory: packages/monaco
+
+      - name: Update playground lockfile
+        if: ${{ inputs.dry_run == false }}
+        run: npm install --package-lock-only --ignore-scripts
+        working-directory: web/playground
+
+      - name: Commit, tag, and push release
         if: ${{ inputs.dry_run == false }}
         run: |
           git add packages/core/package.json packages/core/package-lock.json
@@ -153,33 +206,3 @@ jobs:
           git tag "v${{ steps.bump.outputs.version }}"
           git push origin "HEAD:${{ github.ref_name }}"
           git push origin "v${{ steps.bump.outputs.version }}"
-
-      - name: Dry-run publish core
-        if: ${{ inputs.dry_run == true }}
-        run: npm publish --access public --dry-run
-        working-directory: packages/core
-
-      - name: Publish core
-        if: ${{ inputs.dry_run == false }}
-        run: npm publish --access public
-        working-directory: packages/core
-
-      - name: Dry-run publish CLI
-        if: ${{ inputs.dry_run == true }}
-        run: npm publish --access public --dry-run
-        working-directory: packages/cli
-
-      - name: Publish CLI
-        if: ${{ inputs.dry_run == false }}
-        run: npm publish --access public
-        working-directory: packages/cli
-
-      - name: Dry-run publish Monaco
-        if: ${{ inputs.dry_run == true }}
-        run: npm publish --access public --dry-run
-        working-directory: packages/monaco
-
-      - name: Publish Monaco
-        if: ${{ inputs.dry_run == false }}
-        run: npm publish --access public
-        working-directory: packages/monaco
