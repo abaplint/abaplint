@@ -195,6 +195,7 @@ export * from "./sql_source_simple";
 export * from "./sql_source";
 export * from "./sql_target";
 export * from "./sql_up_to";
+export * from "./sql_over";
 export * from "./string_template_formatting";
 export * from "./string_template_source";
 export * from "./string_template";
