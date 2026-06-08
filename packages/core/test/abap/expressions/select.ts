@@ -1,8 +1,10 @@
 import {expect} from "chai";
 import * as Combi from "../../../src/abap/2_statements/combi";
-import {getTokens} from "../_utils";
+import {getTokens, statementVersionOk, statementVersionFail} from "../_utils";
 import {Config} from "../../../src/config";
 import {Select} from "../../../src/abap/2_statements/expressions";
+import * as Statements from "../../../src/abap/2_statements/statements";
+import {Version} from "../../../src/version";
 
 describe("Test expression, Select", () => {
   it("test1", () => {
@@ -21,3 +23,16 @@ describe("Test expression, Select", () => {
     expect(match).to.not.equal(undefined);
   });
 });
+
+const privilegedLevelVersions = [
+  {abap: `SELECT * FROM ztab WITH PRIVILEGED ACCESS LEVEL @lv_level INTO TABLE @DATA(lt).`, ver: Version.Cloud},
+  {abap: `SELECT SINGLE * FROM ztab WITH PRIVILEGED ACCESS LEVEL @lv_level INTO @DATA(ls).`, ver: Version.Cloud},
+];
+
+statementVersionOk(privilegedLevelVersions, "SELECT privileged access level", Statements.Select);
+
+const privilegedLevelVersionsFail = [
+  {abap: `SELECT * FROM ztab WITH PRIVILEGED ACCESS LEVEL @lv_level INTO TABLE @DATA(lt).`, ver: Version.v758},
+];
+
+statementVersionFail(privilegedLevelVersionsFail, "SELECT privileged access level");

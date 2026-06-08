@@ -1,5 +1,5 @@
 import {seq, per, str, Expression, altPrio, optPrio, ver} from "../combi";
-import {SQLFieldList, SQLFrom, SQLCond, SQLSource, SQLClient, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints, SQLFields, SQLIntoList} from ".";
+import {SQLFieldList, SQLFrom, SQLCond, SQLSource, SQLClient, DatabaseConnection, SQLIntoTable, SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints, SQLFields, SQLIntoList, SQLOptions, SQLPrivilegedAccess} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLGroupBy} from "./sql_group_by";
@@ -18,13 +18,14 @@ export class Select extends Expression {
 
     const fields = ver(Version.v750, SQLFields, Version.OpenABAP);
 
-    // todo, HINTS cannot be anywhere, need an expression dedicated for strict sql
+    const privileged = ver(Version.v758, SQLPrivilegedAccess);
+
     const perm = per(SQLFrom, into, SQLForAllEntries, where,
                      SQLOrderBy, SQLUpTo, offset, SQLClient, SQLHaving,
-                     bypass, SQLGroupBy, fields, DatabaseConnection, SQLHints);
+                     bypass, SQLGroupBy, fields, DatabaseConnection, SQLHints, privileged, SQLOptions);
 
     const permSingle = per(SQLFrom, altPrio(SQLIntoStructure, SQLIntoList), where, SQLClient,
-                           bypass, SQLGroupBy, fields, DatabaseConnection, SQLHints);
+                           bypass, SQLGroupBy, fields, DatabaseConnection, SQLHints, privileged, SQLOptions);
 
     const fieldList = optPrio(SQLFieldList);
 

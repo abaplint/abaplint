@@ -1,4 +1,4 @@
-import {statementType, statementVersionOk} from "../_utils";
+import {statementType, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -265,3 +265,41 @@ const versions = [
 
 statementVersionOk(versions, "SELECT loop", Statements.SelectLoop);
 
+const privilegedVersions = [
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id PRIVILEGED ACCESS.`, ver: Version.v758},
+  {abap: `SELECT field APPENDING TABLE lt FROM ztab PACKAGE SIZE 10 WHERE id = lv_id PRIVILEGED ACCESS.`, ver: Version.v758},
+];
+
+statementVersionOk(privilegedVersions, "SELECT loop privileged access", Statements.SelectLoop);
+
+const privilegedVersionsFail = [
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id PRIVILEGED ACCESS.`, ver: Version.v756},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id PRIVILEGED ACCESS.`, ver: Version.v757},
+];
+
+statementVersionFail(privilegedVersionsFail, "SELECT loop privileged access");
+
+const optionsVersions = [
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO @DATA(wa) OPTIONS USING ALL CLIENTS.`, ver: Version.v758},
+  {abap: `SELECT * FROM veri_VER56133_cs ORDER BY PRIMARY KEY INTO @DATA(wa2) OPTIONS USING ALL CLIENTS.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id OPTIONS PRIVILEGED ACCESS.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id OPTIONS BYPASSING BUFFER.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id OPTIONS CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS BYPASSING BUFFER.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS BYPASSING BUFFER.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS BYPASSING BUFFER CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS PRIVILEGED ACCESS BYPASSING BUFFER.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS PRIVILEGED ACCESS CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS BYPASSING BUFFER CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS PRIVILEGED ACCESS BYPASSING BUFFER CONNECTION foo.`, ver: Version.v758},
+];
+
+statementVersionOk(optionsVersions, "SELECT loop OPTIONS clause", Statements.SelectLoop);
+
+const optionsVersionsFail = [
+  {abap: `SELECT * FROM ztab INTO @DATA(wa) OPTIONS USING ALL CLIENTS.`, ver: Version.v757},
+];
+
+statementVersionFail(optionsVersionsFail, "SELECT loop OPTIONS clause");
