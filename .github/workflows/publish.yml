@@ -18,9 +18,28 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  detect-release:
+    name: Detect release commit
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.detect.outputs.should_publish }}
+
+    steps:
+      - name: Detect release commit
+        id: detect
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          if [[ "${COMMIT_MESSAGE}" == *"chore(release): v"* ]]; then
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
   publish-release:
     name: Publish release
-    if: contains(github.event.head_commit.message, 'chore(release): v')
+    needs: detect-release
+    if: needs.detect-release.outputs.should_publish == 'true'
     runs-on: ubuntu-latest
 
     steps:
