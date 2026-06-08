@@ -6733,6 +6733,23 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, calc with fs", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         fieldname TYPE i,
+       END OF ty.
+FIELD-SYMBOLS <fs> TYPE ty.
+DATA: BEGIN OF int,
+        field TYPE f,
+      END OF int.
+CONSTANTS gc TYPE string VALUE 'FIELDNAME'.
+
+ASSIGN COMPONENT gc OF STRUCTURE <fs> TO FIELD-SYMBOL(<fv>).
+DATA(lv) = int-field + <fv>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("REDUCE with LET used in FOR", () => {
     const abap = `
     DATA(text) = REDUCE string(
