@@ -1,4 +1,4 @@
-import {statementType, statementVersion, statementVersionFail} from "../_utils";
+import {statementType, statementVersion, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -83,6 +83,8 @@ const tests = [
   "SELECT COUNT( DISTINCT id ) FROM zfoo INTO lv_cnt.",
   "SELECT SINGLE id FROM ztab connection (lv_con) INTO lv_id.",
   "SELECT SUM( value ) FROM table INTO lv_count.",
+  "SELECT AVG( value ) FROM ztable INTO lv_avg.",
+  "SELECT AVG( DISTINCT value ) FROM ztable INTO lv_avg.",
   "SELECT carrid, connid FROM sflight INTO CORRESPONDING FIELDS OF TABLE @flight FOR ALL ENTRIES IN @carriers.",
   "SELECT SINGLE blah INTO lv_blah FROM dbtable WHERE posid = foo-bar AND field IN ( '02', '30' ).",
   "SELECT matnr, werks FROM ztable INTO TABLE @DATA(lt_result) WHERE matnr IN @s_matnr AND werks IN @s_werks.",
@@ -237,9 +239,8 @@ SELECT DISTINCT b~partner, c~name_first, c~name_last, c~name_org1, c~name_grp1, 
 
   `SELECT * FROM cds_view WITH PRIVILEGED ACCESS WHERE test = @foo INTO CORRESPONDING FIELDS OF TABLE @rt_values.`,
   `SELECT foo, bar FROM dbtab WHERE id = @key-id AND name IS NOT INITIAL INTO TABLE @DATA(result).`,
-  `SELECT SINGLE * FROM usr02 INTO @DATA(sdf) WHERE bname = @text-001.`,
-  "SELECT SUM( (l_field) ) INTO l_value FROM (l_table).",
   "SELECT COUNT( DISTINCT ( field ) ) FROM voided INTO @DATA(lv_result).",
+  `SELECT SINGLE * FROM usr02 INTO @DATA(sdf) WHERE bname = @text-001.`,
   `SELECT SINGLE foo, bar FROM tab INTO (@lv_moo, @DATA(lv_bar)).`,
   `SELECT SINGLE FROM rfcdes FIELDS rfcdest WHERE rfcdest = @lv_rfcdes INTO @lv_rfcdes.`,
   `SELECT SINGLE FROM tadir FIELDS object, obj_name WHERE devclass = @co_package INTO @DATA(ls_object).`,
@@ -574,9 +575,104 @@ const versions = [
       ELSE '3'
     END
   INTO TABLE @DATA(sdfsd).`, ver: Version.v750},
+  {abap: `SELECT field1, field2, division( 0, 1, 2 ) AS r1, division( 100, 2, 2 ) AS r2, division( -100, 5, 0 ) AS r3 FROM ztable INTO TABLE @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT field1, division( field2, 2, 2 ) AS r1, division( field2, -5, 1 ) AS r2 FROM ztable INTO TABLE @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT field1, division( 100, field2, 2 ) AS r1 FROM ztable WHERE field3 = @lv_val INTO TABLE @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT t1~field1, t1~field2, division( t1~field3, t2~field3, 2 ) AS ratio FROM ztable AS t1 INNER JOIN ztable2 AS t2 ON t1~field1 = t2~field1 ORDER BY t1~field1 INTO TABLE @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT t1~field1, division( t1~field2, t2~field2, 2 ) AS d FROM ztable AS t1 LEFT OUTER JOIN ztable2 AS t2 ON t1~field1 = t2~field1 WHERE division( t1~field2, t2~field2, 2 ) IS NOT NULL INTO TABLE @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT t1~field1, division( t1~field2, t2~field2, 2 ) AS d FROM ztable AS t1 LEFT OUTER JOIN ztable2 AS t2 ON t1~field1 = t2~field1 WHERE division( t1~field2, t2~field2, 2 ) IS NULL INTO TABLE @DATA(result).`, ver: Version.v751},
 ];
 
 statementVersion(versions, "SELECT", Statements.Select);
+
+const windowVersions = [
+  {abap: `SELECT company, category, item, price, row_number( ) over( ) AS rn FROM @ztable AS t ORDER BY rn INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT company, category, item, price, rank( ) over( order by price descending ) AS rnk FROM @ztable AS t ORDER BY rnk, company, category, item INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT company, category, item, price, dense_rank( ) over( order by price descending ) AS dr FROM @ztable AS t ORDER BY dr, company, category, item INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, row_number( ) over( order by field1, field2, field3 ) AS rn FROM @ztable AS t ORDER BY field3, field2, field1 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, row_number( ) over( partition by field1 order by field4, field3 ) AS rn FROM @ztable AS t ORDER BY field3, field2, field1 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, row_number( ) over( partition by field2, field1 order by field4, field3 ) AS rn FROM @ztable AS t ORDER BY field3, field2, field1 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, rank( ) over( partition by field1 order by field4 descending ) AS rnk FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, rank( ) over( partition by field2, field1 order by field4 descending ) AS rnk FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, dense_rank( ) over( partition by field2, field1 order by field4 descending ) AS dr FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, count(*) over( ) AS cnt FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, count(*) over( partition by field1 ) AS cnt FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, count(*) over( partition by field1, field2 ) AS cnt FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, count(*) over( partition by field1, field2 order by field4 ) AS cnt FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, sum( field4 ) over( ) AS s FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, sum( field4 ) over( partition by field1, field2 ) AS s FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, sum( field4 ) over( partition by field1, field2 order by field4 ) AS s FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, min( field4 ) over( ) AS m FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, min( field4 ) over( partition by field1, field2 ) AS m FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, min( field4 ) over( partition by field1, field2 order by field3 ) AS m FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, max( field4 ) over( ) AS m FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, max( field4 ) over( partition by field1, field2 ) AS m FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, max( field4 ) over( partition by field1, field2 order by field3 ) AS m FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT AVG( field1 AS DEC( 15, 2 ) ) AS a FROM ztable INTO @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT AVG( field1 AS CURR( 15, 2 ) ) AS a FROM ztable INTO @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT AVG( field1 AS QUAN( 15, 2 ) ) AS a FROM ztable INTO @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT AVG( field1 AS D16N ) AS a FROM ztable INTO @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT AVG( field1 AS D34N ) AS a FROM ztable INTO @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT AVG( field1 AS FLTP ) AS a FROM ztable INTO @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT AVG( DISTINCT field1 AS DEC( 10, 3 ) ) AS a FROM ztable INTO @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT field1, field2, field3, field4, avg( field4 as dec( 31, 2 ) ) over( ) AS a FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, avg( field4 as dec( 31, 2 ) ) over( partition by field1, field2 ) AS a FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, avg( field4 as dec( 31, 2 ) ) over( partition by field1, field2 order by field3 ) AS a FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, avg( field4 as curr( 15, 2 ) ) over( ) AS a FROM @ztable AS t ORDER BY field1 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, avg( field4 as quan( 15, 2 ) ) over( ) AS a FROM @ztable AS t ORDER BY field1 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, avg( field4 as d16n ) over( ) AS a FROM @ztable AS t ORDER BY field1 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, avg( field4 as d34n ) over( ) AS a FROM @ztable AS t ORDER BY field1 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, avg( field4 as fltp ) over( ) AS a FROM @ztable AS t ORDER BY field1 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, case when avg( field4 ) over( ) > @lv_val then 1 else 0 end AS flag FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, count( field4 ) over( ) AS cnt FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, count( field4 ) over( partition by field1 ) AS cnt FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, field3, field4, count( field4 ) over( partition by field1, field2 ) AS cnt FROM @ztable AS t ORDER BY field1, field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, sum( field4 ) AS s1, sum( sum( field4 ) ) over( partition by field1 ) AS s2 FROM @ztable AS t GROUP BY field1, field2 ORDER BY field1, field2 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT field1, field2, division( sum( field4 ), sum( sum( field4 ) ) over( partition by field1 ), 2 ) AS d FROM @ztable AS t GROUP BY field1, field2 ORDER BY field1, field2 INTO TABLE @DATA(result).`, ver: Version.v757},
+];
+
+statementVersionOk(windowVersions, "SELECT", Statements.Select);
+
+const frameVersions = [
+  {abap: `SELECT FROM ztable FIELDS sum( field1 ) over( partition by field2 order by field3 rows between unbounded preceding and unbounded following ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT FROM ztable FIELDS sum( field1 ) over( partition by field2 order by field3 rows between unbounded preceding and 2 following ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT FROM ztable FIELDS sum( field1 ) over( partition by field2 order by field3 rows between unbounded preceding and 1 following ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT FROM ztable FIELDS sum( field1 ) over( partition by field2 order by field3 rows between unbounded preceding and 0 following ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT FROM ztable FIELDS sum( field1 ) over( partition by field2 order by field3 rows between unbounded preceding and current row ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT FROM ztable FIELDS coalesce( sum( field1 ) over( partition by field2 order by field3 rows between 1 following and 2 following ), 1728 ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT FROM ztable FIELDS coalesce( sum( field1 ) over( partition by field2 order by field3 rows between 1 preceding and 2 following ), 1728 ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT FROM ztable FIELDS coalesce( sum( field1 ) over( partition by field2 order by field3 rows between 2 preceding and 1 preceding ), 1728 ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT FROM ztable FIELDS coalesce( sum( field1 ) over( partition by field2 order by field3 rows between 2 preceding and unbounded following ), 1728 ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT FROM ztable FIELDS coalesce( sum( field1 ) over( partition by field2 order by field3 rows between current row and unbounded following ), 1728 ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT FROM ztable FIELDS coalesce( sum( field1 ) over( partition by field2 order by field3 rows between 1 following and unbounded following ), 1728 ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT FROM ztable FIELDS coalesce( avg( field1 as dec( 16, 2 ) ) over( partition by field2 order by field3 rows between 1 following and unbounded following ), 1728 ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+  {abap: `SELECT FROM ztable FIELDS coalesce( avg( field1 as d34n ) over( partition by field2 order by field3 rows between 1 following and unbounded following ), 1728 ) WHERE field4 = @lv_val ORDER BY field2, field3 INTO TABLE @DATA(result).`, ver: Version.v757},
+];
+
+statementVersionOk(frameVersions, "SELECT", Statements.Select);
+
+const aggArgExprVersions = [
+  {abap: `SELECT SINGLE SUM( field1 + field2 ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
+  {abap: `SELECT SINGLE SUM( field1 - field2 ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
+  {abap: `SELECT SINGLE SUM( field1 * field2 ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
+  {abap: `SELECT SINGLE MIN( field1 + 1 ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
+  {abap: `SELECT SINGLE MAX( field1 + field2 ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
+  {abap: `SELECT SINGLE AVG( field1 + field2 ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
+  {abap: `SELECT SINGLE COUNT( DISTINCT field1 + field2 ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
+  {abap: `SELECT SINGLE SUM( field1 + @lv_offset ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
+  {abap: `SELECT SINGLE SUM( CASE WHEN field1 > 0 THEN field1 ELSE 0 END ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
+];
+
+statementVersionOk(aggArgExprVersions, "SELECT", Statements.Select);
+
+const aggInArithVersions = [
+  {abap: `SELECT SINGLE 1 + SUM( field1 ) FROM ztable INTO @DATA(result).`, ver: Version.v754},
+  {abap: `SELECT SINGLE SUM( field1 ) + SUM( field2 ) FROM ztable INTO @DATA(result).`, ver: Version.v754},
+  {abap: `SELECT SINGLE SUM( field1 ) * 2 FROM ztable INTO @DATA(result).`, ver: Version.v754},
+  {abap: `SELECT SINGLE CASE WHEN field1 > 0 THEN SUM( field1 ) ELSE 0 END FROM ztable INTO @DATA(result).`, ver: Version.v754},
+];
+
+statementVersionOk(aggInArithVersions, "SELECT", Statements.Select);
 
 const versionsFail = [
   {abap: `SELECT * INTO TABLE lt_but000
@@ -593,6 +689,9 @@ const versionsFail = [
   ORDER BY PRIMARY KEY.`, ver: Version.v750},
   {abap: `SELECT ( arbgb, text ) AS bar FROM t100 INTO TABLE @DATA(sdf).`, ver: Version.v750},
   {abap: `SELECT ( arbgb AS bar ) FROM t100 INTO TABLE @DATA(sdf).`, ver: Version.v750},
+  {abap: `SELECT SINGLE SUM( field1 + field2 ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp05},
+  {abap: `SELECT SINGLE 1 + SUM( field1 ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
+  {abap: "SELECT SUM( (l_field) ) INTO l_value FROM (l_table).", ver: Version.v702},
 ];
 
 statementVersionFail(versionsFail, "SELECT");
