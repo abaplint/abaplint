@@ -1,0 +1,170 @@
+name: Prepare Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: Release type
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+      dry_run:
+        description: Run versioning and checks without creating a PR
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: prepare-release
+  cancel-in-progress: false
+
+jobs:
+  prepare-release:
+    name: Prepare release PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+
+      - name: Install core dependencies
+        run: npm install
+        working-directory: packages/core
+
+      - name: Install CLI dependencies
+        run: npm install
+        working-directory: packages/cli
+
+      - name: Install Monaco dependencies
+        run: npm install
+        working-directory: packages/monaco
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump core version
+        id: bump
+        run: |
+          npm --no-git-tag-version version "${RELEASE_TYPE}"
+          VERSION="$(node -p "require('./package.json').version")"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+        working-directory: packages/core
+        env:
+          RELEASE_TYPE: ${{ inputs.release_type }}
+
+      - name: Bump CLI version
+        run: npm --no-git-tag-version version "${{ steps.bump.outputs.version }}"
+        working-directory: packages/cli
+
+      - name: Bump Monaco version
+        run: npm --no-git-tag-version version "${{ steps.bump.outputs.version }}"
+        working-directory: packages/monaco
+
+      - name: Check release tag
+        run: |
+          if git rev-parse "v${{ steps.bump.outputs.version }}" >/dev/null 2>&1; then
+            echo "Tag v${{ steps.bump.outputs.version }} already exists"
+            exit 1
+          fi
+
+      - name: Check npm package versions
+        run: |
+          VERSION="${{ steps.bump.outputs.version }}"
+          for PACKAGE in @abaplint/core @abaplint/cli @abaplint/monaco; do
+            if npm view "${PACKAGE}@${VERSION}" version >/dev/null 2>&1; then
+              echo "Package ${PACKAGE}@${VERSION} already exists"
+              exit 1
+            fi
+          done
+
+      - name: Clean core build
+        run: rm -rf build
+        working-directory: packages/core
+
+      - name: Test core
+        run: npm run test
+        working-directory: packages/core
+
+      - name: Link core
+        run: npm link
+        working-directory: packages/core
+
+      - name: Clean CLI build
+        run: rm -rf build
+        working-directory: packages/cli
+
+      - name: Link core into CLI
+        run: npm link @abaplint/core
+        working-directory: packages/cli
+
+      - name: Test CLI
+        run: npm run test
+        working-directory: packages/cli
+
+      - name: Clean Monaco build
+        run: rm -rf build
+        working-directory: packages/monaco
+
+      - name: Link core into Monaco
+        run: npm link @abaplint/core
+        working-directory: packages/monaco
+
+      - name: Test Monaco
+        run: npm run test
+        working-directory: packages/monaco
+
+      - name: Publish dry-run core
+        run: npm publish --access public --dry-run
+        working-directory: packages/core
+
+      - name: Publish dry-run CLI
+        run: npm publish --access public --dry-run
+        working-directory: packages/cli
+
+      - name: Publish dry-run Monaco
+        run: npm publish --access public --dry-run
+        working-directory: packages/monaco
+
+      - name: Create release pull request
+        if: ${{ inputs.dry_run == false }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.bump.outputs.version }}
+          BASE_BRANCH: ${{ github.ref_name }}
+        run: |
+          BRANCH="release/v${VERSION}"
+
+          if git ls-remote --exit-code --heads origin "${BRANCH}" >/dev/null 2>&1; then
+            echo "Branch ${BRANCH} already exists"
+            exit 1
+          fi
+
+          git checkout -b "${BRANCH}"
+          git add packages/core/package.json packages/core/package-lock.json
+          git add packages/cli/package.json packages/cli/package-lock.json
+          git add packages/monaco/package.json packages/monaco/package-lock.json
+          git commit -m "chore(release): v${VERSION}"
+          git push origin "${BRANCH}"
+          gh pr create \
+            --base "${BASE_BRANCH}" \
+            --head "${BRANCH}" \
+            --title "chore(release): v${VERSION}" \
+            --body "Release PR for v${VERSION}. Merging this PR to ${BASE_BRANCH} triggers npm publishing."
