@@ -1,0 +1,185 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: Release type
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+      dry_run:
+        description: Run versioning and publish checks without pushing or publishing
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: publish-release
+  cancel-in-progress: false
+
+jobs:
+  publish-release:
+    name: Publish release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+
+      - name: Verify trusted publishing prerequisites
+        run: |
+          node --version
+          npm --version
+          npm config get registry
+
+      - name: Install core dependencies
+        run: npm install
+        working-directory: packages/core
+
+      - name: Install CLI dependencies
+        run: npm install
+        working-directory: packages/cli
+
+      - name: Install Monaco dependencies
+        run: npm install
+        working-directory: packages/monaco
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump core version
+        id: bump
+        run: |
+          npm --no-git-tag-version version "${RELEASE_TYPE}"
+          VERSION="$(node -p "require('./package.json').version")"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+        working-directory: packages/core
+        env:
+          RELEASE_TYPE: ${{ inputs.release_type }}
+
+      - name: Bump CLI version
+        run: npm --no-git-tag-version version "${{ steps.bump.outputs.version }}"
+        working-directory: packages/cli
+
+      - name: Bump Monaco version
+        run: npm --no-git-tag-version version "${{ steps.bump.outputs.version }}"
+        working-directory: packages/monaco
+
+      - name: Update CLI core dependency
+        run: |
+          node -e "const fs = require('fs'); const pkg = require('./package.json'); pkg.devDependencies['@abaplint/core'] = '^${{ steps.bump.outputs.version }}'; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 4) + '\n');"
+        working-directory: packages/cli
+
+      - name: Update Monaco core dependency
+        run: |
+          node -e "const fs = require('fs'); const pkg = require('./package.json'); pkg.dependencies['@abaplint/core'] = '^${{ steps.bump.outputs.version }}'; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');"
+        working-directory: packages/monaco
+
+      - name: Update playground dependencies
+        run: |
+          node -e "const fs = require('fs'); const pkg = require('./package.json'); pkg.devDependencies['@abaplint/core'] = '^${{ steps.bump.outputs.version }}'; pkg.devDependencies['@abaplint/monaco'] = '^${{ steps.bump.outputs.version }}'; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');"
+        working-directory: web/playground
+
+      - name: Check release tag
+        run: |
+          if git rev-parse "v${{ steps.bump.outputs.version }}" >/dev/null 2>&1; then
+            echo "Tag v${{ steps.bump.outputs.version }} already exists"
+            exit 1
+          fi
+
+      - name: Clean core build
+        run: rm -rf build
+        working-directory: packages/core
+
+      - name: Test core
+        run: npm run test
+        working-directory: packages/core
+
+      - name: Link core
+        run: npm link
+        working-directory: packages/core
+
+      - name: Clean CLI build
+        run: rm -rf build
+        working-directory: packages/cli
+
+      - name: Link core into CLI
+        run: npm link @abaplint/core
+        working-directory: packages/cli
+
+      - name: Test CLI
+        run: npm run test
+        working-directory: packages/cli
+
+      - name: Clean Monaco build
+        run: rm -rf build
+        working-directory: packages/monaco
+
+      - name: Link core into Monaco
+        run: npm link @abaplint/core
+        working-directory: packages/monaco
+
+      - name: Test Monaco
+        run: npm run test
+        working-directory: packages/monaco
+
+      - name: Commit and tag release
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          git add packages/core/package.json packages/core/package-lock.json
+          git add packages/cli/package.json packages/cli/package-lock.json
+          git add packages/monaco/package.json packages/monaco/package-lock.json
+          git add web/playground/package.json web/playground/package-lock.json
+          git commit -m "chore(release): v${{ steps.bump.outputs.version }}"
+          git tag "v${{ steps.bump.outputs.version }}"
+          git push origin "HEAD:${{ github.ref_name }}"
+          git push origin "v${{ steps.bump.outputs.version }}"
+
+      - name: Dry-run publish core
+        if: ${{ inputs.dry_run == true }}
+        run: npm publish --access public --dry-run
+        working-directory: packages/core
+
+      - name: Publish core
+        if: ${{ inputs.dry_run == false }}
+        run: npm publish --access public
+        working-directory: packages/core
+
+      - name: Dry-run publish CLI
+        if: ${{ inputs.dry_run == true }}
+        run: npm publish --access public --dry-run
+        working-directory: packages/cli
+
+      - name: Publish CLI
+        if: ${{ inputs.dry_run == false }}
+        run: npm publish --access public
+        working-directory: packages/cli
+
+      - name: Dry-run publish Monaco
+        if: ${{ inputs.dry_run == true }}
+        run: npm publish --access public --dry-run
+        working-directory: packages/monaco
+
+      - name: Publish Monaco
+        if: ${{ inputs.dry_run == false }}
+        run: npm publish --access public
+        working-directory: packages/monaco
