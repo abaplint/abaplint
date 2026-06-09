@@ -84,12 +84,6 @@ jobs:
             fi
           done
 
-      - name: Update published dependency ranges
-        run: |
-          VERSION="${{ steps.release.outputs.version }}"
-          node -e "const fs = require('fs'); const pkg = require('./packages/cli/package.json'); pkg.devDependencies['@abaplint/core'] = '^${VERSION}'; fs.writeFileSync('./packages/cli/package.json', JSON.stringify(pkg, null, 4) + '\n');"
-          node -e "const fs = require('fs'); const pkg = require('./packages/monaco/package.json'); pkg.dependencies['@abaplint/core'] = '^${VERSION}'; fs.writeFileSync('./packages/monaco/package.json', JSON.stringify(pkg, null, 2) + '\n');"
-
       - name: Install core dependencies
         run: npm install
         working-directory: packages/core
