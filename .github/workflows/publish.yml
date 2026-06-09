@@ -43,13 +43,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
@@ -96,10 +94,6 @@ jobs:
         run: npm install
         working-directory: packages/core
 
-      - name: Clean core build
-        run: rm -rf build
-        working-directory: packages/core
-
       - name: Test core
         run: npm run test
         working-directory: packages/core
@@ -125,10 +119,6 @@ jobs:
         run: npm link
         working-directory: packages/core
 
-      - name: Clean CLI build
-        run: rm -rf build
-        working-directory: packages/cli
-
       - name: Link core into CLI
         run: npm link @abaplint/core
         working-directory: packages/cli
@@ -136,10 +126,6 @@ jobs:
       - name: Test CLI
         run: npm run test
         working-directory: packages/cli
-
-      - name: Clean Monaco build
-        run: rm -rf build
-        working-directory: packages/monaco
 
       - name: Link core into Monaco
         run: npm link @abaplint/core
