@@ -1,6 +1,10 @@
 name: playground.abaplint.org
 
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore:
+      - 'release/v**'
+  pull_request:
 
 jobs:
   playground:
