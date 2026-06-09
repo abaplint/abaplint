@@ -1,0 +1,151 @@
+name: Publish Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - packages/core/package.json
+      - packages/cli/package.json
+      - packages/monaco/package.json
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: publish-release
+  cancel-in-progress: false
+
+jobs:
+  detect-release:
+    name: Detect release commit
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.detect.outputs.should_publish }}
+
+    steps:
+      - name: Detect release commit
+        id: detect
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          if [[ "${COMMIT_MESSAGE}" == *"chore(release): v"* ]]; then
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  publish-release:
+    name: Publish release
+    needs: detect-release
+    if: needs.detect-release.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+
+      - name: Verify release version
+        id: release
+        run: |
+          VERSION="$(node -p "require('./packages/core/package.json').version")"
+          CLI_VERSION="$(node -p "require('./packages/cli/package.json').version")"
+          MONACO_VERSION="$(node -p "require('./packages/monaco/package.json').version")"
+
+          if [ "${VERSION}" != "${CLI_VERSION}" ] || [ "${VERSION}" != "${MONACO_VERSION}" ]; then
+            echo "Package versions do not match"
+            exit 1
+          fi
+
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Check release tag
+        run: |
+          if git rev-parse "v${{ steps.release.outputs.version }}" >/dev/null 2>&1; then
+            echo "Tag v${{ steps.release.outputs.version }} already exists"
+            exit 1
+          fi
+
+      - name: Check npm package versions
+        run: |
+          VERSION="${{ steps.release.outputs.version }}"
+          for PACKAGE in @abaplint/core @abaplint/cli @abaplint/monaco; do
+            if npm view "${PACKAGE}@${VERSION}" version >/dev/null 2>&1; then
+              echo "Package ${PACKAGE}@${VERSION} already exists"
+              exit 1
+            fi
+          done
+
+      - name: Install core dependencies
+        run: npm install
+        working-directory: packages/core
+
+      - name: Test core
+        run: npm run test
+        working-directory: packages/core
+
+      - name: Publish dry-run core
+        run: npm publish --access public --dry-run
+        working-directory: packages/core
+
+      - name: Publish core
+        run: npm publish --access public
+        working-directory: packages/core
+
+      # Core must exist on npm before CLI and Monaco can install their updated ranges.
+      - name: Install CLI dependencies
+        run: npm install
+        working-directory: packages/cli
+
+      - name: Install Monaco dependencies
+        run: npm install
+        working-directory: packages/monaco
+
+      - name: Link core
+        run: npm link
+        working-directory: packages/core
+
+      - name: Link core into CLI
+        run: npm link @abaplint/core
+        working-directory: packages/cli
+
+      - name: Test CLI
+        run: npm run test
+        working-directory: packages/cli
+
+      - name: Link core into Monaco
+        run: npm link @abaplint/core
+        working-directory: packages/monaco
+
+      - name: Test Monaco
+        run: npm run test
+        working-directory: packages/monaco
+
+      - name: Publish dry-run CLI
+        run: npm publish --access public --dry-run
+        working-directory: packages/cli
+
+      - name: Publish dry-run Monaco
+        run: npm publish --access public --dry-run
+        working-directory: packages/monaco
+
+      - name: Publish CLI
+        run: npm publish --access public
+        working-directory: packages/cli
+
+      - name: Publish Monaco
+        run: npm publish --access public
+        working-directory: packages/monaco
+
+      - name: Tag release
+        run: |
+          git tag "v${{ steps.release.outputs.version }}"
+          git push origin "v${{ steps.release.outputs.version }}"
