@@ -68,12 +68,19 @@ jobs:
         run: npm --no-git-tag-version version "${{ steps.bump.outputs.version }}"
         working-directory: packages/monaco
 
-      - name: Update core dependency ranges
+      - name: Update CLI core dependency range
         env:
           VERSION: ${{ steps.bump.outputs.version }}
         run: |
           node -e "const fs = require('fs'); const pkg = require('./packages/cli/package.json'); pkg.devDependencies['@abaplint/core'] = '^' + process.env.VERSION; fs.writeFileSync('./packages/cli/package.json', JSON.stringify(pkg, null, 4) + '\n');"
+          node -e "const fs = require('fs'); const lock = require('./packages/cli/package-lock.json'); lock.packages[''].devDependencies['@abaplint/core'] = '^' + process.env.VERSION; fs.writeFileSync('./packages/cli/package-lock.json', JSON.stringify(lock, null, 4) + '\n');"
+
+      - name: Update Monaco core dependency range
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
           node -e "const fs = require('fs'); const pkg = require('./packages/monaco/package.json'); pkg.dependencies['@abaplint/core'] = '^' + process.env.VERSION; fs.writeFileSync('./packages/monaco/package.json', JSON.stringify(pkg, null, 2) + '\n');"
+          node -e "const fs = require('fs'); const lock = require('./packages/monaco/package-lock.json'); lock.packages[''].dependencies['@abaplint/core'] = '^' + process.env.VERSION; fs.writeFileSync('./packages/monaco/package-lock.json', JSON.stringify(lock, null, 2) + '\n');"
 
       - name: Check release tag
         run: |
