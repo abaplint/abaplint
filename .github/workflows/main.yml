@@ -2,7 +2,11 @@ name: Main
 
 on:
   push:
+    branches-ignore:
+      - 'release/v**'
   pull_request:
+    branches-ignore:
+      - 'release/v**'
   workflow_dispatch:
 
 jobs:
@@ -12,24 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - uses: actions/setup-node@v6
-    # Install in dependency order so cli/monaco resolve @abaplint/core via a
-    # local link. On release branches the bumped core version is not yet
-    # published to npm, so a plain install would fail with ENOTARGET.
-    - run: npm install --ignore-scripts
-    - run: npm install
-      working-directory: packages/core
-    - run: npm link
-      working-directory: packages/core
-    - run: npm link @abaplint/core
-      working-directory: packages/cli
-    - run: npm link @abaplint/core
-      working-directory: packages/monaco
-    - run: npm install
-      working-directory: packages/cli
-    - run: npm install
-      working-directory: packages/monaco
-    - run: npm install
-      working-directory: packages/morph
+    - run: npm run install
     - run: npm run link-local
     - run: npm test
     - run: ./packages/cli/abaplint --version
