@@ -103,15 +103,9 @@ jobs:
         run: npm publish --access public
         working-directory: packages/core
 
-      # Core must exist on npm before CLI and Monaco can install their updated ranges.
-      - name: Install CLI dependencies
-        run: npm install
-        working-directory: packages/cli
-
-      - name: Install Monaco dependencies
-        run: npm install
-        working-directory: packages/monaco
-
+      # Link core into CLI and Monaco before installing so the @abaplint/core
+      # range resolves to the local package. This avoids depending on npm
+      # registry propagation of the just-published core version.
       - name: Link core
         run: npm link
         working-directory: packages/core
@@ -120,13 +114,21 @@ jobs:
         run: npm link @abaplint/core
         working-directory: packages/cli
 
-      - name: Test CLI
-        run: npm run test
-        working-directory: packages/cli
-
       - name: Link core into Monaco
         run: npm link @abaplint/core
         working-directory: packages/monaco
+
+      - name: Install CLI dependencies
+        run: npm install
+        working-directory: packages/cli
+
+      - name: Install Monaco dependencies
+        run: npm install
+        working-directory: packages/monaco
+
+      - name: Test CLI
+        run: npm run test
+        working-directory: packages/cli
 
       - name: Test Monaco
         run: npm run test
