@@ -4,6 +4,7 @@ on:
   push:
     branches-ignore:
       - 'main'
+      - 'release/v**'
 
 permissions:
   contents: read

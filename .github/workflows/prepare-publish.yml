@@ -153,4 +153,3 @@ jobs:
             --head "${BRANCH}" \
             --title "chore(release): v${VERSION}" \
             --body "Release PR for v${VERSION}. Merging this PR to ${BASE_BRANCH} triggers npm publishing."
-          gh workflow run main.yml --ref "${BRANCH}"

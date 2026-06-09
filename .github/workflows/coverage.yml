@@ -1,6 +1,9 @@
 name: Coverage
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - 'release/v**'
 
 jobs:
   coverage:
