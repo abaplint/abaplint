@@ -84,6 +84,9 @@ jobs:
             fi
           done
 
+      - name: Install root dependencies
+        run: npm install --ignore-scripts
+
       - name: Install core dependencies
         run: npm install
         working-directory: packages/core

@@ -41,17 +41,8 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
 
-      - name: Install core dependencies
-        run: npm install
-        working-directory: packages/core
-
-      - name: Install CLI dependencies
-        run: npm install
-        working-directory: packages/cli
-
-      - name: Install Monaco dependencies
-        run: npm install
-        working-directory: packages/monaco
+      - name: Install dependencies
+        run: npm run install
 
       - name: Configure Git
         run: |
