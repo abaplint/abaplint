@@ -82,6 +82,13 @@ jobs:
           node -e "const fs = require('fs'); const pkg = require('./packages/monaco/package.json'); pkg.dependencies['@abaplint/core'] = '^' + process.env.VERSION; fs.writeFileSync('./packages/monaco/package.json', JSON.stringify(pkg, null, 2) + '\n');"
           node -e "const fs = require('fs'); const lock = require('./packages/monaco/package-lock.json'); lock.packages[''].dependencies['@abaplint/core'] = '^' + process.env.VERSION; fs.writeFileSync('./packages/monaco/package-lock.json', JSON.stringify(lock, null, 2) + '\n');"
 
+      - name: Update Playground abaplint dependency ranges
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
+          node -e "const fs = require('fs'); const pkg = require('./web/playground/package.json'); pkg.devDependencies['@abaplint/core'] = '^' + process.env.VERSION; pkg.devDependencies['@abaplint/monaco'] = '^' + process.env.VERSION; fs.writeFileSync('./web/playground/package.json', JSON.stringify(pkg, null, 2) + '\n');"
+          node -e "const fs = require('fs'); const lock = require('./web/playground/package-lock.json'); lock.packages[''].devDependencies['@abaplint/core'] = '^' + process.env.VERSION; lock.packages[''].devDependencies['@abaplint/monaco'] = '^' + process.env.VERSION; fs.writeFileSync('./web/playground/package-lock.json', JSON.stringify(lock, null, 2) + '\n');"
+
       - name: Check release tag
         run: |
           if git rev-parse "v${{ steps.bump.outputs.version }}" >/dev/null 2>&1; then
@@ -153,6 +160,7 @@ jobs:
           git add packages/core/package.json packages/core/package-lock.json
           git add packages/cli/package.json packages/cli/package-lock.json
           git add packages/monaco/package.json packages/monaco/package-lock.json
+          git add web/playground/package.json web/playground/package-lock.json
           git commit -m "chore(release): v${VERSION}"
           git push origin "${BRANCH}"
           gh pr create \
