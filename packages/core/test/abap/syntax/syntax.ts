@@ -6750,6 +6750,24 @@ DATA(lv) = int-field + <fv>.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, method call no spaces", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE c LENGTH 30.
+    CLASS-METHODS call IMPORTING foo TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD call.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>call('SDFSD').`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("REDUCE with LET used in FOR", () => {
     const abap = `
     DATA(text) = REDUCE string(

@@ -1,5 +1,5 @@
 import {ExpressionNode} from "../../nodes";
-import {StringType, VoidType} from "../../types/basic";
+import {VoidType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {IMethodDefinition} from "../../types/_method_definition";
 import {MethodParameters} from "./method_parameters";
@@ -8,6 +8,7 @@ import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {Constant} from "./constant";
 
 export class MethodCallParam {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, method: IMethodDefinition | VoidType): void {
@@ -66,9 +67,11 @@ export class MethodCallParam {
       } else {
         targetType = method;
       }
-      let sourceType: AbstractType | undefined = StringType.get();
+      let sourceType: AbstractType | undefined = undefined;
       if (child.get() instanceof Expressions.Source) {
         sourceType = Source.runSyntax(child, input, targetType);
+      } else if (child.get() instanceof Expressions.ConstantString) {
+        sourceType = Constant.runSyntax(child);
       }
 
       if (sourceType === undefined) {
