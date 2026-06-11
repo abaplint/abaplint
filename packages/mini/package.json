@@ -5,7 +5,7 @@
   "description": "",
   "scripts": {
     "esbuild": "esbuild src/index.ts --bundle --format=esm --banner:js=/*eslint-disable*/ --outfile=bundle.js",
-    "zmjs": "rm -rf zmjs && git clone https://github.com/oisee/zmjs && abap_transpile && node test.mjs",
+    "zmjs": "node scripts/rm.cjs zmjs && git clone https://github.com/oisee/zmjs && abap_transpile && node test.mjs",
     "test": "tsc && npm run esbuild && npm run zmjs"
   },
   "author": "Lars Hvam",
@@ -15,6 +15,6 @@
     "@abaplint/runtime": "^2.13.28",
     "@abaplint/transpiler-cli": "^2.13.28",
     "esbuild": "^0.28.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   }
 }

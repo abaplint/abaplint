@@ -8,7 +8,7 @@
     "scripts": {
         "lint": "eslint src/**/*.ts test/**/*.ts",
         "lint:fix": "eslint src/**/*.ts test/**/*.ts --fix",
-        "compile": "tsc && sh scripts/version.sh",
+        "compile": "tsc && node scripts/version.js",
         "test": "npm run compile && mocha --timeout 1000 && npm run lint && npm run schema && api-extractor run",
         "test:only": "npm run compile && mocha --timeout 1000000",
         "test:parallel": "npm run compile && mocha --timeout 1000 --parallel --reporter dot",
@@ -60,7 +60,7 @@
         "mocha": "^11.7.6",
         "source-map-support": "^0.5.21",
         "ts-json-schema-generator": "^2.9.0",
-        "typescript": "^5.9.3"
+        "typescript": "^6.0.3"
     },
     "dependencies": {
         "fast-xml-parser": "^5.8.0",
