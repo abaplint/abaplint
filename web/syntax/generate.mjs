@@ -3,7 +3,7 @@
 
 // used for generating "syntax"
 
-import Railroad from "railroad-diagrams";
+import Railroad from "railroad-diagrams/railroad.js";
 import {writeFileSync, readFileSync} from "fs";
 
 const folder = "./build/";

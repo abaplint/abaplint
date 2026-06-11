@@ -43,6 +43,9 @@ export class ApplyWorkSpaceEdit {
     const rows = old.getRawRows();
 
     for (const e of edit.edits) {
+      if ("newText" in e === false) {
+        throw new Error("applyEdit, snippet edit not supported");
+      }
       if (e.range.start.line !== e.range.end.line) {
         throw new Error("applyEdit, unsupported range, expect same line");
       }

@@ -169,7 +169,8 @@ class Vers implements IStatementRunnable {
       } else {
         return this.runnable.run(r);
       }
-    } else if ((targetVersion !== Version.Cloud && this.version !== Version.Cloud && targetVersion >= this.version) || targetVersion === Version.Cloud) {
+    } else if ((targetVersion !== Version.Cloud && this.version !== Version.Cloud && targetVersion >= this.version)
+        || targetVersion === Version.Cloud) {
       return this.runnable.run(r);
     } else {
       return [];

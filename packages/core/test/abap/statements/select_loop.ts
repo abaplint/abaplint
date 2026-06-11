@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {statementType, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";

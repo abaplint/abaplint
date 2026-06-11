@@ -27,16 +27,16 @@
   },
   "homepage": "https://abaplint.org",
   "dependencies": {
-    "@abaplint/cli": "^2.106.3",
-    "@abaplint/runtime": "^2.8.19",
-    "@abaplint/transpiler-cli": "^2.8.19",
-    "@types/chai": "^4.3.14",
-    "@types/mocha": "^10.0.6",
-    "@types/node": "^20.11.30",
-    "chai": "^4.4.1",
-    "mocha": "^10.4.0",
+    "@abaplint/cli": "^2.119.26",
+    "@abaplint/runtime": "^2.13.28",
+    "@abaplint/transpiler-cli": "^2.13.28",
+    "@types/chai": "^4.3.20",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.19.43",
+    "chai": "^4.5.0",
+    "mocha": "^10.8.2",
     "source-map-support": "^0.5.21",
     "ts-morph": "^22.0.0",
-    "typescript": "^5.4.3"
+    "typescript": "^5.9.3"
   }
 }

@@ -129,6 +129,9 @@ export class Renamer {
     }
     const rows = file.getRawRows();
     for (const e of dc.edits) {
+      if ("newText" in e === false) {
+        throw new Error("applyEdit, snippet edit not supported");
+      }
       if (e.range.start.line !== e.range.end.line) {
         throw new Error("applyEdit, start and end line differ");
       }
