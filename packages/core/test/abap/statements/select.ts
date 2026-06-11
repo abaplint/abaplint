@@ -696,3 +696,51 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "SELECT");
+
+const privilegedVersions = [
+  {abap: `SELECT * FROM ztab WITH PRIVILEGED ACCESS INTO TABLE @DATA(lt).`, ver: Version.v752},
+  {abap: `SELECT SINGLE * FROM ztab WITH PRIVILEGED ACCESS INTO @DATA(ls).`, ver: Version.v752},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(lt) PRIVILEGED ACCESS.`, ver: Version.v758},
+  {abap: `SELECT SINGLE * FROM ztab INTO @DATA(ls) PRIVILEGED ACCESS.`, ver: Version.v758},
+];
+
+statementVersion(privilegedVersions, "SELECT privileged access", Statements.Select);
+
+const privilegedVersionsFail = [
+  {abap: `SELECT * FROM ztab WITH PRIVILEGED ACCESS INTO TABLE @DATA(lt).`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(lt) PRIVILEGED ACCESS.`, ver: Version.v756},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(lt) PRIVILEGED ACCESS.`, ver: Version.v757},
+];
+
+statementVersionFail(privilegedVersionsFail, "SELECT privileged access");
+
+const optionsVersions = [
+  {abap: `SELECT count(*) FROM veri_clnt INTO @DATA(cnt) OPTIONS USING ALL CLIENTS.`, ver: Version.v758},
+  {abap: `SELECT count(*) FROM ztab INTO @DATA(wa) OPTIONS USING ALL CLIENTS.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS USING CLIENTS IN @lv_clients.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS USING CLIENTS IN t000.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS USING CLIENT '000'.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS PRIVILEGED ACCESS.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS BYPASSING BUFFER.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS BYPASSING BUFFER.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS BYPASSING BUFFER.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS BYPASSING BUFFER CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS BYPASSING BUFFER CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS PRIVILEGED ACCESS BYPASSING BUFFER.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS PRIVILEGED ACCESS CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS BYPASSING BUFFER CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS PRIVILEGED ACCESS BYPASSING BUFFER CONNECTION foo.`, ver: Version.v758},
+];
+
+statementVersion(optionsVersions, "SELECT OPTIONS clause", Statements.Select);
+
+const optionsVersionsFail = [
+  {abap: `SELECT count(*) FROM ztab INTO @DATA(wa) OPTIONS USING ALL CLIENTS.`, ver: Version.v757},
+];
+
+statementVersionFail(optionsVersionsFail, "SELECT OPTIONS clause");

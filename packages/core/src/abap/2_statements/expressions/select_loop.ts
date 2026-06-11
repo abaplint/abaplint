@@ -1,5 +1,5 @@
 import {seq, per, alt, Expression, optPrio, altPrio, ver, plusPrio} from "../combi";
-import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLClient, SQLForAllEntries, SQLIntoList, SQLAggregation, DatabaseConnection} from ".";
+import {SQLSource, SQLFrom, SQLCond, SQLIntoTable, SQLGroupBy, SQLClient, SQLForAllEntries, SQLIntoList, SQLAggregation, DatabaseConnection, SQLOptions, SQLPrivilegedAccess} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLOrderBy} from "./sql_order_by";
 import {SQLHaving} from "./sql_having";
@@ -19,6 +19,8 @@ export class SelectLoop extends Expression {
 
     const pack = seq("PACKAGE SIZE", SQLSource);
 
+    const privileged = ver(Version.v758, SQLPrivilegedAccess);
+
     const tab = seq(SQLIntoTable, alt(pack, seq(SQLFrom, pack), seq(pack, SQLFrom)));
 
     const packTab = seq(pack, SQLIntoTable);
@@ -35,6 +37,8 @@ export class SelectLoop extends Expression {
                      SQLGroupBy,
                      SQLForAllEntries,
                      DatabaseConnection,
+                     privileged,
+                     SQLOptions,
                      alt(tab, SQLIntoStructure, SQLIntoList, packTab));
 
     const strict = seq(SQLFrom,
@@ -50,7 +54,9 @@ export class SelectLoop extends Expression {
 
     const ret = seq("SELECT",
                     altPrio(seq(optPrio("DISTINCT"), SQLFieldListLoop, perm), strict, aggrIntoBeforeFrom, aggrIntoAfterFrom),
-                    optPrio(SQLHints));
+                    optPrio(SQLHints),
+                    optPrio(privileged),
+                    optPrio(SQLOptions));
 
     return ret;
   }

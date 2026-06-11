@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Version} from "../../../src/version";
 
 const tests = [
   `WITH +cte AS ( SELECT mandt FROM ztable CLIENT SPECIFIED )
@@ -19,3 +20,29 @@ const tests = [
 ];
 
 statementType(tests, "WITH", Statements.With);
+
+const privilegedVersions = [
+  {abap: `WITH +cte AS ( SELECT mandt FROM ztable WITH PRIVILEGED ACCESS )
+    SELECT * FROM +cte INTO TABLE @DATA(result).`, ver: Version.v752},
+
+  {abap: `WITH +cte AS ( SELECT mandt FROM ztable WITH PRIVILEGED ACCESS )
+    SELECT * FROM +cte WITH PRIVILEGED ACCESS INTO TABLE @DATA(result).`, ver: Version.v752},
+
+  {abap: `WITH +cte AS ( SELECT mandt FROM ztable )
+    SELECT * FROM +cte INTO TABLE @DATA(result) PRIVILEGED ACCESS.`, ver: Version.v758},
+];
+
+statementVersionOk(privilegedVersions, "WITH privileged access", Statements.With);
+
+const privilegedVersionsFail = [
+  {abap: `WITH +cte AS ( SELECT mandt FROM ztable WITH PRIVILEGED ACCESS )
+    SELECT * FROM +cte INTO TABLE @DATA(result).`, ver: Version.v751},
+
+  {abap: `WITH +cte AS ( SELECT mandt FROM ztable )
+    SELECT * FROM +cte INTO TABLE @DATA(result) PRIVILEGED ACCESS.`, ver: Version.v756},
+
+  {abap: `WITH +cte AS ( SELECT mandt FROM ztable )
+    SELECT * FROM +cte INTO TABLE @DATA(result) PRIVILEGED ACCESS.`, ver: Version.v757},
+];
+
+statementVersionFail(privilegedVersionsFail, "WITH privileged access");
