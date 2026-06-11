@@ -34,10 +34,7 @@ export function updateMarkers(reg: IRegistry, model: monaco.editor.ITextModel) {
 
   const markers: monaco.editor.IMarkerData[] = [];
   for (const diagnostic of diagnostics) {
-    let codeValue = diagnostic.code || "";
-    if (typeof codeValue === "number") {
-      codeValue = "";
-    }
+    const codeValue = typeof diagnostic.code === "string" ? diagnostic.code : "";
     const codeTarget = monaco.Uri.parse(diagnostic.codeDescription?.href || "");
 
     let severity = monaco.MarkerSeverity.Error;
@@ -47,9 +44,11 @@ export function updateMarkers(reg: IRegistry, model: monaco.editor.ITextModel) {
       severity = monaco.MarkerSeverity.Info;
     }
 
+    const message = typeof diagnostic.message === "string" ? diagnostic.message : diagnostic.message.value;
+
     markers.push({
       severity: severity,
-      message: diagnostic.message,
+      message: message,
       code: {
         value: codeValue,
         target: codeTarget,
