@@ -5,7 +5,7 @@ import * as fsPromises from "node:fs/promises";
 import * as glob from "glob";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as pLimit from "p-limit";
+import pLimit from "p-limit";
 import * as zlib from "node:zlib";
 
 export class FileOperations {

@@ -38,7 +38,7 @@
         "eslint": "^9.39.4",
         "globals": "^17.6.0",
         "railroad-diagrams": "github:tabatkins/railroad-diagrams#gh-pages",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.3",
         "vscode-languageserver-types": "^3.18.0",
         "xml-js": "^1.6.11"
     }

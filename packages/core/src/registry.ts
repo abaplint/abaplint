@@ -102,7 +102,7 @@ export class Registry implements IRegistry {
   }
 
   public static abaplintVersion(): string {
-    // magic, see build script "version.sh"
+    // magic, see build script "version.js"
     return "{{ VERSION }}";
   }
 

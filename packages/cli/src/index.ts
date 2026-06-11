@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import * as ProgressBar from "progress";
+import ProgressBar from "progress";
 import * as childProcess from "child_process";
 import * as JSON5 from "json5";
 import {Issue, IProgress, IFile, Position, Config, Registry, Version, IRegistry, MemoryFile} from "@abaplint/core";

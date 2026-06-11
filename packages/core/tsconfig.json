@@ -12,12 +12,15 @@
     "declaration": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
+    "strictPropertyInitialization": false,
+    "useUnknownInCatchVariables": false,
     "forceConsistentCasingInFileNames": true,
     "alwaysStrict": true,
     "target": "es2017",
     "lib": [
-      "ES2017"
+      "ES2019"
     ],
+    "types": ["node", "mocha"],
     "sourceMap": true
   },
   "filesGlob": [

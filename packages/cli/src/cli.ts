@@ -1,4 +1,4 @@
-import * as minimist from "minimist";
+import minimist from "minimist";
 import {run, GENERIC_ERROR, Arguments} from ".";
 
 const parsed = minimist(process.argv.slice(2), {boolean: ["p", "c", "fix", "rename"]});
