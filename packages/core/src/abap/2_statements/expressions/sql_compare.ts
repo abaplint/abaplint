@@ -1,13 +1,13 @@
 import {ver, seq, optPrio, altPrio, Expression, plusPrio, tok} from "../combi";
-import {SQLSource, SQLFieldName, Dynamic, Select, SQLIn, SQLCompareOperator, SQLFunction, SQLAggregation, Source, SimpleSource3, SQLPath, ConstantString} from ".";
+import {SQLSource, SQLFieldName, Dynamic, SQLIn, SQLCompareOperator, SQLFunction, SQLAggregation, Source, SimpleSource3, SQLPath, ConstantString} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {ParenLeftW, WAt, WParenRightW} from "../../1_lexer/tokens";
+import {SQLSetOpGroup} from "./sql_set_op_group";
 
 export class SQLCompare extends Expression {
   public getRunnable(): IStatementRunnable {
-    const subSelect = seq("(", Select, ")");
-    const subSelectDouble = seq("(", "(", Select, ")", ")");
+    const subSelect = ver(Version.v750, SQLSetOpGroup, Version.OpenABAP);
 
     const between = seq("BETWEEN", SQLSource, "AND", SQLSource);
 
@@ -17,7 +17,7 @@ export class SQLCompare extends Expression {
 
     const source = new SQLSource();
 
-    const sub = seq(optPrio(altPrio("ALL", "ANY", "SOME")), altPrio(subSelect, subSelectDouble));
+    const sub = seq(optPrio(altPrio("ALL", "ANY", "SOME")), subSelect);
 
     const arith = ver(Version.v750, plusPrio(seq(altPrio("+", "-", "*", "/"), SQLFieldName)), Version.OpenABAP);
 
