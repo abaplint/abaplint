@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import {statementType, statementVersion, statementVersionOk, statementVersionFail} from "../_utils";
+import {statementType, statementVersion, statementVersionOk, statementVersionFail, statementExpectFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -163,7 +163,6 @@ const tests = [
   "SELECT SINGLE * FROM *moo WHERE foo = bar.",
   "SELECT SINGLE * FROM ztable WHERE host = @lv_host INTO @DATA(ls_config).",
   "SELECT SINGLE * FROM ztable WHERE lower( host ) = @lv_host INTO @DATA(ls_config).",
-  "SELECT field FROM table INTO TABLE @DATA(lt_tab) OFFSET 22.",
   "SELECT bname, bcode FROM usr02 GROUP BY bname, bcode INTO TABLE @DATA(result).",
 
   `SELECT *
@@ -845,3 +844,49 @@ const unionCorrespVersions = [
 ];
 
 statementType(unionCorrespVersions, "SELECT UNION into corresponding fields", Statements.Select);
+
+statementType([
+  `WITH +cte AS ( SELECT col FROM ztab ) SELECT FROM +cte FIELDS col INTO TABLE @DATA(lt_r).`,
+], "WITH parses as With not Select", Statements.With);
+
+statementType([
+  `WITH +cte AS ( SELECT col FROM ztab ) SELECT FROM +cte FIELDS col INTO @wa.`,
+], "WITH parses as WithLoop not Select", Statements.WithLoop);
+
+statementExpectFail([
+  `SELECT col FROM ztab INTO @wa PACKAGE SIZE 10.`,
+  `SELECT col FROM ztab INTO lv_wa PACKAGE SIZE 10.`,
+], "PACKAGE SIZE requires INTO TABLE");
+
+// keywords that are valid column names despite looking like SQL keywords
+statementType([
+  `SELECT select FROM ztab INTO @wa.`,
+  `SELECT where FROM ztab INTO @wa.`,
+  `SELECT group FROM ztab INTO @wa.`,
+  `SELECT order FROM ztab INTO @wa.`,
+  `SELECT up FROM ztab INTO @wa.`,
+  `SELECT is FROM ztab INTO @wa.`,
+  `SELECT in FROM ztab INTO @wa.`,
+  `SELECT or FROM ztab INTO @wa.`,
+  `SELECT null FROM ztab INTO @wa.`,
+  `SELECT offset FROM ztab INTO @wa.`,
+  `SELECT package FROM ztab INTO @wa.`,
+  `SELECT size FROM ztab INTO @wa.`,
+  `SELECT bypassing FROM ztab INTO @wa.`,
+], "valid column names that look like keywords", Statements.SelectLoop);
+
+// keywords that are truly reserved and cannot be column names
+statementExpectFail([
+  `SELECT from FROM ztab INTO @wa.`,
+  `SELECT into FROM ztab INTO @wa.`,
+  `SELECT appending FROM ztab INTO @wa.`,
+  `SELECT having FROM ztab INTO @wa.`,
+  `SELECT for FROM ztab INTO @wa.`,
+  `SELECT union FROM ztab INTO @wa.`,
+  `SELECT intersect FROM ztab INTO @wa.`,
+  `SELECT except FROM ztab INTO @wa.`,
+  `SELECT not FROM ztab INTO @wa.`,
+  `SELECT when FROM ztab INTO @wa.`,
+  `SELECT case FROM ztab INTO @wa.`,
+  `SELECT as FROM ztab INTO @wa.`,
+], "reserved SQL keywords cannot be column names");
