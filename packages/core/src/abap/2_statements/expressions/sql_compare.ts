@@ -25,7 +25,7 @@ export class SQLCompare extends Expression {
     const at = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, paren)), Version.OpenABAP);
 
     const rett = seq(altPrio(SQLAggregation, SQLFunction, ConstantString, seq(altPrio(SQLPath, SQLFieldName), optPrio(arith)), at),
-                     altPrio(seq(SQLCompareOperator, altPrio(sub, source)),
+                     altPrio(seq(SQLCompareOperator, altPrio(sub, SQLAggregation, SQLFunction, source)),
                              seq(optPrio("NOT"), altPrio(SQLIn, like, between)),
                              nul));
 
