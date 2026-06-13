@@ -417,6 +417,30 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     GROUP BY foo bar
     HAVING count( * ) > 1.`,
 
+  `SELECT MAX( f1 ) INTO TABLE @et FROM ztab WHERE f2 EQ iv HAVING NOT MAX( f1 ) IS NULL.`,
+
+  `SELECT MAX( f1 ) INTO @wa FROM ztab WHERE f2 EQ iv HAVING MAX( f1 ) IS NOT NULL.`,
+
+  `SELECT MIN( f1 ) MAX( f1 ) INTO ( ls-low , ls-high ) FROM ztab WHERE f2 IN it HAVING NOT MIN( f1 ) IS NULL AND NOT MAX( f1 ) IS NULL.`,
+
+  `SELECT f1 SUM( f2 ) AS s1 SUM( f3 ) AS s2 FROM ztab INTO CORRESPONDING FIELDS OF TABLE @lt GROUP BY f1 HAVING SUM( f2 ) <> 0 OR SUM( f3 ) <> 0.`,
+
+  `SELECT f1 SUM( ABS( f2 ) ) AS s1 MAX( f3 ) AS s2 INTO CORRESPONDING FIELDS OF TABLE @lt FROM ztab GROUP BY f1 HAVING SUM( ABS( f2 ) ) <> MAX( f3 ).`,
+
+  `SELECT f1 FROM ztab GROUP BY f1 HAVING f1 IS NULL INTO TABLE @lt.`,
+
+  `SELECT f1 INTO TABLE @lt FROM ztab AS t1 GROUP BY f1 HAVING f1 <= ( SELECT MAX( f1 ) FROM ztab AS t2 ).`,
+
+  `SELECT f1 SUM( f2 ) AS s FROM ztab AS t1 GROUP BY f1 HAVING COUNT( * ) > ( SELECT COUNT( * ) FROM ztab2 WHERE f3 = SUM( t1~f2 ) ) INTO TABLE @lt.`,
+
+  `SELECT f1 FROM ztab GROUP BY f1 HAVING COUNT( * ) >= ALL ( SELECT COUNT( * ) FROM ztab2 GROUP BY f2 ) INTO CORRESPONDING FIELDS OF TABLE @et.`,
+
+  `SELECT f1 FROM ztab GROUP BY f1 HAVING f1 IN ( SELECT DISTINCT f2 FROM ztab2 WHERE f3 = f1 ) INTO TABLE @lt.`,
+
+  `SELECT SINGLE COUNT( * ) INTO lv_cnt FROM ztab WHERE (lv_where) GROUP BY (lv_grp) HAVING COUNT( * ) > 1.`,
+
+  `SELECT SINGLE (lv_fields) FROM ztab GROUP BY (lv_grp) HAVING (lv_having) INTO @wa.`,
+
   `SELECT SINGLE * FROM t100 WHERE 'A' = t100~arbgb INTO @DATA(sdf).`,
 
   `SELECT

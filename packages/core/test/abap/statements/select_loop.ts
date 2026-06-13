@@ -251,6 +251,12 @@ const tests = [
             AND   t_map~site_id IN lt_site_rng
             AND   t_vendor~client_id = ls_input-client_id
             AND   t_qty~amount_a IN lt_amt_rng.`,
+
+  `SELECT f1 COUNT(*) INTO ( wa-id1 , wa-id2 ) UP TO 3 ROWS FROM ztab GROUP BY f1 HAVING f1 = 5.`,
+
+  `SELECT f1 FROM ztab GROUP BY f1 HAVING f1 = ( SELECT MAX( f1 ) FROM ztab WHERE f2 = iv ) INTO CORRESPONDING FIELDS OF ls.`,
+
+  `SELECT DISTINCT (lv_fields) FROM ztab INTO lv_wa GROUP BY (lv_fields) HAVING NOT (lv_where).`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

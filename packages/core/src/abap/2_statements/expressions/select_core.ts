@@ -23,7 +23,7 @@ export function buildSelectCore(into?: IStatementRunnable, allowOrderBy = true):
 
   const intoSingle = altPrio(SQLIntoStructure, SQLIntoList);
   const permSingleItems = [SQLFrom, ...(into ? [intoSingle] : []), where, SQLClient,
-    bypass, SQLGroupBy, fields, DatabaseConnection, SQLHints, privileged, SQLOptions];
+    bypass, SQLGroupBy, SQLHaving, fields, DatabaseConnection, SQLHints, privileged, SQLOptions];
   const permSingle = per(permSingleItems[0], permSingleItems[1], ...permSingleItems.slice(2));
 
   const fieldList = optPrio(SQLFieldList);
