@@ -387,15 +387,7 @@ export class Select {
     let expr: ExpressionNode | undefined = undefined;
     const ret = [];
 
-    if (node.get() instanceof Expressions.SelectLoop) {
-      expr = node.findFirstExpression(Expressions.SQLFieldListLoop);
-      if (expr === undefined) {
-        expr = node;
-      }
-    } else {
-      expr = node.findFirstExpression(Expressions.SQLFieldList);
-    }
-
+    expr = node.findFirstExpression(Expressions.SQLFieldList);
     if (expr?.getFirstChild()?.get() instanceof Expressions.Dynamic) {
       Dynamic.runSyntax(expr.getFirstChild() as ExpressionNode, input);
     }

@@ -2,7 +2,7 @@ import {seq, Expression, altPrio, optPrio, ver} from "../combi";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLSetOpGroup} from "./sql_set_op_group";
-import {buildSelectCore} from "./select_core";
+import {buildSelectCore} from "./_select_core";
 
 export class SQLSetOp extends Expression {
   public getRunnable(): IStatementRunnable {

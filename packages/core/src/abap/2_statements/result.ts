@@ -22,6 +22,10 @@ export class Result {
     return this.tokens[this.tokenIndex];
   }
 
+  public peekAt(offset: number): AbstractToken | undefined {
+    return this.tokens[this.tokenIndex + offset];
+  }
+
   public shift(node: ExpressionNode | TokenNode): Result {
     const cp = this.nodes!.slice();
     cp.push(node);

@@ -14,8 +14,9 @@ import {ExpandMacros} from "./expand_macros";
 import {Pragma} from "../1_lexer/tokens";
 import {IRegistry} from "../../_iregistry";
 import {IStatementRunnable} from "./statement_runnable";
+import {reclassifySelect} from "./_select_reclassify";
 
-export const STATEMENT_MAX_TOKENS = 1000;
+export const STATEMENT_MAX_TOKENS = 20000;
 
 class StatementMap {
   // this also serves as container for statement matcher singletons,
@@ -280,7 +281,8 @@ export class StatementParser {
       if (match) {
         const last = tokens[tokens.length - 1];
         match.push(new TokenNode(last));
-        return new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
+        const matched = new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
+        return reclassifySelect(matched, st.statement, pragmas);
       }
     }
     // next try the statements without specific keywords
@@ -289,7 +291,8 @@ export class StatementParser {
       if (match) {
         const last = tokens[tokens.length - 1];
         match.push(new TokenNode(last));
-        return new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
+        const matched = new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
+        return reclassifySelect(matched, st.statement, pragmas);
       }
     }
 
