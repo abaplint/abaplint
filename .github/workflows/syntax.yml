@@ -2,15 +2,14 @@ name: syntax.abaplint.org
 
 on:
   push:
-    branches-ignore:
-      - 'release/v**'
+    branches:
+      - main
   pull_request:
-    branches-ignore:
-      - 'release/v**'
   workflow_dispatch:
 
 jobs:
   syntax:
+    if: github.event_name != 'pull_request' || !startsWith(github.head_ref, 'release/v')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
