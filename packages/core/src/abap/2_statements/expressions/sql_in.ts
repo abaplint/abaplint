@@ -1,8 +1,9 @@
 import {ver, seq, tok, alt, starPrio, altPrio, Expression} from "../combi";
-import {SQLSource, Select, SQLSourceNoSpace} from ".";
+import {SQLSource, SQLSourceNoSpace} from ".";
 import {ParenRight, ParenRightW, WParenLeft, WParenLeftW, WParenRight, WParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
+import {SQLSetOpGroup} from "./sql_set_op_group";
 
 export class SQLIn extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -14,7 +15,7 @@ export class SQLIn extends Expression {
     // version is a guess, https://github.com/abaplint/abaplint/issues/2530
     const listNeww = ver(Version.v740sp02, listNew, Version.OpenABAP);
 
-    const subSelect = seq("(", Select, ")");
+    const subSelect = SQLSetOpGroup;
 
     const inn = seq("IN", altPrio(subSelect, listOld, listNeww, SQLSource));
 

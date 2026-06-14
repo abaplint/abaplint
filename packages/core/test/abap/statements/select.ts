@@ -417,6 +417,30 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
     GROUP BY foo bar
     HAVING count( * ) > 1.`,
 
+  `SELECT MAX( f1 ) INTO TABLE @et FROM ztab WHERE f2 EQ iv HAVING NOT MAX( f1 ) IS NULL.`,
+
+  `SELECT MAX( f1 ) INTO @wa FROM ztab WHERE f2 EQ iv HAVING MAX( f1 ) IS NOT NULL.`,
+
+  `SELECT MIN( f1 ) MAX( f1 ) INTO ( ls-low , ls-high ) FROM ztab WHERE f2 IN it HAVING NOT MIN( f1 ) IS NULL AND NOT MAX( f1 ) IS NULL.`,
+
+  `SELECT f1 SUM( f2 ) AS s1 SUM( f3 ) AS s2 FROM ztab INTO CORRESPONDING FIELDS OF TABLE @lt GROUP BY f1 HAVING SUM( f2 ) <> 0 OR SUM( f3 ) <> 0.`,
+
+  `SELECT f1 SUM( ABS( f2 ) ) AS s1 MAX( f3 ) AS s2 INTO CORRESPONDING FIELDS OF TABLE @lt FROM ztab GROUP BY f1 HAVING SUM( ABS( f2 ) ) <> MAX( f3 ).`,
+
+  `SELECT f1 FROM ztab GROUP BY f1 HAVING f1 IS NULL INTO TABLE @lt.`,
+
+  `SELECT f1 INTO TABLE @lt FROM ztab AS t1 GROUP BY f1 HAVING f1 <= ( SELECT MAX( f1 ) FROM ztab AS t2 ).`,
+
+  `SELECT f1 SUM( f2 ) AS s FROM ztab AS t1 GROUP BY f1 HAVING COUNT( * ) > ( SELECT COUNT( * ) FROM ztab2 WHERE f3 = SUM( t1~f2 ) ) INTO TABLE @lt.`,
+
+  `SELECT f1 FROM ztab GROUP BY f1 HAVING COUNT( * ) >= ALL ( SELECT COUNT( * ) FROM ztab2 GROUP BY f2 ) INTO CORRESPONDING FIELDS OF TABLE @et.`,
+
+  `SELECT f1 FROM ztab GROUP BY f1 HAVING f1 IN ( SELECT DISTINCT f2 FROM ztab2 WHERE f3 = f1 ) INTO TABLE @lt.`,
+
+  `SELECT SINGLE COUNT( * ) INTO lv_cnt FROM ztab WHERE (lv_where) GROUP BY (lv_grp) HAVING COUNT( * ) > 1.`,
+
+  `SELECT SINGLE (lv_fields) FROM ztab GROUP BY (lv_grp) HAVING (lv_having) INTO @wa.`,
+
   `SELECT SINGLE * FROM t100 WHERE 'A' = t100~arbgb INTO @DATA(sdf).`,
 
   `SELECT
@@ -744,3 +768,80 @@ const optionsVersionsFail = [
 ];
 
 statementVersionFail(optionsVersionsFail, "SELECT OPTIONS clause");
+
+const intersectExceptVersions = [
+  {abap: `SELECT zcol FROM ztab1 INTERSECT SELECT zcol FROM ztab2 INTO TABLE @DATA(res).`, ver: Version.v756},
+  {abap: `SELECT zcol FROM ztab1 INTERSECT DISTINCT SELECT zcol FROM ztab2 INTO TABLE @DATA(res).`, ver: Version.v756},
+  {abap: `SELECT zcol FROM ztab1 EXCEPT SELECT zcol FROM ztab2 INTO TABLE @DATA(res).`, ver: Version.v756},
+  {abap: `SELECT zcol FROM ztab1 EXCEPT DISTINCT SELECT zcol FROM ztab2 INTO TABLE @DATA(res).`, ver: Version.v756},
+];
+
+statementVersion(intersectExceptVersions, "SELECT INTERSECT/EXCEPT", Statements.Select);
+
+const intersectExceptVersionsFail = [
+  {abap: `SELECT zcol FROM ztab1 INTERSECT SELECT zcol FROM ztab2 INTO TABLE @DATA(res).`, ver: Version.v755},
+  {abap: `SELECT zcol FROM ztab1 EXCEPT SELECT zcol FROM ztab2 INTO TABLE @DATA(res).`, ver: Version.v755},
+];
+
+statementVersionFail(intersectExceptVersionsFail, "SELECT INTERSECT/EXCEPT");
+
+const unionChainVersions = [
+  {abap: `SELECT zcol FROM ztab UNION ALL SELECT zcol FROM ztab UNION SELECT zcol FROM ztab INTO TABLE @DATA(res).`, ver: Version.v750},
+];
+
+statementVersion(unionChainVersions, "SELECT UNION chains and parentheses", Statements.Select);
+
+const unionChainVersionsFail = [
+  {abap: `SELECT zcol FROM ztab UNION ALL SELECT zcol FROM ztab INTO TABLE @DATA(res).`, ver: Version.v740sp08},
+];
+
+statementVersionFail(unionChainVersionsFail, "SELECT UNION chains and parentheses");
+
+const subselectSetOpLoopVersions = [
+  {abap: `SELECT zcol FROM ztab WHERE EXISTS ( SELECT zcol FROM ztab UNION ( SELECT zcol FROM ztab UNION SELECT zcol FROM ztab GROUP BY zcol ) ) GROUP BY zcol INTO @wa.`, ver: Version.v750},
+];
+
+statementVersion(subselectSetOpLoopVersions, "SELECT subselect with UNION/parens (loop)", Statements.SelectLoop);
+
+const subselectSetOpVersions = [
+  {abap: `SELECT * FROM ztab WHERE zcol = ( ( SELECT zcol FROM ztab2 ) ) INTO TABLE @itab.`, ver: Version.v750},
+  {abap: `SELECT * FROM ztab WHERE zcol = ( ( SELECT zcol FROM ztab2 ) UNION SELECT zcol FROM ztab2 ) INTO TABLE @itab.`, ver: Version.v750},
+];
+
+statementVersion(subselectSetOpVersions, "SELECT subselect with UNION/parens", Statements.Select);
+
+const unionClientVersions = [
+  `SELECT f1 FROM ztab UNION ALL SELECT f1 FROM ztab USING CLIENT @mandt INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ztab USING CLIENT @mandt UNION ALL SELECT f1 FROM ztab INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ('ztab') UNION ALL SELECT f1 FROM ztab INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ztab UNION ALL SELECT f1 FROM ('ztab') INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ('ztab') UNION ALL SELECT f1 FROM ('ztab') USING CLIENT @mandt INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ('ztab') USING CLIENT @mandt UNION ALL SELECT f1 FROM ('ztab') INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ztab CLIENT SPECIFIED WHERE k = @sy-mandt UNION ALL SELECT f1 FROM ztab USING CLIENT @mandt INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ztab USING CLIENT @mandt UNION ALL SELECT f1 FROM ztab CLIENT SPECIFIED WHERE k = @sy-mandt INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ('ztab') CLIENT SPECIFIED WHERE k = @sy-mandt UNION ALL SELECT f1 FROM ztab INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ('ztab') CLIENT SPECIFIED WHERE k = @sy-mandt UNION ALL SELECT f1 FROM ztab USING CLIENT @mandt INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ('ztab') CLIENT SPECIFIED WHERE k = @sy-mandt UNION ALL SELECT f1 FROM ('ztab') USING CLIENT @mandt INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ztab CLIENT SPECIFIED WHERE k = @sy-mandt UNION ALL SELECT f1 FROM ('ztab') USING CLIENT @mandt INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ('ztab') USING CLIENT @mandt UNION ALL SELECT f1 FROM ('ztab') CLIENT SPECIFIED WHERE k = @curr INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ztab UNION ALL SELECT f1 FROM ztab UNION SELECT f1 FROM ztab INTO TABLE @DATA(res).`,
+  `SELECT f1 AS int FROM ztab UNION SELECT f2 AS int FROM ztab ORDER BY int DESCENDING INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ztab UNION ( SELECT f1 FROM ztab UNION ALL SELECT f1 FROM ztab ) INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ztab UNION ALL ( SELECT f1 FROM ztab UNION SELECT f1 FROM ztab ) INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ztab UNION ( SELECT f1 FROM ztab ) ORDER BY f1 INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ztab UNION ALL ( SELECT f1 FROM ztab ) ORDER BY f1 DESCENDING INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ztab UNION SELECT f1 FROM ztab2 ORDER BY f1 INTO TABLE @DATA(res).`,
+  `SELECT f1 FROM ztab UNION SELECT f2 FROM ztab2 GROUP BY f2 ORDER BY f2 INTO TABLE @DATA(res).`,
+  `SELECT f1 , COUNT(*) AS cnt FROM ztab GROUP BY f1 UNION SELECT f1 , COUNT(*) AS cnt FROM ztab2 GROUP BY f1 ORDER BY f1 INTO TABLE @DATA(res).`,
+];
+
+statementType(unionClientVersions, "SELECT UNION CLIENT SPECIFIED / USING CLIENT / dynamic", Statements.Select);
+
+const unionCorrespVersions = [
+  `SELECT f1 FROM ztab UNION SELECT f1 FROM ztab INTO CORRESPONDING FIELDS OF @wa.`,
+  `SELECT f1 FROM ztab UNION SELECT f1 FROM ('ztab') INTO CORRESPONDING FIELDS OF @wa.`,
+  `SELECT f1 FROM ztab UNION SELECT f1 FROM ('ztab') CLIENT SPECIFIED WHERE k = @sy-mandt INTO CORRESPONDING FIELDS OF @wa.`,
+  `SELECT f1 FROM ztab CLIENT SPECIFIED WHERE k = @sy-mandt UNION SELECT f1 FROM ('ztab') CLIENT SPECIFIED WHERE k = @sy-mandt INTO CORRESPONDING FIELDS OF @wa.`,
+];
+
+statementType(unionCorrespVersions, "SELECT UNION into corresponding fields", Statements.Select);

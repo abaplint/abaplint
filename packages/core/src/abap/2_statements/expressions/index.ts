@@ -195,6 +195,8 @@ export * from "./sql_over";
 export * from "./sql_over";
 export * from "./sql_path";
 export * from "./sql_privileged_access";
+export * from "./sql_set_op";
+export * from "./sql_set_op_group";
 export * from "./sql_source_no_space";
 export * from "./sql_source_simple";
 export * from "./sql_source";
