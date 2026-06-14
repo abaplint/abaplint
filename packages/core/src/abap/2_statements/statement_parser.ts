@@ -14,6 +14,100 @@ import {ExpandMacros} from "./expand_macros";
 import {Pragma} from "../1_lexer/tokens";
 import {IRegistry} from "../../_iregistry";
 import {IStatementRunnable} from "./statement_runnable";
+import {ExpressionNode} from "../nodes/expression_node";
+
+type TopChildren = readonly (ExpressionNode | TokenNode)[];
+
+// stop at SQLSetOpGroup to avoid descending into subselects
+function containsAggregation(children: TopChildren): boolean {
+  for (const child of children) {
+    if (!(child instanceof ExpressionNode)) {
+      continue;
+    }
+    if (child.get() instanceof Expressions.SQLAggregation) {
+      return true;
+    }
+    if (child.get() instanceof Expressions.SQLSetOpGroup) {
+      continue;
+    }
+    if (containsAggregation(child.getChildren())) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isCountAllPattern(children: TopChildren): boolean {
+  for (const child of children) {
+    if (!(child instanceof ExpressionNode)) { continue; }
+    const e = child.get();
+    if (e instanceof Expressions.SQLGroupBy ||
+        e instanceof Expressions.SQLHaving ||
+        e instanceof Expressions.SQLOrderBy) {
+      return false;
+    }
+  }
+  return containsAggregation(children);
+}
+
+// single DFS pass collecting presence of any given expression types, stopping early when all found.
+// does not descend into SQLSetOpGroup (parenthesized SELECT groups / subselects in WHERE)
+function scanForExprTypes(children: TopChildren, found: Set<Function>, targets: readonly Function[]): void {
+  for (const child of children) {
+    if (found.size === targets.length) { return; }
+    if (!(child instanceof ExpressionNode)) { continue; }
+    const e = child.get();
+    if (e instanceof Expressions.SQLSetOpGroup) { continue; }
+    for (const t of targets) {
+      if (e instanceof t) { found.add(t); break; }
+    }
+    scanForExprTypes(child.getChildren(), found, targets);
+  }
+}
+
+// must not descend into subselects
+function isSelectLoop(node: StatementNode): boolean {
+  const selectExpr = node.findDirectExpression(Expressions.Select);
+  const top = selectExpr ? selectExpr.getChildren() : [];
+
+  // check for SINGLE token among direct children of the Select expression
+  if (top.some(c => c instanceof TokenNode && c.get().getStr().toUpperCase() === "SINGLE")) {
+    return false;
+  }
+
+  const targets = [
+    Expressions.SQLSetOp, Expressions.SQLPackageSize, Expressions.SQLIntoTable,
+    Expressions.SQLIntoStructure, Expressions.SQLIntoList, Expressions.SQLGroupBy,
+  ] as const;
+  const found = new Set<Function>();
+  scanForExprTypes(top, found, targets);
+
+  const has = (t: Function) => found.has(t);
+
+  if (has(Expressions.SQLSetOp))       { return false; }
+  if (has(Expressions.SQLPackageSize))  { return true; }
+  if (has(Expressions.SQLIntoTable))   { return false; }
+
+  const hasInto = has(Expressions.SQLIntoTable) || has(Expressions.SQLIntoStructure) || has(Expressions.SQLIntoList);
+  if (!hasInto && isCountAllPattern(top)) { return false; }
+  if (!has(Expressions.SQLGroupBy) && containsAggregation(top)) { return false; }
+
+  return true;
+}
+
+function isWithLoop(node: StatementNode): boolean {
+  const selectExpr = node.findDirectExpression(Expressions.Select);
+  if (!selectExpr) { return true; }
+
+  const targets = [Expressions.SQLPackageSize, Expressions.SQLIntoTable] as const;
+  const found = new Set<Function>();
+  scanForExprTypes(selectExpr.getChildren(), found, targets);
+
+  if (found.has(Expressions.SQLPackageSize)) { return true; }
+  if (found.has(Expressions.SQLIntoTable))   { return false; }
+
+  return true;
+}
 
 export const STATEMENT_MAX_TOKENS = 1000;
 
@@ -280,7 +374,8 @@ export class StatementParser {
       if (match) {
         const last = tokens[tokens.length - 1];
         match.push(new TokenNode(last));
-        return new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
+        const matched = new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
+        return this.reclassifySelect(matched, st.statement, pragmas);
       }
     }
     // next try the statements without specific keywords
@@ -289,11 +384,36 @@ export class StatementParser {
       if (match) {
         const last = tokens[tokens.length - 1];
         match.push(new TokenNode(last));
-        return new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
+        const matched = new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
+        return this.reclassifySelect(matched, st.statement, pragmas);
       }
     }
 
     return statement;
+  }
+
+  private reclassifySelect(
+    node: StatementNode,
+    stmt: IStatement,
+    pragmas: readonly AbstractToken[],
+  ): StatementNode {
+    const children = [...node.getChildren()];
+    if (stmt instanceof Statements.Select || stmt instanceof Statements.SelectLoop) {
+      const loop = isSelectLoop(node);
+      if (loop && stmt instanceof Statements.Select) {
+        return new StatementNode(new Statements.SelectLoop(), node.getColon(), pragmas).setChildren(children);
+      } else if (!loop && stmt instanceof Statements.SelectLoop) {
+        return new StatementNode(new Statements.Select(), node.getColon(), pragmas).setChildren(children);
+      }
+    } else if (stmt instanceof Statements.With || stmt instanceof Statements.WithLoop) {
+      const loop = isWithLoop(node);
+      if (loop && stmt instanceof Statements.With) {
+        return new StatementNode(new Statements.WithLoop(), node.getColon(), pragmas).setChildren(children);
+      } else if (!loop && stmt instanceof Statements.WithLoop) {
+        return new StatementNode(new Statements.With(), node.getColon(), pragmas).setChildren(children);
+      }
+    }
+    return node;
   }
 
 // takes care of splitting tokens into statements, also handles chained statements

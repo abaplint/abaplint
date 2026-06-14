@@ -29,11 +29,11 @@ export class SQLField extends Expression {
     const parenField = seq(tok(WParenLeftW), field, tok(WParenRightW));
     const parenFieldNoAgg = seq(tok(WParenLeftW), fieldNoAgg, tok(WParenRightW));
 
-    // arithmetic without aggregates as operands: from v740sp05
+    // without aggregates: from v740sp05
     const subNoAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenFieldNoAgg, fieldNoAgg)));
     const arithNoAgg = ver(Version.v740sp05, subNoAgg);
 
-    // arithmetic with aggregates as operands: from v754
+    // with aggregates: from v754
     const subWithAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenField, field)));
     const arithWithAgg = ver(Version.v754, subWithAgg);
 
@@ -42,6 +42,14 @@ export class SQLField extends Expression {
     const arithSequence = seq(field, optPrio(arith));
     const parenArithSequence = seq(tok(WParenLeftW), arithSequence, tok(WParenRightW));
 
-    return seq(altPrio(parenArithSequence, arithSequence), optPrio(as));
+    // allows (a-b)*(c-d) — paren groups as operands, defined after parenArithSequence
+    const subExtWithAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenArithSequence, parenField, field)));
+    const subExtNoAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenArithSequence, parenFieldNoAgg, fieldNoAgg)));
+    const arithExt = altPrio(ver(Version.v754, subExtWithAgg), ver(Version.v740sp05, subExtNoAgg));
+
+    return seq(altPrio(
+      seq(parenArithSequence, optPrio(arithExt)),
+      arithSequence,
+    ), optPrio(as));
   }
 }
