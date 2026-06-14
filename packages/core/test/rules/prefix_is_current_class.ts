@@ -173,6 +173,120 @@ ENDINTERFACE.`;
     expect(issues).to.equal(0);
   });
 
+  it("member shadowed by method parameter, prefix required, issue #3755", async () => {
+    const abap = `CLASS zcl_tests DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS init
+      IMPORTING
+        test TYPE i.
+  PRIVATE SECTION.
+    CLASS-DATA test TYPE i.
+ENDCLASS.
+
+CLASS zcl_tests IMPLEMENTATION.
+  METHOD init.
+    zcl_tests=>test = test.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await run(abap);
+    expect(issues).to.equal(0);
+  });
+
+  it("member shadowed by method parameter, LIKE reference, issue #3707", async () => {
+    const abap = `CLASS zcl_tests DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run
+      IMPORTING
+        v1 TYPE string.
+    CLASS-DATA v1 TYPE string.
+ENDCLASS.
+
+CLASS zcl_tests IMPLEMENTATION.
+  METHOD run.
+    DATA: BEGIN OF ls_split,
+            v1 LIKE zcl_tests=>v1,
+          END OF ls_split.
+    ls_split-v1 = v1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await run(abap);
+    expect(issues).to.equal(0);
+  });
+
+  it("member shadowed by local DATA, prefix required", async () => {
+    const abap = `CLASS zcl_tests DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS init.
+    CLASS-DATA test TYPE i.
+ENDCLASS.
+
+CLASS zcl_tests IMPLEMENTATION.
+  METHOD init.
+    DATA test TYPE i.
+    test = 1.
+    zcl_tests=>test = test.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await run(abap);
+    expect(issues).to.equal(0);
+  });
+
+  it("member shadowed by inline DATA, prefix required", async () => {
+    const abap = `CLASS zcl_tests DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS init.
+    CLASS-DATA test TYPE i.
+ENDCLASS.
+
+CLASS zcl_tests IMPLEMENTATION.
+  METHOD init.
+    DATA(test) = 1.
+    zcl_tests=>test = test.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await run(abap);
+    expect(issues).to.equal(0);
+  });
+
+  it("parameter with different name, prefix still reported", async () => {
+    const abap = `CLASS zcl_tests DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS init
+      IMPORTING
+        foo TYPE i.
+  PRIVATE SECTION.
+    CLASS-DATA test TYPE i.
+ENDCLASS.
+
+CLASS zcl_tests IMPLEMENTATION.
+  METHOD init.
+    zcl_tests=>test = foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await run(abap);
+    expect(issues).to.equal(1);
+  });
+
+  it("first reference shadowed, second not, second is reported", async () => {
+    const abap = `CLASS zcl_tests DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS init
+      IMPORTING
+        test TYPE i.
+  PRIVATE SECTION.
+    CLASS-DATA test TYPE i.
+    CLASS-DATA other TYPE i.
+ENDCLASS.
+
+CLASS zcl_tests IMPLEMENTATION.
+  METHOD init.
+    zcl_tests=>test = zcl_tests=>other.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await run(abap);
+    expect(issues).to.equal(1);
+  });
+
 });
 
 
