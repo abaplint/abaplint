@@ -2,8 +2,8 @@ name: playground.abaplint.org
 
 on:
   push:
-    branches-ignore:
-      - 'release/v**'
+    branches:
+      - main
   pull_request:
 
 jobs:
