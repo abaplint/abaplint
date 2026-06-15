@@ -190,6 +190,7 @@ export * from "./sql_into_structure";
 export * from "./sql_field_list_loop_greedy";
 export * from "./sql_into_table";
 export * from "./sql_join";
+export * from "./sql_join_source";
 export * from "./sql_options";
 export * from "./sql_package_size";
 export * from "./sql_order_by";
