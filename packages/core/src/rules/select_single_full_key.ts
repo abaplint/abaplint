@@ -119,12 +119,10 @@ If the statement contains a JOIN it is not checked`,
         }
 
         for (const compare of cond?.findAllExpressionsRecursive(Expressions.SQLCompare) || []) {
-          if (compare.getChildren().length === 3) {
-            const fname = compare.findDirectExpression(Expressions.SQLFieldName)?.concatTokens().toUpperCase();
-            const operator = compare.findDirectExpression(Expressions.SQLCompareOperator)?.concatTokens().toUpperCase();
-            if (fname && (operator === "=" || operator === "EQ")) {
-              set.delete(fname);
-            }
+          const fname = compare.findDirectExpression(Expressions.SQLFieldName)?.concatTokens().toUpperCase();
+          const operator = compare.findDirectExpression(Expressions.SQLCompareOperator)?.concatTokens().toUpperCase();
+          if (fname && (operator === "=" || operator === "EQ")) {
+            set.delete(fname);
           }
         }
 
