@@ -1759,4 +1759,12 @@ TYPES END OF ty.`;
     expect(issues.length).to.equal(0);
   });
 
+
+  it("READ DATASET", async () => {
+    const abap = `
+DATA lv_content TYPE xstring.
+READ DATASET 'foo' INTO lv_content.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
 });
