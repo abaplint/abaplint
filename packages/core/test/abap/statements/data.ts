@@ -1,4 +1,5 @@
-import {statementExpectFail, statementType} from "../_utils";
+import {statementExpectFail, statementType, statementVersionOk} from "../_utils";
+import {Version} from "../../../src/version";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -131,6 +132,10 @@ const tests = [
 ];
 
 statementType(tests, "DATA", Statements.Data);
+
+statementVersionOk([
+  {abap: "DATA foo TYPE TABLE FOR UPDATE EntityItem.", ver: Version.OpenABAP},
+], "DATA TYPE TABLE FOR", Statements.Data);
 
 const fails = [
   `DATA something TYPE STANDARD TABLE OF  WITH DEFAULT KEY.`, // missing type

@@ -69,12 +69,12 @@ function isSelectLoop(node: StatementNode): boolean {
 
   const has = (t: Function) => found.has(t);
 
-  if (has(Expressions.SQLPackageSize))  { return true; }
-  if (has(Expressions.SQLIntoTable))    { return false; }
+  if (has(Expressions.SQLPackageSize)) { return true; }
+  if (has(Expressions.SQLIntoTable)) { return false; }
 
   const hasInto = has(Expressions.SQLIntoTable) || has(Expressions.SQLIntoStructure) || has(Expressions.SQLIntoList);
   if (!hasInto && isCountAllPattern(top)) { return false; }
-  if (has(Expressions.SQLSetOp))        { return true; }
+  if (has(Expressions.SQLSetOp)) { return true; }
   if (!has(Expressions.SQLGroupBy) && containsAggregation(top)) { return false; }
 
   return true;
@@ -89,7 +89,7 @@ function isWithLoop(node: StatementNode): boolean {
   scanForExprTypes(selectExpr.getChildren(), found, targets);
 
   if (found.has(Expressions.SQLPackageSize)) { return true; }
-  if (found.has(Expressions.SQLIntoTable))   { return false; }
+  if (found.has(Expressions.SQLIntoTable)) { return false; }
 
   return true;
 }

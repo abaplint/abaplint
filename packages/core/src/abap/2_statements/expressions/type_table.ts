@@ -48,7 +48,7 @@ export class TypeTable extends Expression {
       "READ RESULT",
       "UPDATE",
       "DELETE",
-    ), alt(TypeName, EntityAssociation)));
+    ), alt(TypeName, EntityAssociation)), Version.OpenABAP);
 
     const oldType = seq(opt("REF TO"), TypeName, alt(seq(occurs, opt(header)), header));
     const oldLike = seq(opt("REF TO"), FieldChain, alt(seq(occurs, opt(header)), header));
