@@ -24,7 +24,7 @@ export class ClassDefinition implements IStatement {
                      risk,
                      "SHARED MEMORY ENABLED",
                      duration,
-                     ver(Version.v754, seq("FOR BEHAVIOR OF", BehaviorDefinitionName)),
+                     ver(Version.v754, seq("FOR BEHAVIOR OF", BehaviorDefinitionName), Version.OpenABAP),
                      ClassFriends);
 
     const def = seq("DEFINITION", optPrio(blah));
