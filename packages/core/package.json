@@ -9,6 +9,7 @@
         "lint": "eslint src/**/*.ts test/**/*.ts",
         "lint:fix": "eslint src/**/*.ts test/**/*.ts --fix",
         "compile": "tsc && node scripts/version.js",
+        "watch": "tsc --watch",
         "test": "npm run compile && mocha --timeout 1000 && npm run lint && npm run schema && api-extractor run",
         "test:only": "npm run compile && mocha --timeout 1000000",
         "test:parallel": "npm run compile && mocha --timeout 1000 --parallel --reporter dot",

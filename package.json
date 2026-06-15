@@ -9,6 +9,7 @@
         "web.playground": "cd web/playground && npm install && npm test && npm run build && cd ../../",
         "web.rules": "cd web/rules && npm install && npm test && cd ../../",
         "web.syntax": "cd web/syntax/ && node index.mjs && cd ../../",
+        "watch:core": "cd packages/core && npm run watch",
         "link-local": "npm run link:core && npm run link:monaco && npm run link:core-into-cli && npm run link:core-into-monaco && npm run link:core-into-playground && npm run link:monaco-into-playground",
         "link:core": "cd packages/core && npm link",
         "link:core-into-cli": "cd packages/cli && npm link @abaplint/core",
