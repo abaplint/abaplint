@@ -1,6 +1,7 @@
-import {seq, optPrio, altPrio, Expression} from "../combi";
+import {seq, optPrio, altPrio, Expression, ver} from "../combi";
 import {SQLFromSource, SQLCond} from ".";
 import {IStatementRunnable} from "../statement_runnable";
+import {Version} from "../../../version";
 
 export class SQLJoin extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -8,6 +9,8 @@ export class SQLJoin extends Expression {
 
     const join = seq(joinType, SQLFromSource, "ON", SQLCond);
 
-    return join;
+    const crossJoin = ver(Version.v750, seq("CROSS JOIN", SQLFromSource), Version.OpenABAP);
+
+    return altPrio(crossJoin, join);
   }
 }

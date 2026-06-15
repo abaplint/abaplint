@@ -649,6 +649,10 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
+    if (high.findFirstExpression(Expressions.SQLFields) !== undefined) {
+      return undefined;
+    }
+
     let into = high.findFirstExpression(Expressions.SQLIntoList);
     if (into === undefined) {
       into = high.findFirstExpression(Expressions.SQLIntoStructure);

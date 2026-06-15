@@ -103,9 +103,8 @@ jobs:
         run: npm publish --access public
         working-directory: packages/core
 
-      # Link core into CLI and Monaco before installing so the @abaplint/core
-      # range resolves to the local package. This avoids depending on npm
-      # registry propagation of the just-published core version.
+      # Link core into CLI and Monaco so tests and dry-runs use the local
+      # package without depending on npm registry propagation.
       - name: Link core
         run: npm link
         working-directory: packages/core
@@ -116,14 +115,6 @@ jobs:
 
       - name: Link core into Monaco
         run: npm link @abaplint/core
-        working-directory: packages/monaco
-
-      - name: Install CLI dependencies
-        run: npm install
-        working-directory: packages/cli
-
-      - name: Install Monaco dependencies
-        run: npm install
         working-directory: packages/monaco
 
       - name: Test CLI

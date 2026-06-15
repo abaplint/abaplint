@@ -1118,3 +1118,38 @@ export function failCombinator(): IStatementRunnable {
 export function failStar(): IStatementRunnable {
   return new FailStar();
 }
+
+// Passes through results where the next two tokens do NOT match t1 followed by t2.
+class StopBefore2 implements IStatementRunnable {
+  private readonly t1: string;
+  private readonly t2: string;
+
+  public constructor(t1: string, t2: string) {
+    this.t1 = t1.toUpperCase();
+    this.t2 = t2.toUpperCase();
+  }
+
+  public listKeywords(): string[] { return []; }
+  public getUsing(): string[] { return []; }
+
+  public run(r: Result[]): Result[] {
+    const result: Result[] = [];
+    for (const input of r) {
+      const next = input.peek();
+      if (next === undefined) { continue; }
+      if (next.getUpperStr() === this.t1 && input.peekAt(1)?.getUpperStr() === this.t2) {
+        continue;
+      }
+      result.push(input);
+    }
+    return result;
+  }
+
+  public railroad() { return "Railroad.Terminal('stopBefore(" + this.t1 + " " + this.t2 + ")')"; }
+  public toStr() { return "stopBefore(" + this.t1 + "," + this.t2 + ")"; }
+  public first() { return [""]; }
+}
+
+export function stopBefore(t1: string, t2: string): IStatementRunnable {
+  return new StopBefore2(t1, t2);
+}

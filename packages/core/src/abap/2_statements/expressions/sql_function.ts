@@ -1,6 +1,6 @@
 import {Version} from "../../../version";
 import {ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
-import {Expression, ver, seq, tok, altPrio, optPrio, regex as reg} from "../combi";
+import {Expression, ver, seq, tok, altPrio, optPrio, starPrio, regex as reg} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
 import {Integer} from "./integer";
 import {SQLFunctionInput} from "./sql_function_input";
@@ -15,6 +15,7 @@ export class SQLFunction extends Expression {
       seq("NUMC", optPrio(seq(tok(ParenLeftW), Integer, tok(WParenRightW)))),
       "DATS",
       "FLTP",
+      "INT1",
       "INT2",
       "INT4",
       "INT8");
@@ -27,7 +28,7 @@ export class SQLFunction extends Expression {
     const castInput = altPrio(SQLCase, SQLFunctionInput);
     const cast = ver(Version.v750, seq(reg(/^cast$/i), tok(ParenLeftW), castInput, "AS", castTypes, tok(WParenRightW)));
     const ceil = ver(Version.v740sp05, seq(reg(/^ceil$/i), tok(ParenLeftW), SQLFunctionInput, tok(WParenRightW)));
-    const coalesce = ver(Version.v740sp05, seq(reg(/^coalesce$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, optPrio(commaParam), tok(WParenRightW)));
+    const coalesce = ver(Version.v740sp05, seq(reg(/^coalesce$/i), tok(ParenLeftW), SQLFunctionInput, starPrio(commaParam), tok(WParenRightW)));
     const concat = ver(Version.v750, seq(reg(/^concat$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
     const div = ver(Version.v740sp05, seq(reg(/^div$/i), tok(ParenLeftW), SQLFunctionInput, commaParam, tok(WParenRightW)));
     const floor = ver(Version.v740sp05, seq(reg(/^floor$/i), tok(ParenLeftW), SQLFunctionInput, tok(WParenRightW)));
