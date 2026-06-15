@@ -3,7 +3,7 @@ import {SQLIntoTable, SQLOrderBy, SQLIntoList, SQLSetOp} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLIntoStructure} from "./sql_into_structure";
-import {buildSelectCore} from "./select_core";
+import {buildSelectCore} from "./_select_core";
 
 export class Select extends Expression {
   public getRunnable(): IStatementRunnable {

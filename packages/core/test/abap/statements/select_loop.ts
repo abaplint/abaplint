@@ -257,6 +257,8 @@ const tests = [
   `SELECT f1 FROM ztab GROUP BY f1 HAVING f1 = ( SELECT MAX( f1 ) FROM ztab WHERE f2 = iv ) INTO CORRESPONDING FIELDS OF ls.`,
 
   `SELECT DISTINCT (lv_fields) FROM ztab INTO lv_wa GROUP BY (lv_fields) HAVING NOT (lv_where).`,
+
+  `SELECT ( col1 - col2 ) * ( col3 - col4 ) AS result FROM ztab INTO wa.`,
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
@@ -310,3 +312,49 @@ const optionsVersionsFail = [
 ];
 
 statementVersionFail(optionsVersionsFail, "SELECT loop OPTIONS clause");
+
+const isLoopTests = [
+  `SELECT foo FROM ztab.`,
+  `SELECT foo bar FROM ztab WHERE id = 1.`,
+  `SELECT foo FROM ztab INTO @wa.`,
+  `SELECT foo FROM ztab INTO wa.`,
+  `SELECT foo FROM ztab INTO CORRESPONDING FIELDS OF @wa.`,
+  `SELECT foo bar FROM ztab INTO (lv1, lv2).`,
+  `SELECT * FROM ztab INTO TABLE @lt_t PACKAGE SIZE 10.`,
+  `SELECT * FROM ztab APPENDING TABLE @lt_t PACKAGE SIZE 10.`,
+  `SELECT * FROM ztab INTO TABLE @lt_t PACKAGE SIZE 10 WHERE id = 1.`,
+  `SELECT * INTO CORRESPONDING FIELDS OF TABLE @lt_t PACKAGE SIZE 10 FROM ztab WHERE id = 1.`,
+  `SELECT COUNT(*) FROM ztab GROUP BY id.`,
+  `SELECT id COUNT(*) FROM ztab GROUP BY id HAVING COUNT(*) > 1.`,
+  `SELECT foo FROM ztab ORDER BY PRIMARY KEY.`,
+  `SELECT foo bar FROM ztab ORDER BY foo.`,
+  `SELECT foo FROM ztab INTO @wa UP TO 1 ROWS.`,
+];
+statementType(isLoopTests, "isSelectLoop → SelectLoop", Statements.SelectLoop);
+
+const isNotLoopTests = [
+  `SELECT SINGLE foo FROM ztab INTO @wa.`,
+  `SELECT SINGLE * FROM ztab INTO @wa WHERE id = 1.`,
+  `SELECT SINGLE foo FROM ztab INTO wa.`,
+  `SELECT foo FROM ztab UNION SELECT foo FROM ztab2 INTO TABLE @lt_t.`,
+  `SELECT foo FROM ztab UNION ALL SELECT foo FROM ztab2 INTO TABLE @lt_t.`,
+  `SELECT * FROM ztab INTO TABLE @lt_t.`,
+  `SELECT * FROM ztab APPENDING TABLE @lt_t WHERE id = 1.`,
+  `SELECT foo FROM ztab INTO TABLE lt_t.`,
+  `SELECT foo FROM ztab APPENDING TABLE @lt_t.`,
+  `SELECT foo FROM ztab APPENDING CORRESPONDING FIELDS OF TABLE @lt_t.`,
+  `SELECT COUNT(*) FROM ztab INTO @lv_cnt.`,
+  `SELECT COUNT( * ) FROM ztab INTO lv_cnt WHERE id = 1.`,
+  `SELECT COUNT(*) FROM ztab.`,
+  `SELECT COUNT(*) FROM ztab HAVING COUNT(*) > 1.`,
+  `SELECT COUNT(*) FROM ztab ORDER BY PRIMARY KEY.`,
+  `SELECT SUM( val ) FROM ztab INTO lv_sum.`,
+  `SELECT MAX( val ) FROM ztab INTO lv_max.`,
+  `SELECT MIN( val ) FROM ztab INTO lv_min.`,
+  `SELECT AVG( val ) FROM ztab INTO lv_avg.`,
+  `SELECT COUNT(DISTINCT id) FROM ztab INTO lv_cnt.`,
+  `SELECT SUM( val ) MAX( val ) FROM ztab INTO (lv_sum, lv_max).`,
+  `SELECT MIN( val ) MAX( val ) FROM ztab INTO (lv_min, lv_max).`,
+  `SELECT num MAX( count ) COUNT(*) INTO TABLE lt_tab FROM zfoo.`,
+];
+statementType(isNotLoopTests, "isSelectLoop → Select (not loop)", Statements.Select);
