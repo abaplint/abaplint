@@ -8,7 +8,7 @@ import {WithName} from "./with_name";
 export class SQLFromSource extends Expression {
   public getRunnable(): IStatementRunnable {
     // https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-752-open_sql.htm#!ABAP_MODIFICATION_1@1@
-    const tab = ver(Version.v752, seq(tok(WAt), FieldChain));
+    const tab = ver(Version.v752, seq(tok(WAt), FieldChain), Version.OpenABAP);
     const aas = seq("AS", SQLAsName);
     const privileged = ver(Version.v752, seq("WITH", SQLPrivilegedAccess));
 

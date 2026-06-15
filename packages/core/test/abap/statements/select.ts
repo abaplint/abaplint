@@ -616,6 +616,10 @@ const versions = [
 
 statementVersion(versions, "SELECT", Statements.Select);
 
+statementVersionOk([
+  {abap: "SELECT * FROM @lt_fields AS fields INTO TABLE @DATA(result).", ver: Version.OpenABAP},
+], "SELECT FROM internal table", Statements.Select);
+
 const windowVersions = [
   {abap: `SELECT company, category, item, price, row_number( ) over( ) AS rn FROM @ztable AS t ORDER BY rn INTO TABLE @DATA(result).`, ver: Version.v757},
   {abap: `SELECT company, category, item, price, rank( ) over( order by price descending ) AS rnk FROM @ztable AS t ORDER BY rnk, company, category, item INTO TABLE @DATA(result).`, ver: Version.v757},

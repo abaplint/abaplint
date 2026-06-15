@@ -1,4 +1,5 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionOk} from "../_utils";
+import {Version} from "../../../src/version";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -127,3 +128,10 @@ const tests = [
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);
+
+statementVersionOk([
+  {abap: `READ ENTITIES OF zi_foo IN LOCAL MODE
+    ENTITY ent
+    FIELDS ( field ) WITH CORRESPONDING #( keys )
+    RESULT DATA(res).`, ver: Version.OpenABAP},
+], "READ ENTITIES", Statements.ReadEntities);

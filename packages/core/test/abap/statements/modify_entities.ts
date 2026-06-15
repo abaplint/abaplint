@@ -1,4 +1,5 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionOk} from "../_utils";
+import {Version} from "../../../src/version";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -181,3 +182,11 @@ const tests = [
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
+
+statementVersionOk([
+  {abap: `MODIFY ENTITIES OF zi_foobar
+  ENTITY ent
+  UPDATE SET FIELDS WITH VALUE #( ( foo = 'bar' ) )
+  FAILED DATA(failed)
+  REPORTED DATA(reported).`, ver: Version.OpenABAP},
+], "MODIFY ENTITIES", Statements.ModifyEntities);
