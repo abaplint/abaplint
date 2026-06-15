@@ -154,6 +154,7 @@ import {InsertFieldGroup} from "./statements/insert_field_group";
 import {ReadEntities} from "./statements/read_entities";
 import {ModifyEntities} from "./statements/modify_entities";
 import {CommitEntities} from "./statements/commit_entities";
+import {ReadDataset} from "./statements/read_dataset";
 import {CheckSyntaxKey, SyntaxInput} from "./_syntax_input";
 import {AssertError} from "./assert_error";
 import {FieldGroup} from "./statements/field_group";
@@ -286,6 +287,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Parameter());
   addToMap(new FieldSymbol());
   addToMap(new ReadEntities());
+  addToMap(new ReadDataset());
   addToMap(new ModifyEntities());
   addToMap(new CommitEntities());
   addToMap(new CallKernel());
