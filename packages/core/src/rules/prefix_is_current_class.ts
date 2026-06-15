@@ -1,12 +1,15 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import * as Structures from "../abap/3_structures/structures";
+import * as Statements from "../abap/2_statements/statements";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {ClassName, MethodCall, InterfaceName, TypeName} from "../abap/2_statements/expressions";
+import {ClassName, MethodCall, InterfaceName, TypeName, MethodName, MethodParamName, DefinitionName, InlineData, TargetField} from "../abap/2_statements/expressions";
 import {Position} from "../position";
 import {EditHelper} from "../edit_helper";
 import {RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {StatementNode, StructureNode} from "../abap/nodes";
+import {Comment} from "../abap/1_lexer/tokens/comment";
 
 export class PrefixIsCurrentClassConf extends BasicRuleConfig {
   /**
@@ -95,12 +98,18 @@ export class PrefixIsCurrentClass extends ABAPRule {
     for (const c of classStructures) {
       const className = c.findFirstExpression(ClassName)!.getFirstToken().getStr().toUpperCase();
       const staticAccess = className + "=>";
+      const shadowed = this.buildShadowedNames(struc, c, className);
 
       for (const s of c.findAllStatementNodes()) {
         const concat = s.concatTokensWithoutStringsAndComments().toUpperCase();
         if (concat.includes(staticAccess)) {
-          const tokenPos = s.findTokenSequencePosition(className, "=>");
-          if (tokenPos) {
+          // when the referenced member is shadowed by a method parameter or local
+          // declaration, the class prefix is required and cannot be omitted, see issues #3755 and #3707
+          const names = shadowed.get(s);
+          const ref = this.findStaticReferences(s, className).find(
+            r => r.member === undefined || names?.has(r.member) !== true);
+          if (ref) {
+            const tokenPos = ref.pos;
             const end = new Position(tokenPos.getRow(), tokenPos.getCol() + className.length + 2);
             const fix = EditHelper.deleteRange(file, tokenPos, end);
             issues.push(Issue.atRange(
@@ -128,5 +137,68 @@ export class PrefixIsCurrentClass extends ABAPRule {
       }
     }
     return issues;
+  }
+
+  /** finds "className=>member" references in the statement, position is the start of the class name */
+  private findStaticReferences(s: StatementNode, className: string): {pos: Position, member: string | undefined}[] {
+    const refs: {pos: Position, member: string | undefined}[] = [];
+    const tokens = s.getTokens().filter(t => !(t instanceof Comment));
+    for (let i = 0; i < tokens.length - 1; i++) {
+      if (tokens[i].getStr().toUpperCase() === className
+          && tokens[i + 1].getStr() === "=>") {
+        refs.push({
+          pos: tokens[i].getStart(),
+          member: tokens[i + 2]?.getStr().toUpperCase(),
+        });
+      }
+    }
+    return refs;
+  }
+
+  /** for each statement in a method implementation: the method parameter and local
+   *  declaration names that shadow class members of the same name */
+  private buildShadowedNames(struc: StructureNode, impl: StructureNode, className: string): Map<StatementNode, Set<string>> {
+    const map = new Map<StatementNode, Set<string>>();
+    if (!(impl.get() instanceof Structures.ClassImplementation)) {
+      return map;
+    }
+
+    const definition = struc.findDirectStructures(Structures.ClassDefinition).find(
+      d => d.findFirstExpression(ClassName)?.getFirstToken().getStr().toUpperCase() === className);
+
+    for (const method of impl.findAllStructuresRecursive(Structures.Method)) {
+      const names = new Set<string>();
+
+      const methodName = method.findFirstStatement(Statements.MethodImplementation)
+        ?.findFirstExpression(MethodName)?.concatTokens().toUpperCase();
+      if (definition !== undefined && methodName !== undefined) {
+        for (const def of definition.findAllStatements(Statements.MethodDef)) {
+          if (def.findFirstExpression(MethodName)?.concatTokens().toUpperCase() === methodName) {
+            for (const param of def.findAllExpressions(MethodParamName)) {
+              names.add(param.concatTokens().toUpperCase());
+            }
+            break;
+          }
+        }
+      }
+
+      for (const d of method.findAllExpressions(DefinitionName)) {
+        names.add(d.concatTokens().toUpperCase());
+      }
+      for (const inline of method.findAllExpressions(InlineData)) {
+        const field = inline.findFirstExpression(TargetField);
+        if (field) {
+          names.add(field.concatTokens().toUpperCase());
+        }
+      }
+
+      if (names.size === 0) {
+        continue;
+      }
+      for (const statement of method.findAllStatementNodes()) {
+        map.set(statement, names);
+      }
+    }
+    return map;
   }
 }
