@@ -56,7 +56,8 @@ export function buildSelectCore(into?: IStatementRunnable, allowOrderBy = true):
     optPrio(SQLFrom), client, byp, fromPackSize,
     altPrio(
       seq(sqlFields, fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, trailingInto),
-      seq(intoForPackSize, optPrio(SQLPackageSize), optPrio(SQLUpTo), byp, fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, optPrio(SQLOptions)),
+      seq(intoForPackSize, optPrio(SQLPackageSize), optPrio(SQLUpTo), byp, fae,
+          whereClause, groupHaving, ...orderUpOff, trailingOpts, optPrio(SQLOptions)),
       seq(intoSingle, byp, fae, optPrio(SQLUpTo), byp, whereClause, groupHaving, ...orderUpOff, trailingOpts, optPrio(SQLOptions)),
       seq(fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, trailingInto),
     ),

@@ -5,8 +5,10 @@ import {TokenNode} from "../nodes";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {ExpressionNode} from "../nodes/expression_node";
 import {IStatement} from "./statements/_statement";
+import {Expression} from "./combi";
 
 type TopChildren = readonly (ExpressionNode | TokenNode)[];
+type ExpressionConstructor = new () => Expression;
 
 function containsAggregation(children: TopChildren): boolean {
   for (const child of children) {
@@ -39,7 +41,7 @@ function isCountAllPattern(children: TopChildren): boolean {
   return containsAggregation(children);
 }
 
-function scanForExprTypes(children: TopChildren, found: Set<Function>, targets: readonly Function[]): void {
+function scanForExprTypes(children: TopChildren, found: Set<ExpressionConstructor>, targets: readonly ExpressionConstructor[]): void {
   for (const child of children) {
     if (found.size === targets.length) { return; }
     if (!(child instanceof ExpressionNode)) { continue; }
@@ -64,10 +66,10 @@ function isSelectLoop(node: StatementNode): boolean {
     Expressions.SQLSetOp, Expressions.SQLPackageSize, Expressions.SQLIntoTable,
     Expressions.SQLIntoStructure, Expressions.SQLIntoList, Expressions.SQLGroupBy,
   ] as const;
-  const found = new Set<Function>();
+  const found = new Set<ExpressionConstructor>();
   scanForExprTypes(top, found, targets);
 
-  const has = (t: Function) => found.has(t);
+  const has = (t: ExpressionConstructor) => found.has(t);
 
   if (has(Expressions.SQLPackageSize)) { return true; }
   if (has(Expressions.SQLIntoTable)) { return false; }
@@ -85,7 +87,7 @@ function isWithLoop(node: StatementNode): boolean {
   if (!selectExpr) { return true; }
 
   const targets = [Expressions.SQLPackageSize, Expressions.SQLIntoTable] as const;
-  const found = new Set<Function>();
+  const found = new Set<ExpressionConstructor>();
   scanForExprTypes(selectExpr.getChildren(), found, targets);
 
   if (found.has(Expressions.SQLPackageSize)) { return true; }
