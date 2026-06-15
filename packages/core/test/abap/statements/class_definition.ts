@@ -1,4 +1,5 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionOk} from "../_utils";
+import {Version} from "../../../src/version";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -29,3 +30,7 @@ const tests = [
 ];
 
 statementType(tests, "CLASS Definition", Statements.ClassDefinition);
+
+statementVersionOk([
+  {abap: "CLASS cl_foo DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF blah.", ver: Version.OpenABAP},
+], "CLASS Definition", Statements.ClassDefinition);

@@ -1,8 +1,8 @@
 import {seq, altPrio, optPrio, ver} from "../combi";
 import {SQLFieldList, SQLFrom, SQLCond, SQLSource, SQLClient, DatabaseConnection,
-        SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints, SQLFields,
-        SQLIntoList, SQLIntoTable, SQLOptions, SQLPrivilegedAccess, SQLPackageSize,
-        SQLBypassingBuffer} from ".";
+  SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints, SQLFields,
+  SQLIntoList, SQLIntoTable, SQLOptions, SQLPrivilegedAccess, SQLPackageSize,
+  SQLBypassingBuffer} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLGroupBy} from "./sql_group_by";
@@ -56,7 +56,8 @@ export function buildSelectCore(into?: IStatementRunnable, allowOrderBy = true):
     optPrio(SQLFrom), client, byp, fromPackSize,
     altPrio(
       seq(sqlFields, fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, trailingInto),
-      seq(intoForPackSize, optPrio(SQLPackageSize), optPrio(SQLUpTo), byp, fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, optPrio(SQLOptions)),
+      seq(intoForPackSize, optPrio(SQLPackageSize), optPrio(SQLUpTo), byp, fae,
+          whereClause, groupHaving, ...orderUpOff, trailingOpts, optPrio(SQLOptions)),
       seq(intoSingle, byp, fae, optPrio(SQLUpTo), byp, whereClause, groupHaving, ...orderUpOff, trailingOpts, optPrio(SQLOptions)),
       seq(fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, trailingInto),
     ),
@@ -72,7 +73,7 @@ export function buildSelectCore(into?: IStatementRunnable, allowOrderBy = true):
   );
 
   const nonSingleBody = seq(optPrio("DISTINCT"), fieldList, optPrio(SQLUpTo), byp,
-    altPrio(selectTableIntoThenFrom, selectOtherIntoThenFrom, afterFromWithInto));
+                            altPrio(selectTableIntoThenFrom, selectOtherIntoThenFrom, afterFromWithInto));
 
   const singleAfterFrom = seq(
     SQLFrom, client, byp,

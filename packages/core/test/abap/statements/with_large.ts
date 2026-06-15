@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
@@ -998,7 +997,7 @@ const tests = [
                  col40 = @iv_6 and
                  col41 = @iv_7 and
                  col42 = @iv_8
-    into corresponding fields of table @lt_result.`
+    into corresponding fields of table @lt_result.`,
 ];
 
 statementType(tests, "WITH large", Statements.With);

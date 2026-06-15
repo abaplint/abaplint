@@ -1,6 +1,6 @@
 import {seq, altPrio, optPrio, Expression, ver, starPrio} from "../combi";
 import {SQLFrom, SQLCond, SQLClient, SQLGroupBy, SQLHaving, SQLForAllEntries,
-        DatabaseConnection, SQLHints, SQLOptions, SQLPrivilegedAccess, SQLOrderBy} from ".";
+  DatabaseConnection, SQLHints, SQLOptions, SQLPrivilegedAccess, SQLOrderBy} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLFieldListLoopGreedy} from "./sql_field_list_loop_greedy";

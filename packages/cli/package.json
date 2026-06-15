@@ -7,7 +7,7 @@
         "abaplint": "abaplint"
     },
     "scripts": {
-        "lint": "eslint src/**/*.ts test/**/*.ts",
+        "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
         "compile": "tsc",
         "test": "npm run compile && mocha && npm run lint && npm run webpack",
         "webpack": "webpack --progress",

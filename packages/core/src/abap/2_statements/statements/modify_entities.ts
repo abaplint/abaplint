@@ -52,7 +52,7 @@ export class ModifyEntities implements IStatement {
                        alt(NamespaceSimpleName, EntityAssociation),
                        alt(execute, create, updateFields, deleteFrom, updateSetFields, updateFrom, create2, create3, create4));
 
-    return ver(Version.v754, seq("MODIFY", alt(entities, entity), end));
+    return ver(Version.v754, seq("MODIFY", alt(entities, entity), end), Version.OpenABAP);
   }
 
 }
