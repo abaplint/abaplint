@@ -75,8 +75,9 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
 
   const trailingInto = seq(
     optPrio(seq(intoForPackSize, optPrio(SQLPackageSize), byp, optPrio(SQLUpTo), byp,
-                optPrio(offset), optPrio(SQLOrderBy), optPrio(SQLOptions))),
-    optPrio(seq(intoSingle, byp, optPrio(SQLUpTo), byp, optPrio(offset), optPrio(SQLOptions))),
+                optPrio(offset), optPrio(SQLOrderBy))),
+    optPrio(seq(intoSingle, byp, optPrio(SQLUpTo), byp, optPrio(offset))),
+    optPrio(SQLOptions),
   );
 
   const afterFromWithInto = seq(
