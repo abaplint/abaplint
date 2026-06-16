@@ -9,6 +9,38 @@ import {SQLGroupBy} from "./sql_group_by";
 import {SQLIntoStructure} from "./sql_into_structure";
 import {SQLUpTo} from "./sql_up_to";
 
+export function buildSelectSingleCore(allowInto = false): IStatementRunnable {
+  const where = seq("WHERE", SQLCond);
+  const sqlFields = ver(Version.v750, SQLFields, Version.OpenABAP);
+  const privileged = ver(Version.v758, SQLPrivilegedAccess);
+  const fieldList = optPrio(SQLFieldList);
+
+  const client = optPrio(SQLClient);
+  const byp = optPrio(SQLBypassingBuffer);
+  const whereClause = optPrio(where);
+  const groupHaving = seq(optPrio(SQLGroupBy), optPrio(SQLHaving));
+  const trailingOpts = seq(optPrio(DatabaseConnection), optPrio(SQLHints), optPrio(privileged), optPrio(SQLOptions));
+
+  const intoSingle = altPrio(SQLIntoStructure, SQLIntoList);
+
+  if (!allowInto) {
+    const singleBody = seq(SQLFrom, client, byp, whereClause, groupHaving, trailingOpts);
+    return seq(fieldList, singleBody);
+  }
+
+  const singleAfterFrom = seq(
+    SQLFrom, client, byp, optPrio(DatabaseConnection),
+    altPrio(
+      seq(sqlFields, whereClause, groupHaving, trailingOpts, optPrio(intoSingle), optPrio(DatabaseConnection)),
+      seq(intoSingle, byp, whereClause, groupHaving, trailingOpts),
+      seq(whereClause, groupHaving, trailingOpts, optPrio(intoSingle), optPrio(DatabaseConnection)),
+    ),
+  );
+  const singleIntoBeforeFrom = seq(intoSingle, SQLFrom, client, byp, optPrio(DatabaseConnection), whereClause, groupHaving, trailingOpts);
+
+  return seq(fieldList, byp, altPrio(singleIntoBeforeFrom, singleAfterFrom));
+}
+
 export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatementRunnable {
   const where = seq("WHERE", SQLCond);
   const offset = ver(Version.v751, seq("OFFSET", SQLSource));
@@ -37,9 +69,8 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
         seq(fae, whereClause, groupHaving, ...orderUpOff, trailingOpts),
       ),
     );
-    const singleBody = seq(SQLFrom, client, byp, whereClause, groupHaving, trailingOpts);
     return altPrio(
-      seq("SINGLE", optPrio("FOR UPDATE"), fieldList, singleBody),
+      seq("SINGLE", buildSelectSingleCore(false)),
       seq(optPrio("DISTINCT"), fieldList, byp, afterFromNoInto),
     );
   }
@@ -76,18 +107,8 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
   const nonSingleBody = seq(optPrio("DISTINCT"), fieldList, optPrio(SQLUpTo), byp,
                             altPrio(selectTableIntoThenFrom, selectOtherIntoThenFrom, afterFromWithInto));
 
-  const singleAfterFrom = seq(
-    SQLFrom, client, byp, optPrio(DatabaseConnection),
-    altPrio(
-      seq(sqlFields, whereClause, groupHaving, trailingOpts, optPrio(intoSingle), optPrio(DatabaseConnection)),
-      seq(intoSingle, byp, whereClause, groupHaving, trailingOpts),
-      seq(whereClause, groupHaving, trailingOpts, optPrio(intoSingle), optPrio(DatabaseConnection)),
-    ),
-  );
-  const singleIntoBeforeFrom = seq(intoSingle, SQLFrom, client, byp, optPrio(DatabaseConnection), whereClause, groupHaving, trailingOpts);
-
   return altPrio(
-    seq("SINGLE", optPrio("FOR UPDATE"), fieldList, byp, altPrio(singleIntoBeforeFrom, singleAfterFrom)),
+    seq("SINGLE", buildSelectSingleCore(true)),
     nonSingleBody,
   );
 }
