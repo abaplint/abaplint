@@ -51,7 +51,7 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@microsoft/api-extractor": "^7.58.8",
+        "@microsoft/api-extractor": "^7.58.9",
         "@types/chai": "^4.3.20",
         "@types/mocha": "^10.0.10",
         "@types/node": "^24.13.2",
@@ -64,7 +64,7 @@
         "typescript": "^6.0.3"
     },
     "dependencies": {
-        "fast-xml-parser": "^5.8.0",
+        "fast-xml-parser": "^5.9.0",
         "json5": "^2.2.3",
         "vscode-languageserver-types": "^3.18.0"
     }
