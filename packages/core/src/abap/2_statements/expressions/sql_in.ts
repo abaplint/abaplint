@@ -4,6 +4,7 @@ import {ParenRight, ParenRightW, WParenLeft, WParenLeftW, WParenRight, WParenRig
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLSetOpGroup} from "./sql_set_op_group";
+import {buildSelectCore} from "./_select_core";
 
 export class SQLIn extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -16,8 +17,10 @@ export class SQLIn extends Expression {
     const listNeww = ver(Version.v740sp02, listNew, Version.OpenABAP);
 
     const subSelect = SQLSetOpGroup;
+    // simple subquery for pre-v750 versions: IN ( SELECT ... ), https://github.com/abaplint/abaplint/issues/3999
+    const simpleSubSelect = seq("(", buildSelectCore(undefined, false), ")");
 
-    const inn = seq("IN", altPrio(subSelect, listOld, listNeww, SQLSource));
+    const inn = seq("IN", altPrio(subSelect, simpleSubSelect, listOld, listNeww, SQLSource));
 
     return inn;
   }
