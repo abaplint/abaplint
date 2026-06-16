@@ -29,18 +29,16 @@ export class SQLField extends Expression {
     const parenField = seq(tok(WParenLeftW), field, tok(WParenRightW));
     const parenFieldNoAgg = seq(tok(WParenLeftW), fieldNoAgg, tok(WParenRightW));
 
-    // without aggregates: from v740sp05
     const subNoAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenFieldNoAgg, fieldNoAgg)));
     const arithNoAgg = ver(Version.v740sp05, subNoAgg);
 
-    // with aggregates: from v754
     const subWithAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenField, field)));
     const arithWithAgg = ver(Version.v754, subWithAgg);
 
     const arith = altPrio(arithWithAgg, arithNoAgg);
 
-    const arithSequence = seq(field, optPrio(arith));
-    const parenArithSequence = seq(tok(WParenLeftW), arithSequence, tok(WParenRightW));
+    const arithSequence = seq(optPrio("-"), field, optPrio(arith));
+    const parenArithSequence = seq(tok(WParenLeftW), optPrio("-"), arithSequence, tok(WParenRightW));
 
     // allows (a-b)*(c-d) — paren groups as operands, defined after parenArithSequence
     const subExtWithAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenArithSequence, parenField, field)));

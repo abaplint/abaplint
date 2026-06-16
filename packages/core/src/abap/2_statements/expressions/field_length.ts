@@ -1,5 +1,5 @@
 import {seq, optPrio, altPrio, tok, regex as reg, Expression} from "../combi";
-import {ParenLeft, ParenRightW, Plus} from "../../1_lexer/tokens";
+import {ParenLeft, ParenRightW, ParenRight, Plus} from "../../1_lexer/tokens";
 import {SimpleFieldChain2} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,7 +10,7 @@ export class FieldLength extends Expression {
 
     const length = seq(tok(ParenLeft),
                        optPrio(altPrio(normal, "*")),
-                       tok(ParenRightW));
+                       altPrio(tok(ParenRightW), tok(ParenRight)));
 
     return length;
   }

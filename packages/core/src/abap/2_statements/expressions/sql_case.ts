@@ -19,11 +19,12 @@ export class SQLCase extends Expression {
                           Constant);
     const sub = seq(altPrio("+", "-", "*", "/", "&&"), optPrio(tok(WParenLeftW)), field, optPrio(tok(WParenRightW)));
 
-    const sourc = altPrio(SQLCase, SQLAggregation, SQLFunction, SQLFieldName, SQLSource, Constant);
+    const source = altPrio(SQLCase, SQLAggregation, SQLFunction, SQLFieldName, SQLSource, Constant);
+    const parenSource = seq(tok(WParenLeftW), source, tok(WParenRightW));
     const val = altPrio(SQLCond, Constant, abap);
-    const when = seq("WHEN", val, "THEN", sourc, starPrio(sub));
-    const els = seq("ELSE", sourc);
+    const when = seq("WHEN", val, "THEN", altPrio(parenSource, seq(optPrio("-"), source)), starPrio(sub));
+    const else_ = seq("ELSE", altPrio(parenSource, seq(optPrio("-"), source)));
 
-    return ver(Version.v740sp05, seq("CASE", opt(altPrio(SQLFieldName, abap)), plusPrio(when), optPrio(els), "END"), Version.OpenABAP);
+    return ver(Version.v740sp05, seq("CASE", opt(altPrio(SQLFieldName, abap)), plusPrio(when), optPrio(else_), "END"), Version.OpenABAP);
   }
 }

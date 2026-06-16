@@ -28,6 +28,8 @@ const tests = [
   "SELECT COUNT(*) FROM /bobf/act_conf WHERE name = 'ZFOO'.",
   "SELECT * FROM zfoobar CLIENT SPECIFIED INTO TABLE rt_data WHERE mandt = '111'.",
   "SELECT SINGLE FOR UPDATE * FROM ZFOOBAR WHERE NAME_ID = lv_name.",
+  "SELECT SINGLE FOR UPDATE * FROM ztab WHERE k = @lv INTO @DATA(lv) CONNECTION (lv_con).",
+  "SELECT SINGLE FOR UPDATE * FROM ztab WHERE k = @lv INTO @lv2 CONNECTION (lv_con).",
   "SELECT * FROM zfoo BYPASSING BUFFER INTO TABLE lt_table WHERE foo = lv_bar.",
   "SELECT SINGLE MAX( version ) FROM zfoo INTO lv_version.",
   "SELECT SINGLE MAX( version ) FROM zfoo INTO lv_version BYPASSING BUFFER WHERE " +
@@ -136,6 +138,10 @@ const tests = [
   "SELECT * FROM table INTO TABLE lt_tab WHERE field LIKE search ESCAPE '#'.",
   "SELECT * FROM table INTO TABLE lt_tab %_HINTS ORACLE 'FIRST_ROWS'.",
   "SELECT foo INTO TABLE gt_result FROM ztable %_HINTS ORACLE 'ORDERED' ORACLE 'USE_NL(&table2&)'.",
+  "SELECT * FROM ztab INTO TABLE @DATA(lt_r) %_HINTS HDB @lv_hint DB2 @lv_hint ORACLE @lv_hint.",
+  "SELECT * FROM ztab INTO TABLE @DATA(lt_r) %_HINTS HDB lv_hint DB2 lv_hint.",
+  "SELECT * FROM ztab INTO TABLE @DATA(lt_r) %_HINTS HDB '&prefer_join 0&' HDB '&prefer_union_all 1&'.",
+  "SELECT * FROM ztab INTO TABLE @DATA(lt_r) %_HINTS ADABAS go_hints->adabas AS400 go_hints->as400 HDB go_hints->hdb.",
   "SELECT SINGLE FROM table FIELDS field INTO @DATA(lv_field).",
   "SELECT SINGLE @abap_true FROM dd03l INTO @DATA(lv_exists) WHERE tabname = @lv_tabname AND as4local = 'A'.",
   "SELECT field1, field2 FROM ztab INTO TABLE @DATA(lt_result) WHERE field = @lv_field ORDER BY field1, field2.",
@@ -164,6 +170,15 @@ const tests = [
   "SELECT SINGLE * FROM ztable WHERE host = @lv_host INTO @DATA(ls_config).",
   "SELECT SINGLE * FROM ztable WHERE lower( host ) = @lv_host INTO @DATA(ls_config).",
   "SELECT bname, bcode FROM usr02 GROUP BY bname, bcode INTO TABLE @DATA(result).",
+  `SELECT f FROM t1 INNER JOIN ( t2 ) ON t1~k = t2~k INTO TABLE @DATA(lt_r).`,
+  `SELECT f FROM t1 INNER JOIN ( t2 AS x ) ON t1~k = x~k INTO TABLE @DATA(lt_r).`,
+  `SELECT f FROM t1 LEFT OUTER JOIN ( t2 LEFT JOIN t3 ON t2~k = t3~k ) ON t1~k = t2~k INTO TABLE @DATA(lt_r).`,
+  `SELECT f FROM t1 LEFT OUTER JOIN ( ( t2 INNER JOIN t3 ON t2~k = t3~k ) LEFT JOIN t4 ON t3~k = t4~k ) ON t1~k = t2~k INTO TABLE @DATA(lt_r).`,
+  `SELECT f FROM t1 WHERE f IN ( SELECT f FROM t1 JOIN ( t2 JOIN t3 ON t2~k = t3~k ) ON t1~k = t2~k ) INTO TABLE @DATA(lt_r).`,
+  `SELECT f INTO TABLE @lt CONNECTION (lv_con) FROM t1.`,
+  `SELECT f INTO TABLE @lt CONNECTION (lv_con) FROM ( t1 JOIN t2 ON t1~k = t2~k ).`,
+  `SELECT f INTO CORRESPONDING FIELDS OF TABLE @lt CONNECTION (lv_con) FROM ( ( ( t1 JOIN t2 ON t1~k = t2~k ) LEFT OUTER JOIN t3 ON t1~k = t3~k ) LEFT OUTER JOIN t4 ON t1~k = t4~k ) WHERE lv = lv2.`,
+  `SELECT f FROM ( t1 INNER JOIN t2 ON t1~k = t2~k ) INTO TABLE @lt CONNECTION (lv_con) WHERE k = @lv.`,
 
   `SELECT *
 FROM /abc/def_c_clearing_history(
@@ -429,6 +444,9 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
 
   `SELECT SINGLE (lv_fields) FROM ztab GROUP BY (lv_grp) HAVING (lv_having) INTO @wa.`,
 
+  `SELECT SINGLE MAX( col ) INTO @wa FROM ztab CONNECTION (lv_con) WHERE col = @lv HAVING MAX( col ) IS NOT NULL.`,
+  `SELECT SINGLE col INTO @lv FROM ztab CONNECTION (lv_con) WHERE col = @lv.`,
+
   `SELECT SINGLE * FROM t100 WHERE 'A' = t100~arbgb INTO @DATA(sdf).`,
 
   `SELECT
@@ -524,6 +542,11 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
   `SELECT ( arbgb ) FROM t100 INTO TABLE @DATA(sdf).`,
   `SELECT ( arbgb ) AS bar FROM t100 INTO TABLE @DATA(sdf).`,
   `SELECT ( arbgb ), text AS bar FROM t100 INTO TABLE @DATA(sdf).`,
+  `SELECT (lv_dyn(11)) FROM t100 INTO TABLE @DATA(sdf).`,
+  `SELECT (lv_dyn+3(1)) FROM t100 INTO TABLE @DATA(sdf).`,
+  `SELECT (lv_dyn+lv_off(lv_len)) FROM t100 INTO TABLE @DATA(sdf).`,
+  `SELECT (go_obj->attr) FROM t100 INTO TABLE @DATA(sdf).`,
+  `SELECT (ls_str-(lv_comp)) FROM t100 INTO TABLE @DATA(sdf).`,
   `SELECT DISTINCT 'I' AS sign, 'EQ' AS option, werks AS low
     FROM t001w
     APPENDING CORRESPONDING FIELDS OF TABLE @r_drive[]
@@ -574,6 +597,11 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
   `SELECT CAST( CASE T1~_DATAAGING WHEN '00000000' THEN ' ' ELSE 'X' END AS CHAR ) AS XARCH FROM BSEG AS T1 INTO TABLE @DATA(lt_result).`,
   `SELECT CAST( CASE T1~FKBER_LONG WHEN ' ' THEN T1~FKBER ELSE T1~FKBER_LONG END AS CHAR ) AS FKBER ` +
   ` FROM BSEG AS T1 INTO TABLE @DATA(lt_result).`,
+  `SELECT CASE col WHEN @abap_true THEN ( ' ' ) ELSE ( 'X' ) END AS flag FROM ztab INTO TABLE @DATA(lt_r).`,
+  `SELECT CASE col WHEN '1' THEN ( 'Y' ) WHEN '0' THEN ( 'N' ) ELSE ( ' ' ) END AS val FROM ztab INTO TABLE @DATA(lt_r).`,
+  `SELECT @class_name=>const_attr AS rec FROM ztab INTO TABLE @DATA(lt_r).`,
+  `SELECT col FROM ztab WHERE col = @class_name=>const_attr INTO TABLE @DATA(lt_r).`,
+  `SELECT col FROM ztab WHERE NOT col LIKE '/prefix_pattern' INTO TABLE @DATA(lt_r).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
@@ -594,6 +622,12 @@ statementType([
   `SELECT * FROM ztab UP TO 10 ROWS BYPASSING BUFFER INTO TABLE @DATA(lt_r).`,
   `SELECT * FROM ztab UP TO 10 ROWS BYPASSING BUFFER WHERE col = @lv_v INTO TABLE @DATA(lt_r).`,
   `SELECT * FROM ztab CLIENT SPECIFIED BYPASSING BUFFER UP TO 10 ROWS WHERE col = @lv_v INTO TABLE @DATA(lt_r).`,
+  `SELECT * UP TO 10 ROWS INTO TABLE @DATA(lt_r) BYPASSING BUFFER FROM ztab WHERE col = @lv_v.`,
+  `SELECT * UP TO 10 ROWS APPENDING CORRESPONDING FIELDS OF TABLE @lt_r BYPASSING BUFFER FROM ztab WHERE col = @lv_v.`,
+  `SELECT * INTO CORRESPONDING FIELDS OF TABLE @lt_r BYPASSING BUFFER FROM ztab INNER JOIN ztab2 ON ztab~k = ztab2~k WHERE ztab~col = @lv_v.`,
+  `SELECT col INTO CORRESPONDING FIELDS OF TABLE @lt_r BYPASSING BUFFER FROM ztab FOR ALL ENTRIES IN @lt_fae WHERE col = @lt_fae-col.`,
+  `SELECT * FROM ztab CONNECTION (lv_con) UP TO 10 ROWS INTO TABLE @DATA(lt_r) BYPASSING BUFFER WHERE col = @lv_v.`,
+  `SELECT * FROM ztab CONNECTION (lv_con) UP TO 10 ROWS APPENDING CORRESPONDING FIELDS OF TABLE @lt_r BYPASSING BUFFER WHERE col = @lv_v.`,
 ], "SELECT BYPASSING BUFFER positional variants", Statements.Select);
 
 const versions = [
@@ -612,6 +646,16 @@ const versions = [
   {abap: `SELECT t1~field1, t1~field2, division( t1~field3, t2~field3, 2 ) AS ratio FROM ztable AS t1 INNER JOIN ztable2 AS t2 ON t1~field1 = t2~field1 ORDER BY t1~field1 INTO TABLE @DATA(result).`, ver: Version.v751},
   {abap: `SELECT t1~field1, division( t1~field2, t2~field2, 2 ) AS d FROM ztable AS t1 LEFT OUTER JOIN ztable2 AS t2 ON t1~field1 = t2~field1 WHERE division( t1~field2, t2~field2, 2 ) IS NOT NULL INTO TABLE @DATA(result).`, ver: Version.v751},
   {abap: `SELECT t1~field1, division( t1~field2, t2~field2, 2 ) AS d FROM ztable AS t1 LEFT OUTER JOIN ztable2 AS t2 ON t1~field1 = t2~field1 WHERE division( t1~field2, t2~field2, 2 ) IS NULL INTO TABLE @DATA(result).`, ver: Version.v751},
+  {abap: `SELECT col FROM ztab USING CLIENT @lv_mandt INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+  {abap: `SELECT col FROM ztab ORDER BY col INTO TABLE @DATA(lt_r) UP TO 10 ROWS OFFSET @lv_off.`, ver: Version.v751},
+  {abap: `SELECT col1 + col2 AS first , COUNT(*) AS second FROM ztab GROUP BY col1 + col2 ORDER BY first INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+  {abap: `SELECT - col AS neg , COUNT(*) AS cnt FROM ztab GROUP BY - col INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+  {abap: `SELECT CASE WHEN col = 0 THEN 0 WHEN col IS NOT NULL THEN 1 END AS grp , COUNT(*) FROM ztab GROUP BY CASE WHEN col = 0 THEN 0 WHEN col IS NOT NULL THEN 1 END INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+  {abap: `SELECT 1 + CASE WHEN col < 2 THEN 1 END AS grp , COUNT(*) FROM ztab GROUP BY 1 + CASE WHEN col < 2 THEN 1 END INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+  {abap: `SELECT col FROM ztab GROUP BY REPLACE( CONCAT( col , col2 ) , col3 , col4 ) INTO TABLE @DATA(lt_r).`, ver: Version.v750},
+  {abap: `SELECT col1 + col2 AS first , col3 , COUNT(*) AS cnt FROM ztab GROUP BY col1 + col2 , col3 INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+  {abap: `SELECT - col AS neg , col2 , COUNT(*) AS cnt FROM ztab GROUP BY - col , col2 INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+  {abap: `SELECT @lv_const AS c , col , COUNT(*) AS cnt FROM ztab GROUP BY @lv_const , col INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
 ];
 
 statementVersion(versions, "SELECT", Statements.Select);
@@ -696,6 +740,8 @@ const aggArgExprVersions = [
   {abap: `SELECT SINGLE COUNT( DISTINCT field1 + field2 ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
   {abap: `SELECT SINGLE SUM( field1 + @lv_offset ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
   {abap: `SELECT SINGLE SUM( CASE WHEN field1 > 0 THEN field1 ELSE 0 END ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
+  {abap: `SELECT SINGLE SUM( CASE WHEN field1 > 0 THEN field1 ELSE - field1 END ) FROM ztable INTO @DATA(result).`, ver: Version.v740sp08},
+  {abap: `SELECT - col AS neg , col FROM ztab INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
 ];
 
 statementVersionOk(aggArgExprVersions, "SELECT", Statements.Select);
@@ -847,6 +893,19 @@ const unionClientVersions = [
 
 statementType(unionClientVersions, "SELECT UNION CLIENT SPECIFIED / USING CLIENT / dynamic", Statements.Select);
 
+statementVersion([
+  {abap: `SELECT * FROM ztab CLIENT SPECIFIED t~mandt INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+  {abap: `SELECT * FROM ztab CLIENT SPECIFIED t~mandt WHERE col = @lv_v INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+  {abap: `SELECT * FROM ztab INNER JOIN ztab2 ON ztab~k = ztab2~k CLIENT SPECIFIED ztab~mandt , ztab2~mandt INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+  {abap: `SELECT * FROM ('ztab') CLIENT SPECIFIED (lv_cl) INTO CORRESPONDING FIELDS OF TABLE @lt_r.`, ver: Version.v740sp05},
+  {abap: `SELECT * FROM ztab CLIENT SPECIFIED (lv_cl) WHERE col = @lv_v INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+], "SELECT CLIENT SPECIFIED with column list or dynamic", Statements.Select);
+
+statementVersionFail([
+  {abap: `SELECT * FROM ztab CLIENT SPECIFIED t~mandt INTO TABLE @DATA(lt_r).`, ver: Version.v740sp02},
+  {abap: `SELECT * FROM ztab CLIENT SPECIFIED (lv_cl) INTO TABLE @DATA(lt_r).`, ver: Version.v740sp02},
+], "SELECT CLIENT SPECIFIED column list requires v740sp05");
+
 const unionCorrespVersions = [
   `SELECT f1 FROM ztab UNION SELECT f1 FROM ztab INTO CORRESPONDING FIELDS OF @wa.`,
   `SELECT f1 FROM ztab UNION SELECT f1 FROM ('ztab') INTO CORRESPONDING FIELDS OF @wa.`,
@@ -855,6 +914,18 @@ const unionCorrespVersions = [
 ];
 
 statementType(unionCorrespVersions, "SELECT UNION into corresponding fields", Statements.SelectLoop);
+
+statementType([
+  `SELECT * FROM ztab INTO wa UP TO 5 ROWS FOR ALL ENTRIES IN lt WHERE col = lt-col.`,
+  `SELECT * FROM ztab INTO wa UP TO lv_n ROWS FOR ALL ENTRIES IN lt WHERE col = lt-col.`,
+  `SELECT * FROM ztab INNER JOIN ztab2 ON ztab~k EQ ztab2~k INTO wa UP TO lv_n ROWS FOR ALL ENTRIES IN lt WHERE ztab~k EQ lt-k.`,
+], "SELECT INTO structure UP TO ROWS FOR ALL ENTRIES", Statements.SelectLoop);
+
+statementVersion([
+  {abap: `SELECT col FROM ztab ORDER BY col INTO @DATA(lv_r) UP TO 1 ROWS OFFSET 5.`, ver: Version.v751},
+  {abap: `SELECT col FROM ztab ORDER BY (lv_dyn) INTO @DATA(lv_r) UP TO 1 ROWS OFFSET 5.`, ver: Version.v751},
+  {abap: `SELECT col FROM ztab ORDER BY col INTO TABLE @DATA(lt_r) PACKAGE SIZE 17 UP TO 1 ROWS OFFSET 2.`, ver: Version.v751},
+], "SELECT OFFSET after INTO UP TO", Statements.SelectLoop);
 
 statementType([
   `WITH +cte AS ( SELECT col FROM ztab ) SELECT FROM +cte FIELDS col INTO TABLE @DATA(lt_r).`,
