@@ -20,6 +20,7 @@ const tests = [
     "ENTRIES IN it_matnr WHERE blah = lv_value.",
   "SELECT COUNT( * ) INTO rv_count FROM foo INNER JOIN bar ON bar~field = foo~field WHERE mat_id IN it_mat_id.",
   "SELECT name INTO TABLE lt_icon FROM icon WHERE name IN s_icon ORDER BY name.",
+  "SELECT obj_name FROM tadir INTO TABLE lt_tadir WHERE devclass IN ( SELECT devclass FROM tadir WHERE object = 'PROG' ).",
   "SELECT * UP TO 2 ROWS FROM t005t INTO TABLE lt_test.",
   "SELECT * FROM t006a APPENDING CORRESPONDING FIELDS OF TABLE lt_texts WHERE spras = sy-langu AND msehi = 'ASDF'.",
   "SELECT COUNT(*) INTO dbcount FROM vbak WHERE (where_clause).",
@@ -661,6 +662,68 @@ const versions = [
 statementVersion(versions, "SELECT", Statements.Select);
 
 statementVersionOk([
+  {abap: `SELECT * FROM ztab1 \\_assoc1 AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v740sp05},
+  {abap: `SELECT * FROM ztab1\\_assoc1 AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v740sp05},
+  {abap: `SELECT * FROM ztab1 \\_assoc1 \\_assoc2 AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v740sp05},
+  {abap: `SELECT * FROM ztab1( col1 = 'AB', col2 = 3 ) \\_assoc1 AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1( col1 = 'AB', col2 = 3 ) AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1\\_assoc1( col1 = 'AB', col2 = 3 ) AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ col4 = @sy-uname ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ WHERE col4 = @sy-uname ] AS r INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ INNER ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ LEFT OUTER ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ RIGHT OUTER ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ ONE TO ONE ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ MANY TO ONE ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ ONE TO MANY ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ MANY TO MANY ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ EXACT ONE TO ONE ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ INNER WHERE col4 = @sy-uname ] AS r INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ LEFT OUTER WHERE col4 = @sy-uname ] AS r INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ ONE TO ONE WHERE col4 = @sy-uname ] AS r INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ MANY TO ONE WHERE col4 = @sy-uname ] AS r INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ EXACT ONE TO ONE WHERE col4 = @sy-uname ] AS r INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1( col1 = 'AB', col2 = 3 )[ key1 < 3 ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1( col1 = 'AB', col2 = 3 ) \\_assoc1( col1 = 'CD', col2 = 1729 ) AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1( col1 = 'AB', col2 = 3 ) \\_assoc1( col1 = 'CD', col2 = 1728 )[ key1 < 3 ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1( col1 = 'AB', col2 = 3 ) \\_assoc1( col1 = 'CD', col2 = 3 )[ key1 < 3 ] \\_assoc2( col1 = @lv_qr, col2 = 2 ) AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1-col FROM ztab1 INTO TABLE @r.`, ver: Version.v740sp05},
+  {abap: `SELECT t1~\\_assoc1-col FROM ztab1 AS t1 INTO TABLE @r.`, ver: Version.v740sp05},
+  {abap: `SELECT \\_assoc1\\_assoc2-col FROM ztab1 INTO TABLE @r.`, ver: Version.v740sp05},
+  {abap: `SELECT \\_assoc1-col AS c FROM ztab1 INTO TABLE @r.`, ver: Version.v740sp05},
+  {abap: `SELECT \\_assoc1[ key1 < 3 ]-col FROM ztab1 INTO TABLE @r.`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1[ WHERE key1 < 3 ]-col FROM ztab1 INTO TABLE @r.`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1[ INNER ]-col FROM ztab1 INTO TABLE @r.`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1[ LEFT OUTER ]-col FROM ztab1 INTO TABLE @r.`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1[ ONE TO ONE ]-col FROM ztab1 INTO TABLE @r.`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1[ MANY TO ONE ]-col FROM ztab1 INTO TABLE @r.`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1[ INNER WHERE key1 < 3 ]-col FROM ztab1 INTO TABLE @r.`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1[ LEFT OUTER WHERE key1 < 3 ]-col FROM ztab1 INTO TABLE @r.`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1[ ONE TO ONE WHERE key1 < 3 ]-col FROM ztab1 INTO TABLE @r.`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1( col1 = 'AB' )[ key1 < 3 ]-col FROM ztab1 INTO TABLE @r.`, ver: Version.v751},
+  {abap: `SELECT t1~\\_assoc1\\_assoc2-col FROM ztab1 AS t1 INTO TABLE @r.`, ver: Version.v740sp05},
+  {abap: `SELECT /foo/t1~\\_assoc-col FROM /foo/ztab AS /foo/t1 INTO TABLE @r.`, ver: Version.v740sp05},
+  {abap: `SELECT /foo/t1~\\_assoc[ key1 < 3 ]-col FROM /foo/ztab AS /foo/t1 INTO TABLE @r.`, ver: Version.v751},
+  {abap: `SELECT t1~key1 AS k1 FROM ztab1 AS t1 WHERE t1~col4 = @sy-uname AND key1 = ( SELECT key1 FROM ztab1 AS t2 WHERE t1~\\_assoc1-key1 = t2~key1 ) INTO TABLE @lt_result.`, ver: Version.v750},
+  {abap: `SELECT count(*) AS cnt FROM ztab1 AS t1 WHERE key1 < 8877 GROUP BY t1~\\_assoc1-key1 HAVING count(*) > 0 INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+  {abap: `SELECT gla, \\_skat-txt50, indi FROM /foo/bar WHERE indi = @abap_false AND \\_skat-spras = @sy-langu ORDER BY gla ASCENDING INTO TABLE @lt.`, ver: Version.v740sp05},
+  {abap: `SELECT FROM zcds FIELDS col1, \\_Text[ ONE TO ONE WHERE Language = @sy-langu ]-LanguageName ORDER BY col1 INTO TABLE @DATA(languages).`, ver: Version.v751},
+  {abap: `SELECT FROM /foo/bar FIELDS (mv_sql_select) WHERE uuid = @mv__uuid AND \\_foo\\_bar-top IN @mt_top GROUP BY (mv_sql_group) INTO CORRESPONDING FIELDS OF TABLE @mt_result.`, ver: Version.v750},
+], "SELECT association path expressions", Statements.Select);
+
+statementVersionFail([
+  {abap: `SELECT * FROM ztab1 \\_assoc1 ( col1 = 'AB' ) AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1\\_assoc1 ( col1 = 'AB' ) AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1( col1 = 'AB' ) \\_assoc1 ( col2 = @lv ) AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1 [ col4 = @sy-uname ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1\\_assoc1 [ col4 = @sy-uname ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1( col1 = 'AB' ) [ col4 = @sy-uname ] AS r INTO TABLE @result.`, ver: Version.v751},
+  {abap: `SELECT t1~key1 FROM ztab1 AS t1 WHERE t1~ \\_assoc1-key1 = 5 INTO TABLE @r.`, ver: Version.v740sp05},
+  {abap: `SELECT count(*) AS cnt FROM ztab1 AS t1 WHERE x = 1 GROUP BY t1~ \\_assoc1-key1 INTO TABLE @DATA(lt_r).`, ver: Version.v740sp05},
+  {abap: `SELECT \\_assoc1 [ key1 < 3 ]-col FROM ztab1 INTO TABLE @r.`, ver: Version.v751},
+], "SELECT association path invalid spacing");
+
+statementVersionOk([
   {abap: "SELECT * FROM @lt_fields AS fields INTO TABLE @DATA(result).", ver: Version.OpenABAP},
 ], "SELECT FROM internal table", Statements.Select);
 
@@ -784,6 +847,36 @@ const subqueryInVersions = [
 ];
 
 statementVersionOk(subqueryInVersions, "SELECT subquery in IN clause", Statements.Select);
+
+const subqueryExistsVersions = [
+  {abap: `SELECT foo FROM bar INTO TABLE lt WHERE EXISTS ( SELECT * FROM baz WHERE baz~foo = bar~foo ).`, ver: Version.v702},
+  {abap: `SELECT AVG( b~kbetr ) AS kbetr FROM a670 AS a JOIN konp AS b ON a~knumh EQ b~knumh INTO @lv_kbetr WHERE a~kunnr IN ( SELECT kunnr FROM zrlx_c_can_rlx JOIN zrlx_c_can_pdv ON zrlx_c_can_rlx~canale_anag = zrlx_c_can_pdv~canale_anag JOIN t001w ON zrlx_c_can_pdv~pdv = t001w~werks WHERE canale_relex = @<mat_can>-canale_relex ) AND EXISTS ( SELECT 'X' FROM wlk1 WHERE filia = a~kunnr AND artnr = @<mat_can>-matnr ).`, ver: Version.v740sp05},
+];
+
+statementVersionOk(subqueryExistsVersions, "SELECT subquery in EXISTS clause", Statements.Select);
+
+const correlatedMaxSubqueryVersions = [
+  {abap: `SELECT *
+  INTO TABLE lt_result
+  FROM zmain_table AS a CLIENT SPECIFIED
+  WHERE a~mandt   EQ sy-mandt
+    AND a~comp    EQ p_comp
+    AND a~plant   IN s_plant
+    AND a~vendor  IN s_vendor
+    AND a~material IN s_material
+    AND a~channel IN s_channel
+    AND a~version EQ
+    ( SELECT MAX( version ) FROM zmain_table CLIENT SPECIFIED
+      WHERE mandt    EQ sy-mandt
+        AND comp     EQ p_comp
+        AND plant    EQ a~plant
+        AND vendor   EQ a~vendor
+        AND material EQ a~material
+        AND channel  EQ a~channel
+        AND version  IN s_version ).`, ver: Version.v740sp08},
+];
+
+statementVersionOk(correlatedMaxSubqueryVersions, "SELECT correlated MAX subquery", Statements.Select);
 
 const privilegedVersions = [
   {abap: `SELECT * FROM ztab WITH PRIVILEGED ACCESS INTO TABLE @DATA(lt).`, ver: Version.v752},
@@ -947,6 +1040,15 @@ statementExpectFail([
   `SELECT col FROM ztab INTO @wa PACKAGE SIZE 10.`,
   `SELECT col FROM ztab INTO lv_wa PACKAGE SIZE 10.`,
 ], "PACKAGE SIZE requires INTO TABLE");
+
+statementExpectFail([
+  `SELECT col FROM ztab INTO TABLE @lt INTO @wa.`,
+  `SELECT col FROM ztab INTO @wa INTO TABLE @lt.`,
+], "SELECT allows only one trailing INTO target");
+
+statementExpectFail([
+  `SELECT field FROM table INTO TABLE lt_table WHERE field IN ( SELECT SINGLE FOR UPDATE * FROM ztab WHERE field = lv_field ).`,
+], "SELECT SINGLE FOR UPDATE in IN subquery");
 
 // keywords that are valid column names in SELECT <kw> FROM ztab INTO @wa.
 statementType([
@@ -1533,4 +1635,101 @@ statementExpectFail([
   `SELECT SINGLE WHEN FROM ztab INTO @wa.`,
   `SELECT SINGLE WHERE FROM ztab INTO @wa.`,
 ], "SELECT SINGLE: keywords reserved (cannot be column names)");
+
+statementVersionOk([
+  // HIERARCHY generator: CHILD TO PARENT ASSOCIATION + START WHERE (minimal)
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with SIBLINGS ORDER BY
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root SIBLINGS ORDER BY sort_key ASCENDING ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with DEPTH
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root DEPTH 3 ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with MULTIPLE PARENTS NOT ALLOWED
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root MULTIPLE PARENTS NOT ALLOWED ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with MULTIPLE PARENTS ALLOWED
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root MULTIPLE PARENTS ALLOWED ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with MULTIPLE PARENTS LEAVES ONLY
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root MULTIPLE PARENTS LEAVES ONLY ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with ORPHAN IGNORE
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root ORPHAN IGNORE ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with ORPHAN ERROR
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root ORPHAN ERROR ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with ORPHAN ROOT
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root ORPHAN ROOT ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with CYCLE BREAKUP
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root CYCLE BREAKUP ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with CYCLE ERROR
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root CYCLE ERROR ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with CACHE ON
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root CACHE ON ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with CACHE FORCE
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root CACHE FORCE ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with GENERATE SPANTREE
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root GENERATE SPANTREE ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator with PERIOD / VALID
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent PERIOD FROM valid_from TO valid_to VALID FROM @lv_from TO @lv_to START WHERE id = @lv_root ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY generator: complex WHERE condition
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root AND level = 0 ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY accessor: HIERARCHY_DESCENDANTS
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS( SOURCE ztab START WHERE id = @lv_root ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY accessor: HIERARCHY_ANCESTORS
+  {abap: `SELECT * FROM HIERARCHY_ANCESTORS( SOURCE ztab START WHERE id = @lv_node ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY accessor: HIERARCHY_SIBLINGS
+  {abap: `SELECT * FROM HIERARCHY_SIBLINGS( SOURCE ztab START WHERE id = @lv_node ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY accessor with DISTANCE FROM
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS( SOURCE ztab START WHERE id = @lv_root DISTANCE FROM 1 ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY accessor with DISTANCE TO
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS( SOURCE ztab START WHERE id = @lv_root DISTANCE TO 3 ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY accessor with DISTANCE FROM ... TO
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS( SOURCE ztab START WHERE id = @lv_root DISTANCE FROM 1 TO 3 ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY aggregate: HIERARCHY_DESCENDANTS_AGGREGATE with MEASURES
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS_AGGREGATE( SOURCE ztab START WHERE id = @lv_root MEASURES SUM( amount ) AS total ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY aggregate: HIERARCHY_ANCESTORS_AGGREGATE with MEASURES
+  {abap: `SELECT * FROM HIERARCHY_ANCESTORS_AGGREGATE( SOURCE ztab START WHERE id = @lv_root MEASURES SUM( amount ) AS total ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY aggregate with multiple measures
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS_AGGREGATE( SOURCE ztab START WHERE id = @lv_root MEASURES SUM( amount ) AS total , COUNT( * ) AS cnt ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY aggregate with WHERE
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS_AGGREGATE( SOURCE ztab START WHERE id = @lv_root MEASURES SUM( amount ) AS total WHERE level > 0 ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY aggregate with WITH SUBTOTAL
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS_AGGREGATE( SOURCE ztab START WHERE id = @lv_root MEASURES SUM( amount ) AS total WITH SUBTOTAL ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY aggregate with JOIN
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS_AGGREGATE( SOURCE ztab START WHERE id = @lv_root JOIN zdata ON zdata~id = id MEASURES SUM( amount ) AS total ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+  // HIERARCHY aggregate without START WHERE (optional)
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS_AGGREGATE( SOURCE ztab MEASURES SUM( amount ) AS total ) AS h INTO TABLE @DATA(lt).`, ver: Version.v750},
+], "SELECT hierarchy source functions", Statements.Select);
+
+statementVersionOk([
+  // SIBLINGS ORDER BY single field
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE col1 = 'X' SIBLINGS ORDER BY col2 ) INTO TABLE @DATA(result).`, ver: Version.v750},
+  // LOAD INCREMENTAL
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root SIBLINGS ORDER BY col1 LOAD INCREMENTAL ) INTO TABLE @result.`, ver: Version.v750},
+  // LOAD BULK
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root SIBLINGS ORDER BY col1 LOAD BULK ) INTO TABLE @result.`, ver: Version.v750},
+  // LOAD @var
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _parent START WHERE id = @lv_root SIBLINGS ORDER BY col1 LOAD @load ) INTO TABLE @result.`, ver: Version.v750},
+  // RETAIN NULLS @var (leveled)
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab LEVELS ( a, b, c ) RETAIN NULLS @n ) INTO TABLE @DATA(t).`, ver: Version.v750},
+  // RETAIN NULLS with SIBLINGS ORDER BY before it
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab LEVELS ( a, b, c ) SIBLINGS ORDER BY a DESCENDING, b ASCENDING RETAIN NULLS @n ) INTO TABLE @DATA(t).`, ver: Version.v750},
+  // RETAIN NULLS with CACHE before it
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab LEVELS ( a, b, c ) CACHE ON RETAIN NULLS @n ) INTO TABLE @DATA(t).`, ver: Version.v750},
+  // LEVELS with CTE name as source
+  {abap: `SELECT * FROM HIERARCHY( SOURCE +a LEVELS ( a, b, c ) SIBLINGS ORDER BY a ) INTO TABLE @DATA(t).`, ver: Version.v750},
+], "SELECT hierarchy source functions (kernel-derived, INTO TABLE)", Statements.Select);
+
+statementVersionOk([
+  // PERIOD/VALID + START WHERE
+  {abap: `SELECT 1 FROM HIERARCHY( SOURCE ztab CHILD TO PARENT ASSOCIATION _self PERIOD FROM valid_from TO valid_to VALID FROM @timestamp TO @timestamp START WHERE 1 = 0 ) INTO @result.`, ver: Version.v750},
+  // SOURCE with alias
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab AS foo CHILD TO PARENT ASSOCIATION _parent START WHERE foo~col1 = 'X' SIBLINGS ORDER BY foo~col3 ) INTO @result.`, ver: Version.v750},
+  // SOURCE with alias + ORDER BY PRIMARY KEY
+  {abap: `SELECT * FROM HIERARCHY( SOURCE ztab AS foo CHILD TO PARENT ASSOCIATION _parent START WHERE foo~col1 = 'X' SIBLINGS ORDER BY PRIMARY KEY ) INTO @result.`, ver: Version.v750},
+  // aggregate: WITH SUBTOTAL
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS_AGGREGATE( SOURCE ztab MEASURES COUNT( * ) AS cnt WITH SUBTOTAL ) INTO @bar.`, ver: Version.v750},
+  // aggregate: JOIN
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS_AGGREGATE( SOURCE ztab JOIN zdata ON ztab~id = zdata~fk MEASURES COUNT( * ) AS cnt ) INTO @wa.`, ver: Version.v750},
+  // aggregate: WHERE
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS_AGGREGATE( SOURCE ztab MEASURES COUNT( * ) AS cnt WHERE id > 0 ) INTO @wa.`, ver: Version.v750},
+  // aggregate: WITH BALANCE WITH NOT MATCHED WITH TOTAL
+  {abap: `SELECT * FROM HIERARCHY_DESCENDANTS_AGGREGATE( SOURCE ztab MEASURES COUNT( * ) AS cnt WITH BALANCE WITH NOT MATCHED WITH TOTAL ) INTO @wa.`, ver: Version.v750},
+], "SELECT hierarchy source functions (kernel-derived, INTO work area)", Statements.SelectLoop);
 
