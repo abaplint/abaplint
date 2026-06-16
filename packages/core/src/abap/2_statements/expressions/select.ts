@@ -9,7 +9,7 @@ export class Select extends Expression {
   public getRunnable(): IStatementRunnable {
     const into = altPrio(SQLIntoTable, SQLIntoStructure, SQLIntoList);
 
-    const standalone = buildSelectCore(into);
+    const standalone = buildSelectCore(true);
 
     const unionTail = ver(Version.v750, plusPrio(SQLSetOp), Version.OpenABAP);
     const chained = seq(buildSelectCore(undefined, false), unionTail, optPrio(SQLOrderBy), optPrio(into));

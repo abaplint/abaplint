@@ -9,7 +9,7 @@ import {SQLGroupBy} from "./sql_group_by";
 import {SQLIntoStructure} from "./sql_into_structure";
 import {SQLUpTo} from "./sql_up_to";
 
-export function buildSelectCore(into?: IStatementRunnable, allowOrderBy = true): IStatementRunnable {
+export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatementRunnable {
   const where = seq("WHERE", SQLCond);
   const offset = ver(Version.v751, seq("OFFSET", SQLSource));
   const sqlFields = ver(Version.v750, SQLFields, Version.OpenABAP);
@@ -27,10 +27,9 @@ export function buildSelectCore(into?: IStatementRunnable, allowOrderBy = true):
   const trailingOpts = seq(optPrio(DatabaseConnection), optPrio(SQLHints), optPrio(privileged), optPrio(SQLOptions));
 
   const intoSingle = altPrio(SQLIntoStructure, SQLIntoList);
-  const intoAny = into ? altPrio(into, intoSingle) : intoSingle;
   const intoForPackSize = SQLIntoTable;
 
-  if (!into) {
+  if (!allowInto) {
     const afterFromNoInto = seq(
       SQLFrom, client, byp,
       altPrio(
@@ -70,7 +69,7 @@ export function buildSelectCore(into?: IStatementRunnable, allowOrderBy = true):
     afterFromWithInto,
   );
   const selectOtherIntoThenFrom = seq(
-    intoAny, optPrio(SQLUpTo), byp, optPrio(DatabaseConnection),
+    intoSingle, optPrio(SQLUpTo), byp, optPrio(DatabaseConnection),
     afterFromWithInto,
   );
 
