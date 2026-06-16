@@ -63,10 +63,7 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
   if (!allowInto) {
     const afterFromNoInto = seq(
       SQLFrom, client, byp,
-      altPrio(
-        seq(sqlFields, fae, whereClause, groupHaving, ...orderUpOff, trailingOpts),
-        seq(fae, whereClause, groupHaving, ...orderUpOff, trailingOpts),
-      ),
+      seq(optPrio(sqlFields), fae, whereClause, groupHaving, ...orderUpOff, trailingOpts),
     );
     return altPrio(
       seq("SINGLE", buildSelectSingleCore(false)),
