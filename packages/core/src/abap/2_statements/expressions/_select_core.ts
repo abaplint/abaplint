@@ -82,12 +82,11 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
   const afterFromWithInto = seq(
     optPrio(SQLFrom), client, byp, fromPackSize,
     altPrio(
-      seq(sqlFields, fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, trailingInto),
       seq(intoForPackSize, optPrio(SQLPackageSize), byp, optPrio(DatabaseConnection),
           optPrio(SQLUpTo), byp, optPrio(offset), fae, whereClause, groupHaving, ...orderUpOff, trailingOpts),
       seq(intoSingle, byp, optPrio(SQLUpTo), byp, fae, optPrio(SQLUpTo), byp,
           optPrio(offset), whereClause, groupHaving, ...orderUpOff, trailingOpts),
-      seq(fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, trailingInto),
+      seq(optPrio(sqlFields), fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, trailingInto),
     ),
   );
 
