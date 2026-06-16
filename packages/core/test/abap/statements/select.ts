@@ -950,6 +950,11 @@ statementExpectFail([
 ], "PACKAGE SIZE requires INTO TABLE");
 
 statementExpectFail([
+  `SELECT col FROM ztab INTO TABLE @lt INTO @wa.`,
+  `SELECT col FROM ztab INTO @wa INTO TABLE @lt.`,
+], "SELECT allows only one trailing INTO target");
+
+statementExpectFail([
   `SELECT field FROM table INTO TABLE lt_table WHERE field IN ( SELECT SINGLE FOR UPDATE * FROM ztab WHERE field = lv_field ).`,
 ], "SELECT SINGLE FOR UPDATE in IN subquery");
 
