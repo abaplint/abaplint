@@ -92,11 +92,12 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
     ),
   );
 
-  const selectTableIntoThenFrom = seq(intoForPackSize, optPrio(SQLPackageSize), optPrio(SQLUpTo), byp, optPrio(DatabaseConnection));
-  const selectOtherIntoThenFrom = seq(intoSingle, optPrio(SQLUpTo), byp, optPrio(DatabaseConnection));
+  const selectTableIntoThenFrom = seq(intoForPackSize, optPrio(SQLPackageSize));
+  const selectOtherIntoThenFrom = intoSingle;
 
   const nonSingleBody = seq(optPrio("DISTINCT"), fieldList, optPrio(SQLUpTo), byp,
-                            optPrio(altPrio(selectTableIntoThenFrom, selectOtherIntoThenFrom)), afterFromWithInto);
+                            optPrio(altPrio(selectTableIntoThenFrom, selectOtherIntoThenFrom)),
+                            optPrio(SQLUpTo), byp, optPrio(DatabaseConnection), afterFromWithInto);
 
   return altPrio(
     seq("SINGLE", buildSelectSingleCore(true)),
