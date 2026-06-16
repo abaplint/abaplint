@@ -11698,7 +11698,7 @@ DATA w_vkorg TYPE voided.
 DATA w_vtext TYPE voided.
 SELECT vkorg vtext FROM tvkot
   INTO (w_vkorg, w_vtext)
-  WHERE vkorg IN ( SELECT foo FROM zbar ).
+  WHERE vkorg IN ( SELECT foo FROM voided ).
 ENDSELECT.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
@@ -13536,7 +13536,7 @@ PARAMETERS p-clas AS CHECKBOX.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, SELECT IN subselect", () => {
+  it("ok, SELECT IN subselect", () => {
     const abap = `
 DATA rt TYPE also_voided.
 SELECT foo, bar
@@ -13545,6 +13545,17 @@ SELECT foo, bar
   WHERE t001w~werks IN ( SELECT werks FROM voided2 WHERE sdffsd EQ @abap_true ).`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, SELECT IN subselect checks source", () => {
+    const abap = `
+DATA rt TYPE also_voided.
+SELECT foo, bar
+  FROM voided1 JOIN t001w ON voided1~locnr = t001w~kunnr
+  APPENDING TABLE @rt
+  WHERE t001w~werks IN ( SELECT werks FROM voided2 WHERE sdffsd EQ @does_not_exist ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain(`"does_not_exist" not found`);
   });
 
   it("ok, field list length", () => {
