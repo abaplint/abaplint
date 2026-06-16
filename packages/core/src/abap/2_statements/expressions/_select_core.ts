@@ -31,9 +31,8 @@ export function buildSelectSingleCore(allowInto = false): IStatementRunnable {
   const singleAfterFrom = seq(
     SQLFrom, client, byp, optPrio(DatabaseConnection),
     altPrio(
-      seq(sqlFields, whereClause, groupHaving, trailingOpts, optPrio(intoSingle), optPrio(DatabaseConnection)),
       seq(intoSingle, byp, whereClause, groupHaving, trailingOpts),
-      seq(whereClause, groupHaving, trailingOpts, optPrio(intoSingle), optPrio(DatabaseConnection)),
+      seq(optPrio(sqlFields), whereClause, groupHaving, trailingOpts, optPrio(intoSingle), optPrio(DatabaseConnection)),
     ),
   );
   const singleIntoBeforeFrom = seq(intoSingle, SQLFrom, client, byp, optPrio(DatabaseConnection), whereClause, groupHaving, trailingOpts);
