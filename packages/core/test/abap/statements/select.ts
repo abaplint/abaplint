@@ -777,6 +777,14 @@ const versionsFail = [
 
 statementVersionFail(versionsFail, "SELECT");
 
+// https://github.com/abaplint/abaplint/issues/3999
+const subqueryInVersions = [
+  {abap: `SELECT foo FROM bar INTO TABLE table WHERE foo IN ( SELECT foo FROM bar ).`, ver: Version.v702},
+  {abap: `SELECT foo FROM bar INTO TABLE table WHERE foo NOT IN ( SELECT foo FROM bar WHERE foo = lv_val ).`, ver: Version.v702},
+];
+
+statementVersionOk(subqueryInVersions, "SELECT subquery in IN clause", Statements.Select);
+
 const privilegedVersions = [
   {abap: `SELECT * FROM ztab WITH PRIVILEGED ACCESS INTO TABLE @DATA(lt).`, ver: Version.v752},
   {abap: `SELECT SINGLE * FROM ztab WITH PRIVILEGED ACCESS INTO @DATA(ls).`, ver: Version.v752},
