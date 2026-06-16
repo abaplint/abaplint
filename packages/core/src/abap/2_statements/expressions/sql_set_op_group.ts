@@ -6,7 +6,7 @@ import {buildSelectCore} from "./_select_core";
 
 export class SQLSetOpGroup extends Expression {
   public getRunnable(): IStatementRunnable {
-    const operand = altPrio(SQLSetOpGroup, seq("SELECT", buildSelectCore(undefined, false)));
+    const operand = altPrio(SQLSetOpGroup, seq("SELECT", buildSelectCore(false, false)));
     const chain = seq(operand, optPrio(seq(ver(Version.v750, plusPrio(SQLSetOp), Version.OpenABAP), optPrio(SQLOrderBy))));
 
     return ver(Version.v750, seq("(", chain, ")"), Version.OpenABAP);
