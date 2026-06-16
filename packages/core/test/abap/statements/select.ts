@@ -20,6 +20,8 @@ const tests = [
     "ENTRIES IN it_matnr WHERE blah = lv_value.",
   "SELECT COUNT( * ) INTO rv_count FROM foo INNER JOIN bar ON bar~field = foo~field WHERE mat_id IN it_mat_id.",
   "SELECT name INTO TABLE lt_icon FROM icon WHERE name IN s_icon ORDER BY name.",
+  "SELECT obj_name FROM tadir INTO TABLE lt_tadir WHERE devclass IN ( SELECT devclass FROM tadir WHERE object = 'PROG' ).",
+  "SELECT field FROM table INTO TABLE lt_table WHERE field IN ( SELECT SINGLE FOR UPDATE * FROM ztab WHERE field = lv_field ).",
   "SELECT * UP TO 2 ROWS FROM t005t INTO TABLE lt_test.",
   "SELECT * FROM t006a APPENDING CORRESPONDING FIELDS OF TABLE lt_texts WHERE spras = sy-langu AND msehi = 'ASDF'.",
   "SELECT COUNT(*) INTO dbcount FROM vbak WHERE (where_clause).",
