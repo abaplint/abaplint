@@ -2,11 +2,18 @@ import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
 import {TableType, UnknownType, VoidType} from "../../types/basic";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {SQLSetOpGroup} from "./sql_set_op_group";
 import {SQLSource} from "./sql_source";
 
 export class SQLIn {
 
   public static runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): void {
+
+    const setop = node.findDirectExpression(Expressions.SQLSetOpGroup);
+    if (setop) {
+      SQLSetOpGroup.runSyntax(setop, input);
+      return;
+    }
 
     if (node.getChildren().length === 2) {
       const insource = node.findFirstExpression(Expressions.SQLSource);
