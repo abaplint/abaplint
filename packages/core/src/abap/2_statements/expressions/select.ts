@@ -12,7 +12,7 @@ export class Select extends Expression {
     const standalone = buildSelectCore(true);
 
     const unionTail = ver(Version.v750, plusPrio(SQLSetOp), Version.OpenABAP);
-    const chained = seq(buildSelectCore(undefined, false), unionTail, optPrio(SQLOrderBy), optPrio(into));
+    const chained = seq(buildSelectCore(false, false), unionTail, optPrio(SQLOrderBy), optPrio(into));
 
     return seq("SELECT", altPrio(chained, standalone));
   }
