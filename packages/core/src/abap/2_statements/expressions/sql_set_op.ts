@@ -6,7 +6,7 @@ import {buildSelectCore} from "./_select_core";
 
 export class SQLSetOp extends Expression {
   public getRunnable(): IStatementRunnable {
-    const operand = altPrio(SQLSetOpGroup, buildSelectCore(undefined, false));
+    const operand = altPrio(SQLSetOpGroup, seq("SELECT", buildSelectCore(undefined, false)));
 
     const union = seq("UNION", optPrio(altPrio("DISTINCT", "ALL")));
     const intersectExcept = altPrio(seq("INTERSECT", optPrio("DISTINCT")),

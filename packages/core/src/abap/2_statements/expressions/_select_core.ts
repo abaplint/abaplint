@@ -39,10 +39,10 @@ export function buildSelectCore(into?: IStatementRunnable, allowOrderBy = true):
       ),
     );
     const singleBody = seq(SQLFrom, client, byp, whereClause, groupHaving, trailingOpts);
-    return seq("SELECT", altPrio(
+    return altPrio(
       seq("SINGLE", optPrio("FOR UPDATE"), fieldList, singleBody),
       seq(optPrio("DISTINCT"), fieldList, byp, afterFromNoInto),
-    ));
+    );
   }
 
   const fromPackSize = seq(optPrio(SQLPackageSize), optPrio(SQLUpTo), byp, optPrio(DatabaseConnection), optPrio(SQLUpTo));
@@ -87,8 +87,8 @@ export function buildSelectCore(into?: IStatementRunnable, allowOrderBy = true):
   );
   const singleIntoBeforeFrom = seq(intoSingle, SQLFrom, client, byp, optPrio(DatabaseConnection), whereClause, groupHaving, trailingOpts);
 
-  return seq("SELECT", altPrio(
+  return altPrio(
     seq("SINGLE", optPrio("FOR UPDATE"), fieldList, byp, altPrio(singleIntoBeforeFrom, singleAfterFrom)),
     nonSingleBody,
-  ));
+  );
 }
