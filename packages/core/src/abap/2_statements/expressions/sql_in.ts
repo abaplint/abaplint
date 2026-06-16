@@ -18,7 +18,7 @@ export class SQLIn extends Expression {
 
     const subSelect = SQLSetOpGroup;
     // simple subquery for pre-v750 versions: IN ( SELECT ... ), https://github.com/abaplint/abaplint/issues/3999
-    const simpleSubSelect = seq("(", buildSelectCore(undefined, false), ")");
+    const simpleSubSelect = seq("(", "SELECT", buildSelectCore(undefined, false), ")");
 
     const inn = seq("IN", altPrio(subSelect, simpleSubSelect, listOld, listNeww, SQLSource));
 
