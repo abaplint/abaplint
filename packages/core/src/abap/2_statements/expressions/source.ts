@@ -1,4 +1,4 @@
-import {ver, seq, tok, altPrio, optPrio, regex, Expression, starPrio} from "../combi";
+import {ver, seq, tok, altPrio, optPrio, regex, Expression, starPrio, star} from "../combi";
 import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash, ParenRightW, ParenLeft} from "../../1_lexer/tokens";
 import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TypeNameOrInfer,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody, Arrow} from ".";
@@ -7,6 +7,7 @@ import {IStatementRunnable} from "../statement_runnable";
 import {TextElement} from "./text_element";
 import {AttributeChain} from "./attribute_chain";
 import {Dereference} from "./dereference";
+import {dynAttr, dynComp} from "./_dynamic_access";
 
 // todo, COND and SWITCH are quite similar?
 
@@ -18,7 +19,9 @@ export class Source extends Expression {
     const attr = seq(Arrow, AttributeChain);
     const deref = optPrio(ver(Version.v756, Dereference));
 
-    const method = seq(MethodCallChain, optPrio(altPrio(attr, comp)), deref);
+    const dynChain = star(altPrio(dynAttr(), dynComp(), Dereference));
+
+    const method = seq(MethodCallChain, optPrio(altPrio(attr, comp)), deref, dynChain);
 
     const rparen = tok(WParenRightW);
     const rparenNoSpace = altPrio(tok(ParenRightW), tok(WParenRightW));

@@ -1,4 +1,4 @@
-import {statementType, statementVersion} from "../_utils";
+import {statementType, statementVersion, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -50,3 +50,32 @@ const versions = [
 ];
 
 statementVersion(versions, "ASSIGN", Statements.Assign);
+
+const v757 = [
+  {abap: "ASSIGN struc-(comp) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN struc-(comp)-field TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN struc-(comp+off(len)) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN ref->(attr) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN ref->(attr)->* TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN struc-(comp)->(attr)->* TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN ref->('comp') TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN ref->(`comp`) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN struc-('comp') TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN ref->(comp_name->*) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN itab[ 1 ]->(dyn_cmp) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN itab[ 1 ]->(dyn_cmp)->* TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN ref->(comp_name)-(comp2) TO <fs>.", ver: Version.v757},
+];
+
+statementVersionOk(v757, "ASSIGN dynamic component/ref access v757", Statements.Assign);
+
+const v757fail = [
+  {abap: "ASSIGN ref->( comp ) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN ref->( comp) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN ref->(comp ) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN struc-( comp ) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN struc-( comp) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN struc-(comp ) TO <fs>.", ver: Version.v757},
+];
+
+statementVersionFail(v757fail, "ASSIGN dynamic access with internal whitespace");

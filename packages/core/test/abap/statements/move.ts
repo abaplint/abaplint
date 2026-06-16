@@ -471,3 +471,49 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "MOVE");
+
+const v757dyn = [
+  {abap: "result = ref->(comp_name).", ver: Version.v757},
+  {abap: "result = ref->('comp').", ver: Version.v757},
+  {abap: "result = ref->(`comp`).", ver: Version.v757},
+  {abap: "result = ref->(comp_name)->*.", ver: Version.v757},
+  {abap: "result = struc-(comp_name).", ver: Version.v757},
+  {abap: "result = struc-(comp_name)->*.", ver: Version.v757},
+  {abap: "result = struc-('comp')->*.", ver: Version.v757},
+  {abap: "result = ref->(comp_name->*).", ver: Version.v757},
+  {abap: "result = obj->meth( )-(comp_name)->*.", ver: Version.v757},
+  {abap: "result = obj->meth( )->(comp_name).", ver: Version.v757},
+  {abap: "DATA(result) = ref->(comp_name).", ver: Version.v757},
+  {abap: "DATA(result) = struc-(comp_name)->*.", ver: Version.v757},
+  {abap: "ref->(comp_name) = 5.", ver: Version.v757},
+  {abap: "struc-(comp_name) = 5.", ver: Version.v757},
+  {abap: "ref->(comp_name)->* = 5.", ver: Version.v757},
+  {abap: "struc-(comp_name)->(attr_name) = 5.", ver: Version.v757},
+  {abap: "itab[ 1 ]->(comp_name) = 5.", ver: Version.v757},
+  {abap: "itab[ 1 ]->(comp_name)->* = 5.", ver: Version.v757},
+  {abap: "result = itab[ 1 ]->(comp_name).", ver: Version.v757},
+  {abap: "result = itab[ 1 ]->(comp_name)->*.", ver: Version.v757},
+  {abap: "struc-(s_name)-(comp_name) = 5.", ver: Version.v757},
+];
+
+statementVersionOk(v757dyn, "MOVE dynamic component/ref access v757", Statements.Move);
+
+const v757dynFail = [
+  {abap: "result = ref->( comp ).", ver: Version.v757},
+  {abap: "result = ref->( comp).", ver: Version.v757},
+  {abap: "result = ref->(comp ).", ver: Version.v757},
+  {abap: "result = struc-( comp ).", ver: Version.v757},
+  {abap: "result = struc-( comp).", ver: Version.v757},
+  {abap: "result = struc-(comp ).", ver: Version.v757},
+  {abap: "result = obj->meth( )-( comp )->*.", ver: Version.v757},
+  {abap: "DATA(foo) = bar->( bar ).", ver: Version.v757},
+  {abap: "DATA(foo) = bar->( bar).", ver: Version.v757},
+  {abap: "DATA(foo) = bar->(bar ).", ver: Version.v757},
+  {abap: "DATA(foo) = bar-( bar).", ver: Version.v757},
+  {abap: "ref->( comp ) = 5.", ver: Version.v757},
+  {abap: "ref->( comp) = 5.", ver: Version.v757},
+  {abap: "struc-( comp ) = 5.", ver: Version.v757},
+  {abap: "struc-(comp ) = 5.", ver: Version.v757},
+];
+
+statementVersionFail(v757dynFail, "MOVE dynamic access with internal whitespace");
