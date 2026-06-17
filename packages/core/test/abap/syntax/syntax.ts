@@ -11949,6 +11949,21 @@ WRITE / lines( lt_upd ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("TYPE TABLE FOR CREATE, entity association", () => {
+    const ddls = `
+define view entity zasis_i_ruleset as select from zfoo {
+  key field1
+}`;
+    const abap = `
+DATA: rulesets_cba TYPE TABLE FOR CREATE zasis_i_ruleset\\_Items.
+WRITE / lines( rulesets_cba ).`;
+    const issues = runMulti([
+      {filename: "zasis_i_ruleset.ddls.asddls", contents: ddls},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("basic WITH INDICATORS", () => {
     const abap = `
 TYPES: BEGIN OF ty,

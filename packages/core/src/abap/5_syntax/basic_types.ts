@@ -479,11 +479,12 @@ export class BasicTypes {
         || text.startsWith("TYPE TABLE FOR DELETE ")
         || text.startsWith("TYPE TABLE FOR UPDATE "))) {
       const name = typename.concatTokens();
-      const type = this.input.scope.getDDIC().lookupDDLS(name)?.type;
+      const ddlsName = this.getRAPBaseEntityName(name);
+      const type = this.input.scope.getDDIC().lookupDDLS(ddlsName)?.type;
       if (type) {
         return new Types.TableType(VoidType.get("RAP-TODO"), options);
-      } else if (this.input.scope.getDDIC().inErrorNamespace(name)) {
-        return new Types.UnknownType(`DDLS ${name} not found`);
+      } else if (this.input.scope.getDDIC().inErrorNamespace(ddlsName)) {
+        return new Types.UnknownType(`DDLS ${ddlsName} not found`);
       } else {
         return Types.VoidType.get(name);
       }
@@ -652,6 +653,17 @@ export class BasicTypes {
       return true;
     }
     return false;
+  }
+
+  private getRAPBaseEntityName(name: string): string {
+    const association = name.indexOf("\\_");
+    const path = name.indexOf("\\\\");
+    if (association === -1 && path === -1) {
+      return name;
+    }
+
+    const splitAt = association === -1 ? path : path === -1 ? association : Math.min(association, path);
+    return name.substring(0, splitAt);
   }
 
   // todo, rewrite this method
