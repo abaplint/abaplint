@@ -2886,6 +2886,25 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("RAP for global authorization", () => {
+    const abap = `
+CLASS lhc_ZASIS_I_RULESET DEFINITION INHERITING FROM cl_abap_behavior_handler.
+  PRIVATE SECTION."
+    METHODS get_global_authorizations  FOR GLOBAL AUTHORIZATION
+      IMPORTING REQUEST requested_authorizations FOR ruleset RESULT result.
+ENDCLASS.
+
+CLASS lhc_ZASIS_I_RULESET IMPLEMENTATION.
+  METHOD get_global_authorizations.
+    IF requested_authorizations-%create = if_abap_behv=>mk-on.
+      INSERT VALUE #( ) INTO reported-ruleset.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("LOOP AT select option", () => {
     const abap = `
 TYPES: BEGIN OF ty_type,
