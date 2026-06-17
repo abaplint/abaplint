@@ -2886,7 +2886,7 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("RAP for global authorization", () => {
+  it("RAP for global authorization", () => {
     const abap = `
 CLASS lhc_ZASIS_I_RULESET DEFINITION.
   PRIVATE SECTION."
