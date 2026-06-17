@@ -9,6 +9,8 @@ import {buildSelectCore} from "./_select_core";
 export class SQLCompare extends Expression {
   public getRunnable(): IStatementRunnable {
     const subSelect = ver(Version.v750, SQLSetOpGroup, Version.OpenABAP);
+    const simpleSubSelect = seq("(", "SELECT", buildSelectCore(undefined, false), ")");
+    const simpleScalarSubSelect = ver(Version.v740sp08, simpleSubSelect, Version.OpenABAP);
 
     const between = seq("BETWEEN", SQLSource, "AND", SQLSource);
 
@@ -16,7 +18,7 @@ export class SQLCompare extends Expression {
 
     const nul = seq("IS", optPrio("NOT"), altPrio("NULL", ver(Version.v753, "INITIAL")));
 
-    const sub = seq(optPrio(altPrio("ALL", "ANY", "SOME")), subSelect);
+    const sub = seq(optPrio(altPrio("ALL", "ANY", "SOME")), altPrio(subSelect, simpleScalarSubSelect));
 
     const source = new SQLSource();
 
@@ -30,8 +32,6 @@ export class SQLCompare extends Expression {
                              seq(optPrio("NOT"), altPrio(SQLIn, like, between)),
                              nul));
 
-    // simple subquery for pre-v750 versions: EXISTS ( SELECT ... )
-    const simpleSubSelect = seq("(", "SELECT", buildSelectCore(undefined, false), ")");
     const exists = seq("EXISTS", altPrio(subSelect, simpleSubSelect));
 
     return altPrio(exists, Dynamic, rett);
