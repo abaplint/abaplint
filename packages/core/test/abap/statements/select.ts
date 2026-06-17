@@ -793,6 +793,29 @@ const subqueryExistsVersions = [
 
 statementVersionOk(subqueryExistsVersions, "SELECT subquery in EXISTS clause", Statements.Select);
 
+const correlatedMaxSubqueryVersions = [
+  {abap: `SELECT *
+  INTO TABLE lt_result
+  FROM zmain_table AS a CLIENT SPECIFIED
+  WHERE a~mandt   EQ sy-mandt
+    AND a~comp    EQ p_comp
+    AND a~plant   IN s_plant
+    AND a~vendor  IN s_vendor
+    AND a~material IN s_material
+    AND a~channel IN s_channel
+    AND a~version EQ
+    ( SELECT MAX( version ) FROM zmain_table CLIENT SPECIFIED
+      WHERE mandt    EQ sy-mandt
+        AND comp     EQ p_comp
+        AND plant    EQ a~plant
+        AND vendor   EQ a~vendor
+        AND material EQ a~material
+        AND channel  EQ a~channel
+        AND version  IN s_version ).`, ver: Version.v740sp08},
+];
+
+statementVersionOk(correlatedMaxSubqueryVersions, "SELECT correlated MAX subquery", Statements.Select);
+
 const privilegedVersions = [
   {abap: `SELECT * FROM ztab WITH PRIVILEGED ACCESS INTO TABLE @DATA(lt).`, ver: Version.v752},
   {abap: `SELECT SINGLE * FROM ztab WITH PRIVILEGED ACCESS INTO @DATA(ls).`, ver: Version.v752},
