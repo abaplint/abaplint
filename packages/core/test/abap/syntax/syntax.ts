@@ -2888,7 +2888,7 @@ ENDLOOP.`;
 
   it.only("RAP for global authorization", () => {
     const abap = `
-CLASS lhc_ZASIS_I_RULESET DEFINITION INHERITING FROM cl_abap_behavior_handler.
+CLASS lhc_ZASIS_I_RULESET DEFINITION.
   PRIVATE SECTION."
     METHODS get_global_authorizations  FOR GLOBAL AUTHORIZATION
       IMPORTING REQUEST requested_authorizations FOR ruleset RESULT result.
@@ -2896,7 +2896,7 @@ ENDCLASS.
 
 CLASS lhc_ZASIS_I_RULESET IMPLEMENTATION.
   METHOD get_global_authorizations.
-    IF requested_authorizations-%create = if_abap_behv=>mk-on.
+    IF requested_authorizations-%create = 2.
       INSERT VALUE #( ) INTO reported-ruleset.
     ENDIF.
   ENDMETHOD.
