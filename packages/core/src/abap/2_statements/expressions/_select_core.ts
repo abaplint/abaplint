@@ -31,9 +31,8 @@ export function buildSelectSingleCore(allowInto = false): IStatementRunnable {
   const singleAfterFrom = seq(
     SQLFrom, client, byp, optPrio(DatabaseConnection),
     altPrio(
-      seq(sqlFields, whereClause, groupHaving, trailingOpts, optPrio(intoSingle), optPrio(DatabaseConnection)),
       seq(intoSingle, byp, whereClause, groupHaving, trailingOpts),
-      seq(whereClause, groupHaving, trailingOpts, optPrio(intoSingle), optPrio(DatabaseConnection)),
+      seq(optPrio(sqlFields), whereClause, groupHaving, trailingOpts, optPrio(intoSingle), optPrio(DatabaseConnection)),
     ),
   );
   const singleIntoBeforeFrom = seq(intoSingle, SQLFrom, client, byp, optPrio(DatabaseConnection), whereClause, groupHaving, trailingOpts);
@@ -64,10 +63,7 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
   if (!allowInto) {
     const afterFromNoInto = seq(
       SQLFrom, client, byp,
-      altPrio(
-        seq(sqlFields, fae, whereClause, groupHaving, ...orderUpOff, trailingOpts),
-        seq(fae, whereClause, groupHaving, ...orderUpOff, trailingOpts),
-      ),
+      seq(optPrio(sqlFields), fae, whereClause, groupHaving, ...orderUpOff, trailingOpts),
     );
     return altPrio(
       seq("SINGLE", buildSelectSingleCore(false)),
@@ -78,34 +74,30 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
   const fromPackSize = seq(optPrio(SQLPackageSize), optPrio(SQLUpTo), byp, optPrio(DatabaseConnection), optPrio(SQLUpTo));
 
   const trailingInto = seq(
-    optPrio(seq(intoForPackSize, optPrio(SQLPackageSize), byp, optPrio(SQLUpTo), byp,
-                optPrio(offset), optPrio(SQLOrderBy), optPrio(SQLOptions))),
-    optPrio(seq(intoSingle, byp, optPrio(SQLUpTo), byp, optPrio(offset), optPrio(SQLOptions))),
+    optPrio(altPrio(
+      seq(intoForPackSize, optPrio(SQLPackageSize), byp, optPrio(SQLUpTo), byp, optPrio(offset), optPrio(SQLOrderBy)),
+      seq(intoSingle, byp, optPrio(SQLUpTo), byp, optPrio(offset)),
+    )),
+    optPrio(SQLOptions),
   );
 
   const afterFromWithInto = seq(
     optPrio(SQLFrom), client, byp, fromPackSize,
     altPrio(
-      seq(sqlFields, fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, trailingInto),
       seq(intoForPackSize, optPrio(SQLPackageSize), byp, optPrio(DatabaseConnection),
           optPrio(SQLUpTo), byp, optPrio(offset), fae, whereClause, groupHaving, ...orderUpOff, trailingOpts),
       seq(intoSingle, byp, optPrio(SQLUpTo), byp, fae, optPrio(SQLUpTo), byp,
           optPrio(offset), whereClause, groupHaving, ...orderUpOff, trailingOpts),
-      seq(fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, trailingInto),
+      seq(optPrio(sqlFields), fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, trailingInto),
     ),
   );
 
-  const selectTableIntoThenFrom = seq(
-    intoForPackSize, optPrio(SQLPackageSize), optPrio(SQLUpTo), byp, optPrio(DatabaseConnection),
-    afterFromWithInto,
-  );
-  const selectOtherIntoThenFrom = seq(
-    intoSingle, optPrio(SQLUpTo), byp, optPrio(DatabaseConnection),
-    afterFromWithInto,
-  );
+  const selectTableIntoThenFrom = seq(intoForPackSize, optPrio(SQLPackageSize));
+  const selectOtherIntoThenFrom = intoSingle;
 
   const nonSingleBody = seq(optPrio("DISTINCT"), fieldList, optPrio(SQLUpTo), byp,
-                            altPrio(selectTableIntoThenFrom, selectOtherIntoThenFrom, afterFromWithInto));
+                            optPrio(altPrio(selectTableIntoThenFrom, selectOtherIntoThenFrom)),
+                            optPrio(SQLUpTo), byp, optPrio(DatabaseConnection), afterFromWithInto);
 
   return altPrio(
     seq("SINGLE", buildSelectSingleCore(true)),

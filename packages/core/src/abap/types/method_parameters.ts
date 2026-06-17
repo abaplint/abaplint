@@ -221,7 +221,9 @@ export class MethodParameters implements IMethodParameters {
 
   private workaroundRAP(node: StatementNode, input: SyntaxInput, parentName: string): void {
     const resultName = node.findExpressionAfterToken("RESULT");
-    const isRap = node.findExpressionAfterToken("IMPORTING");
+    const concat = node.concatTokens().toUpperCase();
+    const isRap = node.findExpressionAfterToken("IMPORTING")
+      || (concat.includes(" IMPORTING REQUEST ") ? node.findExpressionAfterToken("REQUEST") : undefined);
     if (isRap) {
       for (const foo of node.findDirectExpressions(Expressions.MethodParamName)) {
         if (foo === resultName) {
@@ -230,7 +232,6 @@ export class MethodParameters implements IMethodParameters {
         this.importing.push(new TypedIdentifier(foo.getFirstToken(), input.filename, VoidType.get("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
       }
 
-      const concat = node.concatTokens().toUpperCase();
       if (concat.includes(" FOR VALIDATE ")
           || concat.includes(" FOR BEHAVIOR ")
           || concat.includes(" FOR DETERMINE ")

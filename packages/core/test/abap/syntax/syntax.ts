@@ -2886,6 +2886,25 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("RAP for global authorization", () => {
+    const abap = `
+CLASS lhc_ZASIS_I_RULESET DEFINITION.
+  PRIVATE SECTION."
+    METHODS get_global_authorizations  FOR GLOBAL AUTHORIZATION
+      IMPORTING REQUEST requested_authorizations FOR ruleset RESULT result.
+ENDCLASS.
+
+CLASS lhc_ZASIS_I_RULESET IMPLEMENTATION.
+  METHOD get_global_authorizations.
+    IF requested_authorizations-%create = 2.
+      INSERT VALUE #( ) INTO reported-ruleset.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("LOOP AT select option", () => {
     const abap = `
 TYPES: BEGIN OF ty_type,
@@ -11927,6 +11946,21 @@ APPEND LINES OF row TO tab.`;
 DATA lt_upd TYPE TABLE FOR UPDATE /foo/bar\\\\moo.
 WRITE / lines( lt_upd ).`;
     const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("TYPE TABLE FOR CREATE, entity association", () => {
+    const ddls = `
+define view entity zasis_i_ruleset as select from zfoo {
+  key field1
+}`;
+    const abap = `
+DATA: rulesets_cba TYPE TABLE FOR CREATE zasis_i_ruleset\\_Items.
+WRITE / lines( rulesets_cba ).`;
+    const issues = runMulti([
+      {filename: "zasis_i_ruleset.ddls.asddls", contents: ddls},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
