@@ -786,6 +786,13 @@ const subqueryInVersions = [
 
 statementVersionOk(subqueryInVersions, "SELECT subquery in IN clause", Statements.Select);
 
+const subqueryExistsVersions = [
+  {abap: `SELECT foo FROM bar INTO TABLE lt WHERE EXISTS ( SELECT * FROM baz WHERE baz~foo = bar~foo ).`, ver: Version.v702},
+  {abap: `SELECT AVG( b~kbetr ) AS kbetr FROM a670 AS a JOIN konp AS b ON a~knumh EQ b~knumh INTO @lv_kbetr WHERE a~kunnr IN ( SELECT kunnr FROM zrlx_c_can_rlx JOIN zrlx_c_can_pdv ON zrlx_c_can_rlx~canale_anag = zrlx_c_can_pdv~canale_anag JOIN t001w ON zrlx_c_can_pdv~pdv = t001w~werks WHERE canale_relex = @<mat_can>-canale_relex ) AND EXISTS ( SELECT 'X' FROM wlk1 WHERE filia = a~kunnr AND artnr = @<mat_can>-matnr ).`, ver: Version.v740sp05},
+];
+
+statementVersionOk(subqueryExistsVersions, "SELECT subquery in EXISTS clause", Statements.Select);
+
 const privilegedVersions = [
   {abap: `SELECT * FROM ztab WITH PRIVILEGED ACCESS INTO TABLE @DATA(lt).`, ver: Version.v752},
   {abap: `SELECT SINGLE * FROM ztab WITH PRIVILEGED ACCESS INTO @DATA(ls).`, ver: Version.v752},
@@ -948,6 +955,11 @@ statementExpectFail([
   `SELECT col FROM ztab INTO @wa PACKAGE SIZE 10.`,
   `SELECT col FROM ztab INTO lv_wa PACKAGE SIZE 10.`,
 ], "PACKAGE SIZE requires INTO TABLE");
+
+statementExpectFail([
+  `SELECT col FROM ztab INTO TABLE @lt INTO @wa.`,
+  `SELECT col FROM ztab INTO @wa INTO TABLE @lt.`,
+], "SELECT allows only one trailing INTO target");
 
 statementExpectFail([
   `SELECT field FROM table INTO TABLE lt_table WHERE field IN ( SELECT SINGLE FOR UPDATE * FROM ztab WHERE field = lv_field ).`,

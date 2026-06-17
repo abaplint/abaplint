@@ -4,6 +4,7 @@ import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {ParenLeftW, WAt, WParenRightW} from "../../1_lexer/tokens";
 import {SQLSetOpGroup} from "./sql_set_op_group";
+import {buildSelectCore} from "./_select_core";
 
 export class SQLCompare extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -29,7 +30,9 @@ export class SQLCompare extends Expression {
                              seq(optPrio("NOT"), altPrio(SQLIn, like, between)),
                              nul));
 
-    const exists = seq("EXISTS", subSelect);
+    // simple subquery for pre-v750 versions: EXISTS ( SELECT ... )
+    const simpleSubSelect = seq("(", "SELECT", buildSelectCore(undefined, false), ")");
+    const exists = seq("EXISTS", altPrio(subSelect, simpleSubSelect));
 
     return altPrio(exists, Dynamic, rett);
   }
