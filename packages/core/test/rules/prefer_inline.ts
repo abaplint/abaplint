@@ -256,6 +256,26 @@ ENDFORM.`);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("No inlining for generic source type", async () => {
+    const issues = await findIssues(`
+REPORT zfoo.
+
+CLASS lcl_test DEFINITION.
+  PUBLIC SECTION.
+    METHODS test
+      IMPORTING
+        iv_param TYPE any.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD test.
+    DATA lv_var TYPE string.
+    lv_var = iv_param.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equal(0);
+  });
+
 ////////////////////
 
   it.skip("Dont inline, type P, this will change the type?", async () => {
