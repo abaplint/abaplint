@@ -119,6 +119,70 @@ describe("Funcion Group, parse main xml", () => {
     expect(row.name).to.equal("LZAGTEST_FUNCTION_GROUPTOP");
   });
 
+  it("test, findTextFile, Z case", async () => {
+    const textXml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>Hello</ENTRY>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zagtest_function_group.fugr.xml", xml));
+    reg.addFile(new MemoryFile("zagtest_function_group.fugr.saplzagtest_function_group.xml", textXml));
+    await reg.parseAsync();
+    const fugr = getABAPObjects(reg)[0] as FunctionGroup;
+
+    const texts = fugr.getTextSymbols();
+    expect(Object.keys(texts).length).to.be.greaterThan(0);
+  });
+
+  it("test, findTextFile, namespace case", async () => {
+    const nsXml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>fugr</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>/FOO/LBARTOP</SOBJ_NAME>
+   </INCLUDES>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const textXml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>Hello</ENTRY>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("#foo#bar.fugr.xml", nsXml));
+    reg.addFile(new MemoryFile("#foo#bar.fugr.#foo#saplbar.xml", textXml));
+    await reg.parseAsync();
+    const fugr = getABAPObjects(reg)[0] as FunctionGroup;
+
+    const texts = fugr.getTextSymbols();
+    expect(Object.keys(texts).length).to.be.greaterThan(0);
+  });
+
   it("test, getSequencedFiles with namespace", async () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
