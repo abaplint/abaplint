@@ -2142,6 +2142,49 @@ moo->bar( ).`;
     expect(issues.length).to.equals(0);
   });
 
+  it("alias from interface accessible on subclass, super-interface re-included via second interface", () => {
+    const abap = `
+INTERFACE if_message.
+  METHODS get_text RETURNING VALUE(result) TYPE string.
+ENDINTERFACE.
+
+INTERFACE if_t100_message.
+  INTERFACES if_message.
+  ALIASES get_text FOR if_message~get_text.
+ENDINTERFACE.
+
+CLASS cx_root DEFINITION PUBLIC ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES if_message.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+  METHOD if_message~get_text.
+    result = 'x'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS cx_salv_static_check DEFINITION PUBLIC ABSTRACT INHERITING FROM cx_root.
+  PUBLIC SECTION.
+    INTERFACES if_t100_message.
+ENDCLASS.
+CLASS cx_salv_static_check IMPLEMENTATION.
+ENDCLASS.
+
+CLASS cx_salv_data_error DEFINITION PUBLIC FINAL INHERITING FROM cx_salv_static_check.
+ENDCLASS.
+CLASS cx_salv_data_error IMPLEMENTATION.
+ENDCLASS.
+
+FORM run.
+  DATA: lo_static TYPE REF TO cx_salv_static_check,
+        lo_data   TYPE REF TO cx_salv_data_error.
+  WRITE lo_static->get_text( ).
+  WRITE lo_data->get_text( ).
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("with syntax errors", () => {
     const abap = `
 INTERFACE lif_foo.

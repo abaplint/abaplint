@@ -357,6 +357,15 @@ export class ObjectOriented {
       if (found) {
         return found;
       }
+      for (const i of def.getImplementing()) {
+        const idef = this.scope.findInterfaceDefinition(i.name);
+        if (idef) {
+          const found = this.findMethodViaAlias(name, idef);
+          if (found) {
+            return found;
+          }
+        }
+      }
     }
 
     const sup = def.getSuperClass();
