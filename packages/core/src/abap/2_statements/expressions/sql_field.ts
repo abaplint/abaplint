@@ -4,7 +4,7 @@ import {Version} from "../../../version";
 import {ParenLeftW, WAt, WParenLeftW, WParenRight, WParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLFunction} from "./sql_function";
-import {SQLPath} from "./sql_path";
+import {SQLPathForColumn} from "./sql_path_for_column";
 
 export class SQLField extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -18,7 +18,7 @@ export class SQLField extends Expression {
 
     const fieldNoAgg = altPrio(SQLCase,
                                SQLFunction,
-                               SQLPath,
+                               SQLPathForColumn,
                                SQLFieldName,
                                abap,
                                Constant,
@@ -40,7 +40,6 @@ export class SQLField extends Expression {
     const arithSequence = seq(optPrio("-"), field, optPrio(arith));
     const parenArithSequence = seq(tok(WParenLeftW), optPrio("-"), arithSequence, tok(WParenRightW));
 
-    // allows (a-b)*(c-d) — paren groups as operands, defined after parenArithSequence
     const subExtWithAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenArithSequence, parenField, field)));
     const subExtNoAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenArithSequence, parenFieldNoAgg, fieldNoAgg)));
     const arithExt = altPrio(ver(Version.v754, subExtWithAgg), ver(Version.v740sp05, subExtNoAgg));

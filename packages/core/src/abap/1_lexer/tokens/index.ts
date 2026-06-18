@@ -52,5 +52,6 @@ export * from "./string_template_middle";
 export * from "./colon";
 export * from "./comment";
 export * from "./identifier";
+export * from "./association_name";
 export * from "./pragma";
 export * from "./punctuation";
