@@ -191,9 +191,10 @@ export class FunctionGroup extends ABAPObject {
   }
 
   private findTextFile() {
-    const search = this.getName() + ".fugr.sapl" + this.getName() + ".xml";
+    const name = this.getName().replace(/\//g, "#");
+    const regex = new RegExp(name + "\\.fugr\\.(#\\w+#)?sapl" + name.replace(/^#\w+#/, "") + "\\.xml", "i");
     for (const f of this.getFiles()) {
-      if (f.getFilename().includes(search.toLowerCase())) {
+      if (regex.test(f.getFilename())) {
         return f;
       }
     }
