@@ -14,6 +14,7 @@ import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {EditHelper, IEdit} from "../edit_helper";
+import {StatementNode} from "../abap/nodes";
 
 interface IVariableReference {
   position: Identifier,
@@ -127,8 +128,13 @@ DATA(percentage) = CONV decfloat34( comment_number / abs_statement_number ) * 10
       }
       const file = obj.getABAPFileByName(identifier.getFilename());
       const writeStatement = EditHelper.findStatement(next, file);
+      if (writeStatement === undefined) {
+        continue;
+      }
       const statementType = writeStatement?.get();
       if (statementType === undefined) {
+        continue;
+      } else if (this.statementHasGenericRead(node, writeStatement)) {
         continue;
       }
 
@@ -226,6 +232,22 @@ DATA(percentage) = CONV decfloat34( comment_number / abs_statement_number ) * 10
       return firstWrite;
     }
     return undefined;
+  }
+
+  private statementHasGenericRead(node: ISpaghettiScopeNode, statement: StatementNode): boolean {
+    for (const ref of node.getData().references) {
+      if (ref.referenceType !== ReferenceType.DataReadReference
+          || ref.resolved === undefined
+          || statement.includesToken(ref.position.getToken()) === false
+          || !(ref.resolved instanceof TypedIdentifier)) {
+        continue;
+      } else if (ref.resolved.getType().isGeneric() === true
+          || ref.resolved.getType().containsVoid() === true) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private isLocalDefinition(node: ISpaghettiScopeNode, identifier: TypedIdentifier): boolean {
