@@ -1,5 +1,5 @@
 import {ver, seq, optPrio, altPrio, Expression, plusPrio, tok} from "../combi";
-import {SQLSource, SQLFieldName, Dynamic, SQLIn, SQLCompareOperator, SQLFunction, SQLAggregation, SQLCase, Source, SimpleSource3, SQLPath, ConstantString} from ".";
+import {SQLSource, SQLFieldName, Dynamic, SQLIn, SQLCompareOperator, SQLFunction, SQLAggregation, SQLCase, Source, SimpleSource3, SQLPathForColumn, ConstantString} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {ParenLeftW, WAt, WParenRightW} from "../../1_lexer/tokens";
@@ -27,10 +27,12 @@ export class SQLCompare extends Expression {
     const paren = seq(tok(ParenLeftW), Source, tok(WParenRightW));
     const at = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, paren)), Version.OpenABAP);
 
-    const rett = seq(altPrio(SQLCase, SQLAggregation, SQLFunction, ConstantString, seq(altPrio(SQLPath, SQLFieldName), optPrio(arith)), at),
-                     altPrio(seq(SQLCompareOperator, altPrio(sub, SQLCase, SQLAggregation, SQLFunction, seq(source, optPrio(arith)))),
-                             seq(optPrio("NOT"), altPrio(SQLIn, like, between)),
-                             nul));
+    const lhs = altPrio(SQLCase, SQLAggregation, SQLFunction, ConstantString,
+                        seq(altPrio(SQLPathForColumn, SQLFieldName), optPrio(arith)), at);
+    const rhs = altPrio(seq(SQLCompareOperator, altPrio(sub, SQLCase, SQLAggregation, SQLFunction, seq(source, optPrio(arith)))),
+                        seq(optPrio("NOT"), altPrio(SQLIn, like, between)),
+                        nul);
+    const rett = seq(lhs, rhs);
 
     const exists = seq("EXISTS", altPrio(subSelect, simpleSubSelect));
 

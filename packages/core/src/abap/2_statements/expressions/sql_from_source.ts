@@ -4,6 +4,10 @@ import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
 import {WAt} from "../../1_lexer/tokens";
 import {WithName} from "./with_name";
+import {SQLPathForEntity} from "./sql_path_for_entity";
+import {SQLHierarchySource} from "./sql_hierarchy_source";
+import {SQLHierarchyAccessor} from "./sql_hierarchy_accessor";
+import {SQLHierarchyAggregate} from "./sql_hierarchy_aggregate";
 
 export class SQLFromSource extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -12,7 +16,12 @@ export class SQLFromSource extends Expression {
     const aas = seq("AS", SQLAsName);
     const privileged = ver(Version.v752, seq("WITH", SQLPrivilegedAccess));
 
-    return seq(altPrio(WithName, seq(DatabaseTable, optPrio(SQLCDSParameters)), tab),
+    return seq(altPrio(new SQLHierarchyAggregate(),
+                       new SQLHierarchyAccessor(),
+                       new SQLHierarchySource(),
+                       seq(WithName, optPrio(new SQLPathForEntity())),
+                       seq(DatabaseTable, optPrio(SQLCDSParameters), optPrio(new SQLPathForEntity())),
+                       tab),
                optPrio(privileged),
                optPrio(aas));
   }
