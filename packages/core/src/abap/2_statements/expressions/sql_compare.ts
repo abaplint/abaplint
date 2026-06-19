@@ -5,6 +5,7 @@ import {IStatementRunnable} from "../statement_runnable";
 import {ParenLeftW, WAt, WParenRightW} from "../../1_lexer/tokens";
 import {SQLSetOpGroup} from "./sql_set_op_group";
 import {buildSelectCore} from "./_select_core";
+import {SQLLikeRegexpr} from "./sql_like_regexpr";
 
 export class SQLCompare extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -31,6 +32,7 @@ export class SQLCompare extends Expression {
                         seq(altPrio(SQLPathForColumn, SQLFieldName), optPrio(arith)), at);
     const rhs = altPrio(seq(SQLCompareOperator, altPrio(sub, SQLCase, SQLAggregation, SQLFunction, seq(source, optPrio(arith)))),
                         seq(optPrio("NOT"), altPrio(SQLIn, like, between)),
+                        SQLLikeRegexpr,
                         nul);
     const rett = seq(lhs, rhs);
 
