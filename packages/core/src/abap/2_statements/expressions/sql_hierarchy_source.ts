@@ -10,13 +10,13 @@ export class SQLHierarchySource extends Expression {
     const orderFieldName = reg(/^(?!(?:DEPTH|MULTIPLE|ORPHAN|CACHE|CYCLE|LOAD|GENERATE|RETAIN|DEPTH)$)(\/\w+\/)?(\*?\w+~(\/\w+\/)?(\w+|\*)|\w+)$/i);
     const orderField = seq(orderFieldName, orderDir, optPrio(","));
     const siblingsOrderBy = seq("SIBLINGS", "ORDER", "BY",
-      altPrio("PRIMARY KEY", Dynamic, seq(orderField, starPrio(orderField))));
+                                altPrio("PRIMARY KEY", Dynamic, seq(orderField, starPrio(orderField))));
 
     const cache = seq("CACHE", altPrio("FORCE", "OFF", "ON"));
     const retainNulls = seq("RETAIN", "NULLS", SQLSource);
     const cycle = seq("CYCLE", altPrio("BREAKUP", "ERROR"));
     const multipleParents = seq("MULTIPLE", "PARENTS",
-      altPrio(seq("NOT", "ALLOWED"), seq("LEAVES", "ONLY"), "ALLOWED"));
+                                altPrio(seq("NOT", "ALLOWED"), seq("LEAVES", "ONLY"), "ALLOWED"));
     const orphan = seq("ORPHAN", altPrio("IGNORE", "ERROR", "ROOT"));
     const depth = seq("DEPTH", SQLSource);
     const load = seq("LOAD", altPrio("INCREMENTAL", "BULK", SQLSource));

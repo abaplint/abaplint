@@ -391,7 +391,7 @@ const isLoopWindowTests = [
   `SELECT ROW_NUMBER( ) OVER( ORDER BY col ) AS rn FROM ztab INTO @wa WHERE id = 1.`,
 ];
 statementVersionOk(isLoopWindowTests.map(abap => ({abap, ver: Version.v757})),
-  "isSelectLoop → SelectLoop (window functions)", Statements.SelectLoop);
+                   "isSelectLoop → SelectLoop (window functions)", Statements.SelectLoop);
 
 const isNotLoopPlainAggTests = [
   `SELECT SUM( amount ) FROM ztab INTO @wa.`,
