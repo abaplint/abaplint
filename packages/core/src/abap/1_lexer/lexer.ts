@@ -3,7 +3,7 @@ import {Position} from "../../position";
 import {VirtualPosition} from "../../virtual_position";
 import {AbstractToken} from "./tokens/abstract_token";
 import {IABAPLexerResult} from "./lexer_result";
-import {At, AtW, BracketLeft, BracketLeftW, BracketRight, BracketRightW, Comment, Dash, DashW, Identifier, InstanceArrow, InstanceArrowW, ParenLeft, ParenLeftW, ParenRight, ParenRightW, Plus, PlusW, Pragma, Punctuation, StaticArrow, StaticArrowW, StringTemplate, StringTemplateBegin, StringTemplateEnd, StringTemplateMiddle, StringToken, WAt, WAtW, WBracketLeft, WBracketLeftW, WBracketRight, WBracketRightW, WDash, WDashW, WInstanceArrow, WInstanceArrowW, WParenLeft, WParenLeftW, WParenRight, WParenRightW, WPlus, WPlusW, WStaticArrow, WStaticArrowW} from "./tokens";
+import {At, AtW, AssociationName, BracketLeft, BracketLeftW, BracketRight, BracketRightW, Comment, Dash, DashW, Identifier, InstanceArrow, InstanceArrowW, ParenLeft, ParenLeftW, ParenRight, ParenRightW, Plus, PlusW, Pragma, Punctuation, StaticArrow, StaticArrowW, StringTemplate, StringTemplateBegin, StringTemplateEnd, StringTemplateMiddle, StringToken, WAt, WAtW, WBracketLeft, WBracketLeftW, WBracketRight, WBracketRightW, WDash, WDashW, WInstanceArrow, WInstanceArrowW, WParenLeft, WParenLeftW, WParenRight, WParenRightW, WPlus, WPlusW, WStaticArrow, WStaticArrowW} from "./tokens";
 import {LexerBuffer} from "./lexer_buffer";
 import {LexerStream} from "./lexer_stream";
 
@@ -175,6 +175,16 @@ export class Lexer {
         }
       }
 
+      if (tok === undefined && this.m === ModeNormal && s.charAt(0) === "\\") {
+        const adj = this.stream.nextChar() === "" ? 1 : 0;
+        const prevOffset = this.stream.getOffset() - s.length - adj;
+        const prevChar = prevOffset >= 0 ? this.stream.getRaw().substr(prevOffset, 1) : "";
+        const whiteBeforeBackslash = prevChar === " " || prevChar === "\n" || prevChar === "\t" || prevChar === ":";
+        if (!whiteBeforeBackslash) {
+          tok = new AssociationName(pos, s);
+        }
+      }
+
       if (tok === undefined) {
         tok = new Identifier(pos, s);
       }
@@ -198,6 +208,7 @@ export class Lexer {
     splits[")"] = true;
     splits["["] = true;
     splits["]"] = true;
+    splits["\\"] = true;
     splits["\t"] = true;
     splits["\n"] = true;
 

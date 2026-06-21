@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {alt, altPrio, opt, optPrio, per, plus, plusPrio, seq, ver} from "../combi";
-import {AssociationName, EntityAssociation, NamespaceSimpleName, SimpleName, Source, Target} from "../expressions";
+import {EMLEntityPath, EntityAssociation, NamespaceSimpleName, SimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
 
@@ -9,7 +9,7 @@ export class ModifyEntities implements IStatement {
   public getMatcher(): IStatementRunnable {
     const withh = seq("WITH", Source);
     const fieldsWith = seq("FIELDS (", plus(SimpleName), ")", withh);
-    const by = seq("BY", AssociationName);
+    const by = seq("BY", EMLEntityPath);
     const relating = seq("RELATING TO", NamespaceSimpleName, "BY", NamespaceSimpleName);
 
     const execute = seq("EXECUTE", NamespaceSimpleName, "FROM", Source);
@@ -43,9 +43,9 @@ export class ModifyEntities implements IStatement {
                          opt("IN LOCAL MODE"),
                          plusPrio(seq("ENTITY", NamespaceSimpleName, plus(operation))));
 
-    const create2 = seq("CREATE", fieldsWith, opt(seq("CREATE BY", AssociationName, fieldsWith)));
-    const create3 = seq("CREATE BY", AssociationName, fieldsWith);
-    const create4 = seq("CREATE FROM", Source, plus(seq("CREATE BY", AssociationName, "FROM", Source)));
+    const create2 = seq("CREATE", fieldsWith, opt(seq("CREATE BY", EMLEntityPath, fieldsWith)));
+    const create3 = seq("CREATE BY", EMLEntityPath, fieldsWith);
+    const create4 = seq("CREATE FROM", Source, plus(seq("CREATE BY", EMLEntityPath, "FROM", Source)));
 
     const entity = seq("ENTITY",
                        opt("IN LOCAL MODE"),
