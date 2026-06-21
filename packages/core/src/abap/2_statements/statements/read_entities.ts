@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {seq, ver, tok, plus, alt, optPrio, opt, per} from "../combi";
-import {AssociationName, EntityAssociation, NamespaceSimpleName, SimpleName, Source, Target} from "../expressions";
+import {EMLEntityPath, EntityAssociation, NamespaceSimpleName, SimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
@@ -15,7 +15,7 @@ export class ReadEntities implements IStatement {
     const failed = seq("FAILED", Target);
     const reported = seq("REPORTED", Target);
 
-    const foo = seq(opt(seq("BY", AssociationName)),
+    const foo = seq(opt(seq("BY", EMLEntityPath)),
                     alt(fields, from, all),
                     optPrio(result));
 
@@ -28,8 +28,8 @@ export class ReadEntities implements IStatement {
                   optPrio(seq("LINK", Target)),
                   optPrio(per(failed, reported)));
 
-    const byall = seq("BY", AssociationName, all);
-    const by = seq("BY", AssociationName, fields);
+    const byall = seq("BY", EMLEntityPath, all);
+    const by = seq("BY", EMLEntityPath, fields);
     const sub = seq(alt(all, fields, from, by, byall), result);
     const single = seq("ENTITY", opt("IN LOCAL MODE"), alt(NamespaceSimpleName, EntityAssociation), plus(sub), optPrio(failed), optPrio(reported));
     return ver(Version.v754, seq("READ", alt(s, single)), Version.OpenABAP);

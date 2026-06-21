@@ -16,9 +16,15 @@ function containsAggregation(children: TopChildren): boolean {
       continue;
     }
     if (child.get() instanceof Expressions.SQLAggregation) {
-      return true;
+      if (child.findDirectExpression(Expressions.SQLOver) === undefined) {
+        return true;
+      }
+      continue;
     }
     if (child.get() instanceof Expressions.SQLSetOpGroup) {
+      continue;
+    }
+    if (child.get() instanceof Expressions.SQLFrom) {
       continue;
     }
     if (containsAggregation(child.getChildren())) {
