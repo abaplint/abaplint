@@ -7,7 +7,7 @@ import {Version} from "../../../version";
 export class TestSeam implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    return ver(Version.v750, seq("TEST-SEAM", TestSeamName));
+    return ver(Version.v750, seq("TEST-SEAM", TestSeamName), Version.OpenABAP);
   }
 
 }

@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Version} from "../../../src/version";
 
 const tests = [
   "CREATE DATA et_table LIKE io_grid->mt_outtab.",
@@ -29,3 +30,7 @@ const tests = [
 ];
 
 statementType(tests, "CREATE DATA", Statements.CreateData);
+
+statementVersionOk([
+  {abap: "CREATE DATA casting_table TYPE STANDARD TABLE OF (table_name) WITH EMPTY KEY.", ver: Version.OpenABAP},
+], "CREATE DATA", Statements.CreateData);
