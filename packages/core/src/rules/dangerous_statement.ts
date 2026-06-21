@@ -26,6 +26,8 @@ export class DangerousStatementConf extends BasicRuleConfig {
   public exportDynpro: boolean = true;
   /** Finds instances of dynamic SQL: SELECT, UPDATE, DELETE, INSERT, MODIFY */
   public dynamicSQL: boolean = true;
+  /** Ignore dynamic SQL in IF_RAP_QUERY_PROVIDER~SELECT implementations */
+  public ignoreRAPQueryProvider: boolean = true;
 }
 
 export class DangerousStatement extends ABAPRule {
@@ -57,9 +59,18 @@ dynamic SQL can potentially create SQL injection problems`,
 
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
+    let ignoreDynamicSQL = false;
 
     for (const statementNode of file.getStatements()) {
       const statement = statementNode.get();
+      if (statement instanceof Statements.MethodImplementation) {
+        const methodName = statementNode.findFirstExpression(Expressions.MethodName)?.concatTokens().toUpperCase();
+        ignoreDynamicSQL = this.conf.ignoreRAPQueryProvider === true
+          && methodName === "IF_RAP_QUERY_PROVIDER~SELECT";
+      } else if (statement instanceof Statements.EndMethod) {
+        ignoreDynamicSQL = false;
+      }
+
       let message: string | undefined = undefined;
       if (this.conf.execSQL && statement instanceof Statements.ExecSQL) {
         message = "EXEC SQL";
@@ -91,7 +102,7 @@ dynamic SQL can potentially create SQL injection problems`,
         issues.push(Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key, this.conf.severity));
       }
 
-      if (this.conf.dynamicSQL) {
+      if (this.conf.dynamicSQL && ignoreDynamicSQL === false) {
         message = this.findDynamicSQL(statementNode);
         if (message) {
           issues.push(Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key, this.conf.severity));
