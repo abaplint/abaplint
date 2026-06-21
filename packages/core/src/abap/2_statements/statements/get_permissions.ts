@@ -18,7 +18,7 @@ export class GetPermissions implements IStatement {
                   "RESULT", Target,
                   "FAILED", Target,
                   "REPORTED", Target);
-    return ver(Version.v754, s);
+    return ver(Version.v754, s, Version.OpenABAP);
   }
 
 }

@@ -18,7 +18,7 @@ export class CommitEntities implements IStatement {
                   opt(responses),
                   opt(seq("RESPONSE OF", NamespaceSimpleName, per(failed, reported))));
 
-    return ver(Version.v754, s);
+    return ver(Version.v754, s, Version.OpenABAP);
   }
 
 }
