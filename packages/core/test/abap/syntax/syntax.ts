@@ -6854,6 +6854,15 @@ MOVE-CORRESPONDING tab1 TO tab2.`;
     expect(issues[0]?.getMessage()).to.include("MOVE-CORRESPONDING with tables possible");
   });
 
+  it("MOVE-CORRESPONDING with internal tables possible in open-abap", () => {
+    const abap = `
+DATA tab1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA tab2 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+MOVE-CORRESPONDING tab1 TO tab2.`;
+    const issues = runProgram(abap, [], Version.OpenABAP);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("field symbol tokens is undefined", () => {
     const abap = `
 DATA chain_tokens TYPE STANDARD TABLE OF string WITH DEFAULT KEY.

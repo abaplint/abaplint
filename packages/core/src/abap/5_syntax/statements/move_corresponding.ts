@@ -21,7 +21,9 @@ export class MoveCorresponding implements StatementSyntax {
     const sourceType = Source.runSyntax(s, input);
     const targetType = Target.runSyntax(t, input);
 
-    if (input.scope.getVersion() < Version.v740sp05 && input.scope.getVersion() !== Version.Cloud) {
+    if (input.scope.getVersion() < Version.v740sp05
+        && input.scope.getVersion() !== Version.Cloud
+        && input.scope.getVersion() !== Version.OpenABAP) {
       if (sourceType instanceof TableType && sourceType.isWithHeader() === false) {
         const message = "MOVE-CORRESPONDING with tables possible from v740sp05";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
