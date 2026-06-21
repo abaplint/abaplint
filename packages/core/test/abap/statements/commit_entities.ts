@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Version} from "../../../src/version";
 
 const tests = [
   `COMMIT ENTITIES
@@ -24,3 +25,7 @@ const tests = [
 ];
 
 statementType(tests, "COMMIT ENTITIES", Statements.CommitEntities);
+
+statementVersionOk([
+  {abap: "COMMIT ENTITIES.", ver: Version.OpenABAP},
+], "COMMIT ENTITIES", Statements.CommitEntities);

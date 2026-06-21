@@ -34,7 +34,7 @@ export class CreateData implements IStatement {
     const initial = seq("INITIAL SIZE", Source);
     const decimals = seq("DECIMALS", Source);
     const uniq = alt("UNIQUE", "NON-UNIQUE");
-    const emptyKey = ver(Version.v740sp02, "EMPTY KEY");
+    const emptyKey = ver(Version.v740sp02, "EMPTY KEY", Version.OpenABAP);
     const def = seq(opt(uniq), alt("DEFAULT KEY", emptyKey));
 
     const kdef = seq(opt(uniq), "KEY", alt(plus(Field), Dynamic));

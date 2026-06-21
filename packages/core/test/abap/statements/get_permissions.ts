@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Version} from "../../../src/version";
 
 const tests = [
   `GET PERMISSIONS ONLY GLOBAL AUTHORIZATION ENTITY ent
@@ -17,3 +18,7 @@ const tests = [
 ];
 
 statementType(tests, "GET PERMISSIONS", Statements.GetPermissions);
+
+statementVersionOk([
+  {abap: tests[0], ver: Version.OpenABAP},
+], "GET PERMISSIONS", Statements.GetPermissions);
