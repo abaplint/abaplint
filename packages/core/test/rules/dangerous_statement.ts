@@ -41,19 +41,19 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
 
-  it("finds dynamic SQL by default", () => {
+  it("ignores dynamic SQL by default", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_rap.clas.abap", abap)).parse();
     const issues = new DangerousStatement().initialize(reg).run(reg.getFirstObject()!);
-    expect(issues.length).to.equal(1);
+    expect(issues.length).to.equal(0);
   });
 
-  it("ignores dynamic SQL in RAP provider method when configured", () => {
+  it("finds dynamic SQL in RAP provider method when configured off", () => {
     const conf = new DangerousStatementConf();
-    conf.ignoreRAPQueryProvider = true;
+    conf.ignoreRAPQueryProvider = false;
     const rule = new DangerousStatement();
     rule.setConfig(conf);
     const reg = new Registry().addFile(new MemoryFile("zcl_rap.clas.abap", abap)).parse();
     const issues = rule.initialize(reg).run(reg.getFirstObject()!);
-    expect(issues.length).to.equal(0);
+    expect(issues.length).to.equal(1);
   });
 });

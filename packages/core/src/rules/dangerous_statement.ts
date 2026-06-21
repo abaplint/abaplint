@@ -27,7 +27,7 @@ export class DangerousStatementConf extends BasicRuleConfig {
   /** Finds instances of dynamic SQL: SELECT, UPDATE, DELETE, INSERT, MODIFY */
   public dynamicSQL: boolean = true;
   /** Ignore dynamic SQL in IF_RAP_QUERY_PROVIDER~SELECT implementations */
-  public ignoreRAPQueryProvider: boolean = false;
+  public ignoreRAPQueryProvider: boolean = true;
 }
 
 export class DangerousStatement extends ABAPRule {
