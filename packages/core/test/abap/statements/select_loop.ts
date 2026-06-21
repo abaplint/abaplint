@@ -274,6 +274,31 @@ const versions = [
 
 statementVersionOk(versions, "SELECT loop", Statements.SelectLoop);
 
+statementVersionOk([
+  {abap: `SELECT \\_assoc1-col FROM ztab1 INTO @DATA(r).`, ver: Version.v740sp05},
+  {abap: `SELECT key_property, \\_assoc1-col FROM ztab1 INTO @DATA(r).`, ver: Version.v740sp05},
+  {abap: `SELECT \\_assoc1-col AS c FROM ztab1 INTO @DATA(r).`, ver: Version.v740sp05},
+  {abap: `SELECT \\_assoc1\\_assoc2-col FROM ztab1 INTO @DATA(r).`, ver: Version.v740sp05},
+  {abap: `SELECT t1~\\_assoc1-col FROM ztab1 AS t1 INTO @DATA(r).`, ver: Version.v740sp05},
+  {abap: `SELECT \\_assoc1[ key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1[ WHERE key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1[ INNER WHERE key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1[ ONE TO ONE ]-col FROM ztab1 INTO @DATA(r).`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1[ LEFT OUTER WHERE key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1 WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v740sp05},
+  {abap: `SELECT * FROM ztab1\\_assoc1 WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v740sp05},
+  {abap: `SELECT * FROM ztab1 \\_assoc1( col1 = 'AB', col2 = 3 ) WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ col4 = @sy-uname ] WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ INNER ] WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1 \\_assoc2 WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v740sp05},
+], "SELECT loop association path expressions", Statements.SelectLoop);
+
+statementVersionFail([
+  {abap: `SELECT * FROM ztab1 \\_assoc1 ( col1 = 'AB' ) WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1 [ col4 = @sy-uname ] WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v751},
+  {abap: `SELECT \\_assoc1 [ key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, ver: Version.v751},
+], "SELECT loop association path invalid spacing");
+
 const privilegedVersions = [
   {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id PRIVILEGED ACCESS.`, ver: Version.v758},
   {abap: `SELECT field APPENDING TABLE lt FROM ztab PACKAGE SIZE 10 WHERE id = lv_id PRIVILEGED ACCESS.`, ver: Version.v758},
@@ -358,3 +383,18 @@ const isNotLoopTests = [
   `SELECT num MAX( count ) COUNT(*) INTO TABLE lt_tab FROM zfoo.`,
 ];
 statementType(isNotLoopTests, "isSelectLoop → Select (not loop)", Statements.Select);
+
+const isLoopWindowTests = [
+  `SELECT ROW_NUMBER( ) OVER( ORDER BY col ) AS rn FROM ztab INTO @wa.`,
+  `SELECT RANK( ) OVER( ORDER BY col ) AS rk FROM ztab INTO @wa.`,
+  `SELECT SUM( amount ) OVER( PARTITION BY grp ) AS running FROM ztab INTO @wa.`,
+  `SELECT ROW_NUMBER( ) OVER( ORDER BY col ) AS rn FROM ztab INTO @wa WHERE id = 1.`,
+];
+statementVersionOk(isLoopWindowTests.map(abap => ({abap, ver: Version.v757})),
+                   "isSelectLoop → SelectLoop (window functions)", Statements.SelectLoop);
+
+const isNotLoopPlainAggTests = [
+  `SELECT SUM( amount ) FROM ztab INTO @wa.`,
+  `SELECT MAX( val ) MIN( val ) FROM ztab INTO (lv_max, lv_min).`,
+];
+statementType(isNotLoopPlainAggTests, "isSelectLoop → Select (plain aggregates, no OVER)", Statements.Select);

@@ -1,4 +1,4 @@
-import {SimpleFieldChain2, SQLAggregation, SQLFunction, SQLPath} from ".";
+import {SimpleFieldChain2, SQLAggregation, SQLFunction, SQLPathForColumn} from ".";
 import {Version} from "../../../version";
 import {WAt, WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {Expression, ver, seq, tok, optPrio, opt, altPrio, starPrio, plusPrio} from "../combi";
@@ -14,7 +14,7 @@ export class SQLCase extends Expression {
     const field = altPrio(SQLAggregation,
                           SQLCase,
                           SQLFunction,
-                          SQLPath,
+                          SQLPathForColumn,
                           SQLFieldName,
                           Constant);
     const sub = seq(altPrio("+", "-", "*", "/", "&&"), optPrio(tok(WParenLeftW)), field, optPrio(tok(WParenRightW)));
