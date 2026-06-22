@@ -125,6 +125,7 @@ SELECT-OPTIONS s_miss FOR foo.`;
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xmlNoSelTexts));
     const issues = await run(reg);
     expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.not.include("zfoobar");
   });
 
   it("no parameters or select-options, no issues", async () => {
@@ -203,6 +204,82 @@ PARAMETERS p_miss TYPE string.`;
     reg.addFile(new MemoryFile("zfoobar_sel.prog.xml", inclXml));
     const issues = await run(reg);
     expect(issues.length).to.equal(1);
+  });
+
+  it("two programs share an INCLUDE, only one missing text: issue names the correct program", async () => {
+    const inclAbap = "PARAMETERS p_test TYPE string.";
+    const inclXml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>ZSHARED_SEL</NAME>
+    <SUBC>I</SUBC>
+    <RLOAD>E</RLOAD>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const prog1Abap = "INCLUDE zshared_sel.";
+    const prog1Xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>ZPROG1</NAME>
+    <SUBC>1</SUBC>
+    <RLOAD>E</RLOAD>
+    <FIXPT>X</FIXPT>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+   <TPOOL>
+    <item>
+     <ID>S</ID>
+     <KEY>P_TEST</KEY>
+     <ENTRY>        Test Parameter</ENTRY>
+     <LENGTH>23</LENGTH>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const prog2Abap = "INCLUDE zshared_sel.";
+    const prog2Xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>ZPROG2</NAME>
+    <SUBC>1</SUBC>
+    <RLOAD>E</RLOAD>
+    <FIXPT>X</FIXPT>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+   <TPOOL>
+    <item>
+     <ID>R</ID>
+     <ENTRY>Program ZPROG2</ENTRY>
+     <LENGTH>28</LENGTH>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zshared_sel.prog.abap", inclAbap));
+    reg.addFile(new MemoryFile("zshared_sel.prog.xml", inclXml));
+    reg.addFile(new MemoryFile("zprog1.prog.abap", prog1Abap));
+    reg.addFile(new MemoryFile("zprog1.prog.xml", prog1Xml));
+    reg.addFile(new MemoryFile("zprog2.prog.abap", prog2Abap));
+    reg.addFile(new MemoryFile("zprog2.prog.xml", prog2Xml));
+
+    const issues = await run(reg);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include(", zprog2.prog.abap");
   });
 
 });
