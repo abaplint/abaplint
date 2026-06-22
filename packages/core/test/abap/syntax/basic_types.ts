@@ -34,6 +34,11 @@ function expectTable(identifier: TypedIdentifier | undefined) {
   return tab.getRowType();
 }
 
+function expectVoid(identifier: TypedIdentifier | undefined) {
+  expect(identifier).to.not.equals(undefined);
+  expect(identifier!.getType()).to.be.instanceof(Basic.VoidType);
+}
+
 /*
 function expectCharacter(identifier: TypedIdentifier | undefined, length: number) {
   expect(identifier).to.not.equals(undefined);
@@ -112,6 +117,24 @@ describe("Syntax - Basic Types", () => {
     const type = resolveType(abap, "ty_tpool");
     expect(type).to.not.equal(undefined);
     expect(type!.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("RAP TYPES are voided", () => {
+    const abap = `
+TYPES t_mapped  TYPE RESPONSE FOR MAPPED EARLY ZDMO_R_RAPG_ProjectTP.
+TYPES t_failed TYPE RESPONSE FOR FAILED EARLY ZDMO_R_RAPG_ProjectTP.
+TYPES t_reported TYPE RESPONSE FOR REPORTED EARLY ZDMO_R_RAPG_ProjectTP.
+TYPES t_update TYPE STRUCTURE FOR UPDATE ZDMO_R_RAPG_ProjectTP\\\\node.
+TYPES t_create TYPE STRUCTURE FOR CREATE ZDMO_R_RAPG_ProjectTP\\_node.
+TYPES t_read TYPE STRUCTURE FOR READ RESULT ZDMO_R_RAPG_ProjectTP\\\\node.
+TYPES t_change TYPE REQUEST FOR CHANGE ZDMO_R_RAPG_ProjectTP.`;
+    expectVoid(resolveType(abap, "t_mapped"));
+    expectVoid(resolveType(abap, "t_failed"));
+    expectVoid(resolveType(abap, "t_reported"));
+    expectVoid(resolveType(abap, "t_update"));
+    expectVoid(resolveType(abap, "t_create"));
+    expectVoid(resolveType(abap, "t_read"));
+    expectVoid(resolveType(abap, "t_change"));
   });
 
   it("LIKE voided class", () => {

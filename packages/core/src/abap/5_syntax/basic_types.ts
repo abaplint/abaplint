@@ -474,15 +474,14 @@ export class BasicTypes {
       ], name);
       options.primaryKey!.type = TableAccessType.standard;
       return new Types.TableType(structure, options);
-    } else if (typename && (text.startsWith("TYPE TABLE FOR CREATE ")
-        || text.startsWith("TYPE TABLE FOR READ ")
-        || text.startsWith("TYPE TABLE FOR DELETE ")
-        || text.startsWith("TYPE TABLE FOR UPDATE "))) {
+    } else if (typename && this.isRAPTableFor(text)) {
       const name = typename.concatTokens();
       const ddlsName = this.getRAPBaseEntityName(name);
       const type = this.input.scope.getDDIC().lookupDDLS(ddlsName)?.type;
       if (type) {
         return new Types.TableType(VoidType.get("RAP-TODO"), options);
+      } else if (this.isRAPDerivedEntityName(name)) {
+        return Types.VoidType.get(name);
       } else if (this.input.scope.getDDIC().inErrorNamespace(ddlsName)) {
         return new Types.UnknownType(`DDLS ${ddlsName} not found`);
       } else {
@@ -508,6 +507,9 @@ export class BasicTypes {
       }
     }
     if (text === undefined) {
+      text = node.findFirstExpression(Expressions.TypeStructure)?.concatTokens().toUpperCase();
+    }
+    if (text === undefined) {
       text = node.findFirstExpression(Expressions.FormParamType)?.concatTokens().toUpperCase();
     }
     if (text === undefined
@@ -520,7 +522,9 @@ export class BasicTypes {
     }
 
     let found: AbstractType | undefined = undefined;
-    if (text.startsWith("LIKE LINE OF ")) {
+    if (this.isRAPTypeStructure(text)) {
+      return Types.VoidType.get(node.findFirstExpression(Expressions.TypeStructure)?.concatTokens());
+    } else if (text.startsWith("LIKE LINE OF ")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
 
       let e = node.findFirstExpression(Expressions.Type);
@@ -658,12 +662,41 @@ export class BasicTypes {
   private getRAPBaseEntityName(name: string): string {
     const association = name.indexOf("\\_");
     const path = name.indexOf("\\\\");
-    if (association === -1 && path === -1) {
+    const action = name.indexOf("~");
+    if (association === -1 && path === -1 && action === -1) {
       return name;
     }
 
-    const splitAt = association === -1 ? path : path === -1 ? association : Math.min(association, path);
+    const candidates = [association, path, action].filter(i => i !== -1);
+    const splitAt = Math.min(...candidates);
     return name.substring(0, splitAt);
+  }
+
+  private isRAPDerivedEntityName(name: string): boolean {
+    return name.includes("\\") || name.includes("~");
+  }
+
+  private isRAPTableFor(text: string): boolean {
+    return text.startsWith("TYPE TABLE FOR ACTION IMPORT ")
+      || text.startsWith("TYPE TABLE FOR ACTION RESULT ")
+      || text.startsWith("TYPE TABLE FOR CREATE ")
+      || text.startsWith("TYPE TABLE FOR DELETE ")
+      || text.startsWith("TYPE TABLE FOR DETERMINATION ")
+      || text.startsWith("TYPE TABLE FOR EVENT ")
+      || text.startsWith("TYPE TABLE FOR FAILED ")
+      || text.startsWith("TYPE TABLE FOR FAILED EARLY ")
+      || text.startsWith("TYPE TABLE FOR LOCK ")
+      || text.startsWith("TYPE TABLE FOR READ ")
+      || text.startsWith("TYPE TABLE FOR READ IMPORT ")
+      || text.startsWith("TYPE TABLE FOR READ RESULT ")
+      || text.startsWith("TYPE TABLE FOR REPORTED EARLY ")
+      || text.startsWith("TYPE TABLE FOR UPDATE ");
+  }
+
+  private isRAPTypeStructure(text: string): boolean {
+    return text.startsWith("TYPE STRUCTURE FOR ")
+      || text.startsWith("TYPE RESPONSE FOR ")
+      || text.startsWith("TYPE REQUEST FOR CHANGE ");
   }
 
   // todo, rewrite this method
