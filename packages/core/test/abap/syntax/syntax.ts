@@ -233,7 +233,7 @@ ENDCLASS.`;
       {filename: "zcl_foobar.clas.abap", contents: clas},
       {filename: "zcl_foobar.clas.testclasses.abap", contents: test},
     ]);
-    expect(issues.length).to.equals(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("program, abap_true", () => {
