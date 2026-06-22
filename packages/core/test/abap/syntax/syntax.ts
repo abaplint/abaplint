@@ -192,6 +192,50 @@ field = zcl_global_class=>method( ).`;
     expect(issues.length).to.equals(0);
   });
 
+  it.only("class, test seam and injection", () => {
+    const clas = `
+CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS run.
+  PRIVATE SECTION.
+    CLASS-DATA gv_value TYPE i.
+ENDCLASS.
+
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD run.
+    TEST-SEAM authorization_seam.
+      gv_value = 1.
+    END-TEST-SEAM.
+  ENDMETHOD.
+ENDCLASS.
+`;
+
+    const test = `
+CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS test FOR TESTING.
+ENDCLASS.
+
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD test.
+    DATA lo_cut TYPE REF TO zcl_foobar.
+    CREATE OBJECT lo_cut.
+
+    TEST-INJECTION authorization_seam.
+      gv_value = 2.
+    END-TEST-INJECTION.
+
+    lo_cut->run( ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = runMulti([
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zcl_foobar.clas.testclasses.abap", contents: test},
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
   it("program, abap_true", () => {
     const abap = "WRITE abap_true.\nWRITE ABAP_TRUE.\n";
     const issues = runProgram(abap);
