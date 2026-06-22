@@ -1088,6 +1088,10 @@
         "generateSubroutine": {
           "type": "boolean"
         },
+        "ignoreRAPQueryProvider": {
+          "description": "Ignore dynamic SQL in IF_RAP_QUERY_PROVIDER~SELECT implementations",
+          "type": "boolean"
+        },
         "insertReport": {
           "description": "Detects INSERT REPORT",
           "type": "boolean"
@@ -1121,7 +1125,8 @@
         "insertTextpool",
         "deleteDynpro",
         "exportDynpro",
-        "dynamicSQL"
+        "dynamicSQL",
+        "ignoreRAPQueryProvider"
       ],
       "type": "object"
     },

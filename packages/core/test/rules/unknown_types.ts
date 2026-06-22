@@ -2307,6 +2307,13 @@ SELECT-OPTIONS s_any FOR ('ANYTHING').`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("dynamic select count into inline data", () => {
+    const abap = ``;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("type alias via interface", () => {
     const abap = `
 INTERFACE lif.
