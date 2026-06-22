@@ -206,6 +206,33 @@ PARAMETERS p_miss TYPE string.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("INCLUDE before PARAMETER in main program: issue should not include program name", async () => {
+    const mainAbap = `INCLUDE zfoobar_sel.
+PARAMETERS p_miss TYPE string.`;
+    const inclAbap = "WRITE 'hello'.";
+    const inclXml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>ZFOOBAR_SEL</NAME>
+    <SUBC>I</SUBC>
+    <RLOAD>E</RLOAD>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zfoobar.prog.abap", mainAbap));
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xmlNoSelTexts));
+    reg.addFile(new MemoryFile("zfoobar_sel.prog.abap", inclAbap));
+    reg.addFile(new MemoryFile("zfoobar_sel.prog.xml", inclXml));
+    const issues = await run(reg);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.not.include("zfoobar");
+  });
+
   it("two programs share an INCLUDE, only one missing text: issue names the correct program", async () => {
     const inclAbap = "PARAMETERS p_test TYPE string.";
     const inclXml = `<?xml version="1.0" encoding="utf-8"?>

@@ -88,9 +88,9 @@ export class SelectionScreenTextsMissing implements IRule {
         if (nameNode) {
           const inclName = nameNode.getFirstToken().getStr().toUpperCase();
           const inclObj = this.reg.getObject("PROG", inclName) as Program | undefined;
-          mainProgName ??= file.getFilename();
+          const inclMainProgName = mainProgName ?? file.getFilename();
           if (inclObj) {
-            this.checkFile(inclObj.getMainABAPFile(), selTexts, output, checked, mainProgName);
+            this.checkFile(inclObj.getMainABAPFile(), selTexts, output, checked, inclMainProgName);
           }
         }
       }
