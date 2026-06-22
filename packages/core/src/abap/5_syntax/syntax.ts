@@ -485,6 +485,9 @@ export class SyntaxLogic {
       const values = new TypeEnum().runSyntax(node, input).values;
       this.scope.addList(values);
       return true;
+    } else if (stru instanceof Structures.TestInjection) {
+      // todo: skipped for now
+      return true;
     }
     return false;
   }

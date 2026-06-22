@@ -192,7 +192,7 @@ field = zcl_global_class=>method( ).`;
     expect(issues.length).to.equals(0);
   });
 
-  it.only("class, test seam and injection", () => {
+  it("class, test seam and injection", () => {
     const clas = `
 CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
   PUBLIC SECTION.
