@@ -27,6 +27,7 @@ const tests = [
   "CREATE DATA ref TYPE STANDARD TABLE OF (table) WITH KEY (key).",
   "CREATE DATA rr_data TYPE TABLE OF REF TO data.",
   "CREATE DATA lr_data TYPE STANDARD TABLE OF (foo-bar) WITH EMPTY KEY.",
+  "CREATE DATA casting_table TYPE STANDARD TABLE OF (table_name) WITH EMPTY KEY.",
 ];
 
 statementType(tests, "CREATE DATA", Statements.CreateData);
