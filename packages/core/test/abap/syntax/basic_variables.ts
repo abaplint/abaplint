@@ -91,6 +91,24 @@ describe("Basic Types", () => {
     expectString(identifier);
   });
 
+  it("RAP DATA declarations are voided", () => {
+    const abap = `
+DATA update_node TYPE TABLE FOR UPDATE ZDMO_R_RAPG_ProjectTP\\\\node.
+DATA update_rapbo TYPE TABLE FOR UPDATE ZDMO_R_RAPG_ProjectTP\\\\Project.
+DATA failed_root TYPE TABLE FOR FAILED EARLY ZDMO_R_RAPG_ProjectTP\\\\root.
+DATA reported_root TYPE TABLE FOR REPORTED EARLY ZDMO_R_RAPG_ProjectTP\\\\root.
+DATA action_result TYPE TABLE FOR ACTION RESULT ZDMO_R_RAPG_ProjectTP~run.
+DATA update_node_line TYPE STRUCTURE FOR UPDATE ZDMO_R_RAPG_ProjectTP\\\\node .
+DATA update_rapbo_line TYPE STRUCTURE FOR UPDATE ZDMO_R_RAPG_ProjectTP\\\\Project.`;
+    expectVoid(resolveVariable(abap, "update_node"));
+    expectVoid(resolveVariable(abap, "update_rapbo"));
+    expectVoid(resolveVariable(abap, "failed_root"));
+    expectVoid(resolveVariable(abap, "reported_root"));
+    expectVoid(resolveVariable(abap, "action_result"));
+    expectVoid(resolveVariable(abap, "update_node_line"));
+    expectVoid(resolveVariable(abap, "update_rapbo_line"));
+  });
+
   it("DATA TYPE c", () => {
     const abap = "DATA foo TYPE c.";
     const identifier = resolveVariable(abap, "foo");

@@ -12010,6 +12010,19 @@ WRITE / lines( lt_upd ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("RAP response and update declarations are voided", () => {
+    const abap = `
+TYPES t_mapped  TYPE RESPONSE FOR MAPPED EARLY ZDMO_R_RAPG_ProjectTP.
+TYPES t_failed TYPE RESPONSE FOR FAILED EARLY ZDMO_R_RAPG_ProjectTP.
+TYPES t_reported TYPE RESPONSE FOR REPORTED EARLY ZDMO_R_RAPG_ProjectTP.
+DATA update_node TYPE TABLE FOR UPDATE ZDMO_R_RAPG_ProjectTP\\\\node.
+DATA update_rapbo TYPE TABLE FOR UPDATE ZDMO_R_RAPG_ProjectTP\\\\Project.
+DATA update_node_line TYPE STRUCTURE FOR UPDATE ZDMO_R_RAPG_ProjectTP\\\\node .
+DATA update_rapbo_line TYPE STRUCTURE FOR UPDATE ZDMO_R_RAPG_ProjectTP\\\\Project.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("TYPE TABLE FOR CREATE, entity association", () => {
     const ddls = `
 define view entity zasis_i_ruleset as select from zfoo {
