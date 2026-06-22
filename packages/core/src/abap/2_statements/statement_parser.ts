@@ -1,7 +1,7 @@
 import * as Statements from "./statements";
 import * as Expressions from "./expressions";
 import * as Tokens from "../1_lexer/tokens";
-import {Version} from "../../version";
+import {ABAPRelease, LanguageVersion} from "../../version";
 import {IFile} from "../../files/_ifile";
 import {TokenNode, StatementNode} from "../nodes";
 import {ArtifactsABAP} from "../artifacts";
@@ -91,20 +91,25 @@ class WorkArea {
 
 export class StatementParser {
   private static map: StatementMap;
-  private readonly version: Version;
+  private readonly release: ABAPRelease;
+  private readonly languageVersion: LanguageVersion;
+  private readonly openABAP: boolean;
   private readonly reg?: IRegistry;
 
-  public constructor(version: Version, reg?: IRegistry) {
+  public constructor(release: ABAPRelease, reg?: IRegistry,
+                     languageVersion: LanguageVersion = LanguageVersion.Normal, openABAP: boolean = false) {
     if (!StatementParser.map) {
       StatementParser.map = new StatementMap();
     }
-    this.version = version;
+    this.release = release;
+    this.languageVersion = languageVersion;
+    this.openABAP = openABAP;
     this.reg = reg;
   }
 
   /** input is one full object */
   public run(input: readonly IABAPLexerResult[], globalMacros: readonly string[]): IStatementResult[] {
-    const macros = new ExpandMacros(globalMacros, this.version, this.reg);
+    const macros = new ExpandMacros(globalMacros, this.release, this.reg, this.languageVersion);
 
     const wa = input.map(i => new WorkArea(i.file, i.tokens));
 
@@ -276,8 +281,9 @@ export class StatementParser {
       return new StatementNode(new Empty()).setChildren(this.tokensToNodes(tokens));
     }
 
+    Combi.clearMemo();
     for (const st of StatementParser.map.lookup(filtered[0].getStr())) {
-      const match = Combi.run(st.matcher, filtered, this.version);
+      const match = Combi.run(st.matcher, filtered, this.release, this.languageVersion, this.openABAP);
       if (match) {
         const last = tokens[tokens.length - 1];
         match.push(new TokenNode(last));
@@ -287,7 +293,7 @@ export class StatementParser {
     }
     // next try the statements without specific keywords
     for (const st of StatementParser.map.lookup("")) {
-      const match = Combi.run(st.matcher, filtered, this.version);
+      const match = Combi.run(st.matcher, filtered, this.release, this.languageVersion, this.openABAP);
       if (match) {
         const last = tokens[tokens.length - 1];
         match.push(new TokenNode(last));

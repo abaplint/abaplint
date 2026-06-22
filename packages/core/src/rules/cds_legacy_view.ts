@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
-import {Version} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {DataDefinition} from "../objects";
 import {CDSDefineView} from "../cds/expressions";
@@ -44,8 +44,8 @@ v755 and up`,
   public run(o: IObject): Issue[] {
     const issues: Issue[] = [];
 
-    if (this.reg.getConfig().getVersion() < Version.v755
-        && this.reg.getConfig().getVersion() !== Version.Cloud) {
+    if (!releaseAtLeast(this.reg.getConfig().getRelease(), Release.v755)
+        && this.reg.getConfig().getLanguageVersion() !== LanguageVersion.Cloud) {
       return [];
     }
 

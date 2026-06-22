@@ -4,7 +4,7 @@ import {Source} from "../expressions/source";
 import {FieldChain} from "../expressions/field_chain";
 import {ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {FunctionParameters} from "../expressions/function_parameters";
 
@@ -16,7 +16,7 @@ export class CallFunction implements StatementSyntax {
     const chain = name?.findFirstExpression(Expressions.FieldChain);
     if (chain) {
       FieldChain.runSyntax(chain, input, ReferenceType.DataReadReference);
-    } else if (input.scope.getVersion() === Version.Cloud
+    } else if (input.scope.getLanguageVersion() === LanguageVersion.Cloud
         && node.findDirectExpression(Expressions.Destination) === undefined) {
       const functionName = name?.concatTokens().replace(/'/g, "");
       if (input.scope.findFunctionModule(functionName) === undefined) {

@@ -12,7 +12,7 @@ import {SourceField} from "./source_field";
 import {Dash, InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
 import {AttributeName} from "./attribute_name";
 import {ComponentName} from "./component_name";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 
@@ -34,7 +34,7 @@ export class MethodSource {
       children.unshift(first);
     }
 
-    if (input.scope.getVersion() === Version.Cloud
+    if (input.scope.getLanguageVersion() === LanguageVersion.Cloud
         && first.get() instanceof Expressions.Dynamic
         && first instanceof ExpressionNode
         && children[0]?.concatTokens() === "=>") {

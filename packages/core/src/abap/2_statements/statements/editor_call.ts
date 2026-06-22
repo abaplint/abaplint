@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, per, optPrio} from "../combi";
+import {verNotLang, seq, per, optPrio} from "../combi";
 import {SimpleSource3, Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class EditorCall implements IStatement {
@@ -16,7 +16,7 @@ export class EditorCall implements IStatement {
                     Source,
                     optPrio(options));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

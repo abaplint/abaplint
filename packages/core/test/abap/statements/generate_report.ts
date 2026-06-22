@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "generate report lv_name.",
@@ -50,3 +51,9 @@ const tests = [
 ];
 
 statementType(tests, "GENERATE REPORT", Statements.GenerateReport);
+
+const versionsFail = [
+  {abap: `generate report lv_name.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "GENERATE REPORT");

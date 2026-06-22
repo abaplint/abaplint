@@ -10,9 +10,9 @@ const tests = [
 statementType(tests, "TEST-SEAM", Statements.TestSeam);
 
 statementVersionOk([
-  {abap: "TEST-SEAM foo.", ver: Version.OpenABAP},
+  {abap: "TEST-SEAM foo.", rel: Version.OpenABAP},
 ], "TEST-SEAM", Statements.TestSeam);
 
 statementVersionOk([
-  {abap: "END-TEST-SEAM.", ver: Version.OpenABAP},
+  {abap: "END-TEST-SEAM.", rel: Version.OpenABAP},
 ], "END-TEST-SEAM", Statements.EndTestSeam);

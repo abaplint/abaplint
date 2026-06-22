@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "CALL SCREEN 0011.",
@@ -8,3 +9,9 @@ const tests = [
 ];
 
 statementType(tests, "CALL SCREEN", Statements.CallScreen);
+
+const versionsFail = [
+  {abap: `CALL SCREEN 0011.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "CALL SCREEN");

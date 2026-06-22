@@ -33,5 +33,5 @@ const tests = [
 statementType(tests, "CREATE DATA", Statements.CreateData);
 
 statementVersionOk([
-  {abap: "CREATE DATA casting_table TYPE STANDARD TABLE OF (table_name) WITH EMPTY KEY.", ver: Version.OpenABAP},
+  {abap: "CREATE DATA casting_table TYPE STANDARD TABLE OF (table_name) WITH EMPTY KEY.", rel: Version.OpenABAP},
 ], "CREATE DATA", Statements.CreateData);

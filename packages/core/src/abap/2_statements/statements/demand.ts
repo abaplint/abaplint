@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, plus} from "../combi";
+import {verNotLang, seq, opt, plus} from "../combi";
 import {Target, Field} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Demand implements IStatement {
@@ -17,7 +17,7 @@ export class Demand implements IStatement {
                     Field,
                     opt(messages));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

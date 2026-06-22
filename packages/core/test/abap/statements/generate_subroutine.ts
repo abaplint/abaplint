@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "GENERATE SUBROUTINE POOL lt_source\n" +
@@ -42,3 +43,12 @@ const tests = [
 ];
 
 statementType(tests, "GENERATE SUBROUTINE", Statements.GenerateSubroutine);
+
+const versionsFail = [
+  {abap: `GENERATE SUBROUTINE POOL lt_source
+  NAME    l_name
+  MESSAGE l_error
+  LINE    l_line.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "GENERATE SUBROUTINE POOL");

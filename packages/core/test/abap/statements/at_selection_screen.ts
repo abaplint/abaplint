@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "AT SELECTION-SCREEN.",
@@ -19,3 +20,9 @@ const tests = [
 ];
 
 statementType(tests, "AT SELECTION-SCREEN", Statements.AtSelectionScreen);
+
+const versionsFail = [
+  {abap: `AT SELECTION-SCREEN.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "AT SELECTION-SCREEN");

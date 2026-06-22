@@ -1,6 +1,7 @@
+import {Release} from "../../../src/version";
 import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+
 
 const tests = [
   "INTERFACES lif_gui_page ABSTRACT METHODS render.",
@@ -15,7 +16,7 @@ const tests = [
 statementType(tests, "INTERFACES", Statements.InterfaceDef);
 
 const versions = [
-  {abap: "INTERFACES zif_foo PARTIALLY IMPLEMENTED.", ver: Version.v740sp02},
+  {abap: "INTERFACES zif_foo PARTIALLY IMPLEMENTED.", rel: Release.v740sp02},
 ];
 
 statementVersion(versions, "INTERFACES", Statements.InterfaceDef);

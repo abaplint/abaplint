@@ -1,9 +1,9 @@
-import {seq, altPrio, optPrio, ver} from "../combi";
+import {seq, altPrio, optPrio, ver, AlsoIn} from "../combi";
 import {SQLFieldList, SQLFrom, SQLCond, SQLSource, SQLClient, DatabaseConnection,
   SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints, SQLFields,
   SQLIntoList, SQLIntoTable, SQLOptions, SQLPrivilegedAccess, SQLPackageSize,
   SQLBypassingBuffer} from ".";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLGroupBy} from "./sql_group_by";
 import {SQLIntoStructure} from "./sql_into_structure";
@@ -11,8 +11,8 @@ import {SQLUpTo} from "./sql_up_to";
 
 export function buildSelectSingleCore(allowInto = false): IStatementRunnable {
   const where = seq("WHERE", SQLCond);
-  const sqlFields = ver(Version.v750, SQLFields, Version.OpenABAP);
-  const privileged = ver(Version.v758, SQLPrivilegedAccess);
+  const sqlFields = ver(Release.v750, SQLFields, {also: AlsoIn.OpenABAP});
+  const privileged = ver(Release.v758, SQLPrivilegedAccess);
   const fieldList = optPrio(SQLFieldList);
 
   const client = optPrio(SQLClient);
@@ -42,9 +42,9 @@ export function buildSelectSingleCore(allowInto = false): IStatementRunnable {
 
 export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatementRunnable {
   const where = seq("WHERE", SQLCond);
-  const offset = ver(Version.v751, seq("OFFSET", SQLSource));
-  const sqlFields = ver(Version.v750, SQLFields, Version.OpenABAP);
-  const privileged = ver(Version.v758, SQLPrivilegedAccess);
+  const offset = ver(Release.v751, seq("OFFSET", SQLSource));
+  const sqlFields = ver(Release.v750, SQLFields, {also: AlsoIn.OpenABAP});
+  const privileged = ver(Release.v758, SQLPrivilegedAccess);
   const fieldList = optPrio(SQLFieldList);
 
   const client = optPrio(SQLClient);

@@ -1,6 +1,6 @@
 import {seq, optPrio, altPrio, Expression, ver, tok} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {ParenLeftW, WAt, WParenRightW} from "../../1_lexer/tokens";
 import {SimpleSource3} from "./simple_source3";
 import {Source} from "./source";
@@ -14,7 +14,7 @@ export class SQLReplaceRegexpr extends Expression {
     const hostParen = seq(tok(ParenLeftW), Source, tok(WParenRightW));
     const hostVar = seq(tok(WAt), altPrio(SimpleSource3, hostParen));
     const withClause = seq("WITH", altPrio(hostVar, SQLFunctionInput));
-    return ver(Version.v757, seq(
+    return ver(Release.v757, seq(
       "REPLACE_REGEXPR",
       tok(ParenLeftW),
       SQLRegexprPattern,

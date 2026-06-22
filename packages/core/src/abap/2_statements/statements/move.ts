@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, tok, ver, seq, alt, altPrio, star, opt} from "../combi";
+import {verNotLang, tok, ver, seq, alt, altPrio, star, opt, AlsoIn} from "../combi";
 import {Target, Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion, Release} from "../../../version";
 import {WPlus, WDash} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -9,7 +9,7 @@ export class Move implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const mov = verNot(Version.Cloud, "MOVE");
+    const mov = verNotLang(LanguageVersion.Cloud, "MOVE");
 
     const move = seq(mov,
                      altPrio(
@@ -17,12 +17,12 @@ export class Move implements IStatement {
                        seq(Source, altPrio("?TO", "TO"), Target)),
                      opt(seq("PERCENTAGE", Source, opt(alt("LEFT", "RIGHT")))));
 
-    const calcAssign = ver(Version.v754,
+    const calcAssign = ver(Release.v754,
                            alt(seq(tok(WPlus), "="),
                                seq(tok(WDash), "="),
                                "/=",
                                "*=",
-                               "&&="), Version.OpenABAP);
+                               "&&="), {also: AlsoIn.OpenABAP});
 
     const chained = seq("=", star(seq(Target, "=")));
 

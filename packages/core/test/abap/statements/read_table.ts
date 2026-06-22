@@ -1,6 +1,7 @@
+import {Release} from "../../../src/version";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {statementExpectFail, statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
-import {Version} from "../../../src/version";
+
 
 const tests = [
   "READ TABLE tt_fields ASSIGNING <ls_fbranch> WITH KEY tabname = 'TEXTL'.",
@@ -58,20 +59,20 @@ statementType(tests, "READ TABLE", Statements.ReadTable);
 
 
 const versions = [
-  {abap: "READ TABLE mo_repo->get_files_local( ) INTO ls_local_file WITH KEY file = is_file.", ver: Version.v740sp02},
+  {abap: "READ TABLE mo_repo->get_files_local( ) INTO ls_local_file WITH KEY file = is_file.", rel: Release.v740sp02},
 ];
 
 statementVersion(versions, "READ TABLE", Statements.ReadTable);
 
 const versionsOk = [
   {abap: `READ TABLE lt_tags TRANSPORTING NO FIELDS WITH TABLE KEY name_key
-            COMPONENTS name = zcl_abapgit_git_tag=>add_tag_prefix( lv_new_tag_name ).`, ver: Version.v702},
+            COMPONENTS name = zcl_abapgit_git_tag=>add_tag_prefix( lv_new_tag_name ).`, rel: Release.v702},
 ];
 statementVersionOk(versionsOk, "READ TABLE", Statements.ReadTable);
 
 const versionsFail = [
   // https://github.com/abapGit/abapGit/issues/7413
-  {abap: `READ TABLE lt_lcs WITH KEY key = lines( lt_lcs ) - 1 INTO temp15.`, ver: Version.v702},
+  {abap: `READ TABLE lt_lcs WITH KEY key = lines( lt_lcs ) - 1 INTO temp15.`, rel: Release.v702},
 ];
 
 statementVersionFail(versionsFail, "READ TABLE");

@@ -5,7 +5,7 @@ import {Class} from "../objects";
 import {IObject} from "../objects/_iobject";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-import {Version} from "../version";
+import {Release} from "../version";
 
 export class LocalTestclassConsistencyConf extends BasicRuleConfig {
 }
@@ -34,7 +34,7 @@ export class LocalTestclassConsistency extends ABAPRule {
   public runParsed(file: ABAPFile, obj: IObject) {
     const issues: Issue[] = [];
 
-    if (this.reg.getConfig().getVersion() === Version.v700) {
+    if (this.reg.getConfig().getRelease() === Release.v700) {
       // 700 does not have testclass includes
       return [];
     }

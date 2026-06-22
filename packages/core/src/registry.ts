@@ -374,7 +374,7 @@ export class Registry implements IRegistry {
     input?.progress?.set(this.getObjectCount().total, "Lexing and parsing");
 
     for (const o of this.getObjects()) {
-      await input?.progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " + o.getType() + " " + o.getName());
+      await input?.progress?.tick("Lexing and parsing(" + this.conf.getRelease().name + ") - " + o.getType() + " " + o.getName());
       this.parsePrivate(o);
     }
     if (input?.outputPerformance === true) {
@@ -390,7 +390,8 @@ export class Registry implements IRegistry {
   // todo, refactor, this is a mess, see where-used, a lot of the code should be in this method instead
   private parsePrivate(input: IObject) {
     const config = this.getConfig();
-    const result = input.parse(config.getVersion(), config.getSyntaxSetttings().globalMacros, this);
+    const result = input.parse(config.getRelease(), config.getSyntaxSetttings().globalMacros,
+                               this, config.getLanguageVersion(), config.getOpenABAP());
     ParsingPerformance.push(input, result);
   }
 

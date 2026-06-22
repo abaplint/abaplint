@@ -5,7 +5,7 @@ import {MacroContent, Comment, Unknown, MacroCall} from "./statements/_statement
 import {StatementNode} from "../nodes/statement_node";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {TokenNode} from "../nodes/token_node";
-import {Version} from "../../version";
+import {ABAPRelease, LanguageVersion} from "../../version";
 import {StatementParser} from "./statement_parser";
 import {MemoryFile} from "../../files/memory_file";
 import {Lexer} from "../1_lexer/lexer";
@@ -64,13 +64,16 @@ class Macros {
 export class ExpandMacros {
   private readonly macros: Macros;
   private readonly globalMacros: readonly string[];
-  private readonly version: Version;
+  private readonly release: ABAPRelease;
+  private readonly languageVersion: LanguageVersion;
   private readonly reg?: IRegistry;
 
   // "reg" must be supplied if there are cross object macros via INCLUDE
-  public constructor(globalMacros: readonly string[], version: Version, reg?: IRegistry) {
+  public constructor(globalMacros: readonly string[], release: ABAPRelease, reg?: IRegistry,
+                     languageVersion: LanguageVersion = LanguageVersion.Normal) {
     this.macros = new Macros(globalMacros);
-    this.version = version;
+    this.release = release;
+    this.languageVersion = languageVersion;
     this.globalMacros = globalMacros;
     this.reg = reg;
   }
@@ -100,7 +103,7 @@ export class ExpandMacros {
         // todo, workaround for cyclic includes?
         const prog = this.reg?.getObject("PROG", includeName) as Program | undefined;
         if (prog) {
-          prog.parse(this.version, this.globalMacros, this.reg);
+          prog.parse(this.release, this.globalMacros, this.reg, this.languageVersion);
           const includeMainFile = prog.getMainABAPFile();
           if (includeMainFile) {
             // slow, this copies everything,
@@ -193,7 +196,7 @@ export class ExpandMacros {
     const file = new MemoryFile("expand_macros.abap.prog", str);
     const lexerResult = new Lexer().run(file, statement.getFirstToken().getStart());
 
-    const result = new StatementParser(this.version, this.reg).run([lexerResult], this.macros.listMacroNames());
+    const result = new StatementParser(this.release, this.reg, this.languageVersion).run([lexerResult], this.macros.listMacroNames());
     return result[0].statements;
   }
 

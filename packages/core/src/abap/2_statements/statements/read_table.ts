@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, altPrio, optPrio, plus, per, ver} from "../combi";
+import {seq, alt, opt, altPrio, optPrio, plus, per, ver, AlsoIn} from "../combi";
 import {Field, Source, Dynamic, FieldSub, ComponentCompareSimple, ReadTableTarget, SimpleSource2} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {TransportingFields} from "../expressions/transporting_fields";
 
 export class ReadTable implements IStatement {
@@ -31,7 +31,7 @@ export class ReadTable implements IStatement {
                      per(...common));
 
     return seq("READ TABLE",
-               alt(SimpleSource2, ver(Version.v740sp02, Source, Version.OpenABAP)),
+               alt(SimpleSource2, ver(Release.v740sp02, Source, {also: AlsoIn.OpenABAP})),
                opt(perm));
   }
 

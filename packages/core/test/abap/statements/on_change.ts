@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "ON CHANGE OF structure-field.",
@@ -7,3 +8,9 @@ const tests = [
 ];
 
 statementType(tests, "ON CHANGE", Statements.OnChange);
+
+const versionsFail = [
+  {abap: `ON CHANGE OF structure-field.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "ON CHANGE");

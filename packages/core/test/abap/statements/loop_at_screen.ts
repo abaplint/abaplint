@@ -1,6 +1,6 @@
 import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "LOOP AT SCREEN.",
@@ -10,7 +10,7 @@ const tests = [
 statementType(tests, "LOOP AT SCREEN", Statements.LoopAtScreen);
 
 const versionsFail = [
-  {abap: "LOOP AT SCREEN.", ver: Version.Cloud},
+  {abap: "LOOP AT SCREEN.", rel: Release.Newest, langVer: LanguageVersion.Cloud},
 ];
 
 statementVersionFail(versionsFail, "LOOP AT SCREEN");

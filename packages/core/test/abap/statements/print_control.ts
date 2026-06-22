@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "print-control index-line lv_line.",
@@ -9,3 +10,9 @@ const tests = [
 ];
 
 statementType(tests, "PRINT-CONTROL", Statements.PrintControl);
+
+const versionsFail = [
+  {abap: `print-control index-line lv_line.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "PRINT-CONTROL");

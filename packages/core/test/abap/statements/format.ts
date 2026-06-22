@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "FORMAT COLOR 1.",
@@ -23,3 +24,9 @@ const tests = [
 ];
 
 statementType(tests, "FORMAT", Statements.Format);
+
+const versionsFail = [
+  {abap: `FORMAT COLOR 1.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "FORMAT");

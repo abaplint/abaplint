@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, altPrio, per, optPrio} from "../combi";
+import {verNotLang, seq, opt, altPrio, per, optPrio} from "../combi";
 import {Target, Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class CallTransaction implements IStatement {
@@ -25,7 +25,7 @@ export class CallTransaction implements IStatement {
                     optPrio(seq("USING", Source)),
                     opt(perm));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

@@ -1,7 +1,7 @@
-import {seq, tok, ver, altPrio, Expression} from "../combi";
+import {seq, tok, ver, altPrio, Expression, AlsoIn} from "../combi";
 import {ParenRightW, ParenRight, ParenLeft} from "../../1_lexer/tokens";
 import {TargetField} from ".";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class InlineData extends Expression {
@@ -11,6 +11,6 @@ export class InlineData extends Expression {
     const data = seq("DATA", left, TargetField, right);
     const final = seq("FINAL", left, TargetField, right);
 
-    return altPrio(ver(Version.v740sp02, data, Version.OpenABAP), ver(Version.v757, final, Version.OpenABAP)) ;
+    return altPrio(ver(Release.v740sp02, data, {also: AlsoIn.OpenABAP}), ver(Release.v757, final, {also: AlsoIn.OpenABAP})) ;
   }
 }

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import {statementType, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+import {Version, Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "SELECT foo FROM ztable.",
@@ -264,76 +264,76 @@ const tests = [
 statementType(tests, "SELECT loop", Statements.SelectLoop);
 
 const versions = [
-  {abap: `SELECT FROM ztable FIELDS field1 WHERE field2 = @lv_val INTO @DATA(ls_row).`, ver: Version.v750},
-  {abap: `SELECT FROM ztable FIELDS field1, field2 WHERE status = @lv_status INTO @DATA(ls_result).`, ver: Version.v750},
+  {abap: `SELECT FROM ztable FIELDS field1 WHERE field2 = @lv_val INTO @DATA(ls_row).`, rel: Release.v750},
+  {abap: `SELECT FROM ztable FIELDS field1, field2 WHERE status = @lv_status INTO @DATA(ls_result).`, rel: Release.v750},
   {abap: `SELECT a~field1 b~field2 INTO ( lv_val1, lv_val2 ) FROM ztab1 AS a INNER JOIN ztab2 AS b ON a~id = b~id
-    WHERE a~type = '035' AND b~spras EQ sy-langu.`, ver: Version.v750},
+    WHERE a~type = '035' AND b~spras EQ sy-langu.`, rel: Release.v750},
   {abap: `SELECT a~field1 b~field2 INTO ( lv_val1, lv_val2 ) FROM ztab1 AS a INNER JOIN ztab2 AS b ON a~id = b~id
-    WHERE a~type = '035' AND b~spras EQ sy-langu.`, ver: Version.OpenABAP},
+    WHERE a~type = '035' AND b~spras EQ sy-langu.`, rel: Version.OpenABAP},
 ];
 
 statementVersionOk(versions, "SELECT loop", Statements.SelectLoop);
 
 statementVersionOk([
-  {abap: `SELECT \\_assoc1-col FROM ztab1 INTO @DATA(r).`, ver: Version.v740sp05},
-  {abap: `SELECT key_property, \\_assoc1-col FROM ztab1 INTO @DATA(r).`, ver: Version.v740sp05},
-  {abap: `SELECT \\_assoc1-col AS c FROM ztab1 INTO @DATA(r).`, ver: Version.v740sp05},
-  {abap: `SELECT \\_assoc1\\_assoc2-col FROM ztab1 INTO @DATA(r).`, ver: Version.v740sp05},
-  {abap: `SELECT t1~\\_assoc1-col FROM ztab1 AS t1 INTO @DATA(r).`, ver: Version.v740sp05},
-  {abap: `SELECT \\_assoc1[ key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, ver: Version.v751},
-  {abap: `SELECT \\_assoc1[ WHERE key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, ver: Version.v751},
-  {abap: `SELECT \\_assoc1[ INNER WHERE key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, ver: Version.v751},
-  {abap: `SELECT \\_assoc1[ ONE TO ONE ]-col FROM ztab1 INTO @DATA(r).`, ver: Version.v751},
-  {abap: `SELECT \\_assoc1[ LEFT OUTER WHERE key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, ver: Version.v751},
-  {abap: `SELECT * FROM ztab1 \\_assoc1 WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v740sp05},
-  {abap: `SELECT * FROM ztab1\\_assoc1 WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v740sp05},
-  {abap: `SELECT * FROM ztab1 \\_assoc1( col1 = 'AB', col2 = 3 ) WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v751},
-  {abap: `SELECT * FROM ztab1 \\_assoc1[ col4 = @sy-uname ] WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v751},
-  {abap: `SELECT * FROM ztab1 \\_assoc1[ INNER ] WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v751},
-  {abap: `SELECT * FROM ztab1 \\_assoc1 \\_assoc2 WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v740sp05},
+  {abap: `SELECT \\_assoc1-col FROM ztab1 INTO @DATA(r).`, rel: Release.v740sp05},
+  {abap: `SELECT key_property, \\_assoc1-col FROM ztab1 INTO @DATA(r).`, rel: Release.v740sp05},
+  {abap: `SELECT \\_assoc1-col AS c FROM ztab1 INTO @DATA(r).`, rel: Release.v740sp05},
+  {abap: `SELECT \\_assoc1\\_assoc2-col FROM ztab1 INTO @DATA(r).`, rel: Release.v740sp05},
+  {abap: `SELECT t1~\\_assoc1-col FROM ztab1 AS t1 INTO @DATA(r).`, rel: Release.v740sp05},
+  {abap: `SELECT \\_assoc1[ key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, rel: Release.v751},
+  {abap: `SELECT \\_assoc1[ WHERE key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, rel: Release.v751},
+  {abap: `SELECT \\_assoc1[ INNER WHERE key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, rel: Release.v751},
+  {abap: `SELECT \\_assoc1[ ONE TO ONE ]-col FROM ztab1 INTO @DATA(r).`, rel: Release.v751},
+  {abap: `SELECT \\_assoc1[ LEFT OUTER WHERE key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, rel: Release.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1 WHERE col4 = @sy-uname INTO @DATA(r).`, rel: Release.v740sp05},
+  {abap: `SELECT * FROM ztab1\\_assoc1 WHERE col4 = @sy-uname INTO @DATA(r).`, rel: Release.v740sp05},
+  {abap: `SELECT * FROM ztab1 \\_assoc1( col1 = 'AB', col2 = 3 ) WHERE col4 = @sy-uname INTO @DATA(r).`, rel: Release.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ col4 = @sy-uname ] WHERE col4 = @sy-uname INTO @DATA(r).`, rel: Release.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ INNER ] WHERE col4 = @sy-uname INTO @DATA(r).`, rel: Release.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1 \\_assoc2 WHERE col4 = @sy-uname INTO @DATA(r).`, rel: Release.v740sp05},
 ], "SELECT loop association path expressions", Statements.SelectLoop);
 
 statementVersionFail([
-  {abap: `SELECT * FROM ztab1 \\_assoc1 ( col1 = 'AB' ) WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v751},
-  {abap: `SELECT * FROM ztab1 \\_assoc1 [ col4 = @sy-uname ] WHERE col4 = @sy-uname INTO @DATA(r).`, ver: Version.v751},
-  {abap: `SELECT \\_assoc1 [ key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, ver: Version.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1 ( col1 = 'AB' ) WHERE col4 = @sy-uname INTO @DATA(r).`, rel: Release.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1 [ col4 = @sy-uname ] WHERE col4 = @sy-uname INTO @DATA(r).`, rel: Release.v751},
+  {abap: `SELECT \\_assoc1 [ key1 < 3 ]-col FROM ztab1 INTO @DATA(r).`, rel: Release.v751},
 ], "SELECT loop association path invalid spacing");
 
 const privilegedVersions = [
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id PRIVILEGED ACCESS.`, ver: Version.v758},
-  {abap: `SELECT field APPENDING TABLE lt FROM ztab PACKAGE SIZE 10 WHERE id = lv_id PRIVILEGED ACCESS.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id PRIVILEGED ACCESS.`, rel: Release.v758},
+  {abap: `SELECT field APPENDING TABLE lt FROM ztab PACKAGE SIZE 10 WHERE id = lv_id PRIVILEGED ACCESS.`, rel: Release.v758},
 ];
 
 statementVersionOk(privilegedVersions, "SELECT loop privileged access", Statements.SelectLoop);
 
 const privilegedVersionsFail = [
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id PRIVILEGED ACCESS.`, ver: Version.v756},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id PRIVILEGED ACCESS.`, ver: Version.v757},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id PRIVILEGED ACCESS.`, rel: Release.v756},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id PRIVILEGED ACCESS.`, rel: Release.v757},
 ];
 
 statementVersionFail(privilegedVersionsFail, "SELECT loop privileged access");
 
 const optionsVersions = [
-  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO @DATA(wa) OPTIONS USING ALL CLIENTS.`, ver: Version.v758},
-  {abap: `SELECT * FROM veri_VER56133_cs ORDER BY PRIMARY KEY INTO @DATA(wa2) OPTIONS USING ALL CLIENTS.`, ver: Version.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id OPTIONS PRIVILEGED ACCESS.`, ver: Version.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id OPTIONS BYPASSING BUFFER.`, ver: Version.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id OPTIONS CONNECTION foo.`, ver: Version.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS.`, ver: Version.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS BYPASSING BUFFER.`, ver: Version.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS BYPASSING BUFFER.`, ver: Version.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS CONNECTION foo.`, ver: Version.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS BYPASSING BUFFER CONNECTION foo.`, ver: Version.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS PRIVILEGED ACCESS BYPASSING BUFFER.`, ver: Version.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS PRIVILEGED ACCESS CONNECTION foo.`, ver: Version.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS BYPASSING BUFFER CONNECTION foo.`, ver: Version.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS PRIVILEGED ACCESS BYPASSING BUFFER CONNECTION foo.`, ver: Version.v758},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO @DATA(wa) OPTIONS USING ALL CLIENTS.`, rel: Release.v758},
+  {abap: `SELECT * FROM veri_VER56133_cs ORDER BY PRIMARY KEY INTO @DATA(wa2) OPTIONS USING ALL CLIENTS.`, rel: Release.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id OPTIONS PRIVILEGED ACCESS.`, rel: Release.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id OPTIONS BYPASSING BUFFER.`, rel: Release.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 WHERE id = lv_id OPTIONS CONNECTION foo.`, rel: Release.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS.`, rel: Release.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS BYPASSING BUFFER.`, rel: Release.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS BYPASSING BUFFER.`, rel: Release.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS CONNECTION foo.`, rel: Release.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS BYPASSING BUFFER CONNECTION foo.`, rel: Release.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS PRIVILEGED ACCESS BYPASSING BUFFER.`, rel: Release.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS PRIVILEGED ACCESS CONNECTION foo.`, rel: Release.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS BYPASSING BUFFER CONNECTION foo.`, rel: Release.v758},
+  {abap: `SELECT * FROM ztab INTO TABLE lt_tab PACKAGE SIZE 100 OPTIONS PRIVILEGED ACCESS BYPASSING BUFFER CONNECTION foo.`, rel: Release.v758},
 ];
 
 statementVersionOk(optionsVersions, "SELECT loop OPTIONS clause", Statements.SelectLoop);
 
 const optionsVersionsFail = [
-  {abap: `SELECT * FROM ztab INTO @DATA(wa) OPTIONS USING ALL CLIENTS.`, ver: Version.v757},
+  {abap: `SELECT * FROM ztab INTO @DATA(wa) OPTIONS USING ALL CLIENTS.`, rel: Release.v757},
 ];
 
 statementVersionFail(optionsVersionsFail, "SELECT loop OPTIONS clause");
@@ -390,7 +390,7 @@ const isLoopWindowTests = [
   `SELECT SUM( amount ) OVER( PARTITION BY grp ) AS running FROM ztab INTO @wa.`,
   `SELECT ROW_NUMBER( ) OVER( ORDER BY col ) AS rn FROM ztab INTO @wa WHERE id = 1.`,
 ];
-statementVersionOk(isLoopWindowTests.map(abap => ({abap, ver: Version.v757})),
+statementVersionOk(isLoopWindowTests.map(abap => ({abap, rel: Release.v757})),
                    "isSelectLoop → SelectLoop (window functions)", Statements.SelectLoop);
 
 const isNotLoopPlainAggTests = [
@@ -398,3 +398,9 @@ const isNotLoopPlainAggTests = [
   `SELECT MAX( val ) MIN( val ) FROM ztab INTO (lv_max, lv_min).`,
 ];
 statementType(isNotLoopPlainAggTests, "isSelectLoop → Select (plain aggregates, no OVER)", Statements.Select);
+
+const clientSpecifiedFail = [
+  {abap: `SELECT * FROM ztab CLIENT SPECIFIED INTO @wa.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(clientSpecifiedFail, "SELECT LOOP CLIENT SPECIFIED");

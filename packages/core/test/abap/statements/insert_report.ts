@@ -1,6 +1,6 @@
 import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "INSERT REPORT is_progdir-name FROM it_source STATE 'I' PROGRAM TYPE is_progdir-subc.",
@@ -17,7 +17,8 @@ const tests = [
 statementType(tests, "INSERT REPORT", Statements.InsertReport);
 
 const versionsFail = [
-  {abap: "INSERT REPORT lv_prog FROM lt_tab VERSION 'X'.", ver: Version.v702},
+  {abap: "INSERT REPORT lv_prog FROM lt_tab VERSION 'X'.", rel: Release.v702},
+  {abap: `INSERT REPORT prog FROM lt_source.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
 ];
 
-statementVersionFail(versionsFail, "APPEND");
+statementVersionFail(versionsFail, "INSERT REPORT");

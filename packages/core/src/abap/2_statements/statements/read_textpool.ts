@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, per} from "../combi";
+import {verNotLang, seq, per} from "../combi";
 import {SimpleTarget, Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class ReadTextpool implements IStatement {
@@ -15,7 +15,7 @@ export class ReadTextpool implements IStatement {
                     Source,
                     per(into, language, state));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

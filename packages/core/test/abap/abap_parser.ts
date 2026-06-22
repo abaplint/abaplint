@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {ABAPParser} from "../../src/abap/abap_parser";
 import {IFile} from "../../src/files/_ifile";
 import {Unknown} from "../../src/abap/2_statements/statements/_statement";
-import {defaultVersion} from "../../src/version";
+import {defaultRelease} from "../../src/version";
 import {ABAPFile} from "../../src/abap/abap_file";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src";
@@ -39,7 +39,7 @@ describe("abap_parser", () => {
   END-OF-DEFINITION.
     `));
 
-    const {issues, output} = new ABAPParser(defaultVersion, []).parse(files);
+    const {issues, output} = new ABAPParser({release: defaultRelease}).parse(files);
     expect(issues.length).to.equal(0);
     expect(output.length).to.equal(files.length);
     expectNoUnknown(output);
@@ -59,7 +59,7 @@ CASE lv_bar.
   _bar 'a'.
 ENDCASE.`));
 
-    const {issues, output} = new ABAPParser(defaultVersion, []).parse(files);
+    const {issues, output} = new ABAPParser({release: defaultRelease}).parse(files);
     expect(issues.length).to.equal(0);
     expect(output.length).to.equal(files.length);
     expectNoUnknown(output);
@@ -70,7 +70,7 @@ ENDCASE.`));
 
     files.push(new MemoryFile("zcl_chaining.prog.abap", `data: : bar type c.`));
 
-    const {issues, output} = new ABAPParser(defaultVersion, []).parse(files);
+    const {issues, output} = new ABAPParser({release: defaultRelease}).parse(files);
     expect(issues.length).to.equal(0);
     expect(output.length).to.equal(files.length);
     expectNoUnknown(output);
@@ -84,7 +84,7 @@ ENDCASE.`));
 
     const files = [new MemoryFile("zsdfdsfsd.prog.abap", abap)];
 
-    const {issues, output} = new ABAPParser(defaultVersion, []).parse(files);
+    const {issues, output} = new ABAPParser({release: defaultRelease}).parse(files);
     expect(issues.length).to.equal(0);
     expect(output.length).to.equal(files.length);
     expect(output[0].getStructure()).to.not.equal(undefined);
@@ -101,7 +101,7 @@ ENDCASE.`));
 
     const files = [new MemoryFile("macrointype.prog.abap", abap)];
 
-    const {issues, output} = new ABAPParser(defaultVersion, []).parse(files);
+    const {issues, output} = new ABAPParser({release: defaultRelease}).parse(files);
     expect(issues.length).to.equal(0);
     expect(output.length).to.equal(files.length);
     expect(output[0].getStructure()).to.not.equal(undefined);
@@ -120,7 +120,7 @@ ENDCLASS.`;
 
     const files = [new MemoryFile("macrointype.prog.abap", abap)];
 
-    new ABAPParser(defaultVersion, []).parse(files);
+    new ABAPParser({release: defaultRelease}).parse(files);
   });
 
   it("parsing, dynpro logic", async () => {
@@ -133,7 +133,7 @@ PROCESS AFTER INPUT.
 
     const files = [new MemoryFile("zfoobar.fugr.screen_0500.abap", abap)];
 
-    new ABAPParser(defaultVersion, []).parse(files);
+    new ABAPParser({release: defaultRelease}).parse(files);
   });
 
   it.skip("macro via top include other", async () => {

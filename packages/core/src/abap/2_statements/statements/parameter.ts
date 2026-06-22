@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, altPrio, per, regex as reg, optPrio} from "../combi";
+import {verNotLang, str, seq, opt, altPrio, per, regex as reg, optPrio} from "../combi";
 import {Source, Constant, FieldChain, Dynamic, Field, FieldSub, RadioGroupName, Modif, TypeName, SimpleSource1, DatabaseTable, ConstantFieldLength, FieldOffset, FieldLength} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Parameter implements IStatement {
@@ -44,7 +44,7 @@ export class Parameter implements IStatement {
                     opt(ConstantFieldLength),
                     opt(perm));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

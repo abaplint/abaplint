@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "READ REPORT ls_include INTO rt_source STATE 'A'.",
@@ -9,3 +10,9 @@ const tests = [
 ];
 
 statementType(tests, "READ REPORT", Statements.ReadReport);
+
+const versionsFail = [
+  {abap: `READ REPORT ls_include INTO rt_source STATE 'A'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "READ REPORT");

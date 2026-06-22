@@ -3,7 +3,7 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Version} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {StatementNode} from "../abap/nodes";
 import {Comment} from "../abap/2_statements/statements/_statement";
@@ -49,10 +49,11 @@ ENDIF.`,
       return [];
     }
 
-    const vers = this.reg.getConfig().getVersion();
-    if (vers === Version.OpenABAP) {
+    const release = this.reg.getConfig().getRelease();
+    const langVers = this.reg.getConfig().getLanguageVersion();
+    if (this.reg.getConfig().getOpenABAP()) {
       return [];
-    } else if (vers < Version.v740sp02 && vers !== Version.Cloud) {
+    } else if (!releaseAtLeast(release, Release.v740sp02) && langVers !== LanguageVersion.Cloud) {
       return [];
     }
 

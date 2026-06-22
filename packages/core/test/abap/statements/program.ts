@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "PROGRAM zfoobar.",
@@ -14,3 +15,9 @@ const tests = [
 ];
 
 statementType(tests, "PROGRAM", Statements.Program);
+
+const versionsFail = [
+  {abap: `PROGRAM zfoobar.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "PROGRAM");

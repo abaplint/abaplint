@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, ver, tok, plus, alt, optPrio, opt, per} from "../combi";
+import {seq, ver, tok, plus, alt, optPrio, opt, per, AlsoIn} from "../combi";
 import {EMLEntityPath, EntityAssociation, NamespaceSimpleName, SimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 
 export class ReadEntities implements IStatement {
@@ -32,7 +32,7 @@ export class ReadEntities implements IStatement {
     const by = seq("BY", EMLEntityPath, fields);
     const sub = seq(alt(all, fields, from, by, byall), result);
     const single = seq("ENTITY", opt("IN LOCAL MODE"), alt(NamespaceSimpleName, EntityAssociation), plus(sub), optPrio(failed), optPrio(reported));
-    return ver(Version.v754, seq("READ", alt(s, single)), Version.OpenABAP);
+    return ver(Release.v754, seq("READ", alt(s, single)), {also: AlsoIn.OpenABAP});
   }
 
 }

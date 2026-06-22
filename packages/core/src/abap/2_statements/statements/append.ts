@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {opt, seq, alt, altPrio, optPrio, ver} from "../combi";
-import {Version} from "../../../version";
+import {opt, seq, alt, altPrio, optPrio, ver, AlsoIn} from "../combi";
+import {Release} from "../../../version";
 import {FSTarget, Target, Field, Source, SimpleSource4} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -15,7 +15,7 @@ export class Append implements IStatement {
     const toIndex = seq("TO", Source);
     const toTarget = seq("TO", Target);
 
-    const src = alt(SimpleSource4, ver(Version.v740sp02, Source, Version.OpenABAP));
+    const src = alt(SimpleSource4, ver(Release.v740sp02, Source, {also: AlsoIn.OpenABAP}));
 
     return seq("APPEND",
                altPrio("INITIAL LINE", seq(optPrio("LINES OF"), src)),

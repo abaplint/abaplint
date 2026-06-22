@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {seq, verNot} from "../combi";
-import {Version} from "../../../version";
+import {seq, verNotLang} from "../combi";
+import {LanguageVersion} from "../../../version";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -12,7 +12,7 @@ export class AddCorresponding implements IStatement {
                     "TO",
                     Target);
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

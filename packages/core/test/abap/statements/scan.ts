@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "SCAN ABAP-SOURCE it_code TOKENS INTO lt_tokens STATEMENTS INTO lt_statements WITH ANALYSIS.",
@@ -165,3 +166,9 @@ const tests = [
 ];
 
 statementType(tests, "SCAN", Statements.Scan);
+
+const versionsFail = [
+  {abap: `SCAN ABAP-SOURCE it_code TOKENS INTO lt_tokens STATEMENTS INTO lt_stmts.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "SCAN");

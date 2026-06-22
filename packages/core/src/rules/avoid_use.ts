@@ -5,7 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {TypeTable, TypeTableKey} from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-import {Version} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {EditHelper, IEdit} from "../edit_helper";
 import {Comment} from "../abap/2_statements/statements/_statement";
@@ -113,8 +113,8 @@ BREAK points`,
       }
 
       if (this.conf.defaultKey
-          && (this.reg.getConfig().getVersion() >= Version.v740sp02
-          || this.reg.getConfig().getVersion() === Version.Cloud)
+          && (releaseAtLeast(this.reg.getConfig().getRelease(), Release.v740sp02)
+          || this.reg.getConfig().getLanguageVersion() === LanguageVersion.Cloud)
           && (statement instanceof Statements.Data || statement instanceof Statements.Type)) {
         const tt = statementNode.findFirstExpression(TypeTable)?.findDirectExpression(TypeTableKey);
         const token = tt?.findDirectTokenByText("DEFAULT");

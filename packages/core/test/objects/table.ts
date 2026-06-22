@@ -4,7 +4,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Table, EnhancementCategory, TableCategory} from "../../src/objects";
 import {GenericObjectReferenceType, StructureType, TableType, UnknownType, VoidType} from "../../src/abap/types/basic";
 import {Config} from "../../src/config";
-import {Version} from "../../src";
+import {LanguageVersion} from "../../src";
 
 describe("Table, parse XML", () => {
   const xml1 =
@@ -894,7 +894,7 @@ describe("Table, parse XML", () => {
     const reg = new Registry().addFile(new MemoryFile("zabapgit.tabl.xml", xml2));
 
     const config = reg.getConfig().get();
-    config.syntax.version = Version.Cloud;
+    config.syntax.languageVersion = LanguageVersion.Cloud;
     reg.setConfig(new Config(JSON.stringify(config)));
 
     await reg.parseAsync();

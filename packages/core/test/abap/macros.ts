@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {StatementParser} from "../../src/abap/2_statements/statement_parser";
 import * as Statements from "../../src/abap/2_statements/statements";
-import {defaultVersion} from "../../src/version";
+import {defaultRelease} from "../../src/version";
 import {Lexer} from "../../src/abap/1_lexer/lexer";
 import {MemoryFile} from "../../src/files/memory_file";
 
@@ -21,7 +21,7 @@ END-OF-DEFINITION.
 _if.
 _endif.`;
     const lexerResult = new Lexer().run(new MemoryFile("zmacros1.prog.abap", abap));
-    const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
+    const result = new StatementParser(defaultRelease).run([lexerResult], [])[0];
     expect(result.statements.length).to.equal(10);
   });
 
@@ -32,7 +32,7 @@ DEFINE _macro.
 END-OF-DEFINITION.
 _macro '&1'.`;
     const lexerResult = new Lexer().run(new MemoryFile("zmacros1.prog.abap", abap));
-    const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
+    const result = new StatementParser(defaultRelease).run([lexerResult], [])[0];
     expect(result.statements.length).to.equal(5);
   });
 
@@ -49,7 +49,7 @@ FORM moo.
   sub.
 ENDFORM.`;
     const lexerResult = new Lexer().run(new MemoryFile("zmacros3.prog.abap", abap));
-    const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
+    const result = new StatementParser(defaultRelease).run([lexerResult], [])[0];
     expect(result.statements.filter(s => s.get() instanceof Statements.Write).length).to.equal(3);
   });
 
@@ -70,7 +70,7 @@ FORM moo.
   top.
 ENDFORM.`;
     const lexerResult = new Lexer().run(new MemoryFile("zmacros3.prog.abap", abap));
-    const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
+    const result = new StatementParser(defaultRelease).run([lexerResult], [])[0];
     expect(result.statements.filter(s => s.get() instanceof Statements.Write).length).to.equal(3);
   });
 
@@ -89,7 +89,7 @@ FORM moo.
   top f.
 ENDFORM.`;
     const lexerResult = new Lexer().run(new MemoryFile("zmacros3.prog.abap", abap));
-    const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
+    const result = new StatementParser(defaultRelease).run([lexerResult], [])[0];
     const writes = result.statements.filter(s => s.get() instanceof Statements.Write);
     expect(writes.length).to.equal(1);
     expect(writes[0].concatTokens()).to.include("write foo");
@@ -108,7 +108,7 @@ END-OF-DEFINITION.
 
 top.`;
     const lexerResult = new Lexer().run(new MemoryFile("zmacros3.prog.abap", abap));
-    const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
+    const result = new StatementParser(defaultRelease).run([lexerResult], [])[0];
     const clears = result.statements.filter(s => s.get() instanceof Statements.Clear);
     expect(clears.length).to.equal(2);
   });

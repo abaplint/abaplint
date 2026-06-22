@@ -4,7 +4,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import * as Structures from "../abap/3_structures/structures";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Version} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
 import {ABAPFile} from "../abap/abap_file";
@@ -51,8 +51,9 @@ DATA(fsdf) = xsdbool( foo <> bar ).`,
     const issues: Issue[] = [];
     const stru = file.getStructure();
 
-    const version = this.reg.getConfig().getVersion();
-    if (stru === undefined || (version < Version.v702 && version !== Version.Cloud)) {
+    const release = this.reg.getConfig().getRelease();
+    const langVersion = this.reg.getConfig().getLanguageVersion();
+    if (stru === undefined || (!releaseAtLeast(release, Release.v702) && langVersion !== LanguageVersion.Cloud)) {
       return [];
     }
 
@@ -94,8 +95,8 @@ DATA(fsdf) = xsdbool( foo <> bar ).`,
       const elseSource = elseStatement.findFirstExpression(Expressions.Source)?.concatTokens().toUpperCase();
       if ((bodySource === "ABAP_TRUE" && elseSource === "ABAP_FALSE")
           || (bodySource === "ABAP_FALSE" && elseSource === "ABAP_TRUE")) {
-        const func = (this.reg.getConfig().getVersion() >= Version.v740sp08
-          || this.reg.getConfig().getVersion() === Version.Cloud) ? "xsdbool" : "boolc";
+        const func = (releaseAtLeast(this.reg.getConfig().getRelease(), Release.v740sp08)
+          || this.reg.getConfig().getLanguageVersion() === LanguageVersion.Cloud) ? "xsdbool" : "boolc";
         const negate = bodySource === "ABAP_FALSE";
         const message = `Use ${func} instead of IF` + (negate ? ", negate expression" : "");
         const start = i.getFirstToken().getStart();
@@ -112,7 +113,7 @@ DATA(fsdf) = xsdbool( foo <> bar ).`,
     }
 
 
-    if (version >= Version.v740sp08 || version === Version.Cloud) {
+    if (releaseAtLeast(release, Release.v740sp08) || langVersion === LanguageVersion.Cloud) {
       for (const b of stru.findAllExpressions(Expressions.CondBody)) {
         const concat = b.concatTokens().toUpperCase();
         if (concat.endsWith(" THEN ABAP_TRUE ELSE ABAP_FALSE")

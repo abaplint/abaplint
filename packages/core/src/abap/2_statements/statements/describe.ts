@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, alt, per, altPrio} from "../combi";
+import {verNotLang, seq, opt, alt, per, altPrio} from "../combi";
 import {Target, Source, FieldChain} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Describe implements IStatement {
@@ -50,7 +50,7 @@ export class Describe implements IStatement {
 
     const ret = seq("DESCRIBE", altPrio(table, field, distance, list));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

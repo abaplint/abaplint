@@ -1,6 +1,7 @@
+import {Release} from "../../../src/version";
 import {statementType, statementVersion, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+
 
 const tests = [
   "ASSIGN COMPONENT ls_field-name OF STRUCTURE ig_file TO <lv_field>.",
@@ -43,39 +44,39 @@ const tests = [
 statementType(tests, "ASSIGN", Statements.Assign);
 
 const versions = [
-  {abap: "ASSIGN entity->* TO FIELD-SYMBOL(<entity>).", ver: Version.v740sp02},
-  {abap: "ASSIGN it_cols_width[ KEY primary_key col = lv_col ] TO FIELD-SYMBOL(<ls_cols_width>).", ver: Version.v740sp02},
-  {abap: "ASSIGN lt_table[ table_line->guid = lv_guid ] TO <target>.", ver: Version.v740sp02},
-  {abap: "ASSIGN COMPONENT li_field->get_name( ) OF STRUCTURE ls_item TO <lv_field>.", ver: Version.v740sp02},
+  {abap: "ASSIGN entity->* TO FIELD-SYMBOL(<entity>).", rel: Release.v740sp02},
+  {abap: "ASSIGN it_cols_width[ KEY primary_key col = lv_col ] TO FIELD-SYMBOL(<ls_cols_width>).", rel: Release.v740sp02},
+  {abap: "ASSIGN lt_table[ table_line->guid = lv_guid ] TO <target>.", rel: Release.v740sp02},
+  {abap: "ASSIGN COMPONENT li_field->get_name( ) OF STRUCTURE ls_item TO <lv_field>.", rel: Release.v740sp02},
 ];
 
 statementVersion(versions, "ASSIGN", Statements.Assign);
 
 const v757 = [
-  {abap: "ASSIGN struc-(comp) TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN struc-(comp)-field TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN struc-(comp+off(len)) TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN ref->(attr) TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN ref->(attr)->* TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN struc-(comp)->(attr)->* TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN ref->('comp') TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN ref->(`comp`) TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN struc-('comp') TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN ref->(comp_name->*) TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN itab[ 1 ]->(dyn_cmp) TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN itab[ 1 ]->(dyn_cmp)->* TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN ref->(comp_name)-(comp2) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN struc-(comp) TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN struc-(comp)-field TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN struc-(comp+off(len)) TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN ref->(attr) TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN ref->(attr)->* TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN struc-(comp)->(attr)->* TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN ref->('comp') TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN ref->(`comp`) TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN struc-('comp') TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN ref->(comp_name->*) TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN itab[ 1 ]->(dyn_cmp) TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN itab[ 1 ]->(dyn_cmp)->* TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN ref->(comp_name)-(comp2) TO <fs>.", rel: Release.v757},
 ];
 
 statementVersionOk(v757, "ASSIGN dynamic component/ref access v757", Statements.Assign);
 
 const v757fail = [
-  {abap: "ASSIGN ref->( comp ) TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN ref->( comp) TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN ref->(comp ) TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN struc-( comp ) TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN struc-( comp) TO <fs>.", ver: Version.v757},
-  {abap: "ASSIGN struc-(comp ) TO <fs>.", ver: Version.v757},
+  {abap: "ASSIGN ref->( comp ) TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN ref->( comp) TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN ref->(comp ) TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN struc-( comp ) TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN struc-( comp) TO <fs>.", rel: Release.v757},
+  {abap: "ASSIGN struc-(comp ) TO <fs>.", rel: Release.v757},
 ];
 
 statementVersionFail(v757fail, "ASSIGN dynamic access with internal whitespace");

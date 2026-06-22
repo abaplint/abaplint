@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, optPrio, opt, alt} from "../combi";
+import {verNotLang, seq, optPrio, opt, alt} from "../combi";
 import {Source, Constant, Field, OLEExporting} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class SetProperty implements IStatement {
@@ -16,7 +16,7 @@ export class SetProperty implements IStatement {
                     opt(OLEExporting),
                     opt("QUEUEONLY"));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

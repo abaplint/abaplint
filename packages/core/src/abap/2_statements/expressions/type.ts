@@ -1,7 +1,7 @@
 import {seq, optPrio, Expression, altPrio, ver} from "../combi";
 import {TypeName, Default, FieldChain, LOBHandle, ComponentName} from ".";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class Type extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -18,7 +18,7 @@ export class Type extends Expression {
                          seq("REF TO", typeType),
                          seq(typeType, optPrio(LOBHandle)));
 
-    const ret = seq(altPrio(seq("LIKE", like), seq("TYPE", type)), optPrio(ver(Version.v755, indicators)));
+    const ret = seq(altPrio(seq("LIKE", like), seq("TYPE", type)), optPrio(ver(Release.v755, indicators)));
 
     return ret;
   }

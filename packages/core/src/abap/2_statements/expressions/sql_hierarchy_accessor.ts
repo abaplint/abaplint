@@ -1,6 +1,6 @@
 import {seq, optPrio, altPrio, Expression, ver, tok} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {DatabaseTable, SQLCond, SQLSource} from ".";
 
@@ -18,7 +18,7 @@ export class SQLHierarchyAccessor extends Expression {
 
     const name = altPrio("HIERARCHY_DESCENDANTS", "HIERARCHY_ANCESTORS", "HIERARCHY_SIBLINGS");
 
-    return ver(Version.v750, seq(
+    return ver(Release.v750, seq(
       name,
       tok(ParenLeftW),
       accessor,

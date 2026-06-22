@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "free memory id ls_structure.",
@@ -8,3 +9,9 @@ const tests = [
 ];
 
 statementType(tests, "FREE MEMORY", Statements.FreeMemory);
+
+const versionsFail = [
+  {abap: `free memory id ls_structure.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "FREE MEMORY");

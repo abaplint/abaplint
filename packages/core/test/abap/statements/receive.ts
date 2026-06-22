@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "RECEIVE RESULTS FROM FUNCTION 'ZFOOBAR'\n" +
@@ -30,3 +31,15 @@ const tests = [
 ];
 
 statementType(tests, "RECEIVE", Statements.Receive);
+
+const versionsFail = [
+  {abap: `RECEIVE RESULTS FROM FUNCTION 'ZFOOBAR'
+ IMPORTING
+   ev_foo      = lv_del
+ EXCEPTIONS
+   initial_guid     = 1
+   no_authorization = 2
+   others           = 3.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "RECEIVE");

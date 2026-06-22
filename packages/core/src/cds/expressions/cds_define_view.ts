@@ -1,5 +1,5 @@
 import {CDSAnnotation} from ".";
-import {Version} from "../..";
+import {Release} from "../..";
 import {Expression, seq, star, opt, ver} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSName} from "./cds_name";
@@ -13,7 +13,7 @@ export class CDSDefineView extends Expression {
                opt("DEFINE"),
                opt("ROOT"),
                "VIEW",
-               ver(Version.v755, opt("ENTITY")),
+               ver(Release.v755, opt("ENTITY")),
                CDSName,
                opt(columnAlias),
                opt(CDSWithParameters),

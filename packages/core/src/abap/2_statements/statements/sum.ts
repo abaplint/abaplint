@@ -1,12 +1,12 @@
 import {IStatement} from "./_statement";
-import {verNot} from "../combi";
-import {Version} from "../../../version";
+import {verNotLang} from "../combi";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Sum implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    return verNot(Version.Cloud, "SUM");
+    return verNotLang(LanguageVersion.Cloud, "SUM");
   }
 
 }

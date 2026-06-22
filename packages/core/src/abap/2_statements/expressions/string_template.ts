@@ -1,6 +1,6 @@
 import {tok, ver, seq, starPrio, altPrio, Expression} from "../combi";
 import * as Tokens from "../../1_lexer/tokens";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {StringTemplateSource} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -12,6 +12,6 @@ export class StringTemplate extends Expression {
                      starPrio(seq(tok(Tokens.StringTemplateMiddle), StringTemplateSource)),
                      tok(Tokens.StringTemplateEnd));
 
-    return ver(Version.v702, altPrio(nest, tok(Tokens.StringTemplate)));
+    return ver(Release.v702, altPrio(nest, tok(Tokens.StringTemplate)));
   }
 }

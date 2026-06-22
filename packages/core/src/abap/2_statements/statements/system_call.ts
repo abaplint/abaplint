@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, regex as reg, plus, altPrio} from "../combi";
-import {Version} from "../../../version";
+import {verNotLang, seq, regex as reg, plus, altPrio} from "../combi";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
@@ -15,7 +15,7 @@ export class SystemCall implements IStatement {
 
     const ret = seq("SYSTEM-CALL", altPrio(objmgr, did, plus(anyy)));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

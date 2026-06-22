@@ -1,6 +1,6 @@
 import {statementType, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "MESSAGE 'Saved' TYPE 'S'.",
@@ -45,27 +45,27 @@ const tests = [
 statementType(tests, "MESSAGE", Statements.Message);
 
 const testsVersionOk = [
-  {abap: `MESSAGE 'sdf' TYPE 'S'.`, ver: Version.v702},
-  {abap: `MESSAGE e100(/foo/bar) WITH <fs>-sdf <fs>-sdf <fs>-sdf INTO l_message.`, ver: Version.Cloud},
-  {abap: `MESSAGE e099(zcustom) RAISING input_not_valid.`, ver: Version.Cloud},
-  {abap: `MESSAGE s443(zcustom) INTO l_message WITH lv_lines |sdfsdf|.`, ver: Version.Cloud},
+  {abap: `MESSAGE 'sdf' TYPE 'S'.`, rel: Release.v702},
+  {abap: `MESSAGE e100(/foo/bar) WITH <fs>-sdf <fs>-sdf <fs>-sdf INTO l_message.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `MESSAGE e099(zcustom) RAISING input_not_valid.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `MESSAGE s443(zcustom) INTO l_message WITH lv_lines |sdfsdf|.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
   {abap: `MESSAGE ID l_return-id
   TYPE l_return-type
   NUMBER l_return-number
   WITH l_return-message_v1 l_return-message_v2 l_return-message_v3 l_return-message_v4
-  INTO l_message.`, ver: Version.Cloud},
+  INTO l_message.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
 ];
 
 statementVersionOk(testsVersionOk, "MESSAGE", Statements.Message);
 
 const testsVersionFail = [
-  {abap: `MESSAGE |sdf| TYPE 'S'.`, ver: Version.v702},
-  {abap: `message e101(00) with io_cx_excel->if_message~get_text( ) into lv_dummy.`, ver: Version.v702},
-  {abap: `MESSAGE s000(oo) WITH mv_text rv_result.`, ver: Version.Cloud},
-  {abap: `MESSAGE ix_exception TYPE 'S' DISPLAY LIKE 'E'.`, ver: Version.Cloud},
-  {abap: `MESSAGE 'Commit was successful' TYPE 'S'.`, ver: Version.Cloud},
-  {abap: `MESSAGE lv_text TYPE 'S'.`, ver: Version.Cloud},
-  {abap: `MESSAGE s000(oo) WITH mv_text rv_result.`, ver: Version.Cloud},
+  {abap: `MESSAGE |sdf| TYPE 'S'.`, rel: Release.v702},
+  {abap: `message e101(00) with io_cx_excel->if_message~get_text( ) into lv_dummy.`, rel: Release.v702},
+  {abap: `MESSAGE s000(oo) WITH mv_text rv_result.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `MESSAGE ix_exception TYPE 'S' DISPLAY LIKE 'E'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `MESSAGE 'Commit was successful' TYPE 'S'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `MESSAGE lv_text TYPE 'S'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `MESSAGE s000(oo) WITH mv_text rv_result.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
 ];
 
 statementVersionFail(testsVersionFail, "MESSAGE");

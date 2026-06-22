@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, per, ver} from "../combi";
+import {verNotLang, seq, opt, per, ver} from "../combi";
 import {Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion, Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class InsertReport implements IStatement {
@@ -12,7 +12,7 @@ export class InsertReport implements IStatement {
                         seq("DIRECTORY ENTRY", Source),
                         seq("UNICODE ENABLING", Source),
                         seq("PROGRAM TYPE", Source),
-                        ver(Version.v750, seq("VERSION", Source)),
+                        ver(Release.v750, seq("VERSION", Source)),
                         seq("FIXED-POINT ARITHMETIC", Source),
                         "KEEPING DIRECTORY ENTRY");
 
@@ -22,7 +22,7 @@ export class InsertReport implements IStatement {
                     Source,
                     opt(options));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

@@ -1,7 +1,7 @@
-import {seq, tok, ver, Expression} from "../combi";
+import {seq, tok, ver, Expression, AlsoIn} from "../combi";
 import {ParenRightW, ParenLeft} from "../../1_lexer/tokens";
 import {TargetFieldSymbol} from ".";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class InlineFS extends Expression {
@@ -10,6 +10,6 @@ export class InlineFS extends Expression {
     const left = tok(ParenLeft);
     const fs = seq("FIELD-SYMBOL", left, TargetFieldSymbol, right);
 
-    return ver(Version.v740sp02, fs, Version.OpenABAP);
+    return ver(Release.v740sp02, fs, {also: AlsoIn.OpenABAP});
   }
 }

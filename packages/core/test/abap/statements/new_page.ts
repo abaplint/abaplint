@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "new-page line-size lv_width.",
@@ -73,3 +74,9 @@ const tests = [
 ];
 
 statementType(tests, "NEW-PAGE", Statements.NewPage);
+
+const versionsFail = [
+  {abap: `new-page line-size lv_width.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "NEW-PAGE");
