@@ -944,6 +944,14 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("CREATE DATA dynamic standard table with empty key in open-abap", () => {
+    const abap = `DATA casting_table TYPE REF TO data.
+DATA table_name TYPE string.
+CREATE DATA casting_table TYPE STANDARD TABLE OF (table_name) WITH EMPTY KEY.`;
+    const issues = runProgram(abap, [], Version.OpenABAP);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
   it("FORMAT INTENSIFIED OFF.", () => {
     const abap = "FORMAT INTENSIFIED OFF.\n";
     const issues = runProgram(abap);
