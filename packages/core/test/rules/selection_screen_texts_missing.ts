@@ -309,4 +309,47 @@ PARAMETERS p_miss TYPE string.`;
     expect(issues[0].getMessage()).to.include(", zprog2.prog.abap");
   });
 
+  it("parameter with NO-DISPLAY, no issue", async () => {
+    const abap = `PARAMETERS p_miss TYPE string NO-DISPLAY.`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xmlNoSelTexts));
+    const issues = await run(reg);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("select-option with NO-DISPLAY, no issue", async () => {
+    const abap = `DATA foo TYPE string.
+SELECT-OPTIONS s_miss FOR foo NO-DISPLAY.`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xmlNoSelTexts));
+    const issues = await run(reg);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("parameter inside BEGIN OF LINE block, no issue", async () => {
+    const abap = `SELECTION-SCREEN BEGIN OF LINE.
+  PARAMETERS p_miss TYPE string.
+SELECTION-SCREEN END OF LINE.`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xmlNoSelTexts));
+    const issues = await run(reg);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("mixed: parameter inside and outside BEGIN OF LINE, one issue", async () => {
+    const abap = `SELECTION-SCREEN BEGIN OF LINE.
+  PARAMETERS p_miss TYPE string.
+SELECTION-SCREEN END OF LINE.
+PARAMETERS p_miss2 TYPE string.`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xmlNoSelTexts));
+    const issues = await run(reg);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("P_MISS2");
+  });
+
 });
