@@ -56,7 +56,8 @@ export class SelectionScreenTextsMissing implements IRule {
     return output;
   }
 
-  private checkFile(file: ABAPFile | undefined, selTexts: ITextElements, output: Issue[], checked: Set<string>) {
+  private checkFile(file: ABAPFile | undefined, selTexts: ITextElements,
+                    output: Issue[], checked: Set<string>, mainProgName: string | undefined = undefined) {
     if (file === undefined) {
       return;
     }
@@ -73,10 +74,11 @@ export class SelectionScreenTextsMissing implements IRule {
         if (fieldNode) {
           const fieldName = fieldNode.getFirstToken().getStr().toUpperCase();
           if (selTexts[fieldName] === undefined) {
+            const suffix = mainProgName ? `, ${mainProgName}` : ``;
             output.push(Issue.atToken(
               file,
               fieldNode.getFirstToken(),
-              `Selection text missing for "${fieldName}"`,
+              `Selection text missing for "${fieldName}"${suffix}`,
               this.getMetadata().key,
               this.conf.severity));
           }
@@ -86,8 +88,9 @@ export class SelectionScreenTextsMissing implements IRule {
         if (nameNode) {
           const inclName = nameNode.getFirstToken().getStr().toUpperCase();
           const inclObj = this.reg.getObject("PROG", inclName) as Program | undefined;
+          const inclMainProgName = mainProgName ?? file.getFilename();
           if (inclObj) {
-            this.checkFile(inclObj.getMainABAPFile(), selTexts, output, checked);
+            this.checkFile(inclObj.getMainABAPFile(), selTexts, output, checked, inclMainProgName);
           }
         }
       }
