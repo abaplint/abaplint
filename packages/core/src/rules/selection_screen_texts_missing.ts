@@ -4,7 +4,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {ITextElements} from "../objects/_abap_object";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
-import {Parameter, SelectOption, Include} from "../abap/2_statements/statements";
+import {Parameter, SelectOption, Include, SelectionScreen} from "../abap/2_statements/statements";
 import {FieldSub, IncludeName} from "../abap/2_statements/expressions";
 import {Program} from "../objects";
 import {ABAPFile} from "../abap/abap_file";
@@ -22,6 +22,9 @@ export class SelectionScreenTextsMissing implements IRule {
       key: "selection_screen_texts_missing",
       title: "Selection screen texts missing",
       shortDescription: `Checks that selection screen parameters and select-options have selection texts`,
+      extendedInformation: `Excludes parameters and select-options that:
+* are inside a "SELECTION-SCREEN BEGIN OF LINE" block
+* have the addition "NO-DISPLAY"`,
     };
   }
 
@@ -67,31 +70,48 @@ export class SelectionScreenTextsMissing implements IRule {
     }
     checked.add(file.getFilename());
 
+    let inLine = false;
     for (const stat of file.getStatements()) {
       const s = stat.get();
-      if (s instanceof Parameter || s instanceof SelectOption) {
-        const fieldNode = stat.findFirstExpression(FieldSub);
-        if (fieldNode) {
-          const fieldName = fieldNode.getFirstToken().getStr().toUpperCase();
-          if (selTexts[fieldName] === undefined) {
-            const suffix = mainProgName ? `, ${mainProgName}` : ``;
-            output.push(Issue.atToken(
-              file,
-              fieldNode.getFirstToken(),
-              `Selection text missing for "${fieldName}"${suffix}`,
-              this.getMetadata().key,
-              this.conf.severity));
-          }
+      if (s instanceof SelectionScreen) {
+        const tokens = stat.concatTokens().toUpperCase();
+        if (tokens.includes("BEGIN OF LINE")) {
+          inLine = true;
+        } else if (tokens.includes("END OF LINE")) {
+          // known issue: doesn't support BEGIN and END OF LINE span across several includes (not seen a lot in the wild)
+          inLine = false;
         }
-      } else if (s instanceof Include) {
+        continue;
+      }
+      if (s instanceof Include) {
         const nameNode = stat.findFirstExpression(IncludeName);
         if (nameNode) {
           const inclName = nameNode.getFirstToken().getStr().toUpperCase();
           const inclObj = this.reg.getObject("PROG", inclName) as Program | undefined;
-          const inclMainProgName = mainProgName ?? file.getFilename();
           if (inclObj) {
-            this.checkFile(inclObj.getMainABAPFile(), selTexts, output, checked, inclMainProgName);
+            this.checkFile(inclObj.getMainABAPFile(), selTexts, output, checked, mainProgName ?? file.getFilename());
           }
+        }
+        continue;
+      }
+      if (inLine || !(s instanceof Parameter || s instanceof SelectOption)) {
+        continue;
+      }
+      if (stat.concatTokens().toUpperCase().includes("NO-DISPLAY")) {
+        continue;
+      }
+
+      const fieldNode = stat.findFirstExpression(FieldSub);
+      if (fieldNode) {
+        const fieldName = fieldNode.getFirstToken().getStr().toUpperCase();
+        if (selTexts[fieldName] === undefined) {
+          const suffix = mainProgName ? `, ${mainProgName}` : ``;
+          output.push(Issue.atToken(
+            file,
+            fieldNode.getFirstToken(),
+            `Selection text missing for "${fieldName}"${suffix}`,
+            this.getMetadata().key,
+            this.conf.severity));
         }
       }
     }
