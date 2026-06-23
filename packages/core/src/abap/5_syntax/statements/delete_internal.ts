@@ -7,8 +7,8 @@ import {ComponentCond} from "../expressions/component_cond";
 import {StatementSyntax} from "../_statement_syntax";
 import {ILookupResult} from "../../../ddic";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {TableType} from "../../types/basic";
-import {SyntaxInput} from "../_syntax_input";
+import {TableAccessType, TableType} from "../../types/basic";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class DeleteInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -21,7 +21,8 @@ export class DeleteInternal implements StatementSyntax {
     const target = node.findDirectExpression(Expressions.Target);
     if (target) {
       let tabl: ILookupResult | undefined = undefined;
-      if (node.getChildren().length === 5 && node.getChildren()[2].concatTokens().toUpperCase() === "FROM") {
+      const localVariable = input.scope.findVariable(target.concatTokens());
+      if (localVariable === undefined && node.getChildren().length === 5 && node.getChildren()[2].concatTokens().toUpperCase() === "FROM") {
         // it might be a database table
         tabl = input.scope.getDDIC()?.lookupTableOrView(target.concatTokens());
         if (tabl) {
@@ -30,6 +31,14 @@ export class DeleteInternal implements StatementSyntax {
       }
       if (tabl === undefined) {
         targetType = Target.runSyntax(target, input);
+        if (node.findDirectTokenByText("TABLE") === undefined
+            && node.findDirectTokenByText("FROM")
+            && targetType instanceof TableType
+            && targetType.getAccessType() === TableAccessType.hashed) {
+          const message = "Implicit or explicit index operation on hashed table is not possible";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
+        }
         if (targetType instanceof TableType) {
           targetType = targetType.getRowType();
         }

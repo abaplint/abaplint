@@ -12388,6 +12388,17 @@ READ TABLE tab INTO row INDEX 1.`;
     expect(issues[0]?.getMessage()).to.include("INDEX on hashed table not possible");
   });
 
+  it("DELETE FROM hashed table not possible", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE c LENGTH 10,
+       END OF ty.
+DATA tab TYPE HASHED TABLE OF ty WITH UNIQUE KEY foo.
+DELETE tab FROM 10.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
+  });
+
   it("Structure voided field, expect syntax error the field does not exist", () => {
     const abap = `
 TYPES: BEGIN OF ty_item,
