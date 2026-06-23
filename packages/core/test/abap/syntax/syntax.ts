@@ -12399,6 +12399,19 @@ DELETE tab FROM 10.`;
     expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
   });
 
+  it("DELETE ADJACENT DUPLICATES FROM hashed table", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         bar TYPE i,
+         moo TYPE c LENGTH 2,
+       END OF ty.
+TYPES tytt TYPE HASHED TABLE OF ty WITH UNIQUE KEY bar.
+DATA itab TYPE tytt.
+DELETE ADJACENT DUPLICATES FROM itab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("Structure voided field, expect syntax error the field does not exist", () => {
     const abap = `
 TYPES: BEGIN OF ty_item,

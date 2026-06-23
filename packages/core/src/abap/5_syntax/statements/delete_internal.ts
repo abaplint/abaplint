@@ -32,6 +32,7 @@ export class DeleteInternal implements StatementSyntax {
       if (tabl === undefined) {
         targetType = Target.runSyntax(target, input);
         if (node.findDirectTokenByText("TABLE") === undefined
+            && node.findDirectTokenByText("ADJACENT") === undefined
             && node.findDirectTokenByText("FROM")
             && targetType instanceof TableType
             && targetType.getAccessType() === TableAccessType.hashed) {
