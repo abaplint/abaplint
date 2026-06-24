@@ -119,10 +119,7 @@ async function loadDependencies(config: Config, compress: boolean | undefined, b
         branch = "-b " + d.branch + " ";
       }
       childProcess.execSync("git clone --quiet --depth 1 " + branch + d.url + " .", {cwd: dir, stdio: "inherit"});
-      // normalize backslashes for glob, but keep the drive letter so the absolute
-      // pattern resolves on the correct drive (the temp dir may be on a different
-      // drive than the current working directory)
-      const names = FileOperations.loadFileNames(dir.replace(/\\/g, "/") + d.files);
+      const names = FileOperations.loadFileNames(FileOperations.toUnixPath(dir) + d.files);
       files = files.concat(await FileOperations.loadFiles(compress, names, bar));
       FileOperations.deleteFolderRecursive(dir);
     }
