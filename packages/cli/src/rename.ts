@@ -72,8 +72,8 @@ export class Rename {
         continue;
       }
       for (const f of o.getFiles()) {
-        // yea, ffs
-        const n = outputFolder + f.getFilename().replace(myBase, "").replace("//?/C:", "");
+        // strip the long-path prefix (Windows) then the drive-qualified base
+        const n = outputFolder + f.getFilename().replace("//?/", "").replace(myBase, "");
         console.log("Write " + n);
         fs.mkdirSync(path.dirname(n), {recursive: true});
         fs.writeFileSync(n, f.getRaw());
