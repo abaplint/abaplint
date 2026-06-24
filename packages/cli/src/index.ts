@@ -118,7 +118,13 @@ async function loadDependencies(config: Config, compress: boolean | undefined, b
       if (d.branch) {
         branch = "-b " + d.branch + " ";
       }
-      childProcess.execSync("git clone --quiet --depth 1 " + branch + d.url + " .", {cwd: dir, stdio: "inherit"});
+      try {
+        childProcess.execSync("git clone --quiet --depth 1 " + branch + d.url + " .", {cwd: dir, stdio: "inherit"});
+      } catch (e) {
+        throw new Error("Failed to clone " + d.url + " into cwd \"" + dir + "\""
+          + " (cwd exists: " + fs.existsSync(dir) + ", process cwd: \"" + process.cwd() + "\")"
+          + ": " + (e.message || e));
+      }
       const names = FileOperations.loadFileNames(FileOperations.toUnixPath(dir) + d.files);
       files = files.concat(await FileOperations.loadFiles(compress, names, bar));
       FileOperations.deleteFolderRecursive(dir);
