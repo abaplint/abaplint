@@ -118,13 +118,7 @@ async function loadDependencies(config: Config, compress: boolean | undefined, b
       if (d.branch) {
         branch = "-b " + d.branch + " ";
       }
-      try {
-        childProcess.execSync("git clone --quiet --depth 1 " + branch + d.url + " .", {cwd: dir, stdio: "inherit"});
-      } catch (e) {
-        throw new Error("Failed to clone " + d.url + " into cwd \"" + dir + "\""
-          + " (cwd exists: " + fs.existsSync(dir) + ", process cwd: \"" + process.cwd() + "\")"
-          + ": " + (e.message || e));
-      }
+      childProcess.execSync("git clone --quiet --depth 1 " + branch + d.url + " .", {cwd: dir, stdio: "inherit"});
       // normalize backslashes for glob, but keep the drive letter so the absolute
       // pattern resolves on the correct drive (the temp dir may be on a different
       // drive than the current working directory)
