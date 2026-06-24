@@ -125,7 +125,10 @@ async function loadDependencies(config: Config, compress: boolean | undefined, b
           + " (cwd exists: " + fs.existsSync(dir) + ", process cwd: \"" + process.cwd() + "\")"
           + ": " + (e.message || e));
       }
-      const names = FileOperations.loadFileNames(FileOperations.toUnixPath(dir) + d.files);
+      // normalize backslashes for glob, but keep the drive letter so the absolute
+      // pattern resolves on the correct drive (the temp dir may be on a different
+      // drive than the current working directory)
+      const names = FileOperations.loadFileNames(dir.replace(/\\/g, "/") + d.files);
       files = files.concat(await FileOperations.loadFiles(compress, names, bar));
       FileOperations.deleteFolderRecursive(dir);
     }
