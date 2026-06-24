@@ -33,6 +33,10 @@ const confCheckForms = new MethodLengthConf();
 confCheckForms.checkForms = false;
 confCheckForms.statements = 3;
 
+const confCheckFunctionModules = new MethodLengthConf();
+confCheckFunctionModules.checkFunctionModules = false;
+confCheckFunctionModules.statements = 3;
+
 const abapTestClassOverLength = `
   CLASS ltcl_foo definition final for testing.
     PUBLIC SECTION.
@@ -102,6 +106,21 @@ const abapFormValidLength = `
       WRITE '3'.
     ENDFORM.`;
 
+const abapFunctionOverLength = `
+    FUNCTION ztesting.
+      WRITE '1'.
+      WRITE '2'.
+      WRITE '3'.
+      WRITE '4'.
+    ENDFUNCTION.`;
+
+const abapFunctionValidLength = `
+    FUNCTION ztesting.
+      WRITE '1'.
+      WRITE '2'.
+      WRITE '3'.
+    ENDFUNCTION.`;
+
 const testClassTests = [
   {abap: abapTestClassOverLength,
     description: "testclass, ignore, over length",
@@ -169,6 +188,30 @@ const testClassTests = [
     filename: `zcl_foo.clas.abap`,
     issueLength: 0},
 
+  {abap: abapFunctionOverLength,
+    description: "function module, off, over length",
+    conf: confCheckFunctionModules,
+    filename: `zfoo.fugr.ztesting.abap`,
+    issueLength: 0},
+
+  {abap: abapFunctionValidLength,
+    description: "function module, off, valid length",
+    conf: confCheckFunctionModules,
+    filename: `zfoo.fugr.ztesting.abap`,
+    issueLength: 0},
+
+  {abap: abapFunctionOverLength,
+    description: "function module, check, over length",
+    conf: confCheckTestClasses,
+    filename: `zfoo.fugr.ztesting.abap`,
+    issueLength: 1},
+
+  {abap: abapFunctionValidLength,
+    description: "function module, check, valid length",
+    conf: confCheckTestClasses,
+    filename: `zfoo.fugr.ztesting.abap`,
+    issueLength: 0},
+
   {abap: `CLASS foo DEFINITION FOR TESTING.
   PUBLIC SECTION.
     METHODS bar.
@@ -190,6 +233,8 @@ const lengthTests = [
   {abap: "WRITE: / 'abc'.", cnt: 0},
   {abap: "METHOD foobar. ENDMETHOD.", cnt: 1},
   {abap: "METHOD foobar. WRITE foo. ENDMETHOD.", cnt: 0},
+  {abap: "FUNCTION zfoobar. ENDFUNCTION.", cnt: 1},
+  {abap: "FUNCTION zfoobar. WRITE foo. ENDFUNCTION.", cnt: 0},
 
   {abap: `METHOD foobar.
   WRITE foo.

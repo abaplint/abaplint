@@ -59,6 +59,8 @@ import {SkipLogic} from "./skip_logic";
 import {Diagnostics} from "./lsp/diagnostics";
 import {LSPEdit} from "./lsp/_edit";
 import {ReferenceType} from "./abap/5_syntax/_reference";
+import {FunctionLengthStats} from "./utils/function_length_stats";
+import {FormLengthStats} from "./utils/form_length_stats";
 
 // do not include this file from anywhere within abaplint
 // https://github.com/abaplint/abaplint/issues/873
@@ -70,7 +72,8 @@ const Edits = {
 
 // file used to build typings, index.d.ts
 export {Issue, Config, Version, CyclomaticComplexityStats,
-  Registry, LanguageServer, MethodLengthStats, IProgress, BuiltIn,
+  Registry, LanguageServer, MethodLengthStats, FunctionLengthStats, FormLengthStats,
+  IProgress, BuiltIn,
   ArtifactsABAP, ArtifactsObjects, ArtifactsRules, Objects, IFile, SkipLogic,
   Structures, Statements, Expressions, Types, Nodes, IConfig, Identifier,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment, IConfiguration,
