@@ -1,4 +1,5 @@
 import minimist from "minimist";
+import {Severity} from "@abaplint/core";
 import {run, GENERIC_ERROR, Arguments} from ".";
 
 const parsed = minimist(process.argv.slice(2), {boolean: ["p", "c", "fix", "rename"]});
@@ -29,8 +30,10 @@ run(arg).then(({output, issues}) => {
       if (issues.length > 0) {
         if (issues[0].getKey() === GENERIC_ERROR) {
           process.exit(2); // eg. "git" does not exist in system
-        } else {
+        } else if (issues.some(i => i.getSeverity() === Severity.Error)){
           process.exit(1);
+        } else {
+          process.exit(0); //only Warnings/ Infos
         }
       } else {
         process.exit();
