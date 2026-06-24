@@ -2836,7 +2836,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks relating to method/form length.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/method_length"
+              "description": "Checks relating to method/form/function module length.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/method_length"
             },
             "method_overwrites_builtin": {
               "anyOf": [
@@ -4860,7 +4860,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks relating to method/form length.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/method_length"
+              "description": "Checks relating to method/form/function module length.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/method_length"
             },
             "method_overwrites_builtin": {
               "anyOf": [
@@ -6754,8 +6754,12 @@
           "description": "Option to check forms.",
           "type": "boolean"
         },
+        "checkFunctionModules": {
+          "description": "Option to check function modules.",
+          "type": "boolean"
+        },
         "errorWhenEmpty": {
-          "description": "Checks for empty methods/forms.",
+          "description": "Checks for empty methods/forms/function modules.",
           "type": "boolean"
         },
         "exclude": {
@@ -6774,7 +6778,7 @@
           "description": "Problem severity"
         },
         "statements": {
-          "description": "Maximum method/form length in statements.",
+          "description": "Maximum method/form/function module length in statements.",
           "type": "number"
         }
       },
@@ -6782,7 +6786,8 @@
         "statements",
         "errorWhenEmpty",
         "ignoreTestClasses",
-        "checkForms"
+        "checkForms",
+        "checkFunctionModules"
       ],
       "type": "object"
     },

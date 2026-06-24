@@ -6,16 +6,19 @@ import {IMethodLengthResult, MethodLengthStats} from "../utils/method_length_sta
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {FormLengthStats} from "../utils/form_length_stats";
+import {FunctionLengthStats} from "../utils/function_length_stats";
 
 export class MethodLengthConf extends BasicRuleConfig {
-  /** Maximum method/form length in statements. */
+  /** Maximum method/form/function module length in statements. */
   public statements: number = 100;
-  /** Checks for empty methods/forms. */
+  /** Checks for empty methods/forms/function modules. */
   public errorWhenEmpty: boolean = true;
   /** Option to ignore test classes for this check. */
   public ignoreTestClasses: boolean = false;
   /** Option to check forms. */
   public checkForms: boolean = true;
+  /** Option to check function modules. */
+  public checkFunctionModules: boolean = true;
 }
 
 enum IssueType {
@@ -30,8 +33,8 @@ export class MethodLength implements IRule {
   public getMetadata(): IRuleMetadata {
     return {
       key: "method_length",
-      title: "Method/Form Length",
-      shortDescription: `Checks relating to method/form length.`,
+      title: "Method/Form/Function Module Length",
+      shortDescription: `Checks relating to method/form/function module length.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#keep-methods-small
 
 Abstract methods without statements are considered okay.`,
@@ -82,7 +85,13 @@ Abstract methods without statements are considered okay.`,
       formIssues = this.check(formStats, "FORM");
     }
 
-    return methodIssues.concat(formIssues);
+    let functionIssues: Issue[] = [];
+    if (this.conf.checkFunctionModules) {
+      const functionStats = FunctionLengthStats.run(obj);
+      functionIssues = this.check(functionStats, "FUNCTION MODULE");
+    }
+
+    return methodIssues.concat(formIssues).concat(functionIssues);
   }
 
 // ***********************
