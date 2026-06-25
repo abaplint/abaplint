@@ -1,17 +1,17 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, altPrio} from "../combi";
+import {verNotLang, str, seq, opt, alt, per, altPrio} from "../combi";
 import {FormName, Source, FunctionParameters, FunctionName, Destination, SimpleSource2, MethodSource} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class CallFunction implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const starting = verNot(Version.Cloud, seq("STARTING NEW TASK", SimpleSource2));
-    const update = verNot(Version.Cloud, str("IN UPDATE TASK"));
+    const starting = verNotLang(LanguageVersion.Cloud, seq("STARTING NEW TASK", SimpleSource2));
+    const update = verNotLang(LanguageVersion.Cloud, str("IN UPDATE TASK"));
     const unit = seq("UNIT", Source);
-    const background = verNot(Version.Cloud, seq("IN BACKGROUND", altPrio("TASK", unit)));
+    const background = verNotLang(LanguageVersion.Cloud, seq("IN BACKGROUND", altPrio("TASK", unit)));
     const calling = seq("CALLING", MethodSource, "ON END OF TASK");
     const performing = seq("PERFORMING", FormName, "ON END OF TASK");
     const separate = str("AS SEPARATE UNIT");
@@ -23,7 +23,7 @@ export class CallFunction implements IStatement {
     const dynamic = alt(seq("PARAMETER-TABLE", Source, opt(ex)), ex);
 
     const call = seq("CALL",
-                     altPrio("FUNCTION", verNot(Version.Cloud, "CUSTOMER-FUNCTION")),
+                     altPrio("FUNCTION", verNotLang(LanguageVersion.Cloud, "CUSTOMER-FUNCTION")),
                      FunctionName,
                      opt(options),
                      alt(FunctionParameters, dynamic));

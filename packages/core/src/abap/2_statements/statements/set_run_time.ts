@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt} from "../combi";
-import {Version} from "../../../version";
+import {verNotLang, seq, alt} from "../combi";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class SetRunTime implements IStatement {
@@ -12,7 +12,7 @@ export class SetRunTime implements IStatement {
 
     const ret = seq("SET RUN TIME", alt(clock, analyzer));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

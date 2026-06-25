@@ -1,6 +1,6 @@
 import {statementType, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src";
+import {Release} from "../../../src";
 
 const tests = [
   "IF foo = bar.",
@@ -108,7 +108,7 @@ statementType(tests, "IF", Statements.If);
 
 
 const versionsOk = [
-  {abap: "IF r_e071k->* IS INITIAL.", ver: Version.v756},
+  {abap: "IF r_e071k->* IS INITIAL.", rel: Release.v756},
 ];
 
 statementVersionOk(versionsOk, "IF", Statements.If);

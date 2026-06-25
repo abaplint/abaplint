@@ -8,8 +8,8 @@ describe("getPreviousVersion", () => {
     expect(getPreviousVersion(Version.v751)).to.equal(Version.v750);
   });
 
-  it("cloud", () => {
-    expect(getPreviousVersion(Version.Cloud)).to.equal(Version.v758);
+  it("newest", () => {
+    expect(getPreviousVersion(Version.Newest)).to.equal(Version.Cloud);
   });
 
   it("open-abap", () => {

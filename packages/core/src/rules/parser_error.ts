@@ -3,7 +3,7 @@ import {Unknown} from "../abap/2_statements/statements/_statement";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {STATEMENT_MAX_TOKENS} from "../abap/2_statements/statement_parser";
 import {IRule, RuleTag} from "./_irule";
-import {Version} from "../version";
+import {Release} from "../version";
 import {ABAPObject} from "../objects/_abap_object";
 import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
@@ -58,13 +58,13 @@ See recognized syntax at https://syntax.abaplint.org`,
             issues.push(issue);
           } else {
             const tok = statement.getFirstToken();
-            const message = "Statement does not exist in ABAP" + this.reg.getConfig().getVersion() + "(or a parser error), \"" + tok.getStr() + "\"";
+            const message = "Statement does not exist in ABAP" + this.reg.getConfig().getRelease().name + "(or a parser error), \"" + tok.getStr() + "\"";
             const issue = Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity);
             issues.push(issue);
           }
         }
 
-        if (this.reg.getConfig().getVersion() === Version.v700) {
+        if (this.reg.getConfig().getRelease() === Release.v700) {
           for (const statement of file.getStatements()) {
             if (statement.getPragmas().length > 0) {
               const message = "Pragmas not allowed in v700";

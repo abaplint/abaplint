@@ -1,6 +1,6 @@
 import {seq, optPrio, altPrio, Expression, ver, tok, star, starPrio, regex as reg} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {ParenLeftW, WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {DatabaseTable, Dynamic, SQLAsName, SQLCond, SQLFieldName, SQLSource, WithName} from ".";
 
@@ -52,7 +52,7 @@ export class SQLHierarchySource extends Expression {
       optPrio(generateSpantree),
     );
 
-    return ver(Version.v750, seq(
+    return ver(Release.v750, seq(
       "HIERARCHY",
       tok(ParenLeftW),
       "SOURCE", sourceTable,

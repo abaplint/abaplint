@@ -1,6 +1,6 @@
 import {statementType, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src";
+import {Release} from "../../../src";
 
 const tests = [
   "cl_gui_cfw=>flush( ).",
@@ -85,7 +85,7 @@ EXCEPTIONS
 statementType(tests, "CALL", Statements.Call);
 
 const versionsOk = [
-  {abap: "my_object->meth( foo->* ).", ver: Version.v756},
+  {abap: "my_object->meth( foo->* ).", rel: Release.v756},
 ];
 
 statementVersionOk(versionsOk, "CALL", Statements.Call);

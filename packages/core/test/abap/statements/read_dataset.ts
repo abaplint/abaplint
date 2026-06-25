@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "READ DATASET filename INTO wa_rawdata LENGTH length.",
@@ -9,3 +10,9 @@ const tests = [
 ];
 
 statementType(tests, "READ DATASET", Statements.ReadDataset);
+
+const versionsFail = [
+  {abap: `READ DATASET filename INTO wa_rawdata LENGTH length.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "READ DATASET");

@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {seq, ver, optPrio} from "../combi";
+import {seq, ver, optPrio, AlsoIn} from "../combi";
 import {ClassName, Target} from "../expressions";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class WhenType implements IStatement {
@@ -11,7 +11,7 @@ export class WhenType implements IStatement {
 
     const type = seq(ClassName, optPrio(into));
 
-    return ver(Version.v750, seq("WHEN TYPE", type), Version.OpenABAP);
+    return ver(Release.v750, seq("WHEN TYPE", type), {also: AlsoIn.OpenABAP});
   }
 
 }

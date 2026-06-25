@@ -1,7 +1,7 @@
-import {seq, per, altPrio, ver, Expression} from "../combi";
+import {seq, per, altPrio, ver, Expression, AlsoIn} from "../combi";
 import {Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {Dynamic} from "./dynamic";
 
 export class StringTemplateFormatting extends Expression {
@@ -41,8 +41,8 @@ export class StringTemplateFormatting extends Expression {
     const number = seq("NUMBER =", numberOptions);
     const sign = seq("SIGN =", signOptions);
     const decimals = seq("DECIMALS =", Source);
-    const alpha = ver(Version.v740sp02, seq("ALPHA =", alphaOptions), Version.OpenABAP);
-    const xsd = ver(Version.v740sp02, seq("XSD =", zeroXSDOptions));
+    const alpha = ver(Release.v740sp02, seq("ALPHA =", alphaOptions), {also: AlsoIn.OpenABAP});
+    const xsd = ver(Release.v740sp02, seq("XSD =", zeroXSDOptions));
     const country = seq("COUNTRY =", Source);
 
     const formatting = altPrio(seq("TIME =", dateTimeOptions),

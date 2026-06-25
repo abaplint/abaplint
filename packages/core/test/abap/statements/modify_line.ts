@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "MODIFY LINE sy-index FIELD VALUE lv_val FROM gc_false.",
@@ -34,3 +35,9 @@ const tests = [
 ];
 
 statementType(tests, "MODIFY LINE", Statements.ModifyLine);
+
+const versionsFail = [
+  {abap: `MODIFY LINE sy-index FIELD VALUE lv_val FROM gc_false.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "MODIFY");

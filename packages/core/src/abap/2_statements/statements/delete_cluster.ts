@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, tok, opt} from "../combi";
+import {verNotLang, seq, tok, opt} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Source, SimpleName, NamespaceSimpleName} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class DeleteCluster implements IStatement {
@@ -19,7 +19,7 @@ export class DeleteCluster implements IStatement {
                     "ID",
                     Source);
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

@@ -1,6 +1,6 @@
 import {statementType, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+import {Version, Release} from "../../../src/version";
 
 const tests = [
   "ASSERT <lv_field> IS ASSIGNED.",
@@ -15,8 +15,8 @@ const tests = [
 statementType(tests, "ASSERT", Statements.Assert);
 
 const versionsOk = [
-  {abap: "ASSERT hex = |11|.", ver: Version.v702},
-  {abap: "ASSERT hex = |22|.", ver: Version.OpenABAP},
+  {abap: "ASSERT hex = |11|.", rel: Release.v702},
+  {abap: "ASSERT hex = |22|.", rel: Version.OpenABAP},
 ];
 
 statementVersionOk(versionsOk, "ASSERT", Statements.Assert);

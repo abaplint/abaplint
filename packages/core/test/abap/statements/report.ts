@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "REPORT zabapgit LINE-SIZE 100.",
@@ -24,3 +25,9 @@ const tests = [
 ];
 
 statementType(tests, "REPORT", Statements.Report);
+
+const versionsFail = [
+  {abap: `REPORT zabapgit LINE-SIZE 100.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "REPORT");

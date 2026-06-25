@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "LOG-POINT ID foobar SUBKEY subkey.",
@@ -11,3 +12,9 @@ const tests = [
 ];
 
 statementType(tests, "LOG-POINT", Statements.LogPoint);
+
+const versionsFail = [
+  {abap: `LOG-POINT ID foobar SUBKEY subkey.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "LOG-POINT");

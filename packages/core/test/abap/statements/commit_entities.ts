@@ -27,5 +27,5 @@ const tests = [
 statementType(tests, "COMMIT ENTITIES", Statements.CommitEntities);
 
 statementVersionOk([
-  {abap: "COMMIT ENTITIES.", ver: Version.OpenABAP},
+  {abap: "COMMIT ENTITIES.", rel: Version.OpenABAP},
 ], "COMMIT ENTITIES", Statements.CommitEntities);

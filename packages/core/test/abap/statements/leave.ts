@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "LEAVE TO SCREEN 1001.",
@@ -18,3 +19,9 @@ const tests = [
 ];
 
 statementType(tests, "LEAVE", Statements.Leave);
+
+const versionsFail = [
+  {abap: `LEAVE TO SCREEN 1001.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "LEAVE");

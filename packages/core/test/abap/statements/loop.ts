@@ -1,6 +1,7 @@
+import {Release} from "../../../src/version";
 import {statementType, statementVersion, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+
 
 const tests = [
   "loop at foo.",
@@ -42,15 +43,15 @@ const tests = [
 statementType(tests, "LOOP", Statements.Loop);
 
 const versions = [
-  {abap: "LOOP AT lt_packages ASSIGNING FIELD-SYMBOL(<package>).", ver: Version.v740sp02},
-  {abap: "LOOP AT hierarchy ASSIGNING <h> GROUP BY ( parent = <h>-parent ).", ver: Version.v740sp08},
-  {abap: "LOOP AT lo_dot->get_data( )-ignore INTO lv_ignore.", ver: Version.v740sp02},
+  {abap: "LOOP AT lt_packages ASSIGNING FIELD-SYMBOL(<package>).", rel: Release.v740sp02},
+  {abap: "LOOP AT hierarchy ASSIGNING <h> GROUP BY ( parent = <h>-parent ).", rel: Release.v740sp08},
+  {abap: "LOOP AT lo_dot->get_data( )-ignore INTO lv_ignore.", rel: Release.v740sp02},
 ];
 
 statementVersion(versions, "LOOP", Statements.Loop);
 
 const versionsOk = [
-  {abap: "LOOP AT table[] INTO bar.", ver: Version.v702},
+  {abap: "LOOP AT table[] INTO bar.", rel: Release.v702},
 ];
 
 statementVersionOk(versionsOk, "LOOP, 702", Statements.Loop);

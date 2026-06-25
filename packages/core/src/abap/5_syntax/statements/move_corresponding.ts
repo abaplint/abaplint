@@ -3,7 +3,7 @@ import {StatementNode} from "../../nodes";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
-import {Version} from "../../../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 import {TableType} from "../../types/basic";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
@@ -21,9 +21,9 @@ export class MoveCorresponding implements StatementSyntax {
     const sourceType = Source.runSyntax(s, input);
     const targetType = Target.runSyntax(t, input);
 
-    if (input.scope.getVersion() < Version.v740sp05
-        && input.scope.getVersion() !== Version.Cloud
-        && input.scope.getVersion() !== Version.OpenABAP) {
+    if (!releaseAtLeast(input.scope.getRelease(), Release.v740sp05)
+        && input.scope.getLanguageVersion() !== LanguageVersion.Cloud
+        && !input.scope.getOpenABAP()) {
       if (sourceType instanceof TableType && sourceType.isWithHeader() === false) {
         const message = "MOVE-CORRESPONDING with tables possible from v740sp05";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));

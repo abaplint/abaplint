@@ -1,5 +1,5 @@
-import {alt, tok, seq, Expression, ver, plus, optPrio} from "../combi";
-import {Version} from "../../../version";
+import {alt, tok, seq, Expression, ver, plus, optPrio, AlsoIn} from "../combi";
+import {Release} from "../../../version";
 import {TypeNameOrInfer, Source, ParameterListS} from ".";
 import {ParenLeftW, WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -17,6 +17,6 @@ export class NewObject extends Expression {
                      optPrio(alt(Source, ParameterListS, lines, linesFields)),
                      ")");
 
-    return ver(Version.v740sp02, neww, Version.OpenABAP);
+    return ver(Release.v740sp02, neww, {also: AlsoIn.OpenABAP});
   }
 }

@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "DELETE TEXTPOOL ls_foo-name.",
@@ -8,3 +9,9 @@ const tests = [
 ];
 
 statementType(tests, "DELETE TEXTPOOL", Statements.DeleteTextpool);
+
+const versionsFail = [
+  {abap: `DELETE TEXTPOOL ls_foo-name.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "DELETE TEXTPOOL");

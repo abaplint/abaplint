@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "OPEN DATASET lv_file_name FOR OUTPUT IN BINARY MODE.",
@@ -39,3 +40,9 @@ const tests = [
 ];
 
 statementType(tests, "OPEN", Statements.OpenDataset);
+
+const versionsFail = [
+  {abap: `OPEN DATASET lv_file_name FOR OUTPUT IN BINARY MODE.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "OPEN DATASET");

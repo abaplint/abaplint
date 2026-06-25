@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, plus, altPrio, opt, per, plusPrio} from "../combi";
+import {verNotLang, seq, plus, altPrio, opt, per, plusPrio} from "../combi";
 import {Field, Source, Target, SimpleSource3, Cond, ProvideFieldName} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Provide implements IStatement {
@@ -34,7 +34,7 @@ export class Provide implements IStatement {
                     altPrio(plusPrio(fields), plusPrio(fieldList)),
                     opt(per(between, where)));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

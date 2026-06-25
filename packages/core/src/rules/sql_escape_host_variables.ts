@@ -3,7 +3,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Version} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
@@ -43,9 +43,9 @@ export class SQLEscapeHostVariables extends ABAPRule {
       return [];
     }
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp02
-        && this.reg.getConfig().getVersion() !== Version.Cloud
-        && this.reg.getConfig().getVersion() !== Version.OpenABAP) {
+    if (!releaseAtLeast(this.reg.getConfig().getRelease(), Release.v740sp02)
+        && this.reg.getConfig().getLanguageVersion() !== LanguageVersion.Cloud
+        && !this.reg.getConfig().getOpenABAP()) {
       return [];
     }
 

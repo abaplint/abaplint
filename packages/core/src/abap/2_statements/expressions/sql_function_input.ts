@@ -1,5 +1,5 @@
 import {Constant} from "./constant";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {ParenLeftW, WAt, WParenRightW} from "../../1_lexer/tokens";
 import {Expression, ver, seq, tok, altPrio, starPrio} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
@@ -14,7 +14,7 @@ import {SQLCase} from "./sql_case";
 export class SQLFunctionInput extends Expression {
   public getRunnable(): IStatementRunnable {
     const hostParen = seq(tok(ParenLeftW), Source, tok(WParenRightW));
-    const at = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, hostParen)));
+    const at = ver(Release.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, hostParen)));
     const parenInput = seq("(", SQLFunctionInput, ")");
 
     const param = altPrio(parenInput, SQLCase, SQLFunction, SQLAggregation, SQLFieldName, SQLAliasField, Constant, at);

@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, per, tok, alt} from "../combi";
+import {verNotLang, str, seq, opt, per, tok, alt} from "../combi";
 import {Integer, MessageClass, Field, ReportName} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {ParenLeft, ParenRight, ParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -19,7 +19,7 @@ export class Report implements IStatement {
                     opt(ReportName),
                     opt(per(heading, size, count, database, message)));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

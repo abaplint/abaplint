@@ -2,7 +2,7 @@ import {IStatement} from "./_statement";
 import {opt, plus, seq, star, ver} from "../combi";
 import {NamespaceSimpleName, TypeName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class TypeMesh implements IStatement {
 
@@ -13,7 +13,7 @@ export class TypeMesh implements IStatement {
 
     const association = seq("ASSOCIATION", NamespaceSimpleName, "TO", NamespaceSimpleName, plus(on));
 
-    const ret = ver(Version.v751, seq("TYPES", NamespaceSimpleName, "TYPE", opt("REF TO"), TypeName, plus(association), opt(using)));
+    const ret = ver(Release.v751, seq("TYPES", NamespaceSimpleName, "TYPE", opt("REF TO"), TypeName, plus(association), opt(using)));
 
     return ret;
   }

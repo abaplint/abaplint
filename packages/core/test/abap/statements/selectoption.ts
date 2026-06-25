@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "SELECT-OPTIONS foo FOR bar.",
@@ -33,3 +34,9 @@ const tests = [
 ];
 
 statementType(tests, "SELECT-OPTIONS", Statements.SelectOption);
+
+const versionsFail = [
+  {abap: `SELECT-OPTIONS foo FOR bar.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "SELECT-OPTIONS");

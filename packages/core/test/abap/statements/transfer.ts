@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "TRANSFER lv_file  TO lv_default_file_name.",
@@ -10,3 +11,9 @@ const tests = [
 ];
 
 statementType(tests, "TRANSFER", Statements.Transfer);
+
+const versionsFail = [
+  {abap: `TRANSFER lv_file  TO lv_default_file_name.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "TRANSFER");

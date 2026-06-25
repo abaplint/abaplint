@@ -1,12 +1,12 @@
 import {IStatement} from "./_statement";
-import {str, ver} from "../combi";
+import {str, ver, AlsoIn} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class EndTestSeam implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    return ver(Version.v750, str("END-TEST-SEAM"), Version.OpenABAP);
+    return ver(Release.v750, str("END-TEST-SEAM"), {also: AlsoIn.OpenABAP});
   }
 
 }

@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, ver, altPrio, per, failCombinator} from "../combi";
+import {seq, alt, opt, ver, altPrio, per, failCombinator, AlsoIn} from "../combi";
 import {ComponentCond, Dynamic, Source, SimpleName, LoopTarget, LoopSource} from "../expressions";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {LoopGroupBy} from "../expressions/loop_group_by";
 
@@ -10,9 +10,9 @@ export class Loop implements IStatement {
   public getMatcher(): IStatementRunnable {
     const where = seq("WHERE", alt(ComponentCond, Dynamic));
 
-    const group = ver(Version.v740sp08, seq("GROUP BY", LoopGroupBy), Version.OpenABAP);
+    const group = ver(Release.v740sp08, seq("GROUP BY", LoopGroupBy), {also: AlsoIn.OpenABAP});
 
-    const step = ver(Version.v757, seq("STEP", Source));
+    const step = ver(Release.v757, seq("STEP", Source));
 
     const from = seq("FROM", Source);
 
@@ -23,7 +23,7 @@ export class Loop implements IStatement {
     const options = per(LoopTarget, from, to, where, usingKey, group, step);
 
     const at = seq(opt(seq("SCREEN", failCombinator())),
-                   opt(ver(Version.v740sp08, "GROUP", Version.OpenABAP)),
+                   opt(ver(Release.v740sp08, "GROUP", {also: AlsoIn.OpenABAP})),
                    LoopSource,
                    opt(options));
 

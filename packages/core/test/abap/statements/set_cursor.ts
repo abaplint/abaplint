@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "SET CURSOR FIELD 'ASDF'.",
@@ -11,3 +12,9 @@ const tests = [
 ];
 
 statementType(tests, "SET CURSOR", Statements.SetCursor);
+
+const versionsFail = [
+  {abap: `SET CURSOR FIELD 'ASDF'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "SET CURSOR");

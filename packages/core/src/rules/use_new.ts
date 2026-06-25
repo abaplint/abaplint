@@ -4,7 +4,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Dynamic, ParameterListExceptions, Target} from "../abap/2_statements/expressions";
-import {Version} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper, IEdit} from "../edit_helper";
 import {StatementNode} from "../abap/nodes";
@@ -52,7 +52,8 @@ Applicable from v740sp02 and up`,
       return [];
     }
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp02 && this.reg.getConfig().getVersion() !== Version.Cloud) {
+    if (!releaseAtLeast(this.reg.getConfig().getRelease(), Release.v740sp02)
+        && this.reg.getConfig().getLanguageVersion() !== LanguageVersion.Cloud) {
       return [];
     }
 

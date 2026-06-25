@@ -1,6 +1,6 @@
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {Issue} from "../issue";
-import {Version} from "../version";
+import {LanguageVersion} from "../version";
 import * as Objects from "../objects";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
@@ -90,7 +90,7 @@ export class CloudTypes implements IRule {
   }
 
   public run(obj: IObject): Issue[] {
-    if (this.reg.getConfig().getVersion() !== Version.Cloud || CloudTypes.isCloud(obj)) {
+    if (this.reg.getConfig().getLanguageVersion() !== LanguageVersion.Cloud || CloudTypes.isCloud(obj)) {
       return [];
     }
 

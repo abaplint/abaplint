@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {seq, opt, per, alt, ver} from "../combi";
-import {Version} from "../../../version";
+import {seq, opt, per, alt, ver, AlsoIn} from "../combi";
+import {Release} from "../../../version";
 import {Source, Cond} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -10,7 +10,7 @@ export class Wait implements IStatement {
     const up = seq("UP TO", Source, "SECONDS");
 
     const channels = "MESSAGING CHANNELS";
-    const push = ver(Version.v750, "PUSH CHANNELS", Version.OpenABAP);
+    const push = ver(Release.v750, "PUSH CHANNELS", {also: AlsoIn.OpenABAP});
     const tasks = "ASYNCHRONOUS TASKS";
 
     const type = seq("FOR", per(channels, push, tasks));

@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, optPrio} from "../combi";
+import {verNotLang, seq, alt, optPrio} from "../combi";
 import {SQLSourceSimple, SQLIntoTable, SQLIntoList} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLIntoStructure} from "../expressions/sql_into_structure";
 
@@ -15,7 +15,7 @@ export class FetchNextCursor implements IStatement {
                     alt(SQLIntoStructure, SQLIntoTable, SQLIntoList),
                     optPrio(size));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

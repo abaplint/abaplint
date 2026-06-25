@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {opt, seq, ver} from "../combi";
+import {opt, seq, ver, AlsoIn} from "../combi";
 import {NamespaceSimpleName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class TypeEnumBegin implements IStatement {
 
@@ -13,7 +13,7 @@ export class TypeEnumBegin implements IStatement {
 
     const em = seq("ENUM", NamespaceSimpleName, opt(structure), opt(base));
 
-    const ret = ver(Version.v751, seq("TYPES", "BEGIN OF", em), Version.OpenABAP);
+    const ret = ver(Release.v751, seq("TYPES", "BEGIN OF", em), {also: AlsoIn.OpenABAP});
 
     return ret;
   }

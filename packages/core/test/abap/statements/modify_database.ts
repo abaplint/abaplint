@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "MODIFY t100 FROM <ls_t100>.",
@@ -13,3 +14,9 @@ const tests = [
 ];
 
 statementType(tests, "MODIFY database", Statements.ModifyDatabase);
+
+const versionsFail = [
+  {abap: `MODIFY zfoo CLIENT SPECIFIED.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "MODIFY CLIENT SPECIFIED");

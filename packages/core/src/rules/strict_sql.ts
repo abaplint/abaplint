@@ -3,7 +3,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Version} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
@@ -49,8 +49,8 @@ Activates from v750 and up`,
       return [];
     }
 
-    if (this.reg.getConfig().getVersion() < Version.v750
-        && this.reg.getConfig().getVersion() !== Version.Cloud) {
+    if (!releaseAtLeast(this.reg.getConfig().getRelease(), Release.v750)
+        && this.reg.getConfig().getLanguageVersion() !== LanguageVersion.Cloud) {
       return [];
     }
 

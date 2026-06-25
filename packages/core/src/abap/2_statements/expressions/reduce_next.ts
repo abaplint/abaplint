@@ -2,11 +2,11 @@ import {Expression, seq, plus, altPrio, tok, ver, alt} from "../combi";
 import {SimpleTarget, Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {WDash, WPlus} from "../../1_lexer/tokens";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class ReduceNext extends Expression {
   public getRunnable(): IStatementRunnable {
-    const calcAssign = ver(Version.v754,
+    const calcAssign = ver(Release.v754,
                            alt(seq(tok(WPlus), "="),
                                seq(tok(WDash), "="),
                                "/=",

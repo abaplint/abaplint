@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "CREATE OBJECT lo_obj.",
@@ -16,3 +17,9 @@ const tests = [
 ];
 
 statementType(tests, "CREATE OBJECT", Statements.CreateObject);
+
+const versionsFail = [
+  {abap: `CREATE OBJECT lo_root AREA HANDLE lo_area.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "CREATE OBJECT");

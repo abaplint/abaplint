@@ -9,7 +9,7 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {Position} from "../position";
 import {Comment} from "../abap/2_statements/statements/_statement";
-import {Version} from "../version";
+import {LanguageVersion} from "../version";
 
 export class MainFileContentsConf extends BasicRuleConfig {
 }
@@ -51,7 +51,7 @@ export class MainFileContents implements IRule {
 
   public run(obj: IObject): Issue[] {
     if (!(obj instanceof ABAPObject)
-        || this.reg.getConfig().getVersion() === Version.Cloud) {
+        || this.reg.getConfig().getLanguageVersion() === LanguageVersion.Cloud) {
       return [];
     }
 

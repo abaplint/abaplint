@@ -5,7 +5,7 @@ import * as Structures from "../abap/3_structures/structures";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-import {Version} from "../version";
+import {Release} from "../version";
 
 export class NoInlineInOptionalBranchesConf extends BasicRuleConfig {
 }
@@ -45,10 +45,10 @@ Not considered optional branches:
   public runParsed(file: ABAPFile) {
     const output: Issue[] = [];
 
-    const version = this.reg.getConfig().getVersion();
-    if (version === Version.v700
-        || version === Version.v702
-        || version === Version.OpenABAP) {
+    const release = this.reg.getConfig().getRelease();
+    if (release === Release.v700
+        || release === Release.v702
+        || this.reg.getConfig().getOpenABAP()) {
       return [];
     }
 

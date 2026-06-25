@@ -3,7 +3,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {IRegistry} from "../_iregistry";
 import {IRuleMetadata, RuleTag, IRule} from "./_irule";
-import {Version} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
@@ -76,7 +76,8 @@ DATA(percentage) = CONV decfloat34( comment_number / abs_statement_number ) * 10
       return [];
     }
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp02 && this.reg.getConfig().getVersion() !== Version.Cloud) {
+    if (!releaseAtLeast(this.reg.getConfig().getRelease(), Release.v740sp02)
+        && this.reg.getConfig().getLanguageVersion() !== LanguageVersion.Cloud) {
       return [];
     } else if (!(obj instanceof ABAPObject)) {
       return [];

@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "INSERT tactz FROM TABLE lt_tactz.",
@@ -21,3 +22,9 @@ const tests = [
 ];
 
 statementType(tests, "INSERT", Statements.InsertDatabase);
+
+const versionsFail = [
+  {abap: `INSERT zfoo CLIENT SPECIFIED.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "INSERT CLIENT SPECIFIED");

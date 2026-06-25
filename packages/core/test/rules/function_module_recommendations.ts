@@ -24,7 +24,7 @@ async function findIssues(abap: string, version?: Version): Promise<readonly Iss
   await reg.parseAsync();
   const rule = new FunctionModuleRecommendations();
   const ruleConf = rule.getConfig();
-  ruleConf.recommendations = [{name: "CALCULATE_HASH_FOR_RAW", replace: "use CL_ABAP_HMAC", from: Version.v750}];
+  ruleConf.recommendations = [{name: "CALCULATE_HASH_FOR_RAW", replace: "use CL_ABAP_HMAC", from: "v750"}];
   rule.setConfig(ruleConf);
   return rule.initialize(reg).run(reg.getFirstObject()!);
 }

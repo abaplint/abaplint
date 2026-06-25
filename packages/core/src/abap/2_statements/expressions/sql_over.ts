@@ -1,4 +1,4 @@
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {ParenLeftW, WParenRightW, WParenRight} from "../../1_lexer/tokens";
 import {Expression, ver, seq, tok, altPrio, optPrio, plus, opt} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
@@ -18,9 +18,9 @@ export class SQLOver extends Expression {
     const currentRow = seq("CURRENT", "ROW");
     const numBound = seq(SQLSource, altPrio("PRECEDING", "FOLLOWING"));
     const bound = altPrio(unboundedPreceding, unboundedFollowing, currentRow, numBound);
-    const windowFrameSpec = ver(Version.v757, seq("ROWS", "BETWEEN", bound, "AND", bound));
+    const windowFrameSpec = ver(Release.v757, seq("ROWS", "BETWEEN", bound, "AND", bound));
 
-    return ver(Version.v757,
+    return ver(Release.v757,
                seq("OVER", lparen,
                    optPrio(partitionBy),
                    optPrio(SQLOrderBy),

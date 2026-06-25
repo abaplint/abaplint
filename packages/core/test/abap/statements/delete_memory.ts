@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "DELETE FROM MEMORY ID 'foobar'.",
@@ -11,3 +12,9 @@ const tests = [
 ];
 
 statementType(tests, "DELETE FROM MEMORY", Statements.DeleteMemory);
+
+const versionsFail = [
+  {abap: `DELETE FROM MEMORY ID 'foobar'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "DELETE MEMORY");

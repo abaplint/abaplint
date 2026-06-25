@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, tok, plus, altPrio} from "../combi";
+import {verNotLang, str, seq, opt, alt, tok, plus, altPrio} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import * as Expressions from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {PerformTables, PerformUsing, PerformChanging} from "../expressions";
 
@@ -13,17 +13,17 @@ export class Perform implements IStatement {
     const commit = alt(seq("ON COMMIT", opt(level)),
                        "ON ROLLBACK");
 
-    const short = verNot(Version.Cloud, seq(Expressions.FormName,
-                                            tok(ParenLeft),
-                                            Expressions.IncludeName,
-                                            tok(ParenRightW)));
+    const short = verNotLang(LanguageVersion.Cloud, seq(Expressions.FormName,
+                                                        tok(ParenLeft),
+                                                        Expressions.IncludeName,
+                                                        tok(ParenRightW)));
 
     const program = seq("IN PROGRAM", opt(alt(Expressions.Dynamic, Expressions.IncludeName)));
 
     const found = str("IF FOUND");
 
     const full = seq(alt(Expressions.FormName, Expressions.Dynamic),
-                     opt(verNot(Version.Cloud, program)));
+                     opt(verNotLang(LanguageVersion.Cloud, program)));
 
     const normal = seq(opt(found),
                        opt(PerformTables),

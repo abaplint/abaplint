@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "SORT BY foo bar.",
@@ -9,3 +10,9 @@ const tests = [
 ];
 
 statementType(tests, "SORT dataset", Statements.SortDataset);
+
+const versionsFail = [
+  {abap: `SORT BY foo bar.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "SORT DATASET");

@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, alt} from "../combi";
+import {verNotLang, seq, opt, alt} from "../combi";
 import {Dynamic, Source, ParameterListS, ParameterListT, DatabaseConnection} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class CallDatabase implements IStatement {
@@ -18,7 +18,7 @@ export class CallDatabase implements IStatement {
                     opt(DatabaseConnection),
                     alt(expl, tab));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

@@ -1,6 +1,7 @@
+import {Release} from "../../../src/version";
 import {statementExpectFail, statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+
 
 const tests = [
   "raise exception type zcx_root.",
@@ -44,12 +45,12 @@ statementType(tests, "RAISE", Statements.Raise);
 
 const versions = [
   {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID sy-msgid TYPE sy-msgty" +
-    " NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.", ver: Version.v750},
-  {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZFOO' TYPE 'E' NUMBER 001.", ver: Version.v750},
-  {abap: "RAISE EXCEPTION TYPE zcx_bar MESSAGE e000(zp_foo) WITH lv_moo.", ver: Version.v750},
-  {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZFOO' TYPE 'E' NUMBER 001 WITH bar.", ver: Version.v750},
-  {abap: "RAISE EXCEPTION TYPE zcx_foobar USING MESSAGE.", ver: Version.v752},
-  {abap: "RAISE EXCEPTION NEW zcx_foobar( ).", ver: Version.v752},
+    " NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.", rel: Release.v750},
+  {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZFOO' TYPE 'E' NUMBER 001.", rel: Release.v750},
+  {abap: "RAISE EXCEPTION TYPE zcx_bar MESSAGE e000(zp_foo) WITH lv_moo.", rel: Release.v750},
+  {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZFOO' TYPE 'E' NUMBER 001 WITH bar.", rel: Release.v750},
+  {abap: "RAISE EXCEPTION TYPE zcx_foobar USING MESSAGE.", rel: Release.v752},
+  {abap: "RAISE EXCEPTION NEW zcx_foobar( ).", rel: Release.v752},
 ];
 
 statementVersion(versions, "RAISE", Statements.Raise);

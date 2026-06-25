@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt} from "../combi";
+import {verNotLang, seq, opt} from "../combi";
 import {Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class VerificationMessage implements IStatement {
@@ -12,7 +12,7 @@ export class VerificationMessage implements IStatement {
 
     const ret = seq("VERIFICATION-MESSAGE", Source, Source, opt(priority));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

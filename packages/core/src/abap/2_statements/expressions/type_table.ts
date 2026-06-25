@@ -1,9 +1,9 @@
-import {seq, opt, alt, per, Expression, altPrio, optPrio, plusPrio, plus, ver} from "../combi";
+import {seq, opt, alt, per, Expression, altPrio, optPrio, plusPrio, plus, ver, AlsoIn} from "../combi";
 import {Constant, TypeName, Integer, EntityAssociation} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {FieldChain} from "./field_chain";
 import {TypeTableKey} from "./type_table_key";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class TypeTable extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -34,7 +34,7 @@ export class TypeTable extends Expression {
 
     const occurs = seq("OCCURS", altPrio(Integer, FieldChain));
 
-    const derived = ver(Version.v754, seq("TABLE FOR", altPrio(
+    const derived = ver(Release.v754, seq("TABLE FOR", altPrio(
       "ACTION IMPORT",
       "ACTION RESULT",
       "CREATE",
@@ -48,7 +48,7 @@ export class TypeTable extends Expression {
       "READ RESULT",
       "UPDATE",
       "DELETE",
-    ), alt(TypeName, EntityAssociation)), Version.OpenABAP);
+    ), alt(TypeName, EntityAssociation)), {also: AlsoIn.OpenABAP});
 
     const oldType = seq(opt("REF TO"), TypeName, alt(seq(occurs, opt(header)), header));
     const oldLike = seq(opt("REF TO"), FieldChain, alt(seq(occurs, opt(header)), header));

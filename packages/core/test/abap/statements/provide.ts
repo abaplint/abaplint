@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "PROVIDE FIELDS * \n" +
@@ -59,3 +60,11 @@ BETWEEN <p9745>-begda AND <p9745>-endda.`,
 ];
 
 statementType(tests, "PROVIDE", Statements.Provide);
+
+const versionsFail = [
+  {abap: `PROVIDE FIELDS * 
+FROM li_temp_join INTO ls_join_temp VALID l_flag BOUNDS datab AND datbi 
+BETWEEN l_begda AND l_endda.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "PROVIDE");

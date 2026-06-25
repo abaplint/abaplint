@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "FIELD sdfds MODULE sdfs ON INPUT.",
@@ -25,3 +26,9 @@ const tests = [
 ];
 
 statementType(tests, "FIELD", Statements.Field);
+
+const versionsFail = [
+  {abap: `FIELD sdfds MODULE sdfs ON INPUT.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "FIELD");

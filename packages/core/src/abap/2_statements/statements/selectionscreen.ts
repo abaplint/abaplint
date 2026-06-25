@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, altPrio, optPrio, alt, opt, per, regex as reg, tok} from "../combi";
+import {verNotLang, str, seq, altPrio, optPrio, alt, opt, per, regex as reg, tok} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../../1_lexer/tokens";
 import {Integer, Source, Field, Modif, Constant, InlineField, TextElement, BlockName, FieldSub} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class SelectionScreen implements IStatement {
@@ -128,7 +128,7 @@ export class SelectionScreen implements IStatement {
                             endVersion,
                             def));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

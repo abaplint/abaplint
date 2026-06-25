@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, alt, per} from "../combi";
+import {verNotLang, seq, opt, alt, per} from "../combi";
 import {Source, FieldChain, Constant, Field, Modif, Dynamic, SimpleSource1, FieldSub, SimpleFieldChain} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class SelectOption implements IStatement {
@@ -46,7 +46,7 @@ export class SelectOption implements IStatement {
                     alt(FieldChain, Dynamic),
                     opt(options));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

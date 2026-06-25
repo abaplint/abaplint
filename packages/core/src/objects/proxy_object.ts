@@ -3,7 +3,7 @@ import {AbstractObject} from "./_abstract_object";
 import {Interface} from "./interface";
 import {MemoryFile} from "../files/memory_file";
 import {IRegistry} from "../_iregistry";
-import {Version} from "../version";
+import {ABAPRelease} from "../version";
 
 interface ProxyDataItem {
   OBJECT?: string;
@@ -50,7 +50,7 @@ export class ProxyObject extends AbstractObject {
     super.setDirty();
   }
 
-  public parse(_version?: Version, _globalMacros?: readonly string[], reg?: IRegistry) {
+  public parse(_release?: ABAPRelease, _globalMacros?: readonly string[], reg?: IRegistry) {
     if (this.parsedXML) {
       return {updated: false, runtime: 0};
     }

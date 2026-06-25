@@ -1,6 +1,6 @@
 import {seq, optPrio, altPrio, Expression, ver, tok, star} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {DatabaseTable, SQLAggregation, SQLAsName, SQLCond} from ".";
 
@@ -25,7 +25,7 @@ export class SQLHierarchyAggregate extends Expression {
 
     const name = altPrio("HIERARCHY_DESCENDANTS_AGGREGATE", "HIERARCHY_ANCESTORS_AGGREGATE");
 
-    return ver(Version.v750, seq(
+    return ver(Release.v750, seq(
       name,
       tok(ParenLeftW),
       aggregate,

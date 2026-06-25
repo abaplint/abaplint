@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt} from "../combi";
+import {verNotLang, seq, opt} from "../combi";
 import {Target, ParameterListS, Source, Dynamic} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class GetBadi implements IStatement {
@@ -17,7 +17,7 @@ export class GetBadi implements IStatement {
                     opt(filters),
                     opt(context));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

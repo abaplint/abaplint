@@ -1,6 +1,6 @@
-import {seq, opt, alt, ver, Expression, altPrio, plus, optPrio, failStar} from "../combi";
+import {seq, opt, alt, ver, Expression, altPrio, plus, optPrio, failStar, AlsoIn} from "../combi";
 import {FieldSub, Field} from ".";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class TypeTableKey extends Expression {
@@ -8,7 +8,7 @@ export class TypeTableKey extends Expression {
 
     const uniqueness = alt("NON-UNIQUE", "UNIQUE");
     const defaultKey = "DEFAULT KEY";
-    const emptyKey = ver(Version.v740sp02, "EMPTY KEY", Version.OpenABAP);
+    const emptyKey = ver(Release.v740sp02, "EMPTY KEY", {also: AlsoIn.OpenABAP});
 
     const components = plus(alt(seq("WITH", failStar()), FieldSub));
 

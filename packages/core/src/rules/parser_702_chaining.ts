@@ -4,7 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-import {Version} from "../version";
+import {Release} from "../version";
 import {Statements} from "..";
 import {ExpressionNode} from "../abap/nodes";
 
@@ -37,8 +37,8 @@ Only active on target version 702 and below.`,
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    if (this.reg.getConfig().getVersion() !== Version.v702
-        && this.reg.getConfig().getVersion() !== Version.v700) {
+    if (this.reg.getConfig().getRelease() !== Release.v702
+        && this.reg.getConfig().getRelease() !== Release.v700) {
       return [];
     }
 

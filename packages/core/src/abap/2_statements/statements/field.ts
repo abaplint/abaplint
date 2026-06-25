@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, alt, tok, altPrio, starPrio} from "../combi";
+import {verNotLang, seq, opt, alt, tok, altPrio, starPrio} from "../combi";
 import {Constant, FieldChain, FormName} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {ParenRightW, WParenLeft} from "../../1_lexer/tokens";
 
@@ -21,7 +21,7 @@ export class Field implements IStatement {
 
     const ret = seq("FIELD", FieldChain, opt(altPrio(module, moduleStrange, values, wit, select)));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

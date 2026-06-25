@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, optPrio, altPrio, per, plusPrio} from "../combi";
+import {verNotLang, str, seq, opt, alt, optPrio, altPrio, per, plusPrio} from "../combi";
 import {Source, Dynamic, AndReturn, FieldSub, IncludeName} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Submit implements IStatement {
@@ -75,7 +75,7 @@ export class Submit implements IStatement {
 
     const ret = seq("SUBMIT", prog, opt(perm));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

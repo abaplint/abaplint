@@ -13,6 +13,10 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     this.expression = expression;
   }
 
+  public addChild(_n: ExpressionNode | TokenNode): void {
+    throw new Error("ExpressionNode: addChild() must not be called, nodes are immutable after setChildren()");
+  }
+
   public get(): IStatementRunnable {
     return this.expression;
   }

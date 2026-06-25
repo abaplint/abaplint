@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "SEARCH foo-bar FOR '/' STARTING AT 2.",
@@ -11,3 +12,9 @@ const tests = [
 ];
 
 statementType(tests, "SEARCH", Statements.Search);
+
+const versionsFail = [
+  {abap: `SEARCH foo-bar FOR '/' STARTING AT 2.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "SEARCH");

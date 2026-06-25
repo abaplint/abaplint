@@ -1,11 +1,11 @@
 import {seq, Expression, plus, ver, optPrio, alt} from "../combi";
 import {Source, Field, CorrespondingBodyBase, CorrespondingBodyMapping} from ".";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class CorrespondingBody extends Expression {
   public getRunnable(): IStatementRunnable {
-    const discarding = ver(Version.v751, "DISCARDING DUPLICATES");
+    const discarding = ver(Release.v751, "DISCARDING DUPLICATES");
 
     return seq(
       optPrio("DEEP"),

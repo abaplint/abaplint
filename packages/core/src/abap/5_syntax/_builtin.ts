@@ -8,13 +8,13 @@ import {Visibility} from "../4_file_information/visibility";
 import {Identifier} from "../4_file_information/_identifier";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {IMethodParameters} from "../types/_method_parameters";
-import {Version} from "../../version";
+import {ABAPRelease, Release} from "../../version";
 
 interface IBuiltinMethod {
   counter: number,
   mandatory?: {[key: string]: AbstractType},
   optional?: {[key: string]: AbstractType},
-  version?: Version,
+  release?: ABAPRelease,
   predicate?: boolean,
   return: AbstractType;
   cache?: BuiltInMethod | undefined;
@@ -175,7 +175,7 @@ export class BuiltIn {
         "val": IntegerType.get(),
       },
       return: XStringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "BOOLC": {
@@ -184,7 +184,7 @@ export class BuiltIn {
         "val": CLikeType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "BOOLX": {
@@ -196,7 +196,7 @@ export class BuiltIn {
         "bit": IntegerType.get(),
       },
       return: XStringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "CEIL": {
@@ -217,7 +217,7 @@ export class BuiltIn {
         "off": IntegerType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "CHARLEN": {
@@ -243,7 +243,7 @@ export class BuiltIn {
         "val9": CLikeType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "CMIN": {
@@ -261,7 +261,7 @@ export class BuiltIn {
         "val9": CLikeType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "CONCAT_LINES_OF": {
@@ -273,7 +273,7 @@ export class BuiltIn {
         "sep": CLikeType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "CONDENSE": {
@@ -287,7 +287,7 @@ export class BuiltIn {
         "to": CLikeType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "CONTAINS": {
@@ -308,7 +308,7 @@ export class BuiltIn {
       },
       return: new CharacterType(1),
       predicate: true,
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "CONTAINS_ANY_NOT_OF": {
@@ -325,7 +325,7 @@ export class BuiltIn {
         "occ": IntegerType.get(),
       },
       predicate: true,
-      return: new CharacterType(1), version: Version.v702,
+      return: new CharacterType(1), release: Release.v702,
     },
 
     "CONTAINS_ANY_OF": {
@@ -343,7 +343,7 @@ export class BuiltIn {
       },
       return: new CharacterType(1),
       predicate: true,
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "COS": {
@@ -376,7 +376,7 @@ export class BuiltIn {
         "len": IntegerType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "COUNT_ANY_NOT_OF": {
@@ -393,7 +393,7 @@ export class BuiltIn {
         "len": IntegerType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "COUNT_ANY_OF": {
@@ -410,7 +410,7 @@ export class BuiltIn {
         "len": IntegerType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "DBMAXLEN": {
@@ -428,7 +428,7 @@ export class BuiltIn {
         "val2": CLikeType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "ESCAPE": {
@@ -438,7 +438,7 @@ export class BuiltIn {
         "format": CLikeType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "EXP": {
@@ -464,7 +464,7 @@ export class BuiltIn {
         "occ": IntegerType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "FIND_ANY_NOT_OF": {
@@ -479,7 +479,7 @@ export class BuiltIn {
         "occ": IntegerType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "FIND_ANY_OF": {
@@ -494,7 +494,7 @@ export class BuiltIn {
         "occ": IntegerType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "FIND_END": {
@@ -512,7 +512,7 @@ export class BuiltIn {
         "occ": IntegerType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "FLOOR": {
@@ -541,7 +541,7 @@ export class BuiltIn {
         "min": IntegerType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "INSERT": {
@@ -554,7 +554,7 @@ export class BuiltIn {
         "off": IntegerType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "IPOW": {
@@ -564,7 +564,7 @@ export class BuiltIn {
         "exp": new FloatType(),
       },
       return: IntegerType.get(),
-      version: Version.v740sp02,
+      release: Release.v740sp02,
     },
 
     "LINE_EXISTS": {
@@ -574,7 +574,7 @@ export class BuiltIn {
       },
       return: new CharacterType(1),
       predicate: true,
-      version: Version.v740sp02,
+      release: Release.v740sp02,
     },
 
     "LINE_INDEX": {
@@ -583,7 +583,7 @@ export class BuiltIn {
         "val": AnyType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v740sp02,
+      release: Release.v740sp02,
     },
 
     "LINES": {
@@ -621,7 +621,7 @@ export class BuiltIn {
         "occ": IntegerType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "MATCHES": {
@@ -638,7 +638,7 @@ export class BuiltIn {
       },
       return: new CharacterType(1),
       predicate: true,
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "NMAX": {
@@ -657,7 +657,7 @@ export class BuiltIn {
         "val9": CLikeType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "NMIN": {
@@ -676,7 +676,7 @@ export class BuiltIn {
         "val9": CLikeType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "NUMOFCHAR": {
@@ -694,7 +694,7 @@ export class BuiltIn {
         "occ": CLikeType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "REPLACE": {
@@ -713,7 +713,7 @@ export class BuiltIn {
         "occ": IntegerType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "RESCALE": {
@@ -727,7 +727,7 @@ export class BuiltIn {
         "mode": IntegerType.get(),
       },
       return: new FloatType(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "REVERSE": {
@@ -736,7 +736,7 @@ export class BuiltIn {
         "val": CLikeType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "ROUND": {
@@ -750,7 +750,7 @@ export class BuiltIn {
         "mode": IntegerType.get(),
       },
       return: IntegerType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "SEGMENT": {
@@ -764,7 +764,7 @@ export class BuiltIn {
         "space": CLikeType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "SHIFT_LEFT": {
@@ -779,7 +779,7 @@ export class BuiltIn {
         "circular": IntegerType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "SHIFT_RIGHT": {
@@ -793,7 +793,7 @@ export class BuiltIn {
         "circular": IntegerType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "SIGN": {
@@ -846,7 +846,7 @@ export class BuiltIn {
         "len": IntegerType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "SUBSTRING_AFTER": {
@@ -863,7 +863,7 @@ export class BuiltIn {
         "occ": IntegerType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "SUBSTRING_BEFORE": {
@@ -880,7 +880,7 @@ export class BuiltIn {
         "occ": IntegerType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "SUBSTRING_FROM": {
@@ -897,7 +897,7 @@ export class BuiltIn {
         "occ": IntegerType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "SUBSTRING_TO": {
@@ -914,7 +914,7 @@ export class BuiltIn {
         "occ": IntegerType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "TAN": {
@@ -939,7 +939,7 @@ export class BuiltIn {
         "val": CLikeType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "TO_MIXED": {
@@ -954,14 +954,14 @@ export class BuiltIn {
         "min": IntegerType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "TO_UPPER": {
       counter: BuiltIn.counter++,
       mandatory: {"val": CLikeType.get()},
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "TRANSLATE": {
@@ -972,7 +972,7 @@ export class BuiltIn {
         "to": CLikeType.get(),
       },
       return: StringType.get(),
-      version: Version.v702,
+      release: Release.v702,
     },
 
     "TRUNC": {
@@ -995,13 +995,13 @@ export class BuiltIn {
         "seconds": new FloatType(),
       },
       return: new UTCLongType(),
-      version: Version.v754,
+      release: Release.v754,
     },
 
     "UTCLONG_CURRENT": {
       counter: BuiltIn.counter++,
       return: new UTCLongType(),
-      version: Version.v754,
+      release: Release.v754,
     },
 
     "UTCLONG_DIFF": {
@@ -1011,7 +1011,7 @@ export class BuiltIn {
         "low": new UTCLongType(),
       },
       return: new FloatType(),
-      version: Version.v754,
+      release: Release.v754,
     },
 
     "XSDBOOL": {
@@ -1020,7 +1020,7 @@ export class BuiltIn {
         "val": CLikeType.get(),
       },
       return: new CharacterType(1),
-      version: Version.v740sp08,
+      release: Release.v740sp08,
     },
 
     "XSTRLEN": {

@@ -44,6 +44,14 @@ export class Result {
     this.nodes = n;
   }
 
+  public getTokens(): readonly AbstractToken[] {
+    return this.tokens;
+  }
+
+  public getTokenIndex(): number {
+    return this.tokenIndex;
+  }
+
   public remainingLength(): number {
     return this.tokens.length - this.tokenIndex;
   }

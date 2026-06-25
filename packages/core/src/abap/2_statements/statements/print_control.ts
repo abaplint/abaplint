@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, per} from "../combi";
+import {verNotLang, seq, per} from "../combi";
 import {Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class PrintControl implements IStatement {
@@ -18,7 +18,7 @@ export class PrintControl implements IStatement {
 
     const ret = seq("PRINT-CONTROL", per(index, func, line, position, size, cpi, lpi, font));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

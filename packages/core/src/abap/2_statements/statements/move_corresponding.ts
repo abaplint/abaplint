@@ -1,14 +1,14 @@
 import {IStatement} from "./_statement";
-import {ver, seq, optPrio} from "../combi";
+import {ver, seq, optPrio, AlsoIn} from "../combi";
 import {Source, SimpleTarget} from "../expressions";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class MoveCorresponding implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const keeping = ver(Version.v740sp05, "KEEPING TARGET LINES", Version.OpenABAP);
-    const expanding = ver(Version.v740sp05, "EXPANDING NESTED TABLES", Version.OpenABAP);
+    const keeping = ver(Release.v740sp05, "KEEPING TARGET LINES", {also: AlsoIn.OpenABAP});
+    const expanding = ver(Release.v740sp05, "EXPANDING NESTED TABLES", {also: AlsoIn.OpenABAP});
 
     const move = seq("MOVE-CORRESPONDING",
                      optPrio("EXACT"),

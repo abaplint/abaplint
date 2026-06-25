@@ -12,7 +12,7 @@ import {StatementSyntax} from "../_statement_syntax";
 import {LoopGroupBy} from "../expressions/loop_group_by";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
-import {Version} from "../../../version";
+import {Release, releaseAtLeast} from "../../../version";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -104,7 +104,7 @@ export class Loop implements StatementSyntax {
           return;
         }
 
-        if (input.scope.getRegistry().getConfig().getVersion() <= Version.v740sp02) {
+        if (!releaseAtLeast(input.scope.getRelease(), Release.v740sp02)) {
           const compares = cond.findAllExpressionsRecursive(Expressions.ComponentCompare).map(c => c.concatTokens().toUpperCase());
           for (const keyField of key.keyFields) {
             if (compares.find(c => c === keyField.toUpperCase() + " IS INITIAL") !== undefined) {

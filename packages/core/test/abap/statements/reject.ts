@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "REJECT.",
@@ -7,3 +8,9 @@ const tests = [
 ];
 
 statementType(tests, "REJECT", Statements.Reject);
+
+const versionsFail = [
+  {abap: `REJECT.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "REJECT");

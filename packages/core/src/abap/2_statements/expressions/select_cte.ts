@@ -1,7 +1,7 @@
-import {seq, altPrio, optPrio, Expression, ver, starPrio} from "../combi";
+import {seq, altPrio, optPrio, Expression, ver, starPrio, AlsoIn} from "../combi";
 import {SQLFrom, SQLCond, SQLClient, SQLGroupBy, SQLHaving, SQLForAllEntries,
   DatabaseConnection, SQLHints, SQLOptions, SQLPrivilegedAccess, SQLOrderBy} from ".";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLFieldListLoopGreedy} from "./sql_field_list_loop_greedy";
 import {SQLFieldsLoop} from "./sql_fields_loop";
@@ -13,8 +13,8 @@ export class SelectCTE extends Expression {
   public getRunnable(): IStatementRunnable {
     const where = seq("WHERE", SQLCond);
     const bypass = "BYPASSING BUFFER";
-    const privileged = ver(Version.v758, SQLPrivilegedAccess);
-    const offset = ver(Version.v751, seq("OFFSET", SQLSource));
+    const privileged = ver(Release.v758, SQLPrivilegedAccess);
+    const offset = ver(Release.v751, seq("OFFSET", SQLSource));
 
     const groupHaving = seq(optPrio(SQLGroupBy), optPrio(SQLHaving));
     const tail = seq(
@@ -30,7 +30,7 @@ export class SelectCTE extends Expression {
       SQLFrom,
       optPrio(SQLClient),
       optPrio(bypass),
-      ver(Version.v750, SQLFieldsLoop, Version.OpenABAP),
+      ver(Release.v750, SQLFieldsLoop, {also: AlsoIn.OpenABAP}),
       optPrio(SQLForAllEntries),
       optPrio(where),
       tail,
@@ -50,10 +50,10 @@ export class SelectCTE extends Expression {
     const union = seq("UNION", optPrio(altPrio("DISTINCT", "ALL")));
     const intersectExcept = altPrio(seq("INTERSECT", optPrio("DISTINCT")),
                                     seq("EXCEPT", optPrio("DISTINCT")));
-    const setOp = altPrio(ver(Version.v750, union, Version.OpenABAP),
-                          ver(Version.v756, intersectExcept));
+    const setOp = altPrio(ver(Release.v750, union, {also: AlsoIn.OpenABAP}),
+                          ver(Release.v756, intersectExcept));
 
-    const operandSql = seq(SQLFrom, optPrio(SQLClient), optPrio(bypass), ver(Version.v750, SQLFieldsLoop, Version.OpenABAP),
+    const operandSql = seq(SQLFrom, optPrio(SQLClient), optPrio(bypass), ver(Release.v750, SQLFieldsLoop, {also: AlsoIn.OpenABAP}),
                            optPrio(SQLForAllEntries), optPrio(where), groupHaving);
     const operandAbap = seq(optPrio("DISTINCT"), SQLFieldListLoopGreedy,
                             SQLFrom, optPrio(SQLClient), optPrio(bypass), optPrio(SQLForAllEntries),

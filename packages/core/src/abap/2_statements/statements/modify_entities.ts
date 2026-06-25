@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {alt, altPrio, opt, optPrio, per, plus, plusPrio, seq, ver} from "../combi";
+import {alt, altPrio, opt, optPrio, per, plus, plusPrio, seq, ver, AlsoIn} from "../combi";
 import {EMLEntityPath, EntityAssociation, NamespaceSimpleName, SimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class ModifyEntities implements IStatement {
 
@@ -52,7 +52,7 @@ export class ModifyEntities implements IStatement {
                        alt(NamespaceSimpleName, EntityAssociation),
                        alt(execute, create, updateFields, deleteFrom, updateSetFields, updateFrom, create2, create3, create4));
 
-    return ver(Version.v754, seq("MODIFY", alt(entities, entity), end), Version.OpenABAP);
+    return ver(Release.v754, seq("MODIFY", alt(entities, entity), end), {also: AlsoIn.OpenABAP});
   }
 
 }

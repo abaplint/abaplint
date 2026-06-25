@@ -1,5 +1,6 @@
-import {statementExpectFail, statementType} from "../_utils";
+import {statementExpectFail, statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "describe table lt_foo lines lv_lines.",
@@ -40,3 +41,9 @@ const fails = [
 ];
 
 statementExpectFail(fails, "DESCRIBE");
+
+const versionsFail = [
+  {abap: `describe table lt_foo lines lv_lines.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "DESCRIBE");

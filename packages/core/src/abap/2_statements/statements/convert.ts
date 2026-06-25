@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, alt, per, ver} from "../combi";
+import {seq, alt, per, ver, AlsoIn} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class Convert implements IStatement {
 
@@ -23,7 +23,7 @@ export class Convert implements IStatement {
     const tim = seq("TIME", Source);
 
     const stamp = seq("INTO TIME STAMP", Target);
-    const intoutc = ver(Version.v754, seq("INTO UTCLONG", Target));
+    const intoutc = ver(Release.v754, seq("INTO UTCLONG", Target));
     const invert = seq("INTO INVERTED-DATE", Target);
 
     const date = seq(per(dat, tim),
@@ -31,7 +31,7 @@ export class Convert implements IStatement {
 
     const inv = seq("INVERTED-DATE", Source, "INTO DATE", Target);
 
-    const utclong = ver(Version.v754, seq("UTCLONG", Source, per(zone, into, daylightSource)), Version.OpenABAP);
+    const utclong = ver(Release.v754, seq("UTCLONG", Source, per(zone, into, daylightSource)), {also: AlsoIn.OpenABAP});
 
     return seq("CONVERT", alt(time, date, inv, utclong));
   }
