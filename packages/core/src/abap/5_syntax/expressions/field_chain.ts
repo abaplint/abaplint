@@ -101,7 +101,8 @@ export class FieldChain {
         if (allowGenericDeference === false
             && context?.isGeneric() === true
             && input.scope.getVersion() < Version.v756
-            && input.scope.getVersion() !== Version.Cloud) {
+            && input.scope.getVersion() !== Version.Cloud
+            && input.scope.getVersion() !== Version.OpenABAP) {
           throw new Error("A generic reference cannot be dereferenced");
         }
       } else if (current.get() instanceof Expressions.ComponentName) {
