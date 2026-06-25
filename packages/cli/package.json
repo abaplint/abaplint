@@ -8,11 +8,12 @@
     },
     "scripts": {
         "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
-        "compile": "tsc",
+        "clean": "rm -rf build",
+        "compile": "npm run clean && tsc",
         "test": "npm run compile && mocha && npm run lint && npm run webpack",
         "webpack": "webpack --progress",
-        "publish:minor": "npm --no-git-tag-version version minor && rm -rf build && npm install && npm run test && npm publish --access public",
-        "publish:patch": "npm --no-git-tag-version version patch && rm -rf build && npm install && npm run test && npm publish --access public"
+        "publish:minor": "npm --no-git-tag-version version minor && npm run clean && npm install && npm run test && npm publish --access public",
+        "publish:patch": "npm --no-git-tag-version version patch && npm run clean && npm install && npm run test && npm publish --access public"
     },
     "mocha": {
         "recursive": true,
