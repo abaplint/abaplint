@@ -18,9 +18,12 @@ export class FileOperations {
     fs.rmSync(dir, {recursive: true});
   }
 
+  /** Normalize backslashes to forward slashes, keeping the drive letter so absolute
+   * paths/glob patterns resolve on the correct drive (the path may be on a different
+   * drive than the current working directory). */
   public static toUnixPath(path: string) {
     if (os.platform() === "win32") {
-      return path.replace(/[\\/]+/g, "/").replace(/^([a-zA-Z]+:|\.\/)/, "");
+      return path.replace(/[\\/]+/g, "/");
     } else {
       return path;
     }
