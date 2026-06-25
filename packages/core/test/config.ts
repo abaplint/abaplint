@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {Config} from "../src/config";
 import {IConfig} from "../src/_config";
-import {Version, defaultVersion} from "../src/version";
+import {Version} from "../src/version";
 
 function getConfig(rules: any): IConfig {
   return {
@@ -99,7 +99,7 @@ describe("Config", () => {
 
     const conf = new Config(JSON.stringify(config));
 
-    expect(conf.getVersion()).to.equal(defaultVersion);
+    expect(conf.getVersion()).to.equal(Version.Newest);
   });
 
 });

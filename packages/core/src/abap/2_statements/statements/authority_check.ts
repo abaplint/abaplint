@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {seq, opt, alt, plus} from "../combi";
+import {seq, opt, alt, plus, verNotLang} from "../combi";
 import {Source} from "../expressions";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class AuthorityCheck implements IStatement {
@@ -17,7 +18,7 @@ export class AuthorityCheck implements IStatement {
                     opt(seq("FOR USER", Source)),
                     plus(id));
 
-    return ret;
+    return verNotLang(LanguageVersion.KeyUser, ret);
   }
 
 }

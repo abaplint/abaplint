@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, ver, optPrio, altPrio, AlsoIn} from "../combi";
-import {Release} from "../../../version";
+import {seq, alt, opt, ver, optPrio, altPrio, AlsoIn, verNotLang} from "../combi";
+import {Release, LanguageVersion} from "../../../version";
 import {Source, ParameterListS, ClassName, MessageSource, SimpleSource2, RaiseWith, MessageNumber, ExceptionName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -29,7 +29,8 @@ export class Raise implements IStatement {
     const clas = seq(pre,
                      altPrio(from, ver(Release.v752, Source, {also: AlsoIn.OpenABAP}), SimpleSource2));
 
-    const ret = seq("RAISE", altPrio(clas, ExceptionName));
+    // Old form "RAISE exception_name" blocked in KeyUser
+    const ret = seq("RAISE", altPrio(clas, verNotLang(LanguageVersion.KeyUser, ExceptionName)));
 
     return ret;
   }

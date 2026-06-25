@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, optPrio, altPrio, plus} from "../combi";
+import {seq, optPrio, altPrio, plus, verNotLang} from "../combi";
 import {Source, MethodSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {LanguageVersion} from "../../../version";
 
 export class SetHandler implements IStatement {
 
@@ -15,7 +16,7 @@ export class SetHandler implements IStatement {
                     optPrio(fo),
                     optPrio(activation));
 
-    return ret;
+    return verNotLang(LanguageVersion.KeyUser, ret);
   }
 
 }

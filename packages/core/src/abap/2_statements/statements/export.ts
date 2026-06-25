@@ -1,8 +1,9 @@
 import {IStatement} from "./_statement";
-import {seq, alt, altPrio, opt, regex, per, plus, tok} from "../combi";
+import {seq, alt, altPrio, opt, regex, per, plus, tok, verNotLang} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, FieldSub, NamespaceSimpleName, FieldSymbol, Constant} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {LanguageVersion} from "../../../version";
 
 // todo, cloud, split?
 export class Export implements IStatement {
@@ -19,10 +20,10 @@ export class Export implements IStatement {
                         tok(ParenRightW));
 
     const buffer = seq("DATA BUFFER", Target);
-    const memory = seq("MEMORY", opt(seq("ID", Source)));
+    const memory = verNotLang(LanguageVersion.KeyUser, seq("MEMORY", opt(seq("ID", Source))));
     const table = seq("INTERNAL TABLE", Target);
-    const shared = seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, per(from, client, id));
-    const database = seq("DATABASE", cluster, per(from, client, id, using));
+    const shared = verNotLang(LanguageVersion.KeyUser, seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, per(from, client, id)));
+    const database = verNotLang(LanguageVersion.KeyUser, seq("DATABASE", cluster, per(from, client, id, using)));
 
     const target = alt(buffer, memory, database, table, shared);
 

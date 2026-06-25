@@ -20,7 +20,7 @@ export class CreateObject implements IStatement {
                     optPrio(altPrio(exporting, ptable)),
                     optPrio(altPrio(exceptions, etable)));
 
-    return ret;
+    return verNotLang(LanguageVersion.KeyUser, ret);
   }
 
 }

@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, opt, optPrio, alt, plus, altPrio, regex as reg} from "../combi";
+import {seq, opt, optPrio, alt, plus, altPrio, regex as reg, verNotLang} from "../combi";
 import {MethodName, Language, SimpleFieldChain} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {LanguageVersion} from "../../../version";
 
 export class MethodImplementation implements IStatement {
 
@@ -19,7 +20,8 @@ export class MethodImplementation implements IStatement {
                          opt("OPTIONS READ-ONLY"),
                          opt(using));
 
-    const by = seq("BY", alt(kernel, database));
+    // BY DATABASE and BY KERNEL both blocked in KeyUser
+    const by = verNotLang(LanguageVersion.KeyUser, seq("BY", alt(kernel, database)));
 
     return seq("METHOD", MethodName, optPrio(by));
   }

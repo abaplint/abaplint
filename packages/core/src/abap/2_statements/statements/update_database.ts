@@ -1,5 +1,6 @@
 import {IStatement} from "./_statement";
-import {seq, opt, alt, star, ver} from "../combi";
+import {LanguageVersion} from "../../../version";
+import {seq, opt, alt, star, ver, verNotLang} from "../combi";
 import {SQLSource, DatabaseTable, Dynamic, SQLFieldAndValue, SQLCond, DatabaseConnection, SQLClient, ComponentName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Release} from "../../../version";
@@ -25,7 +26,7 @@ export class UpdateDatabase implements IStatement {
                     opt(DatabaseConnection),
                     opt(alt(fromTable, set)));
 
-    return ret;
+    return verNotLang(LanguageVersion.KeyUser, ret);
   }
 
 }

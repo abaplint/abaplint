@@ -1,4 +1,4 @@
-import {Release} from "../../../src/version";
+import {Release, LanguageVersion} from "../../../src/version";
 import {statementType, statementVersion, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
@@ -80,3 +80,23 @@ const v757fail = [
 ];
 
 statementVersionFail(v757fail, "ASSIGN dynamic access with internal whitespace");
+
+const keyUserFail = [
+  // INCREMENT addition blocked
+  {abap: `ASSIGN lv INCREMENT 1 TO <fs>.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  // dynamic symbol name (dyn_sym) blocked
+  {abap: `ASSIGN (lv_sym) TO <fs>.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  // class=>(dyn_attr) via static arrow blocked
+  {abap: `ASSIGN class=>(lv_attr) TO <fs>.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  // CASTING TYPE (dyn_type) blocked
+  {abap: `ASSIGN lv TO <fs> CASTING TYPE (lv_type).`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "ASSIGN KeyUser restrictions");
+
+const keyUserOk = [
+  // ref->(comp) via instance arrow allowed
+  {abap: `ASSIGN lv->(lv_comp) TO <fs>.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionOk(keyUserOk, "ASSIGN KeyUser allowed variants", Statements.Assign);

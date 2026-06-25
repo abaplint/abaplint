@@ -1,5 +1,6 @@
-import {statementExpectFail, statementType} from "../_utils";
+import {statementExpectFail, statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "CALL TRANSFORMATION id\n" +
@@ -93,3 +94,7 @@ const fails = [
   RESULT XML writer.`,
 ];
 statementExpectFail(fails, "CALL TRANSFORMATION");
+
+statementVersionFail([
+  {abap: "CALL TRANSFORMATION id SOURCE data = foo RESULT XML rv_xml.", rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+], "CALL TRANSFORMATION not allowed in KeyUser");

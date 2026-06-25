@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "STATICS foo TYPE c.",
@@ -17,3 +18,7 @@ const tests = [
 ];
 
 statementType(tests, "STATIC", Statements.Static);
+
+statementVersionFail([
+  {abap: "STATICS lv_count TYPE i.", rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+], "STATICS not allowed in KeyUser");

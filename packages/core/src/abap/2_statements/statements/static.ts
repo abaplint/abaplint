@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {seq, opt, per, alt, optPrio} from "../combi";
+import {seq, opt, per, alt, optPrio, altPrio, verNotLang} from "../combi";
 import * as Expressions from "../expressions";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Static implements IStatement {
@@ -10,12 +11,14 @@ export class Static implements IStatement {
 
     const type = seq(opt(Expressions.ConstantFieldLength), p);
 
-    const ret = seq(alt("STATIC", "STATICS"),
-                    Expressions.DefinitionName,
-                    optPrio(Expressions.ConstantFieldLength),
-                    alt(type, Expressions.TypeTable));
+    const body = seq(Expressions.DefinitionName,
+                     optPrio(Expressions.ConstantFieldLength),
+                     alt(type, Expressions.TypeTable));
 
-    return ret;
+    return altPrio(
+      seq("STATIC", body),
+      verNotLang(LanguageVersion.KeyUser, seq("STATICS", body)),
+    );
   }
 
 }

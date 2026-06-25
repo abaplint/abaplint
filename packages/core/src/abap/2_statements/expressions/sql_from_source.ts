@@ -1,7 +1,7 @@
-import {altPrio, seq, optPrio, Expression, ver, tok, AlsoIn} from "../combi";
+import {altPrio, seq, optPrio, Expression, ver, tok, AlsoIn, verNotLang} from "../combi";
 import {SQLAsName, SQLCDSParameters, DatabaseTable, FieldChain, SQLPrivilegedAccess} from ".";
 import {IStatementRunnable} from "../statement_runnable";
-import {Release} from "../../../version";
+import {Release, LanguageVersion} from "../../../version";
 import {WAt} from "../../1_lexer/tokens";
 import {WithName} from "./with_name";
 import {SQLPathForEntity} from "./sql_path_for_entity";
@@ -15,12 +15,13 @@ export class SQLFromSource extends Expression {
     const tab = ver(Release.v752, seq(tok(WAt), FieldChain), {also: AlsoIn.OpenABAP});
     const aas = seq("AS", SQLAsName);
     const privileged = ver(Release.v752, seq("WITH", SQLPrivilegedAccess));
+    const pathForEntity = optPrio(verNotLang(LanguageVersion.KeyUser, new SQLPathForEntity()));
 
     return seq(altPrio(new SQLHierarchyAggregate(),
                        new SQLHierarchyAccessor(),
                        new SQLHierarchySource(),
-                       seq(WithName, optPrio(new SQLPathForEntity())),
-                       seq(DatabaseTable, optPrio(SQLCDSParameters), optPrio(new SQLPathForEntity())),
+                       seq(WithName, pathForEntity),
+                       seq(new DatabaseTable(true), optPrio(SQLCDSParameters), pathForEntity),
                        tab),
                optPrio(privileged),
                optPrio(aas));

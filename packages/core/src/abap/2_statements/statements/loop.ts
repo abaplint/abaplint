@@ -1,14 +1,14 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, ver, altPrio, per, failCombinator, AlsoIn} from "../combi";
+import {seq, alt, opt, ver, altPrio, per, failCombinator, AlsoIn, verNotLang} from "../combi";
 import {ComponentCond, Dynamic, Source, SimpleName, LoopTarget, LoopSource} from "../expressions";
-import {Release} from "../../../version";
+import {Release, LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {LoopGroupBy} from "../expressions/loop_group_by";
 
 export class Loop implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const where = seq("WHERE", alt(ComponentCond, Dynamic));
+    const where = seq("WHERE", alt(ComponentCond, verNotLang(LanguageVersion.KeyUser, Dynamic)));
 
     const group = ver(Release.v740sp08, seq("GROUP BY", LoopGroupBy), {also: AlsoIn.OpenABAP});
 

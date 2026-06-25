@@ -20,6 +20,7 @@ statementType(tests, "CREATE OBJECT", Statements.CreateObject);
 
 const versionsFail = [
   {abap: `CREATE OBJECT lo_root AREA HANDLE lo_area.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `CREATE OBJECT lo_obj.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
 ];
 
 statementVersionFail(versionsFail, "CREATE OBJECT");

@@ -1,8 +1,9 @@
 import {IStatement} from "./_statement";
-import {seq, opt, alt, regex, per, plus, tok} from "../combi";
+import {seq, opt, alt, regex, per, plus, tok, verNotLang} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Target, Source, Dynamic, ComponentChainSimple, NamespaceSimpleName, FieldSymbol} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {LanguageVersion} from "../../../version";
 
 export class Import implements IStatement {
 
@@ -18,11 +19,11 @@ export class Import implements IStatement {
                         tok(ParenRightW));
 
     const buffer = seq("DATA BUFFER", Source);
-    const memory = seq("MEMORY", opt(seq("ID", Source)));
+    const memory = verNotLang(LanguageVersion.KeyUser, seq("MEMORY", opt(seq("ID", Source))));
     const table = seq("INTERNAL TABLE", Source);
-    const shared = seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, per(dto, client, id));
-    const database = seq("DATABASE", cluster, per(dto, client, id, using));
-    const logfile = seq("LOGFILE ID", Source);
+    const shared = verNotLang(LanguageVersion.KeyUser, seq(alt("SHARED MEMORY", "SHARED BUFFER"), cluster, per(dto, client, id)));
+    const database = verNotLang(LanguageVersion.KeyUser, seq("DATABASE", cluster, per(dto, client, id, using)));
+    const logfile = verNotLang(LanguageVersion.KeyUser, seq("LOGFILE ID", Source));
 
     const source = alt(buffer, memory, database, table, shared, logfile);
 

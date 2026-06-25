@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "FORM name TABLES tt_fields TYPE ty_sval_tt USING pv_code TYPE clike \n" +
@@ -155,3 +156,7 @@ const tests = [
 ];
 
 statementType(tests, "FORM", Statements.Form);
+
+statementVersionFail([
+  {abap: "FORM foo.", rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+], "FORM not allowed in KeyUser");

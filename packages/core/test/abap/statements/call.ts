@@ -1,6 +1,6 @@
-import {statementType, statementVersionOk} from "../_utils";
+import {statementType, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Release} from "../../../src";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "cl_gui_cfw=>flush( ).",
@@ -89,3 +89,7 @@ const versionsOk = [
 ];
 
 statementVersionOk(versionsOk, "CALL", Statements.Call);
+
+statementVersionFail([
+  {abap: "CALL METHOD lo_obj->method( ).", rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+], "CALL METHOD not allowed in KeyUser");

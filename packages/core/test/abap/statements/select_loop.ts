@@ -401,6 +401,16 @@ statementType(isNotLoopPlainAggTests, "isSelectLoop → Select (plain aggregates
 
 const clientSpecifiedFail = [
   {abap: `SELECT * FROM ztab CLIENT SPECIFIED INTO @wa.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `SELECT * FROM ztab CONNECTION (con) INTO TABLE @lt_data.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
 ];
 
 statementVersionFail(clientSpecifiedFail, "SELECT LOOP CLIENT SPECIFIED");
+
+const keyUserLoopFail = [
+  {abap: `SELECT * FROM ztab CLIENT SPECIFIED INTO TABLE @lt_data.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `SELECT * FROM ztab USING CLIENT @lv_mandt INTO TABLE @lt_data.`, rel: Release.v740sp05, langVer: LanguageVersion.KeyUser},
+  {abap: `SELECT * FROM (lv_tabname) INTO TABLE @lt_data.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `SELECT * FROM ztab\\_assoc INTO TABLE @lt_data.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserLoopFail, "SELECT LOOP KeyUser restrictions");

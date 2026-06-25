@@ -1,4 +1,4 @@
-import {Version, LanguageVersion, defaultVersion, ABAPRelease, versionToABAPRelease} from "./version";
+import {Version, LanguageVersion, ABAPRelease, versionToABAPRelease} from "./version";
 import {ArtifactsRules} from "./artifacts_rules";
 import {IRule} from "./rules/_irule";
 import {IConfig, IGlobalConfig, ISyntaxSettings, IConfiguration} from "./_config";
@@ -19,10 +19,7 @@ export class Config implements IConfiguration {
       rules[rule.getMetadata().key] = rule.getConfig();
     }
 
-    let version = defaultVersion;
-    if (ver) {
-      version = ver;
-    }
+    const version: Version | undefined = ver;
 
     // defaults: dont skip anything, report everything. The user can decide to skip stuff
     // its difficult to debug errors not being reported
@@ -147,7 +144,7 @@ export class Config implements IConfiguration {
 
   public getVersion(): Version {
     if (this.config.global === undefined || this.config.syntax.version === undefined) {
-      return defaultVersion;
+      return Version.Newest;
     }
     return this.config.syntax.version;
   }
@@ -169,7 +166,7 @@ export class Config implements IConfiguration {
       }
     }
     if (match === false) {
-      this.config.syntax.version = defaultVersion;
+      this.config.syntax.version = Version.Newest;
       return;
     }
     if (this.config.syntax.version === Version.Cloud) {

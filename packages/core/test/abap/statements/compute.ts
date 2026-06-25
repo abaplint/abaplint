@@ -13,3 +13,9 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "COMPUTE");
+
+const keyUserFail = [
+  {abap: `COMPUTE lv = 1 + 2.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "COMPUTE KeyUser restrictions");

@@ -1,7 +1,7 @@
-import {seq, altPrio, optPrio, Expression, ver, starPrio, AlsoIn} from "../combi";
+import {seq, altPrio, optPrio, Expression, ver, starPrio, AlsoIn, verNotLang} from "../combi";
 import {SQLFrom, SQLCond, SQLClient, SQLGroupBy, SQLHaving, SQLForAllEntries,
   DatabaseConnection, SQLHints, SQLOptions, SQLPrivilegedAccess, SQLOrderBy} from ".";
-import {Release} from "../../../version";
+import {Release, LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLFieldListLoopGreedy} from "./sql_field_list_loop_greedy";
 import {SQLFieldsLoop} from "./sql_fields_loop";
@@ -15,6 +15,7 @@ export class SelectCTE extends Expression {
     const bypass = "BYPASSING BUFFER";
     const privileged = ver(Release.v758, SQLPrivilegedAccess);
     const offset = ver(Release.v751, seq("OFFSET", SQLSource));
+    const conn = optPrio(verNotLang(LanguageVersion.KeyUser, DatabaseConnection));
 
     const groupHaving = seq(optPrio(SQLGroupBy), optPrio(SQLHaving));
     const tail = seq(
@@ -23,7 +24,7 @@ export class SelectCTE extends Expression {
       optPrio(SQLHints),
       optPrio(privileged),
       optPrio(SQLOptions),
-      optPrio(DatabaseConnection),
+      conn,
     );
 
     const sqlStyle = seq(

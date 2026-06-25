@@ -1,5 +1,6 @@
 import {IStatement} from "./_statement";
-import {seq, altPrio, per, opt} from "../combi";
+import {LanguageVersion} from "../../../version";
+import {seq, altPrio, per, opt, verNotLang} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -13,7 +14,7 @@ export class Add implements IStatement {
 
     const ret = seq("ADD", Source, altPrio(to, then));
 
-    return ret;
+    return verNotLang(LanguageVersion.KeyUser, ret);
   }
 
 }

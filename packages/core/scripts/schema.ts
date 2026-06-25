@@ -159,6 +159,7 @@ import {StrictSQLConf} from "../src/rules/strict_sql";
 import {SuperclassFinalConf} from "../src/rules/superclass_final";
 import {SuperfluousValueConf} from "../src/rules/superfluous_value";
 import {SyModificationConf} from "../src/rules/sy_modification";
+import {SyReadRestrictionConf} from "../src/rules/sy_read_restriction";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
 import {TablesDeclaredLocallyConf} from "../src/rules/tables_declared_locally";
 import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
@@ -356,6 +357,7 @@ export interface IConfig {
     "superclass_final"?: SuperclassFinalConf | boolean,
     "superfluous_value"?: SuperfluousValueConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
+    "sy_read_restriction"?: SyReadRestrictionConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
     "tables_declared_locally"?: TablesDeclaredLocallyConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,
@@ -542,6 +544,7 @@ export interface IConfig {
     "superclass_final"?: SuperclassFinalConf | boolean,
     "superfluous_value"?: SuperfluousValueConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
+    "sy_read_restriction"?: SyReadRestrictionConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
     "tables_declared_locally"?: TablesDeclaredLocallyConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,

@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {seq, alt, per} from "../combi";
+import {seq, alt, per, verNotLang} from "../combi";
 import {Target, Dynamic, NamespaceSimpleName, CallTransformationParameters, CallTransformationOptions, SimpleSource3} from "../expressions";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class CallTransformation implements IStatement {
@@ -20,7 +21,7 @@ export class CallTransformation implements IStatement {
     const call = seq("CALL TRANSFORMATION",
                      alt(NamespaceSimpleName, Dynamic),
                      per(options, parameters, objects, source, result));
-    return call;
+    return verNotLang(LanguageVersion.KeyUser, call);
   }
 
 }

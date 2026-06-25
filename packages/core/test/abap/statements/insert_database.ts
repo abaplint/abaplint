@@ -25,6 +25,7 @@ statementType(tests, "INSERT", Statements.InsertDatabase);
 
 const versionsFail = [
   {abap: `INSERT zfoo CLIENT SPECIFIED.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `INSERT INTO ztable VALUES @ls_row.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
 ];
 
 statementVersionFail(versionsFail, "INSERT CLIENT SPECIFIED");

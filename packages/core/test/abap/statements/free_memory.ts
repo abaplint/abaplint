@@ -15,3 +15,9 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "FREE MEMORY");
+
+const keyUserFail = [
+  {abap: `free memory id ls_structure.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "FREE MEMORY KeyUser restrictions");

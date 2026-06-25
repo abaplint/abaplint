@@ -28,7 +28,7 @@ export class CallFunction implements IStatement {
                      opt(options),
                      alt(FunctionParameters, dynamic));
 
-    return call;
+    return verNotLang(LanguageVersion.KeyUser, call);
   }
 
 }

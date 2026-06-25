@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, plus, ver, AlsoIn} from "../combi";
+import {seq, alt, opt, plus, ver, AlsoIn, verNotLang} from "../combi";
 import {Target, Source, Dynamic, Field, TypeName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Release} from "../../../version";
+import {Release, LanguageVersion} from "../../../version";
 
 // todo, similar to DATA or TYPES?
 export class CreateData implements IStatement {
@@ -51,7 +51,7 @@ export class CreateData implements IStatement {
                     Target,
                     opt(alt(typeHandle, seq(opt(areaHandle), specified))));
 
-    return ret;
+    return verNotLang(LanguageVersion.KeyUser, ret);
   }
 
 }

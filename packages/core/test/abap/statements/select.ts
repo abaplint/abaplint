@@ -1714,7 +1714,7 @@ statementVersionOk([
   {abap: `SELECT * FROM HIERARCHY( SOURCE ztab LEVELS ( a, b, c ) CACHE ON RETAIN NULLS @n ) INTO TABLE @DATA(t).`, rel: Release.v750},
   // LEVELS with CTE name as source
   {abap: `SELECT * FROM HIERARCHY( SOURCE +a LEVELS ( a, b, c ) SIBLINGS ORDER BY a ) INTO TABLE @DATA(t).`, rel: Release.v750},
-], "SELECT hierarchy source functions (kernel-derived, INTO TABLE)", Statements.Select);
+], "SELECT hierarchy source functions, INTO TABLE", Statements.Select);
 
 statementVersionOk([
   // PERIOD/VALID + START WHERE
@@ -1731,7 +1731,7 @@ statementVersionOk([
   {abap: `SELECT * FROM HIERARCHY_DESCENDANTS_AGGREGATE( SOURCE ztab MEASURES COUNT( * ) AS cnt WHERE id > 0 ) INTO @wa.`, rel: Release.v750},
   // aggregate: WITH BALANCE WITH NOT MATCHED WITH TOTAL
   {abap: `SELECT * FROM HIERARCHY_DESCENDANTS_AGGREGATE( SOURCE ztab MEASURES COUNT( * ) AS cnt WITH BALANCE WITH NOT MATCHED WITH TOTAL ) INTO @wa.`, rel: Release.v750},
-], "SELECT hierarchy source functions (kernel-derived, INTO work area)", Statements.SelectLoop);
+], "SELECT hierarchy source functions, INTO work area", Statements.SelectLoop);
 
 statementVersionOk([
   {abap: `SELECT OCCURRENCES_REGEXPR( '([[:digit:]])' IN col1 ) FROM ztab INTO TABLE @DATA(lt).`, rel: Release.v757},
@@ -1941,3 +1941,14 @@ const clientSpecifiedFail = [
 ];
 
 statementVersionFail(clientSpecifiedFail, "SELECT CLIENT SPECIFIED");
+
+const keyUserFail = [
+  {abap: `SELECT SINGLE FOR UPDATE * FROM ztab WHERE k = @lv INTO @lv2.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `SELECT * FROM ztab CLIENT SPECIFIED INTO TABLE @DATA(lt).`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `SELECT * FROM ztab USING CLIENT @lv_mandt INTO TABLE @DATA(lt).`, rel: Release.v740sp05, langVer: LanguageVersion.KeyUser},
+  {abap: `SELECT * FROM (lv_tabname) INTO TABLE @DATA(lt).`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `SELECT * FROM ztab CONNECTION (lv_con) INTO TABLE @DATA(lt).`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `SELECT * FROM ztab\\_assoc INTO TABLE @DATA(lt).`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "SELECT KeyUser restrictions");

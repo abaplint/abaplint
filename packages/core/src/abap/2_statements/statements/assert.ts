@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {seq, opt, plus, optPrio} from "../combi";
+import {seq, opt, plus, optPrio, verNotLang} from "../combi";
 import {Source, NamespaceSimpleName, Cond} from "../expressions";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Assert implements IStatement {
@@ -10,12 +11,12 @@ export class Assert implements IStatement {
     const subkey = seq("SUBKEY", Source);
     const id = seq("ID", NamespaceSimpleName);
 
-    return seq("ASSERT",
-               optPrio(id),
-               optPrio(subkey),
-               opt(fields),
-               optPrio("CONDITION"),
-               Cond);
+    return verNotLang(LanguageVersion.KeyUser, seq("ASSERT",
+                                                   optPrio(id),
+                                                   optPrio(subkey),
+                                                   opt(fields),
+                                                   optPrio("CONDITION"),
+                                                   Cond));
   }
 
 }

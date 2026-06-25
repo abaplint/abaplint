@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, altPrio, optPrio, plus, per, ver, AlsoIn} from "../combi";
+import {seq, alt, opt, altPrio, optPrio, plus, per, ver, AlsoIn, verNotLang} from "../combi";
 import {Field, Source, Dynamic, FieldSub, ComponentCompareSimple, ReadTableTarget, SimpleSource2} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Release} from "../../../version";
+import {Release, LanguageVersion} from "../../../version";
 import {TransportingFields} from "../expressions/transporting_fields";
 
 export class ReadTable implements IStatement {
@@ -12,14 +12,15 @@ export class ReadTable implements IStatement {
 
     const index = seq("INDEX", Source);
 
-    const components = seq(alt(Field, Dynamic), "COMPONENTS", ComponentCompareSimple);
+    // Dynamic key name or dynamic component name blocked in KeyUser
+    const components = seq(verNotLang(LanguageVersion.KeyUser, alt(Field, Dynamic)), "COMPONENTS", ComponentCompareSimple);
 
     const key = seq(altPrio("WITH KEY", "WITH TABLE KEY"),
                     alt(ComponentCompareSimple,
                         components,
                         seq(optPrio("="), Source)));
 
-    const using = seq("USING KEY", alt(Field, Dynamic));
+    const using = seq("USING KEY", alt(Field, verNotLang(LanguageVersion.KeyUser, Dynamic)));
 
     const from = seq("FROM", Source);
 

@@ -1,6 +1,6 @@
-import {seq, Expression, altPrio, optPrio, plusPrio, ver, AlsoIn} from "../combi";
+import {seq, Expression, altPrio, optPrio, plusPrio, ver, AlsoIn, verNotLang} from "../combi";
 import {SQLIntoTable, SQLOrderBy, SQLIntoList, SQLSetOp} from ".";
-import {Release} from "../../../version";
+import {Release, LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLIntoStructure} from "./sql_into_structure";
 import {buildSelectCore, buildSelectSingleCore} from "./_select_core";
@@ -10,7 +10,7 @@ export class Select extends Expression {
     const into = altPrio(SQLIntoTable, SQLIntoStructure, SQLIntoList);
 
     const standalone = altPrio(
-      seq("SINGLE", optPrio("FOR UPDATE"), buildSelectSingleCore(true)),
+      seq("SINGLE", optPrio(verNotLang(LanguageVersion.KeyUser, "FOR UPDATE")), buildSelectSingleCore(true)),
       buildSelectCore(true),
     );
 

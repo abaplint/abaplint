@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {seq} from "../combi";
+import {seq, verNotLang} from "../combi";
 import {Target, Source} from "../expressions";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class GetReference implements IStatement {
@@ -11,7 +12,7 @@ export class GetReference implements IStatement {
                     "INTO",
                     Target);
 
-    return ret;
+    return verNotLang(LanguageVersion.KeyUser, ret);
   }
 
 }

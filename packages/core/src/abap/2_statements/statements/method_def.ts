@@ -1,6 +1,6 @@
-import {Release} from "../../../version";
+import {Release, LanguageVersion} from "../../../version";
 import {IStatement} from "./_statement";
-import {seq, alt, altPrio, ver, optPrio, plus, opt, AlsoIn} from "../combi";
+import {seq, alt, altPrio, ver, optPrio, plus, opt, AlsoIn, verNotLang} from "../combi";
 import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, MethodDefExceptions, MethodParamName, NamespaceSimpleName, TypeName, EntityAssociation} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -15,9 +15,10 @@ export class MethodDef implements IStatement {
                            optPrio(MethodDefExporting),
                            optPrio(MethodDefChanging),
                            optPrio(MethodDefReturning),
-                           optPrio(altPrio(MethodDefRaising, MethodDefExceptions)));
+                           // Old-style EXCEPTIONS blocked in KeyUser
+                           optPrio(altPrio(MethodDefRaising, verNotLang(LanguageVersion.KeyUser, MethodDefExceptions))));
 
-    const testing = seq(optPrio(Abstract), "FOR TESTING", optPrio(altPrio(MethodDefRaising, MethodDefExceptions)));
+    const testing = seq(optPrio(Abstract), "FOR TESTING", optPrio(altPrio(MethodDefRaising, verNotLang(LanguageVersion.KeyUser, MethodDefExceptions))));
 
     const result = seq("RESULT", MethodParamName);
     const link = seq("LINK", MethodParamName);
@@ -55,18 +56,20 @@ export class MethodDef implements IStatement {
     );
 
 // todo, this is only from version something
-    const amdp = seq(
+    // AMDP OPTIONS clause blocked in KeyUser
+    const amdp = verNotLang(LanguageVersion.KeyUser, seq(
       "AMDP OPTIONS", optPrio("READ-ONLY"), "CDS SESSION CLIENT", alt("CURRENT", "DEPENDENT"),
       optPrio(MethodDefImporting),
       optPrio(MethodDefExporting),
-      optPrio(MethodDefRaising));
+      optPrio(MethodDefRaising)));
 
+    // FOR DDL OBJECT / FOR TABLE FUNCTION / FOR SCALAR FUNCTION blocked in KeyUser
     const ret = seq(altPrio("CLASS-METHODS", "METHODS"),
                     MethodName,
                     alt(seq(optPrio(Abstract), optPrio(def), EventHandler),
                         parameters,
                         testing,
-                        seq("FOR", behavior),
+                        verNotLang(LanguageVersion.KeyUser, seq("FOR", behavior)),
                         amdp,
                         "NOT AT END OF MODE",
                         optPrio(Redefinition)));

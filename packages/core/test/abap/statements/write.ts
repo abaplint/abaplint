@@ -92,3 +92,10 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "WRITE");
+
+const keyUserFail = [
+  {abap: `WRITE lv.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `WRITE lv TO lv2.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "WRITE KeyUser restrictions");

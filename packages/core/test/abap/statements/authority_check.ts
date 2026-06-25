@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "AUTHORITY-CHECK OBJECT 'ZFOOBAR' ID 'ACTVT' FIELD '06'.",
@@ -9,3 +10,7 @@ const tests = [
 ];
 
 statementType(tests, "AUTHORITY-CHECK", Statements.AuthorityCheck);
+
+statementVersionFail([
+  {abap: "AUTHORITY-CHECK OBJECT 'ZFOOBAR' ID 'ACTVT' FIELD '06'.", rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+], "AUTHORITY-CHECK not allowed in KeyUser");

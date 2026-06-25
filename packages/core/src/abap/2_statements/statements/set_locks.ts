@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, ver} from "../combi";
+import {seq, ver, verNotLang} from "../combi";
 import {SimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Release} from "../../../version";
+import {Release, LanguageVersion} from "../../../version";
 
 export class SetLocks implements IStatement {
 
@@ -14,7 +14,7 @@ export class SetLocks implements IStatement {
                   "FROM", Source,
                   "FAILED", Target,
                   "REPORTED", Target);
-    return ver(Release.v754, s);
+    return verNotLang(LanguageVersion.KeyUser, ver(Release.v754, s));
   }
 
 }

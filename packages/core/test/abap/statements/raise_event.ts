@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "RAISE EVENT message.",
@@ -7,3 +8,9 @@ const tests = [
 ];
 
 statementType(tests, "RAISE EVENT", Statements.RaiseEvent);
+
+const keyUserFail = [
+  {abap: `RAISE EVENT my_event.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "RAISE EVENT KeyUser restrictions");

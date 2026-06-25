@@ -1,4 +1,4 @@
-import {statementType, statementVersionOk} from "../_utils";
+import {statementType, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release, LanguageVersion} from "../../../src";
 
@@ -38,3 +38,20 @@ const versionsOk = [
 ];
 
 statementVersionOk(versionsOk, "IMPORT", Statements.Import);
+
+const keyUserFail = [
+  {abap: `IMPORT foo FROM MEMORY.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `IMPORT data = lt_data FROM DATABASE indx(zr) TO lv_data ID lc_id.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `IMPORT p TO moo FROM SHARED BUFFER indx(a1) ID 'MOO'.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `IMPORT p TO moo FROM SHARED MEMORY indx(a1) ID 'MOO'.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `IMPORT foo TO bar FROM LOGFILE ID key.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "IMPORT KeyUser restrictions");
+
+const keyUserOk = [
+  {abap: `IMPORT foo FROM DATA BUFFER lv_buf.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `IMPORT foo FROM INTERNAL TABLE lt_tab.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionOk(keyUserOk, "IMPORT KeyUser allowed", Statements.Import);

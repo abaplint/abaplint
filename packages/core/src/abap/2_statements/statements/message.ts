@@ -9,7 +9,8 @@ export class Message implements IStatement {
   public getMatcher(): IStatementRunnable {
     const like = seq("DISPLAY LIKE", Source);
     const into = seq("INTO", Target);
-    const raising = seq("RAISING", ExceptionName);
+    // RAISING addition blocked in KeyUser
+    const raising = verNotLang(LanguageVersion.KeyUser, seq("RAISING", ExceptionName));
 
     const options = per(like, into, raising);
 
