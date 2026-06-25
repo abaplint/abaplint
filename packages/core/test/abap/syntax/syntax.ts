@@ -4174,6 +4174,22 @@ ENDFUNCTION.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("dynamic INSERT, FROM TABLE casting", () => {
+    const abap = `DATA table_name TYPE string.
+    DATA casting_table TYPE REF TO data.
+    INSERT (table_name) FROM TABLE @casting_table->*.`;
+    const issues = runProgram(abap, [], Version.OpenABAP);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("dynamic SELECT COUNT, INTO inline DATA", () => {
+    const abap = `DATA table_name TYPE string.
+    SELECT COUNT( * ) FROM (table_name) INTO @DATA(num_of_ana_rows).
+    WRITE / num_of_ana_rows.`;
+    const issues = runProgram(abap, [], Version.OpenABAP);
+    expect(issues.length).to.equals(0);
+  });
+
   it("dynamic DELETE, full errornamespace", () => {
     const abap = `DATA c_tabname TYPE string.
     DELETE FROM (c_tabname) WHERE type = 2.`;

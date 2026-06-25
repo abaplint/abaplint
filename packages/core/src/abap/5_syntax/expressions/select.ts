@@ -282,8 +282,22 @@ export class Select {
     }
   }
 
+  private static countResultType(scope: CurrentScope): AbstractType {
+    if (scope.getVersion() >= Version.v750
+        || scope.getVersion() === Version.OpenABAP
+        || scope.getVersion() === Version.Cloud) {
+      return new Integer8Type();
+    } else {
+      return IntegerType.get();
+    }
+  }
+
   private static buildStructureType(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope): AbstractType | undefined {
     if (fields.length === 1 && dbSources.length === 1) {
+      // COUNT( * ) yields an integer regardless of the (possibly dynamic) table
+      if (/^count\(\s*\*\s*\)$/i.test(fields[0].code)) {
+        return this.countResultType(scope);
+      }
       const dbType = dbSources[0]?.parseType(scope.getRegistry());
       if (dbType === undefined) {
         const name = dbSources[0]?.getName() || "buildStructureTypeError";
@@ -300,14 +314,6 @@ export class Select {
           const field = dbType.getComponentByName(fields[0].code);
           if (field) {
             return field;
-          } else if (fields[0].code === "COUNT(*)") {
-            if (scope.getVersion() >= Version.v750
-                || scope.getVersion() === Version.OpenABAP
-                || scope.getVersion() === Version.Cloud) {
-              return new Integer8Type();
-            } else {
-              return IntegerType.get();
-            }
           } else {
             // todo: aggregated/calculated values
             return VoidType.get("SELECT_todo11");
