@@ -683,6 +683,12 @@ statementVersionOk([
   {abap: `SELECT * FROM ztab1 \\_assoc1[ ONE TO ONE WHERE col4 = @sy-uname ] AS r INTO TABLE @result.`, rel: Release.v751},
   {abap: `SELECT * FROM ztab1 \\_assoc1[ MANY TO ONE WHERE col4 = @sy-uname ] AS r INTO TABLE @result.`, rel: Release.v751},
   {abap: `SELECT * FROM ztab1 \\_assoc1[ EXACT ONE TO ONE WHERE col4 = @sy-uname ] AS r INTO TABLE @result.`, rel: Release.v751},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ INNER ONE TO MANY ] AS r INTO TABLE @result.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ LEFT OUTER ONE TO MANY ] AS r INTO TABLE @result.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ RIGHT OUTER ONE TO ONE ] AS r INTO TABLE @result.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ INNER MANY TO MANY WHERE col4 = @sy-uname ] AS r INTO TABLE @result.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ LEFT OUTER EXACT ONE TO ONE ] AS r INTO TABLE @result.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab1 \\_assoc1[ ONE TO EXACT ONE ] AS r INTO TABLE @result.`, rel: Release.v816},
   {abap: `SELECT * FROM ztab1 \\_assoc1( col1 = 'AB', col2 = 3 )[ key1 < 3 ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, rel: Release.v751},
   {abap: `SELECT * FROM ztab1( col1 = 'AB', col2 = 3 ) \\_assoc1( col1 = 'CD', col2 = 1729 ) AS r WHERE col4 = @sy-uname INTO TABLE @result.`, rel: Release.v751},
   {abap: `SELECT * FROM ztab1( col1 = 'AB', col2 = 3 ) \\_assoc1( col1 = 'CD', col2 = 1728 )[ key1 < 3 ] AS r WHERE col4 = @sy-uname INTO TABLE @result.`, rel: Release.v751},
@@ -887,6 +893,19 @@ const privilegedVersions = [
 
 statementVersion(privilegedVersions, "SELECT privileged access", Statements.Select);
 
+statementVersionOk([
+  {abap: `SELECT * FROM ztab WITH PRIVILEGED ACCESS LEVEL @lv_lvl INTO TABLE @DATA(lt).`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `SELECT SINGLE * FROM ztab WITH PRIVILEGED ACCESS LEVEL @lv_lvl INTO @DATA(ls).`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(lt) PRIVILEGED ACCESS LEVEL @lv_lvl.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+], "SELECT PRIVILEGED ACCESS LEVEL", Statements.Select);
+
+statementType([
+  "SELECT * FROM ztab CONNECTION my_con INTO TABLE @DATA(lt).",
+  "SELECT * FROM ztab CONNECTION (lv_con) INTO TABLE @DATA(lt).",
+  "SELECT * FROM ztab CONNECTION 'R/3*MYCON' INTO TABLE @DATA(lt).",
+  "SELECT col FROM ztab CONNECTION 'DEFAULT' WHERE col = @lv INTO TABLE @lt.",
+], "SELECT CONNECTION text literal", Statements.Select);
+
 const privilegedVersionsFail = [
   {abap: `SELECT * FROM ztab WITH PRIVILEGED ACCESS INTO TABLE @DATA(lt).`, rel: Release.v751},
   {abap: `SELECT * FROM ztab INTO TABLE @DATA(lt) PRIVILEGED ACCESS.`, rel: Release.v756},
@@ -896,26 +915,26 @@ const privilegedVersionsFail = [
 statementVersionFail(privilegedVersionsFail, "SELECT privileged access");
 
 const optionsVersions = [
-  {abap: `SELECT count(*) FROM veri_clnt INTO @DATA(cnt) OPTIONS USING ALL CLIENTS.`, rel: Release.v758},
-  {abap: `SELECT count(*) FROM ztab INTO @DATA(wa) OPTIONS USING ALL CLIENTS.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS USING CLIENTS IN @lv_clients.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS USING CLIENTS IN t000.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS USING CLIENT '000'.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS PRIVILEGED ACCESS.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS BYPASSING BUFFER.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS CONNECTION foo.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS BYPASSING BUFFER.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS CONNECTION foo.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS BYPASSING BUFFER.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS CONNECTION foo.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS BYPASSING BUFFER CONNECTION foo.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS BYPASSING BUFFER CONNECTION foo.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS PRIVILEGED ACCESS BYPASSING BUFFER.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS PRIVILEGED ACCESS CONNECTION foo.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS BYPASSING BUFFER CONNECTION foo.`, rel: Release.v758},
-  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS PRIVILEGED ACCESS BYPASSING BUFFER CONNECTION foo.`, rel: Release.v758},
+  {abap: `SELECT count(*) FROM ztab1 INTO @DATA(cnt) OPTIONS USING ALL CLIENTS.`, rel: Release.v816},
+  {abap: `SELECT count(*) FROM ztab INTO @DATA(wa) OPTIONS USING ALL CLIENTS.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS USING CLIENTS IN @lv_clients.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS USING CLIENTS IN t000.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS USING CLIENT '000'.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS PRIVILEGED ACCESS.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab ORDER BY PRIMARY KEY INTO TABLE @DATA(res) OPTIONS BYPASSING BUFFER.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS CONNECTION foo.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS BYPASSING BUFFER.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS CONNECTION foo.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS BYPASSING BUFFER.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS CONNECTION foo.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS BYPASSING BUFFER CONNECTION foo.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS USING ALL CLIENTS PRIVILEGED ACCESS BYPASSING BUFFER CONNECTION foo.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS PRIVILEGED ACCESS BYPASSING BUFFER.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS PRIVILEGED ACCESS CONNECTION foo.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS BYPASSING BUFFER CONNECTION foo.`, rel: Release.v816},
+  {abap: `SELECT * FROM ztab INTO TABLE @DATA(res) OPTIONS PRIVILEGED ACCESS BYPASSING BUFFER CONNECTION foo.`, rel: Release.v816},
 ];
 
 statementVersion(optionsVersions, "SELECT OPTIONS clause", Statements.Select);
@@ -966,6 +985,12 @@ const subselectSetOpVersions = [
 ];
 
 statementVersion(subselectSetOpVersions, "SELECT subselect with UNION/parens", Statements.Select);
+
+statementVersionOk([
+  {abap: `SELECT zcol FROM ztab WHERE EXISTS ( SELECT zcol FROM ztab UNION SELECT zcol FROM ztab UNION SELECT zcol FROM ztab ) INTO TABLE @lt.`, rel: Release.v750},
+  {abap: `SELECT zcol FROM ztab WHERE zcol IN ( SELECT zcol FROM ztab UNION SELECT zcol FROM ztab UNION SELECT zcol FROM ztab ) INTO TABLE @lt.`, rel: Release.v750},
+  {abap: `SELECT zcol FROM ztab WHERE EXISTS ( SELECT zcol FROM ztab INTERSECT SELECT zcol FROM ztab EXCEPT SELECT zcol FROM ztab ) INTO TABLE @lt.`, rel: Release.v756},
+], "SELECT subquery set-op chain without inner parens", Statements.Select);
 
 const unionClientVersions = [
   `SELECT f1 FROM ztab UNION ALL SELECT f1 FROM ztab USING CLIENT @mandt INTO TABLE @DATA(res).`,
@@ -1952,3 +1977,125 @@ const keyUserFail = [
 ];
 
 statementVersionFail(keyUserFail, "SELECT KeyUser restrictions");
+
+statementVersionOk([
+  {abap: `SELECT col FROM ztab ORDER BY col NULLS FIRST INTO TABLE @DATA(lt).`, rel: Release.v778},
+  {abap: `SELECT col FROM ztab ORDER BY col NULLS LAST INTO TABLE @DATA(lt).`, rel: Release.v778},
+  {abap: `SELECT col FROM ztab ORDER BY col ASCENDING NULLS FIRST INTO TABLE @DATA(lt).`, rel: Release.v778},
+  {abap: `SELECT col FROM ztab ORDER BY col DESCENDING NULLS LAST INTO TABLE @DATA(lt).`, rel: Release.v778},
+  {abap: `SELECT col1, col2 FROM ztab ORDER BY col1 NULLS FIRST, col2 DESCENDING NULLS LAST INTO TABLE @DATA(lt).`, rel: Release.v778},
+  {abap: `SELECT col1, col2, col3 FROM ztab ORDER BY col1 ASCENDING NULLS LAST, col2 DESCENDING NULLS FIRST, col3 INTO TABLE @DATA(lt).`, rel: Release.v778},
+  {abap: `SELECT t1~col FROM ztab AS t1 ORDER BY t1~col NULLS FIRST INTO TABLE @DATA(lt).`, rel: Release.v778},
+], "SELECT ORDER BY NULLS FIRST/LAST", Statements.Select);
+
+statementVersionOk([
+  {abap: `SELECT col1, col2 FROM ztab ORDER BY col1 + col2 INTO TABLE @DATA(lt).`, rel: Release.v789},
+  {abap: `SELECT col1 FROM ztab ORDER BY abs( col1 ) INTO TABLE @DATA(lt).`, rel: Release.v789},
+  {abap: `SELECT col1 FROM ztab ORDER BY CASE WHEN col1 < 0 THEN 0 ELSE col1 END INTO TABLE @DATA(lt).`, rel: Release.v789},
+  {abap: `SELECT col1 FROM ztab ORDER BY - col1 DESCENDING INTO TABLE @DATA(lt).`, rel: Release.v789},
+  {abap: `SELECT col1, col2 FROM ztab ORDER BY col1 * col2 ASCENDING, col1 - col2 DESCENDING INTO TABLE @DATA(lt).`, rel: Release.v789},
+  {abap: `SELECT col FROM ztab ORDER BY concat( col1, col2 ) INTO TABLE @DATA(lt).`, rel: Release.v789},
+  {abap: `SELECT col FROM ztab ORDER BY col1 + col2 DESCENDING, col3 INTO TABLE @DATA(lt).`, rel: Release.v789},
+], "SELECT ORDER BY expressions", Statements.Select);
+
+statementVersionOk([
+  {abap: `SELECT * FROM zalpha INNER JOIN #TAG1 zbeta ON zalpha~k = zbeta~k INTO TABLE @DATA(lt).`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha LEFT OUTER JOIN #JT_ABC zbeta ON zalpha~k = zbeta~k INTO TABLE @DATA(lt).`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha RIGHT OUTER JOIN #X1 zbeta ON zalpha~k = zbeta~k INTO TABLE @DATA(lt).`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha CROSS JOIN #TAG_42 zbeta INTO TABLE @DATA(lt).`, rel: Release.v816},
+], "SELECT join tag (#TAG) on joins", Statements.Select);
+
+statementVersionFail([
+  {abap: `SELECT * FROM zalpha INNER JOIN #TAG1 zbeta ON zalpha~k = zbeta~k INTO TABLE @DATA(lt).`, rel: Release.v758},
+], "SELECT join tag not in older release");
+
+statementVersionFail([
+  {abap: `SELECT col FROM ztab ORDER BY col1 + col2 INTO TABLE @DATA(lt).`, rel: Release.v788},
+  {abap: `SELECT col FROM ztab ORDER BY abs( col1 ) INTO TABLE @DATA(lt).`, rel: Release.v788},
+  {abap: `SELECT col FROM ztab ORDER BY CASE WHEN col1 < 0 THEN 0 ELSE col1 END INTO TABLE @DATA(lt).`, rel: Release.v788},
+], "SELECT ORDER BY expressions not in older release");
+
+statementVersionOk([
+  {abap: `SELECT SINGLE * FROM zalpha INTO @ls_wa EXTENDED RESULT @lo_ext WHERE c1 = @lv.`, rel: Release.v816},
+  {abap: `SELECT SINGLE * FROM zalpha INTO @ls_wa EXTENDED RESULT @lo_ext.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt EXTENDED RESULT @lo_ext WHERE c1 = @lv.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt EXTENDED RESULT @lo_ext.`, rel: Release.v816},
+], "SELECT INTO ... EXTENDED RESULT", Statements.Select);
+
+statementType([
+  "SELECT * FROM ( ( ( ( ( ( ( ( zalpha INNER JOIN zbeta AS b ON 1 = 1 ) ) ) ) ) ) ) ) INTO TABLE @lt.",
+  "SELECT * FROM ( ( ( ( ( ( ( ( ( ( zalpha INNER JOIN zbeta AS b ON 1 = 1 ) ) ) ) ) ) ) ) ) ) INTO TABLE @lt.",
+], "SELECT FROM deep paren nesting (>7 levels)", Statements.Select);
+
+statementVersionOk([
+  {abap: `SELECT col1, col2, COUNT(*) FROM zalpha GROUP BY GROUPING SETS ( ( col1, col2 ), ( col1 ), ( ) ) INTO TABLE @lt.`, rel: Release.v816},
+  {abap: `SELECT col1, COUNT(*) FROM zalpha GROUP BY GROUPING SETS ( ( col1 ) ) INTO TABLE @lt.`, rel: Release.v816},
+  {abap: `SELECT col1, col2, COUNT(*) FROM zalpha GROUP BY GROUPING SETS ( ( col1 ), ( col2 ) ) INTO TABLE @lt.`, rel: Release.v816},
+  {abap: `SELECT col1, c2 + c3 AS sum, COUNT(*) FROM zalpha GROUP BY GROUPING SETS ( ( col1, c2 + c3 ), ( col1 ) ) INTO TABLE @lt.`, rel: Release.v816},
+  {abap: `SELECT FROM zalpha FIELDS col1, col2, sum( c3 ) AS s WHERE k1 = @lv1 AND col2 IN ( 0, 1 ) GROUP BY GROUPING SETS ( ( col1, col2 ), ( ) ) ORDER BY col1, col2 INTO TABLE @act.`, rel: Release.v816},
+], "SELECT GROUP BY GROUPING SETS", Statements.Select);
+
+statementVersionOk([
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt INDICATORS NULL BITFIELD %foo.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt INDICATORS NOT NULL STRUCTURE %foo WHERE c1 = @lv.`, rel: Release.v816},
+  {abap: `SELECT SINGLE * FROM zalpha INTO @wa INDICATORS NULL STRUCTURE %foo WHERE c1 = @lv.`, rel: Release.v816},
+], "SELECT INTO INDICATORS", Statements.Select);
+
+statementVersionOk([
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt CREATING LOCATOR FOR ALL BLOB COLUMNS.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt CREATING LOCATOR FOR ALL CLOB COLUMNS.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt CREATING LOCATOR FOR ALL COLUMNS.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt CREATING READER FOR ALL BLOB COLUMNS.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt CREATING READER FOR ALL CLOB COLUMNS.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt CREATING LOCATOR FOR COLUMNS zcol1.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt CREATING LOCATOR FOR COLUMNS zcol1 zcol2 zcol3.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt CREATING LOCATOR FOR COLUMNS zcol1, zcol2, zcol3.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt CREATING LOCATOR FOR ALL BLOB COLUMNS READER FOR ALL CLOB COLUMNS.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt CREATING LOCATOR FOR ALL BLOB COLUMNS READER FOR ALL OTHER CLOB COLUMNS.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt CREATING LOCATOR FOR COLUMNS zcol1 READER FOR ALL OTHER BLOB COLUMNS.`, rel: Release.v816},
+  {abap: `SELECT SINGLE * FROM zalpha INTO @wa CREATING LOCATOR FOR ALL BLOB COLUMNS.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha INTO TABLE @lt CREATING (lv_dyn).`, rel: Release.v816},
+], "SELECT INTO ... CREATING", Statements.Select);
+
+statementVersionOk([
+  {abap: `SELECT * FROM zalpha PROVIDED BY zschema INTO TABLE @lt.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha PROVIDED BY zschema AS r INTO TABLE @lt.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha AS r EXPOSE CLIENT AS myclnt INTO TABLE @lt.`, rel: Release.v816},
+  {abap: `SELECT * FROM zalpha AS r EXPOSE CLIENT AS myclnt WHERE c1 = @lv INTO TABLE @lt.`, rel: Release.v816},
+], "SELECT FROM PROVIDED BY / EXPOSE CLIENT AS", Statements.Select);
+
+statementType([
+  "SELECT CHAR`abc` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT CLNT`100` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT CUKY`EUR` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT CURR`12.34` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT DATN`20250101` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT DATS`20250101` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT DEC`12.34` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT DECFLOAT16`1.5` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT DECFLOAT34`1.5` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT D16N`1.5` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT D34N`1.5` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT D16D`1.5` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT D34D`1.5` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT D16R`1.5` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT D34R`1.5` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT FLTP`1.0` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT INT1`1` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT INT2`100` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT INT4`12345` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT INT8`123456789` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT LANG`E` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT NUMC`0123` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT QUAN`1.0` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT RAW`AABB` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT RAWSTRING`AABB` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT SSTRING`abc` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT STRING`abc` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT TIMN`120000` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT TIMS`120000` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT UNIT`KG` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT UTCLONG`20250101120000.0000000` AS x FROM ztab INTO TABLE @itab.",
+  "SELECT zcol FROM ztab WHERE zc > FLTP`0.78` INTO TABLE @itab.",
+  "SELECT zcol FROM ztab WHERE zc = STRING`abc` INTO TABLE @itab.",
+], "SELECT typed literals", Statements.Select);

@@ -1,5 +1,5 @@
 import {ver, seq, optPrio, altPrio, Expression, plusPrio, tok, AlsoIn} from "../combi";
-import {SQLSource, SQLFieldName, Dynamic, SQLIn, SQLCompareOperator, SQLFunction, SQLAggregation, SQLCase, Source, SimpleSource3, SQLPathForColumn, ConstantString} from ".";
+import {SQLSource, SQLFieldName, SQLAliasField, Dynamic, SQLIn, SQLCompareOperator, SQLFunction, SQLAggregation, SQLCase, Source, SimpleSource3, SQLPathForColumn, ConstantString} from ".";
 import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {ParenLeftW, WAt, WParenRightW} from "../../1_lexer/tokens";
@@ -29,7 +29,7 @@ export class SQLCompare extends Expression {
     const at = ver(Release.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, paren)), {also: AlsoIn.OpenABAP});
 
     const lhs = altPrio(SQLCase, SQLAggregation, SQLFunction, ConstantString,
-                        seq(altPrio(SQLPathForColumn, SQLFieldName), optPrio(arith)), at);
+                        seq(altPrio(SQLPathForColumn, SQLAliasField, SQLFieldName), optPrio(arith)), at);
     const rhs = altPrio(seq(SQLCompareOperator, altPrio(sub, SQLCase, SQLAggregation, SQLFunction, seq(source, optPrio(arith)))),
                         seq(optPrio("NOT"), altPrio(SQLIn, like, between)),
                         SQLLikeRegexpr,

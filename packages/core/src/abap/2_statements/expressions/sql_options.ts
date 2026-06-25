@@ -10,12 +10,13 @@ export class SQLOptions extends Expression {
                              "ALL CLIENTS",
                              seq("CLIENT", SQLSourceSimple));
 
-    const privilegedAccess = ver(Release.v758, SQLPrivilegedAccess);
+    const privilegedAccess = SQLPrivilegedAccess;
 
     const general = per(privilegedAccess, SQLBypassingBuffer, DatabaseConnection);
 
     const usingClause = seq("USING", usingClients, optPrio(general));
 
-    return ver(Release.v758, seq("OPTIONS", alt(usingClause, general)));
+    return ver(Release.v796, seq("OPTIONS", alt(usingClause, general)));
   }
 }
+

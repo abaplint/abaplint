@@ -67,7 +67,15 @@ export class Select {
       const fields = node.findFirstExpression(Expressions.SQLAggregation)?.concatTokens();
       const c = new RegExp(/^count\(\s*\*\s*\)$/, "i");
       if (fields === undefined || c.test(fields) === false) {
-        const nameToken = from?.findDirectExpression(Expressions.SQLFromSource);
+        let body = from?.findDirectExpression(Expressions.SQLFromBody);
+        while (body) {
+          const inner = body.findDirectExpression(Expressions.SQLFromBody);
+          if (inner === undefined) {
+            break;
+          }
+          body = inner;
+        }
+        const nameToken = body?.findDirectExpression(Expressions.SQLFromSource);
         if (nameToken) {
           const found = input.scope.findVariable(nameToken.concatTokens());
           if (found) {

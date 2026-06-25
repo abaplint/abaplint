@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, tok, verNotLang} from "../combi";
-import {DatabaseTable, SQLSource, Select, DatabaseConnection, SQLClient} from "../expressions";
+import {seq, alt, opt, tok, optPrio, verNotLang} from "../combi";
+import {DatabaseTable, SQLSource, Select, DatabaseConnection, SQLClient, SQLIndicators, SQLMappingFromEntity, SQLDmlOptions} from "../expressions";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -10,24 +10,35 @@ export class InsertDatabase implements IStatement {
   public getMatcher(): IStatementRunnable {
     const sub = seq(tok(WParenLeftW), Select, tok(WParenRightW));
 
-    const f = seq(opt(SQLClient),
-                  opt(DatabaseConnection),
-                  "FROM",
-                  opt("TABLE"),
-                  alt(SQLSource, sub),
-                  opt("ACCEPTING DUPLICATE KEYS"));
+    const fromItabOrWa = seq("FROM",
+                             opt("TABLE"),
+                             SQLSource,
+                             optPrio(SQLIndicators),
+                             optPrio(SQLMappingFromEntity));
+    const fromSubquery = seq("FROM", sub);
+    const fromClause = alt(fromItabOrWa, fromSubquery);
 
-    const from = seq(DatabaseTable,
-                     opt(alt(f, SQLClient, DatabaseConnection)));
+    const fromTrailer = seq(opt(SQLClient),
+                            opt(DatabaseConnection),
+                            fromClause,
+                            opt("ACCEPTING DUPLICATE KEYS"),
+                            optPrio(SQLDmlOptions));
 
-    const into = seq("INTO",
-                     DatabaseTable,
-                     opt(SQLClient),
-                     opt(DatabaseConnection),
-                     "VALUES",
-                     SQLSource);
+    const insertFromForm = seq(DatabaseTable,
+                               opt(alt(fromTrailer, SQLClient, DatabaseConnection)));
 
-    return verNotLang(LanguageVersion.KeyUser, seq("INSERT", alt(from, into)));
+    const insertIntoForm = seq("INTO",
+                               DatabaseTable,
+                               opt(SQLClient),
+                               opt(DatabaseConnection),
+                               "VALUES",
+                               SQLSource,
+                               optPrio(SQLIndicators),
+                               optPrio(SQLMappingFromEntity),
+                               optPrio(SQLDmlOptions));
+
+    return verNotLang(LanguageVersion.KeyUser,
+                      seq("INSERT", alt(insertFromForm, insertIntoForm)));
   }
 
 }

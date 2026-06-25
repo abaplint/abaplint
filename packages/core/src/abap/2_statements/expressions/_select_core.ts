@@ -1,12 +1,13 @@
 import {seq, altPrio, optPrio, ver, AlsoIn, verNotLang} from "../combi";
-import {SQLFieldList, SQLFrom, SQLCond, SQLSource, SQLClient, DatabaseConnection,
+import {SQLFieldList, SQLFrom, SQLCond, SQLClient, DatabaseConnection,
   SQLOrderBy, SQLHaving, SQLForAllEntries, SQLHints, SQLFields,
   SQLIntoList, SQLIntoTable, SQLOptions, SQLPrivilegedAccess, SQLPackageSize,
-  SQLBypassingBuffer} from ".";
+  SQLBypassingBuffer, SQLExtendedResult, SQLCreating} from ".";
 import {Release, LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLGroupBy} from "./sql_group_by";
 import {SQLIntoStructure} from "./sql_into_structure";
+import {SQLOffset} from "./sql_offset";
 import {SQLUpTo} from "./sql_up_to";
 
 export function buildSelectSingleCore(allowInto = false): IStatementRunnable {
@@ -14,6 +15,8 @@ export function buildSelectSingleCore(allowInto = false): IStatementRunnable {
   const sqlFields = ver(Release.v750, SQLFields, {also: AlsoIn.OpenABAP});
   const privileged = ver(Release.v758, SQLPrivilegedAccess);
   const fieldList = optPrio(SQLFieldList);
+  const extResult = optPrio(ver(Release.v766, SQLExtendedResult));
+  const creating = optPrio(ver(Release.v750, SQLCreating));
 
   const client = optPrio(SQLClient);
   const byp = optPrio(SQLBypassingBuffer);
@@ -22,7 +25,7 @@ export function buildSelectSingleCore(allowInto = false): IStatementRunnable {
   const groupHaving = seq(optPrio(SQLGroupBy), optPrio(SQLHaving));
   const trailingOpts = seq(conn, optPrio(SQLHints), optPrio(privileged), optPrio(SQLOptions));
 
-  const intoSingle = altPrio(SQLIntoStructure, SQLIntoList);
+  const intoSingle = seq(altPrio(SQLIntoStructure, SQLIntoList), extResult, creating);
 
   if (!allowInto) {
     const singleBody = seq(SQLFrom, client, byp, whereClause, groupHaving, trailingOpts);
@@ -43,10 +46,12 @@ export function buildSelectSingleCore(allowInto = false): IStatementRunnable {
 
 export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatementRunnable {
   const where = seq("WHERE", SQLCond);
-  const offset = ver(Release.v751, seq("OFFSET", SQLSource));
+  const offset = ver(Release.v751, SQLOffset);
   const sqlFields = ver(Release.v750, SQLFields, {also: AlsoIn.OpenABAP});
   const privileged = ver(Release.v758, SQLPrivilegedAccess);
   const fieldList = optPrio(SQLFieldList);
+  const extResult = optPrio(ver(Release.v766, SQLExtendedResult));
+  const creating = optPrio(ver(Release.v750, SQLCreating));
 
   const client = optPrio(SQLClient);
   const byp = optPrio(SQLBypassingBuffer);
@@ -59,8 +64,8 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
     : [];
   const trailingOpts = seq(conn, optPrio(SQLHints), optPrio(privileged), optPrio(SQLOptions));
 
-  const intoSingle = altPrio(SQLIntoStructure, SQLIntoList);
-  const intoForPackSize = SQLIntoTable;
+  const intoSingle = seq(altPrio(SQLIntoStructure, SQLIntoList), extResult, creating);
+  const intoForPackSize = seq(SQLIntoTable, extResult, creating);
 
   if (!allowInto) {
     const afterFromNoInto = seq(

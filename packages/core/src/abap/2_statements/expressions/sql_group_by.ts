@@ -4,6 +4,7 @@ import {IStatementRunnable} from "../statement_runnable";
 import {Dynamic} from "./dynamic";
 import {SQLFieldName} from "./sql_field_name";
 import {SQLField} from "./sql_field";
+import {SQLGroupingSets} from "./sql_grouping_sets";
 
 export class SQLGroupBy extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -17,6 +18,8 @@ export class SQLGroupBy extends Expression {
     const old = seq(plus(seq(fieldName, ",")), fieldName);
     const oldGroup = seq("GROUP BY", altPrio(old, plus(fieldName)));
 
-    return altPrio(newGroup, oldGroup);
+    const groupingSetsGroup = ver(Release.v772, seq("GROUP BY", SQLGroupingSets));
+
+    return altPrio(groupingSetsGroup, newGroup, oldGroup);
   }
 }

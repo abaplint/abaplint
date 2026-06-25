@@ -131,6 +131,7 @@ export * from "./insert_database";
 export * from "./insert_field_group";
 export * from "./update_database";
 export * from "./modify_database";
+export * from "./merge_database";
 export * from "./modify_internal";
 export * from "./raise";
 export * from "./define";

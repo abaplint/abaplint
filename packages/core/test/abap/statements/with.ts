@@ -171,3 +171,42 @@ const clientSpecifiedFail = [
 ];
 
 statementVersionFail(clientSpecifiedFail, "WITH CLIENT SPECIFIED");
+
+statementType([
+  `WITH +cte AS ( SELECT * FROM ztab )
+   WITH ASSOCIATIONS ( JOIN ztarget AS xx ON 1 = 1 )
+   SELECT k FROM +cte INTO TABLE @lt.`,
+  `WITH +cte AS ( SELECT * FROM ztab )
+   WITH ASSOCIATIONS ( JOIN MANY TO ONE ztarget AS xx ON 1 = 1 )
+   SELECT k FROM +cte INTO TABLE @lt.`,
+  `WITH +cte AS ( SELECT * FROM ztab )
+   WITH ASSOCIATIONS ( JOIN ONE TO MANY ztarget AS xx ON +cte~k = xx~k )
+   SELECT k FROM +cte INTO TABLE @lt.`,
+  `WITH +cte AS ( SELECT * FROM ztab )
+   WITH ASSOCIATIONS ( JOIN #my_tag MANY TO ONE ztarget AS xx ON +cte~k = xx~k )
+   SELECT k FROM +cte INTO TABLE @lt.`,
+  `WITH +cte AS ( SELECT * FROM ztab )
+   WITH ASSOCIATIONS ( JOIN EXACT ONE TO ONE ztarget AS xx ON +cte~k = xx~k )
+   SELECT k FROM +cte INTO TABLE @lt.`,
+], "WITH ASSOCIATIONS defining new association (JOIN)", Statements.With);
+
+statementType([
+  `WITH +cte1 AS ( SELECT * FROM ztab )
+   WITH ASSOCIATIONS ( +cte1~\\zassoc1 )
+   SELECT k FROM +cte1 INTO TABLE @lt.`,
+  `WITH +cte1 AS ( SELECT * FROM ztab )
+   WITH ASSOCIATIONS ( +cte1~\\zassoc1 AS x )
+   SELECT k FROM +cte1 INTO TABLE @lt.`,
+  `WITH +cte1 AS ( SELECT * FROM ztab )
+   WITH ASSOCIATIONS ( +cte1~\\zassoc1[ #my_tag ] AS x )
+   SELECT k FROM +cte1 INTO TABLE @lt.`,
+  `WITH +cte1 AS ( SELECT * FROM ztab )
+   WITH ASSOCIATIONS ( +cte1~\\zassoc1[ #my_tag LEFT OUTER ] AS x )
+   SELECT k FROM +cte1 INTO TABLE @lt.`,
+  `WITH +cte1 AS ( SELECT * FROM ztab )
+   WITH ASSOCIATIONS ( +cte1~\\zassoc1[ #my_tag ONE TO ONE ] AS x )
+   SELECT k FROM +cte1 INTO TABLE @lt.`,
+  `WITH +cte1 AS ( SELECT * FROM ztab )
+   WITH ASSOCIATIONS ( +cte1~\\zassoc1[ #my_tag WHERE zcol = @lv ] AS x )
+   SELECT k FROM +cte1 INTO TABLE @lt.`,
+], "WITH ASSOCIATIONS qualified +cte~\\assoc path", Statements.With);

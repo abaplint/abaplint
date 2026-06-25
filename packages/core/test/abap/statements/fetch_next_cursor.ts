@@ -11,6 +11,11 @@ const tests = [
   "FETCH NEXT CURSOR c INTO CORRESPONDING FIELDS OF <wa>.",
   "FETCH NEXT CURSOR l_cursor INTO lt_data PACKAGE SIZE 1000.", // yea, looks like this is accepted
   "FETCH NEXT CURSOR l_cursor INTO TABLE lt_data PACKAGE SIZE 1000.",
+  "FETCH NEXT CURSOR @lc_cur INTO @ls_wa EXTENDED RESULT @lo_ext.",
+  "FETCH NEXT CURSOR @lc_cur INTO TABLE @lt EXTENDED RESULT @lo_ext PACKAGE SIZE 100.",
+  "FETCH NEXT CURSOR @lc_cur INTO @ls_wa INDICATORS NULL STRUCTURE %zind.",
+  "FETCH NEXT CURSOR @lc_cur INTO TABLE @lt INDICATORS NULL STRUCTURE %zind PACKAGE SIZE 100.",
+  "FETCH NEXT CURSOR @lc_cur INTO TABLE @lt INDICATORS NOT NULL BITFIELD %zind.",
 ];
 
 statementType(tests, "FETCH NEXT", Statements.FetchNextCursor);
