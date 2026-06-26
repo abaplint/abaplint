@@ -1,6 +1,7 @@
 import {expect} from "chai";
 import {StatementParser} from "../../src/abap/2_statements/statement_parser";
 import * as Statements from "../../src/abap/2_statements/statements";
+import {MacroRecursion} from "../../src/abap/2_statements/statements/_statement";
 import {defaultRelease} from "../../src/version";
 import {Lexer} from "../../src/abap/1_lexer/lexer";
 import {MemoryFile} from "../../src/files/memory_file";
@@ -93,6 +94,21 @@ ENDFORM.`;
     const writes = result.statements.filter(s => s.get() instanceof Statements.Write);
     expect(writes.length).to.equal(1);
     expect(writes[0].concatTokens()).to.include("write foo");
+  });
+
+  it("mutually recursive macros produce MacroRecursion node", () => {
+    const abap = `
+DEFINE my_makro_1.
+  my_makro_2.
+END-OF-DEFINITION.
+DEFINE my_makro_2.
+  my_makro_1.
+END-OF-DEFINITION.
+my_makro_1.`;
+    const lexerResult = new Lexer().run(new MemoryFile("zrecursive.prog.abap", abap));
+    const result = new StatementParser(defaultRelease).run([lexerResult], [])[0];
+    const recursion = result.statements.filter(s => s.get() instanceof MacroRecursion);
+    expect(recursion.length).to.equal(1);
   });
 
   it("expand nested macros, parameters 2", () => {

@@ -1,5 +1,5 @@
 import {Issue} from "../issue";
-import {Unknown} from "../abap/2_statements/statements/_statement";
+import {Unknown, MacroRecursion} from "../abap/2_statements/statements/_statement";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {STATEMENT_MAX_TOKENS} from "../abap/2_statements/statement_parser";
 import {IRule, RuleTag} from "./_irule";
@@ -48,19 +48,21 @@ See recognized syntax at https://syntax.abaplint.org`,
       for (const file of obj.getABAPFiles()) {
 
         for (const statement of file.getStatements()) {
-          if (!(statement.get() instanceof Unknown)) {
-            continue;
-          }
-
-          if (statement.getTokens().length > STATEMENT_MAX_TOKENS) {
-            const message = "Statement too long, refactor statement";
-            const issue = Issue.atToken(file, statement.getTokens()[0], message, this.getMetadata().key, this.conf.severity);
-            issues.push(issue);
-          } else {
+          if (statement.get() instanceof Unknown) {
+            if (statement.getTokens().length > STATEMENT_MAX_TOKENS) {
+              const message = "Statement too long, refactor statement";
+              const issue = Issue.atToken(file, statement.getTokens()[0], message, this.getMetadata().key, this.conf.severity);
+              issues.push(issue);
+            } else {
+              const tok = statement.getFirstToken();
+              const message = "Statement does not exist in ABAP" + this.reg.getConfig().getRelease().name + "(or a parser error), \"" + tok.getStr() + "\"";
+              const issue = Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity);
+              issues.push(issue);
+            }
+          } else if (statement.get() instanceof MacroRecursion) {
             const tok = statement.getFirstToken();
-            const message = "Statement does not exist in the configured ABAP version(or a parser error), \"" + tok.getStr() + "\"";
-            const issue = Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity);
-            issues.push(issue);
+            const message = "Macro \"" + tok.getStr() + "\" calls itself recursively";
+            issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
           }
         }
 

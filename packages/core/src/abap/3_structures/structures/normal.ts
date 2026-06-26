@@ -2,7 +2,7 @@ import * as Structures from ".";
 import * as Statements from "../../2_statements/statements";
 import {IStructure} from "./_structure";
 import {alt, sta, sub} from "./_combi";
-import {MacroCall} from "../../2_statements/statements/_statement";
+import {MacroCall, MacroRecursion} from "../../2_statements/statements/_statement";
 import {IStructureRunnable} from "./_structure_runnable";
 
 export class Normal implements IStructure {
@@ -18,6 +18,7 @@ export class Normal implements IStructure {
                sta(Statements.CreateObject),
                sta(Statements.CallFunction),
                sta(MacroCall),
+               sta(MacroRecursion),
                sub(Structures.LoopAtScreen),
                sub(Structures.Loop),
                sub(Structures.LoopExtract),

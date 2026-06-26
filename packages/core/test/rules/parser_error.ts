@@ -37,6 +37,15 @@ END-OF-DEFINITION.
 encrypt_key.`, cnt: 0},
 
   {abap: `
+DEFINE my_makro_1.
+  my_makro_2.
+END-OF-DEFINITION.
+DEFINE my_makro_2.
+  my_makro_1.
+END-OF-DEFINITION.
+my_makro_1.`, cnt: 1},
+
+  {abap: `
 DEFINE _foo.
   WRITE 'hello'.
 END-OF-DEFINITION.
