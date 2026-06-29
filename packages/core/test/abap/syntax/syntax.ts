@@ -7812,13 +7812,13 @@ data MT_TOKEN type TY_TOKEN_TT.`;
 
   it("CALL not found function module in cloud, should give error", () => {
     const abap = `CALL FUNCTION 'NOT_RELEASED'.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("found");
   });
 
   it("CALL not found function module in cloud destination, ok", () => {
     const abap = `CALL FUNCTION 'NOT_RELEASED' DESTINATION 'SDF'.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -7834,7 +7834,7 @@ CREATE OBJECT foo.`;
 
   it("CALL not found class in cloud, should give error", () => {
     const abap = `CALL METHOD ('CL_NOT_RELEASED')=>foobar.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not found");
   });
 
@@ -7843,7 +7843,7 @@ CREATE OBJECT foo.`;
     DATA lv_name TYPE string.
     lv_name = 'CL_NOT_RELEASED'.
     CALL METHOD (lv_name)=>foobar.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -7853,7 +7853,7 @@ INTERFACE lif.
 ENDINTERFACE.
 DATA li_auth TYPE REF TO lif.
 CREATE OBJECT li_auth TYPE ('ZCL_ABAPGIT_AUTH_EXIT').`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -7873,7 +7873,7 @@ CLASS lcl IMPLEMENTATION.
     foo( input ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -7893,7 +7893,7 @@ CLASS lcl IMPLEMENTATION.
     foo( var = input ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -7911,7 +7911,7 @@ CLASS lcl IMPLEMENTATION.
     foo( 'foo' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -7929,7 +7929,7 @@ CLASS lcl IMPLEMENTATION.
     foo( space ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -7947,7 +7947,7 @@ CLASS lcl IMPLEMENTATION.
     foo( 'foo' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -7963,7 +7963,7 @@ CLASS lcl IMPLEMENTATION.
     foo( 'sdf' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -7979,7 +7979,7 @@ CLASS lcl IMPLEMENTATION.
     foo( 'sdf' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8000,7 +8000,7 @@ CLASS lcl IMPLEMENTATION.
     mt_result = foo( ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
@@ -8018,7 +8018,7 @@ TYPES: BEGIN OF ty_result,
 DATA tab2 TYPE STANDARD TABLE OF ty_result WITH DEFAULT KEY.
 
 tab1 = tab2.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
@@ -8036,7 +8036,7 @@ TYPES: BEGIN OF ty_result,
 DATA dat2 TYPE ty_result.
 
 dat1 = dat2.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
@@ -8075,7 +8075,7 @@ DATA: BEGIN OF data2,
 
 data2 = data1.
 data1 = data2.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8104,7 +8104,7 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8124,7 +8124,7 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8152,7 +8152,7 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8180,7 +8180,7 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8195,7 +8195,7 @@ CLASS lcl IMPLEMENTATION.
     foo( '1' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8214,7 +8214,7 @@ DATA lt_notif TYPE STANDARD TABLE OF lty_notif.
 DATA lt_notif_key TYPE STANDARD TABLE OF lty_notif_key.
 
 lt_notif_key = lt_notif.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8226,7 +8226,7 @@ TYPES: BEGIN OF ty,
 DATA voided TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
 DATA lv TYPE i.
 lv = lines( voided ).`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8415,13 +8415,13 @@ CLASS lcl IMPLEMENTATION.
     method1( sy ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("sy-repid", () => {
     const abap = `WRITE sy-repid.`;
-    const issues = runProgram(abap, [], Version.Newest, ".", LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Version.Cloud, ".", LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -11898,7 +11898,7 @@ CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MOD
     let issues = runProgram(abap, [], Version.v756);
     expect(issues[0]?.getMessage()).to.equal(undefined);
 
-    issues = runProgram(abap, [], Version.Newest, undefined, LanguageVersion.Cloud);
+    issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 

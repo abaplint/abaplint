@@ -1,4 +1,4 @@
-import {Version, LanguageVersion, ABAPRelease} from "./version";
+import {Version, LanguageVersion, ABAPRelease, VersionOldOrNew} from "./version";
 import {IRule} from "./rules/_irule";
 
 export interface IGlobalConfig {
@@ -41,8 +41,8 @@ export interface IDependency {
 }
 
 export interface ISyntaxSettings {
-  /** ABAP release to parse against, e.g. `"v758"`, `"Newest"`, `"Cloud"`. */
-  version?: Version;
+  /** ABAP language version */
+  version?: VersionOldOrNew;
   languageVersion?: LanguageVersion;
   /** Use the OpenABAP dialect (v702 base + a set of additional language features). */
   openABAP?: boolean;
