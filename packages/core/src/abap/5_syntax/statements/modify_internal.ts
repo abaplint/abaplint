@@ -5,7 +5,7 @@ import {StatementSyntax} from "../_statement_syntax";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {ComponentCond} from "../expressions/component_cond";
-import {AnyType, StructureType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, StructureType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ModifyInternal implements StatementSyntax {
@@ -26,6 +26,13 @@ export class ModifyInternal implements StatementSyntax {
           || targetType instanceof UnknownType) {
         // ok
       } else if (targetType instanceof TableType) {
+        if (node.findDirectTokenByText("TABLE") === undefined
+            && node.findDirectTokenByText("INDEX")
+            && targetType.getAccessType() === TableAccessType.hashed) {
+          const message = "Implicit or explicit index operation on hashed table is not possible";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
+        }
         if (node.findDirectTokenByText("TABLE")
             && node.findDirectTokenByText("INDEX")
             && targetType.isWithHeader() === false) {

@@ -12420,6 +12420,82 @@ DELETE tab FROM 10.`;
     expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
   });
 
+  it("DELETE FROM hashed table component not possible", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE c LENGTH 10,
+       END OF ty.
+TYPES: BEGIN OF ty_info,
+         missing_remote TYPE HASHED TABLE OF ty WITH UNIQUE KEY foo,
+       END OF ty_info.
+DATA cs_information TYPE ty_info.
+CONSTANTS c_max TYPE i VALUE 50.
+DELETE cs_information-missing_remote FROM c_max.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
+  });
+
+  it("DELETE INDEX hashed table not possible", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE c LENGTH 10,
+       END OF ty.
+DATA tab TYPE HASHED TABLE OF ty WITH UNIQUE KEY foo.
+DELETE tab INDEX 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
+  });
+
+  it("MODIFY INDEX hashed table not possible", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE c LENGTH 10,
+       END OF ty.
+DATA tab TYPE HASHED TABLE OF ty WITH UNIQUE KEY foo.
+DATA row TYPE ty.
+MODIFY tab FROM row INDEX 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
+  });
+
+  it("MODIFY TABLE hashed table, okay", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE c LENGTH 10,
+       END OF ty.
+DATA tab TYPE HASHED TABLE OF ty WITH UNIQUE KEY foo.
+DATA row TYPE ty.
+MODIFY TABLE tab FROM row.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("LOOP AT FROM hashed table not possible", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE c LENGTH 10,
+       END OF ty.
+DATA tab TYPE HASHED TABLE OF ty WITH UNIQUE KEY foo.
+DATA row TYPE ty.
+LOOP AT tab INTO row FROM 1.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
+  });
+
+  it("LOOP AT hashed table WHERE, okay", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE c LENGTH 10,
+       END OF ty.
+DATA tab TYPE HASHED TABLE OF ty WITH UNIQUE KEY foo.
+DATA row TYPE ty.
+LOOP AT tab INTO row WHERE foo = '1'.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("DELETE ADJACENT DUPLICATES FROM hashed table", () => {
     const abap = `
 TYPES: BEGIN OF ty,

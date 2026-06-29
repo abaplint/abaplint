@@ -24,8 +24,9 @@ export class DeleteInternal implements StatementSyntax {
       const localVariable = input.scope.findVariable(target.concatTokens());
       if (localVariable === undefined && node.getChildren().length === 5 && node.getChildren()[2].concatTokens().toUpperCase() === "FROM") {
         // it might be a database table
-        tabl = input.scope.getDDIC()?.lookupTableOrView(target.concatTokens());
-        if (tabl) {
+        const found = input.scope.getDDIC()?.lookupTableOrView(target.concatTokens());
+        if (found?.object !== undefined) {
+          tabl = found;
           input.scope.getDDICReferences().addUsing(input.scope.getParentObj(), {object: tabl.object});
         }
       }
@@ -33,7 +34,7 @@ export class DeleteInternal implements StatementSyntax {
         targetType = Target.runSyntax(target, input);
         if (node.findDirectTokenByText("TABLE") === undefined
             && node.findDirectTokenByText("ADJACENT") === undefined
-            && node.findDirectTokenByText("FROM")
+            && (node.findDirectTokenByText("FROM") || node.findDirectTokenByText("INDEX"))
             && targetType instanceof TableType
             && targetType.getAccessType() === TableAccessType.hashed) {
           const message = "Implicit or explicit index operation on hashed table is not possible";
