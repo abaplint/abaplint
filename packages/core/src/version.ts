@@ -23,8 +23,9 @@ export enum Version {
    * Release.Newest + {@link LanguageVersion.Cloud} pair.
    */
   Cloud = "Cloud",
-  Newest = "Newest",
 }
+
+export type VersionNew = Version | {Release: ABAPRelease, LanguageVersion: LanguageVersion};
 
 /**
  * Dialect / flavor axis, orthogonal to the on-prem/cloud release track.
