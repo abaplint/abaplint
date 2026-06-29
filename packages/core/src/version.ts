@@ -25,7 +25,7 @@ export enum Version {
   Cloud = "Cloud",
 }
 
-export type VersionNew = Version | {Release: ABAPRelease, LanguageVersion: LanguageVersion};
+export type VersionNew = Version | {release: ABAPRelease, languageVersion: LanguageVersion};
 
 /**
  * Dialect / flavor axis, orthogonal to the on-prem/cloud release track.
