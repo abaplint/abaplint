@@ -296,49 +296,6 @@ class LangVersNot implements IStatementRunnable {
   }
 }
 
-class VersNot implements IStatementRunnable {
-
-  private readonly version: Version;
-  private readonly runnable: IStatementRunnable;
-
-  public constructor(version: Version, runnable: IStatementRunnable) {
-    this.version = version;
-    this.runnable = runnable;
-  }
-
-  public listKeywords(): string[] {
-    return this.runnable.listKeywords();
-  }
-
-  public getUsing(): string[] {
-    return this.runnable.getUsing();
-  }
-
-  public run(r: Result[]): Result[] {
-    if (Combi.getVersion() !== this.version) {
-      return this.runnable.run(r);
-    } else {
-      return [];
-    }
-  }
-
-  public railroad() {
-    return "Railroad.Sequence(Railroad.Comment(\"not " +
-      this.version +
-      "\", {}), " +
-      this.runnable.railroad() +
-      ")";
-  }
-
-  public toStr() {
-    return "VersionNot(" + this.runnable.toStr() + ")";
-  }
-
-  public first() {
-    return this.runnable.first();
-  }
-}
-
 class OptionalPriority implements IStatementRunnable {
 
   private readonly optional: IStatementRunnable;
@@ -1241,9 +1198,6 @@ export function ver(versionOrRelease: Version | ABAPRelease, first: InputType, o
     ? opts === Version.OpenABAP ? AlsoIn.OpenABAP : undefined
     : opts?.also;
   return new Vers(inputToRelease(versionOrRelease), mapInput(first), also);
-}
-export function verNot(version: Version, first: InputType): IStatementRunnable {
-  return new VersNot(version, mapInput(first));
 }
 export function verLang(langVersion: LanguageVersion, first: InputType): IStatementRunnable {
   return new LangVers(langVersion, mapInput(first));
