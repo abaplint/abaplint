@@ -16,6 +16,7 @@ import {Dynamic} from "./dynamic";
 import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
+import {IEdit} from "../../../edit_helper";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 const isSimple = /^\w+$/;
@@ -100,7 +101,7 @@ export class Select {
           && from.getFirstToken().getStart().isBefore(up.getFirstToken().getStart())
           && up.getFirstToken().getStart().isBefore(intoExpression.getFirstToken().getStart())) {
         const message = `The addition "UP TO n ROWS" must only be placed after the INTO/APPENDING clause.`;
-        input.issues.push(syntaxIssue(input, up.getFirstToken(), message));
+        input.issues.push(syntaxIssue(input, up.getFirstToken(), message, this.buildUpToRowsFix(node, input, up, intoExpression)));
       }
       for (const s of up.findDirectExpressions(Expressions.SQLSource)) {
         SQLSource.runSyntax(s, input);
@@ -138,6 +139,30 @@ export class Select {
     if (input.scope.getType() === ScopeType.OpenSQL) {
       input.scope.pop(node.getLastToken().getEnd());
     }
+  }
+
+  private static buildUpToRowsFix(node: ExpressionNode,
+                                  input: SyntaxInput,
+                                  up: ExpressionNode,
+                                  intoExpression: ExpressionNode): IEdit {
+    const tokens = node.getTokens();
+    const upLast = up.getLastToken();
+    const next = tokens[tokens.findIndex(t => t === upLast) + 1];
+    const deleteEnd = next?.getStart() || upLast.getEnd();
+    const range = {start: up.getFirstToken().getStart(), end: deleteEnd};
+
+    return {
+      [input.filename]: [
+        {
+          range: {start: intoExpression.getLastToken().getEnd(), end: intoExpression.getLastToken().getEnd()},
+          newText: " " + up.concatTokens(),
+        },
+        {
+          range,
+          newText: "",
+        },
+      ],
+    };
   }
 
   // there are multiple rules, but gotta start somewhere
