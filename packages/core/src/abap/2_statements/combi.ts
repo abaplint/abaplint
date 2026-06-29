@@ -1016,7 +1016,6 @@ class AlternativePriority implements IStatementRunnable {
 export class Combi {
 // todo, change this class to be instantiated, constructor(runnable) ?
 
-  private static ver: Version = Version.v758;
   private static release: ABAPRelease = Release.v758;
   private static langVer: LanguageVersion = LanguageVersion.Normal;
   private static openABAP: boolean = false;
@@ -1053,11 +1052,9 @@ export class Combi {
     this.openABAP = openABAP || versionOrRelease === Version.OpenABAP;
     this.langVer = languageVersion;
     if (typeof versionOrRelease === "string") {
-      this.ver = versionOrRelease;
       this.release = this.openABAP ? Release.v702 : versionToABAPRelease(versionOrRelease);
     } else {
       this.release = this.openABAP ? Release.v702 : versionOrRelease;
-      this.ver = this.openABAP ? Version.OpenABAP : Version.v758;
     }
 
     const input = new Result(tokens, 0);
@@ -1085,10 +1082,6 @@ export class Combi {
     return undefined;
   }
 
-  public static getVersion(): Version {
-    return this.ver;
-  }
-
   public static getRelease(): ABAPRelease {
     return this.release;
   }
@@ -1099,10 +1092,6 @@ export class Combi {
 
   public static isOpenABAP(): boolean {
     return this.openABAP;
-  }
-
-  public static clearMemo(): void {
-    return;
   }
 
 }
@@ -1193,11 +1182,8 @@ function inputToRelease(versionOrRelease: Version | ABAPRelease): ABAPRelease {
   return versionOrRelease;
 }
 
-export function ver(versionOrRelease: Version | ABAPRelease, first: InputType, opts?: Version | IVerOptions): IStatementRunnable {
-  const also = typeof opts === "string"
-    ? opts === Version.OpenABAP ? AlsoIn.OpenABAP : undefined
-    : opts?.also;
-  return new Vers(inputToRelease(versionOrRelease), mapInput(first), also);
+export function ver(versionOrRelease: Version | ABAPRelease, first: InputType, opts: IVerOptions = {}): IStatementRunnable {
+  return new Vers(inputToRelease(versionOrRelease), mapInput(first), opts.also);
 }
 export function verLang(langVersion: LanguageVersion, first: InputType): IStatementRunnable {
   return new LangVers(langVersion, mapInput(first));
