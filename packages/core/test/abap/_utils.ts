@@ -1,6 +1,6 @@
 import {Config} from "../../src/config";
 import {expect} from "chai";
-import {Version, getPreviousVersion, defaultRelease, ABAPRelease, versionToABAPRelease, LanguageVersion} from "../../src/version";
+import {Version, getPreviousVersion, defaultRelease, ABAPRelease, versionToABAPRelease, LanguageVersion, ReleaseName, VersionOldOrNew} from "../../src/version";
 import {Unknown} from "../../src/abap/2_statements/statements/_statement";
 import {IStructure} from "../../src/abap/3_structures/structures/_structure";
 import {StatementParser} from "../../src/abap/2_statements/statement_parser";
@@ -71,41 +71,18 @@ export function parse(abap: string, config?: Config) {
   return files[0];
 }
 
-function releaseToVersion(r: ABAPRelease): Version {
-  // Used only by positive `statementType`/`statementVersion*` tests where the
-  // tester wants the ABAPRelease reflected as a Version in Config.
-  // Skip Version.Cloud and Version.OpenABAP — they trigger Config.checkVersion()
-  // magic that would overwrite the languageVersion the test set.
-  for (const v of Object.values(Version)) {
-    if (v === Version.OpenABAP || v === Version.Cloud) { continue; }
-    try {
-      if (versionToABAPRelease(v as Version) === r) { return v as Version; }
-    } catch { /* */ }
-  }
-  let best = legacyReleases[0];
-  for (const x of legacyReleases) {
-    if (x.ordinal <= r.ordinal) { best = x; }
-  }
-  return releaseToVersion(best);
-}
-
 function run(abap: string, text: string, type: any, version?: ABAPRelease | Version | undefined, langVer?: LanguageVersion) {
   it(text, () => {
-    let ver: Version | undefined;
-    if (version === undefined) {
-      ver = undefined;
-    } else if (typeof version === "string") {
-      ver = version as Version;
-    } else {
-      ver = releaseToVersion(version as ABAPRelease);
-    }
+    // For an explicit ABAPRelease use the object form {release, language} so the
+    // exact release (including Release.Newest, which has no plain Version) and the
+    // requested languageVersion are honored without Config.checkVersion() magic.
+    const ver: VersionOldOrNew | undefined =
+      (version !== undefined && typeof version !== "string")
+        ? {release: (version as ABAPRelease).name as ReleaseName, language: langVer ?? LanguageVersion.Normal}
+        : version as Version | undefined;
     const config = Config.getDefault(ver, langVer);
     const file = parse(abap, config);
     const slist = file.getStatements();
-
-    if (ver === undefined) {
-      ver = Config.getDefault().getVersion();
-    }
 
     expect(slist[0].get()).to.be.instanceof(type);
 // assumption: no colons in input

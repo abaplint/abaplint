@@ -99,7 +99,7 @@ describe("Config", () => {
 
     const conf = new Config(JSON.stringify(config));
 
-    expect(conf.getVersion()).to.equal(Version.Newest);
+    expect(conf.getVersion()).to.equal(Version.v816);
   });
 
 });
