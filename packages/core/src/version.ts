@@ -189,37 +189,6 @@ for (const r of ReleaseList) {
   }
 }
 
-/** Look up a release by its ABAP name, e.g. "7.90", "740SP05", "9.16" */
-export function fromABAP(abap: string): ABAPRelease {
-  const found = byAbap.get(abap);
-  if (found === undefined) { throw new Error("Unknown ABAP release: " + abap); }
-  return found;
-}
-
-/** Look up a release by its kernel release number, e.g. 753, 790, 916 */
-export function fromKernel(kernel: number): ABAPRelease {
-  const found = byKernel.get(kernel);
-  if (found === undefined) { throw new Error("Unknown kernel release: " + kernel); }
-  return found;
-}
-
-/** Look up a release by its cloud release number, e.g. 793, 916 */
-export function fromCloud(cloud: number): ABAPRelease {
-  const found = byCloud.get(cloud);
-  if (found === undefined) { throw new Error("Unknown cloud release: " + cloud); }
-  return found;
-}
-
-/**
- * Look up a release by its on-prem release number, e.g. 758, 816.
- * Returns the *last* cloud row at that op number, which is the full on-prem release.
- */
-export function fromOP(op: number): ABAPRelease {
-  const found = byOp.get(op);
-  if (found === undefined) { throw new Error("Unknown on-prem release: " + op); }
-  return found;
-}
-
 // ---------------------------------------------------------------------------
 // Deprecated compatibility layer — keeps existing callers working
 // ---------------------------------------------------------------------------
