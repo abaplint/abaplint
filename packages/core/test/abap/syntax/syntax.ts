@@ -12608,6 +12608,30 @@ SELECT (lt_select)
     expect(issues[0]?.getMessage()).to.equal(`The addition "UP TO n ROWS" must only be placed after the INTO/APPENDING clause.`);
   });
 
+  it("SELECT: ORDER BY DESCENDING in loop ok", () => {
+    const abap = `
+DATA row TYPE tadir.
+SELECT * FROM tadir
+    UP TO 1 ROWS
+    INTO @row
+    ORDER BY obj_name DESCENDING.
+ENDSELECT.`;
+    const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Normal);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT: ORDER BY DESCENDING in loop, cloud not okay", () => {
+    const abap = `
+DATA row TYPE tadir.
+SELECT * FROM tadir
+    UP TO 1 ROWS
+    INTO @row
+    ORDER BY obj_name DESCENDING.
+ENDSELECT.`;
+    const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(`The addition "UP TO n ROWS" must only be placed after the INTO/APPENDING clause.`);
+  });
+
   it("CONCATENATE: error, structure is not bytelike", () => {
     const abap = `
 TYPES: BEGIN OF ty,

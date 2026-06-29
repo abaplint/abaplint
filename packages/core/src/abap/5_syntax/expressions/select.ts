@@ -87,7 +87,7 @@ export class Select {
     }
     for (const up of node.findDirectExpressions(Expressions.SQLUpTo)) {
       if (intoExpression
-          && this.isStrictMode(node)
+          && this.isStrictMode(node, input)
           && up.getFirstToken().getStart().isBefore(intoExpression.getFirstToken().getStart())) {
         const message = `The addition "UP TO n ROWS" must only be placed after the INTO/APPENDING clause.`;
         input.issues.push(syntaxIssue(input, up.getFirstToken(), message));
@@ -121,7 +121,7 @@ export class Select {
       }
     }
 
-    if (this.isStrictMode(node)) {
+    if (this.isStrictMode(node, input)) {
       this.strictModeChecks(node, input);
     }
 
@@ -131,7 +131,12 @@ export class Select {
   }
 
   // there are multiple rules, but gotta start somewhere
-  private static isStrictMode(node: ExpressionNode) {
+  private static isStrictMode(node: ExpressionNode, input: SyntaxInput) {
+    // strict OpenSQL is always required in the cloud language version
+    if (input.scope.getLanguageVersion() === LanguageVersion.Cloud) {
+      return true;
+    }
+
     const into = node.findDirectExpressionsMulti([Expressions.SQLIntoList, Expressions.SQLIntoStructure, Expressions.SQLIntoTable])[0];
     const where = node.findDirectExpression(Expressions.SQLCond);
 
