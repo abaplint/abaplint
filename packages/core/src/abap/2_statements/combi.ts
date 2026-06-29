@@ -2,7 +2,7 @@ import * as Tokens from "../1_lexer/tokens";
 import {AbstractToken as Tokens_Token} from "../1_lexer/tokens/abstract_token";
 import {Position} from "../../position";
 import {TokenNode, ExpressionNode, TokenNodeRegex} from "../nodes";
-import {Version, LanguageVersion, ABAPRelease, releaseAtLeast, versionToABAPRelease} from "../../version";
+import {Version, LanguageVersion, ABAPRelease, Release, releaseAtLeast, versionToABAPRelease} from "../../version";
 import {IStatementRunnable} from "./statement_runnable";
 import {Result} from "./result";
 
@@ -143,7 +143,6 @@ class Token implements IStatementRunnable {
   }
 }
 
-/** Extra dialects in which a clause guarded by `ver(release, ..., {also: ...})` is also enabled. */
 export enum AlsoIn {
   OpenABAP = "OpenABAP",
 }
@@ -170,14 +169,11 @@ class Vers implements IStatementRunnable {
 
   public run(r: Result[]): Result[] {
     if (Combi.isOpenABAP() === true) {
-      // OpenABAP is based on v702: only clauses available at v702 or earlier match,
-      // unless the call site explicitly opted in via `{also: AlsoIn.OpenABAP}`.
       if (this.also === AlsoIn.OpenABAP) { return this.runnable.run(r); }
-      return releaseAtLeast(versionToABAPRelease(Version.v702), this.release) ? this.runnable.run(r) : [];
+      return releaseAtLeast(Release.v702, this.release) ? this.runnable.run(r) : [];
     }
-    const running = Combi.getRelease();
-    if (running === undefined) { return this.runnable.run(r); }
-    return releaseAtLeast(running, this.release) ? this.runnable.run(r) : [];
+
+    return releaseAtLeast(Combi.getRelease(), this.release) ? this.runnable.run(r) : [];
   }
 
   public getUsing(): string[] {
@@ -185,10 +181,10 @@ class Vers implements IStatementRunnable {
   }
 
   public railroad() {
-    const relName = this.release.abap ?? "Newest";
-    const text = this.also !== undefined
-      ? relName + " or " + this.also
-      : relName;
+    let text = this.release.abap ?? "Newest";
+    if (this.also) {
+      text += " or " + this.also;
+    }
     return "Railroad.Sequence(Railroad.Comment(\"" +
       text +
       "\", {}), " +
@@ -293,6 +289,49 @@ class LangVersNot implements IStatementRunnable {
 
   public toStr() {
     return "LanguageVersionNot(" + this.runnable.toStr() + ")";
+  }
+
+  public first() {
+    return this.runnable.first();
+  }
+}
+
+class VersNot implements IStatementRunnable {
+
+  private readonly version: Version;
+  private readonly runnable: IStatementRunnable;
+
+  public constructor(version: Version, runnable: IStatementRunnable) {
+    this.version = version;
+    this.runnable = runnable;
+  }
+
+  public listKeywords(): string[] {
+    return this.runnable.listKeywords();
+  }
+
+  public getUsing(): string[] {
+    return this.runnable.getUsing();
+  }
+
+  public run(r: Result[]): Result[] {
+    if (Combi.getVersion() !== this.version) {
+      return this.runnable.run(r);
+    } else {
+      return [];
+    }
+  }
+
+  public railroad() {
+    return "Railroad.Sequence(Railroad.Comment(\"not " +
+      this.version +
+      "\", {}), " +
+      this.runnable.railroad() +
+      ")";
+  }
+
+  public toStr() {
+    return "VersionNot(" + this.runnable.toStr() + ")";
   }
 
   public first() {
@@ -699,60 +738,33 @@ export abstract class Expression implements IStatementRunnable {
       this.runnable = this.getRunnable();
     }
 
-    const memo = Combi.getMemo();
-    const name = this.getName();
-
     for (const input of r) {
-      const tokens = input.getTokens();
-      const isActiveMemo = Combi.isMemoActive(tokens);
-      const key = isActiveMemo ? name + ":" + input.getTokenIndex() : undefined;
-      let cached = key !== undefined ? memo.get(key) : undefined;
+      const temp = this.runnable.run([input]);
 
-      if (cached === undefined) {
-        const temp = this.runnable.run([input]);
-        cached = [];
-        for (const t of temp) {
-          let consumed = input.remainingLength() - t.remainingLength();
-          if (consumed > 0) {
-            const originalLength = t.getNodes().length;
-            const children: (ExpressionNode | TokenNode)[] = [];
-            while (consumed > 0) {
-              const sub = t.popNode();
-              if (sub) {
-                children.push(sub);
-                consumed = consumed - sub.countTokens();
-              }
+      for (const t of temp) {
+        let consumed = input.remainingLength() - t.remainingLength();
+        if (consumed > 0) {
+          const originalLength = t.getNodes().length;
+          const children: (ExpressionNode | TokenNode)[] = [];
+          while (consumed > 0) {
+            const sub = t.popNode();
+            if (sub) {
+              children.push(sub);
+              consumed = consumed - sub.countTokens();
             }
-            children.reverse();
-            const re = new ExpressionNode(this);
-            re.setChildren(children);
-            // Cache the children array, not the ExpressionNode itself, so each
-            // cache hit can build a fresh node — node identity stays unique per
-            // tree position. The children array is reused (shared) across hits;
-            // ExpressionNode is immutable after setChildren() so that is safe.
-            cached.push({children, newTokenIndex: t.getTokenIndex()});
-
-            const n = t.getNodes().slice(0, originalLength - consumed);
-            n.push(re);
-            t.setNodes(n);
           }
-          results.push(t);
-        }
-        if (key !== undefined) {
-          memo.set(key, cached);
-        }
-      } else {
-        for (const entry of cached) {
           const re = new ExpressionNode(this);
-          re.setChildren(entry.children.slice());
-          const n = input.getNodes().slice();
-          n.push(re);
-          const shifted = new Result(input.getTokens(), entry.newTokenIndex, n);
-          results.push(shifted);
-        }
-      }
-    }
+          re.setChildren(children.reverse());
 
+          const n = t.getNodes().slice(0, originalLength - consumed);
+          n.push(re);
+          t.setNodes(n);
+        }
+        results.push(t);
+      }
+
+    }
+//    console.dir(results);
     return results;
   }
 
@@ -1044,16 +1056,13 @@ class AlternativePriority implements IStatementRunnable {
   }
 }
 
-type MemoEntry = {children: readonly (ExpressionNode | TokenNode)[], newTokenIndex: number}[];
-
 export class Combi {
 // todo, change this class to be instantiated, constructor(runnable) ?
 
-  private static release: ABAPRelease | undefined = undefined;
+  private static ver: Version = Version.v758;
+  private static release: ABAPRelease = Release.v758;
   private static langVer: LanguageVersion = LanguageVersion.Normal;
   private static openABAP: boolean = false;
-  private static readonly memo: Map<string, MemoEntry> = new Map();
-  private static memoTokens: readonly Tokens_Token[] | undefined = undefined;
 
   public static railroad(runnable: IStatementRunnable, complex = false): string {
 // todo, move method to graph.js?
@@ -1084,17 +1093,15 @@ export class Combi {
     languageVersion: LanguageVersion = LanguageVersion.Normal,
     openABAP: boolean = false): (ExpressionNode | TokenNode)[] | undefined {
 
-    if (typeof versionOrRelease === "string") {
-      // deprecated Version enum path
-      this.openABAP = openABAP || versionOrRelease === Version.OpenABAP;
-      this.release = this.openABAP ? versionToABAPRelease(Version.v702) : versionToABAPRelease(versionOrRelease);
-    } else {
-      this.openABAP = openABAP;
-      this.release = this.openABAP ? versionToABAPRelease(Version.v702) : versionOrRelease;
-    }
+    this.openABAP = openABAP || versionOrRelease === Version.OpenABAP;
     this.langVer = languageVersion;
-    this.memo.clear();
-    this.memoTokens = tokens;
+    if (typeof versionOrRelease === "string") {
+      this.ver = versionOrRelease;
+      this.release = this.openABAP ? Release.v702 : versionToABAPRelease(versionOrRelease);
+    } else {
+      this.release = this.openABAP ? Release.v702 : versionOrRelease;
+      this.ver = this.openABAP ? Version.OpenABAP : Version.v758;
+    }
 
     const input = new Result(tokens, 0);
     try {
@@ -1121,35 +1128,24 @@ export class Combi {
     return undefined;
   }
 
-  public static getRelease(): ABAPRelease | undefined {
-    return this.release;
-  }
-
-  public static isOpenABAP(): boolean {
-    return this.openABAP;
-  }
-
-  /** @deprecated Use getRelease() / isOpenABAP() instead */
   public static getVersion(): Version {
-    if (this.openABAP) { return Version.OpenABAP; }
-    return Version.v758;
+    return this.ver;
+  }
+
+  public static getRelease(): ABAPRelease {
+    return this.release;
   }
 
   public static getLanguageVersion(): LanguageVersion {
     return this.langVer;
   }
 
-  public static isMemoActive(tokens: readonly Tokens_Token[]): boolean {
-    return this.memoTokens === tokens;
+  public static isOpenABAP(): boolean {
+    return this.openABAP;
   }
 
   public static clearMemo(): void {
-    this.memo.clear();
-    this.memoTokens = undefined;
-  }
-
-  public static getMemo(): Map<string, MemoEntry> {
-    return this.memo;
+    return;
   }
 
 }
@@ -1233,8 +1229,21 @@ export function plus(first: InputType): IStatementRunnable {
 export function plusPrio(first: InputType): IStatementRunnable {
   return new PlusPriority(mapInput(first));
 }
-export function ver(release: ABAPRelease, first: InputType, opts: IVerOptions = {}): IStatementRunnable {
-  return new Vers(release, mapInput(first), opts.also);
+function inputToRelease(versionOrRelease: Version | ABAPRelease): ABAPRelease {
+  if (typeof versionOrRelease === "string") {
+    return versionToABAPRelease(versionOrRelease);
+  }
+  return versionOrRelease;
+}
+
+export function ver(versionOrRelease: Version | ABAPRelease, first: InputType, opts?: Version | IVerOptions): IStatementRunnable {
+  const also = typeof opts === "string"
+    ? opts === Version.OpenABAP ? AlsoIn.OpenABAP : undefined
+    : opts?.also;
+  return new Vers(inputToRelease(versionOrRelease), mapInput(first), also);
+}
+export function verNot(version: Version, first: InputType): IStatementRunnable {
+  return new VersNot(version, mapInput(first));
 }
 export function verLang(langVersion: LanguageVersion, first: InputType): IStatementRunnable {
   return new LangVers(langVersion, mapInput(first));
