@@ -7,6 +7,7 @@ import {IRegistry} from "../../../src/_iregistry";
 import {getABAPObjects} from "../../get_abap";
 import {Version, LanguageVersion} from "../../../src/version";
 import {MemoryFile} from "../../../src/files/memory_file";
+import {applyEditSingle} from "../../../src/edit_helper";
 
 function run(reg: IRegistry, globalConstants?: string[], version?: Version, errorNamespace?: string,
              languageVersion?: LanguageVersion): Issue[] {
@@ -12682,6 +12683,43 @@ SELECT (lt_select)
   INTO CORRESPONDING FIELDS OF TABLE @<ft_result>.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(`The addition "UP TO n ROWS" must only be placed after the INTO/APPENDING clause.`);
+  });
+
+  it("SELECT: UP TO must be after INTO in strict mode, quick fix", () => {
+    const abap = `
+FIELD-SYMBOLS <ft_result> TYPE ANY TABLE.
+DATA lv_from TYPE string.
+DATA lt_select TYPE string.
+DATA lt_where TYPE string.
+DATA lv_row_count TYPE i.
+
+SELECT (lt_select)
+  FROM (lv_from)
+  UP TO @lv_row_count ROWS
+  WHERE (lt_where)
+  INTO CORRESPONDING FIELDS OF TABLE @<ft_result>.`;
+    const expected = `
+FIELD-SYMBOLS <ft_result> TYPE ANY TABLE.
+DATA lv_from TYPE string.
+DATA lt_select TYPE string.
+DATA lt_where TYPE string.
+DATA lv_row_count TYPE i.
+
+SELECT (lt_select)
+  FROM (lv_from)
+  WHERE (lt_where)
+  INTO CORRESPONDING FIELDS OF TABLE @<ft_result> UP TO @lv_row_count ROWS.`;
+    const file = new MemoryFile("zfoobar.prog.abap", abap);
+    const reg: IRegistry = new Registry().addFile(file);
+    let issues = run(reg);
+    expect(issues[0]?.getMessage()).to.equal(`The addition "UP TO n ROWS" must only be placed after the INTO/APPENDING clause.`);
+    expect(issues[0]?.getDefaultFix()).to.not.equal(undefined);
+
+    applyEditSingle(reg, issues[0].getDefaultFix()!);
+
+    issues = run(reg);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+    expect(reg.getFileByName("zfoobar.prog.abap")?.getRaw()).to.equal(expected);
   });
 
   it("SELECT: UP TO before FROM ok in strict mode", () => {
