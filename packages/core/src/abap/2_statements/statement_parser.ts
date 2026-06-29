@@ -281,7 +281,6 @@ export class StatementParser {
       return new StatementNode(new Empty()).setChildren(this.tokensToNodes(tokens));
     }
 
-    Combi.clearMemo();
     for (const st of StatementParser.map.lookup(filtered[0].getStr())) {
       const match = Combi.run(st.matcher, filtered, this.release, this.languageVersion, this.openABAP);
       if (match) {
