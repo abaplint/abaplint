@@ -12420,6 +12420,21 @@ DELETE tab FROM 10.`;
     expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
   });
 
+  it("DELETE FROM hashed table component not possible", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE c LENGTH 10,
+       END OF ty.
+TYPES: BEGIN OF ty_info,
+         missing_remote TYPE HASHED TABLE OF ty WITH UNIQUE KEY foo,
+       END OF ty_info.
+DATA cs_information TYPE ty_info.
+CONSTANTS c_max TYPE i VALUE 50.
+DELETE cs_information-missing_remote FROM c_max.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
+  });
+
   it("DELETE ADJACENT DUPLICATES FROM hashed table", () => {
     const abap = `
 TYPES: BEGIN OF ty,
