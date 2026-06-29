@@ -16,8 +16,10 @@ export class SQLPathSegment extends Expression {
   }
 
   public getRunnable(): IStatementRunnable {
+    const joinTag = optPrio(ver(Release.v795, reg(/^#[A-Z][A-Z0-9_]*$/i)));
     const filter = ver(Release.v751, seq(
       tok(BracketLeftW),
+      joinTag,
       optPrio(SQLPathCardinality),
       optPrio(SQLPathJoinType),
       optPrio(seq(optPrio("WHERE"), SQLCond)),

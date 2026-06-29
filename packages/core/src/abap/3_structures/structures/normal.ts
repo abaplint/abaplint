@@ -128,6 +128,7 @@ export class Normal implements IStructure {
                sta(Statements.With),
                sta(Statements.LogPoint),
                sta(Statements.Message),
+               sta(Statements.MergeDatabase),
                sta(Statements.ModifyLine),
                sta(Statements.ModifyDatabase),
                sta(Statements.ModifyInternal),

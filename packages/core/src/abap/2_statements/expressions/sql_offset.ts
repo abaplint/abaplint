@@ -1,9 +1,9 @@
 import {seq, Expression} from "../combi";
-import {SQLFromBody} from "./sql_from_body";
 import {IStatementRunnable} from "../statement_runnable";
+import {SQLSource} from "./sql_source";
 
-export class SQLFrom extends Expression {
+export class SQLOffset extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq("FROM", new SQLFromBody());
+    return seq("OFFSET", SQLSource);
   }
 }

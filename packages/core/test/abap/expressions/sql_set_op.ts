@@ -30,9 +30,11 @@ describe("Test expression, SQLSetOp", () => {
           ]],
           ["SQLFrom", {}, [
             ["Identifier", {text: "FROM"}, []],
-            ["SQLFromSource", {}, [
-              ["DatabaseTable", {}, [
-                ["Identifier", {text: "ztab"}, []],
+            ["SQLFromBody", {}, [
+              ["SQLFromSource", {}, [
+                ["DatabaseTable", {}, [
+                  ["Identifier", {text: "ztab"}, []],
+                ]],
               ]],
             ]],
           ]],
@@ -50,9 +52,11 @@ describe("Test expression, SQLSetOp", () => {
             ]],
             ["SQLFrom", {}, [
               ["Identifier", {text: "FROM"}, []],
-              ["SQLFromSource", {}, [
-                ["DatabaseTable", {}, [
-                  ["Identifier", {text: "ztab2"}, []],
+              ["SQLFromBody", {}, [
+                ["SQLFromSource", {}, [
+                  ["DatabaseTable", {}, [
+                    ["Identifier", {text: "ztab2"}, []],
+                  ]],
                 ]],
               ]],
             ]],
@@ -100,9 +104,11 @@ describe("Test expression, SQLSetOp", () => {
           ]],
           ["SQLFrom", {}, [
             ["Identifier", {text: "FROM"}, []],
-            ["SQLFromSource", {}, [
-              ["DatabaseTable", {}, [
-                ["Identifier", {text: "ztab"}, []],
+            ["SQLFromBody", {}, [
+              ["SQLFromSource", {}, [
+                ["DatabaseTable", {}, [
+                  ["Identifier", {text: "ztab"}, []],
+                ]],
               ]],
             ]],
           ]],
@@ -121,9 +127,11 @@ describe("Test expression, SQLSetOp", () => {
             ]],
             ["SQLFrom", {}, [
               ["Identifier", {text: "FROM"}, []],
-              ["SQLFromSource", {}, [
-                ["DatabaseTable", {}, [
-                  ["Identifier", {text: "ztab2"}, []],
+              ["SQLFromBody", {}, [
+                ["SQLFromSource", {}, [
+                  ["DatabaseTable", {}, [
+                    ["Identifier", {text: "ztab2"}, []],
+                  ]],
                 ]],
               ]],
             ]],
@@ -171,9 +179,11 @@ describe("Test expression, SQLSetOp", () => {
           ]],
           ["SQLFrom", {}, [
             ["Identifier", {text: "FROM"}, []],
-            ["SQLFromSource", {}, [
-              ["DatabaseTable", {}, [
-                ["Identifier", {text: "ztab"}, []],
+            ["SQLFromBody", {}, [
+              ["SQLFromSource", {}, [
+                ["DatabaseTable", {}, [
+                  ["Identifier", {text: "ztab"}, []],
+                ]],
               ]],
             ]],
           ]],
@@ -191,9 +201,11 @@ describe("Test expression, SQLSetOp", () => {
             ]],
             ["SQLFrom", {}, [
               ["Identifier", {text: "FROM"}, []],
-              ["SQLFromSource", {}, [
-                ["DatabaseTable", {}, [
-                  ["Identifier", {text: "ztab2"}, []],
+              ["SQLFromBody", {}, [
+                ["SQLFromSource", {}, [
+                  ["DatabaseTable", {}, [
+                    ["Identifier", {text: "ztab2"}, []],
+                  ]],
                 ]],
               ]],
             ]],
@@ -241,9 +253,11 @@ describe("Test expression, SQLSetOp", () => {
           ]],
           ["SQLFrom", {}, [
             ["Identifier", {text: "FROM"}, []],
-            ["SQLFromSource", {}, [
-              ["DatabaseTable", {}, [
-                ["Identifier", {text: "ztab"}, []],
+            ["SQLFromBody", {}, [
+              ["SQLFromSource", {}, [
+                ["DatabaseTable", {}, [
+                  ["Identifier", {text: "ztab"}, []],
+                ]],
               ]],
             ]],
           ]],
@@ -261,9 +275,11 @@ describe("Test expression, SQLSetOp", () => {
             ]],
             ["SQLFrom", {}, [
               ["Identifier", {text: "FROM"}, []],
-              ["SQLFromSource", {}, [
-                ["DatabaseTable", {}, [
-                  ["Identifier", {text: "ztab2"}, []],
+              ["SQLFromBody", {}, [
+                ["SQLFromSource", {}, [
+                  ["DatabaseTable", {}, [
+                    ["Identifier", {text: "ztab2"}, []],
+                  ]],
                 ]],
               ]],
             ]],
@@ -311,9 +327,11 @@ describe("Test expression, SQLSetOp", () => {
           ]],
           ["SQLFrom", {}, [
             ["Identifier", {text: "FROM"}, []],
-            ["SQLFromSource", {}, [
-              ["DatabaseTable", {}, [
-                ["Identifier", {text: "ztab"}, []],
+            ["SQLFromBody", {}, [
+              ["SQLFromSource", {}, [
+                ["DatabaseTable", {}, [
+                  ["Identifier", {text: "ztab"}, []],
+                ]],
               ]],
             ]],
           ]],
@@ -332,9 +350,11 @@ describe("Test expression, SQLSetOp", () => {
             ]],
             ["SQLFrom", {}, [
               ["Identifier", {text: "FROM"}, []],
-              ["SQLFromSource", {}, [
-                ["DatabaseTable", {}, [
-                  ["Identifier", {text: "ztab"}, []],
+              ["SQLFromBody", {}, [
+                ["SQLFromSource", {}, [
+                  ["DatabaseTable", {}, [
+                    ["Identifier", {text: "ztab"}, []],
+                  ]],
                 ]],
               ]],
             ]],
@@ -353,9 +373,11 @@ describe("Test expression, SQLSetOp", () => {
             ]],
             ["SQLFrom", {}, [
               ["Identifier", {text: "FROM"}, []],
-              ["SQLFromSource", {}, [
-                ["DatabaseTable", {}, [
-                  ["Identifier", {text: "ztab2"}, []],
+              ["SQLFromBody", {}, [
+                ["SQLFromSource", {}, [
+                  ["DatabaseTable", {}, [
+                    ["Identifier", {text: "ztab2"}, []],
+                  ]],
                 ]],
               ]],
             ]],
@@ -403,9 +425,11 @@ describe("Test expression, SQLSetOp", () => {
           ]],
           ["SQLFrom", {}, [
             ["Identifier", {text: "FROM"}, []],
-            ["SQLFromSource", {}, [
-              ["DatabaseTable", {}, [
-                ["Identifier", {text: "ztab"}, []],
+            ["SQLFromBody", {}, [
+              ["SQLFromSource", {}, [
+                ["DatabaseTable", {}, [
+                  ["Identifier", {text: "ztab"}, []],
+                ]],
               ]],
             ]],
           ]],
@@ -425,9 +449,11 @@ describe("Test expression, SQLSetOp", () => {
               ]],
               ["SQLFrom", {}, [
                 ["Identifier", {text: "FROM"}, []],
-                ["SQLFromSource", {}, [
-                  ["DatabaseTable", {}, [
-                    ["Identifier", {text: "ztab2"}, []],
+                ["SQLFromBody", {}, [
+                  ["SQLFromSource", {}, [
+                    ["DatabaseTable", {}, [
+                      ["Identifier", {text: "ztab2"}, []],
+                    ]],
                   ]],
                 ]],
               ]],
@@ -445,9 +471,11 @@ describe("Test expression, SQLSetOp", () => {
                 ]],
                 ["SQLFrom", {}, [
                   ["Identifier", {text: "FROM"}, []],
-                  ["SQLFromSource", {}, [
-                    ["DatabaseTable", {}, [
-                      ["Identifier", {text: "ztab3"}, []],
+                  ["SQLFromBody", {}, [
+                    ["SQLFromSource", {}, [
+                      ["DatabaseTable", {}, [
+                        ["Identifier", {text: "ztab3"}, []],
+                      ]],
                     ]],
                   ]],
                 ]],
@@ -469,9 +497,11 @@ describe("Test expression, SQLSetOp", () => {
             ]],
             ["SQLFrom", {}, [
               ["Identifier", {text: "FROM"}, []],
-              ["SQLFromSource", {}, [
-                ["DatabaseTable", {}, [
-                  ["Identifier", {text: "ztab4"}, []],
+              ["SQLFromBody", {}, [
+                ["SQLFromSource", {}, [
+                  ["DatabaseTable", {}, [
+                    ["Identifier", {text: "ztab4"}, []],
+                  ]],
                 ]],
               ]],
             ]],
