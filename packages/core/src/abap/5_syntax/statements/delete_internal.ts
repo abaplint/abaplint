@@ -34,7 +34,7 @@ export class DeleteInternal implements StatementSyntax {
         targetType = Target.runSyntax(target, input);
         if (node.findDirectTokenByText("TABLE") === undefined
             && node.findDirectTokenByText("ADJACENT") === undefined
-            && node.findDirectTokenByText("FROM")
+            && (node.findDirectTokenByText("FROM") || node.findDirectTokenByText("INDEX"))
             && targetType instanceof TableType
             && targetType.getAccessType() === TableAccessType.hashed) {
           const message = "Implicit or explicit index operation on hashed table is not possible";
