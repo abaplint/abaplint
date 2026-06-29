@@ -6,6 +6,7 @@ import {Version, LanguageVersion, ABAPRelease, Release, releaseAtLeast, versionT
 import {IStatementRunnable} from "./statement_runnable";
 import {Result} from "./result";
 
+
 class Regex implements IStatementRunnable {
 
   private readonly regexp: RegExp;
