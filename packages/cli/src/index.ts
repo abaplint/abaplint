@@ -4,7 +4,7 @@ import * as path from "path";
 import ProgressBar from "progress";
 import * as childProcess from "child_process";
 import * as JSON5 from "json5";
-import {Issue, IProgress, IFile, Position, Config, Registry, Version, IRegistry, MemoryFile} from "@abaplint/core";
+import {Issue, IProgress, IFile, Position, Config, Registry, Version, Release, IRegistry, MemoryFile} from "@abaplint/core";
 import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
@@ -28,6 +28,23 @@ class Progress implements IProgress {
   public tickSync(text: string) {
     this.bar.tick({text});
     this.bar.render();
+  }
+}
+
+function validateVersion(version: any): void {
+  if (version === undefined) {
+    return;
+  }
+  let known = false;
+  if (typeof version === "string") {
+    const vers: any = Version;
+    known = Object.keys(Version).some(v => vers[v] === version);
+  } else if (typeof version === "object" && typeof version.release === "string") {
+    // new object form: {release, language}
+    known = Release[version.release] !== undefined;
+  }
+  if (known === false) {
+    throw "Error: Unknown version in abaplint.json";
   }
 }
 
@@ -71,10 +88,7 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
   process.stderr.write("Using config: " + f + "\n");
   const json = fs.readFileSync(f, "utf8");
   const parsed = JSON5.parse(json);
-  const vers: any = Version;
-  if (Object.keys(Version).some(v => vers[v] === parsed.syntax.version) === false) {
-    throw "Error: Unknown version in abaplint.json";
-  }
+  validateVersion(parsed.syntax?.version);
 
   return {
     config: new Config(json),
