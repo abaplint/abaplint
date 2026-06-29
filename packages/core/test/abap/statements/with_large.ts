@@ -1000,4 +1000,4 @@ const tests = [
     into corresponding fields of table @lt_result.`,
 ];
 
-statementType(tests, "WITH large", Statements.With);
+statementType(tests, "WITH large", Statements.With, 2000);

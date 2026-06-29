@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "CALL 'SYST_LOGOFF'.",
@@ -8,3 +9,9 @@ const tests = [
 ];
 
 statementType(tests, "CALL kernel", Statements.CallKernel);
+
+const versionsFail = [
+  {abap: `CALL 'SYST_LOGOFF'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "CALL kernel");

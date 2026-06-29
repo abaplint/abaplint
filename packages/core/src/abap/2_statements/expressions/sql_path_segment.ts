@@ -5,7 +5,7 @@ import {SQLCDSParameters} from "./sql_cds_parameters";
 import {SQLCond} from "./sql_cond";
 import {SQLPathCardinality} from "./sql_path_cardinality";
 import {SQLPathJoinType} from "./sql_path_join_type";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class SQLPathSegment extends Expression {
   private readonly nws: boolean;
@@ -16,20 +16,20 @@ export class SQLPathSegment extends Expression {
   }
 
   public getRunnable(): IStatementRunnable {
-    const filter = ver(Version.v751, seq(
+    const filter = ver(Release.v751, seq(
       tok(BracketLeftW),
       optPrio(SQLPathCardinality),
       optPrio(SQLPathJoinType),
       optPrio(seq(optPrio("WHERE"), SQLCond)),
       altPrio(tok(WBracketRightW), tok(WBracketRight)),
     ));
-    const params = ver(Version.v751, SQLCDSParameters);
+    const params = ver(Release.v751, SQLCDSParameters);
 
     const name = this.nws
       ? tok(AssociationName)
       : altPrio(tok(AssociationName), reg(/^\\[\w]+$/));
 
-    return ver(Version.v740sp05, seq(name, optPrio(altPrio(
+    return ver(Release.v740sp05, seq(name, optPrio(altPrio(
       seq(params, optPrio(filter)),
       filter,
     ))));

@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, per, altPrio} from "../combi";
+import {verNotLang, seq, per, altPrio} from "../combi";
 import {Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class SetCursor implements IStatement {
@@ -12,7 +12,7 @@ export class SetCursor implements IStatement {
     const field = seq("FIELD", Source);
     const pos = seq(Source, Source);
     const ret = seq("SET CURSOR", altPrio(per(field, offset, line), pos));
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

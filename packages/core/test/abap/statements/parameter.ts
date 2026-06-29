@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "PARAMETERS p_insp TYPE sciins_inf-inspecname OBLIGATORY.",
@@ -45,3 +46,9 @@ const tests = [
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);
+
+const versionsFail = [
+  {abap: `PARAMETERS p_insp TYPE sciins_inf-inspecname OBLIGATORY.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "PARAMETER");

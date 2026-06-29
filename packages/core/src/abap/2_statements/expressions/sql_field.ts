@@ -1,6 +1,6 @@
-import {plusPrio, seq, ver, tok, Expression, optPrio, altPrio} from "../combi";
+import {plusPrio, seq, ver, tok, Expression, optPrio, altPrio, AlsoIn} from "../combi";
 import {Constant, SQLFieldName, SQLAggregation, SQLCase, SQLAsName, SimpleFieldChain2} from ".";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {ParenLeftW, WAt, WParenLeftW, WParenRight, WParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLFunction} from "./sql_function";
@@ -10,7 +10,7 @@ export class SQLField extends Expression {
   public getRunnable(): IStatementRunnable {
 
     const atParen = seq(tok(ParenLeftW), SimpleFieldChain2, tok(WParenRightW));
-    const abap = ver(Version.v740sp05, seq(tok(WAt), altPrio(SimpleFieldChain2, atParen)), Version.OpenABAP);
+    const abap = ver(Release.v740sp05, seq(tok(WAt), altPrio(SimpleFieldChain2, atParen)), {also: AlsoIn.OpenABAP});
 
     const as = seq("AS", SQLAsName);
 
@@ -30,10 +30,10 @@ export class SQLField extends Expression {
     const parenFieldNoAgg = seq(tok(WParenLeftW), fieldNoAgg, tok(WParenRightW));
 
     const subNoAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenFieldNoAgg, fieldNoAgg)));
-    const arithNoAgg = ver(Version.v740sp05, subNoAgg);
+    const arithNoAgg = ver(Release.v740sp05, subNoAgg);
 
     const subWithAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenField, field)));
-    const arithWithAgg = ver(Version.v754, subWithAgg);
+    const arithWithAgg = ver(Release.v754, subWithAgg);
 
     const arith = altPrio(arithWithAgg, arithNoAgg);
 
@@ -42,7 +42,7 @@ export class SQLField extends Expression {
 
     const subExtWithAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenArithSequence, parenField, field)));
     const subExtNoAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenArithSequence, parenFieldNoAgg, fieldNoAgg)));
-    const arithExt = altPrio(ver(Version.v754, subExtWithAgg), ver(Version.v740sp05, subExtNoAgg));
+    const arithExt = altPrio(ver(Release.v754, subExtWithAgg), ver(Release.v740sp05, subExtNoAgg));
 
     return seq(altPrio(
       seq(parenArithSequence, optPrio(arithExt)),

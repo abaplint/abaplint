@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "call dialog 'ZDIALOG' exporting foo from bar.",
@@ -21,3 +22,9 @@ const tests = [
 ];
 
 statementType(tests, "CALL DIALOG", Statements.CallDialog);
+
+const versionsFail = [
+  {abap: `call dialog 'ZDIALOG' exporting foo from bar.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "CALL DIALOG");

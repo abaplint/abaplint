@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "SET PROPERTY OF io_app_obj 'StatusBar' = 'OLE Call'.",
@@ -10,3 +11,9 @@ const tests = [
 ];
 
 statementType(tests, "SET PROPERTY", Statements.SetProperty);
+
+const versionsFail = [
+  {abap: `SET PROPERTY OF io_app_obj 'StatusBar' = 'OLE Call'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "SET PROPERTY");

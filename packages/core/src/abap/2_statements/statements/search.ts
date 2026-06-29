@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, per, altPrio} from "../combi";
+import {verNotLang, str, seq, opt, per, altPrio} from "../combi";
 import {Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Search implements IStatement {
@@ -19,7 +19,7 @@ export class Search implements IStatement {
                     Source,
                     opt(per(mode, starting, ending, mark)));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

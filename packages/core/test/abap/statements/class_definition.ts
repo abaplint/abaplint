@@ -32,5 +32,5 @@ const tests = [
 statementType(tests, "CLASS Definition", Statements.ClassDefinition);
 
 statementVersionOk([
-  {abap: "CLASS cl_foo DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF blah.", ver: Version.OpenABAP},
+  {abap: "CLASS cl_foo DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF blah.", rel: Version.OpenABAP},
 ], "CLASS Definition", Statements.ClassDefinition);

@@ -133,5 +133,5 @@ statementVersionOk([
   {abap: `READ ENTITIES OF zi_foo IN LOCAL MODE
     ENTITY ent
     FIELDS ( field ) WITH CORRESPONDING #( keys )
-    RESULT DATA(res).`, ver: Version.OpenABAP},
+    RESULT DATA(res).`, rel: Version.OpenABAP},
 ], "READ ENTITIES", Statements.ReadEntities);

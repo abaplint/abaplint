@@ -1,6 +1,7 @@
+import {Release} from "../../../src/version";
 import {statementExpectFail, statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+
 
 const tests = [
   "CLASS-METHODS status IMPORTING io_repo TYPE REF TO lcl_repo.",
@@ -181,7 +182,7 @@ statementType(tests, "METHODS", Statements.MethodDef);
 
 
 const versions = [
-  {abap: "METHODS method2 DEFAULT IGNORE.", ver: Version.v740sp08},
+  {abap: "METHODS method2 DEFAULT IGNORE.", rel: Release.v740sp08},
 ];
 statementVersion(versions, "METHODS", Statements.MethodDef);
 

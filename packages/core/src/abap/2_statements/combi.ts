@@ -2,9 +2,10 @@ import * as Tokens from "../1_lexer/tokens";
 import {AbstractToken as Tokens_Token} from "../1_lexer/tokens/abstract_token";
 import {Position} from "../../position";
 import {TokenNode, ExpressionNode, TokenNodeRegex} from "../nodes";
-import {Version} from "../../version";
+import {Version, LanguageVersion, ABAPRelease, Release, releaseAtLeast, versionToABAPRelease} from "../../version";
 import {IStatementRunnable} from "./statement_runnable";
 import {Result} from "./result";
+
 
 class Regex implements IStatementRunnable {
 
@@ -143,16 +144,24 @@ class Token implements IStatementRunnable {
   }
 }
 
+export enum AlsoIn {
+  OpenABAP = "OpenABAP",
+}
+
+export interface IVerOptions {
+  also?: AlsoIn;
+}
+
 class Vers implements IStatementRunnable {
 
-  private readonly version: Version;
-  private readonly or: Version | undefined;
+  private readonly release: ABAPRelease;
   private readonly runnable: IStatementRunnable;
+  private readonly also: AlsoIn | undefined;
 
-  public constructor(version: Version, runnable: IStatementRunnable, or?: Version) {
-    this.version = version;
+  public constructor(release: ABAPRelease, runnable: IStatementRunnable, also?: AlsoIn) {
+    this.release = release;
     this.runnable = runnable;
-    this.or = or;
+    this.also = also;
   }
 
   public listKeywords(): string[] {
@@ -160,21 +169,12 @@ class Vers implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    const targetVersion = Combi.getVersion();
-    if (this.or && targetVersion === this.or) {
-      return this.runnable.run(r);
-    } else if (targetVersion === Version.OpenABAP) {
-      if (this.version > Version.v702) {
-        return [];
-      } else {
-        return this.runnable.run(r);
-      }
-    } else if ((targetVersion !== Version.Cloud && this.version !== Version.Cloud && targetVersion >= this.version)
-        || targetVersion === Version.Cloud) {
-      return this.runnable.run(r);
-    } else {
-      return [];
+    if (Combi.isOpenABAP() === true) {
+      if (this.also === AlsoIn.OpenABAP) { return this.runnable.run(r); }
+      return releaseAtLeast(Release.v702, this.release) ? this.runnable.run(r) : [];
     }
+
+    return releaseAtLeast(Combi.getRelease(), this.release) ? this.runnable.run(r) : [];
   }
 
   public getUsing(): string[] {
@@ -182,9 +182,9 @@ class Vers implements IStatementRunnable {
   }
 
   public railroad() {
-    let text: string = this.version;
-    if (this.or) {
-      text += " or " + this.or;
+    let text = this.release.abap ?? "Newest";
+    if (this.also) {
+      text += " or " + this.also;
     }
     return "Railroad.Sequence(Railroad.Comment(\"" +
       text +
@@ -202,13 +202,22 @@ class Vers implements IStatementRunnable {
   }
 }
 
-class VersNot implements IStatementRunnable {
+function langVersionOrdinal(v: LanguageVersion): number {
+  switch (v) {
+    case LanguageVersion.KeyUser: return 0;
+    case LanguageVersion.Cloud: return 1;
+    case LanguageVersion.Normal: return 2;
+    default: return 2;
+  }
+}
 
-  private readonly version: Version;
+class LangVers implements IStatementRunnable {
+
+  private readonly langVersion: LanguageVersion;
   private readonly runnable: IStatementRunnable;
 
-  public constructor(version: Version, runnable: IStatementRunnable) {
-    this.version = version;
+  public constructor(langVersion: LanguageVersion, runnable: IStatementRunnable) {
+    this.langVersion = langVersion;
     this.runnable = runnable;
   }
 
@@ -221,7 +230,7 @@ class VersNot implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    if (Combi.getVersion() !== this.version) {
+    if (langVersionOrdinal(Combi.getLanguageVersion()) <= langVersionOrdinal(this.langVersion)) {
       return this.runnable.run(r);
     } else {
       return [];
@@ -229,15 +238,58 @@ class VersNot implements IStatementRunnable {
   }
 
   public railroad() {
-    return "Railroad.Sequence(Railroad.Comment(\"not " +
-      this.version +
+    return "Railroad.Sequence(Railroad.Comment(\"langver=" +
+      this.langVersion +
       "\", {}), " +
       this.runnable.railroad() +
       ")";
   }
 
   public toStr() {
-    return "VersionNot(" + this.runnable.toStr() + ")";
+    return "LangVersion(" + this.runnable.toStr() + ")";
+  }
+
+  public first() {
+    return this.runnable.first();
+  }
+}
+
+class LangVersNot implements IStatementRunnable {
+
+  private readonly langVersion: LanguageVersion;
+  private readonly runnable: IStatementRunnable;
+
+  public constructor(langVersion: LanguageVersion, runnable: IStatementRunnable) {
+    this.langVersion = langVersion;
+    this.runnable = runnable;
+  }
+
+  public listKeywords(): string[] {
+    return this.runnable.listKeywords();
+  }
+
+  public getUsing(): string[] {
+    return this.runnable.getUsing();
+  }
+
+  public run(r: Result[]): Result[] {
+    if (langVersionOrdinal(Combi.getLanguageVersion()) > langVersionOrdinal(this.langVersion)) {
+      return this.runnable.run(r);
+    } else {
+      return [];
+    }
+  }
+
+  public railroad() {
+    return "Railroad.Sequence(Railroad.Comment(\"not langver=" +
+      this.langVersion +
+      "\", {}), " +
+      this.runnable.railroad() +
+      ")";
+  }
+
+  public toStr() {
+    return "LanguageVersionNot(" + this.runnable.toStr() + ")";
   }
 
   public first() {
@@ -965,7 +1017,9 @@ class AlternativePriority implements IStatementRunnable {
 export class Combi {
 // todo, change this class to be instantiated, constructor(runnable) ?
 
-  private static ver: Version;
+  private static release: ABAPRelease = Release.v758;
+  private static langVer: LanguageVersion = LanguageVersion.Normal;
+  private static openABAP: boolean = false;
 
   public static railroad(runnable: IStatementRunnable, complex = false): string {
 // todo, move method to graph.js?
@@ -992,9 +1046,17 @@ export class Combi {
 // assumption: no pragmas supplied in tokens input
   public static run(
     runnable: IStatementRunnable,
-    tokens: readonly Tokens_Token[], version: Version): (ExpressionNode | TokenNode)[] | undefined {
+    tokens: readonly Tokens_Token[], versionOrRelease: Version | ABAPRelease,
+    languageVersion: LanguageVersion = LanguageVersion.Normal,
+    openABAP: boolean = false): (ExpressionNode | TokenNode)[] | undefined {
 
-    this.ver = version;
+    this.openABAP = openABAP || versionOrRelease === Version.OpenABAP;
+    this.langVer = languageVersion;
+    if (typeof versionOrRelease === "string") {
+      this.release = this.openABAP ? Release.v702 : versionToABAPRelease(versionOrRelease);
+    } else {
+      this.release = this.openABAP ? Release.v702 : versionOrRelease;
+    }
 
     const input = new Result(tokens, 0);
     try {
@@ -1021,8 +1083,16 @@ export class Combi {
     return undefined;
   }
 
-  public static getVersion(): Version {
-    return this.ver;
+  public static getRelease(): ABAPRelease {
+    return this.release;
+  }
+
+  public static getLanguageVersion(): LanguageVersion {
+    return this.langVer;
+  }
+
+  public static isOpenABAP(): boolean {
+    return this.openABAP;
   }
 
 }
@@ -1106,11 +1176,21 @@ export function plus(first: InputType): IStatementRunnable {
 export function plusPrio(first: InputType): IStatementRunnable {
   return new PlusPriority(mapInput(first));
 }
-export function ver(version: Version, first: InputType, or?: Version): IStatementRunnable {
-  return new Vers(version, mapInput(first), or);
+function inputToRelease(versionOrRelease: Version | ABAPRelease): ABAPRelease {
+  if (typeof versionOrRelease === "string") {
+    return versionToABAPRelease(versionOrRelease);
+  }
+  return versionOrRelease;
 }
-export function verNot(version: Version, first: InputType): IStatementRunnable {
-  return new VersNot(version, mapInput(first));
+
+export function ver(versionOrRelease: Version | ABAPRelease, first: InputType, opts: IVerOptions = {}): IStatementRunnable {
+  return new Vers(inputToRelease(versionOrRelease), mapInput(first), opts.also);
+}
+export function verLang(langVersion: LanguageVersion, first: InputType): IStatementRunnable {
+  return new LangVers(langVersion, mapInput(first));
+}
+export function verNotLang(langVersion: LanguageVersion, first: InputType): IStatementRunnable {
+  return new LangVersNot(langVersion, mapInput(first));
 }
 export function failCombinator(): IStatementRunnable {
   return new FailCombinator();

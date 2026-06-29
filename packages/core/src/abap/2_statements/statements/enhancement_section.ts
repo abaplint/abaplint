@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, starPrio, tok} from "../combi";
+import {verNotLang, seq, opt, starPrio, tok} from "../combi";
 import {Field} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {Dash} from "../../1_lexer/tokens/dash";
 
@@ -15,7 +15,7 @@ export class EnhancementSection implements IStatement {
                     opt("STATIC"),
                     opt("INCLUDE BOUND"));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

@@ -2,7 +2,7 @@ import {IStatement} from "./_statement";
 import {seq, alt, opt, per, optPrio, altPrio, ver} from "../combi";
 import {FSTarget, Target, Source, Dynamic, TypeName, AssignSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class Assign implements IStatement {
 
@@ -24,7 +24,7 @@ export class Assign implements IStatement {
                     FSTarget,
                     opt(altPrio(casting, obsoleteType, decimals)),
                     opt(range),
-                    opt(ver(Version.v757, "ELSE UNASSIGN")));
+                    opt(ver(Release.v757, "ELSE UNASSIGN")));
 
     return ret;
   }

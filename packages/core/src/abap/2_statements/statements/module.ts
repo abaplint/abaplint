@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, opt} from "../combi";
+import {verNotLang, seq, alt, opt} from "../combi";
 import {FormName, NamespaceSimpleName} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Module implements IStatement {
@@ -13,7 +13,7 @@ export class Module implements IStatement {
                     FormName,
                     opt(alt("INPUT", "OUTPUT", "ON CHAIN-REQUEST", "ON CHAIN-INPUT", "AT EXIT-COMMAND", sw)));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

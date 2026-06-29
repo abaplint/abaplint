@@ -1,5 +1,5 @@
 import {CDSAnnotation, CDSAs, CDSAssociation, CDSElement, CDSName, CDSParametersSelect, CDSProviderContract, CDSWhere, CDSWithParameters} from ".";
-import {Version} from "../..";
+import {Release} from "../..";
 import {Expression, seq, star, opt, str, ver} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
@@ -10,7 +10,7 @@ export class CDSDefineProjection extends Expression {
                opt("ROOT"),
                opt("TRANSIENT"),
                "VIEW",
-               ver(Version.v755, opt("ENTITY")),
+               ver(Release.v755, opt("ENTITY")),
                CDSName,
                opt(CDSProviderContract),
                opt(CDSWithParameters),

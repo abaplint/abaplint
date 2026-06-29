@@ -1,12 +1,12 @@
 import {IStatement} from "./_statement";
 import {ver} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class EndWith implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    return ver(Version.v751, "ENDWITH");
+    return ver(Release.v751, "ENDWITH");
   }
 
 }

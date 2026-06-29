@@ -1,6 +1,6 @@
 import {statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+import {Version, Release} from "../../../src/version";
 
 const tests = [
   "WAIT UP TO 1 SECONDS.",
@@ -14,16 +14,16 @@ const tests = [
 statementType(tests, "WAIT", Statements.Wait);
 
 const versions = [
-  {abap: "WAIT FOR PUSH CHANNELS UNTIL ms_message IS NOT INITIAL UP TO iv_timeout SECONDS.", ver: Version.v750},
+  {abap: "WAIT FOR PUSH CHANNELS UNTIL ms_message IS NOT INITIAL UP TO iv_timeout SECONDS.", rel: Release.v750},
 ];
 statementVersion(versions, "WAIT", Statements.Wait);
 
 const versionsOk = [
-  {abap: "WAIT FOR PUSH CHANNELS UNTIL ms_message IS NOT INITIAL UP TO iv_timeout SECONDS.", ver: Version.OpenABAP},
+  {abap: "WAIT FOR PUSH CHANNELS UNTIL ms_message IS NOT INITIAL UP TO iv_timeout SECONDS.", rel: Version.OpenABAP},
 ];
 statementVersionOk(versionsOk, "WAIT", Statements.Wait);
 
 const versionsFail = [
-  {abap: "WAIT FOR PUSH CHANNELS UNTIL ms_message IS NOT INITIAL UP TO iv_timeout SECONDS.", ver: Version.v702},
+  {abap: "WAIT FOR PUSH CHANNELS UNTIL ms_message IS NOT INITIAL UP TO iv_timeout SECONDS.", rel: Release.v702},
 ];
 statementVersionFail(versionsFail, "WAIT");

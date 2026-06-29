@@ -1,6 +1,6 @@
 import {statementType, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "IMPORT foo TO bar FROM MEMORY ID 'MOO'.",
@@ -34,7 +34,7 @@ const tests = [
 statementType(tests, "IMPORT", Statements.Import);
 
 const versionsOk = [
-  {abap: "IMPORT data = ls_file_item FROM DATA BUFFER lv_result.", ver: Version.Cloud},
+  {abap: "IMPORT data = ls_file_item FROM DATA BUFFER lv_result.", rel: Release.Newest, langVer: LanguageVersion.Cloud},
 ];
 
 statementVersionOk(versionsOk, "IMPORT", Statements.Import);

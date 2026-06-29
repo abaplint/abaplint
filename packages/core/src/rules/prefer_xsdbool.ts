@@ -3,7 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import * as Expressions from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
-import {Version} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {EditHelper} from "../edit_helper";
 import {ABAPFile} from "../abap/abap_file";
 
@@ -39,7 +39,8 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-xsdbool
   public runParsed(file: ABAPFile): Issue[] {
     const issues: Issue[] = [];
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp08 && this.reg.getConfig().getVersion() !== Version.Cloud) {
+    if (!releaseAtLeast(this.reg.getConfig().getRelease(), Release.v740sp08)
+        && this.reg.getConfig().getLanguageVersion() !== LanguageVersion.Cloud) {
       return [];
     }
 

@@ -5,7 +5,7 @@ import {EditHelper, IEdit} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {StatementNode} from "../abap/nodes/statement_node";
-import {Version} from "../version";
+import {Release, releaseAtLeast} from "../version";
 import * as Statements from "../abap/2_statements/statements";
 
 export class PreferRaiseExceptionNewConf extends BasicRuleConfig {
@@ -41,7 +41,7 @@ From 752 and up`,
   }
 
   public runParsed(file: ABAPFile): Issue[] {
-    if (this.reg.getConfig().getVersion() < Version.v752) {
+    if (!releaseAtLeast(this.reg.getConfig().getRelease(), Release.v752)) {
       return [];
     }
 

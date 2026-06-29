@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "READ LINE lv_line LINE VALUE INTO lv_text.",
@@ -13,3 +14,9 @@ const tests = [
 ];
 
 statementType(tests, "READ LINE", Statements.ReadLine);
+
+const versionsFail = [
+  {abap: `READ LINE lv_line LINE VALUE INTO lv_text.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "READ LINE");

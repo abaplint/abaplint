@@ -20,5 +20,5 @@ const tests = [
 statementType(tests, "GET PERMISSIONS", Statements.GetPermissions);
 
 statementVersionOk([
-  {abap: tests[0], ver: Version.OpenABAP},
+  {abap: tests[0], rel: Version.OpenABAP},
 ], "GET PERMISSIONS", Statements.GetPermissions);

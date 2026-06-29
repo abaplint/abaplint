@@ -2,7 +2,7 @@ import {IStatement} from "./_statement";
 import {seq, ver} from "../combi";
 import {SimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class SetLocks implements IStatement {
 
@@ -14,7 +14,7 @@ export class SetLocks implements IStatement {
                   "FROM", Source,
                   "FAILED", Target,
                   "REPORTED", Target);
-    return ver(Version.v754, s);
+    return ver(Release.v754, s);
   }
 
 }

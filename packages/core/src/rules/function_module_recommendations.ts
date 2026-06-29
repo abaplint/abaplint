@@ -1,17 +1,21 @@
 import {FunctionName} from "../abap/2_statements/expressions";
 import {ABAPFile} from "../abap/abap_file";
 import {Issue} from "../issue";
-import {Version} from "../version";
+import {ABAPRelease, Release, releaseAtLeast, Version, versionToABAPRelease} from "../version";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 
+function resolveRelease(from: string): ABAPRelease | undefined {
+  if (Release[from] !== undefined) { return Release[from]; }
+  try { return versionToABAPRelease(from as Version); } catch { return undefined; }
+}
 
 export type Recommendations = {
   /** @pattern ^\w+$ */
   name: string,
   replace: string,
-  from?: Version,
+  from?: string,
 };
 
 export class FunctionModuleRecommendationsConf extends BasicRuleConfig {
@@ -119,7 +123,7 @@ export class FunctionModuleRecommendations extends ABAPRule {
     if (!this.conf.recommendations) {
       return issues;
     }
-    const configVersion = this.reg.getConfig().getVersion();
+    const configRelease = this.reg.getConfig().getRelease();
 
     for (const exNode of file.getStructure()?.findAllExpressions(FunctionName) || []) {
       const token = exNode.getFirstToken();
@@ -130,8 +134,12 @@ export class FunctionModuleRecommendations extends ABAPRule {
       }
       // remove leading and trailing single quote
       funcName = funcName.slice(1, funcName.length - 1);
-      const index = this.conf.recommendations.findIndex(
-        i => i.name.toUpperCase() === funcName && (i.from === undefined || configVersion >= i.from));
+      const index = this.conf.recommendations.findIndex(i => {
+        if (i.name.toUpperCase() !== funcName) { return false; }
+        if (i.from === undefined) { return true; }
+        const rel = resolveRelease(i.from);
+        return rel !== undefined && releaseAtLeast(configRelease, rel);
+      });
       if (index >= 0) {
         issues.push(Issue.atToken(file, token, this.getMessage(index), this.getMetadata().key, this.conf.severity));
       }

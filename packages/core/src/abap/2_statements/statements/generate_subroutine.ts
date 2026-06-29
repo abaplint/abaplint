@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, per} from "../combi";
+import {verNotLang, seq, per} from "../combi";
 import {Target, Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class GenerateSubroutine implements IStatement {
@@ -20,7 +20,7 @@ export class GenerateSubroutine implements IStatement {
                     Source,
                     per(name, message, line, word, include, offset, messageid, short));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

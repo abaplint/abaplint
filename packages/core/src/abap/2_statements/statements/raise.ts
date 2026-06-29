@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, ver, optPrio, altPrio} from "../combi";
-import {Version} from "../../../version";
+import {seq, alt, opt, ver, optPrio, altPrio, AlsoIn} from "../combi";
+import {Release} from "../../../version";
 import {Source, ParameterListS, ClassName, MessageSource, SimpleSource2, RaiseWith, MessageNumber, ExceptionName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -21,13 +21,13 @@ export class Raise implements IStatement {
 
     const from = seq("TYPE",
                      ClassName,
-                     opt(alt(ver(Version.v750, alt(mess, messid), Version.OpenABAP), ver(Version.v752, "USING MESSAGE"))),
+                     opt(alt(ver(Release.v750, alt(mess, messid), {also: AlsoIn.OpenABAP}), ver(Release.v752, "USING MESSAGE"))),
                      optPrio(exporting));
 
     const pre = altPrio(seq(optPrio("RESUMABLE"), "EXCEPTION"), "SHORTDUMP");
 
     const clas = seq(pre,
-                     altPrio(from, ver(Version.v752, Source, Version.OpenABAP), SimpleSource2));
+                     altPrio(from, ver(Release.v752, Source, {also: AlsoIn.OpenABAP}), SimpleSource2));
 
     const ret = seq("RAISE", altPrio(clas, ExceptionName));
 

@@ -1,7 +1,7 @@
 import {AbstractObject} from "./_abstract_object";
 import {xmlToArray, unescape} from "../xml_utils";
 import {ABAPParser} from "../abap/abap_parser";
-import {Version} from "../version";
+import {ABAPRelease, LanguageVersion} from "../version";
 import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {IParseResult} from "./_iobject";
 import {ABAPFile} from "../abap/abap_file";
@@ -34,13 +34,14 @@ export abstract class ABAPObject extends AbstractObject {
     return !!x && x instanceof ABAPObject;
   }
 
-  public parse(version: Version, globalMacros?: readonly string[], reg?: IRegistry): IParseResult {
+  public parse(release: ABAPRelease, globalMacros?: readonly string[], reg?: IRegistry,
+               languageVersion: LanguageVersion = LanguageVersion.Normal, openABAP: boolean = false): IParseResult {
     if (this.isDirty() === false) {
       return {updated: false, runtime: 0};
     }
 
     const abapFiles = this.getFiles().filter(f => f.getFilename().endsWith(".abap"));
-    const result = new ABAPParser(version, globalMacros, reg).parse(abapFiles);
+    const result = new ABAPParser({release, globalMacros, reg, languageVersion, openABAP}).parse(abapFiles);
 
     this.parsed = result.output;
     this.old = result.issues;

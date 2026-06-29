@@ -4,7 +4,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Expressions from "../abap/2_statements/expressions";
 import * as Statements from "../abap/2_statements/statements";
 import {IRuleMetadata, RuleTag} from "./_irule";
-import {Version} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {ABAPFile} from "../abap/abap_file";
 
 export class SuperfluousValueConf extends BasicRuleConfig {
@@ -36,8 +36,8 @@ export class SuperfluousValue extends ABAPRule {
   public runParsed(file: ABAPFile) {
     const output: Issue[] = [];
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp02
-        && this.reg.getConfig().getVersion() !== Version.Cloud) {
+    if (!releaseAtLeast(this.reg.getConfig().getRelease(), Release.v740sp02)
+        && this.reg.getConfig().getLanguageVersion() !== LanguageVersion.Cloud) {
       return [];
     }
 

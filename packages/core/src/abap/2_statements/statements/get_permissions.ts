@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {altPrio, optPrio, seq, ver} from "../combi";
+import {altPrio, optPrio, seq, ver, AlsoIn} from "../combi";
 import {SimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class GetPermissions implements IStatement {
 
@@ -18,7 +18,7 @@ export class GetPermissions implements IStatement {
                   "RESULT", Target,
                   "FAILED", Target,
                   "REPORTED", Target);
-    return ver(Version.v754, s, Version.OpenABAP);
+    return ver(Release.v754, s, {also: AlsoIn.OpenABAP});
   }
 
 }

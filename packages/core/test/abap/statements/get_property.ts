@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "GET PROPERTY OF ctrl-obj prop = val NO FLUSH.",
@@ -15,3 +16,9 @@ const tests = [
 ];
 
 statementType(tests, "GET PROPERTY", Statements.GetProperty);
+
+const versionsFail = [
+  {abap: `GET PROPERTY OF ctrl-obj prop = val NO FLUSH.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "GET PROPERTY");

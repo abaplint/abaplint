@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "CALL TRANSACTION 'FOO'.",
@@ -16,3 +17,9 @@ const tests = [
 ];
 
 statementType(tests, "CALL TRANSACTION", Statements.CallTransaction);
+
+const versionsFail = [
+  {abap: `CALL TRANSACTION 'FOO'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "CALL TRANSACTION");

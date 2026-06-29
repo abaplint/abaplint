@@ -4,7 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import * as Statements from "../abap/2_statements/statements";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-import {Version} from "../version";
+import {Release, releaseAtLeast} from "../version";
 
 export class PreferCorrespondingConf extends BasicRuleConfig {
 }
@@ -36,7 +36,7 @@ export class PreferCorresponding extends ABAPRule {
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp05) {
+    if (!releaseAtLeast(this.reg.getConfig().getRelease(), Release.v740sp05)) {
       return issues;
     }
 

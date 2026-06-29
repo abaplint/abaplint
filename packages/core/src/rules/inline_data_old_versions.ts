@@ -1,6 +1,6 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
-import {Version} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {Target} from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag} from "./_irule";
@@ -32,9 +32,9 @@ export class InlineDataOldVersions extends ABAPRule {
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    if (this.reg.getConfig().getVersion() >= Version.v740sp02
-        || this.reg.getConfig().getVersion() === Version.OpenABAP
-        || this.reg.getConfig().getVersion() === Version.Cloud) {
+    if (releaseAtLeast(this.reg.getConfig().getRelease(), Release.v740sp02)
+        || this.reg.getConfig().getOpenABAP()
+        || this.reg.getConfig().getLanguageVersion() === LanguageVersion.Cloud) {
       return [];
     }
 

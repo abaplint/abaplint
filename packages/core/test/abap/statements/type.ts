@@ -1,6 +1,6 @@
 import {statementExpectFail, statementType, statementVersion, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "TYPES ty_type TYPE c LENGTH 6.",
@@ -51,7 +51,7 @@ const tests = [
 statementType(tests, "TYPE", Statements.Type);
 
 const versions = [
-  {abap: "types tt_foo TYPE STANDARD TABLE OF ty_foo WITH EMPTY KEY.", ver: Version.v740sp02},
+  {abap: "types tt_foo TYPE STANDARD TABLE OF ty_foo WITH EMPTY KEY.", rel: Release.v740sp02},
 ];
 
 statementVersion(versions, "TYPE", Statements.Type);
@@ -64,8 +64,8 @@ const fails = [
 statementExpectFail(fails, "TYPES");
 
 const ok = [
-  {abap: `TYPES !ty_moo TYPE string.`, ver: Version.Cloud},
-  {abap: `TYPES !ty_moo TYPE string.`, ver: Version.v740sp02},
+  {abap: `TYPES !ty_moo TYPE string.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `TYPES !ty_moo TYPE string.`, rel: Release.v740sp02},
 ];
 
 statementVersionOk(ok, "TYPES", Statements.Type);

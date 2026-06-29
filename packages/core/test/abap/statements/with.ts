@@ -1,6 +1,7 @@
+import {Release, LanguageVersion} from "../../../src/version";
 import {statementType, statementVersionOk, statementVersionFail, statementExpectFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+
 
 const tests = [
   `WITH +cte AS ( SELECT mandt FROM ztable CLIENT SPECIFIED )
@@ -61,79 +62,79 @@ statementType(tests, "WITH", Statements.With);
 
 const privilegedVersions = [
   {abap: `WITH +cte AS ( SELECT mandt FROM ztable WITH PRIVILEGED ACCESS )
-    SELECT * FROM +cte INTO TABLE @DATA(result).`, ver: Version.v752},
+    SELECT * FROM +cte INTO TABLE @DATA(result).`, rel: Release.v752},
 
   {abap: `WITH +cte AS ( SELECT mandt FROM ztable WITH PRIVILEGED ACCESS )
-    SELECT * FROM +cte WITH PRIVILEGED ACCESS INTO TABLE @DATA(result).`, ver: Version.v752},
+    SELECT * FROM +cte WITH PRIVILEGED ACCESS INTO TABLE @DATA(result).`, rel: Release.v752},
 
   {abap: `WITH +cte AS ( SELECT mandt FROM ztable )
-    SELECT * FROM +cte INTO TABLE @DATA(result) PRIVILEGED ACCESS.`, ver: Version.v758},
+    SELECT * FROM +cte INTO TABLE @DATA(result) PRIVILEGED ACCESS.`, rel: Release.v758},
 ];
 
 statementVersionOk(privilegedVersions, "WITH privileged access", Statements.With);
 
 const privilegedVersionsFail = [
   {abap: `WITH +cte AS ( SELECT mandt FROM ztable WITH PRIVILEGED ACCESS )
-    SELECT * FROM +cte INTO TABLE @DATA(result).`, ver: Version.v751},
+    SELECT * FROM +cte INTO TABLE @DATA(result).`, rel: Release.v751},
 
   {abap: `WITH +cte AS ( SELECT mandt FROM ztable )
-    SELECT * FROM +cte INTO TABLE @DATA(result) PRIVILEGED ACCESS.`, ver: Version.v756},
+    SELECT * FROM +cte INTO TABLE @DATA(result) PRIVILEGED ACCESS.`, rel: Release.v756},
 
   {abap: `WITH +cte AS ( SELECT mandt FROM ztable )
-    SELECT * FROM +cte INTO TABLE @DATA(result) PRIVILEGED ACCESS.`, ver: Version.v757},
+    SELECT * FROM +cte INTO TABLE @DATA(result) PRIVILEGED ACCESS.`, rel: Release.v757},
 ];
 
 statementVersionFail(privilegedVersionsFail, "WITH privileged access");
 
 statementVersionOk([
   {abap: `WITH +p AS ( SELECT * FROM ztab ) WITH ASSOCIATIONS ( \\zassoc AS llt )
-    SELECT col1 FROM +p AS p WHERE col2 = 'AB' AND col3 = @sy-repid INTO TABLE @DATA(result).`, ver: Version.v751},
+    SELECT col1 FROM +p AS p WHERE col2 = 'AB' AND col3 = @sy-repid INTO TABLE @DATA(result).`, rel: Release.v751},
 
   {abap: `WITH +a AS ( SELECT * FROM ztab ) WITH ASSOCIATIONS ( \\zassoc1, \\zassoc2 )
-    SELECT col1 FROM +a WHERE col3 = @sy-repid INTO TABLE @DATA(result).`, ver: Version.v751},
+    SELECT col1 FROM +a WHERE col3 = @sy-repid INTO TABLE @DATA(result).`, rel: Release.v751},
 
   {abap: `WITH +a AS ( SELECT * FROM ztab ) WITH ASSOCIATIONS ( \\zassoc AS x ),
          +b AS ( SELECT * FROM +a ) WITH ASSOCIATIONS ( \\x AS y )
-    SELECT col1 FROM +b WHERE col3 = @sy-repid INTO TABLE @DATA(result).`, ver: Version.v751},
+    SELECT col1 FROM +b WHERE col3 = @sy-repid INTO TABLE @DATA(result).`, rel: Release.v751},
 
   {abap: `WITH +a AS ( SELECT * FROM ztab ) WITH ASSOCIATIONS ( \\x ),
          +b AS ( SELECT * FROM ztab ) WITH ASSOCIATIONS ( \\y ),
          +c AS ( SELECT * FROM ztab ) WITH ASSOCIATIONS ( \\z )
-    SELECT * FROM +a INTO TABLE @DATA(r).`, ver: Version.v751},
+    SELECT * FROM +a INTO TABLE @DATA(r).`, rel: Release.v751},
 
   {abap: `WITH +a AS ( SELECT * FROM ztab ) WITH ASSOCIATIONS ( \\zassoc AS x ),
          +b AS ( SELECT * FROM +a ) WITH ASSOCIATIONS ( \\x AS y ),
          +c AS ( SELECT * FROM ztab ) WITH ASSOCIATIONS ( \\zassoc1, \\zassoc2 )
-    SELECT col1 FROM +a WHERE col3 = @sy-repid INTO TABLE @DATA(result).`, ver: Version.v751},
+    SELECT col1 FROM +a WHERE col3 = @sy-repid INTO TABLE @DATA(result).`, rel: Release.v751},
 
   {abap: `WITH +a AS ( SELECT FROM zcds( p_langu = @sy-langu ) AS t FIELDS * ) WITH ASSOCIATIONS ( \\zassoc AS x ),
          +b AS ( SELECT FROM +a FIELDS * ) WITH ASSOCIATIONS ( \\x AS y ),
          +c AS ( SELECT FROM ztab AS t FIELDS * ) WITH ASSOCIATIONS ( \\zassoc1, \\zassoc2 )
-    SELECT col1 FROM +b WHERE col3 = @sy-repid INTO TABLE @DATA(result).`, ver: Version.v751},
+    SELECT col1 FROM +b WHERE col3 = @sy-repid INTO TABLE @DATA(result).`, rel: Release.v751},
 
   {abap: `WITH +a AS ( SELECT col1 AS r, col2 AS a FROM ztab WHERE col3 = @sy-repid ),
           +b AS ( SELECT FROM ztab2 FIELDS col1, col2, \\zassoc-col1 AS v1, \\zassoc-col2 AS v2 )
                WITH ASSOCIATIONS ( \\zassoc\\zassoc2[ WHERE col1 LIKE '%e%' ] AS foo REDIRECTED TO +a VIA ztab )
     SELECT FROM +b AS result FIELDS \\foo[ WHERE col1 < 6 ]-r
-      WHERE col3 = @sy-repid INTO TABLE @DATA(result).`, ver: Version.v751},
+      WHERE col3 = @sy-repid INTO TABLE @DATA(result).`, rel: Release.v751},
 
   {abap: `WITH +cte AS ( SELECT * FROM ztab ) WITH ASSOCIATIONS ( \\_spfli )
-    SELECT * FROM +cte\\_spfli AS spfli INTO TABLE @DATA(result).`, ver: Version.v751},
+    SELECT * FROM +cte\\_spfli AS spfli INTO TABLE @DATA(result).`, rel: Release.v751},
 
   {abap: `WITH +a AS ( SELECT col1, col2 FROM ztab ) WITH ASSOCIATIONS ( \\zassoc ),
           +b AS ( SELECT FROM zcds( p_langu = @sy-langu ) FIELDS * ) WITH ASSOCIATIONS ( \\zassoc2 AS t )
-    SELECT col1 FROM +a WHERE col3 = @sy-repid INTO TABLE @DATA(result).`, ver: Version.v751},
+    SELECT col1 FROM +a WHERE col3 = @sy-repid INTO TABLE @DATA(result).`, rel: Release.v751},
 
   {abap: `WITH +a AS ( SELECT * FROM ztab ) WITH ASSOCIATIONS (lv_assoc)
-    SELECT * FROM +a INTO TABLE @DATA(result).`, ver: Version.v751},
+    SELECT * FROM +a INTO TABLE @DATA(result).`, rel: Release.v751},
 ], "WITH ASSOCIATIONS", Statements.With);
 
 statementVersionOk([
   {abap: `WITH +a AS ( SELECT col1, col2 FROM ztab WHERE col3 = @sy-repid ) WITH HIERARCHY t1
-    SELECT * FROM +a INTO TABLE @DATA(result).`, ver: Version.v751},
+    SELECT * FROM +a INTO TABLE @DATA(result).`, rel: Release.v751},
 
   {abap: `WITH +a AS ( SELECT * FROM ztab AS t1 WHERE col3 = @sy-repid ) WITH HIERARCHY t1 WITH ASSOCIATIONS ( \\zassoc )
-    SELECT * FROM +a INTO TABLE @DATA(result).`, ver: Version.v751},
+    SELECT * FROM +a INTO TABLE @DATA(result).`, rel: Release.v751},
 ], "WITH HIERARCHY", Statements.With);
 
 statementType([
@@ -161,3 +162,10 @@ statementType(isWithLoopLoopTests, "isWithLoop → WithLoop", Statements.WithLoo
 statementExpectFail([
   `WITH +cte AS ( SELECT col FROM ztab ) SELECT FROM +cte FIELDS col INTO @wa PACKAGE SIZE 10.`,
 ], "PACKAGE SIZE requires INTO TABLE in WITH");
+
+const clientSpecifiedFail = [
+  {abap: `WITH +cte AS ( SELECT mandt FROM ztable CLIENT SPECIFIED )
+    SELECT * FROM +cte WHERE mandt = @sy-mandt INTO TABLE @DATA(result).`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(clientSpecifiedFail, "WITH CLIENT SPECIFIED");

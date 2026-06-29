@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq} from "../combi";
+import {verNotLang, seq} from "../combi";
 import {Field} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Contexts implements IStatement {
@@ -10,7 +10,7 @@ export class Contexts implements IStatement {
     const ret = seq("CONTEXTS",
                     Field);
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

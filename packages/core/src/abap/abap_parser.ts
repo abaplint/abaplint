@@ -8,7 +8,7 @@ import {Issue} from "../issue";
 import {Lexer} from "./1_lexer/lexer";
 import {StatementParser} from "./2_statements/statement_parser";
 import {StructureParser} from "./3_structures/structure_parser";
-import {Version, defaultVersion} from "../version";
+import {ABAPRelease, LanguageVersion, defaultRelease} from "../version";
 
 export interface IABAPParserResult {
   issues: readonly Issue[],
@@ -18,15 +18,46 @@ export interface IABAPParserResult {
   runtimeExtra: {lexing: number, statements: number, structure: number},
 }
 
+export interface IABAPParserOptions {
+  release?: ABAPRelease;
+  languageVersion?: LanguageVersion;
+  openABAP?: boolean;
+  globalMacros?: readonly string[];
+  reg?: IRegistry;
+}
+
 export class ABAPParser {
-  private readonly version: Version;
+  private readonly release: ABAPRelease;
+  private readonly languageVersion: LanguageVersion;
+  private readonly openABAP: boolean;
   private readonly globalMacros: readonly string[];
   private readonly reg?: IRegistry;
 
-  public constructor(version?: Version, globalMacros?: readonly string[], reg?: IRegistry) {
-    this.version = version ? version : defaultVersion;
-    this.globalMacros = globalMacros ? globalMacros : [];
-    this.reg = reg;
+  /** @deprecated Use `new ABAPParser(options)` instead */
+  public constructor(release: ABAPRelease, globalMacros?: readonly string[], reg?: IRegistry);
+  public constructor(options?: IABAPParserOptions);
+  public constructor(
+    optionsOrRelease?: IABAPParserOptions | ABAPRelease,
+    globalMacros?: readonly string[],
+    reg?: IRegistry,
+  ) {
+    if (optionsOrRelease === undefined || ABAPParser.isRelease(optionsOrRelease)) {
+      this.release = optionsOrRelease ?? defaultRelease;
+      this.languageVersion = LanguageVersion.Normal;
+      this.openABAP = false;
+      this.globalMacros = globalMacros ?? [];
+      this.reg = reg;
+    } else {
+      this.release = optionsOrRelease.release ?? defaultRelease;
+      this.languageVersion = optionsOrRelease.languageVersion ?? LanguageVersion.Normal;
+      this.openABAP = optionsOrRelease.openABAP ?? false;
+      this.globalMacros = optionsOrRelease.globalMacros ?? [];
+      this.reg = optionsOrRelease.reg;
+    }
+  }
+
+  private static isRelease(o: IABAPParserOptions | ABAPRelease): o is ABAPRelease {
+    return typeof (o as ABAPRelease).ordinal === "number";
   }
 
   // files is input for a single object
@@ -43,7 +74,8 @@ export class ABAPParser {
 
 // 2: statements
     const b2 = Date.now();
-    const statementResult = new StatementParser(this.version, this.reg).run(lexerResult, this.globalMacros);
+    const statementResult = new StatementParser(this.release, this.reg, this.languageVersion, this.openABAP)
+      .run(lexerResult, this.globalMacros);
     const statementsRuntime = Date.now() - b2;
 
 // 3: structures

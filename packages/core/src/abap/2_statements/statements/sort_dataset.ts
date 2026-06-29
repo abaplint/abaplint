@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, opt, plus, optPrio} from "../combi";
+import {verNotLang, seq, alt, opt, plus, optPrio} from "../combi";
 import {SourceFieldSymbol, Dynamic, ComponentChain} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class SortDataset implements IStatement {
@@ -17,7 +17,7 @@ export class SortDataset implements IStatement {
 
     const ret = seq("SORT", opt("AS TEXT"), opt(by));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

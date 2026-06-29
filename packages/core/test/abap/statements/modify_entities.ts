@@ -188,5 +188,5 @@ statementVersionOk([
   ENTITY ent
   UPDATE SET FIELDS WITH VALUE #( ( foo = 'bar' ) )
   FAILED DATA(failed)
-  REPORTED DATA(reported).`, ver: Version.OpenABAP},
+  REPORTED DATA(reported).`, rel: Version.OpenABAP},
 ], "MODIFY ENTITIES", Statements.ModifyEntities);

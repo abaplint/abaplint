@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "get dataset p_filename position lv_size.",
@@ -7,3 +8,9 @@ const tests = [
 ];
 
 statementType(tests, "GET DATASET", Statements.GetDataset);
+
+const versionsFail = [
+  {abap: `get dataset p_filename position lv_size.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "GET DATASET");

@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, opt} from "../combi";
+import {verNotLang, seq, alt, opt} from "../combi";
 import {Source, AndReturn} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Leave implements IStatement {
@@ -22,7 +22,7 @@ export class Leave implements IStatement {
                             "PROGRAM",
                             seq("TO SCREEN", Source))));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

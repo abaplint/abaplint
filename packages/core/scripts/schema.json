@@ -5987,9 +5987,16 @@
           "type": "array",
           "uniqueItems": true
         },
+        "languageVersion": {
+          "$ref": "#/definitions/LanguageVersion"
+        },
+        "openABAP": {
+          "description": "Use the OpenABAP dialect (v702 base + a set of additional language features).",
+          "type": "boolean"
+        },
         "version": {
           "$ref": "#/definitions/Version",
-          "description": "ABAP language version"
+          "description": "ABAP release to parse against, e.g. `\"v758\"`, `\"Newest\"`, `\"Cloud\"`."
         }
       },
       "required": [
@@ -6376,6 +6383,15 @@
       "enum": [
         "upper",
         "lower"
+      ],
+      "type": "string"
+    },
+    "LanguageVersion": {
+      "description": "Dialect / flavor axis, orthogonal to the on-prem/cloud release track.\n\n`Normal`  = full ABAP, no restrictions. `Cloud`   = restricted ABAP for Cloud, syntactic and semantic restrictions apply. `KeyUser` = stricter still (KeyUser Extensibility), strict subset of Cloud.\n\nOrdering: KeyUser(0) &lt; Cloud(1) &lt; Normal(2) — lower = more restrictive.",
+      "enum": [
+        "Normal",
+        "KeyUser",
+        "Cloud"
       ],
       "type": "string"
     },
@@ -7934,7 +7950,7 @@
       "additionalProperties": false,
       "properties": {
         "from": {
-          "$ref": "#/definitions/Version"
+          "type": "string"
         },
         "name": {
           "pattern": "^\\w+$",
@@ -8937,6 +8953,7 @@
       "type": "object"
     },
     "Version": {
+      "deprecated": "Use ABAPRelease and Release instead",
       "enum": [
         "open-abap",
         "v700",
@@ -8953,7 +8970,9 @@
         "v756",
         "v757",
         "v758",
-        "Cloud"
+        "v816",
+        "Cloud",
+        "Newest"
       ],
       "type": "string"
     },

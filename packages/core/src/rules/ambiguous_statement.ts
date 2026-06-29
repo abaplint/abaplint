@@ -6,7 +6,7 @@ import {StatementNode} from "../abap/nodes";
 import {IStatement} from "../abap/2_statements/statements/_statement";
 import {Combi} from "../abap/2_statements/combi";
 import {IRegistry} from "../_iregistry";
-import {Version} from "../version";
+import {Release, releaseAtLeast} from "../version";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
@@ -49,7 +49,7 @@ MODIFY TABLE foo FROM bar.`,
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    if (this.reg.getConfig().getVersion() < Version.v740sp05) {
+    if (!releaseAtLeast(this.reg.getConfig().getRelease(), Release.v740sp05)) {
       return [];
     }
 

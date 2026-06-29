@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {Version} from "../../../version";
-import {seq, opt, alt, ver, plus} from "../combi";
+import {Release} from "../../../version";
+import {seq, opt, alt, ver, plus, AlsoIn} from "../combi";
 import {Source, InterfaceName, AttributeName, AbstractMethods, FinalMethods} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -15,7 +15,7 @@ export class InterfaceDef implements IStatement {
                         FinalMethods,
                         "ALL METHODS ABSTRACT",
                         "ALL METHODS FINAL",
-                        ver(Version.v740sp02, "PARTIALLY IMPLEMENTED", Version.OpenABAP));
+                        ver(Release.v740sp02, "PARTIALLY IMPLEMENTED", {also: AlsoIn.OpenABAP}));
 
     return seq("INTERFACES",
                InterfaceName,

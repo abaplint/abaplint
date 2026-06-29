@@ -1,8 +1,8 @@
-import {ver, seq, tok, altPrio, optPrio, regex, Expression, starPrio, star} from "../combi";
+import {ver, seq, tok, altPrio, optPrio, regex, Expression, starPrio, star, AlsoIn} from "../combi";
 import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash, ParenRightW, ParenLeft} from "../../1_lexer/tokens";
 import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TypeNameOrInfer,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody, Arrow} from ".";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {TextElement} from "./text_element";
 import {AttributeChain} from "./attribute_chain";
@@ -17,7 +17,7 @@ export class Source extends Expression {
   public getRunnable(): IStatementRunnable {
     const comp = seq(tok(Dash), ComponentChain);
     const attr = seq(Arrow, AttributeChain);
-    const deref = optPrio(ver(Version.v756, Dereference));
+    const deref = optPrio(ver(Release.v756, Dereference));
 
     const dynChain = star(altPrio(dynAttr(), dynComp(), Dereference));
 
@@ -34,8 +34,8 @@ export class Source extends Expression {
 
     const after = seq(altPrio("&", "&&", ArithOperator), Source);
 
-    const bool = seq(altPrio(ver(Version.v702, regex(/^BOOLC$/i), Version.OpenABAP),
-                             ver(Version.v740sp08, regex(/^XSDBOOL$/i), Version.OpenABAP)),
+    const bool = seq(altPrio(ver(Release.v702, regex(/^BOOLC$/i), {also: AlsoIn.OpenABAP}),
+                             ver(Release.v740sp08, regex(/^XSDBOOL$/i), {also: AlsoIn.OpenABAP})),
                      tok(ParenLeftW),
                      Cond,
                      ")");
@@ -51,69 +51,69 @@ export class Source extends Expression {
                                              paren),
                     optPrio(after));
 
-    const corr = ver(Version.v740sp05, seq("CORRESPONDING",
+    const corr = ver(Release.v740sp05, seq("CORRESPONDING",
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            CorrespondingBody,
                                            rparen,
-                                           optPrio(after)), Version.OpenABAP);
+                                           optPrio(after)), {also: AlsoIn.OpenABAP});
 
-    const conv = ver(Version.v740sp02, seq("CONV",
+    const conv = ver(Release.v740sp02, seq("CONV",
                                            TypeNameOrInfer,
                                            lparenNoSpace,
                                            ConvBody,
                                            rparenNoSpace,
-                                           optPrio(after)), Version.OpenABAP);
+                                           optPrio(after)), {also: AlsoIn.OpenABAP});
 
-    const swit = ver(Version.v740sp02, seq("SWITCH",
+    const swit = ver(Release.v740sp02, seq("SWITCH",
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            SwitchBody,
                                            rparenNoSpace,
-                                           optPrio(after)), Version.OpenABAP);
+                                           optPrio(after)), {also: AlsoIn.OpenABAP});
 
-    const value = ver(Version.v740sp02, seq("VALUE",
+    const value = ver(Release.v740sp02, seq("VALUE",
                                             TypeNameOrInfer,
                                             tok(ParenLeftW),
                                             ValueBody,
                                             rparenNoSpace,
-                                            optPrio(after)), Version.OpenABAP);
+                                            optPrio(after)), {also: AlsoIn.OpenABAP});
 
-    const cond = ver(Version.v740sp02, seq("COND",
+    const cond = ver(Release.v740sp02, seq("COND",
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            CondBody,
                                            rparenNoSpace,
-                                           optPrio(after)), Version.OpenABAP);
+                                           optPrio(after)), {also: AlsoIn.OpenABAP});
 
-    const reff = ver(Version.v740sp02, seq("REF",
+    const reff = ver(Release.v740sp02, seq("REF",
                                            TypeNameOrInfer,
                                            tok(ParenLeftW),
                                            Source,
                                            optPrio("OPTIONAL"),
-                                           rparen), Version.OpenABAP);
+                                           rparen), {also: AlsoIn.OpenABAP});
 
-    const exact = ver(Version.v740sp02, seq("EXACT",
+    const exact = ver(Release.v740sp02, seq("EXACT",
                                             TypeNameOrInfer,
                                             tok(ParenLeftW),
                                             Source,
                                             rparen,
                                             optPrio(after)));
 
-    const filter = ver(Version.v740sp08,
+    const filter = ver(Release.v740sp08,
                        seq("FILTER",
                            TypeNameOrInfer,
                            tok(ParenLeftW),
                            FilterBody,
-                           rparen), Version.OpenABAP);
+                           rparen), {also: AlsoIn.OpenABAP});
 
-    const reduce = ver(Version.v740sp08,
+    const reduce = ver(Release.v740sp08,
                        seq("REDUCE",
                            TypeNameOrInfer,
                            tok(ParenLeftW),
                            ReduceBody,
                            rparen,
-                           optPrio(after)), Version.OpenABAP);
+                           optPrio(after)), {also: AlsoIn.OpenABAP});
 
     const prefix1 = altPrio(tok(WDashW), tok(WPlusW));
 

@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, alt, optPrio, altPrio, regex} from "../combi";
+import {verNotLang, seq, alt, optPrio, altPrio, regex} from "../combi";
 import {Source, Field} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class DeleteMemory implements IStatement {
@@ -15,7 +15,7 @@ export class DeleteMemory implements IStatement {
 
     const ret = seq("DELETE FROM", alt(memory, shared));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

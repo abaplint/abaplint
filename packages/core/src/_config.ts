@@ -1,4 +1,4 @@
-import {Version} from "./version";
+import {Version, LanguageVersion, ABAPRelease} from "./version";
 import {IRule} from "./rules/_irule";
 
 export interface IGlobalConfig {
@@ -101,7 +101,11 @@ export interface IConfiguration {
   getEnabledRules(): IRule[];
   get(): IConfig;
   getGlobal(): IGlobalConfig;
+  /** @deprecated Use getRelease() instead. */
   getVersion(): Version;
+  getRelease(): ABAPRelease;
+  getLanguageVersion(): LanguageVersion;
+  getOpenABAP(): boolean;
   getSyntaxSetttings(): ISyntaxSettings;
   readByRule(rule: string): any;
   readByKey(rule: string, key: string): any;

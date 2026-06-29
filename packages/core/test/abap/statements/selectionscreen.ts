@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.",
@@ -66,3 +67,9 @@ const tests = [
 ];
 
 statementType(tests, "SELECTION-SCREEN", Statements.SelectionScreen);
+
+const versionsFail = [
+  {abap: `SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "SELECTION-SCREEN");

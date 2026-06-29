@@ -2,7 +2,7 @@ import {IFile} from "../files/_ifile";
 import {IAllowedNaming, IObject, IParseResult} from "./_iobject";
 import {XMLParser} from "fast-xml-parser";
 import {Issue} from "../issue";
-import {Version} from "../version";
+import {ABAPRelease, LanguageVersion} from "../version";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {Identifier as IdentifierToken} from "../abap/1_lexer/tokens/identifier";
 import {Position} from "../position";
@@ -29,7 +29,8 @@ export abstract class AbstractObject implements IObject {
     return this.old;
   }
 
-  public parse(_version?: Version, _globalMacros?: readonly string[], _reg?: IRegistry): IParseResult {
+  public parse(_release?: ABAPRelease, _globalMacros?: readonly string[], _reg?: IRegistry,
+               _languageVersion?: LanguageVersion, _openABAP?: boolean): IParseResult {
     return {updated: false, runtime: 0};
   }
 

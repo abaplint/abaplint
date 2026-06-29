@@ -3,7 +3,7 @@ import {getStatements} from "./_utils";
 import {Empty, MacroCall, Unknown} from "../../src/abap/2_statements/statements/_statement";
 import {StatementParser} from "../../src/abap/2_statements/statement_parser";
 import {Write, Data, InsertDatabase} from "../../src/abap/2_statements/statements";
-import {defaultVersion, Version} from "../../src/version";
+import {defaultRelease, Release, LanguageVersion} from "../../src/version";
 import {Lexer} from "../../src/abap/1_lexer/lexer";
 import {MemoryFile} from "../../src/files/memory_file";
 
@@ -17,7 +17,7 @@ describe("statement parser", () => {
     const globalMacros = ["moo"];
 
     const lexerResult = new Lexer().run(new MemoryFile("cl_foo.clas.abap", abap));
-    const statements = new StatementParser(defaultVersion).run([lexerResult], globalMacros);
+    const statements = new StatementParser(defaultRelease).run([lexerResult], globalMacros);
     expect(statements.length).to.equal(1);
     expect(statements[0].statements[0].get()).to.be.instanceof(MacroCall);
   });
@@ -28,7 +28,7 @@ describe("statement parser", () => {
     const globalMacros = ["moo-bar"];
 
     const lexerResult = new Lexer().run(new MemoryFile("cl_foo.clas.abap", abap));
-    const statements = new StatementParser(defaultVersion).run([lexerResult], globalMacros);
+    const statements = new StatementParser(defaultRelease).run([lexerResult], globalMacros);
     expect(statements.length).to.equal(1);
     expect(statements[0].statements[0].get()).to.be.instanceof(MacroCall);
   });
@@ -97,7 +97,7 @@ describe("statement parser", () => {
   it("Cloud test", () => {
     const abap = "INSERT (tablename) FROM TABLE @<tab>.";
 
-    const statements = getStatements(abap, Version.Cloud);
+    const statements = getStatements(abap, Release.Newest, LanguageVersion.Cloud);
     expect(statements.length).to.equal(1);
     expect(statements[0].get()).to.be.instanceof(InsertDatabase);
   });

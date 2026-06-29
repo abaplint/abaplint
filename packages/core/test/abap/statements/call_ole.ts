@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "CALL METHOD OF lv_charts 'Add'.",
@@ -20,3 +21,9 @@ const tests = [
 ];
 
 statementType(tests, "CALL METHOD OF", Statements.CallOLE);
+
+const versionsFail = [
+  {abap: `CALL METHOD OF lv_charts 'Add'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "CALL METHOD OF");

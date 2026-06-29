@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, optPrio, regex} from "../combi";
+import {verNotLang, seq, optPrio, regex} from "../combi";
 import {Constant, FieldSub, Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Infotypes implements IStatement {
@@ -14,7 +14,7 @@ export class Infotypes implements IStatement {
 
     const ret = seq("INFOTYPES", regex(/^\d\d\d\d$/), optPrio(valid), optPrio(name), optPrio(occurs), optPrio(mode));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

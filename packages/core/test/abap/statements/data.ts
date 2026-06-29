@@ -134,7 +134,7 @@ const tests = [
 statementType(tests, "DATA", Statements.Data);
 
 statementVersionOk([
-  {abap: "DATA foo TYPE TABLE FOR UPDATE EntityItem.", ver: Version.OpenABAP},
+  {abap: "DATA foo TYPE TABLE FOR UPDATE EntityItem.", rel: Version.OpenABAP},
 ], "DATA TYPE TABLE FOR", Statements.Data);
 
 const fails = [

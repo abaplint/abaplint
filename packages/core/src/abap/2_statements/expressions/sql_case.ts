@@ -1,7 +1,7 @@
 import {SimpleFieldChain2, SQLAggregation, SQLFunction, SQLPathForColumn} from ".";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {WAt, WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
-import {Expression, ver, seq, tok, optPrio, opt, altPrio, starPrio, plusPrio} from "../combi";
+import {Expression, ver, seq, tok, optPrio, opt, altPrio, starPrio, plusPrio, AlsoIn} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
 import {Constant} from "./constant";
 import {SQLCond} from "./sql_cond";
@@ -25,6 +25,6 @@ export class SQLCase extends Expression {
     const when = seq("WHEN", val, "THEN", altPrio(parenSource, seq(optPrio("-"), source)), starPrio(sub));
     const else_ = seq("ELSE", altPrio(parenSource, seq(optPrio("-"), source)));
 
-    return ver(Version.v740sp05, seq("CASE", opt(altPrio(SQLFieldName, abap)), plusPrio(when), optPrio(else_), "END"), Version.OpenABAP);
+    return ver(Release.v740sp05, seq("CASE", opt(altPrio(SQLFieldName, abap)), plusPrio(when), optPrio(else_), "END"), {also: AlsoIn.OpenABAP});
   }
 }

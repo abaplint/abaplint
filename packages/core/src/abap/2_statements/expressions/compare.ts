@@ -1,7 +1,7 @@
-import {seq, ver, tok, plus, opt, optPrio, altPrio, Expression} from "../combi";
+import {seq, ver, tok, plus, opt, optPrio, altPrio, Expression, AlsoIn} from "../combi";
 import {FieldSub, ClassName, Constant, Source, MethodCallChain, CompareOperator, SourceFieldSymbolChain} from ".";
 import {WParenLeft, ParenRightW} from "../../1_lexer/tokens";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Compare extends Expression {
@@ -19,7 +19,7 @@ export class Compare extends Expression {
                      optPrio("NOT"),
                      altPrio("SUPPLIED",
                              "BOUND",
-                             ver(Version.v750, seq("INSTANCE OF", ClassName), Version.OpenABAP),
+                             ver(Release.v750, seq("INSTANCE OF", ClassName), {also: AlsoIn.OpenABAP}),
                              "REQUESTED",
                              "INITIAL"));
 
@@ -27,7 +27,7 @@ export class Compare extends Expression {
 
 // https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abennews-740_sp08-expressions.htm
 // but also seems to work in v740sp05, blah
-    const predicate = ver(Version.v740sp08, MethodCallChain, Version.OpenABAP);
+    const predicate = ver(Release.v740sp08, MethodCallChain, {also: AlsoIn.OpenABAP});
 
     const rett = seq(Source, altPrio(seq(CompareOperator, Source), inn, between, sopt));
 

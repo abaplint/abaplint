@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "SET TITLEBAR 'TITLE'.",
@@ -9,3 +10,9 @@ const tests = [
 ];
 
 statementType(tests, "SET TITLEBAR", Statements.SetTitlebar);
+
+const versionsFail = [
+  {abap: `SET TITLEBAR 'TITLE'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "SET TITLEBAR");

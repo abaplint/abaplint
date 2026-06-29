@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt} from "../combi";
+import {verNotLang, seq, opt} from "../combi";
 import {SimpleName} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class ExecSQL implements IStatement {
@@ -11,7 +11,7 @@ export class ExecSQL implements IStatement {
 
     const ret = seq("EXEC SQL", opt(performing));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

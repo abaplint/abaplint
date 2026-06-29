@@ -1,6 +1,6 @@
 import {CallTransactionAuthorityCheck} from "../../src/rules/call_transaction_authority_check";
 import {testRule} from "./_utils";
-import {Config, Issue, Registry, Version} from "../../src";
+import {Config, Issue, Registry, Version, LanguageVersion} from "../../src";
 import {expect} from "chai";
 import {MemoryFile} from "../../src/files/memory_file";
 
@@ -13,8 +13,17 @@ const tests = [
 testRule(tests, CallTransactionAuthorityCheck);
 
 
-async function findIssues(abap: string, version?: Version): Promise<readonly Issue[]> {
+async function findIssues(abap: string, version?: Version, languageVersion?: LanguageVersion): Promise<readonly Issue[]> {
   const config = Config.getDefault(version);
+  if (languageVersion) {
+    const c = config.get();
+    c.syntax.languageVersion = languageVersion;
+    const newConfig = new Config(JSON.stringify(c));
+    const reg = new Registry(newConfig).addFile(new MemoryFile("zfoo.prog.abap", abap));
+    await reg.parseAsync();
+    const rule = new CallTransactionAuthorityCheck();
+    return rule.initialize(reg).run(reg.getFirstObject()!);
+  }
   const reg = new Registry(config).addFile(new MemoryFile("zfoo.prog.abap", abap));
   await reg.parseAsync();
   const rule = new CallTransactionAuthorityCheck();
@@ -38,7 +47,7 @@ describe("Rule: call transaction with-authority check, version dependent", () =>
   });
 
   it("No Auth check, Cloud : no issue, CALL TRANSACTION not possible", async () => {
-    const issues = await findIssues("CALL TRANSACTION 'ZFOO' WITH AUTHORITY-CHECK.", Version.Cloud);
+    const issues = await findIssues("CALL TRANSACTION 'ZFOO' WITH AUTHORITY-CHECK.", undefined, LanguageVersion.Cloud);
     expect(issues.length).to.equal(0);
   });
 

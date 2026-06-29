@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, opt, plus, optPrio, alt} from "../combi";
+import {verNotLang, seq, opt, plus, optPrio, alt} from "../combi";
 import {Field, FieldSub, Constant, Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class CallDialog implements IStatement {
@@ -18,7 +18,7 @@ export class CallDialog implements IStatement {
                     opt(exporting),
                     opt(importing));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

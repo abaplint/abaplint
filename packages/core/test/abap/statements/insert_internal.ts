@@ -1,6 +1,7 @@
+import {Release} from "../../../src/version";
 import {statementExpectFail, statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version} from "../../../src/version";
+
 
 const tests = [
   "INSERT INITIAL LINE INTO ct_diff INDEX lv_index.",
@@ -45,20 +46,20 @@ const toFail = [
 statementExpectFail(toFail, "INSERT");
 
 const versions = [
-  {abap: "INSERT NEW zcl_foobar( ) INTO TABLE lt_tab ASSIGNING FIELD-SYMBOL(<fs>).", ver: Version.v740sp02},
-  {abap: "insert |field_more| into table ls_result-struc_data-field_more.", ver: Version.v740sp02},
+  {abap: "INSERT NEW zcl_foobar( ) INTO TABLE lt_tab ASSIGNING FIELD-SYMBOL(<fs>).", rel: Release.v740sp02},
+  {abap: "insert |field_more| into table ls_result-struc_data-field_more.", rel: Release.v740sp02},
 ];
 
 statementVersion(versions, "INSERT internal", Statements.InsertInternal);
 
 const ok = [
-  {abap: "INSERT ls_node INTO TABLE mr_dest_tree->*.", ver: Version.v702},
+  {abap: "INSERT ls_node INTO TABLE mr_dest_tree->*.", rel: Release.v702},
 ];
 
 statementVersionOk(ok, "INSERT internal", Statements.InsertInternal);
 
 const versionsFail = [
-  {abap: "insert |field_more| into table ls_result-struc_data-field_more.", ver: Version.v702},
+  {abap: "insert |field_more| into table ls_result-struc_data-field_more.", rel: Release.v702},
 ];
 
 statementVersionFail(versionsFail, "INSERT internal");

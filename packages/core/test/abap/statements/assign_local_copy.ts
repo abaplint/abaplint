@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "ASSIGN LOCAL COPY OF INITIAL LINE OF <table> TO <fs>.",
@@ -10,3 +11,9 @@ const tests = [
 ];
 
 statementType(tests, "ASSIGN LOCAL COPY", Statements.AssignLocalCopy);
+
+const versionsFail = [
+  {abap: `ASSIGN LOCAL COPY OF INITIAL LINE OF <table> TO <fs>.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "ASSIGN LOCAL COPY");

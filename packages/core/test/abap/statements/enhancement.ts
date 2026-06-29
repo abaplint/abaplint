@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "ENHANCEMENT 1  foobar.",
@@ -7,3 +8,9 @@ const tests = [
 ];
 
 statementType(tests, "ENHANCEMENT", Statements.Enhancement);
+
+const versionsFail = [
+  {abap: `ENHANCEMENT 1  foobar.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "ENHANCEMENT");

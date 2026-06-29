@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, plus} from "../combi";
+import {verNotLang, seq, plus} from "../combi";
 import {Field, Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class CatchSystemExceptions implements IStatement {
@@ -10,7 +10,7 @@ export class CatchSystemExceptions implements IStatement {
     const ret = seq("CATCH SYSTEM-EXCEPTIONS",
                     plus(seq(Field, "=", Source)));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

@@ -1,6 +1,6 @@
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 import {IStatement} from "./_statement";
-import {seq, alt, altPrio, ver, optPrio, plus, opt} from "../combi";
+import {seq, alt, altPrio, ver, optPrio, plus, opt, AlsoIn} from "../combi";
 import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, MethodDefExceptions, MethodParamName, NamespaceSimpleName, TypeName, EntityAssociation} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -8,7 +8,7 @@ export class MethodDef implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const def = ver(Version.v740sp08, seq("DEFAULT", altPrio("FAIL", "IGNORE")), Version.OpenABAP);
+    const def = ver(Release.v740sp08, seq("DEFAULT", altPrio("FAIL", "IGNORE")), {also: AlsoIn.OpenABAP});
 
     const parameters = seq(optPrio(altPrio("FINAL", def, Abstract)),
                            optPrio(MethodDefImporting),

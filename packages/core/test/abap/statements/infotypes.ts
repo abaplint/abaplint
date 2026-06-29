@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "INFOTYPES 1000.",
@@ -11,3 +12,9 @@ const tests = [
 ];
 
 statementType(tests, "INFOTYPES", Statements.Infotypes);
+
+const versionsFail = [
+  {abap: `INFOTYPES 1000.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "INFOTYPES");

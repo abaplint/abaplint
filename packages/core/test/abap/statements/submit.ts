@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "SUBMIT zdemo WITH rb_down = abap_true WITH rb_show = abap_false AND RETURN.",
@@ -93,3 +94,9 @@ AND RETURN.`,
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);
+
+const versionsFail = [
+  {abap: `SUBMIT zdemo.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "SUBMIT");

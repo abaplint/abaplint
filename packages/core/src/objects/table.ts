@@ -7,7 +7,7 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {AnyType, DataReference, GenericObjectReferenceType} from "../abap/types/basic";
 import {IObjectAndToken} from "../_iddic_references";
-import {Version} from "../version";
+import {LanguageVersion} from "../version";
 import {IAllowedNaming} from "./_iobject";
 
 export enum EnhancementCategory {
@@ -129,7 +129,7 @@ export class Table extends AbstractObject {
       }
     }
 
-    if (reg.getConfig().getVersion() === Version.Cloud
+    if (reg.getConfig().getLanguageVersion() === LanguageVersion.Cloud
         && this.parsedData.dataClass === "USER3") {
       return new Types.UnknownType("Data class = USER3 not allowed in cloud");
     }

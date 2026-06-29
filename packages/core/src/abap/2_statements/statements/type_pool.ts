@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, regex as reg} from "../combi";
-import {Version} from "../../../version";
+import {verNotLang, seq, regex as reg} from "../combi";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 // type pool definition
@@ -11,7 +11,7 @@ export class TypePool implements IStatement {
 
     const ret = seq("TYPE-POOL", fieldName);
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

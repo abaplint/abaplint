@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, per, seq, opt, altPrio} from "../combi";
+import {verNotLang, per, seq, opt, altPrio} from "../combi";
 import {Source, Color} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Format implements IStatement {
@@ -20,7 +20,7 @@ export class Format implements IStatement {
 
     const ret = seq("FORMAT", options);
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

@@ -5,14 +5,14 @@ import * as Statements from "../abap/2_statements/statements";
 import {ABAPFile} from "../abap/abap_file";
 import {Issue} from "../issue";
 import {ABAPObject} from "../objects/_abap_object";
-import {Version} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 
 export class CallTransactionAuthorityCheckConf extends BasicRuleConfig {
 }
 export class CallTransactionAuthorityCheck extends ABAPRule {
 
   private conf = new CallTransactionAuthorityCheckConf();
-  private readonly MINIMUM_VERSION = Version.v740sp02;
+  private readonly MINIMUM_VERSION = Release.v740sp02;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -42,9 +42,9 @@ ENDTRY.`,
   }
 
   public runParsed(file: ABAPFile, obj: ABAPObject) {
-    const currentVersion = this.reg.getConfig().getVersion();
     // Cloud version does not support CALL TRANSACTION
-    if (currentVersion < this.MINIMUM_VERSION || currentVersion === Version.Cloud) {
+    if (!releaseAtLeast(this.reg.getConfig().getRelease(), this.MINIMUM_VERSION)
+        || this.reg.getConfig().getLanguageVersion() === LanguageVersion.Cloud) {
       return [];
     }
     const issues: Issue[] = [];

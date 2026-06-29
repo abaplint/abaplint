@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, altPrio, optPrio, regex, starPrio} from "../combi";
+import {verNotLang, str, seq, altPrio, optPrio, regex, starPrio} from "../combi";
 import {Source} from "../expressions";
-import {Version} from "../../../version";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Break implements IStatement {
@@ -13,7 +13,7 @@ export class Break implements IStatement {
     const ret = altPrio(seq("BREAK-POINT", optPrio(altPrio(next, Source))),
                         seq("BREAK", starPrio(regex(/.*/))));
 
-    return verNot(Version.Cloud, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

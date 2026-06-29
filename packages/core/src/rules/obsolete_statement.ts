@@ -6,7 +6,7 @@ import {ABAPFile} from "../abap/abap_file";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 import {IRuleMetadata, RuleTag} from "./_irule";
-import {Version} from "../version";
+import {Release, releaseAtLeast} from "../version";
 import {EditHelper, IEdit} from "../edit_helper";
 import {IStatement} from "../abap/2_statements/statements/_statement";
 import {ExpressionNode, StatementNode} from "../abap/nodes";
@@ -159,7 +159,7 @@ ENDIF.`,
 
     const statements = file.getStatements();
     let prev: Position | undefined = undefined;
-    const configVersion = this.reg.getConfig().getVersion();
+    const configRelease = this.reg.getConfig().getRelease();
 
     for (const staNode of statements) {
       const sta = staNode.get();
@@ -167,8 +167,8 @@ ENDIF.`,
           || (sta instanceof Statements.Compute && this.conf.compute)
           || (sta instanceof Statements.Add && this.conf.add)
           || (sta instanceof Statements.Subtract && this.conf.subtract)
-          || (sta instanceof Statements.ClassDefinitionLoad && this.conf.load && configVersion >= Version.v702)
-          || (sta instanceof Statements.InterfaceLoad && this.conf.load && configVersion >= Version.v702)
+          || (sta instanceof Statements.ClassDefinitionLoad && this.conf.load && releaseAtLeast(configRelease, Release.v702))
+          || (sta instanceof Statements.InterfaceLoad && this.conf.load && releaseAtLeast(configRelease, Release.v702))
           || (sta instanceof Statements.Multiply && this.conf.multiply)
           || (sta instanceof Statements.Divide && this.conf.divide)
           || (sta instanceof Statements.Move && this.conf.move
@@ -300,7 +300,7 @@ ENDIF.`,
         }
       }
 
-      if (this.conf.typePools && sta instanceof Statements.TypePools && configVersion >= Version.v702){
+      if (this.conf.typePools && sta instanceof Statements.TypePools && releaseAtLeast(configRelease, Release.v702)){
         const fix = EditHelper.deleteStatement(file, staNode);
         const issue = Issue.atStatement(file, staNode, "Statement \"TYPE-POOLS\" is obsolete", this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
@@ -370,7 +370,7 @@ ENDIF.`,
         issues.push(issue);
       }
 
-      if (configVersion >= Version.v754 && this.conf.clientSpecified
+      if (releaseAtLeast(configRelease, Release.v754) && this.conf.clientSpecified
           && (sta instanceof Statements.Select
           || sta instanceof Statements.SelectLoop
           || sta instanceof Statements.DeleteDatabase
@@ -384,7 +384,7 @@ ENDIF.`,
         }
       }
 
-      if (configVersion >= Version.v756 && this.conf.regex) {
+      if (releaseAtLeast(configRelease, Release.v756) && this.conf.regex) {
         if (sta instanceof Statements.Find || sta instanceof Statements.Replace) {
           if (staNode.findFirstExpression(Expressions.FindType)?.concatTokens().includes("REGEX")) {
             const issue = Issue.atStatement(file, staNode, "REGEX obsolete, use PCRE", this.getMetadata().key, this.conf.severity);

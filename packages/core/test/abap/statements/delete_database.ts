@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "DELETE FROM (c_tabname) WHERE type = iv_type AND value = iv_value.",
@@ -20,3 +21,9 @@ const tests = [
 ];
 
 statementType(tests, "DELETE", Statements.DeleteDatabase);
+
+const versionsFail = [
+  {abap: `DELETE FROM ZFOOBAR CLIENT SPECIFIED WHERE MANDT = SY-MANDT.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "DELETE CLIENT SPECIFIED");

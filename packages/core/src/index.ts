@@ -1,6 +1,6 @@
 import {Issue} from "./issue";
 import {Config} from "./config";
-import {Version} from "./version";
+import {Version, LanguageVersion, ABAPRelease, Release, releaseAtLeast, versionToABAPRelease} from "./version";
 import {Registry} from "./registry";
 import {MethodLengthStats, IMethodLengthResult} from "./utils/method_length_stats";
 import {LanguageServer} from "./lsp/language_server";
@@ -71,7 +71,7 @@ const Edits = {
 };
 
 // file used to build typings, index.d.ts
-export {Issue, Config, Version, CyclomaticComplexityStats,
+export {Issue, Config, Version, LanguageVersion, ABAPRelease, Release, releaseAtLeast, versionToABAPRelease, CyclomaticComplexityStats,
   Registry, LanguageServer, MethodLengthStats, FunctionLengthStats, FormLengthStats,
   IProgress, BuiltIn,
   ArtifactsABAP, ArtifactsObjects, ArtifactsRules, Objects, IFile, SkipLogic,

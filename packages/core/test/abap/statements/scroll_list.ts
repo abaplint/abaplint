@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "SCROLL LIST INDEX lv_index TO FIRST PAGE LINE lv_line.",
@@ -17,3 +18,9 @@ const tests = [
 ];
 
 statementType(tests, "SCROLL LIST", Statements.ScrollList);
+
+const versionsFail = [
+  {abap: `SCROLL LIST INDEX lv_index TO FIRST PAGE LINE lv_line.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+];
+
+statementVersionFail(versionsFail, "SCROLL");

@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {opt, optPrio, per, seq, ver} from "../combi";
+import {opt, optPrio, per, seq, ver, AlsoIn} from "../combi";
 import {NamespaceSimpleName, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Version} from "../../../version";
+import {Release} from "../../../version";
 
 export class CommitEntities implements IStatement {
 
@@ -18,7 +18,7 @@ export class CommitEntities implements IStatement {
                   opt(responses),
                   opt(seq("RESPONSE OF", NamespaceSimpleName, per(failed, reported))));
 
-    return ver(Version.v754, s, Version.OpenABAP);
+    return ver(Release.v754, s, {also: AlsoIn.OpenABAP});
   }
 
 }

@@ -15,7 +15,7 @@ import {Dereference} from "./dereference";
 import {SourceFieldSymbol} from "./source_field_symbol";
 import {SourceField} from "./source_field";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
-import {Version} from "../../../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 export class FieldChain {
 
@@ -100,9 +100,9 @@ export class FieldChain {
         context = Dereference.runSyntax(current, context, input);
         if (allowGenericDeference === false
             && context?.isGeneric() === true
-            && input.scope.getVersion() < Version.v756
-            && input.scope.getVersion() !== Version.Cloud
-            && input.scope.getVersion() !== Version.OpenABAP) {
+            && !releaseAtLeast(input.scope.getRelease(), Release.v756)
+            && input.scope.getLanguageVersion() !== LanguageVersion.Cloud
+            && !input.scope.getOpenABAP()) {
           throw new Error("A generic reference cannot be dereferenced");
         }
       } else if (current.get() instanceof Expressions.ComponentName) {
