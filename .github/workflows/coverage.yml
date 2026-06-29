@@ -7,6 +7,7 @@ on:
 
 jobs:
   coverage:
+    if: "${{ !startsWith(github.event.head_commit.message, 'chore(release): v') }}"
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
