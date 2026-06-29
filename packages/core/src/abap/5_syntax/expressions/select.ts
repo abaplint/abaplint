@@ -86,6 +86,12 @@ export class Select {
       SQLSource.runSyntax(s, input);
     }
     for (const up of node.findDirectExpressions(Expressions.SQLUpTo)) {
+      if (intoExpression
+          && this.isStrictMode(node)
+          && up.getFirstToken().getStart().isBefore(intoExpression.getFirstToken().getStart())) {
+        const message = `The addition "UP TO n ROWS" must only be placed after the INTO/APPENDING clause.`;
+        input.issues.push(syntaxIssue(input, up.getFirstToken(), message));
+      }
       for (const s of up.findDirectExpressions(Expressions.SQLSource)) {
         SQLSource.runSyntax(s, input);
       }

@@ -12585,6 +12585,29 @@ SELECT * FROM t100
     expect(issues[0]?.getMessage()).to.include("ORDER BY must be before INTO");
   });
 
+  it("SELECT: UP TO must be after INTO in strict mode", () => {
+    const abap = `
+FIELD-SYMBOLS <ft_result> TYPE ANY TABLE.
+DATA lv_from TYPE string.
+DATA lt_select TYPE string.
+DATA lt_where TYPE string.
+DATA lt_having TYPE string.
+DATA lt_order_by TYPE string.
+DATA lt_group_by TYPE string.
+DATA lv_row_count TYPE i.
+
+SELECT (lt_select)
+  FROM (lv_from)
+  UP TO @lv_row_count ROWS
+  WHERE (lt_where)
+  GROUP BY (lt_group_by)
+  HAVING (lt_having)
+  ORDER BY (lt_order_by)
+  INTO CORRESPONDING FIELDS OF TABLE @<ft_result>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`The addition "UP TO n ROWS" must only be placed after the INTO/APPENDING clause.`);
+  });
+
   it("CONCATENATE: error, structure is not bytelike", () => {
     const abap = `
 TYPES: BEGIN OF ty,
