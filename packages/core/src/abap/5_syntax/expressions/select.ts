@@ -21,7 +21,7 @@ type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 const isSimple = /^\w+$/;
 
 export class Select {
-  public static runSyntax(node: ExpressionNode, input: SyntaxInput, skipImplicitInto = false): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, skipImplicitInto = false, selectLoop = false): void {
     const token = node.getFirstToken();
 
     let from = node.findDirectExpression(Expressions.SQLFrom);
@@ -86,6 +86,14 @@ export class Select {
       SQLSource.runSyntax(s, input);
     }
     for (const up of node.findDirectExpressions(Expressions.SQLUpTo)) {
+      if (intoExpression
+          && this.isStrictMode(node, input)
+          && (selectLoop === false || input.scope.getLanguageVersion() === LanguageVersion.Cloud)
+          && from.getFirstToken().getStart().isBefore(up.getFirstToken().getStart())
+          && up.getFirstToken().getStart().isBefore(intoExpression.getFirstToken().getStart())) {
+        const message = `The addition "UP TO n ROWS" must only be placed after the INTO/APPENDING clause.`;
+        input.issues.push(syntaxIssue(input, up.getFirstToken(), message));
+      }
       for (const s of up.findDirectExpressions(Expressions.SQLSource)) {
         SQLSource.runSyntax(s, input);
       }
@@ -115,7 +123,7 @@ export class Select {
       }
     }
 
-    if (this.isStrictMode(node)) {
+    if (this.isStrictMode(node, input)) {
       this.strictModeChecks(node, input);
     }
 
@@ -125,7 +133,12 @@ export class Select {
   }
 
   // there are multiple rules, but gotta start somewhere
-  private static isStrictMode(node: ExpressionNode) {
+  private static isStrictMode(node: ExpressionNode, input: SyntaxInput) {
+    // strict OpenSQL is always required in the cloud language version
+    if (input.scope.getLanguageVersion() === LanguageVersion.Cloud) {
+      return true;
+    }
+
     const into = node.findDirectExpressionsMulti([Expressions.SQLIntoList, Expressions.SQLIntoStructure, Expressions.SQLIntoTable])[0];
     const where = node.findDirectExpression(Expressions.SQLCond);
 

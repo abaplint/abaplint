@@ -406,6 +406,15 @@ const clientSpecifiedFail = [
 
 statementVersionFail(clientSpecifiedFail, "SELECT LOOP CLIENT SPECIFIED");
 
+const normalOk = [
+  {abap: `SELECT * FROM tadir
+    UP TO 1 ROWS
+    INTO @row
+    ORDER BY obj_name DESCENDING.`, rel: Release.Newest, langVer: LanguageVersion.Normal},
+];
+
+statementVersionOk(normalOk, "SELECT loop UP TO ROWS ORDER BY DESCENDING", Statements.SelectLoop);
+
 const keyUserLoopFail = [
   {abap: `SELECT * FROM ztab CLIENT SPECIFIED INTO TABLE @lt_data.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
   {abap: `SELECT * FROM ztab USING CLIENT @lv_mandt INTO TABLE @lt_data.`, rel: Release.v740sp05, langVer: LanguageVersion.KeyUser},
