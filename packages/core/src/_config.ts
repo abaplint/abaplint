@@ -1,4 +1,4 @@
-import {LanguageVersion, ABAPRelease, VersionNew} from "./version";
+import {Version, LanguageVersion, ABAPRelease, VersionNew} from "./version";
 import {IRule} from "./rules/_irule";
 
 export interface IGlobalConfig {
@@ -43,6 +43,9 @@ export interface IDependency {
 export interface ISyntaxSettings {
   /** ABAP language version */
   version?: VersionNew;
+  languageVersion?: LanguageVersion;
+  /** Use the OpenABAP dialect (v702 base + a set of additional language features). */
+  openABAP?: boolean;
   /** Report error for objects in this regex namespace. Types not in namespace will be void. Case insensitive */
   errorNamespace: string;
   /** List of full named global constants (regex not possible)

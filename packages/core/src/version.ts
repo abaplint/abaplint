@@ -23,7 +23,6 @@ export enum Version {
    * Release.Newest + {@link LanguageVersion.Cloud} pair.
    */
   Cloud = "Cloud",
-  Newest = "Newest",
 }
 
 /**
@@ -172,54 +171,6 @@ export function releaseAtLeast(running: ABAPRelease, required: ABAPRelease): boo
   return running.ordinal >= required.ordinal;
 }
 
-// Lookup maps for the four constructor functions
-const byAbap = new Map<string, ABAPRelease>();
-const byKernel = new Map<number, ABAPRelease>();
-const byOp = new Map<number, ABAPRelease>();
-const byCloud = new Map<number, ABAPRelease>();
-
-for (const r of ReleaseList) {
-  if (r.abap !== null) { byAbap.set(r.abap, r); }
-  if (r.kernel !== null) { byKernel.set(r.kernel, r); }
-  if (r.cloud !== null) { byCloud.set(r.cloud, r); }
-  if (r.op !== null) {
-    // fromOP returns the *last* row at that op (the full on-prem release),
-    // so we overwrite on each iteration — later rows win.
-    byOp.set(r.op, r);
-  }
-}
-
-/** Look up a release by its ABAP name, e.g. "7.90", "740SP05", "9.16" */
-export function fromABAP(abap: string): ABAPRelease {
-  const found = byAbap.get(abap);
-  if (found === undefined) { throw new Error("Unknown ABAP release: " + abap); }
-  return found;
-}
-
-/** Look up a release by its kernel release number, e.g. 753, 790, 916 */
-export function fromKernel(kernel: number): ABAPRelease {
-  const found = byKernel.get(kernel);
-  if (found === undefined) { throw new Error("Unknown kernel release: " + kernel); }
-  return found;
-}
-
-/** Look up a release by its cloud release number, e.g. 793, 916 */
-export function fromCloud(cloud: number): ABAPRelease {
-  const found = byCloud.get(cloud);
-  if (found === undefined) { throw new Error("Unknown cloud release: " + cloud); }
-  return found;
-}
-
-/**
- * Look up a release by its on-prem release number, e.g. 758, 816.
- * Returns the *last* cloud row at that op number, which is the full on-prem release.
- */
-export function fromOP(op: number): ABAPRelease {
-  const found = byOp.get(op);
-  if (found === undefined) { throw new Error("Unknown on-prem release: " + op); }
-  return found;
-}
-
 // ---------------------------------------------------------------------------
 // Deprecated compatibility layer — keeps existing callers working
 // ---------------------------------------------------------------------------
@@ -240,7 +191,6 @@ const byDeprecated: Readonly<Record<string, ABAPRelease>> = Object.freeze({
   [Version.v757]:     Release["v757"],
   [Version.v758]:     Release["v758"],
   [Version.v816]:     Release["v816"],
-  [Version.Newest]:   Release["Newest"],
   [Version.Cloud]:    Release["Newest"],   // Cloud → Newest sentinel
   [Version.OpenABAP]: Release["v702"],     // OpenABAP shares v702 release identity
 });

@@ -2,6 +2,58 @@
   "$ref": "#/definitions/IConfig",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
+    "ABAPRelease": {
+      "additionalProperties": false,
+      "description": "A single row in the release table.\n\nabap   — SAP_BASIS / ABAP release name as SAP calls it (e.g. \"740SP05\", \"7.90\", \"9.16\") kernel — SAP kernel release number that ships this ABAP release op     — on-premise release number (e.g. 758, 816), null for cloud-only releases cloud  — cloud release number (e.g. 793, 916), null for pre-cloud releases ce     — SAP BTP / S/4HANA Cloud Public Edition shipment quarter (YYMM, e.g. 2308),           null if never shipped to customers on cloud ordinal — chronological index (set at build time from array position), used for ordering",
+      "properties": {
+        "abap": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ce": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "cloud": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "kernel": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "op": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "ordinal": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "abap",
+        "kernel",
+        "op",
+        "cloud",
+        "ce",
+        "ordinal"
+      ],
+      "type": "object"
+    },
     "AFFAndXMLConf": {
       "additionalProperties": false,
       "properties": {
@@ -5995,8 +6047,8 @@
           "type": "boolean"
         },
         "version": {
-          "$ref": "#/definitions/Version",
-          "description": "ABAP release to parse against, e.g. `\"v758\"`, `\"Newest\"`, `\"Cloud\"`."
+          "$ref": "#/definitions/VersionNew",
+          "description": "ABAP language version"
         }
       },
       "required": [
@@ -8971,10 +9023,32 @@
         "v757",
         "v758",
         "v816",
-        "Cloud",
-        "Newest"
+        "Cloud"
       ],
       "type": "string"
+    },
+    "VersionNew": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Version"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "language": {
+              "$ref": "#/definitions/LanguageVersion"
+            },
+            "release": {
+              "$ref": "#/definitions/ABAPRelease"
+            }
+          },
+          "required": [
+            "release",
+            "language"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "WhenOthersLastConf": {
       "additionalProperties": false,
