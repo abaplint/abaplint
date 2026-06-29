@@ -1,6 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
-import {VoidType, TableType, UnknownType, DataReference, AnyType, DataType, ITableKey} from "../../types/basic";
+import {VoidType, TableType, UnknownType, DataReference, AnyType, DataType, ITableKey, TableAccessType} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
@@ -67,6 +67,16 @@ export class Loop implements StatementSyntax {
 
     const targetConcat = loopTarget?.concatTokens().toUpperCase();
     const topType = sourceType; // todo: refactor topType vs sourceType vs rowType
+
+    if (topType instanceof TableType
+        && topType.getAccessType() === TableAccessType.hashed
+        && node.findDirectTokenByText("USING") === undefined
+        && (node.findDirectTokenByText("FROM") || node.findDirectTokenByText("TO"))) {
+      const message = "Implicit or explicit index operation on hashed table is not possible";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
+    }
+
     if (sourceType instanceof TableType) {
       rowType = sourceType.getRowType();
       sourceType = rowType;
