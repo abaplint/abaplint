@@ -6047,7 +6047,7 @@
           "type": "boolean"
         },
         "version": {
-          "$ref": "#/definitions/VersionNew",
+          "$ref": "#/definitions/VersionOldOrNew",
           "description": "ABAP language version"
         }
       },
@@ -9028,25 +9028,28 @@
       "type": "string"
     },
     "VersionNew": {
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "$ref": "#/definitions/LanguageVersion"
+        },
+        "release": {
+          "$ref": "#/definitions/ABAPRelease"
+        }
+      },
+      "required": [
+        "release",
+        "language"
+      ],
+      "type": "object"
+    },
+    "VersionOldOrNew": {
       "anyOf": [
         {
           "$ref": "#/definitions/Version"
         },
         {
-          "additionalProperties": false,
-          "properties": {
-            "language": {
-              "$ref": "#/definitions/LanguageVersion"
-            },
-            "release": {
-              "$ref": "#/definitions/ABAPRelease"
-            }
-          },
-          "required": [
-            "release",
-            "language"
-          ],
-          "type": "object"
+          "$ref": "#/definitions/VersionNew"
         }
       ]
     },

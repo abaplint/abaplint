@@ -1,5 +1,5 @@
 import {IdentifierMeta, TypedIdentifier} from "../types/_typed_identifier";
-import {ABAPRelease, versionToABAPRelease} from "../../version";
+import {ABAPRelease} from "../../version";
 import {BuiltIn} from "./_builtin";
 import {DDIC} from "../../ddic";
 import {Position} from "../../position";
@@ -65,7 +65,7 @@ export class CurrentScope {
 ///////////////////////////
 
   public getRelease(): ABAPRelease {
-    return versionToABAPRelease(this.reg.getConfig().getVersion());
+    return this.reg.getConfig().getRelease();
   }
 
   public getVersion() {
