@@ -9,7 +9,7 @@ on:
 
 jobs:
   syntax:
-    if: github.event_name != 'pull_request' || !startsWith(github.head_ref, 'release/v')
+    if: "${{ (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'release/v')) && !startsWith(github.event.head_commit.message, 'chore(release): v') }}"
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
