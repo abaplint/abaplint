@@ -735,6 +735,10 @@ export abstract class Expression implements IStatementRunnable {
             const n = t.getNodes().slice(0, originalLength - consumed);
             n.push(re);
             t.setNodes(n);
+          } else {
+            // zero-consumption (empty) match: cache a pass-through marker so a
+            // cache hit reproduces this branch instead of silently dropping it.
+            cached.push({newTokenIndex: t.getTokenIndex()});
           }
           results.push(t);
         }
@@ -743,6 +747,11 @@ export abstract class Expression implements IStatementRunnable {
         }
       } else {
         for (const entry of cached) {
+          if (entry.children === undefined) {
+            const shifted = new Result(input.getTokens(), entry.newTokenIndex, input.getNodes().slice());
+            results.push(shifted);
+            continue;
+          }
           const re = new ExpressionNode(this);
           re.setChildren(entry.children.slice());
           const n = input.getNodes().slice();
@@ -1044,7 +1053,9 @@ class AlternativePriority implements IStatementRunnable {
   }
 }
 
-type MemoEntry = {children: readonly (ExpressionNode | TokenNode)[], newTokenIndex: number}[];
+// `children` is undefined for a zero-consumption (empty) match, which is
+// reproduced on a cache hit as a pass-through of the current input.
+type MemoEntry = {children?: readonly (ExpressionNode | TokenNode)[], newTokenIndex: number}[];
 
 export class Combi {
 // todo, change this class to be instantiated, constructor(runnable) ?
