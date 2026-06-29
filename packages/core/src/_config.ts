@@ -1,4 +1,4 @@
-import {Version, LanguageVersion, ABAPRelease} from "./version";
+import {LanguageVersion, ABAPRelease, VersionNew} from "./version";
 import {IRule} from "./rules/_irule";
 
 export interface IGlobalConfig {
