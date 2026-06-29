@@ -31,6 +31,23 @@ class Progress implements IProgress {
   }
 }
 
+function validateVersion(version: any): void {
+  if (version === undefined) {
+    return;
+  }
+  let known = false;
+  if (typeof version === "string") {
+    const vers: any = Version;
+    known = Object.keys(Version).some(v => vers[v] === version);
+  } else if (typeof version === "object" && typeof version.release === "string") {
+    // new object form: {release, language}
+    known = Release[version.release] !== undefined;
+  }
+  if (known === false) {
+    throw "Error: Unknown version in abaplint.json";
+  }
+}
+
 function loadConfig(filename: string | undefined): {config: Config, base: string} {
   // possible cases:
   // a) nothing specified, using abaplint.json from cwd
@@ -71,20 +88,7 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
   process.stderr.write("Using config: " + f + "\n");
   const json = fs.readFileSync(f, "utf8");
   const parsed = JSON5.parse(json);
-  const version = parsed.syntax?.version;
-  if (version !== undefined) {
-    let known = false;
-    if (typeof version === "string") {
-      const vers: any = Version;
-      known = Object.keys(Version).some(v => vers[v] === version);
-    } else if (typeof version === "object" && typeof version.release === "string") {
-      // new object form: {release, language}
-      known = Release[version.release] !== undefined;
-    }
-    if (known === false) {
-      throw "Error: Unknown version in abaplint.json";
-    }
-  }
+  validateVersion(parsed.syntax?.version);
 
   return {
     config: new Config(json),
