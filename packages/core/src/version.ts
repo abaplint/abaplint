@@ -63,7 +63,7 @@ export interface ABAPRelease {
 
 type ReleaseDefRaw = Omit<ABAPRelease, "ordinal" | "name">;
 
-const releaseDefsRaw: readonly [string, ReleaseDefRaw][] = [
+const releaseDefsRaw = [
   // Pre-cloud on-prem releases. kernel == op for these.
   ["v700", {abap: "700", kernel: 700, op: 700, cloud: null, ce: null}],
   ["v701", {abap: "701", kernel: 701, op: 701, cloud: null, ce: null}],
@@ -140,7 +140,10 @@ const releaseDefsRaw: readonly [string, ReleaseDefRaw][] = [
   ["v918", {abap: "9.18", kernel: 918, op: null, cloud: 918, ce: 2602}],
   // Newest: always-active sentinel, satisfies any release check
   ["Newest", {abap: null, kernel: null, op: null, cloud: null, ce: null}],
-];
+] as const satisfies readonly (readonly [string, ReleaseDefRaw])[];
+
+/** Union of all raw release name strings, e.g. `"v700" | "v758" | "Newest"`. */
+export type ReleaseName = (typeof releaseDefsRaw)[number][0];
 
 /** All known releases in chronological order. Declaration order IS the ordering. */
 export const ReleaseList: readonly ABAPRelease[] =
@@ -215,5 +218,5 @@ export function getPreviousVersion(v: Version): Version {
   return all[found - 1];
 }
 
-export type VersionNew = {release: ABAPRelease, language: LanguageVersion};
+export type VersionNew = {release: ReleaseName, language: LanguageVersion};
 export type VersionOldOrNew = Version | VersionNew;

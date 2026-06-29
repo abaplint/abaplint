@@ -1,4 +1,4 @@
-import {Version, LanguageVersion, defaultVersion, ABAPRelease, versionToABAPRelease} from "./version";
+import {Version, LanguageVersion, defaultVersion, ABAPRelease, versionToABAPRelease, Release} from "./version";
 import {ArtifactsRules} from "./artifacts_rules";
 import {IRule} from "./rules/_irule";
 import {IConfig, IGlobalConfig, ISyntaxSettings, IConfiguration} from "./_config";
@@ -140,7 +140,7 @@ export class Config implements IConfiguration {
   public getRelease(): ABAPRelease {
     const v = this.config.syntax.version;
     if (v !== undefined && typeof v !== "string") {
-      return v.release;
+      return Release[v.release];
     }
     return versionToABAPRelease(this.getVersion());
   }

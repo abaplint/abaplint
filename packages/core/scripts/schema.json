@@ -2,58 +2,6 @@
   "$ref": "#/definitions/IConfig",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
-    "ABAPRelease": {
-      "additionalProperties": false,
-      "description": "A single row in the release table.\n\nabap   — SAP_BASIS / ABAP release name as SAP calls it (e.g. \"740SP05\", \"7.90\", \"9.16\") kernel — SAP kernel release number that ships this ABAP release op     — on-premise release number (e.g. 758, 816), null for cloud-only releases cloud  — cloud release number (e.g. 793, 916), null for pre-cloud releases ce     — SAP BTP / S/4HANA Cloud Public Edition shipment quarter (YYMM, e.g. 2308),           null if never shipped to customers on cloud ordinal — chronological index (set at build time from array position), used for ordering",
-      "properties": {
-        "abap": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "ce": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "cloud": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "kernel": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "name": {
-          "type": "string"
-        },
-        "op": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "ordinal": {
-          "type": "number"
-        }
-      },
-      "required": [
-        "name",
-        "abap",
-        "kernel",
-        "op",
-        "cloud",
-        "ce",
-        "ordinal"
-      ],
-      "type": "object"
-    },
     "AFFAndXMLConf": {
       "additionalProperties": false,
       "properties": {
@@ -8075,6 +8023,69 @@
       },
       "type": "object"
     },
+    "ReleaseName": {
+      "description": "Union of all raw release name strings, e.g. `\"v700\" | \"v758\" | \"Newest\"`.",
+      "enum": [
+        "v700",
+        "v701",
+        "v702",
+        "v710",
+        "v711",
+        "v720",
+        "v722",
+        "v730",
+        "v731",
+        "v740sp02",
+        "v740sp05",
+        "v740sp08",
+        "v760",
+        "v761",
+        "v762",
+        "v763",
+        "v764",
+        "v765",
+        "v766",
+        "v767",
+        "v768",
+        "v769",
+        "v770",
+        "v771",
+        "v772",
+        "v773",
+        "v774",
+        "v775",
+        "v776",
+        "v777",
+        "v778",
+        "v779",
+        "v780",
+        "v781",
+        "v782",
+        "v783",
+        "v784",
+        "v785",
+        "v786",
+        "v787",
+        "v788",
+        "v789",
+        "v790",
+        "v791",
+        "v792",
+        "v793",
+        "v794",
+        "v795",
+        "v796",
+        "v912",
+        "v913",
+        "v914",
+        "v915",
+        "v916",
+        "v917",
+        "v918",
+        "Newest"
+      ],
+      "type": "string"
+    },
     "RemoveDescriptionsConf": {
       "additionalProperties": false,
       "properties": {
@@ -9034,7 +9045,7 @@
           "$ref": "#/definitions/LanguageVersion"
         },
         "release": {
-          "$ref": "#/definitions/ABAPRelease"
+          "$ref": "#/definitions/ReleaseName"
         }
       },
       "required": [
