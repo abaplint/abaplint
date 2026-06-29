@@ -1,5 +1,5 @@
-import {Release} from "../../../src/version";
-import {statementType, statementVersion, statementVersionOk} from "../_utils";
+import {Release, LanguageVersion} from "../../../src/version";
+import {statementType, statementVersion, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 
@@ -55,3 +55,7 @@ const versionsOk = [
 ];
 
 statementVersionOk(versionsOk, "LOOP, 702", Statements.Loop);
+
+statementVersionFail([
+  {abap: "LOOP AT lt_tab ASSIGNING <fs> WHERE (lv_where).", rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+], "LOOP dynamic WHERE not allowed in KeyUser");

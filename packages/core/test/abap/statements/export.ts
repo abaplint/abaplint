@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src";
 
 const tests = [
   "EXPORT foo TO MEMORY ID 'MOO'.",
@@ -39,3 +40,19 @@ const tests = [
 ];
 
 statementType(tests, "EXPORT", Statements.Export);
+
+const keyUserFail = [
+  {abap: `EXPORT foo TO MEMORY ID 'MOO'.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `EXPORT data = lt_data TO DATABASE indx(zr) FROM lv_indx ID lc_id.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `EXPORT foo TO SHARED BUFFER indx(AB) ID 'FOO' FROM var.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `EXPORT foo TO SHARED MEMORY indx(AB) ID 'FOO' FROM var.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "EXPORT KeyUser restrictions");
+
+const keyUserOk = [
+  {abap: `EXPORT foo TO DATA BUFFER lv_buf.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `EXPORT foo TO INTERNAL TABLE lt_tab.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionOk(keyUserOk, "EXPORT KeyUser allowed", Statements.Export);

@@ -1,11 +1,11 @@
-import {seq, alt, tok, opt, Expression, ver, AlsoIn} from "../combi";
+import {seq, alt, tok, opt, Expression, ver, AlsoIn, verNotLang} from "../combi";
 import {InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 import {Source} from "./source";
 import {Dynamic} from "./dynamic";
 import {Field} from "./field";
 import {SimpleSource3} from "./simple_source3";
-import {Release} from "../../../version";
+import {Release, LanguageVersion} from "../../../version";
 
 export class AssignSource extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -14,14 +14,23 @@ export class AssignSource extends Expression {
                           "OF STRUCTURE",
                           Source);
 
-    const tableField = seq("TABLE FIELD", alt(Source, Dynamic));
+    // TABLE FIELD form: blocked in KeyUser
+    const tableField = verNotLang(LanguageVersion.KeyUser, seq("TABLE FIELD", alt(Source, Dynamic)));
 
-    const arrow = alt(tok(InstanceArrow), tok(StaticArrow));
+    // class=>(dyn_attr) via static arrow is blocked in KeyUser
+    // ref->(dyn_comp) via instance arrow is allowed — leave unguarded
+    const arrowDynamic = alt(
+      tok(InstanceArrow),
+      verNotLang(LanguageVersion.KeyUser, tok(StaticArrow)),
+    );
 
-    const source = alt(seq(Source, opt(seq(arrow, Dynamic))),
+    const anyArrow = alt(tok(InstanceArrow), tok(StaticArrow));
+    const source = alt(seq(Source, opt(seq(arrowDynamic, Dynamic))),
                        component,
                        tableField,
-                       seq(Dynamic, opt(seq(arrow, alt(Field, Dynamic)))));
+                       // standalone dynamic symbol (dyn_sym) blocked in KeyUser
+                       verNotLang(LanguageVersion.KeyUser,
+                                  seq(Dynamic, opt(seq(anyArrow, alt(Field, Dynamic))))));
 
     return source;
   }

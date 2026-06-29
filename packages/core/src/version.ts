@@ -204,8 +204,7 @@ export function versionToABAPRelease(v: Version): ABAPRelease {
   return found;
 }
 
-export const defaultVersion = Version.v758;
-export const defaultRelease: ABAPRelease = Release.v758;
+export const defaultRelease: ABAPRelease = Release.Newest;
 
 export function getPreviousVersion(v: Version): Version {
   if (v === Version.OpenABAP) {

@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "METHOD zfoobar.",
@@ -16,3 +17,10 @@ const tests = [
 ];
 
 statementType(tests, "METHOD", Statements.MethodImplementation);
+
+const keyUserFail = [
+  {abap: `METHOD foo BY DATABASE PROCEDURE FOR HDB LANGUAGE SQLSCRIPT.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `METHOD foo BY KERNEL MODULE bar.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "METHOD BY DATABASE/KERNEL KeyUser restrictions");

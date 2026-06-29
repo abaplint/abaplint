@@ -1,4 +1,4 @@
-import {Version, LanguageVersion, defaultVersion, ABAPRelease, versionToABAPRelease, Release} from "./version";
+import {Version, LanguageVersion, ABAPRelease, versionToABAPRelease, Release, defaultRelease, VersionOldOrNew} from "./version";
 import {ArtifactsRules} from "./artifacts_rules";
 import {IRule} from "./rules/_irule";
 import {IConfig, IGlobalConfig, ISyntaxSettings, IConfiguration} from "./_config";
@@ -8,7 +8,7 @@ import * as JSON5 from "json5";
 export class Config implements IConfiguration {
   private readonly config: IConfig;
 
-  public static getDefault(ver?: Version, langVer?: LanguageVersion, openABAP?: boolean): Config {
+  public static getDefault(ver?: VersionOldOrNew, langVer?: LanguageVersion, openABAP?: boolean): Config {
     const rules: any = {};
 
     const sorted = ArtifactsRules.getRules().sort((a, b) => {
@@ -19,10 +19,7 @@ export class Config implements IConfiguration {
       rules[rule.getMetadata().key] = rule.getConfig();
     }
 
-    let version = defaultVersion;
-    if (ver) {
-      version = ver;
-    }
+    const version: VersionOldOrNew | undefined = ver;
 
     // defaults: dont skip anything, report everything. The user can decide to skip stuff
     // its difficult to debug errors not being reported
@@ -142,7 +139,10 @@ export class Config implements IConfiguration {
     if (v !== undefined && typeof v !== "string") {
       return Release[v.release];
     }
-    return versionToABAPRelease(this.getVersion());
+    if (this.config.global === undefined || v === undefined) {
+      return defaultRelease;
+    }
+    return versionToABAPRelease(v);
   }
 
   public getOpenABAP(): boolean {
@@ -152,7 +152,7 @@ export class Config implements IConfiguration {
   public getVersion(): Version {
     const v = this.config.syntax.version;
     if (this.config.global === undefined || v === undefined || typeof v !== "string") {
-      return defaultVersion;
+      return Version.v816;
     }
     return v;
   }
@@ -179,7 +179,7 @@ export class Config implements IConfiguration {
       }
     }
     if (match === false) {
-      this.config.syntax.version = defaultVersion;
+      this.config.syntax.version = undefined;
       return;
     }
     if (version === Version.Cloud) {

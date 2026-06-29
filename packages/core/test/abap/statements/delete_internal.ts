@@ -1,5 +1,6 @@
-import {statementExpectFail, statementType} from "../_utils";
+import {statementExpectFail, statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "DELETE mt_stack INDEX lv_index.",
@@ -38,3 +39,9 @@ const fails = [
   "DELETE TABLE ignore FROM lv_name to 10.",
 ];
 statementExpectFail(fails, "DELETE");
+
+const keyUserFail = [
+  {abap: `DELETE lt_tab WHERE (lv_cond).`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "DELETE itab WHERE (dynamic) KeyUser restrictions");

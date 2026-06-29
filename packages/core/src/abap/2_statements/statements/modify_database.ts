@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {seq, opt, per} from "../combi";
+import {seq, opt, per, verNotLang} from "../combi";
 import {DatabaseTable, SQLSource, DatabaseConnection, SQLClient} from "../expressions";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class ModifyDatabase implements IStatement {
@@ -11,7 +12,7 @@ export class ModifyDatabase implements IStatement {
 
     const options = per(DatabaseConnection, from, SQLClient);
 
-    return seq("MODIFY", DatabaseTable, options);
+    return verNotLang(LanguageVersion.KeyUser, seq("MODIFY", DatabaseTable, options));
   }
 
 }

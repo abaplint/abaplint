@@ -69,3 +69,9 @@ const testsVersionFail = [
 ];
 
 statementVersionFail(testsVersionFail, "MESSAGE");
+
+const keyUserFail = [
+  {abap: `MESSAGE e001(foo) RAISING bar.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "MESSAGE RAISING KeyUser restrictions");

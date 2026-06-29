@@ -1,5 +1,5 @@
-import {Release} from "../../../src/version";
-import {statementExpectFail, statementType, statementVersion} from "../_utils";
+import {Release, LanguageVersion} from "../../../src/version";
+import {statementExpectFail, statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 
@@ -61,3 +61,18 @@ const fails = [
 //  "RAISE EXCEPTION TYPE zcx_sdfds MESSAGE e006(sdf) WITH xstrlen( val ) ms_info.",
 ];
 statementExpectFail(fails, "RAISE");
+
+const keyUserFail = [
+  // old form "RAISE exception_name" blocked in KeyUser
+  {abap: `RAISE zcx_foo.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "RAISE KeyUser restrictions");
+
+const keyUserOk = [
+  // RAISE EXCEPTION (new form) and RAISE SHORTDUMP: allowed in KeyUser
+  {abap: `RAISE EXCEPTION TYPE zcx_foo.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `RAISE EXCEPTION NEW zcx_foo( ).`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionOk(keyUserOk, "RAISE KeyUser allowed", Statements.Raise);

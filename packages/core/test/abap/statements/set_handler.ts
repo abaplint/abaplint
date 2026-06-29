@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "SET HANDLER me->on_event FOR mo_html_viewer.",
@@ -13,3 +14,9 @@ const tests = [
 ];
 
 statementType(tests, "SET HANDLER", Statements.SetHandler);
+
+const keyUserFail = [
+  {abap: `SET HANDLER me->on_event FOR mo_html_viewer.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "SET HANDLER KeyUser restrictions");

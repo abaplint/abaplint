@@ -17,3 +17,9 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "GET BADI");
+
+const keyUserFail = [
+  {abap: `GET BADI lo_foobar.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "GET BADI KeyUser restrictions");

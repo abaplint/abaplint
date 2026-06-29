@@ -13,3 +13,9 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "FREE OBJECT");
+
+const keyUserFail = [
+  {abap: `free object foobar.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "FREE OBJECT KeyUser restrictions");

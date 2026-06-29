@@ -1,5 +1,6 @@
 import {IStatement} from "./_statement";
-import {seq} from "../combi";
+import {LanguageVersion} from "../../../version";
+import {seq, verNotLang} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -11,7 +12,7 @@ export class Subtract implements IStatement {
                     "FROM",
                     Target);
 
-    return ret;
+    return verNotLang(LanguageVersion.KeyUser, ret);
   }
 
 }

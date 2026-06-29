@@ -38,7 +38,7 @@ export class Perform implements IStatement {
                     alt(short, full),
                     altPrio(of, normal));
 
-    return ret;
+    return verNotLang(LanguageVersion.KeyUser, ret);
   }
 
 }

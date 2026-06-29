@@ -1,5 +1,6 @@
 import {IStatement} from "./_statement";
-import {seq, opt, per, alt, ver, AlsoIn} from "../combi";
+import {LanguageVersion} from "../../../version";
+import {seq, opt, per, alt, ver, AlsoIn, verNotLang} from "../combi";
 import {Release} from "../../../version";
 import {Source, Cond} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
@@ -19,7 +20,7 @@ export class Wait implements IStatement {
 
     const ret = seq("WAIT", alt(until, up));
 
-    return ret;
+    return verNotLang(LanguageVersion.KeyUser, ret);
   }
 
 }

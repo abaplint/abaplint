@@ -24,6 +24,7 @@ statementType(tests, "DELETE", Statements.DeleteDatabase);
 
 const versionsFail = [
   {abap: `DELETE FROM ZFOOBAR CLIENT SPECIFIED WHERE MANDT = SY-MANDT.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `DELETE FROM zfoo WHERE id = lv_id.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
 ];
 
 statementVersionFail(versionsFail, "DELETE CLIENT SPECIFIED");

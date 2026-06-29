@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, tok} from "../combi";
+import {seq, alt, opt, tok, verNotLang} from "../combi";
 import {DatabaseTable, SQLSource, Select, DatabaseConnection, SQLClient} from "../expressions";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
+import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class InsertDatabase implements IStatement {
@@ -26,7 +27,7 @@ export class InsertDatabase implements IStatement {
                      "VALUES",
                      SQLSource);
 
-    return seq("INSERT", alt(from, into));
+    return verNotLang(LanguageVersion.KeyUser, seq("INSERT", alt(from, into)));
   }
 
 }

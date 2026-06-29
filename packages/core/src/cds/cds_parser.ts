@@ -2,7 +2,7 @@ import {Comment} from "../abap/1_lexer/tokens";
 import {Combi} from "../abap/2_statements/combi";
 import {ExpressionNode} from "../abap/nodes";
 import {IFile} from "../files/_ifile";
-import {defaultVersion} from "../version";
+import {defaultRelease} from "../version";
 import {CDSLexer} from "./cds_lexer";
 import * as Expressions from "./expressions";
 
@@ -17,27 +17,27 @@ export class CDSParser {
     let tokens = CDSLexer.run(file);
     tokens = tokens.filter(t => !(t instanceof Comment));
 
-    let res = Combi.run(new Expressions.CDSDefineView(), tokens, defaultVersion);
+    let res = Combi.run(new Expressions.CDSDefineView(), tokens, defaultRelease);
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {
-      res = Combi.run(new Expressions.CDSDefineAbstract(), tokens, defaultVersion);
+      res = Combi.run(new Expressions.CDSDefineAbstract(), tokens, defaultRelease);
     }
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {
-      res = Combi.run(new Expressions.CDSDefineProjection(), tokens, defaultVersion);
+      res = Combi.run(new Expressions.CDSDefineProjection(), tokens, defaultRelease);
     }
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {
-      res = Combi.run(new Expressions.CDSAnnotate(), tokens, defaultVersion);
+      res = Combi.run(new Expressions.CDSAnnotate(), tokens, defaultRelease);
     }
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {
-      res = Combi.run(new Expressions.CDSDefineCustom(), tokens, defaultVersion);
+      res = Combi.run(new Expressions.CDSDefineCustom(), tokens, defaultRelease);
     }
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {
-      res = Combi.run(new Expressions.CDSDefineTableFunction(), tokens, defaultVersion);
+      res = Combi.run(new Expressions.CDSDefineTableFunction(), tokens, defaultRelease);
     }
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {
-      res = Combi.run(new Expressions.CDSExtendView(), tokens, defaultVersion);
+      res = Combi.run(new Expressions.CDSExtendView(), tokens, defaultRelease);
     }
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {
-      res = Combi.run(new Expressions.CDSDefineHierarchy(), tokens, defaultVersion);
+      res = Combi.run(new Expressions.CDSDefineHierarchy(), tokens, defaultRelease);
     }
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {
       return undefined;

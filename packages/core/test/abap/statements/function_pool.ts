@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "FUNCTION-POOL zfoobar MESSAGE-ID ab.",
@@ -12,3 +13,7 @@ const tests = [
 ];
 
 statementType(tests, "FUNCTION-POOL", Statements.FunctionPool);
+
+statementVersionFail([
+  {abap: "FUNCTION-POOL zfoo.", rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+], "FUNCTION-POOL not allowed in KeyUser");

@@ -1,5 +1,5 @@
-import {Release} from "../../../src/version";
-import {statementExpectFail, statementType, statementVersion} from "../_utils";
+import {Release, LanguageVersion} from "../../../src/version";
+import {statementExpectFail, statementType, statementVersion, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 
@@ -190,3 +190,11 @@ const fails = [
   "METHODS test1 FOR TESTING RETURNING VALUE(vbeln) TYPE string.",
 ];
 statementExpectFail(fails, "MethodDef");
+
+const keyUserFail = [
+  {abap: `METHODS foo AMDP OPTIONS CDS SESSION CLIENT CURRENT.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `METHODS foo EXCEPTIONS bar.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `METHODS foo FOR TABLE FUNCTION zfoo.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "METHODS KeyUser restrictions");

@@ -166,6 +166,8 @@ statementExpectFail([
 const clientSpecifiedFail = [
   {abap: `WITH +cte AS ( SELECT mandt FROM ztable CLIENT SPECIFIED )
     SELECT * FROM +cte WHERE mandt = @sy-mandt INTO TABLE @DATA(result).`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `WITH +cte AS ( SELECT col FROM ztab )
+    SELECT FROM +cte FIELDS col INTO TABLE @DATA(lt_r).`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
 ];
 
 statementVersionFail(clientSpecifiedFail, "WITH CLIENT SPECIFIED");

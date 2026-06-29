@@ -1,6 +1,6 @@
 import {Config} from "../../src/config";
 import {expect} from "chai";
-import {Version, getPreviousVersion, defaultVersion, ABAPRelease, versionToABAPRelease, LanguageVersion} from "../../src/version";
+import {Version, getPreviousVersion, defaultRelease, ABAPRelease, versionToABAPRelease, LanguageVersion, ReleaseName, VersionOldOrNew} from "../../src/version";
 import {Unknown} from "../../src/abap/2_statements/statements/_statement";
 import {IStructure} from "../../src/abap/3_structures/structures/_structure";
 import {StatementParser} from "../../src/abap/2_statements/statement_parser";
@@ -38,20 +38,6 @@ const legacyReleases: ABAPRelease[] = (() => {
   return result.sort((a, b) => a.ordinal - b.ordinal);
 })();
 
-function releaseToVersion(r: ABAPRelease): Version {
-  for (const v of Object.values(Version)) {
-    if (v === Version.OpenABAP) { continue; }
-    try {
-      if (versionToABAPRelease(v as Version) === r) { return v as Version; }
-    } catch { /* */ }
-  }
-  let best = legacyReleases[0];
-  for (const x of legacyReleases) {
-    if (x.ordinal <= r.ordinal) { best = x; }
-  }
-  return releaseToVersion(best);
-}
-
 export function getPreviousRelease(r: ABAPRelease): ABAPRelease {
   const idx = legacyReleases.findIndex(x => x.name === r.name);
   if (idx <= 0) { throw new Error("No previous release for: " + r.name); }
@@ -62,7 +48,7 @@ export function getStatements(abap: string, version?: ABAPRelease | Version, lan
   const lexerResult = new Lexer().run(new MemoryFile("cl_foo.clas.abap", abap));
   let release: ABAPRelease;
   if (version === undefined) {
-    release = versionToABAPRelease(defaultVersion);
+    release = defaultRelease;
   } else if (typeof version === "string") {
     release = versionToABAPRelease(version as Version);
   } else {
@@ -87,21 +73,16 @@ export function parse(abap: string, config?: Config) {
 
 function run(abap: string, text: string, type: any, version?: ABAPRelease | Version | undefined, langVer?: LanguageVersion) {
   it(text, () => {
-    let ver: Version | undefined;
-    if (version === undefined) {
-      ver = undefined;
-    } else if (typeof version === "string") {
-      ver = version as Version;
-    } else {
-      ver = releaseToVersion(version as ABAPRelease);
-    }
+    // For an explicit ABAPRelease use the object form {release, language} so the
+    // exact release (including Release.Newest, which has no plain Version) and the
+    // requested languageVersion are honored without Config.checkVersion() magic.
+    const ver: VersionOldOrNew | undefined =
+      (version !== undefined && typeof version !== "string")
+        ? {release: (version as ABAPRelease).name as ReleaseName, language: langVer ?? LanguageVersion.Normal}
+        : version as Version | undefined;
     const config = Config.getDefault(ver, langVer);
     const file = parse(abap, config);
     const slist = file.getStatements();
-
-    if (ver === undefined) {
-      ver = Config.getDefault().getVersion();
-    }
 
     expect(slist[0].get()).to.be.instanceof(type);
 // assumption: no colons in input
@@ -111,22 +92,7 @@ function run(abap: string, text: string, type: any, version?: ABAPRelease | Vers
 
 function runExpectFail(abap: string, text: string, version?: ABAPRelease | Version | undefined, langVer?: LanguageVersion) {
   it(text, () => {
-    let ver: Version | undefined;
-    if (version === undefined) {
-      ver = undefined;
-    } else if (typeof version === "string") {
-      ver = version as Version;
-    } else {
-      ver = releaseToVersion(version as ABAPRelease);
-    }
-    const config = Config.getDefault(ver, langVer);
-    const file = parse(abap, config);
-    const slist = file.getStatements();
-
-    if (ver === undefined) {
-      ver = Config.getDefault().getVersion();
-    }
-
+    const slist = getStatements(abap, version, langVer);
     expect(slist[0].get()).to.be.instanceof(Unknown);
   });
 }

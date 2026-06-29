@@ -3520,6 +3520,17 @@
               ],
               "description": "Finds modification of sy fields\nTags: SingleFile\nhttps://rules.abaplint.org/sy_modification"
             },
+            "sy_read_restriction": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SyReadRestrictionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds reads of SY fields not allowed in the current language version\nTags: SingleFile\nhttps://rules.abaplint.org/sy_read_restriction"
+            },
             "tabl_enhancement_category": {
               "anyOf": [
                 {
@@ -5543,6 +5554,17 @@
                 }
               ],
               "description": "Finds modification of sy fields\nTags: SingleFile\nhttps://rules.abaplint.org/sy_modification"
+            },
+            "sy_read_restriction": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SyReadRestrictionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds reads of SY fields not allowed in the current language version\nTags: SingleFile\nhttps://rules.abaplint.org/sy_read_restriction"
             },
             "tabl_enhancement_category": {
               "anyOf": [
@@ -8574,6 +8596,23 @@
       "type": "object"
     },
     "SyModificationConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "SyReadRestrictionConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

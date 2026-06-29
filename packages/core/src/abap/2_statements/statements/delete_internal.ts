@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, optPrio, per, plus, altPrio} from "../combi";
+import {seq, alt, opt, optPrio, per, plus, altPrio, verNotLang} from "../combi";
 import {Target, Source, Dynamic, ComponentCompare, ComponentCond, SimpleName, FieldOffset, FieldLength, SimpleFieldChain2} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {LanguageVersion} from "../../../version";
 
 export class DeleteInternal implements IStatement {
 
@@ -17,7 +18,8 @@ export class DeleteInternal implements IStatement {
     const fromTo = seq(optPrio(from),
                        optPrio(seq("TO", Source)));
 
-    const where = seq("WHERE", alt(ComponentCond, Dynamic));
+    // WHERE (dynamic) blocked in KeyUser
+    const where = seq("WHERE", alt(ComponentCond, verNotLang(LanguageVersion.KeyUser, Dynamic)));
 
     const key = seq("WITH TABLE KEY",
                     opt(seq(keyName, "COMPONENTS")),

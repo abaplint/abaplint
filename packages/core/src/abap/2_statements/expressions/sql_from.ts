@@ -1,7 +1,8 @@
-import {seq, starPrio, optPrio, tok, Expression, altPrio} from "../combi";
+import {seq, starPrio, optPrio, tok, Expression, altPrio, verNotLang} from "../combi";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {SQLJoin, SQLFromSource} from ".";
 import {IStatementRunnable} from "../statement_runnable";
+import {LanguageVersion} from "../../../version";
 
 export class SQLFrom extends Expression {
   // todo: rewrite/refactor this method
@@ -11,35 +12,42 @@ export class SQLFrom extends Expression {
     // No opening parens
     const from0 = seq("FROM", SQLFromSource, joins);
 
-    // 1 to 7 opening parens, with up to that many closing parens at the end
-    const from1 = seq("FROM", tok(WParenLeftW), SQLFromSource, joins, optPrio(tok(WParenRightW)));
+    // 1 to 7 opening parens, with up to that many closing parens at the end (dynamic FROM, not allowed in KeyUser)
+    const from1 = verNotLang(LanguageVersion.KeyUser,
+                             seq("FROM", tok(WParenLeftW), SQLFromSource, joins, optPrio(tok(WParenRightW))));
 
-    const from2 = seq("FROM", tok(WParenLeftW), tok(WParenLeftW), SQLFromSource, joins,
-                      optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)));
+    const from2 = verNotLang(LanguageVersion.KeyUser,
+                             seq("FROM", tok(WParenLeftW), tok(WParenLeftW), SQLFromSource, joins,
+                                 optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW))));
 
-    const from3 = seq("FROM", tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), SQLFromSource, joins,
-                      optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)));
+    const from3 = verNotLang(LanguageVersion.KeyUser,
+                             seq("FROM", tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), SQLFromSource, joins,
+                                 optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW))));
 
-    const from4 = seq("FROM", tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW),
-                      SQLFromSource, joins,
-                      optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
-                      optPrio(tok(WParenRightW)));
+    const from4 = verNotLang(LanguageVersion.KeyUser,
+                             seq("FROM", tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW),
+                                 SQLFromSource, joins,
+                                 optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
+                                 optPrio(tok(WParenRightW))));
 
-    const from5 = seq("FROM", tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW),
-                      tok(WParenLeftW), SQLFromSource, joins,
-                      optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
-                      optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)));
+    const from5 = verNotLang(LanguageVersion.KeyUser,
+                             seq("FROM", tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW),
+                                 tok(WParenLeftW), SQLFromSource, joins,
+                                 optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
+                                 optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW))));
 
-    const from6 = seq("FROM", tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW),
-                      tok(WParenLeftW), tok(WParenLeftW), SQLFromSource, joins,
-                      optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
-                      optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)));
+    const from6 = verNotLang(LanguageVersion.KeyUser,
+                             seq("FROM", tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW),
+                                 tok(WParenLeftW), tok(WParenLeftW), SQLFromSource, joins,
+                                 optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
+                                 optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW))));
 
-    const from7 = seq("FROM", tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW),
-                      tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), SQLFromSource, joins,
-                      optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
-                      optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
-                      optPrio(tok(WParenRightW)));
+    const from7 = verNotLang(LanguageVersion.KeyUser,
+                             seq("FROM", tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW),
+                                 tok(WParenLeftW), tok(WParenLeftW), tok(WParenLeftW), SQLFromSource, joins,
+                                 optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
+                                 optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)), optPrio(tok(WParenRightW)),
+                                 optPrio(tok(WParenRightW))));
 
     const source = altPrio(from7, from6, from5, from4, from3, from2, from1, from0);
 

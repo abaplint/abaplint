@@ -156,6 +156,7 @@ export * from "./strict_sql";
 export * from "./superclass_final";
 export * from "./superfluous_value";
 export * from "./sy_modification";
+export * from "./sy_read_restriction";
 export * from "./tabl_enhancement_category";
 export * from "./tables_declared_locally";
 export * from "./try_without_catch";

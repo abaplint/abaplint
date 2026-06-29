@@ -1,7 +1,7 @@
 import {Combi} from "../abap/2_statements/combi";
 import {ExpressionNode} from "../abap/nodes";
 import {IFile} from "../files/_ifile";
-import {defaultVersion} from "../version";
+import {defaultRelease} from "../version";
 import {DDLLexer} from "./ddl_lexer";
 import * as Expressions from "./expressions";
 
@@ -27,9 +27,9 @@ export class DDLParser {
   public parse(file: IFile): IDDLParserResult | undefined {
     const tokens = DDLLexer.run(file);
 
-    let res = Combi.run(new Expressions.DDLStructure(), tokens, defaultVersion);
+    let res = Combi.run(new Expressions.DDLStructure(), tokens, defaultRelease);
     if (res === undefined) {
-      res = Combi.run(new Expressions.DDLTable(), tokens, defaultVersion);
+      res = Combi.run(new Expressions.DDLTable(), tokens, defaultRelease);
     }
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {
       return undefined;

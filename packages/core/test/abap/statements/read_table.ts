@@ -1,4 +1,4 @@
-import {Release} from "../../../src/version";
+import {Release, LanguageVersion} from "../../../src/version";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {statementExpectFail, statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 
@@ -82,3 +82,9 @@ const fail = [
 ];
 
 statementExpectFail(fail, "READ TABLE");
+
+const keyUserFail = [
+  {abap: `READ TABLE lt_tab USING KEY (lv_key) INTO lv.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+];
+
+statementVersionFail(keyUserFail, "READ TABLE-WHERE-DYN KeyUser restrictions");

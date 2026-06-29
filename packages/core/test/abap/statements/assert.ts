@@ -1,6 +1,6 @@
-import {statementType, statementVersionOk} from "../_utils";
+import {statementType, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
-import {Version, Release} from "../../../src/version";
+import {Version, Release, LanguageVersion} from "../../../src/version";
 
 const tests = [
   "ASSERT <lv_field> IS ASSIGNED.",
@@ -20,3 +20,7 @@ const versionsOk = [
 ];
 
 statementVersionOk(versionsOk, "ASSERT", Statements.Assert);
+
+statementVersionFail([
+  {abap: "ASSERT CONDITION 1 = 1.", rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+], "ASSERT not allowed in KeyUser");

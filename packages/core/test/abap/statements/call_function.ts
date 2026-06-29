@@ -330,6 +330,7 @@ const versionsFail = [
   EXPORTING
     iv_package = lo_repo->get_package( ).`, rel: Release.v702},
   {abap: `CALL FUNCTION 'SDF' IN BACKGROUND UNIT foo.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
+  {abap: `CALL FUNCTION 'FUNC'.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
 ];
 
 statementVersionFail(versionsFail, "APPEND");

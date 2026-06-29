@@ -1,5 +1,6 @@
 import {IStatement} from "./_statement";
-import {seq, alt, opt, regex, altPrio} from "../combi";
+import {LanguageVersion} from "../../../version";
+import {seq, alt, opt, regex, altPrio, verNotLang} from "../combi";
 import {SourceFieldSymbol, FieldSub, Dynamic, FieldLength, FieldOffset} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -16,7 +17,7 @@ export class At implements IStatement {
 
     const ret = seq("AT", altPrio(atNew, atEnd, group));
 
-    return ret;
+    return verNotLang(LanguageVersion.KeyUser, ret);
   }
 
 }
