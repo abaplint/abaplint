@@ -6017,8 +6017,8 @@
           "type": "boolean"
         },
         "version": {
-          "$ref": "#/definitions/Version",
-          "description": "ABAP release to parse against, e.g. `\"v758\"`, `\"Newest\"`, `\"Cloud\"`."
+          "$ref": "#/definitions/VersionOldOrNew",
+          "description": "ABAP language version"
         }
       },
       "required": [
@@ -8045,6 +8045,69 @@
       },
       "type": "object"
     },
+    "ReleaseName": {
+      "description": "Union of all raw release name strings, e.g. `\"v700\" | \"v758\" | \"Newest\"`.",
+      "enum": [
+        "v700",
+        "v701",
+        "v702",
+        "v710",
+        "v711",
+        "v720",
+        "v722",
+        "v730",
+        "v731",
+        "v740sp02",
+        "v740sp05",
+        "v740sp08",
+        "v760",
+        "v761",
+        "v762",
+        "v763",
+        "v764",
+        "v765",
+        "v766",
+        "v767",
+        "v768",
+        "v769",
+        "v770",
+        "v771",
+        "v772",
+        "v773",
+        "v774",
+        "v775",
+        "v776",
+        "v777",
+        "v778",
+        "v779",
+        "v780",
+        "v781",
+        "v782",
+        "v783",
+        "v784",
+        "v785",
+        "v786",
+        "v787",
+        "v788",
+        "v789",
+        "v790",
+        "v791",
+        "v792",
+        "v793",
+        "v794",
+        "v795",
+        "v796",
+        "v912",
+        "v913",
+        "v914",
+        "v915",
+        "v916",
+        "v917",
+        "v918",
+        "Newest"
+      ],
+      "type": "string"
+    },
     "RemoveDescriptionsConf": {
       "additionalProperties": false,
       "properties": {
@@ -9010,10 +9073,35 @@
         "v757",
         "v758",
         "v816",
-        "Cloud",
-        "Newest"
+        "Cloud"
       ],
       "type": "string"
+    },
+    "VersionNew": {
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "$ref": "#/definitions/LanguageVersion"
+        },
+        "release": {
+          "$ref": "#/definitions/ReleaseName"
+        }
+      },
+      "required": [
+        "release",
+        "language"
+      ],
+      "type": "object"
+    },
+    "VersionOldOrNew": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Version"
+        },
+        {
+          "$ref": "#/definitions/VersionNew"
+        }
+      ]
     },
     "WhenOthersLastConf": {
       "additionalProperties": false,

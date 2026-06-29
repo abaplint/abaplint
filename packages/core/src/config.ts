@@ -1,4 +1,4 @@
-import {Version, LanguageVersion, ABAPRelease, versionToABAPRelease} from "./version";
+import {Version, LanguageVersion, defaultVersion, ABAPRelease, versionToABAPRelease, Release} from "./version";
 import {ArtifactsRules} from "./artifacts_rules";
 import {IRule} from "./rules/_irule";
 import {IConfig, IGlobalConfig, ISyntaxSettings, IConfiguration} from "./_config";
@@ -135,6 +135,10 @@ export class Config implements IConfiguration {
   }
 
   public getRelease(): ABAPRelease {
+    const v = this.config.syntax.version;
+    if (v !== undefined && typeof v !== "string") {
+      return Release[v.release];
+    }
     return versionToABAPRelease(this.getVersion());
   }
 
@@ -143,24 +147,30 @@ export class Config implements IConfiguration {
   }
 
   public getVersion(): Version {
-    if (this.config.global === undefined || this.config.syntax.version === undefined) {
-      return Version.Newest;
+    const v = this.config.syntax.version;
+    if (this.config.global === undefined || v === undefined || typeof v !== "string") {
+      return defaultVersion;
     }
-    return this.config.syntax.version;
+    return v;
   }
 
   public getLanguageVersion(): LanguageVersion {
+    const v = this.config.syntax.version;
+    if (v !== undefined && typeof v !== "string") {
+      return v.language;
+    }
     return this.config.syntax.languageVersion ?? LanguageVersion.Normal;
   }
 
   private checkVersion() {
-    if (this.config.syntax.version === undefined) {
-      return; // handled in getVersion
+    const version = this.config.syntax.version;
+    if (version === undefined || typeof version !== "string") {
+      return; // undefined handled in getVersion, object form is already explicit
     }
     let match = false;
     const vers: any = Version;
     for (const v in Version) {
-      if (vers[v] === this.config.syntax.version) {
+      if (vers[v] === version) {
         match = true;
         break;
       }
@@ -169,10 +179,9 @@ export class Config implements IConfiguration {
       this.config.syntax.version = Version.Newest;
       return;
     }
-    if (this.config.syntax.version === Version.Cloud) {
-      this.config.syntax.version = Version.Newest;
+    if (version === Version.Cloud) {
       this.config.syntax.languageVersion = LanguageVersion.Cloud;
-    } else if (this.config.syntax.version === Version.OpenABAP) {
+    } else if (version === Version.OpenABAP) {
       this.config.syntax.version = Version.v702;
       this.config.syntax.openABAP = true;
     }
