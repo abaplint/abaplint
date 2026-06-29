@@ -215,4 +215,5 @@ export function getPreviousVersion(v: Version): Version {
   return all[found - 1];
 }
 
-export type VersionNew = Version | {release: ABAPRelease, language: LanguageVersion};
+export type VersionNew = {release: ABAPRelease, language: LanguageVersion};
+export type VersionBoth = Version | VersionNew;

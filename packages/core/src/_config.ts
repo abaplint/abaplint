@@ -1,4 +1,4 @@
-import {Version, LanguageVersion, ABAPRelease, VersionNew} from "./version";
+import {Version, LanguageVersion, ABAPRelease, VersionBoth} from "./version";
 import {IRule} from "./rules/_irule";
 
 export interface IGlobalConfig {
@@ -42,7 +42,7 @@ export interface IDependency {
 
 export interface ISyntaxSettings {
   /** ABAP language version */
-  version?: VersionNew;
+  version?: VersionBoth;
   languageVersion?: LanguageVersion;
   /** Use the OpenABAP dialect (v702 base + a set of additional language features). */
   openABAP?: boolean;
