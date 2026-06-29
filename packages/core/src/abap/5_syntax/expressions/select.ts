@@ -21,7 +21,7 @@ type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 const isSimple = /^\w+$/;
 
 export class Select {
-  public static runSyntax(node: ExpressionNode, input: SyntaxInput, skipImplicitInto = false): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, skipImplicitInto = false, selectLoop = false): void {
     const token = node.getFirstToken();
 
     let from = node.findDirectExpression(Expressions.SQLFrom);
@@ -88,6 +88,8 @@ export class Select {
     for (const up of node.findDirectExpressions(Expressions.SQLUpTo)) {
       if (intoExpression
           && this.isStrictMode(node, input)
+          && (selectLoop === false || input.scope.getLanguageVersion() === LanguageVersion.Cloud)
+          && from.getFirstToken().getStart().isBefore(up.getFirstToken().getStart())
           && up.getFirstToken().getStart().isBefore(intoExpression.getFirstToken().getStart())) {
         const message = `The addition "UP TO n ROWS" must only be placed after the INTO/APPENDING clause.`;
         input.issues.push(syntaxIssue(input, up.getFirstToken(), message));

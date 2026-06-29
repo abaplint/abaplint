@@ -12684,12 +12684,25 @@ SELECT (lt_select)
     expect(issues[0]?.getMessage()).to.equal(`The addition "UP TO n ROWS" must only be placed after the INTO/APPENDING clause.`);
   });
 
+  it("SELECT: UP TO before FROM ok in strict mode", () => {
+    const abap = `
+SELECT *
+  UP TO 10 ROWS
+  FROM t100
+  INTO TABLE @DATA(lt_t100)
+  WHERE sprsl = @sy-langu.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("SELECT: ORDER BY DESCENDING in loop ok", () => {
     const abap = `
 DATA row TYPE tadir.
+DATA object_name TYPE tadir-obj_name.
 SELECT * FROM tadir
     UP TO 1 ROWS
     INTO @row
+    WHERE obj_name = @object_name
     ORDER BY obj_name DESCENDING.
 ENDSELECT.`;
     const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Normal);
