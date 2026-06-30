@@ -1,7 +1,7 @@
 import * as Statements from "./statements";
 import * as Expressions from "./expressions";
 import * as Tokens from "../1_lexer/tokens";
-import {MacroContent, Comment, Unknown, MacroCall} from "./statements/_statement";
+import {MacroContent, Comment, Unknown, MacroCall, MacroRecursion} from "./statements/_statement";
 import {StatementNode} from "../nodes/statement_node";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {TokenNode} from "../nodes/token_node";
@@ -124,7 +124,8 @@ export class ExpandMacros {
     }
   }
 
-  public handleMacros(statements: readonly StatementNode[], file: IFile): {statements: StatementNode[], containsUnknown: boolean} {
+  public handleMacros(statements: readonly StatementNode[], file: IFile,
+                      seen: ReadonlySet<string> = new Set()): {statements: StatementNode[], containsUnknown: boolean} {
     const result: StatementNode[] = [];
     let containsUnknown = false;
 
@@ -146,13 +147,19 @@ export class ExpandMacros {
 
           result.push(new StatementNode(new MacroCall(), statement.getColon()).setChildren(this.tokensToNodes(statement.getTokens())));
 
-          const expanded = this.expandContents(macroName, statement);
-          const handled = this.handleMacros(expanded, file);
-          for (const e of handled.statements) {
-            result.push(e);
-          }
-          if (handled.containsUnknown === true) {
-            containsUnknown = true;
+          if (!seen.has(macroName.toUpperCase())) {
+            const expanded = this.expandContents(macroName, statement);
+            const nextSeen = new Set(seen).add(macroName.toUpperCase());
+            const handled = this.handleMacros(expanded, file, nextSeen);
+            for (const e of handled.statements) {
+              result.push(e);
+            }
+            if (handled.containsUnknown === true) {
+              containsUnknown = true;
+            }
+          } else {
+            const node = new StatementNode(new MacroRecursion(), statement.getColon());
+            result.push(node.setChildren(this.tokensToNodes(statement.getTokens())));
           }
 
           continue;

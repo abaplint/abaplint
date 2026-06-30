@@ -34,6 +34,12 @@ export class MacroContent implements IStatement {
   }
 }
 
+export class MacroRecursion implements IStatement {
+  public getMatcher(): IStatementRunnable {
+    throw new Error("MacroRecursion Statement, get_matcher");
+  }
+}
+
 export class NativeSQL implements IStatement {
   public getMatcher(): IStatementRunnable {
     throw new Error("NativeSQL Statement, get_matcher");
