@@ -1,5 +1,5 @@
 import {statementExpectFail, statementType, statementVersionOk} from "../_utils";
-import {Version} from "../../../src/version";
+import {Version, Release} from "../../../src/version";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -135,7 +135,122 @@ statementType(tests, "DATA", Statements.Data);
 
 statementVersionOk([
   {abap: "DATA foo TYPE TABLE FOR UPDATE EntityItem.", rel: Version.OpenABAP},
-], "DATA TYPE TABLE FOR", Statements.Data);
+], "DATA TYPE TABLE FOR OpenABAP", Statements.Data);
+
+// === RAP derived types ===
+
+statementVersionOk([
+  {abap: "DATA t TYPE TABLE FOR ACTION IMPORT zentity~zaction.", rel: Release.v773},
+  {abap: "DATA t TYPE TABLE FOR ACTION RESULT zentity~zaction.", rel: Release.v773},
+  {abap: "DATA t TYPE TABLE FOR FUNCTION IMPORT zentity~zfn.", rel: Release.v773},
+  {abap: "DATA t TYPE TABLE FOR FUNCTION RESULT zentity~zfn.", rel: Release.v773},
+], "DATA RAP TABLE FOR ACTION/FUNCTION v773", Statements.Data);
+
+statementVersionOk([
+  {abap: "DATA t TYPE STRUCTURE FOR ACTION IMPORT zentity~zaction.", rel: Release.v774},
+  {abap: "DATA t TYPE STRUCTURE FOR ACTION RESULT zentity~zaction.", rel: Release.v774},
+  {abap: "DATA t TYPE STRUCTURE FOR FUNCTION IMPORT zentity~zfn.", rel: Release.v774},
+  {abap: "DATA t TYPE STRUCTURE FOR FUNCTION RESULT zentity~zfn.", rel: Release.v774},
+], "DATA RAP STRUCTURE FOR ACTION/FUNCTION v774", Statements.Data);
+
+statementVersionOk([
+  {abap: "DATA t TYPE TABLE FOR FAILED LATE zentity.", rel: Release.v774},
+  {abap: "DATA t TYPE TABLE FOR MAPPED LATE zentity.", rel: Release.v774},
+  {abap: "DATA t TYPE TABLE FOR REPORTED LATE zentity.", rel: Release.v774},
+  {abap: "DATA t TYPE STRUCTURE FOR FAILED LATE zentity.", rel: Release.v774},
+  {abap: "DATA t TYPE STRUCTURE FOR MAPPED LATE zentity.", rel: Release.v774},
+  {abap: "DATA t TYPE STRUCTURE FOR REPORTED LATE zentity.", rel: Release.v774},
+], "DATA RAP *LATE v774", Statements.Data);
+
+statementVersionOk([
+  {abap: "DATA t TYPE TABLE FOR KEY OF zentity.", rel: Release.v775},
+  {abap: "DATA t TYPE STRUCTURE FOR KEY OF zentity.", rel: Release.v775},
+], "DATA RAP KEY OF v775", Statements.Data);
+
+statementVersionOk([
+  {abap: "DATA t TYPE TABLE FOR DETERMINATION zentity~zdet.", rel: Release.v776},
+  {abap: "DATA t TYPE TABLE FOR FAILED zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE TABLE FOR FEATURES KEY zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE TABLE FOR FEATURES RESULT zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE TABLE FOR MAPPED zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE TABLE FOR REPORTED zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE TABLE FOR VALIDATION zentity~zval.", rel: Release.v776},
+  {abap: "DATA t TYPE STRUCTURE FOR DETERMINATION zentity~zdet.", rel: Release.v776},
+  {abap: "DATA t TYPE STRUCTURE FOR FAILED zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE STRUCTURE FOR FEATURES KEY zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE STRUCTURE FOR FEATURES REQUEST zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE STRUCTURE FOR FEATURES RESULT zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE STRUCTURE FOR MAPPED zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE STRUCTURE FOR REPORTED zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE STRUCTURE FOR VALIDATION zentity~zval.", rel: Release.v776},
+  {abap: "DATA t TYPE RESPONSE FOR FAILED zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE RESPONSE FOR FAILED LATE zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE RESPONSE FOR MAPPED zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE RESPONSE FOR MAPPED LATE zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE RESPONSE FOR REPORTED zentity.", rel: Release.v776},
+  {abap: "DATA t TYPE RESPONSE FOR REPORTED LATE zentity.", rel: Release.v776},
+], "DATA RAP v776", Statements.Data);
+
+statementVersionOk([
+  {abap: "DATA t TYPE TABLE FOR FAILED EARLY zentity.", rel: Release.v777},
+  {abap: "DATA t TYPE TABLE FOR MAPPED EARLY zentity.", rel: Release.v777},
+  {abap: "DATA t TYPE TABLE FOR REPORTED EARLY zentity.", rel: Release.v777},
+  {abap: "DATA t TYPE STRUCTURE FOR FAILED EARLY zentity.", rel: Release.v777},
+  {abap: "DATA t TYPE STRUCTURE FOR MAPPED EARLY zentity.", rel: Release.v777},
+  {abap: "DATA t TYPE STRUCTURE FOR REPORTED EARLY zentity.", rel: Release.v777},
+  {abap: "DATA t TYPE RESPONSE FOR FAILED EARLY zentity.", rel: Release.v777},
+  {abap: "DATA t TYPE RESPONSE FOR MAPPED EARLY zentity.", rel: Release.v777},
+  {abap: "DATA t TYPE RESPONSE FOR REPORTED EARLY zentity.", rel: Release.v777},
+], "DATA RAP *EARLY v777", Statements.Data);
+
+statementVersionOk([
+  {abap: "DATA t TYPE TABLE FOR CHANGE zentity.", rel: Release.v778},
+  {abap: "DATA t TYPE STRUCTURE FOR CHANGE zentity.", rel: Release.v778},
+  {abap: "DATA t TYPE REQUEST FOR CHANGE zentity.", rel: Release.v778},
+  {abap: "DATA t TYPE REQUEST FOR DELETE zentity.", rel: Release.v778},
+], "DATA RAP CHANGE/DELETE v778", Statements.Data);
+
+statementVersionOk([
+  {abap: "DATA t TYPE STRUCTURE FOR ACTION REQUEST zentity~zaction.", rel: Release.v779},
+  {abap: "DATA t TYPE STRUCTURE FOR FUNCTION REQUEST zentity~zfn.", rel: Release.v779},
+], "DATA RAP REQUEST v779", Statements.Data);
+
+statementVersionOk([
+  {abap: "DATA t TYPE TABLE FOR AUTHORIZATION RESULT zentity.", rel: Release.v780},
+  {abap: "DATA t TYPE TABLE FOR PERMISSIONS KEY zentity.", rel: Release.v780},
+  {abap: "DATA t TYPE STRUCTURE FOR AUTHORIZATION REQUEST zentity.", rel: Release.v780},
+  {abap: "DATA t TYPE STRUCTURE FOR AUTHORIZATION RESULT zentity.", rel: Release.v780},
+  {abap: "DATA t TYPE STRUCTURE FOR PERMISSIONS KEY zentity.", rel: Release.v780},
+  {abap: "DATA t TYPE STRUCTURE FOR PERMISSIONS REQUEST zentity.", rel: Release.v780},
+  {abap: "DATA t TYPE STRUCTURE FOR PERMISSIONS RESULT zentity.", rel: Release.v780},
+], "DATA RAP PERMISSIONS/AUTH v780", Statements.Data);
+
+statementVersionOk([
+  {abap: "DATA t TYPE TABLE FOR AUTHORIZATION KEY zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE TABLE FOR FEATURES KEY zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE TABLE FOR INSTANCE AUTHORIZATION KEY zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE TABLE FOR INSTANCE AUTHORIZATION REQUEST zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE TABLE FOR INSTANCE AUTHORIZATION RESULT zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE TABLE FOR INSTANCE FEATURES KEY zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE TABLE FOR INSTANCE FEATURES REQUEST zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE TABLE FOR INSTANCE FEATURES RESULT zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE STRUCTURE FOR AUTHORIZATION KEY zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE STRUCTURE FOR INSTANCE AUTHORIZATION KEY zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE STRUCTURE FOR INSTANCE AUTHORIZATION REQUEST zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE STRUCTURE FOR INSTANCE AUTHORIZATION RESULT zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE STRUCTURE FOR INSTANCE FEATURES KEY zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE STRUCTURE FOR INSTANCE FEATURES REQUEST zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE STRUCTURE FOR INSTANCE FEATURES RESULT zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE STRUCTURE FOR GLOBAL AUTHORIZATION REQUEST zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE STRUCTURE FOR GLOBAL AUTHORIZATION RESULT zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE STRUCTURE FOR GLOBAL FEATURES REQUEST zentity.", rel: Release.v781},
+  {abap: "DATA t TYPE STRUCTURE FOR GLOBAL FEATURES RESULT zentity.", rel: Release.v781},
+], "DATA RAP GLOBAL/INSTANCE v781", Statements.Data);
+
+statementVersionOk([
+  {abap: "DATA t TYPE TABLE FOR READ CHANGES zentity.", rel: Release.v915},
+  {abap: "DATA t TYPE STRUCTURE FOR READ CHANGES zentity.", rel: Release.v915},
+], "DATA RAP READ CHANGES v915", Statements.Data);
 
 const fails = [
   `DATA something TYPE STANDARD TABLE OF  WITH DEFAULT KEY.`, // missing type
