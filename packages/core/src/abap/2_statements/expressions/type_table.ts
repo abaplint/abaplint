@@ -4,6 +4,7 @@ import {IStatementRunnable} from "../statement_runnable";
 import {FieldChain} from "./field_chain";
 import {TypeTableKey} from "./type_table_key";
 import {Release} from "../../../version";
+import {derivedTypesAlt} from "./_derived_types";
 
 export class TypeTable extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -34,21 +35,16 @@ export class TypeTable extends Expression {
 
     const occurs = seq("OCCURS", altPrio(Integer, FieldChain));
 
-    const derived = ver(Release.v754, seq("TABLE FOR", altPrio(
-      "ACTION IMPORT",
-      "ACTION RESULT",
-      "CREATE",
-      "EVENT",
-      "REPORTED EARLY",
-      "READ IMPORT",
-      "FAILED EARLY",
-      "FAILED",
-      "LOCK",
-      "DETERMINATION",
-      "READ RESULT",
-      "UPDATE",
-      "DELETE",
-    ), alt(TypeName, EntityAssociation)), {also: AlsoIn.OpenABAP});
+    const entity = alt(TypeName, EntityAssociation);
+
+    const derivedTypes = derivedTypesAlt(
+      ver(Release.v773, seq("ACTION IMPORT", entity)),
+      seq("READ LINK", entity),
+      seq("EVENT", entity),
+    );
+
+    const derived = ver(Release.v770, seq("TABLE FOR", derivedTypes, optPrio("VALUE IS INITIAL")),
+                        {also: AlsoIn.OpenABAP});
 
     const oldType = seq(opt("REF TO"), TypeName, alt(seq(occurs, opt(header)), header));
     const oldLike = seq(opt("REF TO"), FieldChain, alt(seq(occurs, opt(header)), header));

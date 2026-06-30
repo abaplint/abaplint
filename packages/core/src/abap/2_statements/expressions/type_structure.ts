@@ -1,28 +1,53 @@
-import {seq, Expression, altPrio, alt} from "../combi";
-import {EntityAssociation, EventName, NamespaceSimpleName, Source} from ".";
+import {seq, Expression, altPrio, alt, optPrio, ver} from "../combi";
+import {EntityAssociation, EventName, NamespaceSimpleName, Source, TypeName} from ".";
 import {IStatementRunnable} from "../statement_runnable";
+import {Release} from "../../../version";
+import {derivedTypesAlt} from "./_derived_types";
 
 export class TypeStructure extends Expression {
   public getRunnable(): IStatementRunnable {
-    // todo, add version,
-    const hier = seq("HIERARCHY", NamespaceSimpleName);
-    const create = seq("CREATE", alt(NamespaceSimpleName, EntityAssociation));
-    const update = seq("UPDATE", alt(NamespaceSimpleName, EntityAssociation));
-    const readResult = seq("READ RESULT", alt(NamespaceSimpleName, EntityAssociation));
-    const readLink = seq("READ LINK", EntityAssociation);
-    const action = seq("ACTION IMPORT", Source);
-    const permissionsRequest = seq("PERMISSIONS REQUEST", NamespaceSimpleName);
-    const evt = seq("EVENT", EventName);
+    const entity = alt(TypeName, EntityAssociation);
 
-    const failedEarly = seq("FAILED EARLY", NamespaceSimpleName);
-    const mappedEarly = seq("MAPPED EARLY", NamespaceSimpleName);
-    const reportedEarly = seq("REPORTED EARLY", NamespaceSimpleName);
+    const derivedTypes = derivedTypesAlt(
+      ver(Release.v779, seq("FUNCTION REQUEST", entity)),
+      ver(Release.v779, seq("ACTION REQUEST", entity)),
 
-    const structure = seq("STRUCTURE FOR", altPrio(hier, evt, create, update, action, permissionsRequest, readLink, readResult));
-    const response = seq("RESPONSE FOR", altPrio(failedEarly, mappedEarly, reportedEarly));
-    const request = seq("REQUEST FOR CHANGE", NamespaceSimpleName);
+      seq("ACTION IMPORT", Source),
 
-    return seq("TYPE", altPrio(structure, response, request));
+      ver(Release.v781, seq("GLOBAL AUTHORIZATION REQUEST", entity)),
+      ver(Release.v781, seq("GLOBAL AUTHORIZATION RESULT", entity)),
+      ver(Release.v781, seq("GLOBAL FEATURES REQUEST", entity)),
+      ver(Release.v781, seq("GLOBAL FEATURES RESULT", entity)),
+
+      ver(Release.v780, seq("AUTHORIZATION REQUEST", entity)),
+      ver(Release.v776, seq("FEATURES REQUEST", entity)),
+
+      seq("PERMISSIONS REQUEST", NamespaceSimpleName),
+      ver(Release.v780, seq("PERMISSIONS RESULT", entity)),
+
+      seq("READ LINK", EntityAssociation),
+
+      seq("HIERARCHY", NamespaceSimpleName),
+      seq("EVENT", EventName),
+    );
+
+    const structure = ver(Release.v774, seq("STRUCTURE FOR", derivedTypes));
+
+    const response = ver(Release.v776, seq("RESPONSE FOR", altPrio(
+      seq("FAILED EARLY", NamespaceSimpleName),
+      seq("FAILED LATE", NamespaceSimpleName),
+      seq("FAILED", NamespaceSimpleName),
+      seq("MAPPED EARLY", NamespaceSimpleName),
+      seq("MAPPED LATE", NamespaceSimpleName),
+      seq("MAPPED", NamespaceSimpleName),
+      seq("REPORTED EARLY", NamespaceSimpleName),
+      seq("REPORTED LATE", NamespaceSimpleName),
+      seq("REPORTED", NamespaceSimpleName),
+    )));
+
+    const request = ver(Release.v778, seq("REQUEST FOR", alt("CHANGE", "DELETE"), NamespaceSimpleName));
+
+    return seq("TYPE", altPrio(structure, response, request), optPrio("VALUE IS INITIAL"));
   }
 
 }

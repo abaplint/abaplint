@@ -677,26 +677,13 @@ export class BasicTypes {
   }
 
   private isRAPTableFor(text: string): boolean {
-    return text.startsWith("TYPE TABLE FOR ACTION IMPORT ")
-      || text.startsWith("TYPE TABLE FOR ACTION RESULT ")
-      || text.startsWith("TYPE TABLE FOR CREATE ")
-      || text.startsWith("TYPE TABLE FOR DELETE ")
-      || text.startsWith("TYPE TABLE FOR DETERMINATION ")
-      || text.startsWith("TYPE TABLE FOR EVENT ")
-      || text.startsWith("TYPE TABLE FOR FAILED ")
-      || text.startsWith("TYPE TABLE FOR FAILED EARLY ")
-      || text.startsWith("TYPE TABLE FOR LOCK ")
-      || text.startsWith("TYPE TABLE FOR READ ")
-      || text.startsWith("TYPE TABLE FOR READ IMPORT ")
-      || text.startsWith("TYPE TABLE FOR READ RESULT ")
-      || text.startsWith("TYPE TABLE FOR REPORTED EARLY ")
-      || text.startsWith("TYPE TABLE FOR UPDATE ");
+    return text.startsWith("TYPE TABLE FOR ");
   }
 
   private isRAPTypeStructure(text: string): boolean {
     return text.startsWith("TYPE STRUCTURE FOR ")
       || text.startsWith("TYPE RESPONSE FOR ")
-      || text.startsWith("TYPE REQUEST FOR CHANGE ");
+      || text.startsWith("TYPE REQUEST FOR ");
   }
 
   // todo, rewrite this method
