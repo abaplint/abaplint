@@ -61,7 +61,7 @@ See recognized syntax at https://syntax.abaplint.org`,
             }
           } else if (statement.get() instanceof MacroRecursion) {
             const tok = statement.getFirstToken();
-            const message = "Macro \"" + tok.getStr() + "\" calls itself recursively";
+            const message = "Macro recursion detected involving \"" + tok.getStr() + "\"";
             issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
           }
         }
