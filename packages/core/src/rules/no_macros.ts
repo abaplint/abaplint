@@ -1,7 +1,6 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import * as Statements from "../abap/2_statements/statements";
-import {MacroCall} from "../abap/2_statements/statements/_statement";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
@@ -24,9 +23,7 @@ https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenmacros_guidl
       tags: [RuleTag.SingleFile],
       badExample: `DEFINE _macro.
   WRITE 'hello'.
-END-OF-DEFINITION.
-
-_macro.`,
+END-OF-DEFINITION.`,
       goodExample: `WRITE 'hello'.`,
     };
   }
@@ -43,15 +40,8 @@ _macro.`,
     const issues: Issue[] = [];
 
     for (const stat of file.getStatements()) {
-      const s = stat.get();
-      let message: string | undefined = undefined;
-      if (s instanceof Statements.Define) {
-        message = "Do not define macros";
-      } else if (s instanceof MacroCall) {
-        message = "Do not call macros";
-      }
-      if (message !== undefined) {
-        issues.push(Issue.atStatement(file, stat, message, this.getMetadata().key, this.conf.severity));
+      if (stat.get() instanceof Statements.Define) {
+        issues.push(Issue.atStatement(file, stat, "Do not define macros", this.getMetadata().key, this.conf.severity));
       }
     }
 
