@@ -26,6 +26,10 @@ export class LocalClassNaming extends ABAPRule {
       title: "Local class naming conventions",
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for local class names.`,
       tags: [RuleTag.Naming, RuleTag.SingleFile],
+      badExample: `CLASS helper DEFINITION.
+ENDCLASS.`,
+      goodExample: `CLASS lcl_helper DEFINITION.
+ENDCLASS.`,
     };
   }
 

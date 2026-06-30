@@ -32,6 +32,12 @@ export class MethodParameterNames implements IRule {
       title: "Method parameter naming conventions",
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for method parameter names`,
       tags: [RuleTag.Naming, RuleTag.SingleFile],
+      badExample: `METHODS get_name
+  IMPORTING customer TYPE string
+  RETURNING VALUE(name) TYPE string.`,
+      goodExample: `METHODS get_name
+  IMPORTING iv_customer TYPE string
+  RETURNING VALUE(rv_name) TYPE string.`,
     };
   }
 

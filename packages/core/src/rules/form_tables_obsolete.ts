@@ -21,6 +21,10 @@ export class FormTablesObsolete extends ABAPRule {
       shortDescription: `Checks for TABLES parameters in forms.`,
       extendedInformation: `https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapform_tables.htm`,
       tags: [RuleTag.SingleFile],
+      badExample: `FORM update_items TABLES items.
+ENDFORM.`,
+      goodExample: `FORM update_items CHANGING items TYPE ty_items.
+ENDFORM.`,
     };
   }
 

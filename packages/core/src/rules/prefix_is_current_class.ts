@@ -29,6 +29,14 @@ export class PrefixIsCurrentClass extends ABAPRule {
       // eslint-disable-next-line max-len
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-attribute-or-method`,
       tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
+      badExample: `METHOD run.
+  zcl_current=>helper( ).
+  me->do_work( ).
+ENDMETHOD.`,
+      goodExample: `METHOD run.
+  helper( ).
+  do_work( ).
+ENDMETHOD.`,
     };
   }
 

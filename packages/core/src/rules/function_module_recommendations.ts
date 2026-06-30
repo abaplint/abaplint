@@ -107,6 +107,10 @@ export class FunctionModuleRecommendations extends ABAPRule {
       shortDescription: `Suggests replacements for various function modules`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/53/`,
       tags: [RuleTag.SingleFile],
+      badExample: `CALL FUNCTION 'GUID_CREATE'
+  IMPORTING
+    ev_guid_32 = guid.`,
+      goodExample: `guid = cl_system_uuid=>create_uuid_c32_static( ).`,
     };
   }
 

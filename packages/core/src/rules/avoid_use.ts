@@ -52,6 +52,8 @@ TEST-SEAMS: https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md
 
 BREAK points`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      badExample: `DESCRIBE TABLE items LINES count.`,
+      goodExample: `count = lines( items ).`,
     };
   }
 

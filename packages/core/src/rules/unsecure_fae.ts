@@ -21,6 +21,14 @@ export class UnsecureFAE implements IRule {
       shortDescription: `Checks for unsecure FAE`,
       extendedInformation: `Issues from rule check_syntax must be fixed before this rule takes effect`,
       tags: [RuleTag.Experimental, RuleTag.Performance],
+      badExample: `SELECT * FROM ztab INTO TABLE @DATA(result)
+  FOR ALL ENTRIES IN @input
+  WHERE id = @input-id.`,
+      goodExample: `IF input IS NOT INITIAL.
+  SELECT * FROM ztab INTO TABLE @DATA(result)
+    FOR ALL ENTRIES IN @input
+    WHERE id = @input-id.
+ENDIF.`,
     };
   }
 

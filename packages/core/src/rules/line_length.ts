@@ -22,6 +22,9 @@ export class LineLength extends ABAPRule {
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#stick-to-a-reasonable-line-length
 https://docs.abapopenchecks.org/checks/04/`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      badExample: "DATA long_text TYPE string VALUE 'this line keeps going until it is longer than the configured maximum'.",
+      goodExample: `DATA long_text TYPE string.
+long_text = 'split long expressions across multiple lines'.`,
     };
   }
 

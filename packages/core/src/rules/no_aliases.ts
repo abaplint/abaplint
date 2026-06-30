@@ -20,6 +20,13 @@ export class NoAliases extends ABAPRule {
       title: "No ALIASES",
       shortDescription: `Detects use of the ALIAS statement`,
       tags: [RuleTag.SingleFile],
+      badExample: `INTERFACE lif_foo.
+  METHODS long_method_name.
+  ALIASES short FOR long_method_name.
+ENDINTERFACE.`,
+      goodExample: `INTERFACE lif_foo.
+  METHODS long_method_name.
+ENDINTERFACE.`,
     };
   }
 

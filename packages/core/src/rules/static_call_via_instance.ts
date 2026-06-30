@@ -27,6 +27,12 @@ export class StaticCallViaInstance extends ABAPRule {
       shortDescription: `Static method call via instance variable`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-call-static-methods-through-instance-variables`,
       tags: [RuleTag.Styleguide],
+      badExample: `METHOD run.
+  NEW lcl_helper( )->static_method( ).
+ENDMETHOD.`,
+      goodExample: `METHOD run.
+  lcl_helper=>static_method( ).
+ENDMETHOD.`,
     };
   }
 
