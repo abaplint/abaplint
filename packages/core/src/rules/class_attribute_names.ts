@@ -34,6 +34,14 @@ export class ClassAttributeNames extends ABAPRule {
       title: "Class attributes naming",
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for class variable names.`,
       tags: [RuleTag.Naming, RuleTag.SingleFile],
+      badExample: `CLASS zcl_foo DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    DATA counter TYPE i.
+ENDCLASS.`,
+      goodExample: `CLASS zcl_foo DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    DATA mv_counter TYPE i.
+ENDCLASS.`,
     };
   }
 

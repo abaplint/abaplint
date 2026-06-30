@@ -42,6 +42,8 @@ export class DangerousStatement extends ABAPRule {
       extendedInformation: `Dynamic SQL: Typically ABAP logic does not need dynamic SQL,
 dynamic SQL can potentially create SQL injection problems`,
       tags: [RuleTag.SingleFile, RuleTag.Security],
+      badExample: `SELECT * FROM (lv_table_name) INTO TABLE @DATA(lt_rows).`,
+      goodExample: `SELECT * FROM zknown_table INTO TABLE @DATA(lt_rows).`,
     };
   }
 

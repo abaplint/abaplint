@@ -29,6 +29,14 @@ Exceptions are excluded from this rule.`,
       extendedInformation:
         `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#members-private-by-default-protected-only-if-needed`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
+      badExample: `CLASS zcl_foo DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    DATA counter TYPE i.
+ENDCLASS.`,
+      goodExample: `CLASS zcl_foo DEFINITION PUBLIC.
+  PRIVATE SECTION.
+    DATA counter TYPE i.
+ENDCLASS.`,
     };
   }
 
