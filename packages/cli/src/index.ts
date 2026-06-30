@@ -96,6 +96,24 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
   };
 }
 
+function formatNullable(value: string | number | null): string {
+  return value === null ? "n/a" : value.toString();
+}
+
+function outputSyntaxConfig(config: Config): void {
+  const release = config.getRelease();
+  const releaseDetails = [
+    `SAP_BASIS ${formatNullable(release.abap)}`,
+    `kernel ${formatNullable(release.kernel)}`,
+    `on-premise ${formatNullable(release.op)}`,
+    `cloud ${formatNullable(release.cloud)}`,
+    `CE ${formatNullable(release.ce)}`,
+  ].join(", ");
+
+  process.stderr.write(`ABAP release: ${release.name} (${releaseDetails})\n`);
+  process.stderr.write(`ABAP language version: ${config.getLanguageVersion()}\n`);
+}
+
 async function loadDependencies(config: Config, compress: boolean | undefined, bar: IProgress, base: string): Promise<IFile[]> {
   let files: IFile[] = [];
 
@@ -215,6 +233,7 @@ export async function run(arg: Arguments) {
     let loaded: IFile[] = [];
     let deps: IFile[] = [];
     const {config, base} = loadConfig(arg.configFilename);
+    outputSyntaxConfig(config);
     try {
       if (config.get().global.files === undefined) {
         throw "Error: Update abaplint configuration file to latest format";
