@@ -20,6 +20,17 @@ export class DbOperationInLoop extends ABAPRule {
       title: "Database operation in loop",
       shortDescription: `Database operation in LOOP/DO/WHILE`,
       tags: [RuleTag.SingleFile, RuleTag.Performance],
+      badExample: `LOOP AT lt_items INTO DATA(ls_item).
+  SELECT SINGLE name FROM zcustomer INTO @DATA(lv_name) WHERE id = @ls_item-customer_id.
+ENDLOOP.`,
+      goodExample: `ASSERT lines( lt_items ) > 0.
+SELECT id, name FROM zcustomer INTO TABLE @DATA(lt_customers)
+  FOR ALL ENTRIES IN @lt_items
+  WHERE id = @lt_items-customer_id.
+
+LOOP AT lt_items INTO DATA(ls_item).
+  READ TABLE lt_customers INTO DATA(ls_customer) WITH KEY id = ls_item-customer_id.
+ENDLOOP.`,
     };
   }
 
