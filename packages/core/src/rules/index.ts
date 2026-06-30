@@ -108,6 +108,7 @@ export * from "./no_chained_assignment";
 export * from "./no_comments_between_methods";
 export * from "./no_external_form_calls";
 export * from "./no_inline_in_optional_branches";
+export * from "./no_macros";
 export * from "./no_prefixes";
 export * from "./no_public_attributes";
 export * from "./no_yoda_conditions";

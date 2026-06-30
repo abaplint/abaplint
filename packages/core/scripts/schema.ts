@@ -111,6 +111,7 @@ import {NoCommentsBetweenMethodsConf} from "../src/rules/no_comments_between_met
 import {NoExclamationEscapeConf} from "../src/rules/no_exclamation_escape";
 import {NoExternalFormCallsConf} from "../src/rules/no_external_form_calls";
 import {NoInlineInOptionalBranchesConf} from "../src/rules/no_inline_in_optional_branches";
+import {NoMacrosConf} from "../src/rules/no_macros";
 import {NoPrefixesConf} from "../src/rules/no_prefixes";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {NoYodaConditionsConf} from "../src/rules/no_yoda_conditions";
@@ -309,6 +310,7 @@ export interface IConfig {
     "no_exclamation_escape"?: NoExclamationEscapeConf | boolean,
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
+    "no_macros"?: NoMacrosConf | boolean,
     "no_prefixes"?: NoPrefixesConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
@@ -496,6 +498,7 @@ export interface IConfig {
     "no_exclamation_escape"?: NoExclamationEscapeConf | boolean,
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
+    "no_macros"?: NoMacrosConf | boolean,
     "no_prefixes"?: NoPrefixesConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
