@@ -19,7 +19,7 @@ export class NoCommentsBetweenMethods extends ABAPRule {
     return {
       key: "no_comments_between_methods",
       title: "No comments between methods in global classes",
-      shortDescription: `Its not possible to have comments between methods in global classes.`,
+      shortDescription: `It's not possible to have comments between methods in global classes.`,
       tags: [RuleTag.SingleFile, RuleTag.Syntax],
       badExample: `CLASS zcl_foo IMPLEMENTATION.
   METHOD first.
