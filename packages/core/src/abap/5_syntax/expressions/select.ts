@@ -97,6 +97,7 @@ export class Select {
     for (const up of node.findDirectExpressions(Expressions.SQLUpTo)) {
       if (intoExpression
           && this.isStrictMode(node, input)
+          && (input.scope.getLanguageVersion() === LanguageVersion.Cloud || this.upToUsesHostVariable(up))
           && (selectLoop === false || input.scope.getLanguageVersion() === LanguageVersion.Cloud)
           && from.getFirstToken().getStart().isBefore(up.getFirstToken().getStart())
           && up.getFirstToken().getStart().isBefore(intoExpression.getFirstToken().getStart())) {
@@ -139,6 +140,10 @@ export class Select {
     if (input.scope.getType() === ScopeType.OpenSQL) {
       input.scope.pop(node.getLastToken().getEnd());
     }
+  }
+
+  private static upToUsesHostVariable(up: ExpressionNode): boolean {
+    return up.findFirstExpression(Expressions.SQLSource)?.getFirstToken().getStr() === "@";
   }
 
   private static buildUpToRowsFix(node: ExpressionNode,
