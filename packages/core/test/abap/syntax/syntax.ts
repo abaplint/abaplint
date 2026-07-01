@@ -12747,6 +12747,26 @@ ENDSELECT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it.only("SELECT: ORDER BY DESCENDING with inline table and ranges ok", () => {
+    const abap = `
+DATA lr_langu TYPE RANGE OF t100-sprsl.
+DATA lr_id TYPE RANGE OF t100-arbgb.
+DATA lr_number TYPE RANGE OF t100-msgnr.
+DATA ls_filter TYPE t100.
+
+SELECT * FROM t100
+  UP TO 1 ROWS
+  INTO TABLE @DATA(dataasdf)
+  WHERE sprsl IN @lr_langu
+    AND arbgb IN @lr_id
+    AND msgnr IN @lr_number
+    AND text  LT @ls_filter-text
+    AND sprsl EQ @abap_false
+  ORDER BY text DESCENDING.`;
+    const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Normal);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("SELECT: ORDER BY DESCENDING in loop, cloud not okay", () => {
     const abap = `
 DATA row TYPE tadir.
