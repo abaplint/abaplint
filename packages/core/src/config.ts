@@ -8,7 +8,7 @@ import * as JSON5 from "json5";
 export class Config implements IConfiguration {
   private readonly config: IConfig;
 
-  public static getDefault(ver?: VersionOldOrNew, langVer?: LanguageVersion, openABAP?: boolean): Config {
+  public static getDefault(ver?: VersionOldOrNew, langVer?: LanguageVersion): Config {
     const rules: any = {};
 
     const sorted = ArtifactsRules.getRules().sort((a, b) => {
@@ -46,7 +46,6 @@ export class Config implements IConfiguration {
       syntax: {
         version,
         languageVersion: langVer,
-        openABAP,
         errorNamespace: "^(Z|Y|LCL\_|TY\_|LIF\_)",
         globalConstants: [],
         globalMacros: [],
@@ -146,7 +145,7 @@ export class Config implements IConfiguration {
   }
 
   public getOpenABAP(): boolean {
-    return this.config.syntax.openABAP === true;
+    return this.getRelease() === Release["open-abap"];
   }
 
   public getVersion(): Version {
@@ -184,10 +183,9 @@ export class Config implements IConfiguration {
     }
     if (version === Version.Cloud) {
       this.config.syntax.languageVersion = LanguageVersion.Cloud;
-    } else if (version === Version.OpenABAP) {
-      this.config.syntax.version = Version.v702;
-      this.config.syntax.openABAP = true;
     }
+    // OpenABAP keeps its own version identity; open-abap-ness is derived from the
+    // release in getOpenABAP() rather than a separate stored flag.
   }
 
 }

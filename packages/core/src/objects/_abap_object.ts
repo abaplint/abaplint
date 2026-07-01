@@ -35,13 +35,13 @@ export abstract class ABAPObject extends AbstractObject {
   }
 
   public parse(release: ABAPRelease, globalMacros?: readonly string[], reg?: IRegistry,
-               languageVersion: LanguageVersion = LanguageVersion.Normal, openABAP: boolean = false): IParseResult {
+               languageVersion: LanguageVersion = LanguageVersion.Normal): IParseResult {
     if (this.isDirty() === false) {
       return {updated: false, runtime: 0};
     }
 
     const abapFiles = this.getFiles().filter(f => f.getFilename().endsWith(".abap"));
-    const result = new ABAPParser({release, globalMacros, reg, languageVersion, openABAP}).parse(abapFiles);
+    const result = new ABAPParser({release, globalMacros, reg, languageVersion}).parse(abapFiles);
 
     this.parsed = result.output;
     this.old = result.issues;

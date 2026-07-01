@@ -1019,7 +1019,6 @@ export class Combi {
 
   private static release: ABAPRelease = Release.v758;
   private static langVer: LanguageVersion = LanguageVersion.Normal;
-  private static openABAP: boolean = false;
 
   public static railroad(runnable: IStatementRunnable, complex = false): string {
 // todo, move method to graph.js?
@@ -1047,15 +1046,13 @@ export class Combi {
   public static run(
     runnable: IStatementRunnable,
     tokens: readonly Tokens_Token[], versionOrRelease: Version | ABAPRelease,
-    languageVersion: LanguageVersion = LanguageVersion.Normal,
-    openABAP: boolean = false): (ExpressionNode | TokenNode)[] | undefined {
+    languageVersion: LanguageVersion = LanguageVersion.Normal): (ExpressionNode | TokenNode)[] | undefined {
 
-    this.openABAP = openABAP || versionOrRelease === Version.OpenABAP;
     this.langVer = languageVersion;
     if (typeof versionOrRelease === "string") {
-      this.release = this.openABAP ? Release.v702 : versionToABAPRelease(versionOrRelease);
+      this.release = versionToABAPRelease(versionOrRelease);
     } else {
-      this.release = this.openABAP ? Release.v702 : versionOrRelease;
+      this.release = versionOrRelease;
     }
 
     const input = new Result(tokens, 0);
@@ -1092,7 +1089,7 @@ export class Combi {
   }
 
   public static isOpenABAP(): boolean {
-    return this.openABAP;
+    return this.release === Release["open-abap"];
   }
 
 }

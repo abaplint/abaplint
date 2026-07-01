@@ -6034,10 +6034,6 @@
         "languageVersion": {
           "$ref": "#/definitions/LanguageVersion"
         },
-        "openABAP": {
-          "description": "Use the OpenABAP dialect (v702 base + a set of additional language features).",
-          "type": "boolean"
-        },
         "version": {
           "$ref": "#/definitions/VersionOldOrNew",
           "description": "ABAP language version"
@@ -8090,6 +8086,7 @@
         "v700",
         "v701",
         "v702",
+        "open-abap",
         "v710",
         "v711",
         "v720",

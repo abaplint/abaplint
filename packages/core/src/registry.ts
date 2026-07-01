@@ -391,7 +391,7 @@ export class Registry implements IRegistry {
   private parsePrivate(input: IObject) {
     const config = this.getConfig();
     const result = input.parse(config.getRelease(), config.getSyntaxSetttings().globalMacros,
-                               this, config.getLanguageVersion(), config.getOpenABAP());
+                               this, config.getLanguageVersion());
     ParsingPerformance.push(input, result);
   }
 
