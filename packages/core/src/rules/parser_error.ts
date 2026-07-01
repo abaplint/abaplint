@@ -55,7 +55,7 @@ See recognized syntax at https://syntax.abaplint.org`,
               issues.push(issue);
             } else {
               const tok = statement.getFirstToken();
-              const message = "Statement does not exist in ABAP " + this.reg.getConfig().getRelease().name + " (or a parser error), \"" + tok.getStr() + "\"";
+              const message = "Statement does not exist in the configured ABAP version(or a parser error), \"" + tok.getStr() + "\"";
               const issue = Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity);
               issues.push(issue);
             }
