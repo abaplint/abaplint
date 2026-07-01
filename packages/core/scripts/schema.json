@@ -2957,7 +2957,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Its not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
+              "description": "It's not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
             },
             "no_exclamation_escape": {
               "anyOf": [
@@ -5003,7 +5003,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Its not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
+              "description": "It's not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
             },
             "no_exclamation_escape": {
               "anyOf": [
