@@ -94,11 +94,18 @@ export class Select {
     for (const s of node.findDirectExpressions(Expressions.SQLSource)) {
       SQLSource.runSyntax(s, input);
     }
+    const upToWhere = node.findDirectExpression(Expressions.SQLCond);
+    const isCloud = input.scope.getLanguageVersion() === LanguageVersion.Cloud;
     for (const up of node.findDirectExpressions(Expressions.SQLUpTo)) {
+      // in classic Open SQL (INTO before WHERE) "UP TO" is allowed before INTO,
+      // in strict Open SQL (INTO after WHERE) "UP TO" must be placed after INTO
+      const intoAfterWhere = upToWhere !== undefined
+        && intoExpression !== undefined
+        && intoExpression.getFirstToken().getStart().isAfter(upToWhere.getFirstToken().getStart());
       if (intoExpression
           && this.isStrictMode(node, input)
-          && (input.scope.getLanguageVersion() === LanguageVersion.Cloud || this.upToUsesHostVariable(up))
-          && (selectLoop === false || input.scope.getLanguageVersion() === LanguageVersion.Cloud)
+          && (isCloud || (this.upToUsesHostVariable(up) && intoAfterWhere))
+          && (selectLoop === false || isCloud)
           && from.getFirstToken().getStart().isBefore(up.getFirstToken().getStart())
           && up.getFirstToken().getStart().isBefore(intoExpression.getFirstToken().getStart())) {
         const message = `The addition "UP TO n ROWS" must only be placed after the INTO/APPENDING clause.`;
