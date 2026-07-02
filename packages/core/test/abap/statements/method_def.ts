@@ -1,5 +1,5 @@
 import {Release, LanguageVersion} from "../../../src/version";
-import {statementExpectFail, statementType, statementVersion, statementVersionFail} from "../_utils";
+import {statementExpectFail, statementType, statementVersion, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 
@@ -188,8 +188,18 @@ statementVersion(versions, "METHODS", Statements.MethodDef);
 
 const fails = [
   "METHODS test1 FOR TESTING RETURNING VALUE(vbeln) TYPE string.",
+  "METHODS foo EXPORTING bar TYPE ANY STRUCTURE.",
+  "METHODS foo RETURNING VALUE(bar) TYPE ANY STRUCTURE.",
 ];
 statementExpectFail(fails, "MethodDef");
+
+statementVersionOk([
+  {abap: "METHODS foo IMPORTING bar TYPE ANY STRUCTURE.", rel: Release.v916},
+  {abap: "METHODS foo IMPORTING bar TYPE ANY STRUCTURE OPTIONAL.", rel: Release.v916},
+  {abap: "METHODS foo CHANGING bar TYPE ANY STRUCTURE.", rel: Release.v916},
+  {abap: "METHODS foo CHANGING bar TYPE ANY STRUCTURE OPTIONAL.", rel: Release.v916},
+  {abap: "METHODS foo IMPORTING bar TYPE ANY STRUCTURE CHANGING baz TYPE ANY STRUCTURE.", rel: Release.v916},
+], "METHODS TYPE ANY STRUCTURE v916", Statements.MethodDef);
 
 const keyUserFail = [
   {abap: `METHODS foo AMDP OPTIONS CDS SESSION CLIENT CURRENT.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},

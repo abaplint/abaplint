@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Release} from "../../../src/version";
 
 const tests = [
   "FIELD-SYMBOLS <sdf$> TYPE ty_$.",
@@ -12,3 +13,7 @@ const tests = [
 ];
 
 statementType(tests, "FIELD-SYMBOL", Statements.FieldSymbol);
+
+statementVersionOk([
+  {abap: `FIELD-SYMBOLS <fs> TYPE ANY STRUCTURE.`, rel: Release.v916},
+], "FIELD-SYMBOLS TYPE ANY STRUCTURE v916", Statements.FieldSymbol);

@@ -263,6 +263,7 @@ export * from "./type_param";
 export * from "./type_structure";
 export * from "./type_table_key";
 export * from "./type_table";
+export * from "./type_simple_ref";
 export * from "./type";
 export * from "./value_base";
 export * from "./value_body_line";

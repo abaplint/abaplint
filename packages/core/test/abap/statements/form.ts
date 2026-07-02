@@ -1,4 +1,4 @@
-import {statementType, statementVersionFail} from "../_utils";
+import {statementType, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release, LanguageVersion} from "../../../src/version";
 
@@ -156,6 +156,11 @@ const tests = [
 ];
 
 statementType(tests, "FORM", Statements.Form);
+
+statementVersionOk([
+  {abap: "FORM foobar USING p_param TYPE ANY STRUCTURE.", rel: Release.v916},
+  {abap: "FORM foobar CHANGING p_param TYPE ANY STRUCTURE.", rel: Release.v916},
+], "FORM TYPE ANY STRUCTURE v916", Statements.Form);
 
 statementVersionFail([
   {abap: "FORM foo.", rel: Release.Newest, langVer: LanguageVersion.KeyUser},

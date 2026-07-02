@@ -256,3 +256,28 @@ const fails = [
   `DATA something TYPE STANDARD TABLE OF  WITH DEFAULT KEY.`, // missing type
 ];
 statementExpectFail(fails, "DATA");
+
+statementVersionOk([
+  {abap: `DATA t TYPE ztype LOCATOR FOR ALL COLUMNS.`, rel: Release.v731},
+  {abap: `DATA t TYPE ztype READER FOR ALL COLUMNS.`, rel: Release.v731},
+  {abap: `DATA t TYPE ztype WRITER FOR ALL COLUMNS.`, rel: Release.v731},
+  {abap: `DATA t TYPE ztype LOB HANDLE FOR ALL COLUMNS.`, rel: Release.v731},
+  {abap: `DATA t TYPE ztype READ-ONLY LOCATOR FOR ALL COLUMNS.`, rel: Release.v731},
+  {abap: `DATA t TYPE ztype LOB HANDLE FOR ALL BLOB COLUMNS.`, rel: Release.v731},
+  {abap: `DATA t TYPE ztype LOB HANDLE FOR ALL CLOB COLUMNS.`, rel: Release.v731},
+  {abap: `DATA t TYPE ztype LOCATOR FOR COLUMNS clob1 blob2.`, rel: Release.v731},
+  {abap: `DATA t TYPE ztype LOCATOR FOR ALL BLOB COLUMNS READER FOR ALL CLOB COLUMNS.`, rel: Release.v731},
+], "DATA LOB handles v731", Statements.Data);
+
+statementVersionOk([
+  {abap: `DATA t TYPE t_deep WITH INDICATORS ind TYPE abap_bool.`, rel: Release.v781},
+  {abap: `DATA t TYPE t_deep WITH INDICATORS ind.`, rel: Release.v781},
+], "DATA WITH INDICATORS v781", Statements.Data);
+
+statementVersionOk([
+  {abap: `DATA t TYPE t_deep WITH INDICATORS ind AS BITFIELD.`, rel: Release.v784},
+], "DATA WITH INDICATORS AS BITFIELD v784", Statements.Data);
+
+statementExpectFail([
+  `DATA foo TYPE ANY STRUCTURE.`,
+], "DATA generic type not allowed");

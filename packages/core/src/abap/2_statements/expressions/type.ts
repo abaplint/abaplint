@@ -6,7 +6,8 @@ import {Release} from "../../../version";
 export class Type extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const indicators = seq("WITH INDICATORS", ComponentName, optPrio(seq("TYPE", TypeName)));
+    const indicatorSpec = altPrio(ver(Release.v784, "AS BITFIELD"), seq("TYPE", TypeName));
+    const indicators = seq("WITH INDICATORS", ComponentName, optPrio(indicatorSpec));
 
     const typeType = seq(TypeName, optPrio(Default));
 
@@ -18,7 +19,7 @@ export class Type extends Expression {
                          seq("REF TO", typeType),
                          seq(typeType, optPrio(LOBHandle)));
 
-    const ret = seq(altPrio(seq("LIKE", like), seq("TYPE", type)), optPrio(ver(Release.v755, indicators)));
+    const ret = seq(altPrio(seq("LIKE", like), seq("TYPE", type)), optPrio(ver(Release.v781, indicators)));
 
     return ret;
   }
