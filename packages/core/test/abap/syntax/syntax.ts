@@ -7254,6 +7254,24 @@ APPEND binding REFERENCE INTO wa-binding.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("GET PERMISSIONS, inline definitions", () => {
+    const abap = `
+    DATA permission_request TYPE voided.
+
+    GET PERMISSIONS ONLY GLOBAL AUTHORIZATION ENTITY ent
+      REQUEST permission_request
+      RESULT DATA(permission_result)
+      FAILED DATA(failed_permission_result)
+      REPORTED DATA(reported_permission_result).
+
+    IF permission_result-global-%field-PackageName = 'X'
+        OR failed_permission_result IS NOT INITIAL
+        OR reported_permission_result IS NOT INITIAL.
+    ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("LOOP at deference ref to data", () => {
 // note: this doesnt work in low versions, must be 754+
     const abap = `
