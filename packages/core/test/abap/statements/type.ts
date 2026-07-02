@@ -1,4 +1,4 @@
-import {statementExpectFail, statementType, statementVersion, statementVersionOk} from "../_utils";
+import {statementExpectFail, statementType, statementVersion, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release, LanguageVersion} from "../../../src/version";
 
@@ -186,3 +186,53 @@ statementVersionOk([
   {abap: "TYPES t TYPE TABLE FOR READ CHANGES zentity.", rel: Release.v915},
   {abap: "TYPES t TYPE STRUCTURE FOR READ CHANGES zentity.", rel: Release.v915},
 ], "TYPES RAP READ CHANGES v915", Statements.Type);
+
+statementVersionOk([
+  {abap: "TYPES t TYPE TABLE FOR READ LINK zentity\\zassoc.", rel: Release.v774},
+  {abap: "TYPES t TYPE STRUCTURE FOR READ LINK zentity\\zassoc.", rel: Release.v774},
+], "TYPES RAP READ LINK v774", Statements.Type);
+
+statementVersionOk([
+  {abap: "TYPES t TYPE TABLE FOR EVENT zentity~zevent.", rel: Release.v787},
+  {abap: "TYPES t TYPE STRUCTURE FOR EVENT zentity~zevent.", rel: Release.v787},
+], "TYPES RAP EVENT v787", Statements.Type);
+
+statementVersionFail([
+  {abap: "TYPES t TYPE TABLE FOR CREATE zentity.", rel: Release.v769},
+  {abap: "TYPES t TYPE TABLE FOR DELETE zentity.", rel: Release.v769},
+  {abap: "TYPES t TYPE TABLE FOR UPDATE zentity.", rel: Release.v769},
+  {abap: "TYPES t TYPE TABLE FOR READ IMPORT zentity.", rel: Release.v769},
+  {abap: "TYPES t TYPE TABLE FOR READ RESULT zentity.", rel: Release.v769},
+  {abap: "TYPES t TYPE TABLE FOR READ LINK zentity\\zassoc.", rel: Release.v773},
+  {abap: "TYPES t TYPE TABLE FOR ACTION IMPORT zentity~zaction.", rel: Release.v772},
+  {abap: "TYPES t TYPE TABLE FOR ACTION RESULT zentity~zaction.", rel: Release.v772},
+  {abap: "TYPES t TYPE TABLE FOR FUNCTION IMPORT zentity~zfn.", rel: Release.v772},
+  {abap: "TYPES t TYPE TABLE FOR FUNCTION RESULT zentity~zfn.", rel: Release.v772},
+  {abap: "TYPES t TYPE TABLE FOR FAILED LATE zentity.", rel: Release.v773},
+  {abap: "TYPES t TYPE TABLE FOR MAPPED LATE zentity.", rel: Release.v773},
+  {abap: "TYPES t TYPE TABLE FOR REPORTED LATE zentity.", rel: Release.v773},
+  {abap: "TYPES t TYPE TABLE FOR KEY OF zentity.", rel: Release.v774},
+  {abap: "TYPES t TYPE TABLE FOR DETERMINATION zentity~zdet.", rel: Release.v775},
+  {abap: "TYPES t TYPE TABLE FOR FAILED zentity.", rel: Release.v775},
+  {abap: "TYPES t TYPE TABLE FOR MAPPED zentity.", rel: Release.v775},
+  {abap: "TYPES t TYPE TABLE FOR REPORTED zentity.", rel: Release.v775},
+  {abap: "TYPES t TYPE TABLE FOR FEATURES KEY zentity.", rel: Release.v775},
+  {abap: "TYPES t TYPE TABLE FOR FEATURES RESULT zentity.", rel: Release.v775},
+  {abap: "TYPES t TYPE TABLE FOR VALIDATION zentity~zval.", rel: Release.v775},
+  {abap: "TYPES t TYPE TABLE FOR FAILED EARLY zentity.", rel: Release.v776},
+  {abap: "TYPES t TYPE TABLE FOR MAPPED EARLY zentity.", rel: Release.v776},
+  {abap: "TYPES t TYPE TABLE FOR REPORTED EARLY zentity.", rel: Release.v776},
+  {abap: "TYPES t TYPE TABLE FOR LOCK zentity.", rel: Release.v776},
+  {abap: "TYPES t TYPE TABLE FOR CHANGE zentity.", rel: Release.v777},
+  {abap: "TYPES t TYPE TABLE FOR AUTHORIZATION RESULT zentity.", rel: Release.v779},
+  {abap: "TYPES t TYPE TABLE FOR PERMISSIONS KEY zentity.", rel: Release.v779},
+  {abap: "TYPES t TYPE TABLE FOR AUTHORIZATION KEY zentity.", rel: Release.v780},
+  {abap: "TYPES t TYPE TABLE FOR INSTANCE AUTHORIZATION KEY zentity.", rel: Release.v780},
+  {abap: "TYPES t TYPE TABLE FOR INSTANCE AUTHORIZATION REQUEST zentity.", rel: Release.v780},
+  {abap: "TYPES t TYPE TABLE FOR INSTANCE AUTHORIZATION RESULT zentity.", rel: Release.v780},
+  {abap: "TYPES t TYPE TABLE FOR INSTANCE FEATURES KEY zentity.", rel: Release.v780},
+  {abap: "TYPES t TYPE TABLE FOR INSTANCE FEATURES REQUEST zentity.", rel: Release.v780},
+  {abap: "TYPES t TYPE TABLE FOR INSTANCE FEATURES RESULT zentity.", rel: Release.v780},
+  {abap: "TYPES t TYPE TABLE FOR EVENT zentity~zevent.", rel: Release.v786},
+  {abap: "TYPES t TYPE TABLE FOR READ CHANGES zentity.", rel: Release.v914},
+], "TYPES RAP TABLE FOR version-1 negative");
