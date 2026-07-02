@@ -9,10 +9,12 @@ export class CDSElement extends Expression {
     const redirected = seq(": REDIRECTED TO", optPrio(altPrio("PARENT", "COMPOSITION CHILD")), CDSName);
     const colonThing = seq(":", altPrio(CDSType, CDSName, "LOCALIZED"));
 
-    // $extension.* — extension field wildcard
     const extensionWildcard = seq("$extension", ".", "*");
+    const includeElement = seq("INCLUDE", CDSPrefixedName);
+    const typedVirtual = seq("VIRTUAL", CDSName, ":", CDSType);
 
     const body = altPrio(extensionWildcard,
+                         includeElement,
                          CDSArithmetics,
                          CDSAggregate,
                          CDSString,
@@ -24,11 +26,7 @@ export class CDSElement extends Expression {
                          seq(CDSPrefixedName, optPrio(CDSAs), optPrio(altPrio(redirected, colonThing))),
                          CDSInteger);
 
-    // KEY/VIRTUAL keyword handling via altPrio:
-    // - Try keyword form first: if keyword consumed but body fails (e.g. "virtual.Field"),
-    //   altPrio backtracks to plain body (which handles "virtual" as a datasource alias prefix).
-    // - This gives exactly 1 state in all cases (no exponential blowup from opt()).
-    const elementBody = altPrio(seq(altPrio("KEY", "VIRTUAL"), body), body);
+    const elementBody = altPrio(typedVirtual, seq(altPrio("KEY", "VIRTUAL"), body), body);
 
     return seq(starPrio(CDSAnnotation), elementBody, optPrio(CDSAs));
   }

@@ -40,6 +40,12 @@ export class CDSParser {
       res = Combi.run(new Expressions.CDSDefineHierarchy(), tokens, defaultRelease);
     }
     if (res === undefined || !(res[0] instanceof ExpressionNode)) {
+      res = Combi.run(new Expressions.CDSDefineExternalEntity(), tokens, defaultRelease);
+    }
+    if (res === undefined || !(res[0] instanceof ExpressionNode)) {
+      res = Combi.run(new Expressions.CDSDefineTableEntity(), tokens, defaultRelease);
+    }
+    if (res === undefined || !(res[0] instanceof ExpressionNode)) {
       return undefined;
     }
     return res[0];

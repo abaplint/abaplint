@@ -1,5 +1,5 @@
-import {CDSElement, CDSComposition, CDSGroupBy, CDSSource, CDSWhere, CDSHaving} from ".";
-import {Expression, seq, str, opt, optPrio, star, altPrio} from "../../abap/2_statements/combi";
+import {CDSElement, CDSComposition, CDSGroupBy, CDSSource, CDSWhere, CDSHaving, CDSName, CDSPrefixedName} from ".";
+import {Expression, seq, str, opt, optPrio, star, altPrio, starPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSAssociation} from "./cds_association";
 import {CDSJoin} from "./cds_join";
@@ -8,11 +8,17 @@ export class CDSSelect extends Expression {
   public getRunnable(): IStatementRunnable {
     const fields = seq(star(seq(CDSElement, ",")), CDSElement);
     const distinct = str("DISTINCT");
-
-    // elem (,elem)* [,] — handles separator commas and optional trailing comma
     const elementList = seq(CDSElement, star(seq(",", CDSElement)), opt(","));
-
     const elements = seq(str("{"), altPrio("*", elementList), str("}"));
+
+    const aspectBinding = seq(CDSPrefixedName, "=", ">", CDSPrefixedName);
+    const bindAspect = seq(
+      "BIND", "ASPECT", CDSName,
+      "(", aspectBinding, starPrio(seq(",", aspectBinding)), ")",
+    );
+
+    const parenSelect = seq("(", CDSSelect, ")");
+    const unionBranch = altPrio(parenSelect, CDSSelect);
 
     return seq("SELECT",
                optPrio(distinct),
@@ -21,14 +27,15 @@ export class CDSSelect extends Expression {
                CDSSource,
                star(CDSJoin),
                star(altPrio(CDSComposition, CDSAssociation)),
+               optPrio(bindAspect),
                opt(elements),
                optPrio(CDSWhere),
                optPrio(CDSGroupBy),
                optPrio(CDSHaving),
                optPrio(altPrio(
-                 seq("UNION", optPrio("ALL"), CDSSelect),
-                 seq("EXCEPT", CDSSelect),
-                 seq("INTERSECT", CDSSelect),
+                 seq("UNION", optPrio("ALL"), unionBranch),
+                 seq("EXCEPT", unionBranch),
+                 seq("INTERSECT", unionBranch),
                )));
   }
 }

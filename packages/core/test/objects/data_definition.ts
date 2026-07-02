@@ -459,4 +459,25 @@ define view entity ZI_FIPositionBseg
 
     expect(ddls.listKeys().length).to.equal(4);
   });
+
+  it("projection with virtual element included in fields", async () => {
+    const source = `
+define view entity ZTEST_C_ITEM
+  as projection on ZTEST_I_ITEM
+{
+  key     ItemUUID,
+          ItemType,
+  virtual ItemTypeText : abap.char( 10 ),
+          OffsetPre
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("ztest_c_item.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const parsed = ddls.parseType(reg) as StructureType;
+    const names = parsed.getComponents().map(c => c.name.toUpperCase());
+    expect(names).to.include("ITEMTYPETEXT");
+  });
 });
