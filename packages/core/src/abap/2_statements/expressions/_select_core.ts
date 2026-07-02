@@ -78,7 +78,7 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
     );
   }
 
-  const fromPackSize = seq(optPrio(SQLPackageSize), optPrio(SQLUpTo), byp, conn, optPrio(SQLUpTo));
+  const fromPackSize = seq(optPrio(SQLPackageSize), optPrio(SQLUpTo), byp, conn, byp, optPrio(SQLUpTo));
 
   const trailingInto = seq(
     optPrio(altPrio(
