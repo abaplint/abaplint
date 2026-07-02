@@ -603,7 +603,9 @@ WHERE  but000~partner IN ('1000' , '2000' , '3000' ).`,
   `SELECT @class_name=>const_attr AS rec FROM ztab INTO TABLE @DATA(lt_r).`,
   `SELECT col FROM ztab WHERE col = @class_name=>const_attr INTO TABLE @DATA(lt_r).`,
   `SELECT col FROM ztab WHERE NOT col LIKE '/prefix_pattern' INTO TABLE @DATA(lt_r).`,
+  `SELECT COUNT(*) FROM (tab) CLIENT SPECIFIED CONNECTION (foo-bar) BYPASSING BUFFER WHERE (lt_where).`,
 ];
+
 
 statementType(tests, "SELECT", Statements.Select);
 
