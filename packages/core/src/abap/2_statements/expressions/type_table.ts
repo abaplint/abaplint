@@ -39,8 +39,8 @@ export class TypeTable extends Expression {
 
     const derivedTypes = derivedTypesAlt(
       ver(Release.v773, seq("ACTION IMPORT", entity)),
-      seq("READ LINK", entity),
-      seq("EVENT", entity),
+      ver(Release.v774, seq("READ LINK", entity)),
+      ver(Release.v787, seq("EVENT", entity)),
     );
 
     const derived = ver(Release.v770, seq("TABLE FOR", derivedTypes, optPrio("VALUE IS INITIAL")),
