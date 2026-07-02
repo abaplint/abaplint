@@ -1,7 +1,8 @@
-import {seq, alt, opt, per, Expression, optPrio, ver} from "../combi";
+import {seq, alt, opt, per, Expression, optPrio, ver, altPrio} from "../combi";
 import * as Expressions from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {Release} from "../../../version";
+import {lobHandleType} from "./_lob_handle_type";
 
 export class DataDefinition extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -17,7 +18,7 @@ export class DataDefinition extends Expression {
 
     return seq(Expressions.DefinitionName,
                optPrio(Expressions.ConstantFieldLength),
-               alt(simple, table, Expressions.TypeStructure),
+               altPrio(ver(Release.v731, lobHandleType()), alt(simple, table, Expressions.TypeStructure)),
                optPrio(boxed));
 
   }

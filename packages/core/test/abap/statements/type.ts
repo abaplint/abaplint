@@ -236,3 +236,37 @@ statementVersionFail([
   {abap: "TYPES t TYPE TABLE FOR EVENT zentity~zevent.", rel: Release.v786},
   {abap: "TYPES t TYPE TABLE FOR READ CHANGES zentity.", rel: Release.v914},
 ], "TYPES RAP TABLE FOR version-1 negative");
+
+// === LOB handles, CLIENT SPECIFIED, WITH INDICATORS, ANY STRUCTURE ===
+
+statementVersionOk([
+  {abap: `TYPES t TYPE ztype LOCATOR FOR ALL COLUMNS.`, rel: Release.v731},
+  {abap: `TYPES t TYPE ztype READER FOR ALL COLUMNS.`, rel: Release.v731},
+  {abap: `TYPES t TYPE ztype WRITER FOR ALL COLUMNS.`, rel: Release.v731},
+  {abap: `TYPES t TYPE ztype LOB HANDLE FOR ALL COLUMNS.`, rel: Release.v731},
+  {abap: `TYPES t TYPE ztype READ-ONLY LOCATOR FOR ALL COLUMNS.`, rel: Release.v731},
+  {abap: `TYPES t TYPE ztype LOB HANDLE FOR ALL BLOB COLUMNS.`, rel: Release.v731},
+  {abap: `TYPES t TYPE ztype LOB HANDLE FOR ALL CLOB COLUMNS.`, rel: Release.v731},
+  {abap: `TYPES t TYPE ztype LOCATOR FOR COLUMNS clob1 blob2.`, rel: Release.v731},
+  {abap: `TYPES t TYPE ztype LOCATOR FOR ALL BLOB COLUMNS READER FOR ALL CLOB COLUMNS.`, rel: Release.v731},
+], "TYPES LOB handles v731", Statements.Type);
+
+statementVersionOk([
+  {abap: `TYPES t TYPE ztype CLIENT SPECIFIED mandt.`, rel: Release.v760},
+  {abap: `TYPES t TYPE ztype CLIENT SPECIFIED mandt LOCATOR FOR ALL COLUMNS.`, rel: Release.v760},
+], "TYPES CLIENT SPECIFIED v760", Statements.Type);
+
+statementVersionOk([
+  {abap: `TYPES t TYPE t_deep WITH INDICATORS ind TYPE abap_bool.`, rel: Release.v781},
+  {abap: `TYPES t TYPE t_deep WITH INDICATORS ind.`, rel: Release.v781},
+], "TYPES WITH INDICATORS v781", Statements.Type);
+
+statementVersionOk([
+  {abap: `TYPES t TYPE t_deep WITH INDICATORS ind AS BITFIELD.`, rel: Release.v784},
+], "TYPES WITH INDICATORS AS BITFIELD v784", Statements.Type);
+
+statementVersionOk([
+  {abap: `TYPES gen TYPE ANY STRUCTURE CONTAINING x TYPE numeric.`, rel: Release.v916},
+  {abap: `TYPES gen TYPE ANY STRUCTURE.`, rel: Release.v916},
+  {abap: `TYPES pub TYPE ANY STRUCTURE CONTAINING comp1 TYPE c comp2 TYPE n comp3 TYPE i.`, rel: Release.v916},
+], "TYPES ANY STRUCTURE v916", Statements.Type);
