@@ -68,6 +68,12 @@ const releaseDefsRaw = [
   ["v700", {abap: "700", kernel: 700, op: 700, cloud: null, ce: null}],
   ["v701", {abap: "701", kernel: 701, op: 701, cloud: null, ce: null}],
   ["v702", {abap: "702", kernel: 702, op: 702, cloud: null, ce: null}],
+  // OpenABAP: not a real SAP release. A dialect that is "702 baseline + a curated set
+  // of newer features" (opted in per-statement via AlsoIn.OpenABAP). Placed right after
+  // v702 on purpose: its ordinal must behave exactly like v702 for releaseAtLeast() gates
+  // (nothing else gates between v702 and v710), while staying a distinct identity so
+  // open-abap can be detected without a separate boolean flag.
+  ["open-abap", {abap: "open-abap", kernel: null, op: null, cloud: null, ce: null}],
   ["v710", {abap: "710", kernel: 710, op: 710, cloud: null, ce: null}],
   ["v711", {abap: "711", kernel: 711, op: 711, cloud: null, ce: null}],
   ["v720", {abap: "720", kernel: 720, op: 720, cloud: null, ce: null}],
@@ -149,20 +155,25 @@ export type ReleaseName = (typeof releaseDefsRaw)[number][0];
 export const ReleaseList: readonly ABAPRelease[] =
   releaseDefsRaw.map(([name, r], i) => Object.freeze({...r, name, ordinal: i}));
 
+/** Base lookup, keyed by the raw release name (e.g. `"v762"`, `"Newest"`). */
+const byName: {readonly [name: string]: ABAPRelease} =
+  Object.fromEntries(releaseDefsRaw.map(([name], i) => [name, ReleaseList[i]]));
+
 /** Lookup table keyed by release name (e.g. `Release.v740sp05`, `Release.Newest`). */
 export const Release: {readonly [name: string]: ABAPRelease} = Object.freeze({
-  ...Object.fromEntries(releaseDefsRaw.map(([name], i) => [name, ReleaseList[i]])),
-  // Deprecated aliases: on-prem v750–v758 map to last cloud row at that op
-  v750: ReleaseList[14],   // 7.62 == on-prem 750
-  v751: ReleaseList[17],   // 7.65 == on-prem 751
-  v752: ReleaseList[21],   // 7.69 == on-prem 752
-  v753: ReleaseList[25],   // 7.73 == on-prem 753
-  v754: ReleaseList[29],   // 7.77 == on-prem 754
-  v755: ReleaseList[33],   // 7.81 == on-prem 755
-  v756: ReleaseList[37],   // 7.85 == on-prem 756
-  v757: ReleaseList[41],   // 7.89 == on-prem 757
-  v758: ReleaseList[45],   // 7.93 == on-prem 758
-  v816: ReleaseList[53],   // 9.16 == on-prem 816
+  ...byName,
+  // Deprecated aliases: on-prem v750–v758 map to last cloud row at that op.
+  // Referenced by cloud name (not array index) so inserting rows can't silently repoint them.
+  v750: byName["v762"],   // 7.62 == on-prem 750
+  v751: byName["v765"],   // 7.65 == on-prem 751
+  v752: byName["v769"],   // 7.69 == on-prem 752
+  v753: byName["v773"],   // 7.73 == on-prem 753
+  v754: byName["v777"],   // 7.77 == on-prem 754
+  v755: byName["v781"],   // 7.81 == on-prem 755
+  v756: byName["v785"],   // 7.85 == on-prem 756
+  v757: byName["v789"],   // 7.89 == on-prem 757
+  v758: byName["v793"],   // 7.93 == on-prem 758
+  v816: byName["v916"],   // 9.16 == on-prem 816
 });
 
 /**
@@ -194,8 +205,8 @@ const byDeprecated: Readonly<Record<string, ABAPRelease>> = Object.freeze({
   [Version.v757]:     Release["v757"],
   [Version.v758]:     Release["v758"],
   [Version.v816]:     Release["v816"],
-  [Version.Cloud]:    Release["Newest"],   // Cloud → Newest sentinel
-  [Version.OpenABAP]: Release["v702"],     // OpenABAP shares v702 release identity
+  [Version.Cloud]:    Release["Newest"],     // Cloud → Newest sentinel
+  [Version.OpenABAP]: Release["open-abap"],  // OpenABAP is its own release identity (702 baseline + curated features)
 });
 
 export function versionToABAPRelease(v: Version): ABAPRelease {

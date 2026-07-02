@@ -93,17 +93,15 @@ export class StatementParser {
   private static map: StatementMap;
   private readonly release: ABAPRelease;
   private readonly languageVersion: LanguageVersion;
-  private readonly openABAP: boolean;
   private readonly reg?: IRegistry;
 
   public constructor(release: ABAPRelease, reg?: IRegistry,
-                     languageVersion: LanguageVersion = LanguageVersion.Normal, openABAP: boolean = false) {
+                     languageVersion: LanguageVersion = LanguageVersion.Normal) {
     if (!StatementParser.map) {
       StatementParser.map = new StatementMap();
     }
     this.release = release;
     this.languageVersion = languageVersion;
-    this.openABAP = openABAP;
     this.reg = reg;
   }
 
@@ -282,7 +280,7 @@ export class StatementParser {
     }
 
     for (const st of StatementParser.map.lookup(filtered[0].getStr())) {
-      const match = Combi.run(st.matcher, filtered, this.release, this.languageVersion, this.openABAP);
+      const match = Combi.run(st.matcher, filtered, this.release, this.languageVersion);
       if (match) {
         const last = tokens[tokens.length - 1];
         match.push(new TokenNode(last));
@@ -292,7 +290,7 @@ export class StatementParser {
     }
     // next try the statements without specific keywords
     for (const st of StatementParser.map.lookup("")) {
-      const match = Combi.run(st.matcher, filtered, this.release, this.languageVersion, this.openABAP);
+      const match = Combi.run(st.matcher, filtered, this.release, this.languageVersion);
       if (match) {
         const last = tokens[tokens.length - 1];
         match.push(new TokenNode(last));

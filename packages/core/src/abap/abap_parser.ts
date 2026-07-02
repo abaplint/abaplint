@@ -21,7 +21,6 @@ export interface IABAPParserResult {
 export interface IABAPParserOptions {
   release?: ABAPRelease;
   languageVersion?: LanguageVersion;
-  openABAP?: boolean;
   globalMacros?: readonly string[];
   reg?: IRegistry;
 }
@@ -29,7 +28,6 @@ export interface IABAPParserOptions {
 export class ABAPParser {
   private readonly release: ABAPRelease;
   private readonly languageVersion: LanguageVersion;
-  private readonly openABAP: boolean;
   private readonly globalMacros: readonly string[];
   private readonly reg?: IRegistry;
 
@@ -44,13 +42,11 @@ export class ABAPParser {
     if (optionsOrRelease === undefined || ABAPParser.isRelease(optionsOrRelease)) {
       this.release = optionsOrRelease ?? defaultRelease;
       this.languageVersion = LanguageVersion.Normal;
-      this.openABAP = false;
       this.globalMacros = globalMacros ?? [];
       this.reg = reg;
     } else {
       this.release = optionsOrRelease.release ?? defaultRelease;
       this.languageVersion = optionsOrRelease.languageVersion ?? LanguageVersion.Normal;
-      this.openABAP = optionsOrRelease.openABAP ?? false;
       this.globalMacros = optionsOrRelease.globalMacros ?? [];
       this.reg = optionsOrRelease.reg;
     }
@@ -74,7 +70,7 @@ export class ABAPParser {
 
 // 2: statements
     const b2 = Date.now();
-    const statementResult = new StatementParser(this.release, this.reg, this.languageVersion, this.openABAP)
+    const statementResult = new StatementParser(this.release, this.reg, this.languageVersion)
       .run(lexerResult, this.globalMacros);
     const statementsRuntime = Date.now() - b2;
 

@@ -23,10 +23,13 @@ export function getFile(abap: string): IFile[] {
 }
 
 // Ordered list of releases that have a Version enum mapping, deduped, in ordinal order.
+// OpenABAP is excluded: it is a dialect (702 baseline + curated features), not a linear
+// release step, so it must not appear in the "previous release" ladder.
 const legacyReleases: ABAPRelease[] = (() => {
   const seen = new Set<number>();
   const result: ABAPRelease[] = [];
   for (const v of Object.values(Version)) {
+    if (v === Version.OpenABAP) { continue; }
     try {
       const r = versionToABAPRelease(v as Version);
       if (!seen.has(r.ordinal)) {

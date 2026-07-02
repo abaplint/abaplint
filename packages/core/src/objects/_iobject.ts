@@ -34,7 +34,7 @@ export interface IObject extends IArtifact {
    * registry for global cross object macros
   */
   parse(release?: ABAPRelease, globalMacros?: readonly string[], reg?: IRegistry,
-        languageVersion?: LanguageVersion, openABAP?: boolean): IParseResult;
+        languageVersion?: LanguageVersion): IParseResult;
   getParsingIssues(): readonly Issue[];
 
   getFiles(): readonly IFile[];

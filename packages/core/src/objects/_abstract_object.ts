@@ -30,7 +30,7 @@ export abstract class AbstractObject implements IObject {
   }
 
   public parse(_release?: ABAPRelease, _globalMacros?: readonly string[], _reg?: IRegistry,
-               _languageVersion?: LanguageVersion, _openABAP?: boolean): IParseResult {
+               _languageVersion?: LanguageVersion): IParseResult {
     return {updated: false, runtime: 0};
   }
 
