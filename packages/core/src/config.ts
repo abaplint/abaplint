@@ -160,11 +160,14 @@ export class Config implements IConfiguration {
   }
 
   public getLanguageVersion(): LanguageVersion {
+    if (this.config.syntax.languageVersion !== undefined) {
+      return this.config.syntax.languageVersion;
+    }
     const v = this.config.syntax.version;
     if (v !== undefined && typeof v !== "string") {
       return v.language;
     }
-    return this.config.syntax.languageVersion ?? LanguageVersion.Normal;
+    return LanguageVersion.Normal;
   }
 
   private checkVersion() {
