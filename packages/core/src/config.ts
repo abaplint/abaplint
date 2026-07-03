@@ -1,4 +1,4 @@
-import {Version, LanguageVersion, ABAPRelease, versionToABAPRelease, Release, defaultRelease, VersionOldOrNew} from "./version";
+import {Version, LanguageVersion, ABAPRelease, versionToABAPRelease, Release, defaultRelease, VersionOldOrNew, ReleaseName} from "./version";
 import {ArtifactsRules} from "./artifacts_rules";
 import {IRule} from "./rules/_irule";
 import {IConfig, IGlobalConfig, ISyntaxSettings, IConfiguration} from "./_config";
@@ -19,7 +19,10 @@ export class Config implements IConfiguration {
       rules[rule.getMetadata().key] = rule.getConfig();
     }
 
-    const version: VersionOldOrNew | undefined = ver;
+    const version: VersionOldOrNew = ver ?? {
+      release: Release.Newest.name as ReleaseName,
+      language: langVer ?? LanguageVersion.Normal,
+    };
 
     // defaults: dont skip anything, report everything. The user can decide to skip stuff
     // its difficult to debug errors not being reported
