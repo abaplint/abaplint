@@ -50,7 +50,7 @@ import {Visibility} from "./abap/4_file_information/visibility";
 import {Identifier} from "./abap/4_file_information/_identifier";
 import {Severity} from "./severity";
 import {IMethodDefinition} from "./abap/types/_method_definition";
-import {DDLParser} from "./ddl/ddl_parser";
+import {DDLParser, DDLKind, IDDLParserResult, IDDLParserResultField} from "./ddl/ddl_parser";
 import {CDSParser} from "./cds/cds_parser";
 import {RulesRunner} from "./rules_runner";
 import {RuleTag} from "./rules/_irule";
@@ -83,7 +83,7 @@ export {Issue, Config, Version, LanguageVersion, ABAPRelease, Release, releaseAt
   Edits, MemoryFile,
   ABAPFile, IABAPFile,
   AbstractFile,
-  IMethodDefinition, DDLParser, LanguageServerTypes, CDSParser, ExpressionsCDS,
+  IMethodDefinition, DDLParser, DDLKind, IDDLParserResult, IDDLParserResultField, LanguageServerTypes, CDSParser, ExpressionsCDS,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
   CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
   Diagnostics, IRenameSettings, Info, Visibility, Severity, RuleTag, LSPEdit};

@@ -3,9 +3,8 @@ import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSAnnotation} from "../../cds/expressions";
 import {DDLForeignKey, DDLValueHelp} from "./ddl_clauses";
 import {DDLName} from "./ddl_name";
-import {DDLType} from "./ddl_type";
 
-export class DDLTableField extends Expression {
+export class DDLNamedInclude extends Expression {
   public getRunnable(): IStatementRunnable {
     const trailingClause = alt(DDLForeignKey, DDLValueHelp);
     return seq(
@@ -13,7 +12,9 @@ export class DDLTableField extends Expression {
       optPrio("KEY"),
       DDLName,
       ":",
-      DDLType,
+      "INCLUDE",
+      DDLName,
+      optPrio(seq("WITH", "SUFFIX", DDLName)),
       optPrio("NOT NULL"),
       star(trailingClause),
       ";",
