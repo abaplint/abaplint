@@ -12,6 +12,7 @@ export class CDSDefineView extends Expression {
     return seq(star(CDSAnnotation),
                opt("DEFINE"),
                opt("ROOT"),
+               opt("WRITABLE"),
                "VIEW",
                ver(Release.v755, opt("ENTITY")),
                CDSName,
@@ -19,6 +20,7 @@ export class CDSDefineView extends Expression {
                opt(CDSWithParameters),
                "AS",
                CDSSelect,
+               opt(seq("WITH", "HIERARCHY", CDSName)),  // post-select WITH HIERARCHY clause
                opt(";"));
   }
 }

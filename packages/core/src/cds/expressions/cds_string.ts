@@ -3,15 +3,8 @@ import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSString extends Expression {
   public getRunnable(): IStatementRunnable {
-    // Allow any character except unescaped single quote; escape sequences:
-    //   ''  — escaped single quote (doubling)
-    //   \'  — escaped single quote (backslash form)
-    //   \\  — escaped backslash (e.g. '\\' in ltrim/rtrim calls)
-    //   \x  — other backslash sequences not followed by '
     const reg = regex(/^'(?:[^'\\]|''|\\'|\\\\|\\(?!'))*'$/);
-    // Typed literal: abap.int4'1', abap.char'X', abap.numc(3)'123', etc.
-    // Lexed as tokens: abap, ., typename, 'value'
-    const abapTypeName = regex(/^(?:int[1-9]|sstring|char|numc|dats|tims|fltp|decfloat\d+|dec|string|raw|xstring|clnt|lang|unit|cuky|curr|quan|d|t|p|n|c|x|f)$/i);
+    const abapTypeName = regex(/^(?:int[1-9]|int8|sstring|char|numc|dats|datn|tims|timn|utcl|utclong|fltp|decfloat\d+|dec|string|rawstring|rstr|raw|xstring|clnt|lang|unit|cuky|curr|quan|geom_ewkb|d34n|d16n|d34d|d16d|d34s|d16s|d34r|d16r|d|t|p|n|c|x|f)$/i);
     const abap = seq("abap", ".", abapTypeName, optPrio(seq("(", regex(/^\d+$/), ")")), reg);
     return altPrio(abap, reg);
   }

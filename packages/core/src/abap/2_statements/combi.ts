@@ -40,7 +40,7 @@ class Regex implements IStatementRunnable {
   }
 
   public railroad() {
-    return "Railroad.Terminal(\"" + this.regexp.source.replace(/\\/g, "\\\\") + "\")";
+    return "Railroad.Terminal(\"" + this.regexp.source.replace(/\\/g, "\\\\").replace(/"/g, "\\\"") + "\")";
   }
 
   public toStr() {

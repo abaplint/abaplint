@@ -2854,4 +2854,452 @@ where Path like 'C:\\\\temp'`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  // ---------------------------------------------------------------------------
+  // New grammar additions
+  // ---------------------------------------------------------------------------
+
+  it("hierarchy: depth with integer literal", () => {
+    const cds = `define hierarchy V as parent child hierarchy(
+  source T child to parent association _a
+  siblings order by id
+  depth 5
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy: depth with parameter reference (:p)", () => {
+    const cds = `define hierarchy V with parameters p_depth : abap.int4
+as parent child hierarchy(
+  source T child to parent association _a
+  siblings order by id ascending
+  depth :p_depth
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy: load bulk", () => {
+    const cds = `define hierarchy V with parameters p_id : abap.raw(16)
+as parent child hierarchy(
+  source T child to parent association _a
+  start where id = :p_id
+  siblings order by id
+  load bulk
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy: load incremental", () => {
+    const cds = `define hierarchy V as parent child hierarchy(
+  source T child to parent association _a
+  siblings order by id
+  load incremental
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy: date range parameters", () => {
+    const cds = `define hierarchy V with parameters
+  p_from : dats,
+  p_to   : dats
+as parent child hierarchy(
+  source T child to parent association _a
+  siblings order by id
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("define abstract entity with parameters", () => {
+    const cds = `define abstract entity V
+  with parameters p_id : abap.int4
+{
+  key id : abap.int4;
+  name   : abap.char(40);
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("define external entity", () => {
+    const cds = `define external entity V external name DATATYPES
+{
+  key id : abap.int4;
+  name   : abap.char(40);
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("define writable external entity", () => {
+    const cds = `define writable external entity V external name FOO
+{
+  key id : abap.int4;
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("define static entity", () => {
+    const cds = `define static entity V
+{
+  key code : abap.char(2);
+  description : abap.char(40);
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("define table entity (inline body)", () => {
+    const cds = `define table entity V
+{
+  key id : abap.int4;
+  name   : abap.char(40);
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("define root table entity with select", () => {
+    const cds = `define root table entity V
+as select from base_table {
+  key id,
+  name
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("projection view with redefine association redirected to composition child", () => {
+    const cds = `define root view entity V
+  provider contract transactional_query
+  as projection on BaseView
+    redefine association _child
+      redirected to composition child ChildEntity
+{
+  key Id,
+  _child.Field as field_exposure
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("projection view with redefine association redirected to plain entity", () => {
+    const cds = `define root view entity V as projection on Base
+  redefine association _assoc
+    redirected to OtherEntity
+{
+  key Id
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("select from association path (T._Assoc)", () => {
+    const cds = `define view entity V as select from Base._SomeAssoc {
+  key carrid,
+  connid
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("select from series_generate_date() — colon-style named args with typed literals", () => {
+    const cds = `define view entity V as select from series_generate_date(
+    step: 30,
+    from_value: abap.datn'20200101',
+    to_value: abap.datn'20220102'
+  ) {
+    key generated_period_start,
+    generated_period_end,
+    element_number
+  }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("select from series_generate_time() — timn typed literal", () => {
+    const cds = `define view entity V as select from series_generate_time(
+    step: 2,
+    from_value: abap.timn'131002',
+    to_value: abap.timn'230102'
+  ) {
+    key generated_period_start
+  }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("select from series_generate_timestamp() — utcl typed literal", () => {
+    const cds = `define view entity V as select from series_generate_timestamp(
+    step: 2,
+    from_value: abap.utcl'2020-07-20 12:23:01.1234567',
+    to_value: abap.utcl'2020-07-20 12:23:11.1234567'
+  ) {
+    key generated_period_start
+  }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("series_generate with arrow named args and interval 1 day", () => {
+    const cds = `define view entity V
+  with parameters p_from : abap.dats, p_to : abap.dats
+  as select from series_generate_date(
+    date_start => :p_from,
+    date_end   => :p_to,
+    increment  => interval 1 day
+  ) as s {
+    key s.element as date_val
+  }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("avg(function_call(...) as type) — nested function in aggregate", () => {
+    const cds = `define view entity V as select from demo_expressions {
+  avg( abs(num1) as abap.dec(12,2) ) as average_abs
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("union all with parenthesized branch ( select ... union select ... )", () => {
+    const cds = `define view entity V as select from T { key id, val }
+union all
+(
+  select from T { key id, val } where id = 3
+  union
+  select from T { key id, val } where id = 6
+)`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("define writable view entity", () => {
+    const cds = `define writable view entity V as select from T {
+  key id as Id,
+  name as Name
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("external entity with double-quoted external name and with federated data provided at runtime", () => {
+    const cds = `define external entity V
+  external name "MY_DDIC_TABLE"
+{
+  key id : abap.char(10) external name "K_ID";
+  name   : abap.char(40);
+}
+with federated data provided at runtime`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("external entity with federated data provided by schema", () => {
+    const cds = `define external entity V external name DATATYPES {
+  key id : abap.int4;
+}
+with federated data
+provided by MY_SCHEMA`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("writable external entity with double-quoted external name", () => {
+    const cds = `define writable external entity V
+  external name "WRITABLE_TABLE"
+{
+  key SYSID : abap.char(3) external name "K_SYSID";
+  NAME      : abap.char(40);
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("include ASPECT.field in select list (bind aspect)", () => {
+    const cds = `define view entity V as select from T
+  bind aspect MY_ASPECT ( id => $projection.IdVE )
+{
+  key id         as IdVE,
+      include MY_ASPECT.d34n,
+      include MY_ASPECT.utcl
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("path filter [to exact one] in association path", () => {
+    const cds = `define view entity V as select from T
+  association [1] to U as _U on T.id = _U.id
+{
+  key T.id,
+  _U[to exact one].name as name
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("path filter [to exact one: inner where cond]", () => {
+    const cds = `define view entity V as select from T
+  association [*] to U as _U on T.id = _U.id
+{
+  key T.id,
+  _U[to exact one: inner where language = 'D'].name as name
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy: multiple parents leaves", () => {
+    const cds = `define hierarchy V as parent child hierarchy(
+  source T child to parent association _a
+  start where id = 'A'
+  siblings order by id
+  multiple parents leaves
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy: generate spantree", () => {
+    const cds = `define hierarchy V as parent child hierarchy(
+  source T child to parent association _a
+  start where id = 'A' or id = 'B'
+  siblings order by id
+  generate spantree
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy: period from ... to ... valid from ... to ...", () => {
+    const cds = `define hierarchy V with parameters p_from : dats, p_to : dats
+as parent child hierarchy(
+  source T child to parent association _a
+  period from valid_from to valid_to
+    valid from $parameters.p_from to $parameters.p_to
+  siblings order by id
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy: load $parameters.p_load (parameterized load mode)", () => {
+    const cds = `define hierarchy V with parameters p_load : abap.char(11)
+as parent child hierarchy(
+  source T child to parent association _a
+  siblings order by id
+  load $parameters.p_load
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("abap.datn / abap.timn / abap.utcl typed string literals", () => {
+    const cds = `define view entity V as select from T {
+  abap.datn'20200101' as date_start,
+  abap.timn'120000'   as time_val,
+  abap.utcl'2020-01-01 12:00:00.0000000' as ts_val
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("zero-argument scalar function call FUNC()", () => {
+    const cds = `define view entity V as select from T {
+  DEMO_CDS_SCALAR_HELLOWORLD() as MyFunc
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy: orphans error", () => {
+    const cds = `define hierarchy V as parent child hierarchy(
+  source T child to parent association _a
+  siblings order by id
+  orphans error
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy: cycles error", () => {
+    const cds = `define hierarchy V as parent child hierarchy(
+  source T child to parent association _a
+  siblings order by id
+  cycles error
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy: cache on", () => {
+    const cds = `define hierarchy V as parent child hierarchy(
+  source T child to parent association _a
+  siblings order by id
+  cache on
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy: multiple parents leaves only", () => {
+    const cds = `define hierarchy V as parent child hierarchy(
+  source T child to parent association _a
+  siblings order by id
+  multiple parents leaves only
+) { id, parent }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("provider contract SQL_QUERY", () => {
+    const cds = `define root view entity V
+  provider contract sql_query
+  as projection on T { key id }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend abstract entity with fields", () => {
+    const cds = `extend abstract entity MyAbstractEntity with {
+  newField : abap.char(40);
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend custom entity with fields", () => {
+    const cds = `extend custom entity MyCustomEntity with {
+  key newKey : abap.int4;
+  extraField : abap.char(20);
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("typed virtual element declaration VIRTUAL name : Type", () => {
+    const cds = `define view entity V as select from T {
+  key id,
+  virtual computedField : abap.char(40)
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("view with WITH HIERARCHY clause", () => {
+    const cds = `define view entity V as select from T {
+  key id,
+  parent_id
+}
+with hierarchy MY_HIERARCHY`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
 });

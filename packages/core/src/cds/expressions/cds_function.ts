@@ -1,5 +1,5 @@
 import {CDSFunctionInput, CDSName, CDSType} from ".";
-import {altPrio, Expression, regex, seq, starPrio} from "../../abap/2_statements/combi";
+import {altPrio, Expression, optPrio, regex, seq, starPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSFunction extends Expression {
@@ -72,12 +72,13 @@ export class CDSFunction extends Expression {
     const substrRegexpr = seq("SUBSTR_REGEXPR", "(", conversionInputs, ")");
     const locateRegexpr = seq("LOCATE_REGEXPR", "(", conversionInputs, ")");
 
-    // Generic fallback: user-defined/extension functions like GET_NUMERIC_VALUE(arg).
-    // Use a regex that excludes CDS keywords that would otherwise be matched by CDSName.
-    // Must contain at least one underscore to distinguish from keywords (e.g. GET_NUMERIC_VALUE).
     const extFuncName = regex(/^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+$/i);
     const genericArgs = seq(CDSFunctionInput, starPrio(seq(",", CDSFunctionInput)));
-    const genericFunc = seq(extFuncName, "(", genericArgs, ")");
+    const namedArgValue = altPrio(seq("INTERVAL", CDSFunctionInput, CDSName), CDSFunctionInput, CDSName);
+    const namedArgArrow = seq(CDSName, "=", ">", namedArgValue);
+    const namedArgColon = seq(CDSName, ":", namedArgValue);
+    const namedArgs = seq(altPrio(namedArgArrow, namedArgColon), starPrio(seq(",", altPrio(namedArgArrow, namedArgColon))));
+    const genericFunc = seq(extFuncName, "(", optPrio(altPrio(namedArgs, genericArgs)), ")");
 
     return altPrio(substring, coalesce, tstmp_to_dats, concat, tstmp_to_tims,
                    upper, lower, abs, ceil, floor, round, div, division,

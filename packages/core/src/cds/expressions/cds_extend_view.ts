@@ -1,7 +1,6 @@
-import {CDSAnnotation, CDSAs} from ".";
-import {Expression, seq, star, opt, optPrio, str} from "../../abap/2_statements/combi";
+import {CDSAnnotation, CDSAs, CDSAssociation, CDSComposition, CDSCondition, CDSName, CDSPrefixedName, CDSType, CDSWithParameters} from ".";
+import {Expression, str, seq, star, opt, optPrio, plus, alt, altPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
-import {CDSName} from "./cds_name";
 
 export class CDSExtendView extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -9,7 +8,37 @@ export class CDSExtendView extends Expression {
     const namedot = seq(CDSName, optPrio(seq(".", CDSName)), optPrio(CDSAs));
     const valueNested = seq("{", namedot, star(seq(",", namedot)), "}");
 
-    return seq(star(CDSAnnotation), str("EXTEND VIEW"), opt(str("ENTITY")), CDSName, str("WITH"), opt(CDSName),
-               valueNested, opt(";"));
+    const redefineAssoc = seq(
+      "REDEFINE", "ASSOCIATION", CDSPrefixedName, optPrio(seq("[", CDSCondition, "]")),
+      opt(CDSAs),
+      "REDIRECTED", "TO",
+      optPrio(altPrio(seq("COMPOSITION", "CHILD"), "PARENT")),
+      CDSName,
+    );
+
+    const extendView = seq(
+      star(CDSAnnotation),
+      str("EXTEND VIEW"), opt(str("ENTITY")), CDSName, str("WITH"), opt(CDSName),
+      star(redefineAssoc),
+      valueNested,
+      opt(";"),
+    );
+
+    const field = seq(star(CDSAnnotation), optPrio(str("KEY")), CDSName, ":", CDSType, ";");
+    const assocOrComp = seq(star(CDSAnnotation), CDSName, ":", alt(CDSComposition, CDSAssociation), ";");
+    const entityBody = seq("{", plus(alt(field, assocOrComp)), "}");
+    const extendAbstractOrCustom = seq(
+      star(CDSAnnotation),
+      "EXTEND",
+      alt("ABSTRACT", "CUSTOM"),
+      "ENTITY",
+      CDSName,
+      opt(CDSWithParameters),
+      "WITH",
+      entityBody,
+      opt(";"),
+    );
+
+    return alt(extendAbstractOrCustom, extendView);
   }
 }

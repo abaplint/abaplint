@@ -1,10 +1,18 @@
 import {CDSAnnotation, CDSAs, CDSAssociation, CDSElement, CDSName, CDSParametersSelect, CDSProviderContract, CDSWhere, CDSWithParameters} from ".";
 import {Release} from "../..";
-import {Expression, seq, star, opt, str, ver} from "../../abap/2_statements/combi";
+import {Expression, seq, star, opt, str, ver, altPrio, optPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSDefineProjection extends Expression {
   public getRunnable(): IStatementRunnable {
+    // redefine association _Assoc redirected to [composition child | parent] Entity
+    const redefineAssoc = seq(
+      "REDEFINE", "ASSOCIATION", CDSName,
+      "REDIRECTED", "TO",
+      optPrio(altPrio(seq("COMPOSITION", "CHILD"), "PARENT")),
+      CDSName,
+    );
+
     return seq(star(CDSAnnotation),
                "DEFINE",
                opt("ROOT"),
@@ -18,7 +26,7 @@ export class CDSDefineProjection extends Expression {
                CDSName,
                opt(CDSParametersSelect),
                opt(CDSAs),
-               star(CDSAssociation),
+               star(altPrio(CDSAssociation, redefineAssoc)),
                str("{"),
                seq(CDSElement, star(seq(",", CDSElement)), opt(",")),
                str("}"),
