@@ -78,6 +78,10 @@ export class ExpandMacros {
     this.reg = reg;
   }
 
+  public listMacroNames(): string[] {
+    return this.macros.listMacroNames();
+  }
+
   public find(statements: StatementNode[], file: IFile, clear = true) {
     let nameToken: AbstractToken | undefined = undefined;
     let start: Position | undefined = undefined;
@@ -134,7 +138,7 @@ export class ExpandMacros {
     for (const statement of statements) {
       const type = statement.get();
       if (type instanceof Unknown || type instanceof MacroCall) {
-        const macroName = this.findName(statement.getTokens());
+        const macroName = ExpandMacros.findName(statement.getTokens());
         if (macroName && this.macros.isMacro(macroName)) {
 
           const filename = this.macros.getMacroFilename(macroName);
@@ -239,7 +243,7 @@ export class ExpandMacros {
     return result;
   }
 
-  private findName(tokens: readonly AbstractToken[]): string | undefined {
+  public static findName(tokens: readonly AbstractToken[]): string | undefined {
     let macroName: string | undefined = undefined;
     let previous: AbstractToken | undefined = undefined;
     for (const i of tokens) {

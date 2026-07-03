@@ -42,4 +42,44 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("macro names must not leak between unrelated main programs", async () => {
+    const main1 = `REPORT zmain1.
+INCLUDE ztop1.
+INCLUDE zf1.`;
+    const top1 = `DEFINE macro_a.
+  WRITE &1.
+END-OF-DEFINITION.`;
+    const f1 = `FORM bar1.
+  macro_a 'works'.
+  macro_b 'parser error, only visible via zmain2'.
+ENDFORM.`;
+
+    const main2 = `REPORT zmain2.
+INCLUDE ztop2.
+INCLUDE zf2.`;
+    const top2 = `DEFINE macro_b.
+  WRITE &1.
+END-OF-DEFINITION.`;
+    const f2 = `FORM bar2.
+  macro_b 'works'.
+ENDFORM.`;
+
+    const reg = new Registry().addFiles([
+      new MemoryFile("zmain1.prog.abap", main1),
+      new MemoryFile("ztop1.prog.abap", top1),
+      new MemoryFile("ztop1.prog.xml", "<SUBC>I</SUBC>"),
+      new MemoryFile("zf1.prog.abap", f1),
+      new MemoryFile("zf1.prog.xml", "<SUBC>I</SUBC>"),
+      new MemoryFile("zmain2.prog.abap", main2),
+      new MemoryFile("ztop2.prog.abap", top2),
+      new MemoryFile("ztop2.prog.xml", "<SUBC>I</SUBC>"),
+      new MemoryFile("zf2.prog.abap", f2),
+      new MemoryFile("zf2.prog.xml", "<SUBC>I</SUBC>"),
+    ]);
+
+    const issues = reg.parse().findIssues().filter(i => i.getKey() === "parser_error");
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getFilename()).to.equal("zf1.prog.abap");
+  });
+
 });

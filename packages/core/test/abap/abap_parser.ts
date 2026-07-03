@@ -136,7 +136,7 @@ PROCESS AFTER INPUT.
     new ABAPParser({release: defaultRelease}).parse(files);
   });
 
-  it.skip("macro via top include other", async () => {
+  it("macro via top include other", async () => {
     const zprogram = `
 REPORT zprogram.
 INCLUDE zincl1.
@@ -152,11 +152,13 @@ INCLUDE zincl2.`;
     const files = [
       new MemoryFile("zprogram.prog.abap", zprogram),
       new MemoryFile("zincl1.prog.abap", zincl1),
+      new MemoryFile("zincl1.prog.xml", "<SUBC>I</SUBC>"),
       new MemoryFile("zincl2.prog.abap", zincl2),
+      new MemoryFile("zincl2.prog.xml", "<SUBC>I</SUBC>"),
     ];
 
-    const issues = new Registry().addFiles(files).parse().findIssues();
-    console.dir(issues);
+    const issues = new Registry().addFiles(files).parse().findIssues().filter(i => i.getKey() === "parser_error");
+    expect(issues.length).to.equal(0);
   });
 
 });

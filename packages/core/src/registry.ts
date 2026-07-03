@@ -14,6 +14,7 @@ import {IMSAGReferences} from "./_imsag_references";
 import {MSAGReferences} from "./msag_references";
 import {IMacroReferences} from "./_imacro_references";
 import {MacroReferences} from "./macro_references";
+import {CrossIncludeMacros} from "./abap/cross_include_macros";
 
 // todo, this should really be an instance in case there are multiple Registry'ies
 class ParsingPerformance {
@@ -360,6 +361,7 @@ export class Registry implements IRegistry {
     for (const o of this.getObjects()) {
       this.parsePrivate(o);
     }
+    new CrossIncludeMacros(this).run();
     new FindGlobalDefinitions(this).run();
 
     return this;
@@ -380,6 +382,7 @@ export class Registry implements IRegistry {
     if (input?.outputPerformance === true) {
       ParsingPerformance.output();
     }
+    new CrossIncludeMacros(this).run();
     new FindGlobalDefinitions(this).run(input?.progress);
 
     return this;
