@@ -10,7 +10,7 @@ export class TypeTableKey extends Expression {
     const defaultKey = "DEFAULT KEY";
     const emptyKey = ver(Release.v740sp02, "EMPTY KEY", {also: AlsoIn.OpenABAP});
 
-    const components = plusPrio(seq(stopBefore1("WITH", "INITIAL", "VALUE", "WITHOUT"), stopBefore("READ", "-"), FieldSub));
+    const components = plusPrio(seq(stopBefore1("WITH", "INITIAL", "WITHOUT"), stopBefore("READ", "-"), FieldSub));
 
     const further = seq(alt("WITHOUT", "WITH"), "FURTHER SECONDARY KEYS");
 

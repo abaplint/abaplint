@@ -7900,6 +7900,20 @@ data MT_TOKEN type TY_TOKEN_TT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("key component named VALUE should parse and resolve", () => {
+    const abap = `
+TYPES: BEGIN OF ty_content,
+         type  TYPE c LENGTH 12,
+         value TYPE c LENGTH 12,
+       END OF ty_content.
+TYPES ty_contents TYPE SORTED TABLE OF ty_content WITH UNIQUE KEY type value.
+DATA lt TYPE ty_contents.
+LOOP AT lt INTO DATA(ls).
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("CALL not found function module in cloud, should give error", () => {
     const abap = `CALL FUNCTION 'NOT_RELEASED'.`;
     const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
