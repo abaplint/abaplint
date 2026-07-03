@@ -1,4 +1,4 @@
-import {seq, Expression, altPrio, alt, optPrio, ver} from "../combi";
+import {seq, Expression, altPrio, alt, optPrio, ver, AlsoIn} from "../combi";
 import {EntityAssociation, EventName, NamespaceSimpleName, Source, TypeName} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {Release} from "../../../version";
@@ -9,21 +9,21 @@ export class TypeStructure extends Expression {
     const entity = alt(TypeName, EntityAssociation);
 
     const derivedTypes = derivedTypesAlt(
-      ver(Release.v779, seq("FUNCTION REQUEST", entity)),
-      ver(Release.v779, seq("ACTION REQUEST", entity)),
+      ver(Release.v779, seq("FUNCTION REQUEST", entity), {also: AlsoIn.OpenABAP}),
+      ver(Release.v779, seq("ACTION REQUEST", entity), {also: AlsoIn.OpenABAP}),
 
       seq("ACTION IMPORT", Source),
 
-      ver(Release.v781, seq("GLOBAL AUTHORIZATION REQUEST", entity)),
-      ver(Release.v781, seq("GLOBAL AUTHORIZATION RESULT", entity)),
-      ver(Release.v781, seq("GLOBAL FEATURES REQUEST", entity)),
-      ver(Release.v781, seq("GLOBAL FEATURES RESULT", entity)),
+      ver(Release.v781, seq("GLOBAL AUTHORIZATION REQUEST", entity), {also: AlsoIn.OpenABAP}),
+      ver(Release.v781, seq("GLOBAL AUTHORIZATION RESULT", entity), {also: AlsoIn.OpenABAP}),
+      ver(Release.v781, seq("GLOBAL FEATURES REQUEST", entity), {also: AlsoIn.OpenABAP}),
+      ver(Release.v781, seq("GLOBAL FEATURES RESULT", entity), {also: AlsoIn.OpenABAP}),
 
-      ver(Release.v780, seq("AUTHORIZATION REQUEST", entity)),
-      ver(Release.v776, seq("FEATURES REQUEST", entity)),
+      ver(Release.v780, seq("AUTHORIZATION REQUEST", entity), {also: AlsoIn.OpenABAP}),
+      ver(Release.v776, seq("FEATURES REQUEST", entity), {also: AlsoIn.OpenABAP}),
 
       seq("PERMISSIONS REQUEST", NamespaceSimpleName),
-      ver(Release.v780, seq("PERMISSIONS RESULT", entity)),
+      ver(Release.v780, seq("PERMISSIONS RESULT", entity), {also: AlsoIn.OpenABAP}),
 
       seq("READ LINK", EntityAssociation),
 
@@ -31,7 +31,7 @@ export class TypeStructure extends Expression {
       seq("EVENT", EventName),
     );
 
-    const structure = ver(Release.v774, seq("STRUCTURE FOR", derivedTypes));
+    const structure = ver(Release.v774, seq("STRUCTURE FOR", derivedTypes), {also: AlsoIn.OpenABAP});
 
     const response = ver(Release.v776, seq("RESPONSE FOR", altPrio(
       seq("FAILED EARLY", NamespaceSimpleName),
@@ -43,9 +43,9 @@ export class TypeStructure extends Expression {
       seq("REPORTED EARLY", NamespaceSimpleName),
       seq("REPORTED LATE", NamespaceSimpleName),
       seq("REPORTED", NamespaceSimpleName),
-    )));
+    )), {also: AlsoIn.OpenABAP});
 
-    const request = ver(Release.v778, seq("REQUEST FOR", alt("CHANGE", "DELETE"), NamespaceSimpleName));
+    const request = ver(Release.v778, seq("REQUEST FOR", alt("CHANGE", "DELETE"), NamespaceSimpleName), {also: AlsoIn.OpenABAP});
 
     return seq("TYPE", altPrio(structure, response, request), optPrio("VALUE IS INITIAL"));
   }
