@@ -30,7 +30,10 @@ Suggest starting by running only the syntax check relevant rules, having this wo
     }
   ],
   "syntax": {
-    "version": "v758",
+    "version": {
+      "release": "v793",
+      "language": "Normal"
+    },
     "errorNamespace": "^(Z|Y|LCL_|TY_|LIF_)"
   },
   "rules": {
@@ -66,7 +69,10 @@ Suggest starting by running only the syntax check relevant rules, having this wo
     }
   ],
   "syntax": {
-    "version": "Cloud",
+    "version": {
+      "release": "Newest",
+      "language": "Cloud"
+    },
     "errorNamespace": "."
   },
   "rules": {
@@ -107,7 +113,10 @@ Note: `select_single_full_key` to give all findings, abaplint must know the data
     }
   ],
   "syntax": {
-    "version": "v755",
+    "version": {
+      "release": "v781",
+      "language": "Normal"
+    },
     "errorNamespace": "^(Z|Y|LCL_|TY_|LIF_)"
   },
   "rules": {
@@ -142,7 +151,10 @@ Note: `select_single_full_key` to give all findings, abaplint must know the data
     }
   ],
   "syntax": {
-    "version": "open-abap",
+    "version": {
+      "release": "open-abap",
+      "language": "Normal"
+    },
     "errorNamespace": "."
   },
   "rules": {
