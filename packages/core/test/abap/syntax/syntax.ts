@@ -1064,6 +1064,53 @@ DATA(result) = lines( FILTER #( cells USING KEY key_alive WHERE alive = abap_tru
     expect(issues.length).to.equals(0);
   });
 
+  it("event handler, implicit SENDER parameter is typed with the raising class", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS moo.
+    METHODS name RETURNING VALUE(str) TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS handler DEFINITION.
+  PUBLIC SECTION.
+    METHODS on_moo FOR EVENT moo OF lcl IMPORTING sender.
+ENDCLASS.
+CLASS handler IMPLEMENTATION.
+  METHOD on_moo.
+    DATA str TYPE string.
+    str = sender->name( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("event handler, SENDER, calling unknown method is an error", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS moo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+CLASS handler DEFINITION.
+  PUBLIC SECTION.
+    METHODS on_moo FOR EVENT moo OF lcl IMPORTING sender.
+ENDCLASS.
+CLASS handler IMPLEMENTATION.
+  METHOD on_moo.
+    sender->does_not_exist( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("does_not_exist");
+  });
+
   it("program, global constant", () => {
     const abap = "WRITE hello_world.\n";
     const issues = runProgram(abap, ["hello_world"]);
