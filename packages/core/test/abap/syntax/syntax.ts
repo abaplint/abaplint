@@ -7781,6 +7781,16 @@ READ TABLE tab WITH KEY table_line->* = 2 TRANSPORTING NO FIELDS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, VALUE FOR WHERE with dereference reference, no exponential backtracking", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF REF TO i WITH DEFAULT KEY.
+DATA res TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA r TYPE REF TO i.
+res = VALUE #( for a in tab where ( table_line->* = r->* ) ( a->* ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, read table via alias field", () => {
     const abap = `
 INTERFACE top.

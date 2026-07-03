@@ -1,4 +1,4 @@
-import {CDSAnnotation, CDSAs, CDSAssociation, CDSComposition, CDSCondition, CDSName, CDSPrefixedName, CDSType, CDSWithParameters} from ".";
+import {CDSAnnotation, CDSAs, CDSAssociation, CDSComposition, CDSCondition, CDSElement, CDSName, CDSPrefixedName, CDSType, CDSWithParameters} from ".";
 import {Expression, str, seq, star, opt, optPrio, plus, alt, altPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
@@ -16,11 +16,15 @@ export class CDSExtendView extends Expression {
       CDSName,
     );
 
+    const elementList = seq(CDSElement, star(seq(",", CDSElement)), opt(","));
+    const elementNested = seq("{", altPrio("*", elementList), "}");
+
     const extendView = seq(
       star(CDSAnnotation),
       str("EXTEND VIEW"), opt(str("ENTITY")), CDSName, str("WITH"), opt(CDSName),
       star(redefineAssoc),
-      valueNested,
+      star(CDSAssociation),
+      altPrio(elementNested, valueNested),
       opt(";"),
     );
 

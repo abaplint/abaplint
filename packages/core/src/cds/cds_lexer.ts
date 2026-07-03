@@ -32,6 +32,7 @@ class Stream {
 enum Mode {
   Default,
   String,
+  DoubleQuoteString,
   SingleLineComment,
   MultiLineComment,
 }
@@ -95,6 +96,22 @@ export class CDSLexer {
         continue;
       }
 
+// double-quote string handling
+      if (mode === Mode.DoubleQuoteString) {
+        build += next;
+        if (next === "\\" && nextNext === "\"") {
+          build += stream.takeNext();
+          col++;
+        } else if (next === "\"" && nextNext === "\"") {
+          build += stream.takeNext();
+          col++;
+        } else if (next === "\"") {
+          build = result.add(build, row, col, mode);
+          mode = Mode.Default;
+        }
+        continue;
+      }
+
 // single line comment handling
       if (mode === Mode.SingleLineComment) {
         if (next === "\n") {
@@ -136,6 +153,11 @@ export class CDSLexer {
         case "'":
           build = result.add(build, row, col, mode);
           mode = Mode.String;
+          build += next;
+          break;
+        case "\"":
+          build = result.add(build, row, col, mode);
+          mode = Mode.DoubleQuoteString;
           build += next;
           break;
         case " ":

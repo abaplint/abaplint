@@ -1,4 +1,4 @@
-import {CDSElement, CDSComposition, CDSGroupBy, CDSSource, CDSWhere, CDSHaving, CDSName, CDSPrefixedName} from ".";
+import {CDSElement, CDSComposition, CDSGroupBy, CDSSource, CDSWhere, CDSHaving, CDSName, CDSPrefixedName, CDSString} from ".";
 import {Expression, seq, str, opt, optPrio, star, altPrio, starPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSAssociation} from "./cds_association";
@@ -11,10 +11,12 @@ export class CDSSelect extends Expression {
     const elementList = seq(CDSElement, star(seq(",", CDSElement)), opt(","));
     const elements = seq(str("{"), altPrio("*", elementList), str("}"));
 
-    const aspectBinding = seq(CDSPrefixedName, "=", ">", CDSPrefixedName);
+    const aspectValue = altPrio(CDSString, CDSPrefixedName);
+    const aspectBinding = seq(CDSPrefixedName, "=", ">", aspectValue);
     const bindAspect = seq(
       "BIND", "ASPECT", CDSName,
       "(", aspectBinding, starPrio(seq(",", aspectBinding)), ")",
+      optPrio(seq("AS", CDSName)),
     );
 
     const parenSelect = seq("(", CDSSelect, ")");
@@ -27,7 +29,7 @@ export class CDSSelect extends Expression {
                CDSSource,
                star(CDSJoin),
                star(altPrio(CDSComposition, CDSAssociation)),
-               optPrio(bindAspect),
+               starPrio(bindAspect),
                opt(elements),
                optPrio(CDSWhere),
                optPrio(CDSGroupBy),

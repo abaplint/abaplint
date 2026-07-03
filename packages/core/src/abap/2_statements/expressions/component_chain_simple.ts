@@ -1,14 +1,15 @@
-import {seq, starPrio, Expression, optPrio} from "../combi";
-import {ComponentName, ArrowOrDash, FieldOffset, FieldLength} from ".";
+import {seq, starPrio, Expression, optPrio, altPrio} from "../combi";
+import {ComponentName, ArrowOrDash, FieldOffset, FieldLength, Dereference} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class ComponentChainSimple extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const chain = seq(ComponentName,
-                      starPrio(seq(ArrowOrDash, ComponentName)));
+    const chain = starPrio(altPrio(
+      Dereference,
+      seq(ArrowOrDash, ComponentName)));
 
-    const ret = seq(chain, optPrio(FieldOffset), optPrio(FieldLength));
+    const ret = seq(ComponentName, chain, optPrio(FieldOffset), optPrio(FieldLength));
 
     return ret;
   }

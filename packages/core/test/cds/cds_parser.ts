@@ -3302,4 +3302,212 @@ with hierarchy MY_HIERARCHY`;
     expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
   });
 
+  it("annotation with double-quoted string value", () => {
+    const cds = `@EndUserText.label: "My Label"
+define view V as select from T { key id }`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy with double-quoted annotation label", () => {
+    const cds = `@EndUserText.label: "."
+define hierarchy H as parent child hierarchy (
+  source T
+  child to parent association p
+  start where sum(x) = 42
+  depth 5
+  nodetype z
+  generate spantree
+  cache off
+)
+{ key z }`;
+    const file = new MemoryFile("h.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("path filter with MANY TO EXACT ONE cardinality", () => {
+    const cds = `define view V as select from T {
+  assoc[many to exact one: x = 1].field
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("path filter with MANY TO ONE cardinality", () => {
+    const cds = `define view V as select from T {
+  assoc[many to one: x = 'A'].field
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("include element with wildcard", () => {
+    const cds = `define view entity V as select from T {
+  include ASPECT.*
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("include element with wildcard and excluding clause", () => {
+    const cds = `define view entity V as select from T {
+  include ASPECT.* excluding { field1, field2 }
+}`;
+    const file = new MemoryFile("v.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("abstract entity with association to parent (no ON clause)", () => {
+    const cds = `define abstract entity E {
+  key id : abap.char(20);
+  _parent : association to parent ROOT_ENTITY;
+}`;
+    const file = new MemoryFile("e.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend view with association definition before element body", () => {
+    const cds = `extend view BASE with EXT
+association to TARGET as _t on _t.id = BASE.id
+{ field1 }`;
+    const file = new MemoryFile("e.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend view without extension name and with association", () => {
+    const cds = `extend view BASE with
+association to TARGET as _t on _t.id = BASE.id
+{ field1 }`;
+    const file = new MemoryFile("e.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend view with literal element in body", () => {
+    const cds = `extend view BASE with EXT {
+  'constant' as alias
+}`;
+    const file = new MemoryFile("e.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy with depth before nodetype", () => {
+    const cds = `define hierarchy H with parameters p1 : abap.int1
+  as parent child hierarchy (
+    source T
+    child to parent association p
+    start where sum(x) = 42
+    siblings order by name_field
+    depth $parameters.p1
+    nodetype type_field
+    generate spantree
+    cache off
+  )
+{
+  key type_field
+}`;
+    const file = new MemoryFile("h.ddls.asddls", cds);
+    expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
+  });
+
+  it("abap.sstr typed literal in WHERE condition", () => {
+    const cds = `define view V as select from T { key id } where name = abap.sstr'ABC'`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("abap.sstr typed literal in element list", () => {
+    const cds = `define view V as select from T { abap.sstr'ABCD' as label }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("association parameter with DEFAULT keyword", () => {
+    const cds = `define view entity V as select from T
+  association to B( p1: 'E' default ) as _b on 1 = 1
+{ key id }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("parameterized call with arrow-style args in element path", () => {
+    const cds = `define view entity V as select from T { func( x => 'A' ).field as f }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("association to parameterized target", () => {
+    const cds = `define view entity V as select from T
+  association to B( p1: 'E' ) as _b on 1 = 1
+{ key id }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("3-level association path as FROM source", () => {
+    const cds = `define view V as select from T.assoc1.assoc2 { key id }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("3-level path with filter as JOIN source", () => {
+    const cds = `define view entity V as select from T
+  join T.a.b[x = T.z] as c on 1 = 1
+{ key id }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("multiple bind aspect clauses", () => {
+    const cds = `define view entity V as select from T
+  bind aspect A( x => T.y )
+  bind aspect B( z => T.w )
+{ key id }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("bind aspect with alias", () => {
+    const cds = `define view entity V as select from T
+  bind aspect A( x => T.y ) as asp1
+{ key id }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("bind aspect with typed literal in binding arg", () => {
+    const cds = `define view entity V as select from T
+  bind aspect A( x => abap.char'test' )
+{ key id }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("include element with signature only", () => {
+    const cds = `define view entity V as select from T { include ASPECT.field signature only }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("function call with dotted path continuation", () => {
+    const cds = `define view entity V as select from T { my_func( p: 'A' ).field as f }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy depth with typed literal", () => {
+    const cds = `define hierarchy H as parent child hierarchy (
+  source T
+  child to parent association p
+  depth abap.int4'5'
+)
+{ key id }`;
+    expect(new CDSParser().parse(new MemoryFile("h.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("view with parenthesized SELECT body", () => {
+    const cds = `define view entity V as ( select from T { key id } )`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("view with union of parenthesized SELECT branches", () => {
+    const cds = `define view entity V as
+  ( select from A { key id } union select from B { key id } )
+  union
+  ( select from C { key id } )`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("element alias with slash-namespaced name", () => {
+    const cds = `define view entity V as select from T { x as _/mynamespace/alias }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
 });

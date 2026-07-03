@@ -1,6 +1,6 @@
 import {CDSAnnotation} from ".";
 import {Release} from "../..";
-import {Expression, seq, star, opt, ver} from "../../abap/2_statements/combi";
+import {altPrio, Expression, opt, seq, star, ver} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSName} from "./cds_name";
 import {CDSSelect} from "./cds_select";
@@ -9,6 +9,12 @@ import {CDSWithParameters} from "./cds_with_parameters";
 export class CDSDefineView extends Expression {
   public getRunnable(): IStatementRunnable {
     const columnAlias = seq("(", CDSName, star(seq(",", CDSName)), ")");
+    const parenSelect = seq("(", CDSSelect, ")");
+    const unionBranch = altPrio(parenSelect, CDSSelect);
+    const topLevelSelect = altPrio(
+      seq(parenSelect, star(seq("UNION", opt("ALL"), unionBranch))),
+      CDSSelect,
+    );
     return seq(star(CDSAnnotation),
                opt("DEFINE"),
                opt("ROOT"),
@@ -19,8 +25,8 @@ export class CDSDefineView extends Expression {
                opt(columnAlias),
                opt(CDSWithParameters),
                "AS",
-               CDSSelect,
-               opt(seq("WITH", "HIERARCHY", CDSName)),  // post-select WITH HIERARCHY clause
+               topLevelSelect,
+               opt(seq("WITH", "HIERARCHY", CDSName)),
                opt(";"));
   }
 }

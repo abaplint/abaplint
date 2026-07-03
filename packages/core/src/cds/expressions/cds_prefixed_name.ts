@@ -15,7 +15,7 @@ export class CDSPrefixedName extends Expression {
     const cardinalityJoin = seq("[", cardSpec, ":", joinType, "]");
     const cardinalityJoinWhere = seq("[", cardSpec, ":", joinType, "WHERE", CDSCondition, "]");
     const joinWhere = seq("[", joinType, "WHERE", CDSCondition, "]");
-    const textCard = altPrio("TO EXACT ONE", "TO ONE", "TO MANY");
+    const textCard = altPrio("MANY TO EXACT ONE", "MANY TO ONE", "ONE TO MANY", "ONE TO ONE", "TO EXACT ONE", "TO ONE", "TO MANY");
     const textCardFilter = seq("[", textCard, optPrio(seq(":", altPrio(
       seq(joinType, "WHERE", CDSCondition),
       joinType,
@@ -30,7 +30,7 @@ export class CDSPrefixedName extends Expression {
       seq("[", cardSpec, ":", CDSCondition, "]"),
       seq("[", CDSCondition, "]"),
     );
-    const segment = seq(".", altPrio(CDSString, CDSName), optPrio(altPrio(CDSParametersSelect, CDSParameters)), optPrio(pathFilter));
+    const segment = seq(".", altPrio(CDSString, CDSName, "*"), optPrio(altPrio(CDSParametersSelect, CDSParameters)), optPrio(pathFilter));
     return seq(CDSName, optPrio(altPrio(CDSParameters, CDSParametersSelect)), optPrio(pathFilter), star(segment));
   }
 }

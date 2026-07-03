@@ -26,6 +26,11 @@ export class ComponentChain {
       const child = children[i];
       if (i === 0 && child.concatTokens().toUpperCase() === "TABLE_LINE") {
         continue;
+      } else if (child.get() instanceof Expressions.Dereference) {
+        if (context instanceof DataReference) {
+          context = context.getType();
+        }
+        continue;
       } else if (child.get() instanceof Expressions.ArrowOrDash) {
         const concat = child.concatTokens();
         if (concat === "-") {

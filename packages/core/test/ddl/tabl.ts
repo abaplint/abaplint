@@ -54,8 +54,8 @@ define structure zsdfsd {
 
   it("structure with named include", () => {
     const r = parse(`define structure /dmo/s {
-      travel_uuid : sysuuid_x16;
-      _intx       : include /dmo/other;
+      travel_id : abap.char(16);
+      _intx     : include /dmo/other;
     }`);
     expect(r?.fields.length).to.equal(2);
     expect(r?.fields[1]).to.deep.include({name: "_intx", type: "/dmo/other", key: false});
@@ -63,7 +63,7 @@ define structure zsdfsd {
 
   it("structure field with NOT NULL", () => {
     const r = parse(`define structure s {
-      parent : sysuuid_x16 not null;
+      parent : abap.raw(16) not null;
       opt    : abap.char(10);
     }`);
     expect(r?.fields[0].notNull).to.equal(true);
@@ -75,11 +75,11 @@ define structure zsdfsd {
 describe("DDL Parser — define table", () => {
 
   it("simple table with client key", () => {
-    const r = parse(`define table zhvam_cust {
+    const r = parse(`define table ztabl_demo {
       key client : abap.clnt not null;
       foo        : abap.int2;
     }`);
-    expect(r?.name).to.equal("zhvam_cust");
+    expect(r?.name).to.equal("ztabl_demo");
     expect(r?.kind).to.equal(DDLKind.Table);
     expect(r?.fields.length).to.equal(2);
     expect(r?.fields[0]).to.deep.include({name: "client", type: "abap.clnt", key: true, notNull: true});
@@ -97,10 +97,10 @@ describe("DDL Parser — define table", () => {
   it("data-element type", () => {
     const r = parse(`define table t {
       key mandt : mandt not null;
-      user      : xubname;
+      user      : abap.char(12);
     }`);
     expect(r?.fields[0].type).to.equal("mandt");
-    expect(r?.fields[1].type).to.equal("xubname");
+    expect(r?.fields[1].type).to.equal("abap.char(12)");
   });
 
   it("slash-prefixed table and type names", () => {
@@ -130,7 +130,7 @@ describe("DDL Parser — define table", () => {
     const r = parse(`define table t {
       key mandt : mandt not null;
       @AbapCatalog.anonymizedWhenDelivered : true
-      key username : xubname not null;
+      key username : abap.char(12) not null;
     }`);
     expect(r?.fields.length).to.equal(2);
     expect(r?.fields[1]).to.deep.include({name: "username", key: true, notNull: true});
@@ -140,7 +140,7 @@ describe("DDL Parser — define table", () => {
     const r = parse(`define table t {
       @Semantics.user.createdBy : true
       @AbapCatalog.anonymizedWhenDelivered : true
-      createdby : xubname;
+      createdby : abap.char(12);
     }`);
     expect(r?.fields.length).to.equal(1);
     expect(r?.fields[0].name).to.equal("createdby");
@@ -149,15 +149,15 @@ describe("DDL Parser — define table", () => {
   it("plain include", () => {
     const r = parse(`define table t {
       key mandt : mandt not null;
-      include sych_bdl_draft_admin_inc;
+      include zdemo_inc;
     }`);
-    expect(r?.fields[1]).to.deep.include({name: ".INCLUDE", type: "sych_bdl_draft_admin_inc", key: false});
+    expect(r?.fields[1]).to.deep.include({name: ".INCLUDE", type: "zdemo_inc", key: false});
   });
 
   it("key include", () => {
     const r = parse(`define table t {
       key mandt : mandt not null;
-      key include sych_bdl_draft_admin_inc;
+      key include zdemo_inc;
     }`);
     expect(r?.fields[1]).to.deep.include({name: ".INCLUDE", key: true});
   });
@@ -165,37 +165,37 @@ describe("DDL Parser — define table", () => {
   it("named include with quoted alias", () => {
     const r = parse(`define table t {
       key mandt : mandt not null;
-      "%admin"  : include sych_bdl_draft_admin_inc;
+      "%admin"  : include zdemo_inc;
     }`);
     expect(r?.fields.length).to.equal(2);
-    expect(r?.fields[1]).to.deep.include({name: `"%admin"`, type: "sych_bdl_draft_admin_inc"});
+    expect(r?.fields[1]).to.deep.include({name: `"%admin"`, type: "zdemo_inc"});
   });
 
   it("named include with WITH SUFFIX", () => {
     const r = parse(`define table t {
       key mandt : mandt not null;
-      "_ext"    : include ztabl_ext with suffix ext;
+      "_ext"    : include zdemo_ext with suffix ext;
     }`);
     expect(r?.fields.length).to.equal(2);
     expect(r?.fields[1].name).to.equal(`"_ext"`);
   });
 
   it("field with WITH FOREIGN KEY clause", () => {
-    const r = parse(`define table sbook {
+    const r = parse(`define table ztabl_order {
       key mandt  : abap.clnt not null;
       key carrid : abap.char(3) not null
-        with foreign key scarr where scarr.mandt = sbook.mandt
-                                 and scarr.carrid = sbook.carrid;
+        with foreign key ztabl_carrier where ztabl_carrier.mandt = ztabl_order.mandt
+                                         and ztabl_carrier.carrid = ztabl_order.carrid;
     }`);
     expect(r?.fields.length).to.equal(2);
     expect(r?.fields[1]).to.deep.include({name: "carrid", key: true, notNull: true});
   });
 
   it("field with foreign key and cardinality", () => {
-    const r = parse(`define table sbook {
+    const r = parse(`define table ztabl_order {
       key mandt  : abap.clnt not null;
       key carrid : abap.char(3) not null
-        with foreign key [1..*,1] scarr where scarr.mandt = sbook.mandt;
+        with foreign key [1..*,1] ztabl_carrier where ztabl_carrier.mandt = ztabl_order.mandt;
     }`);
     expect(r?.fields.length).to.equal(2);
     expect(r?.fields[1].notNull).to.equal(true);
@@ -204,7 +204,7 @@ describe("DDL Parser — define table", () => {
   it("field with WITH VALUE HELP clause", () => {
     const r = parse(`define table t {
       key mandt : mandt not null;
-      status    : abap.char(1) with value help t_status_help;
+      status    : abap.char(1) with value help zdemo_vh;
     }`);
     expect(r?.fields[1]).to.deep.include({name: "status", type: "abap.char(1)"});
   });
@@ -212,7 +212,7 @@ describe("DDL Parser — define table", () => {
   it("value help with WHERE and string literal", () => {
     const r = parse(`define table t {
       key mandt : mandt not null;
-      status    : abap.char(1) with value help t_status where status = 'A';
+      status    : abap.char(1) with value help zdemo_vh where status = 'A';
     }`);
     expect(r?.fields.length).to.equal(2);
   });
@@ -220,7 +220,7 @@ describe("DDL Parser — define table", () => {
   it("EXTEND clause inside define table", () => {
     const r = parse(`define table t {
       key mandt : mandt not null;
-      extend country : with foreign key t005;
+      extend country : with foreign key ztabl_country;
     }`);
     // extend clauses aren't reported as fields (they mutate an existing field)
     expect(r?.name).to.equal("t");
@@ -232,14 +232,14 @@ describe("DDL Parser — define table", () => {
 describe("DDL Parser — define aspect", () => {
 
   it("simple aspect", () => {
-    const r = parse(`define aspect veri_parallel {
-      key veriname : progname;
-      key veriuser : syuname;
+    const r = parse(`define aspect zdemo_aspect {
+      key task_name : abap.char(40);
+      key task_user : abap.char(12);
     }`);
-    expect(r?.name).to.equal("veri_parallel");
+    expect(r?.name).to.equal("zdemo_aspect");
     expect(r?.kind).to.equal(DDLKind.Aspect);
     expect(r?.fields.length).to.equal(2);
-    expect(r?.fields[0]).to.deep.include({name: "veriname", type: "progname", key: true});
+    expect(r?.fields[0]).to.deep.include({name: "task_name", type: "abap.char(40)", key: true});
   });
 
   it("aspect with annotations and typed fields", () => {
