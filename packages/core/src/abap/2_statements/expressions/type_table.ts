@@ -38,9 +38,9 @@ export class TypeTable extends Expression {
     const entity = alt(TypeName, EntityAssociation);
 
     const derivedTypes = derivedTypesAlt(
-      ver(Release.v773, seq("ACTION IMPORT", entity)),
-      ver(Release.v774, seq("READ LINK", entity)),
-      ver(Release.v787, seq("EVENT", entity)),
+      ver(Release.v773, seq("ACTION IMPORT", entity), {also: AlsoIn.OpenABAP}),
+      ver(Release.v774, seq("READ LINK", entity), {also: AlsoIn.OpenABAP}),
+      ver(Release.v787, seq("EVENT", entity), {also: AlsoIn.OpenABAP}),
     );
 
     const derived = ver(Release.v770, seq("TABLE FOR", derivedTypes, optPrio("VALUE IS INITIAL")),

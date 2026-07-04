@@ -135,6 +135,8 @@ statementType(tests, "DATA", Statements.Data);
 
 statementVersionOk([
   {abap: "DATA foo TYPE TABLE FOR UPDATE EntityItem.", rel: Version.OpenABAP},
+  {abap: "DATA test_keys TYPE TABLE FOR ACTION IMPORT zdmo_r_rapg_projecttp~check_allowed_combinations_det.", rel: Version.OpenABAP},
+  {abap: "DATA draft_keys TYPE TABLE FOR DETERMINATION zDMO_R_RAPG_ProjectTP\\\\Node~SetRepositoryObjectNames_det.", rel: Version.OpenABAP},
 ], "DATA TYPE TABLE FOR OpenABAP", Statements.Data);
 
 // === RAP derived types ===
