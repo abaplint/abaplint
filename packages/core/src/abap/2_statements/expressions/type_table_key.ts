@@ -22,7 +22,7 @@ export class TypeTableKey extends Expression {
                             seq(opt(alt("SORTED", "HASHED")),
                                 "KEY",
                                 altPrio(seq(Field, opt(alias), "COMPONENTS", components),
-                                    components))),
+                                        components))),
                     optPrio(further),
                     optPrio("READ-ONLY"));
 
