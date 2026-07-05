@@ -12,7 +12,7 @@ export class CDSDefineView extends Expression {
     const parenSelect = seq("(", CDSSelect, ")");
     const unionBranch = altPrio(parenSelect, CDSSelect);
     const topLevelSelect = altPrio(
-      seq(parenSelect, star(seq("UNION", opt("ALL"), unionBranch))),
+      seq(parenSelect, star(altPrio(seq("UNION", opt("ALL"), unionBranch), seq("EXCEPT", unionBranch), seq("INTERSECT", unionBranch)))),
       CDSSelect,
     );
     return seq(star(CDSAnnotation),
