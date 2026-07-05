@@ -1230,3 +1230,26 @@ class StopBefore2 implements IStatementRunnable {
 export function stopBefore(t1: string, t2: string): IStatementRunnable {
   return new StopBefore2(t1, t2);
 }
+
+class StopBefore1 implements IStatementRunnable {
+  private readonly words: string[];
+  public constructor(words: string[]) { this.words = words.map(w => w.toUpperCase()); }
+  public listKeywords(): string[] { return []; }
+  public getUsing(): string[] { return []; }
+  public run(r: Result[]): Result[] {
+    const result: Result[] = [];
+    for (const input of r) {
+      const next = input.peek()?.getUpperStr();
+      if (next !== undefined && this.words.includes(next)) { continue; }
+      result.push(input);
+    }
+    return result;
+  }
+  public railroad() { return "Railroad.Terminal('stopBefore(" + this.words.join("|") + ")')"; }
+  public toStr() { return "stopBefore(" + this.words.join(",") + ")"; }
+  public first() { return [""]; }
+}
+
+export function stopBefore1(...words: string[]): IStatementRunnable {
+  return new StopBefore1(words);
+}

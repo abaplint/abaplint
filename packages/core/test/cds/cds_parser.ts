@@ -3505,6 +3505,22 @@ association to TARGET as _t on _t.id = BASE.id
     expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
   });
 
+  it("view with parenthesized EXCEPT branches", () => {
+    const cds = `define view entity V as
+  ( select from A { key id } )
+  except
+  ( select from B { key id } )`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("view with parenthesized INTERSECT branches", () => {
+    const cds = `define view entity V as
+  ( select from A { key id } )
+  intersect
+  ( select from B { key id } )`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
   it("element alias with slash-namespaced name", () => {
     const cds = `define view entity V as select from T { x as _/mynamespace/alias }`;
     expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);

@@ -7379,6 +7379,20 @@ CLEAR r->*.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("error, dereference on non-data-reference", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA obj TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+DATA o TYPE REF TO lcl.
+WRITE o->*.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Not a data reference");
+  });
+
   it("loop USING KEY primary_key", () => {
     const abap = `
 DATA tab TYPE SORTED TABLE OF i WITH UNIQUE KEY table_line.

@@ -1,4 +1,4 @@
-import {CDSAs, CDSCondition, CDSFunction, CDSJoin, CDSName, CDSParametersSelect, CDSPrefixedName} from ".";
+import {CDSAs, CDSCondition, CDSFunction, CDSJoin, CDSName, CDSPrefixedName} from ".";
 import {altPrio, Expression, opt, optPrio, seq, star} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
