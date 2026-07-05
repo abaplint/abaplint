@@ -27,9 +27,12 @@ export class ComponentChain {
       if (i === 0 && child.concatTokens().toUpperCase() === "TABLE_LINE") {
         continue;
       } else if (child.get() instanceof Expressions.Dereference) {
-        if (context instanceof DataReference) {
-          context = context.getType();
+        if (!(context instanceof DataReference)) {
+          const message = "Not a data reference, cannot be dereferenced";
+          input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
+          return VoidType.get(CheckSyntaxKey);
         }
+        context = context.getType();
         continue;
       } else if (child.get() instanceof Expressions.ArrowOrDash) {
         const concat = child.concatTokens();
