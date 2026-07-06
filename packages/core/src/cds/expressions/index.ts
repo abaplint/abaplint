@@ -38,6 +38,7 @@ export * from "./cds_relation";
 export * from "./cds_select";
 export * from "./cds_source";
 export * from "./cds_string";
+export * from "./cds_table_field";
 export * from "./cds_type";
 export * from "./cds_where";
 export * from "./cds_with_parameters";
