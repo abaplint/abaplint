@@ -49,7 +49,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
       throw new Error("statement: zero children");
     }
 
-    this.children = children;
+    super.setChildren(children);
 
     return this;
   }
