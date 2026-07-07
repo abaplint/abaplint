@@ -1,7 +1,7 @@
 import {INode} from "./_inode";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 
-// shared constant, so nodes without children dont waste memory on empty arrays
+// shared constant, so nodes without children don't waste memory on empty arrays
 const EMPTY: readonly INode[] = Object.freeze([]);
 
 export abstract class AbstractNode<T extends INode> implements INode {
