@@ -1,14 +1,15 @@
-import {CDSAnnotation, CDSAssociation, CDSComposition, CDSElement, CDSJoin, CDSName,
-  CDSSource, CDSType, CDSWhere, CDSWithParameters} from ".";
-import {Expression, str, seq, star, opt, optPrio, plus, alt, altPrio} from "../../abap/2_statements/combi";
+import {CDSAnnotation, CDSElement, CDSJoin, CDSName,
+  CDSSource, CDSTableField, CDSWhere, CDSWithParameters,
+  CDSAssociation, CDSComposition} from ".";
+import {Expression, str, seq, star, opt, optPrio, plus, altPrio} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSDefineTableEntity extends Expression {
   public getRunnable(): IStatementRunnable {
-    const nullability = optPrio(alt("NOT NULL", "NULL"));
-    const field = seq(star(CDSAnnotation), optPrio(str("KEY")), CDSName, ":", CDSType, nullability, ";");
-    const assocOrComp = seq(star(CDSAnnotation), CDSName, ":", alt(CDSComposition, CDSAssociation), ";");
-    const inlineBody = plus(alt(field, assocOrComp));
+    // Inline `{ ... }` body: one or more table-field entries. Each entry is
+    // wrapped in a CDSTableField node so downstream tooling can pair each
+    // field name with its own annotations.
+    const inlineBody = plus(CDSTableField);
 
     const elementList = seq(CDSElement, star(seq(",", CDSElement)), opt(","));
     const elements = seq(str("{"), altPrio("*", elementList), str("}"));

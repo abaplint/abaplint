@@ -3526,4 +3526,56 @@ association to TARGET as _t on _t.id = BASE.id
     expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
   });
 
+  it("define table entity — field annotations sit under CDSTableField", () => {
+    const cds = `@EndUserText.label: 'head'
+define table entity T {
+  key id : abap.int4 not null;
+  @EndUserText.label: 'field1 label'
+  @Semantics.text: true
+  field1 : abap.char(30);
+  @EndUserText.label: 'field2 label'
+  field2 : abap.char(5);
+}`;
+    const file = new MemoryFile("t.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+    // Find all CDSTableField nodes — each should carry its own annotations.
+    const tableFields = findAll(parsed!, "CDSTableField");
+    expect(tableFields.length).to.equal(3);
+    // The first field (key id) has 0 annotations, the second/third each have annotations.
+    const withAnnos = tableFields.filter(tf => findAll(tf, "CDSAnnotation").length > 0);
+    expect(withAnnos.length).to.equal(2);
+    // Head annotation stays direct child of the root, not wrapped in CDSTableField.
+    const rootAnnos = parsed!.getChildren().filter(c => c.get().constructor.name === "CDSAnnotation");
+    expect(rootAnnos.length).to.equal(1);
+  });
+
+  it("define table entity with association/composition wrapped in CDSTableField", () => {
+    const cds = `define table entity T {
+  key id : abap.int4 not null;
+  @Semantics.text: true
+  _rel : association to O on _rel.id = T.id;
+}`;
+    const file = new MemoryFile("t.ddls.asddls", cds);
+    const parsed = new CDSParser().parse(file);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+    const tableFields = findAll(parsed!, "CDSTableField");
+    expect(tableFields.length).to.equal(2);
+    // The assoc should carry the annotation.
+    const withAnnos = tableFields.filter(tf => findAll(tf, "CDSAnnotation").length > 0);
+    expect(withAnnos.length).to.equal(1);
+  });
+
 });
+
+// Recursively find all nodes of a given class name under `n`.
+function findAll(n: any, className: string): any[] {
+  const out: any[] = [];
+  function walk(x: any): void {
+    const k = x.get?.()?.constructor?.name;
+    if (k === className) { out.push(x); }
+    for (const c of x.getChildren?.() ?? []) { walk(c); }
+  }
+  walk(n);
+  return out;
+}
