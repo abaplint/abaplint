@@ -133,6 +133,9 @@ export class BuiltIn {
   public static readonly filename = "_builtin.prog.abap";
   private static counter = 1;
   private static readonly getCache: TypedIdentifier[] = [];
+  private static typesCache: TypedIdentifier[] | undefined = undefined;
+  private static extrasCacheKey: string | undefined = undefined;
+  private static extrasCache: TypedIdentifier[] = [];
 
   // todo: "pcre" vs "regex", only one of these parameters are allowed
   // todo: "pcre", only possible from 755
@@ -1072,19 +1075,24 @@ export class BuiltIn {
   }
 
   public getTypes(): TypedIdentifier[] {
-    const ret: TypedIdentifier[] = this.buildSY();
+    // the identifiers are identical for every object, share them to reduce memory usage
+    if (BuiltIn.typesCache === undefined) {
+      const ret: TypedIdentifier[] = this.buildSY();
 
-    {
-      const id = new TokenIdentifier(new Position(1, 1), "abap_bool");
-      ret.push(new TypedIdentifier(id, BuiltIn.filename, new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"})));
+      {
+        const id = new TokenIdentifier(new Position(1, 1), "abap_bool");
+        ret.push(new TypedIdentifier(id, BuiltIn.filename, new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"})));
+      }
+
+      {
+        const id = new TokenIdentifier(new Position(1, 1), "cursor");
+        ret.push(new TypedIdentifier(id, BuiltIn.filename, IntegerType.get({qualifiedName: "CURSOR", ddicName: "CURSOR"})));
+      }
+
+      BuiltIn.typesCache = ret;
     }
 
-    {
-      const id = new TokenIdentifier(new Position(1, 1), "cursor");
-      ret.push(new TypedIdentifier(id, BuiltIn.filename, IntegerType.get({qualifiedName: "CURSOR", ddicName: "CURSOR"})));
-    }
-
-    return ret;
+    return BuiltIn.typesCache;
   }
 
   public get(extras: string[]): TypedIdentifier[] {
@@ -1127,10 +1135,17 @@ export class BuiltIn {
 
     ret.push(...BuiltIn.getCache);
 
-    for (const e of extras) {
-      const id = new TokenIdentifier(new Position(this.row++, 1), e);
-      ret.push(new TypedIdentifier(id, BuiltIn.filename, VoidType.get(e), [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn], "'?'"));
+    // the extras are identical for every object, share them to reduce memory usage
+    const key = extras.join("|");
+    if (key !== BuiltIn.extrasCacheKey) {
+      BuiltIn.extrasCacheKey = key;
+      BuiltIn.extrasCache = [];
+      for (const e of extras) {
+        const id = new TokenIdentifier(new Position(this.row++, 1), e);
+        BuiltIn.extrasCache.push(new TypedIdentifier(id, BuiltIn.filename, VoidType.get(e), [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn], "'?'"));
+      }
     }
+    ret.push(...BuiltIn.extrasCache);
 
     return ret;
   }
