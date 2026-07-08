@@ -5,7 +5,7 @@ export class CDSName extends Expression {
   public getRunnable(): IStatementRunnable {
     const pre = seq("/", regex(/^[\w_]+$/), "/");
     return altPrio(
-      regex(/^"[^"]*"$/),
+      regex(/^"(?:[^"]|"")*"$/),
       seq(optPrio(":"), optPrio(pre), regex(/^\$?#?[\w_]+$/)),
     );
   }
