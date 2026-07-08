@@ -12,7 +12,7 @@ export class CDSDefineTableFunction extends Expression {
                CDSName,
                optPrio(CDSWithParameters),
                str("RETURNS {"),
-               plus(seq(star(CDSAnnotation), optPrio("KEY"), CDSName, ":", CDSType, ";")),
+               plus(seq(star(CDSAnnotation), optPrio("KEY"), CDSName, ":", CDSType, star(CDSAnnotation), ";")),
                str("} IMPLEMENTED BY METHOD"), methodName, opt(";"));
   }
 }

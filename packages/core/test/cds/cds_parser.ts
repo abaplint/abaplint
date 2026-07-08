@@ -3302,15 +3302,15 @@ with hierarchy MY_HIERARCHY`;
     expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
   });
 
-  it("annotation with double-quoted string value", () => {
-    const cds = `@EndUserText.label: "My Label"
+  it("annotation with single-quoted string value", () => {
+    const cds = `@EndUserText.label: 'My Label'
 define view V as select from T { key id }`;
     const file = new MemoryFile("v.ddls.asddls", cds);
     expect(new CDSParser().parse(file)).to.be.instanceof(ExpressionNode);
   });
 
-  it("hierarchy with double-quoted annotation label", () => {
-    const cds = `@EndUserText.label: "."
+  it("hierarchy with single-quoted annotation label", () => {
+    const cds = `@EndUserText.label: '.'
 define hierarchy H as parent child hierarchy (
   source T
   child to parent association p
@@ -3579,3 +3579,102 @@ function findAll(n: any, className: string): any[] {
   walk(n);
   return out;
 }
+
+// ---------------------------------------------------------------------------
+// Quoted identifier support in CDSName
+// ---------------------------------------------------------------------------
+describe("CDS Parser — quoted identifiers", () => {
+
+  function parse(source: string) {
+    const file = new MemoryFile("v.ddls.acds", source);
+    return new CDSParser().parse(file);
+  }
+
+  it("FROM-clause alias with standard name quoted: parses successfully", () => {
+    const parsed = parse(`define view v as select from t as "MyAlias" { key t.id }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("FROM-clause alias with = prefix: parses successfully", () => {
+    const parsed = parse(`define view v as select from t as "=A0" { key t.id }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("JOIN alias with = prefix: parses successfully", () => {
+    const parsed = parse(`define view v as select from t inner join u as "=A1" on t.id = u.id { key t.id }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("column alias with = prefix: parses successfully", () => {
+    const parsed = parse(`define view v as select from t { key t.id as "=MYKEY" }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("FROM-clause alias '\"=A0\"' token value preserved in CDSAs → CDSName", () => {
+    const parsed = parse(`define view v as select from t as "=A0" { key t.id }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+    // Find CDSSource's CDSAs child and read the alias token
+    const sources = findAll(parsed, "CDSSource");
+    expect(sources.length).to.equal(1);
+    const asNodes = findAll(sources[0], "CDSAs");
+    expect(asNodes.length).to.equal(1);
+    const nameNodes = findAll(asNodes[0], "CDSName");
+    expect(nameNodes.length).to.be.greaterThan(0);
+    const tok = nameNodes[0].getFirstToken().getStr();
+    expect(tok).to.equal('"=A0"');
+  });
+
+  it("quoted identifier with special chars (hyphen) parses", () => {
+    const parsed = parse(`define view v as select from t as "my-alias" { key t.id }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("view name itself can be quoted", () => {
+    const parsed = parse(`define view "MyView" as select from t { key t.id }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+});
+
+// ---------------------------------------------------------------------------
+// Post-annotations on select-list elements
+// (`col as name @<Annotation.path: value` — annotation AFTER the element)
+// ---------------------------------------------------------------------------
+describe("CDS Parser — post-annotations on elements", () => {
+
+  function parseView(source: string) {
+    const file = new MemoryFile("v.ddls.acds", source);
+    return new CDSParser().parse(file);
+  }
+
+  it("single post-annotation after `as` alias parses", () => {
+    const parsed = parseView(
+      `define view V as select from t { key t.id as x @<ObjectModel.text.association: '_A' }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("post-annotation on non-last column, followed by comma and next column, parses", () => {
+    const parsed = parseView(
+      `define view V as select from t { key t.id as x @<Anno: '_A', y as y }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("multiple post-annotations on the same element parse", () => {
+    const parsed = parseView(
+      `define view V as select from t { key t.id as x @<A.x: '1' @<B.y: '2' }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("post-annotation combined with pre-annotation parses", () => {
+    const parsed = parseView(
+      `define view V as select from t { @Semantics.text: true key t.id as x @<A: '_A' }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("post-annotation on aggregated column with alias parses", () => {
+    const parsed = parseView(
+      `define view V as select from t { sum(t.qty) as total @<Semantics.amount.currencyCode: 'CURR' }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+});
