@@ -7,6 +7,7 @@ import {AbstractNode} from "./_abstract_node";
 
 export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
   private readonly expression: IStatementRunnable;
+  private tokenCount: number = 0;
 
   public constructor(expression: IStatementRunnable) {
     super();
@@ -21,12 +22,18 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     return this.expression;
   }
 
-  public countTokens(): number {
-    let ret = 0;
-    for (const c of this.getChildren()) {
-      ret = ret + c.countTokens();
+  public setChildren(children: (ExpressionNode | TokenNode)[]): ExpressionNode {
+    super.setChildren(children);
+
+    for (const child of this.getChildren()) {
+      this.tokenCount = this.tokenCount + child.countTokens();
     }
-    return ret;
+
+    return this;
+  }
+
+  public countTokens(): number {
+    return this.tokenCount;
   }
 
   public getFirstToken(): AbstractToken {
