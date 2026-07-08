@@ -10149,6 +10149,20 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("class_constructor must be static, error", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS class_constructor.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD class_constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("CLASS_CONSTRUCTOR must be static");
+  });
+
   it("ok, select from internal tab", () => {
     const abap = `TYPES: BEGIN OF ty,
     dat TYPE d,
