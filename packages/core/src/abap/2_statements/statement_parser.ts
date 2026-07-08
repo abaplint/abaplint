@@ -18,6 +18,8 @@ import {reclassifySelect} from "./_select_reclassify";
 
 export const STATEMENT_MAX_TOKENS = 20000;
 
+const EMPTY_PRAGMAS: readonly AbstractToken[] = Object.freeze([]);
+
 class StatementMap {
   // this also serves as container for statement matcher singletons,
   private readonly map: {[index: string]: {statement: IStatement, matcher?: IStatementRunnable}[]};
@@ -255,11 +257,21 @@ export class StatementParser {
     return statement;
   }
 
-  private removePragma(tokens: readonly AbstractToken[]): {tokens: AbstractToken[], pragmas: AbstractToken[]} {
+  private removePragma(tokens: readonly AbstractToken[]): {tokens: AbstractToken[], pragmas: readonly AbstractToken[]} {
+    let hasPragma = false;
+    // skip the last token as it is the punctuation
+    for (let i = 0; i < tokens.length - 1; i++) {
+      if (tokens[i] instanceof Tokens.Pragma) {
+        hasPragma = true;
+        break;
+      }
+    }
+    if (hasPragma === false) {
+      return {tokens: tokens.slice(0, tokens.length - 1), pragmas: EMPTY_PRAGMAS};
+    }
+
     const result: AbstractToken[] = [];
     const pragmas: AbstractToken[] = [];
-
-    // skip the last token as it is the punctuation
     for (let i = 0; i < tokens.length - 1; i++) {
       const t = tokens[i];
       if (t instanceof Tokens.Pragma) {
