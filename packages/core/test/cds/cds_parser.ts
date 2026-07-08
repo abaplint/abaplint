@@ -3579,3 +3579,59 @@ function findAll(n: any, className: string): any[] {
   walk(n);
   return out;
 }
+
+// ---------------------------------------------------------------------------
+// Quoted identifier support in CDSName
+// ---------------------------------------------------------------------------
+describe("CDS Parser — quoted identifiers", () => {
+
+  function parse(source: string) {
+    const file = new MemoryFile("v.ddls.acds", source);
+    return new CDSParser().parse(file);
+  }
+
+  it("FROM-clause alias with standard name quoted: parses successfully", () => {
+    const parsed = parse(`define view v as select from t as "MyAlias" { key t.id }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("FROM-clause alias with = prefix: parses successfully", () => {
+    const parsed = parse(`define view v as select from t as "=A0" { key t.id }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("JOIN alias with = prefix: parses successfully", () => {
+    const parsed = parse(`define view v as select from t inner join u as "=A1" on t.id = u.id { key t.id }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("column alias with = prefix: parses successfully", () => {
+    const parsed = parse(`define view v as select from t { key t.id as "=MYKEY" }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("FROM-clause alias '\"=A0\"' token value preserved in CDSAs → CDSName", () => {
+    const parsed = parse(`define view v as select from t as "=A0" { key t.id }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+    // Find CDSSource's CDSAs child and read the alias token
+    const sources = findAll(parsed, "CDSSource");
+    expect(sources.length).to.equal(1);
+    const asNodes = findAll(sources[0], "CDSAs");
+    expect(asNodes.length).to.equal(1);
+    const nameNodes = findAll(asNodes[0], "CDSName");
+    expect(nameNodes.length).to.be.greaterThan(0);
+    const tok = nameNodes[0].getFirstToken().getStr();
+    expect(tok).to.equal('"=A0"');
+  });
+
+  it("quoted identifier with special chars (hyphen) parses", () => {
+    const parsed = parse(`define view v as select from t as "my-alias" { key t.id }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("view name itself can be quoted", () => {
+    const parsed = parse(`define view "MyView" as select from t { key t.id }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+});
