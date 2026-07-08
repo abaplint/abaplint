@@ -34,6 +34,6 @@ export class CDSElement extends Expression {
 
     const elementBody = altPrio(typedVirtual, seq(altPrio("KEY", "VIRTUAL"), body), body);
 
-    return seq(starPrio(CDSAnnotation), elementBody, optPrio(CDSAs));
+    return seq(starPrio(CDSAnnotation), elementBody, optPrio(CDSAs), starPrio(CDSAnnotation));
   }
 }
