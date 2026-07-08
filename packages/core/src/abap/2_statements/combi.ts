@@ -97,9 +97,11 @@ class Word implements IStatementRunnable {
 class Token implements IStatementRunnable {
 
   private readonly name: string;
+  private readonly tokenType: new (p: Position, s: string) => Tokens_Token;
 
-  public constructor(s: string) {
-    this.name = s;
+  public constructor(t: new (p: Position, s: string) => Tokens_Token) {
+    this.tokenType = t;
+    this.name = t.name;
   }
 
   public listKeywords(): string[] {
@@ -115,7 +117,7 @@ class Token implements IStatementRunnable {
 
     for (const input of r) {
       if (input.remainingLength() !== 0
-          && input.peek().constructor.name === this.name) {
+          && input.peek().constructor === this.tokenType) {
         result.push(input.shift(new TokenNode(input.peek())));
       }
     }
@@ -367,7 +369,11 @@ class Optional implements IStatementRunnable {
     for (const input of r) {
       result.push(input);
       const res = this.optional.run([input]);
-      result.push(...res);
+      if (res.length === 1) {
+        result.push(res[0]);
+      } else {
+        result.push(...res);
+      }
     }
 
     return result;
@@ -419,6 +425,8 @@ class Star implements IStatementRunnable {
         if (res.length > 1000) {
           // avoid stack overflow
           result = result.concat(res);
+        } else if (res.length === 1) {
+          result.push(res[0]);
         } else {
           result.push(...res);
         }
@@ -615,6 +623,8 @@ class Sequence implements IStatementRunnable {
         if (temp.length > 1000) {
           // avoid stack overflow
           result = result.concat(temp);
+        } else if (temp.length === 1) {
+          result.push(temp[0]);
         } else {
           result.push(...temp);
         }
@@ -903,7 +913,11 @@ class Alternative implements IStatementRunnable {
 
     for (const sequ of this.list) {
       const temp = sequ.run(r);
-      result.push(...temp);
+      if (temp.length === 1) {
+        result.push(temp[0]);
+      } else {
+        result.push(...temp);
+      }
     }
 
     return result;
@@ -973,7 +987,11 @@ class AlternativePriority implements IStatementRunnable {
       const temp = sequ.run(r);
 
       if (temp.length > 0) {
-        result.push(...temp);
+        if (temp.length === 1) {
+          result.push(temp[0]);
+        } else {
+          result.push(...temp);
+        }
         break;
       }
     }
@@ -1109,7 +1127,7 @@ export function regex(r: RegExp): IStatementRunnable {
 }
 
 export function tok(t: new (p: Position, s: string) => any): IStatementRunnable {
-  return new Token(t.name);
+  return new Token(t);
 }
 
 const expressionSingletons: {[index: string]: Expression} = {};
