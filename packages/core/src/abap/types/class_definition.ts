@@ -95,6 +95,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     // perform checks after everything has been initialized
     this.checkMethodsFromSuperClasses(input);
     this.checkMethodNameLength(input);
+    this.checkClassConstructorStatic(input);
   }
 
   public getFriends() {
@@ -172,6 +173,14 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       if (m.getName().length > 30 && m.getName().includes("~") === false) {
         const message = `Method name "${m.getName()}" is too long, maximum length is 30 characters`;
         input.issues.push(syntaxIssue(input, m.getToken(), message));
+      }
+    }
+  }
+
+  private checkClassConstructorStatic(input: SyntaxInput) {
+    for (const m of this.methodDefs.getAll()) {
+      if (m.getName().toUpperCase() === "CLASS_CONSTRUCTOR" && m.isStatic() === false) {
+        input.issues.push(syntaxIssue(input, m.getToken(), "CLASS_CONSTRUCTOR must be static"));
       }
     }
   }

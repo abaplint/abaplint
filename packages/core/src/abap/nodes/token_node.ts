@@ -1,6 +1,8 @@
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {INode} from "./_inode";
 
+const EMPTY_CHILDREN: readonly INode[] = Object.freeze([]);
+
 export class TokenNode implements INode {
   private readonly token: AbstractToken;
 
@@ -17,7 +19,7 @@ export class TokenNode implements INode {
   }
 
   public getChildren(): readonly INode[] {
-    return [];
+    return EMPTY_CHILDREN;
   }
 
   public concatTokens(): string {

@@ -15,6 +15,8 @@ import {StringTemplate} from "../1_lexer/tokens/string_template";
 import {IStatement} from "../2_statements/statements/_statement";
 import {IStatementRunnable} from "../2_statements/statement_runnable";
 
+const EMPTY_PRAGMAS: readonly AbstractToken[] = Object.freeze([]);
+
 export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
   private readonly statement: IStatement;
   private readonly colon: AbstractToken | undefined;
@@ -24,12 +26,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
     super();
     this.statement = statement;
     this.colon = colon;
-
-    if (pragmas) {
-      this.pragmas = pragmas;
-    } else {
-      this.pragmas = [];
-    }
+    this.pragmas = pragmas ?? EMPTY_PRAGMAS;
   }
 
   public get() {
@@ -49,7 +46,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
       throw new Error("statement: zero children");
     }
 
-    this.children = children;
+    super.setChildren(children);
 
     return this;
   }
