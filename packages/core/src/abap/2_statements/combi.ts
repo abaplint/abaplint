@@ -1126,7 +1126,7 @@ export function regex(r: RegExp): IStatementRunnable {
   return new Regex(r);
 }
 
-export function tok(t: new (p: Position, s: string) => any): IStatementRunnable {
+export function tok(t: new (p: Position, s: string) => Tokens_Token): IStatementRunnable {
   return new Token(t);
 }
 
