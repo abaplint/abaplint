@@ -710,25 +710,13 @@ export abstract class Expression implements IStatementRunnable {
       const temp = this.runnable.run([input]);
 
       for (const t of temp) {
-        let consumed = input.remainingLength() - t.remainingLength();
+        const consumed = input.remainingLength() - t.remainingLength();
         if (consumed > 0) {
-          const originalLength = t.getNodes().length;
-          const children: (ExpressionNode | TokenNode)[] = [];
-          while (consumed > 0) {
-            const sub = t.popNode();
-            if (sub) {
-              children.push(sub);
-              consumed = consumed - sub.countTokens();
-            }
-          }
           const re = new ExpressionNode(this);
-          re.setChildren(children.reverse());
-
-          const n = t.getNodes().slice(0, originalLength - consumed);
-          n.push(re);
-          t.setNodes(n);
+          results.push(t.wrapConsumed(consumed, re));
+        } else {
+          results.push(t);
         }
-        results.push(t);
       }
 
     }
