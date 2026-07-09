@@ -16,6 +16,7 @@ function getConfig(rules: any): IConfig {
       version: Version.v702,
       errorNamespace: "^(Z|Y)",
       globalConstants: [],
+      ambigiousVoids: [],
       globalMacros: [],
     },
     rules: rules,

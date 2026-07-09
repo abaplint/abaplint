@@ -18,6 +18,7 @@ describe("severity", () => {
         version: Version.v702,
         errorNamespace: "^(Z|Y)",
         globalConstants: [],
+        ambigiousVoids: [],
         globalMacros: [],
       },
       rules: rules,

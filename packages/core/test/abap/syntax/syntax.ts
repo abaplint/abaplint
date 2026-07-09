@@ -10,12 +10,15 @@ import {MemoryFile} from "../../../src/files/memory_file";
 import {applyEditSingle} from "../../../src/edit_helper";
 
 function run(reg: IRegistry, globalConstants?: string[], version?: Version, errorNamespace?: string,
-             languageVersion?: LanguageVersion): Issue[] {
+             languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
   let ret: Issue[] = [];
 
   const config = reg.getConfig().get();
   if (globalConstants) {
     config.syntax.globalConstants = globalConstants;
+  }
+  if (ambigiousVoids) {
+    config.syntax.ambigiousVoids = ambigiousVoids;
   }
   if (version) {
     config.syntax.version = version;
@@ -62,10 +65,10 @@ function runInterface(abap: string): Issue[] {
 }
 
 function runProgram(abap: string, globalConstants?: string[], version?: Version, errorNamespace?: string,
-                    languageVersion?: LanguageVersion): Issue[] {
+                    languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);
-  return run(reg, globalConstants, version, errorNamespace, languageVersion);
+  return run(reg, globalConstants, version, errorNamespace, languageVersion, ambigiousVoids);
 }
 
 ////////////////////////////////////////////////////////////
@@ -7823,6 +7826,14 @@ READ TABLE tab WITH KEY table_line->name = 'sdf' TRANSPORTING NO FIELDS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ambigious statement, DELETE FROM standard database table", () => {
+    const abap = `
+DATA ls_foo TYPE foo.
+DELETE foo FROM ls_foo.`;
+    const issues = runProgram(abap, [], undefined, undefined, undefined, ["foo"]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, delete internal", () => {
     const abap = `
 INTERFACE lif.
@@ -12551,6 +12562,18 @@ CONSTANTS c_max TYPE i VALUE 50.
 DELETE cs_information-missing_remote FROM c_max.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
+  });
+
+  it("DELETE FROM configured ambigious void", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE c LENGTH 10,
+       END OF ty.
+DATA wlk1 TYPE HASHED TABLE OF ty WITH UNIQUE KEY foo.
+DATA ls_wlk1_to_delete TYPE i.
+DELETE wlk1 FROM ls_wlk1_to_delete.`;
+    const issues = runProgram(abap, [], undefined, undefined, undefined, ["WLK1"]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("DELETE INDEX hashed table not possible", () => {

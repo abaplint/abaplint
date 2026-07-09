@@ -50,6 +50,10 @@ export interface ISyntaxSettings {
    * @uniqueItems true
   */
   globalConstants?: string[];
+  /** List of names to void in ambigious statements (regex not possible)
+   * @uniqueItems true
+  */
+  ambigiousVoids?: string[];
   /** List of full named global macros (regex not possible)
    * @uniqueItems true
   */

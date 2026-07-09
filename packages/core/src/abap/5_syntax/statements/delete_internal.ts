@@ -7,7 +7,7 @@ import {ComponentCond} from "../expressions/component_cond";
 import {StatementSyntax} from "../_statement_syntax";
 import {ILookupResult} from "../../../ddic";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {TableAccessType, TableType} from "../../types/basic";
+import {TableAccessType, TableType, VoidType} from "../../types/basic";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class DeleteInternal implements StatementSyntax {
@@ -20,18 +20,24 @@ export class DeleteInternal implements StatementSyntax {
     let targetType: AbstractType | undefined = undefined;
     const target = node.findDirectExpression(Expressions.Target);
     if (target) {
+      const targetName = target.concatTokens();
       let tabl: ILookupResult | undefined = undefined;
-      const localVariable = input.scope.findVariable(target.concatTokens());
+      const localVariable = input.scope.findVariable(targetName);
       if (localVariable === undefined && node.getChildren().length === 5 && node.getChildren()[2].concatTokens().toUpperCase() === "FROM") {
         // it might be a database table
-        const found = input.scope.getDDIC()?.lookupTableOrView(target.concatTokens());
+        const found = input.scope.getDDIC()?.lookupTableOrView(targetName);
         if (found?.object !== undefined) {
           tabl = found;
           input.scope.getDDICReferences().addUsing(input.scope.getParentObj(), {object: tabl.object});
         }
       }
       if (tabl === undefined) {
-        targetType = Target.runSyntax(target, input);
+        const ambigiousVoids = input.scope.getRegistry().getConfig().getSyntaxSetttings().ambigiousVoids || [];
+        if (ambigiousVoids.some(name => name.toUpperCase() === targetName.toUpperCase())) {
+          targetType = VoidType.get(targetName);
+        } else {
+          targetType = Target.runSyntax(target, input);
+        }
         if (node.findDirectTokenByText("TABLE") === undefined
             && node.findDirectTokenByText("ADJACENT") === undefined
             && (node.findDirectTokenByText("FROM") || node.findDirectTokenByText("INDEX"))

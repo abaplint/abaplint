@@ -6015,6 +6015,14 @@
     "ISyntaxSettings": {
       "additionalProperties": false,
       "properties": {
+        "ambigiousVoids": {
+          "description": "List of names to void in ambigious statements (regex not possible)",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
         "errorNamespace": {
           "description": "Report error for objects in this regex namespace. Types not in namespace will be void. Case insensitive",
           "type": "string"

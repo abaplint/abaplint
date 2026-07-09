@@ -51,6 +51,7 @@ export class Config implements IConfiguration {
         languageVersion: langVer,
         errorNamespace: "^(Z|Y|LCL\_|TY\_|LIF\_)",
         globalConstants: [],
+        ambigiousVoids: [],
         globalMacros: [],
       },
       rules: rules,
@@ -102,6 +103,11 @@ export class Config implements IConfiguration {
     } else {
       // remove duplicates,
       this.config.syntax.globalConstants = [...new Set(this.config.syntax.globalConstants)];
+    }
+    if (this.config.syntax.ambigiousVoids === undefined) {
+      this.config.syntax.ambigiousVoids = [];
+    } else {
+      this.config.syntax.ambigiousVoids = [...new Set(this.config.syntax.ambigiousVoids)];
     }
     if (this.config.global.skipIncludesWithoutMain === undefined) {
       this.config.global.skipIncludesWithoutMain = false;

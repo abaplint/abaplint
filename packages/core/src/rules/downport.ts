@@ -353,6 +353,7 @@ Make sure to test the downported code, it might not always be completely correct
     const lowConfig = this.lowReg.getConfig().get();
     highConfig.syntax.errorNamespace = lowConfig.syntax.errorNamespace;
     highConfig.syntax.globalConstants = lowConfig.syntax.globalConstants;
+    highConfig.syntax.ambigiousVoids = lowConfig.syntax.ambigiousVoids;
     highConfig.syntax.globalMacros = lowConfig.syntax.globalMacros;
     this.highReg = new Registry();
 
