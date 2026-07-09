@@ -5,7 +5,7 @@ import {Issue} from "../../../src/issue";
 import {Config} from "../../../src/config";
 import {IRegistry} from "../../../src/_iregistry";
 import {getABAPObjects} from "../../get_abap";
-import {Version, LanguageVersion} from "../../../src/version";
+import {Version, LanguageVersion, Release, ReleaseName, versionToABAPRelease} from "../../../src/version";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {applyEditSingle} from "../../../src/edit_helper";
 
@@ -24,7 +24,12 @@ function run(reg: IRegistry, globalConstants?: string[], version?: Version, erro
     config.syntax.version = version;
   }
   if (languageVersion) {
-    config.syntax.languageVersion = languageVersion;
+    config.syntax.version = {
+      release: version === undefined || version === Version.Cloud
+        ? Release.Newest.name as ReleaseName
+        : versionToABAPRelease(version).name as ReleaseName,
+      language: languageVersion,
+    };
   }
   if (errorNamespace) {
     config.syntax.errorNamespace = errorNamespace;

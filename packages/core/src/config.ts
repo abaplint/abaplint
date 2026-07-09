@@ -19,10 +19,20 @@ export class Config implements IConfiguration {
       rules[rule.getMetadata().key] = rule.getConfig();
     }
 
-    const version: VersionOldOrNew = ver ?? {
-      release: Release.Newest.name as ReleaseName,
-      language: langVer ?? LanguageVersion.Normal,
-    };
+    const version: VersionOldOrNew =
+      langVer !== undefined
+        ? {
+          release: ver === undefined || ver === Version.Cloud
+            ? Release.Newest.name as ReleaseName
+            : typeof ver === "string"
+              ? versionToABAPRelease(ver).name as ReleaseName
+              : ver.release,
+          language: langVer,
+        }
+        : ver ?? {
+          release: Release.Newest.name as ReleaseName,
+          language: LanguageVersion.Normal,
+        };
 
     // defaults: dont skip anything, report everything. The user can decide to skip stuff
     // its difficult to debug errors not being reported
@@ -48,7 +58,6 @@ export class Config implements IConfiguration {
       }],
       syntax: {
         version,
-        languageVersion: langVer,
         errorNamespace: "^(Z|Y|LCL\_|TY\_|LIF\_)",
         globalConstants: [],
         ambigiousVoids: [],
@@ -166,9 +175,6 @@ export class Config implements IConfiguration {
   }
 
   public getLanguageVersion(): LanguageVersion {
-    if (this.config.syntax.languageVersion !== undefined) {
-      return this.config.syntax.languageVersion;
-    }
     const v = this.config.syntax.version;
     if (v !== undefined && typeof v !== "string") {
       return v.language;
@@ -194,7 +200,10 @@ export class Config implements IConfiguration {
       return;
     }
     if (version === Version.Cloud) {
-      this.config.syntax.languageVersion = LanguageVersion.Cloud;
+      this.config.syntax.version = {
+        release: Release.Newest.name as ReleaseName,
+        language: LanguageVersion.Cloud,
+      };
     }
     // OpenABAP keeps its own version identity; open-abap-ness is derived from the
     // release in getOpenABAP() rather than a separate stored flag.

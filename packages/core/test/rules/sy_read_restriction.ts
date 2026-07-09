@@ -4,9 +4,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {expect} from "chai";
 
 async function findIssues(abap: string, languageVersion: LanguageVersion): Promise<readonly Issue[]> {
-  const c = Config.getDefault().get();
-  c.syntax.languageVersion = languageVersion;
-  const reg = new Registry(new Config(JSON.stringify(c))).addFile(new MemoryFile("zfoo.prog.abap", abap));
+  const reg = new Registry(Config.getDefault(undefined, languageVersion)).addFile(new MemoryFile("zfoo.prog.abap", abap));
   await reg.parseAsync();
   const rule = new SyReadRestriction();
   return rule.initialize(reg).run(reg.getFirstObject()!);
