@@ -1,27 +1,45 @@
+// The buffer holds a reference to the raw input and tracks the [start, end)
+// offset range of the current token, so the token string can be sliced out with
+// a single substring() instead of being concatenated one character at a time.
 export class LexerBuffer {
-  private buf: string;
+  private readonly raw: string;
+  private start: number;
+  private end: number;   // exclusive
+  private empty: boolean;
 
-  public constructor() {
-    this.buf = "";
+  public constructor(raw: string) {
+    this.raw = raw;
+    this.start = 0;
+    this.end = 0;
+    this.empty = true;
   }
 
-  public add(s: string): string {
-    this.buf = this.buf + s;
-    return this.buf;
+  public add(offset: number): void {
+    if (this.empty === true) {
+      this.start = offset < 0 ? 0 : offset;
+      this.empty = false;
+    }
+    this.end = offset + 1;
   }
 
   public get(): string {
-    return this.buf;
+    return this.raw.substring(this.start, this.end);
+  }
+
+  public length(): number {
+    return this.end - this.start;
   }
 
   public clear(): void {
-    this.buf = "";
+    this.start = 0;
+    this.end = 0;
+    this.empty = true;
   }
 
-  public countIsEven(char: string): boolean {
+  public countIsEven(char: number): boolean {
     let count = 0;
-    for (let i = 0; i < this.buf.length; i += 1) {
-      if (this.buf.charAt(i) === char) {
+    for (let i = this.start; i < this.end; i += 1) {
+      if (this.raw.charCodeAt(i) === char) {
         count += 1;
       }
     }

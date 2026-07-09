@@ -1,3 +1,5 @@
+OBSOLETE
+
 # Notes
 
 * No static classes with class data

@@ -1,3 +1,6 @@
+const NL = 10;   // "\n"
+const EOF = -1;  // no character (start/end of file)
+
 export class LexerStream {
   private readonly raw: string;
   private offset = -1;
@@ -11,7 +14,7 @@ export class LexerStream {
   }
 
   public advance(): boolean {
-    if (this.currentChar() === "\n") {
+    if (this.currentChar() === NL) {
       this.col = 1;
       this.row = this.row + 1;
     }
@@ -35,41 +38,56 @@ export class LexerStream {
     return this.row;
   }
 
-  public prevChar(): string {
-    if (this.offset - 1 < 0) {
-      return "";
+  // the *Char() accessors return character codes (charCodeAt) rather than
+  // single character strings, to avoid allocating a string per input character
+  // in the lexer hot loop. EOF (-1) is returned when the offset is out of range.
+
+  public prevChar(): number {
+    const o = this.offset - 1;
+    if (o < 0) {
+      return EOF;
     }
-    return this.raw.substr(this.offset - 1, 1);
+    return this.raw.charCodeAt(o);
   }
 
-  public prevPrevChar(): string {
-    if (this.offset - 2 < 0) {
-      return "";
+  public prevPrevChar(): number {
+    const o = this.offset - 2;
+    if (o < 0) {
+      return EOF;
     }
-    return this.raw.substr(this.offset - 2, 2);
+    return this.raw.charCodeAt(o);
   }
 
-  public currentChar(): string {
+  public currentChar(): number {
     if (this.offset < 0) {
-      return "\n"; // simulate newline at start of file to handle star(*) comments
+      return NL; // simulate newline at start of file to handle star(*) comments
     } else if (this.offset >= this.raw.length) {
-      return "";
+      return EOF;
     }
-    return this.raw.substr(this.offset, 1);
+    return this.raw.charCodeAt(this.offset);
   }
 
-  public nextChar(): string {
-    if (this.offset + 2 > this.raw.length) {
-      return "";
+  public nextChar(): number {
+    const o = this.offset + 1;
+    if (o >= this.raw.length) {
+      return EOF;
     }
-    return this.raw.substr(this.offset + 1, 1);
+    return this.raw.charCodeAt(o);
   }
 
-  public nextNextChar(): string {
-    if (this.offset + 3 > this.raw.length) {
-      return this.nextChar();
+  public nextNextChar(): number {
+    const o = this.offset + 2;
+    if (o >= this.raw.length) {
+      return EOF;
     }
-    return this.raw.substr(this.offset + 1, 2);
+    return this.raw.charCodeAt(o);
+  }
+
+  public charCodeAt(o: number): number {
+    if (o < 0 || o >= this.raw.length) {
+      return EOF;
+    }
+    return this.raw.charCodeAt(o);
   }
 
   public getRaw(): string {

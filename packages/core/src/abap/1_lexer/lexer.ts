@@ -14,6 +14,38 @@ const ModeTemplate: number = 4;
 const ModeComment: number = 5;
 const ModePragma: number = 6;
 
+// character codes, used for integer comparisons in the hot loop
+const EOF = -1;             // no character (start/end of file)
+const CH_TAB = 9;           // "\t"
+const CH_NL = 10;           // "\n"
+const CH_SPACE = 32;        // " "
+const CH_DQUOTE = 34;       // "\""
+const CH_HASH = 35;         // "#"
+const CH_QUOTE = 39;        // "'"
+const CH_STAR = 42;         // "*"
+const CH_DASH = 45;         // "-"
+const CH_COMMA = 44;        // ","
+const CH_DOT = 46;          // "."
+const CH_COLON = 58;        // ":"
+const CH_EQUALS = 61;       // "="
+const CH_GT = 62;           // ">"
+const CH_AT = 64;           // "@"
+const CH_BACKSLASH = 92;    // "\\"
+const CH_BACKTICK = 96;     // "`"
+const CH_LBRACE = 123;      // "{"
+const CH_PIPE = 124;        // "|"
+const CH_RBRACE = 125;      // "}"
+
+// characters that terminate the current token
+const SPLITS = new Set<number>([
+  CH_SPACE, CH_COLON, CH_DOT, CH_COMMA, CH_DASH, 43 /* + */, 40 /* ( */,
+  41 /* ) */, 91 /* [ */, 93 /* ] */, CH_BACKSLASH, CH_TAB, CH_NL]);
+
+// single characters that are emitted as their own token
+const BUFS = new Set<number>([
+  CH_DOT, CH_COMMA, CH_COLON, 40 /* ( */, 41 /* ) */, 91 /* [ */,
+  93 /* ] */, 43 /* + */, CH_AT]);
+
 export class Lexer {
 
   private virtual: Position | undefined;
@@ -38,16 +70,18 @@ export class Lexer {
       const row = this.stream.getRow();
 
       let whiteBefore = false;
-      if (this.stream.getOffset() - s.length >= 0) {
-        const prev = this.stream.getRaw().substr(this.stream.getOffset() - s.length, 1);
-        if (prev === " " || prev === "\n" || prev === "\t" || prev === ":") {
+      const beforeOffset = this.stream.getOffset() - s.length;
+      if (beforeOffset >= 0) {
+        const prev = this.stream.charCodeAt(beforeOffset);
+        if (prev === CH_SPACE || prev === CH_NL || prev === CH_TAB || prev === CH_COLON) {
           whiteBefore = true;
         }
       }
 
       let whiteAfter = false;
       const next = this.stream.nextChar();
-      if (next === " " || next === "\n" || next === "\t" || next === ":" || next === "," || next === "." || next === "" || next === "\"") {
+      if (next === CH_SPACE || next === CH_NL || next === CH_TAB || next === CH_COLON
+          || next === CH_COMMA || next === CH_DOT || next === EOF || next === CH_DQUOTE) {
         whiteAfter = true;
       }
 
@@ -176,10 +210,10 @@ export class Lexer {
       }
 
       if (tok === undefined && this.m === ModeNormal && s.charAt(0) === "\\") {
-        const adj = this.stream.nextChar() === "" ? 1 : 0;
+        const adj = this.stream.nextChar() === EOF ? 1 : 0;
         const prevOffset = this.stream.getOffset() - s.length - adj;
-        const prevChar = prevOffset >= 0 ? this.stream.getRaw().substr(prevOffset, 1) : "";
-        const whiteBeforeBackslash = prevChar === " " || prevChar === "\n" || prevChar === "\t" || prevChar === ":";
+        const prevChar = this.stream.charCodeAt(prevOffset);
+        const whiteBeforeBackslash = prevChar === CH_SPACE || prevChar === CH_NL || prevChar === CH_TAB || prevChar === CH_COLON;
         if (!whiteBeforeBackslash) {
           tok = new AssociationName(pos, s);
         }
@@ -194,129 +228,104 @@ export class Lexer {
   }
 
   private process(raw: string) {
-    this.stream = new LexerStream(raw.replace(/\r/g, ""));
-    this.buffer = new LexerBuffer();
-
-    const splits: {[name: string]: boolean} = {};
-    splits[" "] = true;
-    splits[":"] = true;
-    splits["."] = true;
-    splits[","] = true;
-    splits["-"] = true;
-    splits["+"] = true;
-    splits["("] = true;
-    splits[")"] = true;
-    splits["["] = true;
-    splits["]"] = true;
-    splits["\\"] = true;
-    splits["\t"] = true;
-    splits["\n"] = true;
-
-    const bufs: {[name: string]: boolean} = {};
-    bufs["."] = true;
-    bufs[","] = true;
-    bufs[":"] = true;
-    bufs["("] = true;
-    bufs[")"] = true;
-    bufs["["] = true;
-    bufs["]"] = true;
-    bufs["+"] = true;
-    bufs["@"] = true;
+    const stream = new LexerStream(raw.replace(/\r/g, ""));
+    this.stream = stream;
+    this.buffer = new LexerBuffer(stream.getRaw());
 
     for (;;) {
-      const current = this.stream.currentChar();
-      const buf = this.buffer.add(current);
-      const ahead = this.stream.nextChar();
-      const aahead = this.stream.nextNextChar();
+      const current = stream.currentChar();
+      this.buffer.add(stream.getOffset());
+      const ahead = stream.nextChar();
+      const aahead = stream.nextNextChar();
 
       if (this.m === ModeNormal) {
-        if (splits[ahead]) {
+        if (SPLITS.has(ahead)) {
           this.add();
-        } else if (ahead === "'") {
+        } else if (ahead === CH_QUOTE) {
 // start string
           this.add();
           this.m = ModeStr;
-        } else if (ahead === "|" || ahead === "}") {
+        } else if (ahead === CH_PIPE || ahead === CH_RBRACE) {
 // start template
           this.add();
           this.m = ModeTemplate;
-        } else if (ahead === "`") {
+        } else if (ahead === CH_BACKTICK) {
 // start ping
           this.add();
           this.m = ModePing;
-        } else if (aahead === "##") {
+        } else if (ahead === CH_HASH && aahead === CH_HASH) {
 // start pragma
           this.add();
           this.m = ModePragma;
-        } else if (ahead === "\""
-            || (ahead === "*" && current === "\n")) {
+        } else if (ahead === CH_DQUOTE
+            || (ahead === CH_STAR && current === CH_NL)) {
 // start comment
           this.add();
           this.m = ModeComment;
-        } else if (ahead === "@" && buf.trim().length === 0) {
+        } else if (ahead === CH_AT && this.buffer.get().trim().length === 0) {
           this.add();
-        } else if (aahead === "->"
-            || aahead === "=>") {
+        } else if ((ahead === CH_DASH || ahead === CH_EQUALS) && aahead === CH_GT) {
           this.add();
-        } else if (current === ">"
-            && ahead !== " "
-            && (this.stream.prevChar() === "-" || this.stream.prevChar() === "=")) {
+        } else if (current === CH_GT
+            && ahead !== CH_SPACE
+            && (stream.prevChar() === CH_DASH || stream.prevChar() === CH_EQUALS)) {
 // arrows
           this.add();
-        } else if (buf.length === 1
-            && (bufs[buf]
-            || (buf === "-" && ahead !== ">"))) {
+        } else if (this.buffer.length() === 1
+            && (BUFS.has(current)
+            || (current === CH_DASH && ahead !== CH_GT))) {
           this.add();
         }
-      } else if (this.m === ModePragma && (ahead === "," || ahead === ":" || ahead === "." || ahead === " " || ahead === "\n")) {
+      } else if (this.m === ModePragma && (ahead === CH_COMMA || ahead === CH_COLON
+        || ahead === CH_DOT || ahead === CH_SPACE || ahead === CH_NL)) {
 // end of pragma
         this.add();
         this.m = ModeNormal;
       } else if (this.m === ModePing
-          && buf.length > 1
-          && current === "`"
-          && aahead !== "``"
-          && ahead !== "`"
-          && this.buffer.countIsEven("`")) {
+          && this.buffer.length() > 1
+          && current === CH_BACKTICK
+          && !(ahead === CH_BACKTICK && aahead === CH_BACKTICK)
+          && ahead !== CH_BACKTICK
+          && this.buffer.countIsEven(CH_BACKTICK)) {
 // end of ping
         this.add();
-        if (ahead === `"`) {
+        if (ahead === CH_DQUOTE) {
           this.m = ModeComment;
         } else {
           this.m = ModeNormal;
         }
       } else if (this.m === ModeTemplate
-          && buf.length > 1
-          && (current === "|" || current === "{")
-          && (this.stream.prevChar() !== "\\" || this.stream.prevPrevChar() === "\\\\")) {
+          && this.buffer.length() > 1
+          && (current === CH_PIPE || current === CH_LBRACE)
+          && (stream.prevChar() !== CH_BACKSLASH || (stream.prevPrevChar() === CH_BACKSLASH && stream.prevChar() === CH_BACKSLASH))) {
 // end of template
         this.add();
         this.m = ModeNormal;
       } else if (this.m === ModeTemplate
-          && ahead === "}"
-          && current !== "\\") {
+          && ahead === CH_RBRACE
+          && current !== CH_BACKSLASH) {
         this.add();
       } else if (this.m === ModeStr
-          && current === "'"
-          && buf.length > 1
-          && aahead !== "''"
-          && ahead !== "'"
-          && this.buffer.countIsEven("'")) {
+          && current === CH_QUOTE
+          && this.buffer.length() > 1
+          && !(ahead === CH_QUOTE && aahead === CH_QUOTE)
+          && ahead !== CH_QUOTE
+          && this.buffer.countIsEven(CH_QUOTE)) {
 // end of string
         this.add();
-        if (ahead === "\"") {
+        if (ahead === CH_DQUOTE) {
           this.m = ModeComment;
         } else {
           this.m = ModeNormal;
         }
-      } else if (ahead === "\n" && this.m !== ModeTemplate) {
+      } else if (ahead === CH_NL && this.m !== ModeTemplate) {
         this.add();
         this.m = ModeNormal;
-      } else if (this.m === ModeTemplate && current === "\n") {
+      } else if (this.m === ModeTemplate && current === CH_NL) {
         this.add();
       }
 
-      if (!this.stream.advance()) {
+      if (!stream.advance()) {
         break;
       }
     }
