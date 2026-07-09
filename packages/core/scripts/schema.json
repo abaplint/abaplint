@@ -1065,6 +1065,9 @@
           "description": "Finds instances of dynamic SQL: SELECT, UPDATE, DELETE, INSERT, MODIFY",
           "type": "boolean"
         },
+        "editorCallForReport": {
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -1125,6 +1128,7 @@
         "insertTextpool",
         "deleteDynpro",
         "exportDynpro",
+        "editorCallForReport",
         "dynamicSQL",
         "ignoreRAPQueryProvider"
       ],

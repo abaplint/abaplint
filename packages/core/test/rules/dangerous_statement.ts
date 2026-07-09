@@ -11,6 +11,8 @@ const tests = [
   {abap: "parser error", cnt: 0},
   {abap: "SYSTEM-CALL foo.", cnt: 1},
   {abap: "INSERT REPORT lv_prog FROM lt_tab VERSION 'X'.", cnt: 1},
+  {abap: "EDITOR-CALL FOR REPORT 'ZFOO'.", cnt: 1},
+  {abap: "EDITOR-CALL FOR lt_text TITLE lv_title DISPLAY-MODE.", cnt: 0},
 
   {abap: "UPDATE /dmo/flight SET (dynamicUpdate) WHERE carrier_id = @carrierId AND connection_id = @connectionId.", cnt: 1},
   {abap: "UPDATE /dmo/flight SET foo = 2 WHERE carrier_id = @carrierId AND connection_id = @connectionId.", cnt: 0},

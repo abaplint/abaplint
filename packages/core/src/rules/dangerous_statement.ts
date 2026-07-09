@@ -24,6 +24,7 @@ export class DangerousStatementConf extends BasicRuleConfig {
   public insertTextpool: boolean = true;
   public deleteDynpro: boolean = true;
   public exportDynpro: boolean = true;
+  public editorCallForReport: boolean = true;
   /** Finds instances of dynamic SQL: SELECT, UPDATE, DELETE, INSERT, MODIFY */
   public dynamicSQL: boolean = true;
   /** Ignore dynamic SQL in IF_RAP_QUERY_PROVIDER~SELECT implementations */
@@ -98,6 +99,10 @@ dynamic SQL can potentially create SQL injection problems`,
         message = "DELETE DYNPRO";
       } else if (this.conf.exportDynpro && statement instanceof Statements.ExportDynpro) {
         message = "EXPORT DYNPRO";
+      } else if (this.conf.editorCallForReport
+          && statement instanceof Statements.EditorCall
+          && statementNode.findDirectTokenByText("REPORT")) {
+        message = "EDITOR-CALL FOR REPORT";
       }
 
       if (message) {
