@@ -20,7 +20,7 @@ describe("Registry", () => {
     expect(abap[0].getStructure()).to.not.equal(undefined);
   });
 
-  it("Parse standalone INCL_OK pragma", async () => {
+  it("Parse standalone INCL_OK pragma, should not crash", async () => {
     const abap = `*&---------------------------------------------------------------------*
 *&  Include           ZSAMPLE
 ##INCL_OK`;
