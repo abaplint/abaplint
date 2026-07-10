@@ -13,7 +13,7 @@ export class TypeMesh implements IStatement {
 
     const association = seq("ASSOCIATION", NamespaceSimpleName, "TO", NamespaceSimpleName, plus(on));
 
-    const ret = ver(Release.v751, seq("TYPES", NamespaceSimpleName, "TYPE", opt("REF TO"), TypeName, plus(association), opt(using)));
+    const ret = ver(Release.v740sp05, seq("TYPES", NamespaceSimpleName, "TYPE", opt("REF TO"), TypeName, plus(association), opt(using)));
 
     return ret;
   }
