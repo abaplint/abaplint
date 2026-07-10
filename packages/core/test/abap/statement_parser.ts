@@ -110,6 +110,7 @@ describe("statement parser", () => {
     expect(statements[0].get()).to.be.instanceof(Write);
     expect(statements[1].get()).to.be.instanceof(Empty);
     expect(statements[1].getPragmas().length).to.equal(1);
+    expect(statements[1].getTokens()).to.deep.equal(statements[1].getPragmas());
   });
 
   it("bad string template", () => {

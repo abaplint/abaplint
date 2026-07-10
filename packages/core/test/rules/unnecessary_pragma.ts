@@ -15,6 +15,10 @@ async function findIssues(abap: string, filename?: string, conf?: UnnecessaryPra
 const tests = [
   {abap: `parser error`, cnt: 0},
 
+  {abap: `*&---------------------------------------------------------------------*
+*&  Include           ZSAMPLE
+##INCL_OK`, cnt: 1},
+
   {abap: `
     TRY.
       CATCH zcx_abapgit_exception ##no_handler.

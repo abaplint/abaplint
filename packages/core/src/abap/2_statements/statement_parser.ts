@@ -250,7 +250,9 @@ export class StatementParser {
         // if the statement contains more than STATEMENT_MAX_TOKENS tokens, just give up
         statement = input;
       } else if (length === 1 && lastToken instanceof Pragma) {
-        statement = new StatementNode(new Empty(), undefined, [lastToken]);
+        // special case, everything crashes if StatementNodes doesnt have children
+        statement = new StatementNode(new Empty(), undefined, [lastToken])
+          .setChildren(this.tokensToNodes([lastToken]));
       }
     }
 
