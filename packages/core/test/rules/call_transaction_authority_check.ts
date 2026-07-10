@@ -14,16 +14,7 @@ testRule(tests, CallTransactionAuthorityCheck);
 
 
 async function findIssues(abap: string, version?: Version, languageVersion?: LanguageVersion): Promise<readonly Issue[]> {
-  const config = Config.getDefault(version);
-  if (languageVersion) {
-    const c = config.get();
-    c.syntax.languageVersion = languageVersion;
-    const newConfig = new Config(JSON.stringify(c));
-    const reg = new Registry(newConfig).addFile(new MemoryFile("zfoo.prog.abap", abap));
-    await reg.parseAsync();
-    const rule = new CallTransactionAuthorityCheck();
-    return rule.initialize(reg).run(reg.getFirstObject()!);
-  }
+  const config = Config.getDefault(version, languageVersion);
   const reg = new Registry(config).addFile(new MemoryFile("zfoo.prog.abap", abap));
   await reg.parseAsync();
   const rule = new CallTransactionAuthorityCheck();

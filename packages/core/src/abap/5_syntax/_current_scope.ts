@@ -360,7 +360,7 @@ export class CurrentScope {
   }
 
   public findTypePoolConstant(name: string | undefined): TypedIdentifier | undefined {
-    if (name === undefined || name.includes("_") === undefined) {
+    if (name === undefined || name.includes("_") === false) {
       return undefined;
     }
 
@@ -387,7 +387,7 @@ export class CurrentScope {
   }
 
   public findTypePoolType(name: string): TypedIdentifier | undefined {
-    if (name.includes("_") === undefined) {
+    if (name.includes("_") === false) {
       return undefined;
     }
 

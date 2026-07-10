@@ -3,7 +3,6 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
-import {Dash, DashW} from "../abap/1_lexer/tokens";
 import {FormName} from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
@@ -51,34 +50,28 @@ export class NamesNoDash extends ABAPRule {
     if (obj.getType() !== "CLAS" && obj.getType() !== "INTF") {
       for (const form of struc.findAllStatements(Statements.Form)) {
         const expr = form.findFirstExpression(FormName);
-        for (const token of expr!.getTokens()) {
-          if (token instanceof Dash || token instanceof DashW) {
-            const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
-            issues.push(issue);
-            break;
-          }
+        const token = expr?.findDirectTokenByText("-");
+        if (token) {
+          const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
         }
       }
 
       for (const form of struc.findAllStatements(Statements.Parameter)) {
         const expr = form.findFirstExpression(Expressions.FieldSub);
-        for (const token of expr!.getTokens()) {
-          if (token instanceof Dash || token instanceof DashW) {
-            const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
-            issues.push(issue);
-            break;
-          }
+        const token = expr?.findDirectTokenByText("-");
+        if (token) {
+          const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
         }
       }
 
       for (const form of struc.findAllStatements(Statements.SelectOption)) {
         const expr = form.findFirstExpression(Expressions.FieldSub);
-        for (const token of expr!.getTokens()) {
-          if (token instanceof Dash || token instanceof DashW) {
-            const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
-            issues.push(issue);
-            break;
-          }
+        const token = expr?.findDirectTokenByText("-");
+        if (token) {
+          const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
+          issues.push(issue);
         }
       }
     }

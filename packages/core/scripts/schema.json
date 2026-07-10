@@ -6043,9 +6043,6 @@
           "type": "array",
           "uniqueItems": true
         },
-        "languageVersion": {
-          "$ref": "#/definitions/LanguageVersion"
-        },
         "version": {
           "$ref": "#/definitions/VersionOldOrNew",
           "description": "ABAP language version"

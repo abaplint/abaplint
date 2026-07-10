@@ -30,6 +30,8 @@ export class Attributes implements IAttributes {
   private readonly filename: string;
   private readonly aliases: Alias[];
   private readonly declaredInterfaces: string[];
+  private readonly all: readonly ClassAttribute[];
+  private readonly byName: {[index: string]: ClassAttribute | ClassConstant};
 
   public constructor(node: StructureNode, input: SyntaxInput) {
     this.static = [];
@@ -40,6 +42,8 @@ export class Attributes implements IAttributes {
     this.tlist = [];
     this.filename = input.filename;
     this.parse(node, input);
+    this.all = this.static.concat(this.instance);
+    this.byName = this.buildByName();
     this.types = new TypeDefinitions(this.tlist);
   }
 
@@ -56,10 +60,7 @@ export class Attributes implements IAttributes {
   }
 
   public getAll(): readonly ClassAttribute[] {
-    let res: ClassAttribute[] = [];
-    res = res.concat(this.static);
-    res = res.concat(this.instance);
-    return res;
+    return this.all;
   }
 
   public getStaticsByVisibility(visibility: Visibility): ClassAttribute[] {
@@ -100,28 +101,33 @@ export class Attributes implements IAttributes {
     return attributes;
   }
 
-  // todo, optimize
   public findByName(name: string): ClassAttribute | ClassConstant | undefined {
-    const upper = name.toUpperCase();
-    for (const a of this.getStatic()) {
-      if (a.getName().toUpperCase() === upper) {
-        return a;
-      }
-    }
-    for (const a of this.getInstance()) {
-      if (a.getName().toUpperCase() === upper) {
-        return a;
-      }
-    }
-    for (const a of this.getConstants()) {
-      if (a.getName().toUpperCase() === upper) {
-        return a;
-      }
-    }
-    return undefined;
+    return this.byName[name.toUpperCase()];
   }
 
 /////////////////////////////
+
+  private buildByName(): {[index: string]: ClassAttribute | ClassConstant} {
+    const ret: {[index: string]: ClassAttribute | ClassConstant} = {};
+
+    for (const a of this.static) {
+      ret[a.getName().toUpperCase()] = a;
+    }
+    for (const a of this.instance) {
+      const name = a.getName().toUpperCase();
+      if (ret[name] === undefined) {
+        ret[name] = a;
+      }
+    }
+    for (const a of this.constants) {
+      const name = a.getName().toUpperCase();
+      if (ret[name] === undefined) {
+        ret[name] = a;
+      }
+    }
+
+    return ret;
+  }
 
   private parse(node: StructureNode, input: SyntaxInput): void {
     const cdef = node.findDirectStructure(Structures.ClassDefinition);

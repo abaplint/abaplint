@@ -94,11 +94,9 @@ export class ObjectOriented {
 
     const idef = this.scope.findInterfaceDefinition(interfaceName);
     if (idef) {
-      const methods = idef.getMethodDefinitions().getAll();
-      for (const method of methods) {
-        if (method.getName().toUpperCase() === methodName.toUpperCase()) {
-          return {method, def: idef};
-        }
+      const method = idef.getMethodDefinitions().getByName(methodName);
+      if (method) {
+        return {method, def: idef};
       }
       return this.findMethodViaAlias(methodName, idef);
     }
@@ -373,16 +371,16 @@ export class ObjectOriented {
       return undefined;
     }
 
-    for (const method of defs.getAll()) {
-      if (method.getName().toUpperCase() === methodName.toUpperCase()) {
-        if (method.isRedefinition()) {
-          return this.findMethodInSuper(def, methodName);
-        } else {
-          return method;
-        }
-      }
+    const method = defs.getByName(methodName);
+    if (method === undefined) {
+      return undefined;
     }
-    return undefined;
+
+    if (method.isRedefinition()) {
+      return this.findMethodInSuper(def, methodName);
+    }
+
+    return method;
   }
 
   private findMethodInSuper(child: IClassDefinition | IInterfaceDefinition, methodName: string): IMethodDefinition | undefined {

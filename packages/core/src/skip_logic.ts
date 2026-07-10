@@ -5,11 +5,13 @@ import {IncludeGraph} from "./utils/include_graph";
 
 export class SkipLogic {
   private readonly reg: IRegistry;
+  private includeGraph: IncludeGraph | undefined;
   /** TOBJ cache hashmap */
   private tobj: { [index: string]: boolean } | undefined;
 
   public constructor(reg: IRegistry) {
     this.reg = reg;
+    this.includeGraph = undefined;
     this.tobj = undefined;
   }
 
@@ -23,9 +25,9 @@ export class SkipLogic {
     } else if (global.skipIncludesWithoutMain === true
         && obj instanceof Program
         && obj.isInclude() === true) {
-      const ig = new IncludeGraph(this.reg);
+      this.includeGraph ??= new IncludeGraph(this.reg);
       const file = obj.getMainABAPFile();
-      if (file && ig.listMainForInclude(file.getFilename()).length === 0) {
+      if (file && this.includeGraph.listMainForInclude(file.getFilename()).length === 0) {
         return true;
       }
     } else if (global.skipGeneratedPersistentClasses === true
