@@ -8,12 +8,6 @@ import {Issue} from "../../src/issue";
 
 async function findIssues(abap: string, version?: Version, languageVersion?: LanguageVersion): Promise<readonly Issue[]> {
   const config = Config.getDefault(version, languageVersion);
-  if (languageVersion) {
-    const reg = new Registry(config).addFile(new MemoryFile("zfoo.prog.abap", abap));
-    await reg.parseAsync();
-    const rule = new InlineDataOldVersions();
-    return rule.initialize(reg).run(reg.getFirstObject()!);
-  }
   const reg = new Registry(config).addFile(new MemoryFile("zfoo.prog.abap", abap));
   await reg.parseAsync();
   const rule = new InlineDataOldVersions();
