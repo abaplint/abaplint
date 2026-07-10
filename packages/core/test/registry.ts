@@ -20,6 +20,16 @@ describe("Registry", () => {
     expect(abap[0].getStructure()).to.not.equal(undefined);
   });
 
+  it.only("Parse standalone INCL_OK pragma", async () => {
+    const abap = `*&---------------------------------------------------------------------*
+*&  Include           ZSAMPLE
+##INCL_OK`;
+    const file = new MemoryFile("zsample.prog.abap", abap);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    reg.findIssues();
+  });
+
   it("Parse PROG without main", async () => {
     const file = new MemoryFile("zfoobar.prog.xml", "<foo></foo>");
     const reg = new Registry().addFile(file);
