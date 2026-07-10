@@ -77,16 +77,17 @@ DATA: BEGIN OF blah ##NEEDED,
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
       const nextStatement = statements[i + 1];
-      const tokens = statement.getTokens();
 
       if (statement.get() instanceof Empty
-          && statement.getChildren().length === 1
-          && tokens.length === 1
-          && tokens[0] instanceof Pragma) {
-        const message = "Pragma without a statement can be removed";
-        const fix = EditHelper.deleteToken(file, tokens[0]);
-        issues.push(Issue.atToken(file, tokens[0], message, this.getMetadata().key, this.conf.severity, fix));
-        continue;
+          && statement.getChildren().length === 1) {
+        const tokens = statement.getTokens();
+        if (tokens.length === 1
+            && tokens[0] instanceof Pragma) {
+          const message = "Pragma without a statement can be removed";
+          const fix = EditHelper.deleteToken(file, tokens[0]);
+          issues.push(Issue.atToken(file, tokens[0], message, this.getMetadata().key, this.conf.severity, fix));
+          continue;
+        }
       }
 
       if (statement.get() instanceof Statements.EndTry) {
