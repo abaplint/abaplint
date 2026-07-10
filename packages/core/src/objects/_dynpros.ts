@@ -3,6 +3,7 @@ import {xmlToArray} from "../xml_utils";
 export type DynproField = {
   name: string,
   type: string,
+  contType: string,
   length: number,
   vislength: number,
   line: number,
@@ -36,6 +37,7 @@ export function parseDynpros(parsed: any): DynproList {
         fields.push({
           name: f.NAME,
           type: f.TYPE,
+          contType: f.CONT_TYPE,
           length: parseNumber(f.LENGTH),
           vislength: parseNumber(f.VISLENGTH),
           line: parseNumber(f.LINE),

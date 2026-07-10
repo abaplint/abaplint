@@ -67,13 +67,14 @@ export class DynproChecks implements IRule {
 
     for (let index = 0; index < dynpro.fields.length; index++) {
       const current = dynpro.fields[index];
-      if (current.name === undefined || current.type === "FRAME") {
+      if (current.name === undefined || current.type === "FRAME" || this.hasContainerRelativeCoordinates(current)) {
         continue;
       }
 
       for (let compare = index + 1; compare < dynpro.fields.length; compare++) {
         const other = dynpro.fields[compare];
-        if (other.name === undefined || other.type === "FRAME" || this.overlaps(current, other) === false) {
+        if (other.name === undefined || other.type === "FRAME" || this.hasContainerRelativeCoordinates(other)
+          || this.overlaps(current, other) === false) {
           continue;
         }
 
@@ -83,6 +84,10 @@ export class DynproChecks implements IRule {
     }
 
     return ret;
+  }
+
+  private hasContainerRelativeCoordinates(field: DynproField): boolean {
+    return field.contType === "TABLE_CTRL" || field.contType === "LOOP";
   }
 
   private overlaps(first: DynproField, second: DynproField): boolean {
