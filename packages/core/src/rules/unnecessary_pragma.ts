@@ -4,10 +4,11 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {StatementNode} from "../abap/nodes";
-import {Comment, MacroContent} from "../abap/2_statements/statements/_statement";
+import {Comment, Empty, MacroContent} from "../abap/2_statements/statements/_statement";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {EditHelper} from "../edit_helper";
+import {Pragma} from "../abap/1_lexer/tokens";
 
 export class UnnecessaryPragmaConf extends BasicRuleConfig {
   /** Allow NO_TEXT in global CLAS and INTF definitions,
@@ -76,6 +77,17 @@ DATA: BEGIN OF blah ##NEEDED,
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
       const nextStatement = statements[i + 1];
+      const tokens = statement.getTokens();
+
+      if (statement.get() instanceof Empty
+          && statement.getChildren().length === 1
+          && tokens.length === 1
+          && tokens[0] instanceof Pragma) {
+        const message = "Pragma without a statement can be removed";
+        const fix = EditHelper.deleteToken(file, tokens[0]);
+        issues.push(Issue.atToken(file, tokens[0], message, this.getMetadata().key, this.conf.severity, fix));
+        continue;
+      }
 
       if (statement.get() instanceof Statements.EndTry) {
         noHandler = false;

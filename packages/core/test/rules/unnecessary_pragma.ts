@@ -17,7 +17,7 @@ const tests = [
 
   {abap: `*&---------------------------------------------------------------------*
 *&  Include           ZSAMPLE
-##INCL_OK`, cnt: 1},
+##INCL_OK`, cnt: 1, fix: true},
 
   {abap: `
     TRY.
