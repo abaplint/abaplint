@@ -67,18 +67,24 @@ export class BeginEndNames extends ABAPRule {
     const output: Issue[] = [];
 
     for (const sub of stru.findAllStructuresRecursive(type)) {
-      let begin = sub.findDirectStatements(b)[0].findFirstExpression(Expressions.NamespaceSimpleName);
+      const beginStatement = sub.findDirectStatement(b);
+      const endStatement = sub.findDirectStatement(e);
+      if (beginStatement === undefined || endStatement === undefined) {
+        continue;
+      }
+
+      let begin = beginStatement.findFirstExpression(Expressions.NamespaceSimpleName);
       if (begin === undefined) {
-        begin = sub.findDirectStatements(b)[0].findFirstExpression(Expressions.DefinitionName);
+        begin = beginStatement.findFirstExpression(Expressions.DefinitionName);
       }
       if (begin === undefined) {
         continue;
       }
       const first = begin.getFirstToken();
 
-      let end = sub.findDirectStatements(e)[0].findFirstExpression(Expressions.NamespaceSimpleName);
+      let end = endStatement.findFirstExpression(Expressions.NamespaceSimpleName);
       if (end === undefined) {
-        end = sub.findDirectStatements(e)[0].findFirstExpression(Expressions.DefinitionName);
+        end = endStatement.findFirstExpression(Expressions.DefinitionName);
       }
       if (end === undefined) {
         continue;

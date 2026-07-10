@@ -3329,7 +3329,7 @@ ${indentation}    output = ${uniqueName}.\n`;
       }
     }
 
-    if (fix === undefined && high.findAllExpressions(Expressions.NewObject)) {
+    if (fix === undefined) {
       const found = high.findFirstExpression(Expressions.NewObject);
       if (found === undefined) {
         return undefined;

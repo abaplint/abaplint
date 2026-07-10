@@ -44,9 +44,9 @@ export class TryWithoutCatch extends ABAPRule {
     const tries = stru.findAllStructures(Try);
 
     for (const t of tries) {
-      const clean = t.findDirectStructures(Cleanup);
-      const c = t.findDirectStructures(Catch);
-      if (c.length === 0 && clean.length === 0) {
+      const clean = t.findDirectStructure(Cleanup);
+      const c = t.findDirectStructure(Catch);
+      if (c === undefined && clean === undefined) {
         const issue = Issue.atToken(file, t.getFirstToken(), this.getMessage(), this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }

@@ -176,9 +176,8 @@ export class DataDefinition extends AbstractObject {
       }
       if (found === undefined) {
         // typed virtual element: VIRTUAL <name> : <type>
-        const names = e.findAllExpressions(CDSName);
-        if (e.findDirectTokenByText("VIRTUAL") !== undefined && names.length > 0) {
-          found = names[0];
+        if (e.findDirectTokenByText("VIRTUAL") !== undefined) {
+          found = e.findFirstExpression(CDSName);
         }
       }
       if (found === undefined) {

@@ -391,12 +391,12 @@ ENDIF.`,
             issues.push(issue);
           }
         } else {
-          const classNameExpression = staNode.findAllExpressions(Expressions.ClassName);
-          const methodNameExpression = staNode.findAllExpressions(Expressions.MethodName);
+          const classNameExpression = staNode.findFirstExpression(Expressions.ClassName);
+          const methodNameExpression = staNode.findFirstExpression(Expressions.MethodName);
 
-          if (classNameExpression.length !== 0 && methodNameExpression.length !== 0) {
-            const className = classNameExpression[0].concatTokens();
-            const methodName = methodNameExpression[0].concatTokens();
+          if (classNameExpression && methodNameExpression) {
+            const className = classNameExpression.concatTokens();
+            const methodName = methodNameExpression.concatTokens();
 
             if (className === "cl_abap_regex") {
               if (methodName === "create_posix") {

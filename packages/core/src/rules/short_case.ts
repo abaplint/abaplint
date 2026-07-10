@@ -54,13 +54,13 @@ export class ShortCase extends ABAPRule {
     }
 
     for (const c of struc.findAllStructures(Structures.Case)) {
-      const clist = c.findDirectStatements(Statements.Case);
-      if (clist.length > 0 && this.conf.allow && this.conf.allow.find((e) => { return e === clist[0].getTokens()[1].getStr(); })) {
+      const caseStatement = c.findDirectStatement(Statements.Case);
+      if (caseStatement && this.conf.allow && this.conf.allow.find((e) => { return e === caseStatement.getTokens()[1].getStr(); })) {
         continue;
       }
 
       if (c.findDirectStructures(Structures.When).length <= this.conf.length) {
-        if (c.findAllExpressions(Expressions.Or).length > 0) {
+        if (c.findFirstExpression(Expressions.Or)) {
           continue;
         }
         const issue = Issue.atToken(file, c.getFirstToken(), this.getMessage(), this.getMetadata().key, this.conf.severity);
