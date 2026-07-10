@@ -87,7 +87,7 @@ export class DynproChecks implements IRule {
   }
 
   private hasContainerRelativeCoordinates(field: DynproField): boolean {
-    return field.contType === "TABLE_CTRL" || field.contType === "LOOP";
+    return field.contType === "TABLE_CTRL" || field.contType === "LOOP" || field.contType === "STRIP_CTRL";
   }
 
   private overlaps(first: DynproField, second: DynproField): boolean {
