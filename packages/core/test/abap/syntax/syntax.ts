@@ -14085,7 +14085,7 @@ ENDSELECT.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it.only("ok, arithmetic with byte fields and table expressions", () => {
+  it("ok, arithmetic with byte fields and table expressions", () => {
     const abap = `
 DATA byte_a TYPE x LENGTH 1 VALUE '02'.
 DATA byte_b TYPE x LENGTH 1 VALUE '03'.

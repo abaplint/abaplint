@@ -304,6 +304,8 @@ export class Source {
   private static infer(context: AbstractType | undefined, found: AbstractType | undefined) {
     if (context instanceof FloatType && found instanceof IntegerType) {
       return context;
+    } else if (context instanceof IntegerType && found instanceof HexType) {
+      return context;
     } else if ((context instanceof IntegerType || context instanceof FloatType) && found?.isGeneric()) {
       return context;
     } else {
