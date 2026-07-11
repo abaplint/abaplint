@@ -12933,6 +12933,18 @@ SELECT * FROM t100
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECT: INTO CORRESPONDING FIELDS OF TABLE with ranges, 702", () => {
+    const abap = `
+    DATA lr_carrid TYPE RANGE OF sflight-carrid.
+    DATA lt_result TYPE STANDARD TABLE OF sflight.
+    SELECT * FROM sflight INTO TABLE lt_result
+      WHERE carrid IN lr_carrid.`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
+    const issues = run(reg, [], Version.v702);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("SELECT: ORDER BY DESCENDING in loop, cloud not okay", () => {
     const abap = `
 DATA row TYPE tadir.
