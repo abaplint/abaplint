@@ -9025,6 +9025,21 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("error, generic x returning parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS byte RETURNING VALUE(rv_byte) TYPE x.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD byte.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("RETURNING parameter must be fully specified");
+  });
+
   it("ok, method structured returning", () => {
     const abap = `
 CLASS lcl DEFINITION.
