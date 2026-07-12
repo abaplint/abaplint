@@ -333,7 +333,7 @@ export class TypeUtils {
         return false;
       } else if (target instanceof XStringType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
-          return true;
+          return node?.concatTokens() !== "''";
         }
         return false;
       } else if (target instanceof StringType) {
