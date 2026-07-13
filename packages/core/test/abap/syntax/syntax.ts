@@ -14141,7 +14141,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(1);
   });
 
-  it.only("error, string concatenation not compatible with xsequence parameter", () => {
+  it("error, string concatenation not compatible with xsequence parameter", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.

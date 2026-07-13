@@ -312,7 +312,8 @@ export class TypeUtils {
     console.dir(target);
     console.dir(calculated);
 */
-    if (calculated && source instanceof StringType && target instanceof XStringType) {
+    if (calculated && source instanceof StringType
+        && (target instanceof XStringType || target instanceof XSequenceType)) {
       return false;
     }
 
