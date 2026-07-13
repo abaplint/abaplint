@@ -339,6 +339,19 @@ Make sure to test the downported code, it might not always be completely correct
         }
       }
 
+      // INTO after WHERE parses as a valid SELECT in the low version, but is only allowed in
+      // strict SQL syntax, so move it also when the statement is no longer Unknown
+      if (ret.length === 0) {
+        for (let i = 0; i < lowStatements.length; i++) {
+          const low = lowStatements[i];
+          const high = highStatements[i];
+          const issue = this.downportSQLMoveInto(low, high, lowFile, highSyntax);
+          if (issue) {
+            ret.push(issue);
+          }
+        }
+      }
+
     }
 
     return ret;
@@ -638,9 +651,13 @@ Make sure to test the downported code, it might not always be completely correct
 
 //////////////////////////////////////////
 
-  /** move INTO from after WHERE to after FROM */
+  /** move INTO from after WHERE to after FROM,
+   * note that INTO after WHERE is only valid in strict SQL syntax, so it must be moved when
+   * downporting; this can happen both while the statement is still Unknown(from the main loop)
+   * and after the @ and FIELDS have been removed, leaving a SELECT that parses in the low version */
   private downportSQLMoveInto(low: StatementNode, high: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
-    if (!(low.get() instanceof Unknown)) {
+    if (!(high.get() instanceof Statements.Select)
+        && !(high.get() instanceof Statements.SelectLoop)) {
       return undefined;
     }
 
@@ -650,6 +667,7 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
+    // the FIELDS list sits between FROM and WHERE, wait for it to be removed first
     if (high.findFirstExpression(Expressions.SQLFields) !== undefined) {
       return undefined;
     }

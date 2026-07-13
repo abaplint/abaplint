@@ -6092,10 +6092,10 @@ SELECT FROM sdfsdfsdf
   INTO CORRESPONDING FIELDS OF TABLE @result.`;
     const expected = `DATA tab TYPE voided.
 DATA result TYPE voided.
-SELECT * FROM sdfsdfsdf
+SELECT * FROM sdfsdfsdf INTO CORRESPONDING FIELDS OF TABLE result
   
   WHERE uname IN tab
-  INTO CORRESPONDING FIELDS OF TABLE result.`;
+  .`;
     testFixAll(abap, expected);
   });
 
