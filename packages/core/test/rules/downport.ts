@@ -6079,4 +6079,20 @@ ENDCLASS.`;
     expect(issues[0].getDefaultFix()).to.not.equal(undefined);
   });
 
+  it.only("SELECT, remove @ with voided types", async () => {
+    const abap = `DATA tab TYPE voided.
+DATA result TYPE voided.
+SELECT FROM sdfsdfsdf
+  FIELDS *
+  WHERE uname IN @tab
+  INTO CORRESPONDING FIELDS OF TABLE @result.`;
+    const expected = `DATA tab TYPE voided.
+DATA result TYPE voided.
+SELECT FROM sdfsdfsdf
+  FIELDS *
+  WHERE uname IN tab
+  INTO CORRESPONDING FIELDS OF TABLE result.`;
+    testFix(abap, expected);
+  });
+
 });
