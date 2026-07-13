@@ -10406,6 +10406,16 @@ CONCATENATE char1 char2 INTO int.`;
     expect(issues[0]?.getMessage()).to.equal("Target type not compatible");
   });
 
+  it("concatenate, table expression not allowed", () => {
+    const abap = `
+DATA lt_current TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lv_joined TYPE string.
+CONCATENATE lt_current[ 1 ] lt_current[ 1 ] INTO lv_joined.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal("CONCATENATE with table expression not possible");
+  });
+
   it("constructor, ok, its a calculated value", () => {
     const abap = `
 CLASS lcl DEFINITION.

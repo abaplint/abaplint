@@ -13,6 +13,12 @@ export class Concatenate implements StatementSyntax {
     const byteMode = node.findDirectTokenByText("BYTE") !== undefined;
     const linesMode = node.findDirectTokenByText("LINES") !== undefined;
 
+    if (node.findFirstExpression(Expressions.TableExpression) !== undefined) {
+      const message = "CONCATENATE with table expression not possible";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
+    }
+
     const target = node.findFirstExpression(Expressions.Target);
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
