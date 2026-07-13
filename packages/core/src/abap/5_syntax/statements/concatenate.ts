@@ -19,6 +19,7 @@ export class Concatenate implements StatementSyntax {
       return;
     }
 
+
     const target = node.findFirstExpression(Expressions.Target);
     const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
