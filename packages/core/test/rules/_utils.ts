@@ -135,6 +135,34 @@ export function testRuleFixCount(
   expect(output.getRaw()).to.equal(expected);
 }
 
+export function testRuleFixAll(
+  input: string, expected: string, rule: IRule, conf?: IConfiguration, extraFiles?: IFile[], maxIterations = 100) {
+  const reg = new Registry(conf).addFile(new MemoryFile("zfoo.prog.abap", input));
+  for (const f of extraFiles || []) {
+    reg.addFile(f);
+  }
+  reg.parse();
+
+  let iterations = 0;
+  for (;;) {
+    const issues = rule.initialize(reg).run(reg.getFirstObject()!);
+    const withFix = issues.filter((issue) => issue.getDefaultFix() !== undefined);
+    if (withFix.length === 0) {
+      break;
+    }
+    if (iterations++ >= maxIterations) {
+      expect.fail(`did not stabilize after ${maxIterations} iterations`);
+    }
+    for (const issue of [...withFix].reverse()) {
+      applyEditSingle(reg, issue.getDefaultFix()!);
+    }
+    reg.parse();
+  }
+
+  const output = reg.getFirstObject()!.getFiles()[0];
+  expect(output.getRaw()).to.equal(expected);
+}
+
 export function testRuleWithVariableConfig(tests: any, rule: new () => IRule, testTitle?: string) {
   const nrule = new rule();
   testTitle = testTitle || `test ${nrule.getMetadata().key} rule`;
