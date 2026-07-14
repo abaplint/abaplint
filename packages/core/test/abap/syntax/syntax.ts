@@ -6812,6 +6812,26 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain(`Duplicate`);
   });
 
+  it("CATCH into subclass reference, syntax error", () => {
+    const abap = `
+CLASS cx_static_check DEFINITION.
+ENDCLASS.
+CLASS cx_static_check IMPLEMENTATION.
+ENDCLASS.
+CLASS lcx_error DEFINITION INHERITING FROM cx_static_check.
+ENDCLASS.
+CLASS lcx_error IMPLEMENTATION.
+ENDCLASS.
+
+DATA lx_error TYPE REF TO lcx_error.
+TRY.
+    CATCH cx_static_check INTO lx_error.
+ENDTRY.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`CATCH target not compatible`);
+  });
+
   it("Error, split table target must be character like", () => {
     const abap = `
     DATA str TYPE string.
