@@ -14170,7 +14170,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
-  it.only("ok, xstring offset/length to xsequence parameter", () => {
+  it("not possible: xstring offset/length in method parameter", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.

@@ -1,5 +1,5 @@
 import {ExpressionNode} from "../../nodes";
-import {VoidType} from "../../types/basic";
+import {StringType, VoidType, XStringType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {IMethodDefinition} from "../../types/_method_definition";
 import {MethodParameters} from "./method_parameters";
@@ -70,6 +70,16 @@ export class MethodCallParam {
       let sourceType: AbstractType | undefined = undefined;
       if (child.get() instanceof Expressions.Source) {
         sourceType = Source.runSyntax(child, input, targetType);
+        const chain = child.findDirectExpression(Expressions.FieldChain);
+        const hasOffsetOrLength = chain !== undefined
+          && (chain.findDirectExpression(Expressions.FieldOffset) !== undefined
+          || chain.findDirectExpression(Expressions.FieldLength) !== undefined);
+        if (hasOffsetOrLength
+            && (sourceType instanceof StringType || sourceType instanceof XStringType)) {
+          const message = `Offsets or lengths cannot be specified for fields of type "STRING" or "XSTRING" in the current statement`;
+          input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
+          return;
+        }
       } else if (child.get() instanceof Expressions.ConstantString) {
         sourceType = Constant.runSyntax(child);
       }
