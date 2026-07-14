@@ -14190,7 +14190,7 @@ ENDCLASS.`;
     expect(issues[2]?.getMessage()).to.contain('Offsets or lengths cannot be specified for fields of type "STRING" or "XSTRING" in the current statement');
   });
 
-  it.skip("not possible: xstring offset/length in method parameter, with name", () => {
+  it.only("not possible: xstring offset/length in method parameter, with name", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
