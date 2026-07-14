@@ -12,6 +12,7 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 import {FieldChain} from "./field_chain";
 import {ReferenceType} from "../_reference";
+import {checkOffsetLength} from "./_check_offset_length";
 
 interface IListItemT {
   name: string;
@@ -244,6 +245,8 @@ export class MethodParameters {
       }
 
       let sourceType = Source.runSyntax(source, input, targetType);
+
+      checkOffsetLength(source, sourceType, method, input);
 
       if (sourceType === undefined) {
         if (method instanceof VoidType) {
