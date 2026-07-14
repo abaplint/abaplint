@@ -14190,6 +14190,22 @@ ENDCLASS.`;
     expect(issues[2]?.getMessage()).to.contain('Offsets or lengths cannot be specified for fields of type "STRING" or "XSTRING" in the current statement');
   });
 
+  it.skip("not possible: xstring offset/length in method parameter, with name", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lv TYPE xstring.
+    foo( bar = lv+1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain('Offsets or lengths cannot be specified for fields of type "STRING" or "XSTRING" in the current statement');
+  });
+
   it("possible, built in method", () => {
     const abap = `
 DATA str TYPE string.
