@@ -14190,4 +14190,12 @@ ENDCLASS.`;
     expect(issues[2]?.getMessage()).to.contain('Offsets or lengths cannot be specified for fields of type "STRING" or "XSTRING" in the current statement');
   });
 
+  it.only("possible, built in method", () => {
+    const abap = `
+DATA str TYPE string.
+WRITE / to_upper( str(4) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
