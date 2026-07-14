@@ -9,6 +9,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Constant} from "./constant";
+import {BuiltInMethod} from "../_builtin";
 
 export class MethodCallParam {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, method: IMethodDefinition | VoidType): void {
@@ -75,6 +76,7 @@ export class MethodCallParam {
           && (chain.findDirectExpression(Expressions.FieldOffset) !== undefined
           || chain.findDirectExpression(Expressions.FieldLength) !== undefined);
         if (hasOffsetOrLength
+            && !(method instanceof BuiltInMethod)
             && (sourceType instanceof StringType || sourceType instanceof XStringType)) {
           const message = `Offsets or lengths cannot be specified for fields of type "STRING" or "XSTRING" in the current statement`;
           input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
