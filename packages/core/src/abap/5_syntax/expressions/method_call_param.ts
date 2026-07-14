@@ -72,7 +72,9 @@ export class MethodCallParam {
       if (child.get() instanceof Expressions.Source) {
         sourceType = Source.runSyntax(child, input, targetType);
         const chain = child.findDirectExpression(Expressions.FieldChain);
+        const isCalculated = child.findDirectExpression(Expressions.Source) !== undefined;
         const hasOffsetOrLength = chain !== undefined
+          && isCalculated === false
           && (chain.findDirectExpression(Expressions.FieldOffset) !== undefined
           || chain.findDirectExpression(Expressions.FieldLength) !== undefined);
         if (hasOffsetOrLength
