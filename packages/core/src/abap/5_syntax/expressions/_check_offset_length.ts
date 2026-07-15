@@ -6,6 +6,7 @@ import {IMethodDefinition} from "../../types/_method_definition";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {BuiltInMethod} from "../_builtin";
 
+
 // Offsets or lengths cannot be specified for STRING or XSTRING fields
 // passed as a method parameter source. Returns true if an issue was reported.
 export function checkOffsetLength(
