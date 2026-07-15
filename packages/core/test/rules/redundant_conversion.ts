@@ -1,5 +1,5 @@
 import {RedundantConversion} from "../../src/rules";
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 
 const tests = [
   {abap: "parser error.", cnt: 0},
@@ -38,9 +38,73 @@ target = CONV i( integer + packed ).`, cnt: 0},
 DATA source TYPE ty_structure.
 DATA target TYPE string.
 target = CONV string( source-component ).`, cnt: 1},
+  {abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run IMPORTING value TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+DATA source TYPE string.
+lcl=>run( CONV #( source ) ).`, cnt: 1},
+  {abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run IMPORTING value TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+DATA source TYPE i.
+lcl=>run( CONV #( source ) ).`, cnt: 0},
+  {abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run IMPORTING value TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+DATA source TYPE string.
+lcl=>run( value = CONV string( source ) ).`, cnt: 1},
   {abap: `DATA source TYPE string.
 DATA target TYPE string.
 target = source.`, cnt: 0},
 ];
 
 testRule(tests, RedundantConversion);
+
+const fixes = [
+  {input: `DATA source TYPE string.
+DATA target TYPE string.
+target = CONV string( source ).`, output: `DATA source TYPE string.
+DATA target TYPE string.
+target = source.`},
+  {input: `DATA source TYPE i.
+DATA target TYPE i.
+target = CONV i( source + 1 ) * 2.`, output: `DATA source TYPE i.
+DATA target TYPE i.
+target = (source + 1) * 2.`},
+  {input: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run IMPORTING value TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+DATA source TYPE string.
+lcl=>run( CONV #( source ) ).`, output: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run IMPORTING value TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+DATA source TYPE string.
+lcl=>run( source ).`},
+];
+
+testRuleFix(fixes, RedundantConversion);

@@ -15,6 +15,7 @@ import {IObject} from "../objects/_iobject";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IRegistry} from "../_iregistry";
+import {EditHelper} from "../edit_helper";
 
 export class RedundantConversionConf extends BasicRuleConfig {
 }
@@ -29,7 +30,7 @@ export class RedundantConversion implements IRule {
       title: "Redundant Conversion",
       shortDescription: `Find redundant CONV expressions`,
       extendedInformation: `Reports CONV expressions whose operand already has the conversion's target type.`,
-      tags: [RuleTag.SingleFile],
+      tags: [RuleTag.Quickfix],
       badExample: `DATA text TYPE string.
 text = CONV string( text ).`,
       goodExample: `DATA text TYPE string.
@@ -100,13 +101,28 @@ text = text.`,
           continue;
         }
 
+        const closingParen = source.getDirectTokens().find(token =>
+          token.getStr() === ")" && token.getStart().isAfter(bodySource.getLastToken().getStart()));
+        if (closingParen === undefined) {
+          continue;
+        }
+        const preserveParentheses = bodySource.findDirectExpression(Expressions.ArithOperator) !== undefined
+          || bodySource.findDirectTokenByText("&&") !== undefined;
+        // Apply the later edit first so the original positions remain valid when
+        // both parts of the CONV wrapper are changed on the same line.
+        const fix = EditHelper.merge(
+          EditHelper.replaceRange(
+            file, bodySource.getLastToken().getEnd(), closingParen.getEnd(), preserveParentheses ? ")" : ""),
+          EditHelper.replaceRange(
+            file, source.getFirstToken().getStart(), bodySource.getFirstToken().getStart(), preserveParentheses ? "(" : ""));
         issues.push(Issue.atRange(
           file,
           source.getFirstToken().getStart(),
-          source.getLastToken().getEnd(),
+          closingParen.getEnd(),
           "Redundant CONV expression",
           this.getMetadata().key,
-          this.conf.severity));
+          this.conf.severity,
+          fix));
       }
     }
 

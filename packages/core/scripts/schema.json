@@ -3291,7 +3291,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Find redundant CONV expressions\nTags: SingleFile\nhttps://rules.abaplint.org/redundant_conversion"
+              "description": "Find redundant CONV expressions\nTags: Quickfix\nhttps://rules.abaplint.org/redundant_conversion"
             },
             "release_idoc": {
               "anyOf": [
@@ -5348,7 +5348,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Find redundant CONV expressions\nTags: SingleFile\nhttps://rules.abaplint.org/redundant_conversion"
+              "description": "Find redundant CONV expressions\nTags: Quickfix\nhttps://rules.abaplint.org/redundant_conversion"
             },
             "release_idoc": {
               "anyOf": [
