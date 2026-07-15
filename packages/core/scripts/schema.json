@@ -861,6 +861,31 @@
       },
       "type": "object"
     },
+    "ClearExportingParametersConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "skipNames": {
+          "description": "Skip specific parameter names, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "type": "object"
+    },
     "CloudTypesConf": {
       "additionalProperties": false,
       "properties": {
@@ -2137,6 +2162,17 @@
                 }
               ],
               "description": "Find overlapping classic exceptions\nTags: SingleFile\nhttps://rules.abaplint.org/classic_exceptions_overlap"
+            },
+            "clear_exporting_parameters": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearExportingParametersConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that EXPORTING parameters passed by reference are cleared or assigned before they are read\nTags: Styleguide\nhttps://rules.abaplint.org/clear_exporting_parameters"
             },
             "cloud_types": {
               "anyOf": [
@@ -4194,6 +4230,17 @@
                 }
               ],
               "description": "Find overlapping classic exceptions\nTags: SingleFile\nhttps://rules.abaplint.org/classic_exceptions_overlap"
+            },
+            "clear_exporting_parameters": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearExportingParametersConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that EXPORTING parameters passed by reference are cleared or assigned before they are read\nTags: Styleguide\nhttps://rules.abaplint.org/clear_exporting_parameters"
             },
             "cloud_types": {
               "anyOf": [

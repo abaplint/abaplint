@@ -33,6 +33,7 @@ import {CheckTextElementsConf} from "../src/rules/check_text_elements";
 import {CheckTransformationExistsConf} from "../src/rules/check_transformation_exists";
 import {ClassAttributeNamesConf} from "../src/rules/class_attribute_names";
 import {ClassicExceptionsOverlapConf} from "../src/rules/classic_exceptions_overlap";
+import {ClearExportingParametersConf} from "../src/rules/clear_exporting_parameters";
 import {CloudTypesConf} from "../src/rules/cloud_types";
 import {ColonMissingSpaceConf} from "../src/rules/colon_missing_space";
 import {CommentedCodeConf} from "../src/rules/commented_code";
@@ -233,6 +234,7 @@ export interface IConfig {
     "check_transformation_exists"?: CheckTransformationExistsConf | boolean,
     "class_attribute_names"?: ClassAttributeNamesConf | boolean,
     "classic_exceptions_overlap"?: ClassicExceptionsOverlapConf | boolean,
+    "clear_exporting_parameters"?: ClearExportingParametersConf | boolean,
     "cloud_types"?: CloudTypesConf | boolean,
     "colon_missing_space"?: ColonMissingSpaceConf | boolean,
     "commented_code"?: CommentedCodeConf | boolean,
@@ -422,6 +424,7 @@ export interface IConfig {
     "check_transformation_exists"?: CheckTransformationExistsConf | boolean,
     "class_attribute_names"?: ClassAttributeNamesConf | boolean,
     "classic_exceptions_overlap"?: ClassicExceptionsOverlapConf | boolean,
+    "clear_exporting_parameters"?: ClearExportingParametersConf | boolean,
     "cloud_types"?: CloudTypesConf | boolean,
     "colon_missing_space"?: ColonMissingSpaceConf | boolean,
     "commented_code"?: CommentedCodeConf | boolean,
