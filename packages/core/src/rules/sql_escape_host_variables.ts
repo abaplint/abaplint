@@ -45,7 +45,7 @@ export class SQLEscapeHostVariables extends ABAPRule {
 
     if (!releaseAtLeast(this.reg.getConfig().getRelease(), Release.v740sp02)
         && this.reg.getConfig().getLanguageVersion() !== LanguageVersion.Cloud
-        && !this.reg.getConfig().getOpenABAP()) {
+        && !this.reg.getConfig().isOpenABAP()) {
       return [];
     }
 

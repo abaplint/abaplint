@@ -51,7 +51,7 @@ ENDIF.`,
 
     const release = this.reg.getConfig().getRelease();
     const langVers = this.reg.getConfig().getLanguageVersion();
-    if (this.reg.getConfig().getOpenABAP()) {
+    if (this.reg.getConfig().isOpenABAP()) {
       return [];
     } else if (!releaseAtLeast(release, Release.v740sp02) && langVers !== LanguageVersion.Cloud) {
       return [];

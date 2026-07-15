@@ -77,7 +77,7 @@ export class CurrentScope {
   }
 
   public getOpenABAP() {
-    return this.reg.getConfig().getOpenABAP();
+    return this.reg.getConfig().isOpenABAP();
   }
 
   public getRegistry(): IRegistry {

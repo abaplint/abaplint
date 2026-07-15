@@ -109,7 +109,7 @@ export interface IConfiguration {
   getVersion(): Version;
   getRelease(): ABAPRelease;
   getLanguageVersion(): LanguageVersion;
-  getOpenABAP(): boolean;
+  isOpenABAP(): boolean;
   getSyntaxSetttings(): ISyntaxSettings;
   readByRule(rule: string): any;
   readByKey(rule: string, key: string): any;

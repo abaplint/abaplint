@@ -197,7 +197,7 @@ Make sure to test the downported code, it might not always be completely correct
   public initialize(reg: IRegistry) {
     this.lowReg = reg;
     const config = this.lowReg.getConfig();
-    if (config.getRelease() === Release.v702 || config.getOpenABAP()) {
+    if (config.getRelease() === Release.v702 || config.isOpenABAP()) {
       this.initHighReg();
     }
     return this;
@@ -234,7 +234,7 @@ Make sure to test the downported code, it might not always be completely correct
     this.counter = 1;
 
     const config = this.lowReg.getConfig();
-    if (config.getRelease() !== Release.v702 && !config.getOpenABAP()) {
+    if (config.getRelease() !== Release.v702 && !config.isOpenABAP()) {
       return ret;
     } else if (!(lowObj instanceof ABAPObject)) {
       return ret;
@@ -1235,7 +1235,7 @@ ${indentation}`);
   private outlineCatchSimple(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
     // outlines "CATCH cx_bcs INTO DATA(lx_bcs_excep).", note that this does not need to look at types
 
-    if (this.lowReg.getConfig().getOpenABAP()) {
+    if (this.lowReg.getConfig().isOpenABAP()) {
       return undefined;
     }
 
@@ -1296,7 +1296,7 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
       return undefined;
     }
 
-    if (this.lowReg.getConfig().getOpenABAP()) {
+    if (this.lowReg.getConfig().isOpenABAP()) {
       return undefined;
     }
 
@@ -1351,7 +1351,7 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
   }
 
   private partiallyImplemented(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
-    if (this.lowReg.getConfig().getOpenABAP()) {
+    if (this.lowReg.getConfig().isOpenABAP()) {
       return undefined;
     }
 
@@ -2111,7 +2111,7 @@ ${indentation}    output = ${uniqueName}.\n`;
       return undefined;
     }
 
-    if (this.lowReg.getConfig().getOpenABAP()) {
+    if (this.lowReg.getConfig().isOpenABAP()) {
       return undefined;
     }
 
@@ -2849,7 +2849,7 @@ ${indentation}    output = ${uniqueName}.\n`;
   private outlineData(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     // hmm, no guard here, as DATA(SDF) is valid in 702
 
-    if (this.lowReg.getConfig().getOpenABAP()) {
+    if (this.lowReg.getConfig().isOpenABAP()) {
       return undefined;
     }
 
@@ -3094,7 +3094,7 @@ ${indentation}    output = ${uniqueName}.\n`;
   }
 
   private replaceXsdBool(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
-    if (this.lowReg.getConfig().getOpenABAP()) {
+    if (this.lowReg.getConfig().isOpenABAP()) {
       return undefined;
     }
 
@@ -3245,7 +3245,7 @@ ${indentation}    output = ${uniqueName}.\n`;
   }
 
   private replaceLineFunctions(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult, highFile: ABAPFile): Issue | undefined {
-    if (this.lowReg.getConfig().getOpenABAP()) {
+    if (this.lowReg.getConfig().isOpenABAP()) {
       return undefined;
     }
 

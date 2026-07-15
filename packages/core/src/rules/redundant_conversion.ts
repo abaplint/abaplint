@@ -16,6 +16,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IRegistry} from "../_iregistry";
 import {EditHelper} from "../edit_helper";
+import {Release, releaseAtLeast} from "../version";
 
 export class RedundantConversionConf extends BasicRuleConfig {
 }
@@ -52,6 +53,11 @@ text = text.`,
   }
 
   public run(obj: IObject): readonly Issue[] {
+    if (!releaseAtLeast(this.reg.getConfig().getRelease(), Release.v740sp02)
+        && !this.reg.getConfig().isOpenABAP()) {
+      return [];
+    }
+
     if (!(obj instanceof ABAPObject)) {
       return [];
     }

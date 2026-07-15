@@ -162,7 +162,7 @@ export class Config implements IConfiguration {
     return versionToABAPRelease(v);
   }
 
-  public getOpenABAP(): boolean {
+  public isOpenABAP(): boolean {
     return this.getRelease() === Release["open-abap"];
   }
 

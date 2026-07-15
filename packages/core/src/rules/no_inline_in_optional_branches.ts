@@ -48,7 +48,7 @@ Not considered optional branches:
     const release = this.reg.getConfig().getRelease();
     if (release === Release.v700
         || release === Release.v702
-        || this.reg.getConfig().getOpenABAP()) {
+        || this.reg.getConfig().isOpenABAP()) {
       return [];
     }
 
