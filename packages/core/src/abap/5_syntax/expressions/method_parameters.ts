@@ -216,16 +216,23 @@ export class MethodParameters {
     }
 
     const ret: IListItemS[] = [];
+    const supplied = new Set<string>();
 
     for (const c of node.getChildren()) {
       if (!(c.get() instanceof Expressions.ParameterS) || !(c instanceof ExpressionNode)) {
         throw new AssertError("parameterListS, unexpected node, child");
       }
 
-      const name = c.findDirectExpression(Expressions.ParameterName)?.getFirstToken().getStr().toUpperCase();
-      if (name === undefined) {
+      const nameNode = c.findDirectExpression(Expressions.ParameterName);
+      const name = nameNode?.getFirstToken().getStr().toUpperCase();
+      if (name === undefined || nameNode === undefined) {
         throw new AssertError("parameterListS, no name determined");
       }
+      if (supplied.has(name)) {
+        const message = `Method parameter "${name}" is supplied more than once`;
+        input.issues.push(syntaxIssue(input, nameNode.getFirstToken(), message));
+      }
+      supplied.add(name);
 
       const source = c.findDirectExpression(Expressions.Source);
       if (source === undefined) {
@@ -275,16 +282,23 @@ export class MethodParameters {
     }
 
     const ret: IListItemT[] = [];
+    const supplied = new Set<string>();
 
     for (const c of node.getChildren()) {
       if (!(c.get() instanceof Expressions.ParameterT) || !(c instanceof ExpressionNode)) {
         throw new AssertError("parameterListT, unexpected node, child");
       }
 
-      const name = c.findDirectExpression(Expressions.ParameterName)?.getFirstToken().getStr().toUpperCase();
-      if (name === undefined) {
+      const nameNode = c.findDirectExpression(Expressions.ParameterName);
+      const name = nameNode?.getFirstToken().getStr().toUpperCase();
+      if (name === undefined || nameNode === undefined) {
         throw new AssertError("parameterListT, no name determined");
       }
+      if (supplied.has(name)) {
+        const message = `Method parameter "${name}" is supplied more than once`;
+        input.issues.push(syntaxIssue(input, nameNode.getFirstToken(), message));
+      }
+      supplied.add(name);
 
       const target = c.findDirectExpression(Expressions.Target);
       if (target === undefined) {
