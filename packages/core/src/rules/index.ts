@@ -134,6 +134,7 @@ export * from "./preferred_compare_operator";
 export * from "./prefix_is_current_class";
 export * from "./reduce_procedural_code";
 export * from "./reduce_string_templates";
+export * from "./redundant_conversion";
 export * from "./release_idoc";
 export * from "./remove_descriptions";
 export * from "./rfc_error_handling";

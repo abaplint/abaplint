@@ -137,6 +137,7 @@ import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_opera
 import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
 import {ReduceProceduralCodeConf} from "../src/rules/reduce_procedural_code";
 import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
+import {RedundantConversionConf} from "../src/rules/redundant_conversion";
 import {ReleaseIdocConf} from "../src/rules/release_idoc";
 import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
 import {RFCErrorHandlingConf} from "../src/rules/rfc_error_handling";
@@ -336,6 +337,7 @@ export interface IConfig {
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
+    "redundant_conversion"?: RedundantConversionConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,
     "rfc_error_handling"?: RFCErrorHandlingConf | boolean,
@@ -524,6 +526,7 @@ export interface IConfig {
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
+    "redundant_conversion"?: RedundantConversionConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,
     "rfc_error_handling"?: RFCErrorHandlingConf | boolean,

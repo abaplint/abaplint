@@ -3282,6 +3282,17 @@
               ],
               "description": "Checks for string templates\nTags: SingleFile\nhttps://rules.abaplint.org/reduce_string_templates"
             },
+            "redundant_conversion": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RedundantConversionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Find redundant CONV expressions\nTags: SingleFile\nhttps://rules.abaplint.org/redundant_conversion"
+            },
             "release_idoc": {
               "anyOf": [
                 {
@@ -5327,6 +5338,17 @@
                 }
               ],
               "description": "Checks for string templates\nTags: SingleFile\nhttps://rules.abaplint.org/reduce_string_templates"
+            },
+            "redundant_conversion": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RedundantConversionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Find redundant CONV expressions\nTags: SingleFile\nhttps://rules.abaplint.org/redundant_conversion"
             },
             "release_idoc": {
               "anyOf": [
@@ -8056,6 +8078,23 @@
       "type": "object"
     },
     "ReduceStringTemplatesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "RedundantConversionConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
