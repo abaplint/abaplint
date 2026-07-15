@@ -7,6 +7,7 @@ import {Target} from "../expressions/target";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {TypeUtils} from "../_type_utils";
 
 export class Catch implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -56,7 +57,22 @@ export class Catch implements StatementSyntax {
         input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
       }
     } else if (target) {
-      Target.runSyntax(target, input);
+      const targetType = Target.runSyntax(target, input);
+      if (targetType instanceof ObjectReferenceType) {
+        for (const c of node.findDirectExpressions(Expressions.ClassName)) {
+          const token = c.getFirstToken();
+          const className = token.getStr().toUpperCase();
+          const found = input.scope.existsObject(className);
+          if (found?.id) {
+            const catchType = new ObjectReferenceType(found.id);
+            if (new TypeUtils(input.scope).isAssignableStrict(catchType, targetType) === false) {
+              const message = "CATCH target not compatible with " + className;
+              input.issues.push(syntaxIssue(input, token, message));
+              return;
+            }
+          }
+        }
+      }
     }
 
   }

@@ -6812,6 +6812,26 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain(`Duplicate`);
   });
 
+  it("CATCH into subclass reference, syntax error", () => {
+    const abap = `
+CLASS cx_static_check DEFINITION.
+ENDCLASS.
+CLASS cx_static_check IMPLEMENTATION.
+ENDCLASS.
+CLASS lcx_error DEFINITION INHERITING FROM cx_static_check.
+ENDCLASS.
+CLASS lcx_error IMPLEMENTATION.
+ENDCLASS.
+
+DATA lx_error TYPE REF TO lcx_error.
+TRY.
+    CATCH cx_static_check INTO lx_error.
+ENDTRY.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`CATCH target not compatible`);
+  });
+
   it("Error, split table target must be character like", () => {
     const abap = `
     DATA str TYPE string.
@@ -14188,6 +14208,22 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain('Offsets or lengths cannot be specified for fields of type "STRING" or "XSTRING" in the current statement');
     expect(issues[1]?.getMessage()).to.contain('Offsets or lengths cannot be specified for fields of type "STRING" or "XSTRING" in the current statement');
     expect(issues[2]?.getMessage()).to.contain('Offsets or lengths cannot be specified for fields of type "STRING" or "XSTRING" in the current statement');
+  });
+
+  it("not possible: xstring offset/length in method parameter, with name", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lv TYPE xstring.
+    foo( bar = lv+1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain('Offsets or lengths cannot be specified for fields of type "STRING" or "XSTRING" in the current statement');
   });
 
   it("possible, built in method", () => {
