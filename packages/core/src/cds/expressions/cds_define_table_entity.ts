@@ -25,7 +25,7 @@ export class CDSDefineTableEntity extends Expression {
 
     return seq(
       star(CDSAnnotation),
-      "DEFINE",
+      opt("DEFINE"),
       opt("ROOT"),
       "TABLE", "ENTITY", CDSName,
       opt(CDSWithParameters),

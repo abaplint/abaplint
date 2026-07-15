@@ -3677,4 +3677,24 @@ describe("CDS Parser — post-annotations on elements", () => {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  // `define` is optional
+  it("projection without define keyword", () => {
+    const parsed = parseView(
+      `root view entity v as projection on foo as myfoo {
+         key mykey,
+         _myassoc[ carrid = 'LH' and connid = '4000' ] as _a : redirected to BAR
+       }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("abstract entity without define keyword", () => {
+    const parsed = parseView(`abstract entity e { key id : abap.int4; }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("custom entity without define keyword", () => {
+    const parsed = parseView(`custom entity e { key id : abap.int4; }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
 });

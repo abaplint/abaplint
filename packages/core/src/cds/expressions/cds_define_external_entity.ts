@@ -25,7 +25,7 @@ export class CDSDefineExternalEntity extends Expression {
 
     return seq(
       star(CDSAnnotation),
-      "DEFINE",
+      opt("DEFINE"),
       alt(externalEntity, staticEntity),
       str("{"), body, str("}"),
       opt(seq("WITH", "FEDERATED", "DATA", optPrio(alt(
