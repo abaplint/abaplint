@@ -3697,4 +3697,21 @@ describe("CDS Parser — post-annotations on elements", () => {
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+  it("table entity without define keyword", () => {
+    const parsed = parseView(`table entity t { key id : abap.int4; }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("external entity without define keyword", () => {
+    const parsed = parseView(`external entity e { key id : abap.int4; }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy without define keyword", () => {
+    const parsed = parseView(`hierarchy h as parent child hierarchy (
+  source I_OrgUnit
+  child to parent association _Parent
+) { key NodeID }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
 });
