@@ -72,6 +72,8 @@ export class CDSFunction extends Expression {
     const substrRegexpr = seq("SUBSTR_REGEXPR", "(", conversionInputs, ")");
     const locateRegexpr = seq("LOCATE_REGEXPR", "(", conversionInputs, ")");
 
+
+    const sqrt = seq("SQRT", "(", CDSFunctionInput, ")");
     const extFuncName = regex(/^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+$/i);
     const genericArgs = seq(CDSFunctionInput, starPrio(seq(",", CDSFunctionInput)));
     const namedArgValue = altPrio(seq("INTERVAL", CDSFunctionInput, CDSName), CDSFunctionInput, CDSName);
@@ -90,6 +92,7 @@ export class CDSFunction extends Expression {
                    unitConversion, currencyConversion, decimalShift, fltp_to_dec, ratioOf,
                    replaceRegexpr, matchesRegexpr, occurrencesRegexpr, substrRegexpr, locateRegexpr,
                    curr_to_decfloat_amount,
+                   sqrt,
                    genericFunc);
   }
 }

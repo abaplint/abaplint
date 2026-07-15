@@ -1,17 +1,18 @@
-import {CDSElement, CDSComposition, CDSGroupBy, CDSSource, CDSWhere, CDSHaving, CDSName, CDSPrefixedName, CDSString} from ".";
-import {Expression, seq, str, opt, optPrio, star, altPrio, starPrio} from "../../abap/2_statements/combi";
+import {CDSElement, CDSComposition, CDSGroupBy, CDSSource, CDSType, CDSWhere, CDSHaving, CDSName, CDSPrefixedName, CDSString} from ".";
+import {Expression, seq, str, opt, optPrio, star, altPrio, starPrio, stopBefore1} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 import {CDSAssociation} from "./cds_association";
 import {CDSJoin} from "./cds_join";
 
 export class CDSSelect extends Expression {
   public getRunnable(): IStatementRunnable {
-    const fields = seq(star(seq(CDSElement, ",")), CDSElement);
+    const fields = seq(stopBefore1("FROM"), star(seq(CDSElement, ",")), CDSElement);
     const distinct = str("DISTINCT");
     const elementList = seq(CDSElement, star(seq(",", CDSElement)), opt(","));
     const elements = seq(str("{"), altPrio("*", elementList), str("}"));
 
-    const aspectValue = altPrio(CDSString, CDSPrefixedName);
+    const typedLiteralVal = seq(CDSType, CDSString);
+    const aspectValue = altPrio(typedLiteralVal, CDSString, CDSPrefixedName);
     const aspectBinding = seq(CDSPrefixedName, "=", ">", aspectValue);
     const bindAspect = seq(
       "BIND", "ASPECT", CDSName,

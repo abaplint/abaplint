@@ -1,12 +1,12 @@
-import {CDSAggregate, CDSArithParen, CDSArithmetics, CDSCase, CDSCast, CDSFunction, CDSInteger, CDSPrefixedName, CDSString} from ".";
-import {altPrio, Expression} from "../../abap/2_statements/combi";
+import {CDSAggregate, CDSArithParen, CDSArithmetics, CDSCase, CDSCast, CDSFunction, CDSInteger, CDSName, CDSPrefixedName, CDSString} from ".";
+import {altPrio, Expression, seq} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSFunctionInput extends Expression {
   public getRunnable(): IStatementRunnable {
-    const input = altPrio(CDSArithmetics, CDSArithParen, CDSAggregate, CDSCast,
-                          CDSFunction, CDSCase, CDSString, CDSPrefixedName, CDSInteger);
-
-    return input;
+    const positional = altPrio(CDSArithmetics, CDSArithParen, CDSAggregate, CDSCast,
+                               CDSFunction, CDSCase, CDSString, CDSPrefixedName, CDSInteger);
+    const named = seq(CDSName, "=", ">", positional);
+    return altPrio(named, positional);
   }
 }

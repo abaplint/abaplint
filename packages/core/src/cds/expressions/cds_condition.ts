@@ -7,7 +7,8 @@ export class CDSCondition extends Expression {
   public getRunnable(): IStatementRunnable {
     // CDSArithmetics before CDSCast/CDSFunction so cast(A)-cast(B) is handled as arithmetic, not two separate casts
     // CDSCase allows nested case expressions on either side of a comparison
-    const left = altPrio(CDSString, CDSArithmetics, CDSCast, CDSFunction, CDSAggregate, CDSCase, CDSArithParen, CDSPrefixedName);
+    const left = altPrio(CDSString, CDSArithmetics, CDSCast, CDSFunction, CDSAggregate, CDSCase,
+			 CDSArithParen, CDSInteger, CDSPrefixedName);
     const nonLikeOperators = altPrio("=", seq("!", "="), seq("<", ">"), seq(">", "="), seq("<", "="), "<", ">");
     const likeOperators = altPrio("LIKE", "NOT LIKE");
     // Right side of comparison: simple values first, then parenthesized, then full arithmetic last.

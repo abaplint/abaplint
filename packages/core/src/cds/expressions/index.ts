@@ -20,6 +20,7 @@ export * from "./cds_define_hierarchy";
 export * from "./cds_define_projection";
 export * from "./cds_define_table_entity";
 export * from "./cds_define_table_function";
+export * from "./cds_paren_select";
 export * from "./cds_define_view";
 export * from "./cds_element";
 export * from "./cds_extend_view";

@@ -1,10 +1,10 @@
 import {CDSAnnotation, CDSAssociation, CDSComposition, CDSName, CDSType, CDSWithParameters} from ".";
-import {Expression, str, seq, star, opt, optPrio, plus, alt, regex} from "../../abap/2_statements/combi";
+import {Expression, str, seq, star, opt, optPrio, altPrio, plus, alt, regex} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
 
 export class CDSDefineExternalEntity extends Expression {
   public getRunnable(): IStatementRunnable {
-    const extNameValue = alt(CDSName, regex(/^"[^"]*"$/));
+    const extNameValue = alt(CDSName, regex(/^"(?:[^"]|"")*"$/));
     const externalName = seq("EXTERNAL", "NAME", extNameValue);
     const nullability = optPrio(alt("NOT NULL", "NULL"));
     const field = seq(star(CDSAnnotation), optPrio(str("KEY")), CDSName, ":", CDSType, nullability, optPrio(externalName), ";");
@@ -26,12 +26,13 @@ export class CDSDefineExternalEntity extends Expression {
     return seq(
       star(CDSAnnotation),
       opt("DEFINE"),
+      opt("ROOT"),
       alt(externalEntity, staticEntity),
       str("{"), body, str("}"),
       opt(seq("WITH", "FEDERATED", "DATA", optPrio(alt(
         seq("PROVIDED", "AT", "RUNTIME"),
         seq("PROVIDED", "BY", CDSName),
-      )))),
+      )), optPrio(seq("ON", "UNLINKED", altPrio("FAIL", "IGNORE"))))),
       opt(";"),
     );
   }

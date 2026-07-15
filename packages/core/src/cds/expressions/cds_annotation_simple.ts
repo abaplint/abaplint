@@ -7,13 +7,16 @@ export class CDSAnnotationSimple extends Expression {
   public getRunnable(): IStatementRunnable {
     const ident = regex(/^[\w_]+$/);
     // #(expr) where expr can be: identifier, dotted path, string, or concatenation with +
-    const hashArg = altPrio(CDSString, CDSPrefixedName, ident);
+    const funcCall = seq(ident, "(", altPrio(CDSString, CDSPrefixedName, ident), ")");
+    const hashArg = altPrio(CDSString, funcCall, CDSPrefixedName, ident);
     const hashExpr = seq(hashArg, starPrio(seq("+", hashArg)));
 
     const value = altPrio(CDSString,
                           "true",
                           "false",
                           "null",
+                          seq("-", regex(/^\d+$/), ".", regex(/^\d+[eE]$/), altPrio("+", "-"), regex(/^\d+$/)),
+                          seq(regex(/^\d+$/), ".", regex(/^\d+[eE]$/), altPrio("+", "-"), regex(/^\d+$/)),
                           seq("-", regex(/^\d+$/), ".", regex(/^\d+$/)),
                           seq("-", regex(/^\d+$/)),
                           seq(regex(/^\d+$/), ".", regex(/^\d+$/)),

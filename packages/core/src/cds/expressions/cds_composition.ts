@@ -6,8 +6,9 @@ import {CDSCardinality} from "./cds_cardinality";
 export class CDSComposition extends Expression {
   public getRunnable(): IStatementRunnable {
     const num = altPrio("ONE", "MANY");
-    // Text cardinality after OF: "of exact one to many", "of one to many", or bare "of many" / "of one"
-    const textCardinality = altPrio(seq(opt("EXACT"), num, "TO", num), seq(opt("EXACT"), num));
+    const exactNum = seq(opt("EXACT"), num);
+    // Text cardinality after OF: "of exact one to exact one", "of exact one to many", "of one to many", or bare "of many" / "of one"
+    const textCardinality = altPrio(seq(exactNum, "TO", exactNum), seq(opt("EXACT"), num));
     // Numeric cardinality [n..m] before OF: any non-negative integer or *
     const cardNum = altPrio(regex(/^\d+$/), "*");
     const numericCardinality = seq("[", cardNum, optPrio(seq(".", ".", cardNum)), "]");

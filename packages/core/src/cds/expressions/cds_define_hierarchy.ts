@@ -14,7 +14,7 @@ export class CDSDefineHierarchy extends Expression {
     // DATE PERIOD: period from <field> to <field> [valid from :p to :p]
     const datePeriod = seq(
       "PERIOD", "FROM", CDSName, "TO", CDSName,
-      opt(seq("VALID", "FROM", CDSPrefixedName, "TO", CDSPrefixedName)),
+      opt(seq("VALID", "FROM", altPrio(CDSString, CDSPrefixedName), "TO", altPrio(CDSString, CDSPrefixedName))),
     );
 
     const depthValue = altPrio(CDSString, CDSInteger, CDSPrefixedName);
@@ -23,13 +23,16 @@ export class CDSDefineHierarchy extends Expression {
     const hierarchyBody = seq(
       "SOURCE", CDSName, opt(CDSParametersSelect),
       "CHILD", "TO", "PARENT", "ASSOCIATION", CDSName,
-      opt(directory),
-      opt(datePeriod),
+      opt(altPrio(
+        seq(opt(directory), datePeriod, opt(directory)),
+        seq(datePeriod, opt(directory)),
+        directory,
+      )),
       opt(seq("START", "WHERE", CDSCondition)),
       opt(siblingsOrder),
-      opt(seq("LOAD", loadMode)),
       opt(seq("DEPTH", depthValue)),
       opt(seq("NODETYPE", CDSName)),
+      opt(seq("LOAD", loadMode)),
       opt(seq("MULTIPLE", "PARENTS", altPrio("NOT ALLOWED", "ALLOWED", seq("LEAVES", optPrio("ONLY"))))),
       opt(seq("ORPHANS", altPrio("IGNORE", "ROOT", "ERROR"))),
       opt(seq("CYCLES", altPrio("BREAKUP", "ERROR"))),

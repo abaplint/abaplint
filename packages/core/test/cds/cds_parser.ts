@@ -1839,6 +1839,202 @@ implemented by method CL_TEST=>METHOD;`;
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 
+
+  it("table function returns on new line", () => {
+    const cds = `define table function V_TabFunc returns
+{
+  col: abap.int4;
+}
+implemented by method CL_IMPL=>METHOD`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend view with union suffix", () => {
+    const cds = `extend view Base with Ext
+  { c as c3, d as c4 }
+union
+  { f as c3, g as c4 }
+union all
+  { k as c3, l as c4 };`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend view entity with group by suffix", () => {
+    const cds = `extend view entity BaseView with
+{
+  src.connid,
+  sum(src.distance) as sum_dist
+}
+group by src.connid;`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend view with paren union body", () => {
+    const cds = `extend view entity V with
+    ( { a.f1 } union all { b.f1 } )
+    union
+    ( { c.f1 } )`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend view with bind aspect", () => {
+    const cds = `extend view entity V with
+  bind aspect Asp(f => src.field) as al
+{
+  include al.f as g
+}`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("define transient root view entity projection", () => {
+    const cds = `define transient root view entity V
+  provider contract transactional_query
+  as projection on Base
+{ key id }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("composition of exact one to exact one", () => {
+    const cds = `define root abstract entity V
+{
+  key k : abap.char(20);
+  _child : composition of exact one to exact one Child;
+}`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("redefine association with cardinality in filter brackets", () => {
+    const cds = `define root view entity V as projection on Base
+  redefine association _a[ exact one to one : k = 'F'] as _b redirected to Target
+{ key k }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hierarchy directory after period clause", () => {
+    const cds = `define hierarchy H with parameters p : dats
+as parent child hierarchy(
+  source S child to parent association _Parent
+  period from vf to vt valid from $parameters.p to $parameters.p
+  directory _Dir filter by OrgId = $parameters.p
+  siblings order by Name
+)
+{ key NodeId }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("table entity include signature only then excluding", () => {
+    const cds = `define table entity T { key f : abap.char(3); include Asp.* signature only excluding { f2, f3 }; }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("association of many to many with default filter", () => {
+    const cds = `define view entity V as select from T
+  association of many to many T2 as _a on _a.f = T.f
+    with default filter _a.s = 'A'
+{ key f }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("count distinct with extra parens", () => {
+    const cds = `define view entity V as select from T { count( distinct ( t.id ) ) as cnt }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("slash namespaced alias in source and element", () => {
+    const cds = `define view entity V as select from T as /ns/alias
+  association to T2 as /ns/Other on /ns/Other.id = /ns/alias.id
+{ key /ns/alias.f as g }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("slash namespaced association alias", () => {
+    const cds = `define view entity V as select from T { x as /abc/association }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("slash namespaced view name", () => {
+    const cds = `define view /1BS/SADL_QE_TEST_VIEW as select from /1bs/test_table { key /1bs/key }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("union all on bare select three branches", () => {
+    const cds = `define view V as select from A { key a }
+union all select from B { key b } where x = 'Y'
+union all select from C { key c }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("deeply nested paren union", () => {
+    const cds = `define view entity V as
+  ( ( select from A { key id } ) except ( select from B { key id } ) )
+  union
+  ( select from C { key id } )`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("hash function call in annotation", () => {
+    const cds = `@A.b: { toleranceRangeLowValue: #(max(TotalPrice)) }
+define view entity V as select from T { key id }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("scientific notation in where condition", () => {
+    const cds = `define view V as select from T { key id } where x >= 1.00e+00`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("include keyword used as field name in element list", () => {
+    const cds = `define view V as select from T { include as include, fullname as fullname }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("bind aspect in define projection", () => {
+    const cds = `define root view entity V as projection on B
+  bind aspect A(f => x) as asp
+{ key k }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("double-quoted external name with escaped quote", () => {
+    const cds = `define external entity V external name "NAME_WITH_""_ESCAPED" { key f : t; }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("block comment with double slash inside", () => {
+    const cds = `define view V /*//->NOTE: ignore
+T as T */ as select from T { key id }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("external entity with parameters and external names", () => {
+    const cds = `define external entity V external name X
+with parameters P_A : abap.char(10), P_B : mytype external name "P_EXT"
+{ key f : t; }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("define view union after where clause", () => {
+    const cds = `define view entity V as select from T { key a } where x = 'A'
+union all
+( select from T2 { key b } where y = 'B' )`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("cast sci notation float literal", () => {
+    const cds = `define view entity V as select from T { cast(0.0E+00 as abap.fltp) as f }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("case with string selector", () => {
+    const cds = `define view entity V as select from T { cast(case 'GC' when 'X' then 'Y' else 'Z' end as abap.char(5)) as f }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("redirected to with parameters call", () => {
+    const cds = `define root view entity V as projection on Base { key A, _dep : redirected to Target(p : 'val') }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.acds", cds))).to.be.instanceof(ExpressionNode);
+  });
+
   it("double operator in arithmetic (A + + B, A + -B)", () => {
     const cds = `define view Test as select from t {
   cast(A + + B as mytype) as F1,
@@ -3550,6 +3746,39 @@ define table entity T {
     expect(rootAnnos.length).to.equal(1);
   });
 
+
+
+  it("debug: table entity plain field", () => {
+    const cds = `define table entity E { key id : abap.int4; }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("debug: table entity assoc no body field", () => {
+    const cds = `define table entity E { _rel : association to O on _rel.id = x; }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("debug: table entity key plus assoc", () => {
+    const cds = `define table entity E { key id : abap.int4; _rel : association to O on _rel.id = x; }`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("debug: table entity assoc simple", () => {
+    const cds = `define table entity E {
+  key id : abap.int4;
+  _rel : association to O on _rel.id = id;
+}`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
+  it("debug: table entity assoc T.id", () => {
+    const cds = `define table entity T {
+  key id : abap.int4;
+  _rel : association to O on _rel.id = T.id;
+}`;
+    expect(new CDSParser().parse(new MemoryFile("v.ddls.asddls", cds))).to.be.instanceof(ExpressionNode);
+  });
+
   it("define table entity with association/composition wrapped in CDSTableField", () => {
     const cds = `define table entity T {
   key id : abap.int4 not null;
@@ -3712,6 +3941,38 @@ describe("CDS Parser — post-annotations on elements", () => {
   source I_OrgUnit
   child to parent association _Parent
 ) { key NodeID }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  // Long boolean WHERE chain (and/not/between/like/paren). The AND/OR chain
+  // repeats a single condition term (not the whole CDSCondition), so this
+  // stays linear rather than exponential.
+  it("where long boolean chain", () => {
+    const parsed = parseView(`define view v as select from t {
+  carrid
+} where         carrid = 'AA'
+  and not       carrid = 'BB'
+  and not ( not carrid = 'CC' )
+  and     seatsocc     between 10 and 20
+  and     seatsocc not between 30 and 40
+  and     planetype     like 'A%' escape '$'
+  and not planetype not like 'D%' escape '*'
+  and     connid is     initial`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend view entity with composition numeric cardinality", () => {
+    const parsed = parseView(`extend view entity ztab1 with composition [0..*] of ztab2 as _assoc1 { ztab1.field1 as f1, _assoc1 }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend view entity with composition no cardinality", () => {
+    const parsed = parseView(`extend view entity ztab1 with composition of ztab2 as _assoc1 { _assoc1 }`);
+    expect(parsed).to.be.instanceof(ExpressionNode);
+  });
+
+  it("extend view entity with composition text cardinality", () => {
+    const parsed = parseView(`extend view entity ztab1 with composition of exact one to many ztab2 as _assoc1 { _assoc1 }`);
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
 });

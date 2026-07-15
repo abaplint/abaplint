@@ -12,9 +12,11 @@ export class CDSAssociation extends Expression {
     const numericCardinality = seq("[", cardNum, optPrio(seq(".", ".", cardNum)), "]");
     // Text-based OF form: "association of one to many Target on ..." — text cardinality includes "TO"
     const ofTextSide = altPrio(seq("EXACT", "ONE"), "ONE", "MANY");
-    const ofTextForm = seq("ASSOCIATION", "OF", ofTextSide, "TO", ofTextSide, CDSRelation, "ON", CDSCondition);
+    const ofTextForm = seq("ASSOCIATION", "OF", ofTextSide, "TO", ofTextSide, CDSRelation, "ON", CDSCondition,
+                           opt(seq("WITH", "DEFAULT", "FILTER", CDSCondition)));
     // Numeric OF form: "association of [0..1] to Target on ..."
-    const ofNumericForm = seq("ASSOCIATION", "OF", numericCardinality, "TO", CDSRelation, "ON", CDSCondition);
+    const ofNumericForm = seq("ASSOCIATION", "OF", numericCardinality, "TO", CDSRelation, "ON", CDSCondition,
+                              opt(seq("WITH", "DEFAULT", "FILTER", CDSCondition)));
     // "association [0..1] to Target as _Alias on condition" — standard form
     const parentForm = seq("ASSOCIATION", "TO", "PARENT", CDSRelation);
     const standardForm = seq("ASSOCIATION", optPrio(CDSCardinality), "TO", opt(altPrio(textCardinality, "PARENT")), CDSRelation, "ON", CDSCondition,

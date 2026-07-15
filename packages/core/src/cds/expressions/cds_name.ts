@@ -1,12 +1,18 @@
-import {Expression, optPrio, regex, seq, altPrio} from "../../abap/2_statements/combi";
+import {Expression, optPrio, regex, seq, altPrio, stopBefore1} from "../../abap/2_statements/combi";
 import {IStatementRunnable} from "../../abap/2_statements/statement_runnable";
+
+const KEYWORDS = ["AS", "ON", "WHERE", "WITH", "UNION", "GROUP", "HAVING",
+  "AND", "OR", "BETWEEN", "LIKE", "IN", "EXISTS",
+  "WHEN", "THEN", "ELSE", "END", "CASE", "CAST"];
 
 export class CDSName extends Expression {
   public getRunnable(): IStatementRunnable {
-    const pre = seq("/", regex(/^[\w_]+$/), "/");
+    const word = regex(/^\$?#?[\w_]+$/);
+    const slashName = seq("/", regex(/^[\w]+$/), "/", stopBefore1(...KEYWORDS), regex(/^[\w_]+$/));
     return altPrio(
       regex(/^"(?:[^"]|"")*"$/),
-      seq(optPrio(":"), optPrio(pre), regex(/^\$?#?[\w_]+$/)),
+      seq(optPrio(":"), slashName),
+      seq(optPrio(":"), word),
     );
   }
 }

@@ -6,7 +6,7 @@ export class CDSCast extends Expression {
   public getRunnable(): IStatementRunnable {
     // CDSArithmetics before CDSFunction/CDSAggregate: handles function()*n, cast()*n, sum()*n patterns
     const first = altPrio(CDSArithmetics, CDSFunction, CDSArithParen, CDSCase,
-                          CDSAggregate, CDSCast, CDSString, CDSPrefixedName, CDSInteger);
+                          CDSAggregate, CDSCast, CDSInteger, CDSString, CDSPrefixedName);
     return seq("CAST", "(", first, "AS", CDSType, optPrio(seq("PRESERVING", "TYPE")), ")");
   }
 }
