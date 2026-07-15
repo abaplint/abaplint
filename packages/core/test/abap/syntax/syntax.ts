@@ -1954,6 +1954,45 @@ START-OF-SELECTION.
     expect(issues[0].getMessage().toLowerCase()).to.contain("something");
   });
 
+  it("error, method importing parameter supplied twice", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method IMPORTING value TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA object TYPE REF TO lcl_bar.
+  object->method( value = 1 VALUE = 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal("Method parameter \"VALUE\" is supplied more than once");
+  });
+
+  it("error, method exporting parameter supplied twice", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method EXPORTING value TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA object TYPE REF TO lcl_bar.
+  DATA result TYPE i.
+  object->method( IMPORTING value = result value = result ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal("Method parameter \"VALUE\" is supplied more than once");
+  });
+
   it("error, no importing parameters", () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
