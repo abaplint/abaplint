@@ -9,7 +9,7 @@ export class CDSDefineCustom extends Expression {
     const field = seq(optPrio(str("KEY")), CDSName, ":", CDSType, ";");
     const compsiOrAssoci = seq(CDSName, ":", alt(CDSComposition, CDSAssociation), ";");
 
-    return seq(star(CDSAnnotation), str("DEFINE"), opt(str("ROOT")), str("CUSTOM ENTITY"), CDSName, opt(CDSWithParameters), str("{"),
+    return seq(star(CDSAnnotation), opt("DEFINE"), opt("ROOT"), str("CUSTOM ENTITY"), CDSName, opt(CDSWithParameters), str("{"),
                plus(seq(star(CDSAnnotation), alt(field, compsiOrAssoci))),
                str("}"), opt(";"));
   }

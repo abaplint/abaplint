@@ -39,7 +39,7 @@ export class CDSDefineHierarchy extends Expression {
 
     return seq(
       star(CDSAnnotation),
-      "DEFINE", "HIERARCHY", CDSName,
+      opt("DEFINE"), "HIERARCHY", CDSName,
       opt(CDSWithParameters),
       "AS", "PARENT", "CHILD", "HIERARCHY", "(", hierarchyBody, ")",
       "{", seq(field, star(seq(",", field))), "}",

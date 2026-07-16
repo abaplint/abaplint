@@ -14,7 +14,7 @@ export class CDSDefineProjection extends Expression {
     );
 
     return seq(star(CDSAnnotation),
-               "DEFINE",
+               opt("DEFINE"),
                opt("ROOT"),
                opt("TRANSIENT"),
                "VIEW",

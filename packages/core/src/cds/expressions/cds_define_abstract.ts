@@ -8,7 +8,7 @@ export class CDSDefineAbstract extends Expression {
     const field = seq(star(CDSAnnotation), optPrio(str("KEY")), CDSName, ":", CDSType, ";");
     const compsiOrAssoci = seq(star(CDSAnnotation), CDSName, ":", alt(CDSComposition, CDSAssociation), ";");
 
-    return seq(star(CDSAnnotation), "DEFINE", opt("ROOT"), "ABSTRACT", "ENTITY", CDSName,
+    return seq(star(CDSAnnotation), opt("DEFINE"), opt("ROOT"), "ABSTRACT", "ENTITY", CDSName,
                opt(CDSWithParameters),
                str("{"),
                plus(alt(field, compsiOrAssoci)),
