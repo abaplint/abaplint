@@ -4,14 +4,21 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Issue} from "../../src/issue";
 
-async function runSingle(abap: string, config?: ClearExportingParametersConf): Promise<Issue[]> {
-  const reg = new Registry().addFile(new MemoryFile("zcl_foo.clas.abap", abap));
+async function runFiles(files: MemoryFile[], config?: ClearExportingParametersConf): Promise<Issue[]> {
+  const reg = new Registry();
+  for (const file of files) {
+    reg.addFile(file);
+  }
   await reg.parseAsync();
   const rule = new ClearExportingParameters();
   if (config) {
     rule.setConfig(config);
   }
   return rule.initialize(reg).run(reg.getFirstObject()!);
+}
+
+async function runSingle(abap: string, config?: ClearExportingParametersConf): Promise<Issue[]> {
+  return runFiles([new MemoryFile("zcl_foo.clas.abap", abap)], config);
 }
 
 function wrap(body: string, definition = "METHODS foo EXPORTING ev_result TYPE i."): string {
@@ -55,6 +62,37 @@ describe("Rule: clear_exporting_parameters", () => {
 
   it("plain assignment only, no issue", async () => {
     const issues = await runSingle(wrap("    ev_result = 1."));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("cast assignment before read, no issue", async () => {
+    const def = `DATA mo_insert TYPE REF TO object.
+    METHODS foo EXPORTING eo_insert TYPE REF TO object.`;
+    const body = `    eo_insert ?= mo_insert.
+    ASSERT eo_insert IS BOUND.`;
+    const issues = await runSingle(wrap(body, def));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("statement lookup considers the include filename", async () => {
+    const testclasses = `CLASS ltcl_test DEFINITION FOR TESTING.
+  PRIVATE SECTION.
+    METHODS test FOR TESTING.
+ENDCLASS.
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD test.
+
+    DATA(lv_value) =
+      1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9.
+  ENDMETHOD.
+ENDCLASS.`;
+    const main = wrap(`    eo_insert ?= mo_insert.
+    ASSERT eo_insert IS BOUND.`, `DATA mo_insert TYPE REF TO object.
+    METHODS foo EXPORTING eo_insert TYPE REF TO object.`);
+    const issues = await runFiles([
+      new MemoryFile("zcl_foo.clas.testclasses.abap", testclasses),
+      new MemoryFile("zcl_foo.clas.abap", main),
+    ]);
     expect(issues.length).to.equal(0);
   });
 

@@ -186,7 +186,7 @@ ENDCLASS.`,
 
   private checkParameter(parameter: TypedIdentifier, references: IReference[], obj: ABAPObject): Issue | undefined {
     let firstRead: IReference | undefined = undefined;
-    let earliestWrite: Position | undefined = undefined;
+    let earliestWrite: IReference | undefined = undefined;
 
     for (const reference of references) {
       if (reference.resolved === undefined || parameter.equals(reference.resolved) === false) {
@@ -198,8 +198,8 @@ ENDCLASS.`,
           firstRead = reference;
         }
       } else if (reference.referenceType === ReferenceType.DataWriteReference) {
-        if (earliestWrite === undefined || pos.isBefore(earliestWrite)) {
-          earliestWrite = pos;
+        if (earliestWrite === undefined || pos.isBefore(earliestWrite.position.getStart())) {
+          earliestWrite = reference;
         }
       }
     }
@@ -209,7 +209,7 @@ ENDCLASS.`,
     }
 
     // the parameter is safe only if it is written in a statement strictly before the first read
-    const readStatement = this.statementStart(firstRead.position.getStart(), obj);
+    const readStatement = this.statementStart(firstRead, obj);
     const writeStatement = earliestWrite === undefined ? undefined : this.statementStart(earliestWrite, obj);
     if (writeStatement !== undefined && readStatement !== undefined && writeStatement.isBefore(readStatement)) {
       return undefined;
@@ -219,14 +219,14 @@ ENDCLASS.`,
     return Issue.atIdentifier(firstRead.position, message, this.getMetadata().key, this.conf.severity);
   }
 
-  private statementStart(pos: Position, obj: ABAPObject): Position | undefined {
-    for (const file of obj.getABAPFiles()) {
-      for (const statement of file.getStatements()) {
-        const start = statement.getStart();
-        const end = statement.getEnd();
-        if (pos.equals(start) || (pos.isAfter(start) && pos.isBefore(end))) {
-          return start;
-        }
+  private statementStart(reference: IReference, obj: ABAPObject): Position | undefined {
+    const file = obj.getABAPFileByName(reference.position.getFilename());
+    for (const statement of file?.getStatements() || []) {
+      const pos = reference.position.getStart();
+      const start = statement.getStart();
+      const end = statement.getEnd();
+      if (pos.equals(start) || (pos.isAfter(start) && pos.isBefore(end))) {
+        return start;
       }
     }
     return undefined;
