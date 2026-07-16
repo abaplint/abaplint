@@ -79,7 +79,8 @@ ENDCLASS.`,
       }
       for (const v in vars) {
         const id = vars[v];
-        if (id.getMeta().includes(IdentifierMeta.PassByValue) === false) {
+        if (id.getMeta().includes(IdentifierMeta.MethodImporting) === false
+            || id.getMeta().includes(IdentifierMeta.PassByValue) === false) {
           continue;
         } else if (this.reg.isFileDependency(id.getFilename()) === true) {
           continue;

@@ -49,6 +49,21 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("no issue, exporting parameter passed by value", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar EXPORTING VALUE(sdf) TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE sdf.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap, "zslowpass.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
   it("fixed", async () => {
     const abap = `
 CLASS lcl DEFINITION.
