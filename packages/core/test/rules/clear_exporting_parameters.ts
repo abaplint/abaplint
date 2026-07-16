@@ -33,6 +33,39 @@ ${body}
 ENDCLASS.`;
 }
 
+function wrapFunctionModule(body: string, passByValue = false, globalParameters = false): MemoryFile[] {
+  const reference = passByValue ? "" : "<REFERENCE>X</REFERENCE>";
+  const globalFlag = globalParameters ? "<GLOBAL_FLAG>X</GLOBAL_FLAG>" : "";
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+    <asx:values>
+      <AREAT>test</AREAT>
+      <FUNCTIONS>
+        <item>
+          <FUNCNAME>ZFOO</FUNCNAME>
+          ${globalFlag}
+          <EXPORT>
+            <RSEXP>
+              <PARAMETER>EV_RESULT</PARAMETER>
+              ${reference}
+              <TYP>I</TYP>
+            </RSEXP>
+          </EXPORT>
+        </item>
+      </FUNCTIONS>
+    </asx:values>
+  </asx:abap>
+</abapGit>`;
+  return [
+    new MemoryFile("zfoo.fugr.xml", xml),
+    new MemoryFile("zfoo.fugr.saplzfoo.abap", "FUNCTION-POOL zfoo."),
+    new MemoryFile("zfoo.fugr.zfoo.abap", `FUNCTION zfoo.
+${body}
+ENDFUNCTION.`),
+  ];
+}
+
 describe("Rule: clear_exporting_parameters", () => {
 
   it("parser error, no issues", async () => {
@@ -129,6 +162,27 @@ ENDCLASS.`;
     const rule = new ClearExportingParameters().initialize(reg);
     const issues = rule.run(reg.getObject("CLAS", "ZCL_FOO")!);
     expect(issues.length).to.equal(0);
+  });
+
+  it("function module exporting parameter read before write, issue", async () => {
+    const issues = await runFiles(wrapFunctionModule("  ev_result = ev_result + 1."));
+    expect(issues.length).to.equal(1);
+  });
+
+  it("function module exporting parameter cleared before read, no issue", async () => {
+    const issues = await runFiles(wrapFunctionModule(`  CLEAR ev_result.
+  ev_result = ev_result + 1.`));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("function module exporting parameter passed by value, no issue", async () => {
+    const issues = await runFiles(wrapFunctionModule("  ev_result = ev_result + 1.", true));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("function module global exporting parameter read before write, issue", async () => {
+    const issues = await runFiles(wrapFunctionModule("  ev_result = ev_result + 1.", false, true));
+    expect(issues.length).to.equal(1);
   });
 
   it("importing parameter, no issue", async () => {

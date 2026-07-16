@@ -3,12 +3,12 @@ import * as Statements from "../2_statements/statements";
 import * as Structures from "../3_structures/structures";
 import {StatementNode} from "../nodes";
 import {ABAPObject} from "../../objects/_abap_object";
-import {FormDefinition, FunctionModuleDefinition, FunctionModuleParameterDirection} from "../types";
+import {FormDefinition, FunctionModuleDefinition, FunctionModuleParameterDirection, IFunctionModuleParameter} from "../types";
 import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
 import {FunctionGroup} from "../../objects";
 import {IRegistry} from "../../_iregistry";
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {IdentifierMeta, TypedIdentifier} from "../types/_typed_identifier";
 import {TableType, UnknownType, AnyType, VoidType, StructureType, TableKeyType} from "../types/basic";
 import {DDIC} from "../../ddic";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -16,6 +16,7 @@ import {ABAPFile} from "../abap_file";
 import {ObjectOriented} from "./_object_oriented";
 import {ReferenceType} from "./_reference";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
+import {Identifier as IdentifierToken} from "../1_lexer/tokens";
 
 export class Procedural {
   private readonly scope: CurrentScope;
@@ -217,7 +218,8 @@ export class Procedural {
         // workaround to avoid false postivies, can be improved
         continue;
       } else {
-        const type = new TypedIdentifier(nameToken, filename, found);
+        const token = new IdentifierToken(nameToken.getStart(), param.name);
+        const type = new TypedIdentifier(token, filename, found, this.functionModuleParameterMeta(param));
         if (ignoreIfAlreadyExists === true) {
           const exists = this.scope.findVariable(param.name);
           if (exists === undefined) {
@@ -229,6 +231,23 @@ export class Procedural {
         allNames.add(param.name.toUpperCase());
       }
     }
+  }
+
+  private functionModuleParameterMeta(param: IFunctionModuleParameter): IdentifierMeta[] {
+    const ret: IdentifierMeta[] = [];
+    if (param.direction === FunctionModuleParameterDirection.importing) {
+      ret.push(IdentifierMeta.FunctionModuleImporting);
+    } else if (param.direction === FunctionModuleParameterDirection.exporting) {
+      ret.push(IdentifierMeta.FunctionModuleExporting);
+    } else if (param.direction === FunctionModuleParameterDirection.changing) {
+      ret.push(IdentifierMeta.FunctionModuleChanging);
+    } else if (param.direction === FunctionModuleParameterDirection.tables) {
+      ret.push(IdentifierMeta.FunctionModuleTables);
+    }
+    if (param.passByValue) {
+      ret.push(IdentifierMeta.PassByValue);
+    }
+    return ret;
   }
 
 }

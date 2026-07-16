@@ -43,7 +43,7 @@ Reading and writing the parameter in the same statement (e.g. "ev_result = ev_re
 as the source is evaluated before the parameter is assigned.
 Objects containing parser or syntax errors are not reported.
 
-Only class and interface method implementations are checked, function module parameters are currently not supported.`,
+Class and interface method implementations and function modules are checked.`,
       tags: [RuleTag.Styleguide],
       badExample: `CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -107,21 +107,21 @@ ENDCLASS.`,
   }
 
   private traverse(node: ISpaghettiScopeNode, obj: ABAPObject, issues: Issue[]): void {
-    if (node.getIdentifier().stype === ScopeType.Method) {
-      this.checkMethod(node, obj, issues);
+    if (node.getIdentifier().stype === ScopeType.Method
+        || node.getIdentifier().stype === ScopeType.FunctionModule) {
+      this.checkProcedure(node, obj, issues);
     }
     for (const child of node.getChildren()) {
       this.traverse(child, obj, issues);
     }
   }
 
-  private checkMethod(node: ISpaghettiScopeNode, obj: ABAPObject, issues: Issue[]): void {
-    const parameters = this.findExportingByReference(node);
+  private checkProcedure(node: ISpaghettiScopeNode, obj: ABAPObject, issues: Issue[]): void {
+    const references = this.collectReferences(node);
+    const parameters = this.findExportingByReference(node, references);
     if (parameters.length === 0) {
       return;
     }
-
-    const references = this.collectReferences(node);
 
     for (const parameter of parameters) {
       const issue = this.checkParameter(parameter, references, obj);
@@ -131,16 +131,23 @@ ENDCLASS.`,
     }
   }
 
-  private findExportingByReference(node: ISpaghettiScopeNode): TypedIdentifier[] {
+  private findExportingByReference(node: ISpaghettiScopeNode, references: IReference[]): TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];
-    const vars = node.getData().vars;
-    for (const name in vars) {
-      const parameter = vars[name];
+    const candidates = new Set<TypedIdentifier>(Object.values(node.getData().vars));
+    for (const reference of references) {
+      if (reference.resolved instanceof TypedIdentifier) {
+        candidates.add(reference.resolved);
+      }
+    }
+
+    for (const parameter of candidates) {
       const meta = parameter.getMeta();
-      if (meta.includes(IdentifierMeta.MethodExporting) === false
+      const exporting = meta.includes(IdentifierMeta.MethodExporting)
+        || meta.includes(IdentifierMeta.FunctionModuleExporting);
+      if (exporting === false
           || meta.includes(IdentifierMeta.PassByValue) === true) {
         continue;
-      } else if (this.conf.skipNames?.some(s => s.toUpperCase() === name.toUpperCase())) {
+      } else if (this.conf.skipNames?.some(s => s.toUpperCase() === parameter.getName().toUpperCase())) {
         continue;
       }
       const type = parameter.getType();
@@ -153,7 +160,7 @@ ENDCLASS.`,
   }
 
   private collectReferences(node: ISpaghettiScopeNode): IReference[] {
-    // methods do not nest, so all descendant scopes (FOR, LET, ...) belong to this method
+    // procedures do not nest, so all descendant scopes (FOR, LET, ...) belong to this procedure
     const ret: IReference[] = [...node.getData().references];
     for (const child of node.getChildren()) {
       ret.push(...this.collectReferences(child));
@@ -166,7 +173,9 @@ ENDCLASS.`,
     let earliestWrite: IReference | undefined = undefined;
 
     for (const reference of references) {
-      if (reference.resolved === undefined || parameter.equals(reference.resolved) === false) {
+      if (reference.resolved === undefined
+          || parameter.equals(reference.resolved) === false
+          || parameter.getName().toUpperCase() !== reference.resolved.getName().toUpperCase()) {
         continue;
       }
       const pos = reference.position.getStart();

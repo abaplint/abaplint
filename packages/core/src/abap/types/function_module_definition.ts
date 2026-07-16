@@ -13,6 +13,7 @@ export interface IFunctionModuleParameter {
   type: string | undefined;
   optional: boolean;
   defaultValue: string | undefined;
+  passByValue: boolean;
 }
 
 export enum FunctionModuleType {
@@ -81,6 +82,7 @@ export class FunctionModuleDefinition {
           type: param.TYP || param.DBFIELD,
           optional: param.OPTIONAL === "X",
           defaultValue: param.DEFAULT,
+          passByValue: param.REFERENCE !== "X",
         });
       }
     }
@@ -96,6 +98,7 @@ export class FunctionModuleDefinition {
           type: param.TYP || param.DBFIELD,
           optional: param.OPTIONAL === "X",
           defaultValue: param.DEFAULT,
+          passByValue: param.REFERENCE !== "X",
         });
       }
     }
@@ -111,6 +114,7 @@ export class FunctionModuleDefinition {
           type: param.TYP || param.DBFIELD,
           optional: true,
           defaultValue: undefined,
+          passByValue: param.REFERENCE !== "X",
         });
       }
     }
@@ -127,6 +131,7 @@ export class FunctionModuleDefinition {
           type: param.DBSTRUCT || param.TYP,
           optional: param.OPTIONAL === "X",
           defaultValue: undefined,
+          passByValue: false,
         });
       }
     }
