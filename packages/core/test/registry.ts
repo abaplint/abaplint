@@ -88,6 +88,20 @@ describe("Registry", () => {
     expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
   });
 
+  it("URL encoded namespaced class resolves main file before test include", async () => {
+    const test = new MemoryFile(
+      "file:///src/%23namesp%23cl_foobar.clas.testclasses.abap",
+      "CLASS ltc_test DEFINITION FOR TESTING. ENDCLASS.");
+    const main = new MemoryFile(
+      "file:///src/%23namesp%23cl_foobar.clas.abap",
+      "CLASS /namesp/cl_foobar DEFINITION. ENDCLASS.");
+    const reg = new Registry().addFiles([test, main]);
+    await reg.parseAsync();
+
+    const object = reg.getObject("CLAS", "/namesp/cl_foobar") as ABAPObject;
+    expect(object.getMainABAPFile()?.getFilename()).to.equal(main.getFilename());
+  });
+
   it("filename with namespace, with dash", async () => {
     const reg = new Registry().addFile(new MemoryFile("/src/%23name-sp%23cl_foobar.clas.abap", "parser error"));
     expect(reg.getObjectCount().normal).to.equal(1);
