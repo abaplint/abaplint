@@ -11,8 +11,13 @@ import {SyntaxInput} from "../_syntax_input";
 export class CallTransformation implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
+    const resultParameters = node.findExpressionAfterToken("RESULT");
+    const resultSources = new Set(
+      resultParameters?.findAllExpressions(Expressions.SimpleSource3) || [],
+    );
+
     for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
-      Source.runSyntax(s, input);
+      Source.runSyntax(s, input, undefined, resultSources.has(s));
     }
 
     for (const d of node.findAllExpressions(Expressions.Dynamic)) {

@@ -103,6 +103,18 @@ ENDCLASS.`;
     expect(writes.length).to.equal(2, "writes");
   });
 
+  it("CALL TRANSFORMATION named RESULT is a write position", () => {
+    const abap = `
+    DATA lv_xdata TYPE xstring.
+    DATA et_data TYPE STANDARD TABLE OF i.
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xdata
+      RESULT root = et_data[].`;
+    const spaghetti = runProgram(abap);
+    const writes = spaghetti.listWritePositions(filename);
+    expect(writes.map(w => w.getName())).to.deep.equal(["et_data"]);
+  });
+
   it("FORM should not add references to _global", () => {
     const abap = `
     FORM foo CHANGING bar TYPE sy.
