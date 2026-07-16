@@ -279,7 +279,7 @@ export class MethodParameters implements IMethodParameters {
         continue;
       }
       const extraMeta: IdentifierMeta[] = [];
-      if (p.getFirstToken().getStr().toUpperCase() === "VALUE" && p.getChildren()[1]?.getFirstToken().getStr() === "(") {
+      if (this.isPassByValue(p)) {
         extraMeta.push(IdentifierMeta.PassByValue);
       } else if (meta.includes(IdentifierMeta.MethodImporting)) {
         extraMeta.push(IdentifierMeta.ReadOnly);
@@ -309,8 +309,14 @@ export class MethodParameters implements IMethodParameters {
 
     const params = source.findAllExpressions(Expressions.MethodParam);
     for (const param of params) {
-      target.push(MethodParam.runSyntax(param, input, meta));
+      const extraMeta = this.isPassByValue(param) ? [IdentifierMeta.PassByValue] : [];
+      target.push(MethodParam.runSyntax(param, input, [...meta, ...extraMeta]));
     }
+  }
+
+  private isPassByValue(param: ExpressionNode): boolean {
+    return param.getFirstToken().getStr().toUpperCase() === "VALUE"
+      && param.getChildren()[1]?.getFirstToken().getStr() === "(";
   }
 
 }

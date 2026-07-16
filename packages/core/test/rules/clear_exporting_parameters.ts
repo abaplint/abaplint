@@ -107,6 +107,30 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("pass by value declared in interface, no issue", async () => {
+    const intf = `INTERFACE zif_foo PUBLIC.
+  METHODS foo EXPORTING VALUE(ev_result) TYPE i.
+ENDINTERFACE.`;
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_foo.
+ENDCLASS.
+CLASS zcl_foo IMPLEMENTATION.
+  METHOD zif_foo~foo.
+    ev_result = ev_result + 1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zif_foo.intf.abap", intf),
+      new MemoryFile("zcl_foo.clas.abap", clas),
+    ]);
+    await reg.parseAsync();
+
+    const rule = new ClearExportingParameters().initialize(reg);
+    const issues = rule.run(reg.getObject("CLAS", "ZCL_FOO")!);
+    expect(issues.length).to.equal(0);
+  });
+
   it("importing parameter, no issue", async () => {
     const def = "METHODS foo IMPORTING iv_input TYPE i EXPORTING ev_result TYPE i.";
     const issues = await runSingle(wrap("    ev_result = iv_input.", def));

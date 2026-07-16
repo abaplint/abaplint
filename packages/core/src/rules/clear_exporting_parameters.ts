@@ -13,8 +13,6 @@ import {ReferenceType, IReference} from "../abap/5_syntax/_reference";
 import {VoidType, UnknownType} from "../abap/types/basic";
 import {Position} from "../position";
 import {Unknown} from "../abap/2_statements/statements/_statement";
-import {EditHelper} from "../edit_helper";
-import * as Expressions from "../abap/2_statements/expressions";
 
 export class ClearExportingParametersConf extends BasicRuleConfig {
   /** Skip specific parameter names, case insensitive
@@ -118,7 +116,7 @@ ENDCLASS.`,
   }
 
   private checkMethod(node: ISpaghettiScopeNode, obj: ABAPObject, issues: Issue[]): void {
-    const parameters = this.findExportingByReference(node, obj);
+    const parameters = this.findExportingByReference(node);
     if (parameters.length === 0) {
       return;
     }
@@ -133,7 +131,7 @@ ENDCLASS.`,
     }
   }
 
-  private findExportingByReference(node: ISpaghettiScopeNode, obj: ABAPObject): TypedIdentifier[] {
+  private findExportingByReference(node: ISpaghettiScopeNode): TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];
     const vars = node.getData().vars;
     for (const name in vars) {
@@ -148,31 +146,10 @@ ENDCLASS.`,
       const type = parameter.getType();
       if (type instanceof VoidType || type instanceof UnknownType) {
         continue; // e.g. RAP magic parameters, or unresolved types
-      } else if (this.isPassByValue(parameter, obj) === true) {
-        continue; // VALUE(..) parameters are always initialized
       }
       ret.push(parameter);
     }
     return ret;
-  }
-
-  private isPassByValue(parameter: TypedIdentifier, obj: ABAPObject): boolean {
-    // the PassByValue meta is not set for EXPORTING parameters, so determine it from the definition
-    const file = obj.getABAPFileByName(parameter.getFilename());
-    if (file === undefined) {
-      return false;
-    }
-    const statement = EditHelper.findStatement(parameter.getToken(), file);
-    if (statement === undefined) {
-      return false;
-    }
-    for (const param of statement.findAllExpressions(Expressions.MethodParam)) {
-      const nameToken = param.findFirstExpression(Expressions.MethodParamName)?.getFirstToken();
-      if (nameToken !== undefined && nameToken.getStart().equals(parameter.getStart())) {
-        return param.getFirstToken().getStr().toUpperCase() === "VALUE";
-      }
-    }
-    return false;
   }
 
   private collectReferences(node: ISpaghettiScopeNode): IReference[] {
