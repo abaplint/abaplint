@@ -84,6 +84,7 @@ export class Source {
           } else {
             this.addIfInferred(node, input, foundType);
           }
+          this.traverseRemainingChildren(children, input);
           return foundType ? foundType : bodyType;
         }
         case "SWITCH":

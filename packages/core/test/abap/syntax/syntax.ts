@@ -8,6 +8,7 @@ import {getABAPObjects} from "../../get_abap";
 import {Version, LanguageVersion, Release, ReleaseName, versionToABAPRelease} from "../../../src/version";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {applyEditSingle} from "../../../src/edit_helper";
+import {IReference, ReferenceType} from "../../../src/abap/5_syntax/_reference";
 
 function run(reg: IRegistry, globalConstants?: string[], version?: Version, errorNamespace?: string,
              languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
@@ -1811,6 +1812,29 @@ DATA lt_bar TYPE STANDARD TABLE OF string.
 DATA(result) = lines( lt_bar ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
+  });
+
+  it("built-in lines( ) after REDUCE", () => {
+    const abap = `
+DATA it TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+DATA rv TYPE i.
+rv = REDUCE i( INIT s = 0 FOR x IN it NEXT s = s + x ) / lines( it ).`;
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
+    const result = new SyntaxLogic(reg, getABAPObjects(reg)[0]).run();
+
+    expect(result.issues.length).to.equals(0);
+
+    const references: IReference[] = [];
+    const visit = (node: ReturnType<typeof result.spaghetti.getTop>): void => {
+      references.push(...node.getData().references);
+      for (const child of node.getChildren()) {
+        visit(child);
+      }
+    };
+    visit(result.spaghetti.getTop());
+    const lines = references.filter(r => r.referenceType === ReferenceType.BuiltinMethodReference
+      && r.position.getName().toUpperCase() === "LINES");
+    expect(lines.length).to.equals(1);
   });
 
   it("built-in to_upper", () => {
