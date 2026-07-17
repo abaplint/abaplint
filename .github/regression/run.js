@@ -44,11 +44,11 @@ const repos = [
   "open-abap/express-icf-shim",
   "open-abap/open-abap-adt",
   "open-abap/open-abap-bal",
-  "open-abap/open-abap-brf",
+//  "open-abap/open-abap-brf",   no files
   "open-abap/open-abap-cds",
   "open-abap/open-abap-ci",
   "open-abap/open-abap-core",
-  "open-abap/open-abap-deprecated",
+//  "open-abap/open-abap-deprecated",  no files
   "open-abap/open-abap-gui",
   "open-abap/open-abap-jobs",
   "open-abap/open-abap-lock",
