@@ -6875,6 +6875,35 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain(`Duplicate`);
   });
 
+  it("CATCH multiple exceptions INTO reference", () => {
+    const abap = `CLASS cx_sy_dyn_call_error DEFINITION INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_sy_dyn_call_error IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_sy_itab_line_not_found DEFINITION INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_sy_itab_line_not_found IMPLEMENTATION.
+ENDCLASS.
+
+TRY.
+  CATCH cx_sy_dyn_call_error cx_sy_itab_line_not_found INTO DATA(lo_exc).
+ENDTRY.
+TRY.
+  CATCH cx_sy_dyn_call_error cx_sy_itab_line_not_found INTO lo_exc.
+ENDTRY.`;
+
+    const root = `CLASS cx_root DEFINITION ABSTRACT PUBLIC.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.`;
+
+    const issues = runMulti([
+      {filename: "zfoobar.prog.abap", contents: abap},
+      {filename: "cx_root.clas.abap", contents: root},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("CATCH into subclass reference, syntax error", () => {
     const abap = `
 CLASS cx_static_check DEFINITION.

@@ -17,7 +17,8 @@ export class CallTransformation implements StatementSyntax {
     );
 
     for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
-      Source.runSyntax(s, input, undefined, resultSources.has(s));
+      const isResult = resultSources.has(s);
+      Source.runSyntax(s, input, undefined, isResult, false, isResult === false);
     }
 
     for (const d of node.findAllExpressions(Expressions.Dynamic)) {

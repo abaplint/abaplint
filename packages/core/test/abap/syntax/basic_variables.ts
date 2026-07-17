@@ -944,6 +944,48 @@ ENDTRY.`;
     expect(type).to.be.instanceof(Basic.VoidType);
   });
 
+  it("CATCH multiple classes into DATA uses first common superclass", () => {
+    const abap = `
+CLASS cx_root DEFINITION.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_middle DEFINITION INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_middle IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_first DEFINITION INHERITING FROM cx_middle.
+ENDCLASS.
+CLASS cx_first IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_second DEFINITION INHERITING FROM cx_middle.
+ENDCLASS.
+CLASS cx_second IMPLEMENTATION.
+ENDCLASS.
+TRY.
+  CATCH cx_first cx_second INTO DATA(lx_error).
+ENDTRY.`;
+    const identifier = resolveVariable(abap, "lx_error");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.ObjectReferenceType);
+    expect((type as Basic.ObjectReferenceType).getIdentifierName().toLowerCase()).to.equal("cx_middle");
+  });
+
+  it("CATCH multiple classes into DATA is voided when a class is unknown", () => {
+    const abap = `
+CLASS cx_known DEFINITION.
+ENDCLASS.
+CLASS cx_known IMPLEMENTATION.
+ENDCLASS.
+TRY.
+  CATCH cx_known zcx_unknown INTO DATA(lx_error).
+ENDTRY.`;
+    const identifier = resolveVariable(abap, "lx_error");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
   it("Anything from voided type should give void", () => {
     const abap = `
   DATA lo_void TYPE REF TO cl_voided.

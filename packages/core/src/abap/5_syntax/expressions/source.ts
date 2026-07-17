@@ -43,7 +43,8 @@ export class Source {
     input: SyntaxInput,
     targetType?: AbstractType,
     writeReference = false,
-    allowGenericDeference = false): AbstractType | undefined {
+    allowGenericDeference = false,
+    readReference = true): AbstractType | undefined {
 
     if (node === undefined) {
       return undefined;
@@ -218,7 +219,10 @@ export class Source {
 
     let context: AbstractType | undefined = new UnknownType("todo, Source type");
 
-    const type = [ReferenceType.DataReadReference];
+    const type: ReferenceType[] = [];
+    if (readReference) {
+      type.push(ReferenceType.DataReadReference);
+    }
     if (writeReference) {
       type.push(ReferenceType.DataWriteReference);
     }
