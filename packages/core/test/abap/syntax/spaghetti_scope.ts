@@ -111,6 +111,8 @@ ENDCLASS.`;
       SOURCE XML lv_xdata
       RESULT root = et_data[].`;
     const spaghetti = runProgram(abap);
+    const reads = spaghetti.listReadPositions(filename);
+    expect(reads.map(r => r.getName())).to.deep.equal(["lv_xdata"]);
     const writes = spaghetti.listWritePositions(filename);
     expect(writes.map(w => w.getName())).to.deep.equal(["et_data"]);
   });
