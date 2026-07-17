@@ -6875,7 +6875,7 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain(`Duplicate`);
   });
 
-  it.only("CATCH multiple exceptions INTO reference", () => {
+  it("CATCH multiple exceptions INTO reference", () => {
     const abap = `CLASS cx_sy_dyn_call_error DEFINITION INHERITING FROM cx_root.
 ENDCLASS.
 CLASS cx_sy_dyn_call_error IMPLEMENTATION.
