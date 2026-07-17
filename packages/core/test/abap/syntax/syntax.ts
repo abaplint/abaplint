@@ -6901,7 +6901,7 @@ ENDCLASS.`;
       {filename: "zfoobar.prog.abap", contents: abap},
       {filename: "cx_root.clas.abap", contents: root},
     ]);
-    expect(issues.length).to.equal(0);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("CATCH into subclass reference, syntax error", () => {
