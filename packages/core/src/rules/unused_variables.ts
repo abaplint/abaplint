@@ -15,6 +15,7 @@ import {StatementNode} from "../abap/nodes/statement_node";
 import * as Statements from "../abap/2_statements/statements";
 import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
 import {ReferenceType} from "../abap/5_syntax/_reference";
+import {ABAPFile} from "../abap/abap_file";
 
 
 export class UnusedVariablesConf extends BasicRuleConfig {
@@ -27,38 +28,42 @@ export class UnusedVariablesConf extends BasicRuleConfig {
 }
 
 class WorkArea {
-  private readonly workarea: {id: TypedIdentifier, count: number}[] = [];
+  // keyed by filename + start position, this equals Identifier.equals()
+  private readonly workarea = new Map<string, {id: TypedIdentifier, count: number}>();
 
   public push(id: TypedIdentifier, count = 1) {
-    for (const w of this.workarea) {
-      if (id.equals(w.id)) {
-        return;
-      }
+    const key = this.buildKey(id);
+    if (this.workarea.has(key)) {
+      return;
     }
-    this.workarea.push({id, count});
+    this.workarea.set(key, {id, count});
   }
 
   public removeIfExists(id: Identifier | undefined): void {
     if (id === undefined) {
       return;
     }
-    for (let i = 0; i < this.workarea.length; i++) {
-      if (id.equals(this.workarea[i].id)) {
-        this.workarea[i].count--;
-        if (this.workarea[i].count === 0) {
-          this.workarea.splice(i, 1);
-        }
-        return;
+    const key = this.buildKey(id);
+    const found = this.workarea.get(key);
+    if (found !== undefined) {
+      found.count--;
+      if (found.count === 0) {
+        this.workarea.delete(key);
       }
     }
   }
 
   public get() {
-    return this.workarea;
+    return [...this.workarea.values()];
   }
 
   public count(): number {
-    return this.workarea.length;
+    return this.workarea.size;
+  }
+
+  private buildKey(id: Identifier): string {
+    const start = id.getStart();
+    return id.getFilename() + "," + start.getRow() + "," + start.getCol();
   }
 }
 
@@ -208,6 +213,9 @@ Errors found in INCLUDES are reported for the main program.`,
 
   private buildIssues(obj: ABAPObject): Issue[] {
     const ret: Issue[] = [];
+    const metadata = this.getMetadata();
+    const pragma = metadata.pragma + "";
+    const files = new Map<string, ABAPFile | undefined>();
 
     for (const w of this.workarea.get()) {
       const filename = w.id.getFilename();
@@ -217,48 +225,61 @@ Errors found in INCLUDES are reported for the main program.`,
         continue;
       }
 
-      const statement = this.findStatement(w.id);
-      if (statement?.getPragmas().map(t => t.getStr()).includes(this.getMetadata().pragma + "")) {
-        continue;
-      } else if (this.suppressedbyPseudo(statement, w.id, obj)) {
-        continue;
+      if (files.has(filename) === false) {
+        files.set(filename, this.findFile(filename));
+      }
+      const file = files.get(filename);
+
+      let statement: StatementNode | undefined = undefined;
+      let statementIndex = -1;
+      if (file !== undefined) {
+        const statements = file.getStatements();
+        const token = w.id.getToken();
+        for (let i = 0; i < statements.length; i++) {
+          if (statements[i].includesToken(token)) {
+            statement = statements[i];
+            statementIndex = i;
+            break;
+          }
+        }
+      }
+
+      if (statement !== undefined && file !== undefined) {
+        if (statement.getPragmas().some(t => t.getStr() === pragma)) {
+          continue;
+        } else if (this.suppressedbyPseudo(file, statementIndex, w.id, obj)) {
+          continue;
+        }
       }
 
       const name = w.id.getName();
       const message = "Variable \"" + name.toLowerCase() + "\" not used";
 
-      const fix = this.buildFix(w.id, obj);
-      ret.push(Issue.atIdentifier(w.id, message, this.getMetadata().key, this.conf.severity, fix));
+      const fix = this.buildFix(w.id, obj, statement);
+      ret.push(Issue.atIdentifier(w.id, message, metadata.key, this.conf.severity, fix));
     }
 
     return ret;
   }
 
-  private suppressedbyPseudo(statement: StatementNode | undefined, v: TypedIdentifier, obj: ABAPObject): boolean {
-    if (statement === undefined) {
+  private suppressedbyPseudo(file: ABAPFile, statementIndex: number, v: TypedIdentifier, obj: ABAPObject): boolean {
+    // pseudo comments are only found in files belonging to the object itself, not in eg. includes
+    if (obj.getABAPFileByName(v.getFilename()) === undefined) {
       return false;
     }
 
-    const file = obj.getABAPFileByName(v.getFilename());
-    if (file === undefined) {
-      return false;
-    }
-
-    let next = false;
-    for (const s of file.getStatements()) {
-      if (next === true && s.get() instanceof Comment) {
-        return s.concatTokens().includes(this.getMetadata().pseudoComment + "");
-      }
-      if (s === statement) {
-        next = true;
+    const statements = file.getStatements();
+    for (let i = statementIndex + 1; i < statements.length; i++) {
+      if (statements[i].get() instanceof Comment) {
+        return statements[i].concatTokens().includes(this.getMetadata().pseudoComment + "");
       }
     }
 
     return false;
   }
 
-  private findStatement(v: TypedIdentifier): StatementNode | undefined {
-    const file = this.reg.getFileByName(v.getFilename());
+  private findFile(filename: string): ABAPFile | undefined {
+    const file = this.reg.getFileByName(filename);
     if (file === undefined) {
       return undefined;
     }
@@ -266,27 +287,18 @@ Errors found in INCLUDES are reported for the main program.`,
     if (!(object instanceof ABAPObject)) {
       return undefined;
     }
-    const abapfile = object.getABAPFileByName(v.getFilename());
-    if (abapfile === undefined) {
+    return object.getABAPFileByName(filename);
+  }
+
+  private buildFix(v: TypedIdentifier, obj: ABAPObject, statement: StatementNode | undefined): IEdit | undefined {
+    if (statement === undefined || !(statement.get() instanceof Statements.Data)) {
       return undefined;
     }
 
-    const statement = EditHelper.findStatement(v.getToken(), abapfile);
-    return statement;
-  }
-
-  private buildFix(v: TypedIdentifier, obj: ABAPObject): IEdit | undefined {
     const file = obj.getABAPFileByName(v.getFilename());
     if (file === undefined) {
       return undefined;
     }
-
-    const statement = EditHelper.findStatement(v.getToken(), file);
-    if (statement === undefined) {
-      return undefined;
-    } else if (statement.get() instanceof Statements.Data) {
-      return EditHelper.deleteStatement(file, statement);
-    }
-    return undefined;
+    return EditHelper.deleteStatement(file, statement);
   }
 }

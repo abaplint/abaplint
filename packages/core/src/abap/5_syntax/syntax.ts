@@ -314,9 +314,9 @@ export class SyntaxLogic {
   private readonly object: ABAPObject;
   private readonly reg: IRegistry;
 
-  private readonly scope: CurrentScope;
+  private scope: CurrentScope;
 
-  private readonly helpers: {
+  private helpers: {
     oooc: ObjectOriented,
     proc: Procedural,
   };
@@ -326,18 +326,19 @@ export class SyntaxLogic {
     this.issues = [];
 
     this.object = object;
-    this.scope = CurrentScope.buildDefault(this.reg, object);
-
-    this.helpers = {
-      oooc: new ObjectOriented(this.scope),
-      proc: new Procedural(this.reg, this.scope),
-    };
   }
 
   public run(): ISyntaxResult {
     if (this.object.syntaxResult !== undefined) {
       return this.object.syntaxResult;
     }
+
+    // the scope is built here instead of in the constructor, cached results must stay cheap
+    this.scope = CurrentScope.buildDefault(this.reg, this.object);
+    this.helpers = {
+      oooc: new ObjectOriented(this.scope),
+      proc: new Procedural(this.reg, this.scope),
+    };
 
     this.issues = [];
     this.reg.getDDICReferences().clear(this.object);
