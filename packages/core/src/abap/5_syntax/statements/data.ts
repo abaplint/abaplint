@@ -18,6 +18,10 @@ export class Data {
         input.issues.push(syntaxIssue(input, id.getToken(), message));
         return new TypedIdentifier(id.getToken(), input.filename, VoidType.get(CheckSyntaxKey));
       }
+      if (id && this.isNameTooLong(id.getName())) {
+        const message = "DATA name too long, " + id.getName();
+        input.issues.push(syntaxIssue(input, id.getToken(), message));
+      }
       if (id?.getType().isGeneric() === true
           && id?.getType().containsVoid() === false) {
         const message = "DATA definition cannot be generic, " + name?.concatTokens();
@@ -32,10 +36,18 @@ export class Data {
         const message = "not possible to have a name with only digits";
         input.issues.push(syntaxIssue(input, name.getFirstToken(), message));
       }
+      if (this.isNameTooLong(name.concatTokens())) {
+        const message = "DATA name too long, " + name.concatTokens();
+        input.issues.push(syntaxIssue(input, name.getFirstToken(), message));
+      }
       return new TypedIdentifier(name.getFirstToken(), input.filename, new UnknownType("data, fallback"));
     }
 
     return undefined;
+  }
+
+  private isNameTooLong(name: string): boolean {
+    return name.length > 30;
   }
 
   private isOnlyDigits(name: string): boolean {

@@ -19,6 +19,10 @@ export class Constant {
         input.issues.push(syntaxIssue(input, found.getToken(), message));
         return new TypedIdentifier(found.getToken(), input.filename, VoidType.get(CheckSyntaxKey), meta, val);
       }
+      if (this.isNameTooLong(found.getName())) {
+        const message = "CONSTANTS name too long, " + found.getName();
+        input.issues.push(syntaxIssue(input, found.getToken(), message));
+      }
       return new TypedIdentifier(found.getToken(), input.filename, found.getType(), meta, val);
     }
 
@@ -28,10 +32,18 @@ export class Constant {
         const message = "not possible to have a name with only digits";
         input.issues.push(syntaxIssue(input, fallback.getFirstToken(), message));
       }
+      if (this.isNameTooLong(fallback.concatTokens())) {
+        const message = "CONSTANTS name too long, " + fallback.concatTokens();
+        input.issues.push(syntaxIssue(input, fallback.getFirstToken(), message));
+      }
       return new TypedIdentifier(fallback.getFirstToken(), input.filename, new UnknownType("constant, fallback"));
     }
 
     throw new AssertError("Statement Constant: unexpected structure");
+  }
+
+  private isNameTooLong(name: string): boolean {
+    return name.length > 30;
   }
 
   private isOnlyDigits(name: string): boolean {

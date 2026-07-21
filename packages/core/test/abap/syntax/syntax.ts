@@ -14342,4 +14342,22 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("DATA name too long", () => {
+    const abap = `DATA token_shift_right_unsigned_assign1 TYPE i VALUE 74.`;
+    const issues = runProgram(abap);
+    const message = issues[0]?.getMessage();
+    expect(message).to.not.equal(undefined);
+    expect(message).to.include("too long");
+    expect(message).to.include("token_shift_right_unsigned_assign1");
+  });
+
+  it("CONSTANTS name too long", () => {
+    const abap = `CONSTANTS token_shift_right_unsigned_assign2 TYPE i VALUE 74.`;
+    const issues = runProgram(abap);
+    const message = issues[0]?.getMessage();
+    expect(message).to.not.equal(undefined);
+    expect(message).to.include("too long");
+    expect(message).to.include("token_shift_right_unsigned_assign2");
+  });
+
 });
