@@ -269,11 +269,9 @@ Errors found in INCLUDES are reported for the main program.`,
     }
 
     const statements = file.getStatements();
-    for (let i = statementIndex + 1; i < statements.length; i++) {
-      if (statements[i].get() instanceof Comment) {
-        return statements[i].concatTokens().includes(this.getMetadata().pseudoComment + "");
-      }
-    }
+    const next = statements[statementIndex + 1];
+    return next?.get() instanceof Comment
+      && next.concatTokens().includes(this.getMetadata().pseudoComment + "");
 
     return false;
   }
