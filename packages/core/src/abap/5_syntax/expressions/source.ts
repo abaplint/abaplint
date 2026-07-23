@@ -91,7 +91,7 @@ export class Source {
         case "SWITCH":
         {
           const foundType = this.determineType(node, input, targetType);
-          const bodyType = SwitchBody.runSyntax(node.findDirectExpression(Expressions.SwitchBody), input);
+          const bodyType = SwitchBody.runSyntax(node.findDirectExpression(Expressions.SwitchBody), input, foundType);
           if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, input, bodyType);
           } else {

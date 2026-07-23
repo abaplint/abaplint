@@ -6,7 +6,10 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {VoidType} from "../../types/basic";
 
 export class SwitchBody {
-  public static runSyntax(node: ExpressionNode | undefined, input: SyntaxInput): AbstractType | undefined {
+  public static runSyntax(
+    node: ExpressionNode | undefined,
+    input: SyntaxInput,
+    targetType?: AbstractType): AbstractType | undefined {
     if (node === undefined) {
       return;
     }
@@ -17,13 +20,13 @@ export class SwitchBody {
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return VoidType.get(CheckSyntaxKey);
     }
-    const type = Source.runSyntax(thenSource, input);
+    const type = Source.runSyntax(thenSource, input, targetType);
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       if (s === thenSource) {
         continue;
       }
-      Source.runSyntax(s, input);
+      Source.runSyntax(s, input, targetType ?? type);
     }
 
     return type;

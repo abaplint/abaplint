@@ -297,6 +297,20 @@ DATA(result) = |foo { COND #( WHEN input IS INITIAL THEN \`you\` ELSE input ) } 
     expect(hover?.value).to.contain("Inferred");
   });
 
+  it("Hover inferred type, VALUE in later COND branch", () => {
+    const abap = `TYPES message_type TYPE c LENGTH 1.
+TYPES severity_filter TYPE RANGE OF message_type.
+DATA(existing_filter) = VALUE severity_filter( ( sign = 'I' option = 'EQ' low = 'E' ) ).
+DATA(use_filter) = abap_true.
+DATA(filter) = COND #( WHEN use_filter = abap_true THEN existing_filter ELSE VALUE #( ) ).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 4, 83));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Inferred");
+    expect(hover?.value).to.contain("severity_filter");
+  });
+
   it("Hover inferred type, types table", () => {
     const abap = `TYPES type_e_letter TYPE c LENGTH 1.
 TYPES type_t_letter TYPE STANDARD TABLE OF type_e_letter WITH NON-UNIQUE DEFAULT KEY.
@@ -340,6 +354,39 @@ DATA(left) = SWITCH #( bottle - 1
     expect(hover).to.not.equal(undefined);
     expect(hover?.value).to.contain("Inferred");
     expect(hover?.value).to.contain("c LENGTH 6");
+  });
+
+  it("Hover inferred type, VALUE branches in SWITCH", () => {
+    const abap = `CLASS lcl_reproducer DEFINITION.
+  PUBLIC SECTION.
+    TYPES message_type TYPE c LENGTH 1.
+    TYPES severity_filter TYPE RANGE OF message_type.
+    CLASS-METHODS get_filter
+      IMPORTING message_type TYPE message_type
+      RETURNING VALUE(filter) TYPE severity_filter.
+ENDCLASS.
+CLASS lcl_reproducer IMPLEMENTATION.
+  METHOD get_filter.
+    filter = SWITCH #(
+      message_type
+      WHEN 'E' THEN VALUE #( ( sign = 'I' option = 'EQ' low = 'E' ) )
+      WHEN 'W' THEN VALUE #( ( sign = 'I' option = 'EQ' low = 'W' ) )
+      ELSE VALUE #( ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zfoo.clas.locals_imp.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+
+    for (const position of [
+      buildPosition(file, 12, 26),
+      buildPosition(file, 13, 26),
+      buildPosition(file, 14, 17),
+    ]) {
+      const hover = new Hover(reg).find(position);
+      expect(hover).to.not.equal(undefined);
+      expect(hover?.value).to.contain("Inferred");
+      expect(hover?.value).to.contain("severity_filter");
+    }
   });
 
   it("Hover data element", () => {

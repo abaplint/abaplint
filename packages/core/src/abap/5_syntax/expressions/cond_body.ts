@@ -31,7 +31,7 @@ export class CondBody {
       if (type === undefined) {
         type = Source.runSyntax(s, input, targetType);
       } else {
-        Source.runSyntax(s, input, targetType);
+        Source.runSyntax(s, input, targetType ?? type);
       }
     }
 
