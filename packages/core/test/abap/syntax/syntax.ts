@@ -14360,4 +14360,16 @@ ENDCLASS.`;
     expect(message).to.include("token_shift_right_unsigned_assign2");
   });
 
+  it("INTERFACES can only be declared in public sections", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PRIVATE SECTION.
+    INTERFACES if_bali_item_getter.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("INTERFACES can only be declared in public sections");
+  });
+
 });
