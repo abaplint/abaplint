@@ -93,6 +93,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
 
     // perform checks after everything has been initialized
+    this.checkInterfaceVisibility(input, node);
     this.checkMethodsFromSuperClasses(input);
     this.checkMethodNameLength(input);
     this.checkClassConstructorStatic(input);
@@ -181,6 +182,18 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     for (const m of this.methodDefs.getAll()) {
       if (m.getName().toUpperCase() === "CLASS_CONSTRUCTOR" && m.isStatic() === false) {
         input.issues.push(syntaxIssue(input, m.getToken(), "CLASS_CONSTRUCTOR must be static"));
+      }
+    }
+  }
+
+  private checkInterfaceVisibility(input: SyntaxInput, node: StructureNode) {
+    const sections = [
+      node.findDirectStructure(Structures.ProtectedSection),
+      node.findDirectStructure(Structures.PrivateSection),
+    ];
+    for (const section of sections) {
+      for (const statement of section?.findAllStatements(Statements.InterfaceDef) || []) {
+        input.issues.push(syntaxIssue(input, statement.getFirstToken(), "INTERFACES can only be declared in public sections"));
       }
     }
   }

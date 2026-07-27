@@ -4,14 +4,20 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {BasicTypes} from "../basic_types";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {StatementSyntax} from "../_statement_syntax";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {VoidType} from "../../types/basic";
 
 export class FieldSymbol implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
-    const fsname = node.findFirstExpression(Expressions.FieldSymbol)?.getFirstToken();
-    if (fsname === undefined) {
+    const fs = node.findFirstExpression(Expressions.FieldSymbol);
+    const fsname = fs?.getFirstToken();
+    if (fs === undefined || fsname === undefined) {
       return;
+    }
+
+    if (fs.concatTokens().length > 30) {
+      const message = "FIELD-SYMBOLS name too long, " + fs.concatTokens();
+      input.issues.push(syntaxIssue(input, fsname, message));
     }
 
     if (node.getChildren().length === 5) {
