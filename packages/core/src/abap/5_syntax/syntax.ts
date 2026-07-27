@@ -59,6 +59,7 @@ import {If} from "./statements/if";
 import {ElseIf} from "./statements/else_if";
 import {Append} from "./statements/append";
 import {SelectionScreen} from "./statements/selection_screen";
+import {AtSelectionScreen} from "./statements/at_selection_screen";
 import {Ranges} from "./statements/ranges";
 import {Write} from "./statements/write";
 import {Case} from "./statements/case";
@@ -272,6 +273,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new AuthorityCheck());
   addToMap(new InsertReport());
   addToMap(new SelectionScreen());
+  addToMap(new AtSelectionScreen());
   addToMap(new Ranges());
   addToMap(new Add());
   addToMap(new RaiseEvent());
