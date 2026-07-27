@@ -82,6 +82,29 @@ describe("Rule: unused_variables, single file", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("SELECT-OPTIONS used in AT SELECTION-SCREEN ON", async () => {
+    const abap = `REPORT zfoo.
+SELECT-OPTIONS s_bukrs FOR t001-bukrs.
+AT SELECTION-SCREEN ON s_bukrs.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("PARAMETERS used in AT SELECTION-SCREEN ON VALUE-REQUEST FOR", async () => {
+    const abap = `REPORT zfoo.
+PARAMETERS p_file TYPE string.
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_file.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("SELECT-OPTIONS not used, should report", async () => {
+    const abap = `REPORT zfoo.
+SELECT-OPTIONS s_bukrs FOR t001-bukrs.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+  });
+
   it("class with attribute", async () => {
     const abap =
 `CLASS lcl_foo DEFINITION.
