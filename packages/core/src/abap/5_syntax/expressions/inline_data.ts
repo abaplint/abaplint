@@ -9,6 +9,10 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 export class InlineData {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, type: AbstractType | undefined): void {
     const token = node.findFirstExpression(Expressions.TargetField)?.getFirstToken();
+    if (token && token.getStr().length > 30) {
+      const message = "DATA name too long, " + token.getStr();
+      input.issues.push(syntaxIssue(input, token, message));
+    }
     if (token && type) {
       if (type instanceof CSequenceType || type instanceof CLikeType) {
         type = StringType.get();
