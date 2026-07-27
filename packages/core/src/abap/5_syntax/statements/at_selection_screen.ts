@@ -12,8 +12,8 @@ export class AtSelectionScreen implements StatementSyntax {
     // a parameter or select-option, register these as read references so
     // they are not reported as unused.
     const fields = [
-      ...node.findAllExpressions(Expressions.FieldSub),
-      ...node.findAllExpressions(Expressions.Field),
+      ...node.findDirectExpressions(Expressions.FieldSub),
+      ...node.findDirectExpressions(Expressions.Field),
     ];
 
     for (const field of fields) {
