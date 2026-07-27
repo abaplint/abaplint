@@ -4,11 +4,18 @@ import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class InlineFS {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, type: AbstractType | undefined): void {
     const token = node.findFirstExpression(Expressions.TargetFieldSymbol)?.getFirstToken();
+
+    const fs = node.findFirstExpression(Expressions.FieldSymbol);
+    if (fs && fs.concatTokens().length > 30) {
+      const message = "FIELD-SYMBOLS name too long, " + fs.concatTokens();
+      input.issues.push(syntaxIssue(input, fs.getFirstToken(), message));
+    }
+
     if (token && type) {
       const identifier = new TypedIdentifier(token, input.filename, type, [IdentifierMeta.InlineDefinition]);
       input.scope.addIdentifier(identifier);

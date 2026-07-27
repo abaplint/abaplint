@@ -14369,6 +14369,42 @@ ENDCLASS.`;
     expect(message).to.include("lv_set_proto_constructable_base");
   });
 
+  it("inline FIELD-SYMBOL name too long", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+LOOP AT tab ASSIGNING FIELD-SYMBOL(<lv_set_proto_constructable_ba>).
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    const message = issues[0]?.getMessage();
+    expect(message).to.not.equal(undefined);
+    expect(message).to.include("too long");
+    expect(message).to.include("<lv_set_proto_constructable_ba>");
+  });
+
+  it("inline FIELD-SYMBOL name, 30 characters, ok", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+LOOP AT tab ASSIGNING FIELD-SYMBOL(<lv_set_proto_constructable_b>).
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FIELD-SYMBOLS name too long", () => {
+    const abap = `FIELD-SYMBOLS <lv_set_proto_constructable_ba> TYPE i.`;
+    const issues = runProgram(abap);
+    const message = issues[0]?.getMessage();
+    expect(message).to.not.equal(undefined);
+    expect(message).to.include("too long");
+    expect(message).to.include("<lv_set_proto_constructable_ba>");
+  });
+
+  it("FIELD-SYMBOLS name, 30 characters, ok", () => {
+    const abap = `FIELD-SYMBOLS <lv_set_proto_constructable_b> TYPE i.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("INTERFACES can only be declared in public sections", () => {
     const abap = `
 CLASS lcl DEFINITION.
