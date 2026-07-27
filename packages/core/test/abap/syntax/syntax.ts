@@ -14360,6 +14360,15 @@ ENDCLASS.`;
     expect(message).to.include("token_shift_right_unsigned_assign2");
   });
 
+  it("inline DATA name too long", () => {
+    const abap = `DATA(lv_set_proto_constructable_base) = abap_false.`;
+    const issues = runProgram(abap);
+    const message = issues[0]?.getMessage();
+    expect(message).to.not.equal(undefined);
+    expect(message).to.include("too long");
+    expect(message).to.include("lv_set_proto_constructable_base");
+  });
+
   it("INTERFACES can only be declared in public sections", () => {
     const abap = `
 CLASS lcl DEFINITION.
