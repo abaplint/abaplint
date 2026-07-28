@@ -46,7 +46,7 @@ export class ChainMainlyDeclarations extends ABAPRule {
       extendedInformation: `
 https://docs.abapopenchecks.org/checks/23/
 
-https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenchained_statements_guidl.htm
+https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenchained_statements_guidl.html
 `,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `CALL METHOD: bar.`,

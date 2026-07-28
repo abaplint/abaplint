@@ -23,7 +23,7 @@ export class ImplicitStartOfSelection extends ABAPRule {
       shortDescription: `Add explicit selection screen event handling`,
       extendedInformation: `Only runs for executable programs
 
-https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapstart-of-selection.htm`,
+https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abapstart-of-selection.html`,
       tags: [RuleTag.SingleFile],
       badExample: `REPORT zfoo.
 WRITE 'hello'.`,

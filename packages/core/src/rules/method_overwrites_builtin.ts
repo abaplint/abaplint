@@ -18,7 +18,7 @@ export class MethodOverwritesBuiltIn extends ABAPRule {
       key: "method_overwrites_builtin",
       title: "Method name overwrites builtin function",
       shortDescription: `Checks Method names that overwrite builtin SAP functions`,
-      extendedInformation: `https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abenbuilt_in_functions_overview.htm
+      extendedInformation: `https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abenbuilt_in_functions_overview.html
 
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-obscuring-built-in-functions
 

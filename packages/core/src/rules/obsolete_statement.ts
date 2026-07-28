@@ -95,44 +95,44 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-func
 
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#avoid-obsolete-language-elements
 
-SET EXTENDED CHECK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapset_extended_check.htm
+SET EXTENDED CHECK: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abapset_extended_check.html
 
-IS REQUESTED: https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenlogexp_requested.htm
+IS REQUESTED: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenlogexp_requested.html
 
-WITH HEADER LINE: https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abapdata_header_line.htm
+WITH HEADER LINE: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapdata_header_line.html
 
-FIELD-SYMBOLS STRUCTURE: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapfield-symbols_obsolete_typing.htm
+FIELD-SYMBOLS STRUCTURE: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abapfield-symbols_obsolete_typing.html
 
-TYPE-POOLS: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm
+TYPE-POOLS: from 702, https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abennews-71-program_load.html
 
-LOAD addition: from 702, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abennews-71-program_load.htm
+LOAD addition: from 702, https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abennews-71-program_load.html
 
-COMMUICATION: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapcommunication.htm
+COMMUICATION: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abapcommunication.html
 
-OCCURS: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapdata_occurs.htm
+OCCURS: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abapdata_occurs.html
 
-PARAMETER: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapparameter.htm
+PARAMETER: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapparameter.html
 
-RANGES: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapranges.htm
+RANGES: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapranges.html
 
-PACK: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abappack.htm
+PACK: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abappack.html
 
-MOVE: https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapmove_obs.htm
+MOVE: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abapmove_obs.html
 
-SELECT without INTO: https://help.sap.com/doc/abapdocu_731_index_htm/7.31/en-US/abapselect_obsolete.htm
+SELECT without INTO: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapselect_obsolete.html
 SELECT COUNT(*) is considered okay
 
-FREE MEMORY: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapfree_mem_id_obsolete.htm
+FREE MEMORY: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abapfree_mem_id_obsolete.html
 
-SORT BY FS: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapsort_itab_obsolete.htm
+SORT BY FS: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapsort_itab_obsolete.html
 
-CALL TRANSFORMATION OBJECTS: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapcall_transformation_objects.htm
+CALL TRANSFORMATION OBJECTS: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapcall_transformation_objects.html
 
-POSIX REGEX: https://help.sap.com/doc/abapdocu_755_index_htm/7.55/en-US/index.htm
+POSIX REGEX: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENREGEX_MIGRATING_POSIX.html
 
 OCCURENCES: check for OCCURENCES vs OCCURRENCES
 
-CLIENT SPECIFIED, from 754: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/index.htm?file=abapselect_client_obsolete.htm`,
+CLIENT SPECIFIED, from 754: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapselect_client_obsolete.html`,
       badExample: `REFRESH itab.
 
 COMPUTE foo = 2 + 2.

@@ -19,7 +19,7 @@ export class NoMacros extends ABAPRule {
       shortDescription: `Checks that macros are not used`,
       extendedInformation: `Macros reduce readability and are difficult to debug, use methods or form routines instead.
 
-https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenmacros_guidl.htm`,
+https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenmacros_guidl.html`,
       tags: [RuleTag.SingleFile],
       badExample: `DEFINE _macro.
   WRITE 'hello'.

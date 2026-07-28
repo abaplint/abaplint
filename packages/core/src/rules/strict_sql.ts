@@ -20,9 +20,9 @@ export class StrictSQL extends ABAPRule {
       key: "strict_sql",
       title: "Strict SQL",
       shortDescription: `Strict SQL`,
-      extendedInformation: `https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapinto_clause.htm
+      extendedInformation: `https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapinto_clause.html
 
-https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abenopensql_strict_mode_750.htm
+https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENABAP_SQL_STRICT_MODES.html
 
 Also see separate rule sql_escape_host_variables
 

@@ -18,7 +18,7 @@ export class PragmaStyle extends ABAPRule {
       title: "Pragma Style",
       shortDescription: `Check pragmas placement and case`,
       tags: [RuleTag.SingleFile],
-      extendedInformation: `https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/abenpragma.htm`,
+      extendedInformation: `https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENPRAGMA.html`,
       badExample: `DATA field ##NO_TEXT TYPE i.`,
       goodExample: `DATA field TYPE i ##NO_TEXT.`,
     };

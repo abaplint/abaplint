@@ -20,7 +20,7 @@ export class ExpandMacros extends ABAPRule {
       key: "expand_macros",
       title: "Expand Macros",
       shortDescription: `Allows expanding macro calls with quick fixes`,
-      extendedInformation: `Macros: https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm
+      extendedInformation: `Macros: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenmacros_guidl.html
 
 Note that macros/DEFINE cannot be used in the ABAP Cloud programming model`,
       badExample: `DEFINE _hello.

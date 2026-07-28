@@ -18,7 +18,7 @@ export class SyModification extends ABAPRule {
       key: "sy_modification",
       title: "Modification of SY fields",
       shortDescription: `Finds modification of sy fields`,
-      extendedInformation: `https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abensystem_fields.htm
+      extendedInformation: `https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abensystem_fields.html
 
 Changes to SY-TVAR* fields are not reported
 
