@@ -1,4 +1,4 @@
-import {statementType, statementVersionFail} from "../_utils";
+import {statementExpectFail, statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release, LanguageVersion} from "../../../src";
 
@@ -31,3 +31,7 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "PERFORM");
+
+statementExpectFail([
+  "PERFORM foo USING 1 + 2.",
+], "PERFORM");
