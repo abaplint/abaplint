@@ -125,6 +125,14 @@ const tests = [
 
        failed failed
        reported reported.`,
+
+  `READ ENTITIES OF i_journalentrytp
+     ENTITY JournalEntry
+     EXECUTE Validate
+     FROM lt_param
+     RESULT lt_val_res
+     FAILED ls_val_failed
+     REPORTED ls_val_reported.`,
 ];
 
 statementType(tests, "READ ENTITIES", Statements.ReadEntities);

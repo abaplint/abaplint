@@ -15,8 +15,10 @@ export class ReadEntities implements IStatement {
     const failed = seq("FAILED", Target);
     const reported = seq("REPORTED", Target);
 
+    const execute = seq("EXECUTE", SimpleName, from);
+
     const foo = seq(opt(seq("BY", EMLEntityPath)),
-                    alt(fields, from, all),
+                    alt(fields, from, all, execute),
                     optPrio(result));
 
     const entity = seq("ENTITY", NamespaceSimpleName,
