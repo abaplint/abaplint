@@ -236,9 +236,10 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
     for (const method of topNode.findAllStatements(Statements.MethodDef)) {
       for (const param of method.findAllExpressionsMulti([Expressions.MethodDefReturning, Expressions.MethodParam])) {
         const nameToken = param?.findFirstExpression(Expressions.MethodParamName);
-        const type = param?.findFirstExpression(Expressions.TypeParam)?.concatTokens()?.toUpperCase();
+        const typeName = param?.findFirstExpression(Expressions.TypeParam)
+          ?.findFirstExpression(Expressions.TypeNameOrInfer)?.concatTokens()?.toUpperCase();
 
-        if (this.getConfig().allowIsPrefixBoolean === true && type?.endsWith("TYPE ABAP_BOOL")) {
+        if (this.getConfig().allowIsPrefixBoolean === true && typeName === "ABAP_BOOL") {
           continue;
         }
 
