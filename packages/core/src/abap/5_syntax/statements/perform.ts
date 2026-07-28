@@ -29,7 +29,7 @@ export class Perform implements StatementSyntax {
       }
     }
     for (const u of node.findDirectExpressions(Expressions.PerformUsing)) {
-      for (const s of u.findDirectExpressions(Expressions.Source)) {
+      for (const s of u.findDirectExpressions(Expressions.SimpleSource3)) {
         Source.runSyntax(s, input);
       }
     }
