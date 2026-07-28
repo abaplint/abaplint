@@ -125,6 +125,7 @@ ENDINTERFACE.`;
     expect(issues.length).to.equal(0);
   });
 
+
   it("is prefix with bool and DEFAULT, interface", async () => {
     const abap = `INTERFACE lif.
   METHODS bar
