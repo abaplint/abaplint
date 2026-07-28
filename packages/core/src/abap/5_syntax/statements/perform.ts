@@ -1,6 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
-import {StatementNode} from "../../nodes";
+import {ExpressionNode, StatementNode} from "../../nodes";
 import {ReferenceType} from "../_reference";
 import {Source} from "../expressions/source";
 import {StatementSyntax} from "../_statement_syntax";
@@ -25,11 +25,13 @@ export class Perform implements StatementSyntax {
     }
     for (const t of node.findDirectExpressions(Expressions.PerformTables)) {
       for (const s of t.findDirectExpressions(Expressions.Source)) {
+        this.checkNotExpression(s, input);
         Source.runSyntax(s, input);
       }
     }
     for (const u of node.findDirectExpressions(Expressions.PerformUsing)) {
       for (const s of u.findDirectExpressions(Expressions.Source)) {
+        this.checkNotExpression(s, input);
         Source.runSyntax(s, input);
       }
     }
@@ -64,5 +66,12 @@ export class Perform implements StatementSyntax {
     input.scope.addReference(expr.getFirstToken(), found, ReferenceType.FormReference, input.filename);
 
     // todo, also check parameters match
+  }
+
+  private checkNotExpression(source: ExpressionNode, input: SyntaxInput): void {
+    if (source.findDirectExpression(Expressions.ArithOperator) !== undefined) {
+      const message = "PERFORM, expressions cannot be passed as parameters";
+      input.issues.push(syntaxIssue(input, source.getFirstToken(), message));
+    }
   }
 }

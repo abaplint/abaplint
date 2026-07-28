@@ -2598,6 +2598,27 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
+  it("PERFORM, expression as USING parameter", () => {
+    const abap = `
+    FORM foo USING i TYPE i.
+    ENDFORM.
+    START-OF-SELECTION.
+      PERFORM foo USING 1 + 2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("expressions cannot be passed");
+  });
+
+  it("PERFORM, literal as USING parameter, ok", () => {
+    const abap = `
+    FORM foo USING i TYPE i.
+    ENDFORM.
+    START-OF-SELECTION.
+      PERFORM foo USING 1.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("PERFORM something, CHANGING, dynamic", () => {
     const abap = `
     FORM foo CHANGING bar foo.
