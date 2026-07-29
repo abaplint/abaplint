@@ -12,6 +12,7 @@ import {Data as DataStatement} from "../5_syntax/statements/data";
 import {Constant as ConstantStatement} from "../5_syntax/statements/constant";
 import {Data as DataStructure} from "../5_syntax/structures/data";
 import {TypeEnum} from "../5_syntax/structures/type_enum";
+import {TypeMesh} from "../5_syntax/structures/type_mesh";
 import {Constants} from "../5_syntax/structures/constants";
 import {IAttributes} from "./_class_attributes";
 import {TypeDefinitions} from "./type_definitions";
@@ -199,6 +200,12 @@ export class Attributes implements IAttributes {
           for (const t of types) {
             this.tlist.push({type: t, visibility});
 //            scope.addIdentifier(attr);
+          }
+        } else if (ctyp instanceof Structures.TypeMesh) {
+          const res = new TypeMesh().runSyntax(c, input);
+          if (res) {
+            input.scope.addType(res);
+            this.tlist.push({type: res, visibility});
           }
         } else if (ctyp instanceof Structures.Types) {
           const res = new Types().runSyntax(c, input);
