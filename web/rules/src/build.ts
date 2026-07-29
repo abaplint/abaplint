@@ -87,7 +87,7 @@ If no configuration file is found, the default configuration will be used, which
 <br><br>
 Get default configuration by running <tt>abaplint -d > abaplint.json</tt>
 <br><br>
-<a href="https://github.com/FreHu/abaplint-clean-code">abaplint-clean-code</a> contains rule
+<a href="https://github.com/mbtools/abaplint-clean-code">abaplint-clean-code</a> contains rule
 documentation as well as abaplint.json definitions which attempt to align abaplint with the official
 <a href="https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md">Clean ABAP styleguide</a>.
 

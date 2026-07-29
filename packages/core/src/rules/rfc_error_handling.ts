@@ -18,7 +18,7 @@ export class RFCErrorHandling extends ABAPRule {
       title: "RFC error handling",
       tags: [RuleTag.SingleFile],
       shortDescription: `Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls`,
-      extendedInformation: `https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenrfc_exception.htm`,
+      extendedInformation: `https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenrfc_exception.html`,
       badExample: `CALL FUNCTION 'ZRFC'
   DESTINATION lv_rfc.`,
       goodExample: `CALL FUNCTION 'ZRFC'

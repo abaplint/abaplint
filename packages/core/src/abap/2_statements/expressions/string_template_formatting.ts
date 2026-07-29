@@ -7,7 +7,7 @@ import {Dynamic} from "./dynamic";
 export class StringTemplateFormatting extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    // https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abapcompute_string_format_options.htm
+    // https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abapcompute_string_format_options.html
     const alphaOptions = altPrio("OUT", "RAW", "IN", Source);
 
     const alignOptions = altPrio("LEFT", "RIGHT", "CENTER", Source, Dynamic);

@@ -21,7 +21,7 @@ export class MixReturning extends ABAPRule {
       shortDescription: `Checks that methods don't have a mixture of returning and exporting/changing parameters`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination
 
-This syntax is not allowed on versions earlier than 740sp02, https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-us/abennews-740-abap_objects.htm#!ABAP_MODIFICATION_1@1@`,
+This syntax is not allowed on versions earlier than 740sp02, https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abennews-740-abap_objects.html#!ABAP_MODIFICATION_1@1@`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Syntax],
       badExample: `CLASS lcl DEFINITION.
   PUBLIC SECTION.

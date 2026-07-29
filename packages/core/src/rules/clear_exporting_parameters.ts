@@ -36,7 +36,7 @@ before reading it, so a leftover value is not accidentally used.
 
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#clear-or-overwrite-exporting-reference-parameters
 
-https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenref_transf_output_param_guidl.htm
+https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenref_transf_output_param_guidl.html
 
 Note: EXPORTING parameters passed by VALUE are always initialized and are therefore not reported.
 Reading and writing the parameter in the same statement (e.g. "ev_result = ev_result + 1") is reported,

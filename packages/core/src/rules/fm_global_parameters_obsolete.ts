@@ -17,7 +17,7 @@ export class FMGlobalParametersObsolete implements IRule {
       key: "fm_global_parameters_obsolete",
       title: "FM Global Parameters Obsolete",
       shortDescription: `Check for function modules with global parameters`,
-      extendedInformation: `https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenglobal_parameters_obsolete.htm`,
+      extendedInformation: `https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenglobal_parameters_obsolete.html`,
       tags: [],
     };
   }

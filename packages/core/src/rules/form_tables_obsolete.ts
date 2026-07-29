@@ -19,7 +19,7 @@ export class FormTablesObsolete extends ABAPRule {
       key: "form_tables_obsolete",
       title: "TABLES parameters are obsolete",
       shortDescription: `Checks for TABLES parameters in forms.`,
-      extendedInformation: `https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapform_tables.htm`,
+      extendedInformation: `https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapform_tables.html`,
       tags: [RuleTag.SingleFile],
       badExample: `FORM update_items TABLES items.
 ENDFORM.`,

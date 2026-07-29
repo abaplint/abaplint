@@ -18,7 +18,7 @@ export class SevenBitAscii implements IRule {
       shortDescription: `Only allow characters from the 7bit ASCII set.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/05/
 
-https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abencharacter_set_guidl.htm
+https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abencharacter_set_guidl.html
 
 Checkes files with extensions ".abap" and ".asddls"`,
       tags: [RuleTag.SingleFile],

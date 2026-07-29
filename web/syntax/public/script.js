@@ -116,7 +116,7 @@ function renderSyntax(type, name) {
     html = html + "<b>Next</b>: <a href=\"#/" + currentLanguage + "/" + type + "/" + next.name + "\">" + next.name + "</a><br>\n";
   }
 
-// html = html + "<a href=\"https://github.com/abaplint/abaplint/blob/master/src/packages/core/abap/" +
+// html = html + "<a href=\"https://github.com/abaplint/abaplint/tree/main/packages/core/src/abap/2_statements" +
 // found.type + "s/" + found.filename + "\">Source</a><br>";
 
   const use = found.using.map((e) => { return "<a href=\"#/" + currentLanguage + "/" + e + "\">" + e + "</a>"; });
