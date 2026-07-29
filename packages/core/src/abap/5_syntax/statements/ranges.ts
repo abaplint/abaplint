@@ -4,11 +4,16 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {StructureType, TableType, CharacterType, TableKeyType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import {StatementSyntax} from "../_statement_syntax";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 
 export class Ranges implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput) {
+    if (input.scope.isAnyOO()) {
+      const message = "RANGES is not allowed within classes";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+    }
+
     const nameToken = node.findFirstExpression(Expressions.DefinitionName)?.getFirstToken();
 
     const typeExpression = node.findFirstExpression(Expressions.SimpleFieldChain2);

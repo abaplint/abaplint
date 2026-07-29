@@ -2468,6 +2468,22 @@ tables_tab-foo = 'A'.
     expect(issues.length).to.equals(0);
   });
 
+  it("RANGES is not possible within classes", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA int TYPE i.
+    RANGES bar FOR int.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals("RANGES is not allowed within classes");
+  });
+
   it("FORM TABLES STRUCTURE, contains header line", () => {
     const abap = `
 DATA: BEGIN OF stru,
@@ -5581,6 +5597,22 @@ ENDCLASS.
 CLASS lcl_bar IMPLEMENTATION.
   METHOD run.
     run( 1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("integer passed to date method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING moo TYPE d.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA int TYPE i.
+    bar( int ).
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
