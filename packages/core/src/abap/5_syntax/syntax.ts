@@ -13,6 +13,7 @@ import {FunctionGroup, Program, TypePool} from "../../objects";
 import {Position} from "../../position";
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
+import {TypeMesh} from "./structures/type_mesh";
 import {Types} from "./structures/types";
 import {Statics} from "./structures/statics";
 import {Constants} from "./structures/constants";
@@ -485,6 +486,12 @@ export class SyntaxLogic {
       return true;
     } else if (stru instanceof Structures.Statics) {
       this.scope.addIdentifier(new Statics().runSyntax(node, input));
+      return true;
+    } else if (stru instanceof Structures.TypeMesh) {
+      const found = new TypeMesh().runSyntax(node, input);
+      if (found) {
+        this.scope.addType(found);
+      }
       return true;
     } else if (stru instanceof Structures.TypeEnum) {
       const values = new TypeEnum().runSyntax(node, input).values;
