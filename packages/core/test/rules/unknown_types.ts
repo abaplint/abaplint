@@ -2455,6 +2455,48 @@ DATA lr_ref TYPE REF TO ty_foo.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("TYPES BEGIN OF MESH", () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         id TYPE i,
+       END OF ty_row.
+
+TYPES: tt_rows TYPE STANDARD TABLE OF ty_row WITH KEY id.
+
+TYPES: BEGIN OF MESH ty_dataset,
+         rows TYPE tt_rows
+              ASSOCIATION a TO rows
+              ON id = id,
+       END OF MESH ty_dataset.
+
+DATA dataset TYPE ty_dataset.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("TYPES BEGIN OF MESH in class", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_row,
+             id TYPE i,
+           END OF ty_row.
+    TYPES tt_rows TYPE STANDARD TABLE OF ty_row WITH KEY id.
+    TYPES: BEGIN OF MESH ty_dataset,
+             rows TYPE tt_rows
+                  ASSOCIATION a TO rows
+                  ON id = id,
+           END OF MESH ty_dataset.
+    DATA dataset TYPE ty_dataset.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("sy datum sub", () => {
     const abap = `
 DATA foo LIKE sy-datum(4).`;
