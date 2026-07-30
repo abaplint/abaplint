@@ -491,15 +491,6 @@ export class TypeUtils {
       return true;
     }
 
-    if (target instanceof PGenericType) {
-      return source instanceof PackedType
-        || source instanceof PGenericType
-        || source instanceof VoidType
-        || source instanceof AnyType
-        || source instanceof DataType
-        || source instanceof UnknownType;
-    }
-
 /*
     console.dir(source);
     console.dir(target);
