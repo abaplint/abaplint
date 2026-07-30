@@ -5619,6 +5619,25 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
   });
 
+  it("inferred packed arithmetic is not compatible with differently typed method parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_quantity TYPE p LENGTH 8 DECIMALS 3.
+    METHODS bar IMPORTING moo TYPE ty_quantity.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA iv_reserve TYPE ty_quantity.
+    DATA val TYPE ty_quantity.
+    DATA(lv_allocatable) = val - iv_reserve.
+    bar( lv_allocatable ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
   it("READ TABLE without target and header line", () => {
     const abap = `
     DATA ii_node TYPE REF TO if_ixml_node.

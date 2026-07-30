@@ -416,6 +416,9 @@ export class TypeUtils {
         }
         return false;
       }
+    } else if (source instanceof PackedType && target instanceof PackedType) {
+      return source.getLength() === target.getLength()
+        && source.getDecimals() === target.getDecimals();
     } else if (source instanceof FloatType) {
       if (target instanceof IntegerType) {
         return false;
