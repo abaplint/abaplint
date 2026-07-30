@@ -9925,6 +9925,21 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("ok, decfloat34 assigned to generic packed parameter", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo EXPORTING val TYPE p.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+    DATA i TYPE decfloat34.
+    val = i.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("error for no field list", () => {
     const abap = `DATA target TYPE tab.
 SELECT SINGLE FROM tab INTO target.`;
