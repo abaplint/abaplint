@@ -9909,6 +9909,22 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("ok, packed into generic packed parameter", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_short TYPE p LENGTH 2 DECIMALS 0.
+    METHODS moo IMPORTING bar TYPE p.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+    DATA short TYPE ty_short.
+    moo( short ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("error for no field list", () => {
     const abap = `DATA target TYPE tab.
 SELECT SINGLE FROM tab INTO target.`;
