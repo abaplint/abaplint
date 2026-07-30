@@ -1,5 +1,5 @@
 import {ClassDefinition, InterfaceDefinition} from "../types";
-import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DataType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
+import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DataType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, PGenericType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
 import {TableKeyType} from "../types/basic/table_type";
 import {EnumType} from "../types/basic/enum_type";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -81,6 +81,7 @@ export class TypeUtils {
         || type instanceof DataType
         || type instanceof CLikeType
         || type instanceof PackedType
+        || type instanceof PGenericType
         || type instanceof TimeType
         || type instanceof EnumType) {
       return true;
@@ -321,6 +322,15 @@ export class TypeUtils {
       return this.isAssignable(source, target);
     }
 
+    if (target instanceof PGenericType) {
+      return source instanceof PackedType
+        || source instanceof PGenericType
+        || source instanceof VoidType
+        || source instanceof AnyType
+        || source instanceof DataType
+        || source instanceof UnknownType;
+    }
+
     if (source instanceof CharacterType) {
       if (target instanceof CharacterType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
@@ -479,6 +489,15 @@ export class TypeUtils {
   public isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
     if (source === undefined || target === undefined) {
       return true;
+    }
+
+    if (target instanceof PGenericType) {
+      return source instanceof PackedType
+        || source instanceof PGenericType
+        || source instanceof VoidType
+        || source instanceof AnyType
+        || source instanceof DataType
+        || source instanceof UnknownType;
     }
 
 /*
