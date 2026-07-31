@@ -1,4 +1,4 @@
-import {Expression, seq, plus, altPrio, tok, ver, alt} from "../combi";
+import {Expression, seq, plus, altPrio, tok, ver, alt, AlsoIn} from "../combi";
 import {SimpleTarget, Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 import {WDash, WPlus} from "../../1_lexer/tokens";
@@ -11,7 +11,7 @@ export class ReduceNext extends Expression {
                                seq(tok(WDash), "="),
                                "/=",
                                "*=",
-                               "&&="));
+                               "&&="), {also: AlsoIn.OpenABAP});
 
     const fields = seq(SimpleTarget, altPrio("=", calcAssign), Source);
     return seq("NEXT", plus(fields));

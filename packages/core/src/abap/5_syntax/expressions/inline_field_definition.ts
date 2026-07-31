@@ -17,7 +17,8 @@ export class InlineFieldDefinition {
 
     let type: AbstractType | undefined = undefined;
 
-    const field = node.findDirectExpression(Expressions.Field)?.getFirstToken();
+    const field = (node.findDirectExpression(Expressions.Field)
+      || node.findDirectExpression(Expressions.FieldSymbol))?.getFirstToken();
     if (field === undefined) {
       return undefined;
     }
