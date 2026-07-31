@@ -443,6 +443,12 @@ const versions = [
   {abap: "lv_foo *= 2.", rel: Release.v754},
   {abap: "lv_foo &&= `abc`.", rel: Release.v754},
 
+  {abap: "result = REDUCE i( INIT s = 0 FOR value IN values NEXT s += value ).", rel: Version.OpenABAP},
+  {abap: "result = REDUCE i( INIT s = 0 FOR value IN values NEXT s -= value ).", rel: Version.OpenABAP},
+  {abap: "result = REDUCE i( INIT s = 1 FOR value IN values NEXT s *= value ).", rel: Version.OpenABAP},
+  {abap: "result = REDUCE i( INIT s = 1 FOR value IN values NEXT s /= value ).", rel: Version.OpenABAP},
+  {abap: "result = REDUCE string( INIT s = `` FOR value IN values NEXT s &&= value ).", rel: Version.OpenABAP},
+
   {abap: "DATA(mode) = SWITCH edit_mode( id_edit_mode\n" +
     "  WHEN 'U' THEN asdf\n" +
     "  ELSE THROW zcx_exception( ) ).", rel: Release.v740sp02},
@@ -451,6 +457,11 @@ const versions = [
     FOR GROUPS _tabname OF _dd03l IN dd03l
     GROUP BY _dd03l-tabname
     ( _tabname ) ).`, rel: Release.v740sp08},
+
+  {abap: `output = VALUE #(
+    FOR GROUPS _tabname OF _dd03l IN dd03l
+    GROUP BY _dd03l-tabname
+    ( _tabname ) ).`, rel: Version.OpenABAP},
 
   {abap: "lv_foo *= 2.", rel: Version.OpenABAP},
 
