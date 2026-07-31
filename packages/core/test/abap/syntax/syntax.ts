@@ -12367,6 +12367,36 @@ et_list = FILTER #( et_list EXCEPT IN lt_exclude WHERE field1 = field1 ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("FILTER IN resolves WHERE operands against different row types", () => {
+    const abap = `
+TYPES: BEGIN OF input_row,
+         input_key TYPE i,
+       END OF input_row,
+       BEGIN OF filter_row,
+         filter_key TYPE i,
+       END OF filter_row.
+DATA input TYPE SORTED TABLE OF input_row WITH UNIQUE KEY input_key.
+DATA filter TYPE SORTED TABLE OF filter_row WITH UNIQUE KEY filter_key.
+DATA(result) = FILTER #( input IN filter WHERE input_key = filter_key ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FILTER EXCEPT IN validates WHERE conditions", () => {
+    const abap = `
+TYPES: BEGIN OF input_row,
+         input_key TYPE i,
+       END OF input_row,
+       BEGIN OF filter_row,
+         filter_key TYPE i,
+       END OF filter_row.
+DATA input TYPE SORTED TABLE OF input_row WITH UNIQUE KEY input_key.
+DATA filter TYPE SORTED TABLE OF filter_row WITH UNIQUE KEY filter_key.
+DATA(result) = FILTER #( input EXCEPT IN filter WHERE input_key = unknown_filter_key ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("unknown_filter_key");
+  });
+
   it("LINES OF must be a table", () => {
     const abap = `
 DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

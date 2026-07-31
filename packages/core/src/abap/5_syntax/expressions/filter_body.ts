@@ -16,22 +16,15 @@ export class FilterBody {
       return targetType;
     }
 
-    let type: AbstractType | undefined = undefined;
+    const types: (AbstractType | undefined)[] = [];
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      if (type === undefined) {
-        type = Source.runSyntax(s, input);
-      } else {
-        Source.runSyntax(s, input);
-      }
+      types.push(Source.runSyntax(s, input));
     }
 
-    // todo
-    if (node.findDirectTokenByText("EXCEPT") === undefined) {
-      const rowType = type instanceof TableType ? type.getRowType() : undefined;
-      ComponentCond.runSyntax(node.findDirectExpression(Expressions.ComponentCond)!, input, rowType);
-    }
+    const inputRowType = types[0] instanceof TableType ? types[0].getRowType() : undefined;
+    const filterRowType = types[1] instanceof TableType ? types[1].getRowType() : undefined;
+    ComponentCond.runSyntax(node.findDirectExpression(Expressions.ComponentCond)!, input, inputRowType, filterRowType);
 
-
-    return type ? type : targetType;
+    return types[0] ? types[0] : targetType;
   }
 }

@@ -6,17 +6,21 @@ import {ComponentCompare} from "./component_compare";
 
 export class ComponentCond {
 
-  public static runSyntax(node: ExpressionNode, input: SyntaxInput, type?: AbstractType): void {
+  public static runSyntax(
+    node: ExpressionNode,
+    input: SyntaxInput,
+    leftType?: AbstractType,
+    rightType?: AbstractType): void {
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCondSub)) {
       const c = t.findDirectExpression(Expressions.ComponentCond);
       if (c) {
-        ComponentCond.runSyntax(c, input, type);
+        ComponentCond.runSyntax(c, input, leftType, rightType);
       }
     }
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCompare)) {
-      ComponentCompare.runSyntax(t, input, type);
+      ComponentCompare.runSyntax(t, input, leftType, rightType);
     }
 
   }
