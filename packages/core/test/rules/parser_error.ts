@@ -22,6 +22,20 @@ const tests = [
     ")->get_column( 'TIMESTAMP' )->set_visible( abap_false ),\n" +
     ")->get_column( 'USERNAME' )->set_visible( abap_false ).", cnt: 0},
   {abap: "WRITE.", cnt: 1},
+  {abap: `
+DATA t_split       TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA c_string_soc  TYPE string.
+
+t_split = VALUE #( ( \`ABC\` ) ( \`123\` ) ( \`XYZ\` ) ).
+
+DO lines( t_split ) TIMES.
+  c_string_soc = CONV #(
+    LET <split> = t_split[ sy-index ]
+        sep     = SWITCH #( sy-index
+                              WHEN 1 THEN \`\`
+                              ELSE '-' )
+    IN c_string_soc && sep && <split> ).
+ENDDO.`, cnt: 0},
 
   {abap: `
   DATA rv_text TYPE string.
