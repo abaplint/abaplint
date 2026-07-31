@@ -5619,6 +5619,25 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
   });
 
+  it("inferred packed arithmetic is not compatible with differently typed method parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_quantity TYPE p LENGTH 8 DECIMALS 3.
+    METHODS bar IMPORTING moo TYPE ty_quantity.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA iv_reserve TYPE ty_quantity.
+    DATA val TYPE ty_quantity.
+    DATA(lv_allocatable) = val - iv_reserve.
+    bar( lv_allocatable ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
   it("READ TABLE without target and header line", () => {
     const abap = `
     DATA ii_node TYPE REF TO if_ixml_node.
@@ -9884,6 +9903,37 @@ ENDCLASS.
 CLASS lcl IMPLEMENTATION.
   METHOD foo.
     foo( 22 ) .
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, packed into generic packed parameter", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_short TYPE p LENGTH 2 DECIMALS 0.
+    METHODS moo IMPORTING bar TYPE p.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+    DATA short TYPE ty_short.
+    moo( short ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, decfloat34 assigned to generic packed parameter", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo EXPORTING val TYPE p.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+    DATA i TYPE decfloat34.
+    val = i.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);

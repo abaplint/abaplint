@@ -912,6 +912,21 @@ ENDCLASS.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("Inline DATA definition, packed arithmetic defaults to P(8,0)", () => {
+    const abap = `
+TYPES ty_quantity TYPE p LENGTH 8 DECIMALS 3.
+DATA iv_reserve TYPE ty_quantity.
+DATA val TYPE ty_quantity.
+DATA(lv_allocatable) = val - iv_reserve.`;
+    const identifier = resolveVariable(abap, "lv_allocatable");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.PackedType);
+    const packed = type as Basic.PackedType;
+    expect(packed.getLength()).to.equal(8);
+    expect(packed.getDecimals()).to.equal(0);
+  });
+
   it("Inline object ref", () => {
     const abap = `
   CLASS lcl_foo DEFINITION.

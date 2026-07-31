@@ -9,6 +9,7 @@ import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Dereference} from "../expressions/dereference";
 import {IdentifierMeta} from "../../types/_typed_identifier";
+import {PackedType} from "../../types/basic";
 
 export class Move implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -51,6 +52,9 @@ export class Move implements StatementSyntax {
     }
 
     if (inline) {
+      if (sourceType instanceof PackedType && source?.findDirectExpression(Expressions.ArithOperator)) {
+        sourceType = new PackedType(8, 0);
+      }
       InlineData.runSyntax(inline, input, sourceType);
       targetType = sourceType;
     }
