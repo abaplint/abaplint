@@ -209,6 +209,15 @@ describe("DDL Parser — define table", () => {
     expect(r?.fields[1]).to.deep.include({name: "status", type: "abap.char(1)"});
   });
 
+  it("QUAN field with reference table and field", () => {
+    const r = parse(`define table t {
+      key mandt : mandt not null;
+      quantity  : abap.quan(13,3) with reference table zunit_tab and reference field unit;
+    }`);
+    expect(r?.fields.length).to.equal(2);
+    expect(r?.fields[1]).to.deep.include({name: "quantity", type: "abap.quan(13,3)"});
+  });
+
   it("value help with WHERE and string literal", () => {
     const r = parse(`define table t {
       key mandt : mandt not null;
