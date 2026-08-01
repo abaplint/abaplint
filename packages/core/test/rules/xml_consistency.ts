@@ -282,6 +282,50 @@ ENDCLASS.`));
   });
 });
 
+async function runTabl(fields: string): Promise<Issue[]> {
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTABL</TABNAME>
+    <TABCLASS>INTTAB</TABCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    ${fields}
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  const reg = new Registry().addFile(new MemoryFile("ztabl.tabl.xml", xml));
+  return run(reg);
+}
+
+describe("rule, xml_consistency, TABL QUAN reference fields", () => {
+  it("errors when reference fields are not set", async () => {
+    const issues = await runTabl(`<DD03P>
+     <FIELDNAME>QUANTITY</FIELDNAME>
+     <DATATYPE>QUAN</DATATYPE>
+     <LENG>000013</LENG>
+     <DECIMALS>000003</DECIMALS>
+    </DD03P>`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("QUAN field QUANTITY must have REFTABLE and REFFIELD set");
+  });
+
+  it("allows QUAN fields with reference fields set", async () => {
+    const issues = await runTabl(`<DD03P>
+     <FIELDNAME>QUANTITY</FIELDNAME>
+     <DATATYPE>QUAN</DATATYPE>
+     <LENG>000013</LENG>
+     <DECIMALS>000003</DECIMALS>
+     <REFTABLE>ZTABL</REFTABLE>
+     <REFFIELD>UNIT</REFFIELD>
+    </DD03P>`);
+    expect(issues.length).to.equal(0);
+  });
+});
+
 async function runDtel(xml: string, conf?: XMLConsistencyConf): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zdtel.dtel.xml", xml));
   return run(reg, conf);

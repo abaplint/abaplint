@@ -51,6 +51,8 @@ export class Table extends AbstractObject {
       KEYFLAG?: string,
       GROUPNAME?: string,
       CHECKTABLE?: string,
+      REFTABLE?: string,
+      REFFIELD?: string,
       REFTYPE?: string,
       DDTEXT?: string,
     }[]} | undefined;
@@ -74,6 +76,13 @@ export class Table extends AbstractObject {
     }
 
     return this.parsedData?.secondaryIndexes;
+  }
+
+  public getFields() {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+    return this.parsedData?.fields;
   }
 
   public getAllowedNaming(): IAllowedNaming {
@@ -340,6 +349,8 @@ export class Table extends AbstractObject {
         KEYFLAG: field.KEYFLAG,
         GROUPNAME: field.GROUPNAME,
         CHECKTABLE: field.CHECKTABLE,
+        REFTABLE: field.REFTABLE,
+        REFFIELD: field.REFFIELD,
         REFTYPE: field.REFTYPE,
         DDTEXT: field.DDTEXT,
       });
