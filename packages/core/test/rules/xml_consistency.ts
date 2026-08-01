@@ -211,6 +211,58 @@ describe("xml consistency", () => {
     expect(issues.length).to.equals(1);
   });
 
+  it("unexpected abapGit version", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_LARS</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Description</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`)).addFile(new MemoryFile("zcl_lars.clas.abap", `
+CLASS zcl_lars DEFINITION PUBLIC CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_lars IMPLEMENTATION.
+ENDCLASS.`));
+    const issues = await run(reg);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Unexpected abapGit version");
+  });
+
+  it("unexpected abapGit serializer_version", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_LARS</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Description</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`)).addFile(new MemoryFile("zcl_lars.clas.abap", `
+CLASS zcl_lars DEFINITION PUBLIC CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_lars IMPLEMENTATION.
+ENDCLASS.`));
+    const issues = await run(reg);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Unexpected abapGit serializer_version");
+  });
+
   it("parser error, DTEL", async () => {
     const reg = new Registry().addFile(new MemoryFile("zdtel.dtel.xml", `parser error`));
     const issues = await run(reg);
