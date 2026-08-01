@@ -14517,6 +14517,17 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("local class name too long", () => {
+    const abap = `
+CLASS lcl_failing_result_write_authority DEFINITION.
+ENDCLASS.
+CLASS lcl_failing_result_write_authority IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("Class name \"lcl_failing_result_write_authority\" is too long");
+  });
+
   it("INTERFACES can only be declared in public sections", () => {
     const abap = `
 CLASS lcl DEFINITION.
