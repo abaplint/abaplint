@@ -134,9 +134,12 @@ export class Table extends AbstractObject {
       return new Types.UnknownType("Data class = USER3 not allowed in cloud");
     }
 
-    if (this.getTableCategory() === TableCategory.Transparent
-        && this.listKeys(reg).length === 0) {
-      return new Types.UnknownType("Table " + this.getName() + " has no key fields");
+    if (this.getTableCategory() === TableCategory.Transparent) {
+      if (this.listKeys(reg).length === 0) {
+        return new Types.UnknownType("Table " + this.getName() + " has no key fields");
+      } else if (this.keyFieldsNotFirst()) {
+        return new Types.UnknownType("Table " + this.getName() + " key fields must be first");
+      }
     }
 
     if (this.parsedType) {
@@ -300,6 +303,20 @@ export class Table extends AbstractObject {
   }
 
 ///////////////
+
+  private keyFieldsNotFirst(): boolean {
+    let seenNonKey = false;
+    for (const field of this.parsedData?.fields || []) {
+      if (field.KEYFLAG === "X") {
+        if (seenNonKey === true) {
+          return true;
+        }
+      } else {
+        seenNonKey = true;
+      }
+    }
+    return false;
+  }
 
   private parseXML() {
     const parsed = super.parseRaw2();
