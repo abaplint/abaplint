@@ -25,3 +25,9 @@ export class DDLValueHelp extends Expression {
     return seq("WITH", "VALUE", "HELP", DDLName, optPrio(DDLWhere));
   }
 }
+
+export class DDLReference extends Expression {
+  public getRunnable(): IStatementRunnable {
+    return seq("WITH", "REFERENCE", "TABLE", DDLName, "AND", "REFERENCE", "FIELD", DDLName);
+  }
+}
