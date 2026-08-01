@@ -891,6 +891,67 @@ describe("Table, parse XML", () => {
     expect(fields[1]).to.equal("KEY2");
   });
 
+  it("transparent key fields must be first", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zbadorder.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZBADORDER</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>test</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZBADORDER</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL0</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>KEY1</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000002</LENG>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>FIELD1</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000002</LENG>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>KEY2</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000002</LENG>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`));
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Table;
+
+    const fields = tabl.parseType(reg) as UnknownType | undefined;
+    expect(fields).to.be.instanceof(UnknownType);
+    expect(fields?.getError()).to.include("key fields must be first");
+  });
+
   it("TABART = USER3 not allowed in cloud", async () => {
     const reg = new Registry().addFile(new MemoryFile("zabapgit.tabl.xml", xml2));
 
