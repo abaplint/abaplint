@@ -3052,7 +3052,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Do not specify the client in database operations; the ABAP runtime handles it automatically.\nTags: SingleFile\nhttps://rules.abaplint.org/no_mandt_in_database_operations"
+              "description": "Do not specify the client in database operations; the ABAP runtime handles it automatically.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_mandt_in_database_operations"
             },
             "no_prefixes": {
               "anyOf": [
@@ -5131,7 +5131,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Do not specify the client in database operations; the ABAP runtime handles it automatically.\nTags: SingleFile\nhttps://rules.abaplint.org/no_mandt_in_database_operations"
+              "description": "Do not specify the client in database operations; the ABAP runtime handles it automatically.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_mandt_in_database_operations"
             },
             "no_prefixes": {
               "anyOf": [
