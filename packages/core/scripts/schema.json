@@ -3043,6 +3043,17 @@
               ],
               "description": "Checks that macros are not used\nTags: SingleFile\nhttps://rules.abaplint.org/no_macros"
             },
+            "no_mandt_in_database_operations": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoMandtInDatabaseOperationsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Do not specify the client in database operations; the ABAP runtime handles it automatically.\nTags: SingleFile\nhttps://rules.abaplint.org/no_mandt_in_database_operations"
+            },
             "no_prefixes": {
               "anyOf": [
                 {
@@ -5110,6 +5121,17 @@
                 }
               ],
               "description": "Checks that macros are not used\nTags: SingleFile\nhttps://rules.abaplint.org/no_macros"
+            },
+            "no_mandt_in_database_operations": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoMandtInDatabaseOperationsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Do not specify the client in database operations; the ABAP runtime handles it automatically.\nTags: SingleFile\nhttps://rules.abaplint.org/no_mandt_in_database_operations"
             },
             "no_prefixes": {
               "anyOf": [
@@ -7253,6 +7275,23 @@
       "type": "object"
     },
     "NoMacrosConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "NoMandtInDatabaseOperationsConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
