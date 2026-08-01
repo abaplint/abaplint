@@ -57,9 +57,11 @@ export class XMLConsistency implements IRule {
       if (res !== true) {
         issues.push(Issue.atRow(file, 1, "XML parser error: " + res.err.msg, this.getMetadata().key, this.conf.severity));
       } else {
-        const version = xml.match(/<abapGit\b[^>]*\bversion="([^"]+)"/)?.[1];
-        if (version !== undefined && version.match(/^v\d\.\d\.\d$/) === null) {
-          issues.push(Issue.atRow(file, 1, `Unexpected abapGit version "${version}"`, this.getMetadata().key, this.conf.severity));
+        for (const attribute of ["version", "serializer_version"]) {
+          const value = xml.match(new RegExp(`<abapGit\\b[^>]*\\b${attribute}="([^"]+)"`))?.[1];
+          if (value !== undefined && value.match(/^v\d\.\d\.\d$/) === null) {
+            issues.push(Issue.atRow(file, 1, `Unexpected abapGit ${attribute} "${value}"`, this.getMetadata().key, this.conf.severity));
+          }
         }
       }
     }
