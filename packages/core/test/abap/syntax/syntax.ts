@@ -3394,6 +3394,23 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("VALUE #, character literal in string table, error", () => {
+    const abap = `
+    DATA lt_values TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    lt_values = VALUE #( ( 'material' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with StringType");
+  });
+
+  it("VALUE #, string literal in string table, ok", () => {
+    const abap = `
+    DATA lt_values TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    lt_values = VALUE #( ( \`material\` ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("void method, value with row", () => {
     const abap = `cl_void=>method( VALUE #( ( row = 2 ) ) ).`;
     const issues = runProgram(abap);
@@ -6475,6 +6492,23 @@ WRITE '1' TO time.`;
 FIELD-SYMBOLS <fs> TYPE any.
 DATA p_date TYPE d.
 WRITE p_date TO <FS>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("type checking, WRITE TO generic clike parameter, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar
+      EXPORTING
+        VALUE(ev_text) TYPE clike.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE 'hello' TO ev_text.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });

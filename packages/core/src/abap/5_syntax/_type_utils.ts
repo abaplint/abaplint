@@ -53,6 +53,7 @@ export class TypeUtils {
       || type instanceof NumericType
       || type instanceof DateType
       || type instanceof TimeType
+      || type instanceof CLikeType
       || type instanceof AnyType
       || type instanceof UnknownType
       || type instanceof VoidType;
