@@ -6446,6 +6446,39 @@ WRITE tab.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("type checking, WRITE date TO string, error", () => {
+    const abap = `
+DATA bar TYPE string.
+DATA p_date TYPE d.
+WRITE p_date TO bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain(`"bar" must be a character-like field`);
+  });
+
+  it("type checking, WRITE TO fixed character-like targets, ok", () => {
+    const abap = `
+DATA char TYPE c LENGTH 10.
+DATA numeric TYPE n LENGTH 10.
+DATA date TYPE d.
+DATA time TYPE t.
+WRITE '1' TO char.
+WRITE '1' TO numeric.
+WRITE '1' TO date.
+WRITE '1' TO time.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("type checking, WRITE TO generic field-symbol, ok", () => {
+    const abap = `
+FIELD-SYMBOLS <fs> TYPE any.
+DATA p_date TYPE d.
+WRITE p_date TO <FS>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("WRITE numeric, ok", () => {
     const abap = `
 CLASS lcl DEFINITION.
