@@ -80,7 +80,11 @@ export class NoMandtInDatabaseOperations extends ABAPRule {
 
   private findMandtInCondition(statement: StatementNode) {
     for (const condition of statement.findAllExpressions(Expressions.SQLCond)) {
-      for (const field of condition.findAllExpressions(Expressions.SQLFieldName)) {
+      const fields = condition.findAllExpressionsMulti([
+        Expressions.SQLFieldName,
+        Expressions.SQLAliasField,
+      ]);
+      for (const field of fields) {
         const name = field.concatTokens().toUpperCase();
         if (name === "MANDT" || name.endsWith("~MANDT")) {
           return field;

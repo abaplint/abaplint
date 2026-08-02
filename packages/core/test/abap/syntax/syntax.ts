@@ -3394,6 +3394,23 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("VALUE #, character literal in string table, error", () => {
+    const abap = `
+    DATA lt_values TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    lt_values = VALUE #( ( 'material' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with StringType");
+  });
+
+  it("VALUE #, string literal in string table, ok", () => {
+    const abap = `
+    DATA lt_values TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    lt_values = VALUE #( ( \`material\` ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("void method, value with row", () => {
     const abap = `cl_void=>method( VALUE #( ( row = 2 ) ) ).`;
     const issues = runProgram(abap);
@@ -6444,6 +6461,56 @@ WRITE tab.`;
     WRITE float.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("type checking, WRITE date TO string, error", () => {
+    const abap = `
+DATA bar TYPE string.
+DATA p_date TYPE d.
+WRITE p_date TO bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain(`"bar" must be a character-like field`);
+  });
+
+  it("type checking, WRITE TO fixed character-like targets, ok", () => {
+    const abap = `
+DATA char TYPE c LENGTH 10.
+DATA numeric TYPE n LENGTH 10.
+DATA date TYPE d.
+DATA time TYPE t.
+WRITE '1' TO char.
+WRITE '1' TO numeric.
+WRITE '1' TO date.
+WRITE '1' TO time.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("type checking, WRITE TO generic field-symbol, ok", () => {
+    const abap = `
+FIELD-SYMBOLS <fs> TYPE any.
+DATA p_date TYPE d.
+WRITE p_date TO <FS>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("type checking, WRITE TO generic clike parameter, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar
+      EXPORTING
+        VALUE(ev_text) TYPE clike.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE 'hello' TO ev_text.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 
   it("WRITE numeric, ok", () => {

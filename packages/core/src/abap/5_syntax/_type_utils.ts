@@ -48,6 +48,17 @@ export class TypeUtils {
     return false;
   }
 
+  public isCharLikeField(type: AbstractType | undefined): boolean {
+    return type instanceof CharacterType
+      || type instanceof NumericType
+      || type instanceof DateType
+      || type instanceof TimeType
+      || type instanceof CLikeType
+      || type instanceof AnyType
+      || type instanceof UnknownType
+      || type instanceof VoidType;
+  }
+
   public isCharLike(type: AbstractType | undefined): boolean {
     if (type === undefined) {
       return false;
