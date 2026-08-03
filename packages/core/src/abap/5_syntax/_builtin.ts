@@ -438,7 +438,7 @@ export class BuiltIn {
       counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
-        "format": CLikeType.get(),
+        "format": SimpleType.get(),
       },
       return: StringType.get(),
       release: Release.v702,
