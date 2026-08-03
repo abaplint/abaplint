@@ -334,6 +334,10 @@ export class TypeUtils {
       return false;
     }
 
+    if (target instanceof CLikeType) {
+      return this.isCharLikeStrict(source);
+    }
+
     if (calculated) {
       return this.isAssignable(source, target);
     }

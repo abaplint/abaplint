@@ -4766,6 +4766,14 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("call strlen(), input must be charlike", () => {
+    const abap = `
+DATA int TYPE i.
+WRITE / strlen( int ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   it("FORM, TABLES", () => {
     const abap = `
 TYPES: BEGIN OF ty,
