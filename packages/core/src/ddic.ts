@@ -98,7 +98,7 @@ export class DDIC {
       case "ANY":
         return Types.AnyType.get({qualifiedName: qualifiedName});
       case "SIMPLE":
-        return new Types.SimpleType({qualifiedName: qualifiedName});
+        return Types.SimpleType.get();
       case "%_C_POINTER":
         return new Types.HexType(8, qualifiedName);
       case "TABLE":
