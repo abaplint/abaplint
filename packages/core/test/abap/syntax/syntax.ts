@@ -2379,6 +2379,15 @@ WRITE bar-bar.
     expect(issues.length).to.equals(0);
   });
 
+  it("Table with header line, WRITE TO component", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF voided WITH HEADER LINE.
+WRITE 'sdf' TO tab-bar.
+`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("LIKE DDIC structure, 2", () => {
     const xml = `
     <?xml version="1.0" encoding="utf-8"?>
