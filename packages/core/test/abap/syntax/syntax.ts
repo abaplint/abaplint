@@ -10001,6 +10001,22 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("ok, default packed into packed parameter", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p LENGTH 8 DECIMALS 0.
+    METHODS bar IMPORTING moo TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA lv_tstmp1 TYPE p.
+    bar( lv_tstmp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("ok, decfloat34 assigned to generic packed parameter", () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.

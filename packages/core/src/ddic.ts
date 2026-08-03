@@ -134,7 +134,7 @@ export class DDIC {
         } else if (length) {
           return new Types.PackedType(length, 0, {qualifiedName: qualifiedName});
         } else {
-          return new Types.PackedType(1, 0, {qualifiedName: qualifiedName});
+          return new Types.PackedType(8, 0, {qualifiedName: qualifiedName});
         }
       case "C":
         if (length) {
