@@ -379,13 +379,14 @@ export class DDIC {
       case "DF16_DEC": // 1 <= len <= 31
       case "DF34_DEC": // 1 <= len <= 31
       case "CURR":     // 1 <= len <= 31
-      case "QUAN":     // 1 <= len <= 31
+      case "QUAN": {   // 1 <= len <= 31
         if (input.length === undefined) {
           return new Types.UnknownType(input.text + " unknown length, " + input.infoText, input.infoText);
-        } else if (input.decimals === undefined) {
-          return new Types.PackedType(parseInt(input.length, 10), 0, extra);
         }
-        return new Types.PackedType(parseInt(input.length, 10), parseInt(input.decimals, 10), extra);
+        const packedLength = Math.ceil((parseInt(input.length, 10) + 1) / 2);
+        const decimals = input.decimals === undefined ? 0 : parseInt(input.decimals, 10);
+        return new Types.PackedType(packedLength, decimals, extra);
+      }
       case "ACCP":
         return new Types.CharacterType(6, extra); // YYYYMM
       case "LANG":
