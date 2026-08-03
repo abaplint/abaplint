@@ -2379,6 +2379,15 @@ WRITE bar-bar.
     expect(issues.length).to.equals(0);
   });
 
+  it("Table with header line, WRITE TO component", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF voided WITH HEADER LINE.
+WRITE 'sdf' TO tab-bar.
+`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("LIKE DDIC structure, 2", () => {
     const xml = `
     <?xml version="1.0" encoding="utf-8"?>
@@ -9882,6 +9891,18 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
   });
 
+  it("packed, DECIMALS must be specified in local OO context", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p LENGTH 8.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
+  });
+
   it("INSERT INITIAL LINE, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_language,
@@ -9986,6 +10007,22 @@ CLASS lcl IMPLEMENTATION.
   METHOD moo.
     DATA short TYPE ty_short.
     moo( short ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, default packed into packed parameter", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p LENGTH 8 DECIMALS 0.
+    METHODS bar IMPORTING moo TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA lv_tstmp1 TYPE p.
+    bar( lv_tstmp1 ).
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);

@@ -1030,7 +1030,7 @@ export class BasicTypes {
     }
 
     if (val === undefined) {
-      return 1;
+      return undefined;
     }
 
     const intExpr = val.findFirstExpression(Expressions.Integer);
