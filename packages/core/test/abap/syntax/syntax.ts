@@ -9892,6 +9892,21 @@ INSERT INITIAL LINE INTO lt_components ASSIGNING <ls_component> INDEX 1.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("INSERT INITIAL LINE ASSIGNING inline field symbol", () => {
+    const abap = `
+TYPES: BEGIN OF ty_item,
+         a TYPE c LENGTH 1,
+         b TYPE c LENGTH 1,
+       END OF ty_item.
+TYPES tt_item TYPE STANDARD TABLE OF ty_item WITH EMPTY KEY.
+DATA lt_items TYPE tt_item.
+INSERT INITIAL LINE INTO lt_items INDEX 1 ASSIGNING FIELD-SYMBOL(<fs_item>).
+<fs_item>-a = 'A'.
+<fs_item>-b = 'B'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("packed1, DECIMALS must be specified in OO context", () => {
     const abap = `
 CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
