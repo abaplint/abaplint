@@ -2469,6 +2469,16 @@ tables_tab-foo = 'A'.
     expect(issues.length).to.equals(0);
   });
 
+  it("WRITE to substring of OCCURS header line", () => {
+    const abap = `
+DATA: BEGIN OF dirlines OCCURS 5,
+        text TYPE c LENGTH 10,
+      END OF dirlines.
+WRITE 'hello' TO dirlines(2).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("RANGES, with header line", () => {
     const abap = `
   RANGES foo FOR sy-mandt.

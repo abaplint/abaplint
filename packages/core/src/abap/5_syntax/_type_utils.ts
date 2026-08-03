@@ -49,6 +49,10 @@ export class TypeUtils {
   }
 
   public isCharLikeField(type: AbstractType | undefined): boolean {
+    if (type instanceof StructureType
+        || (type instanceof TableType && type.isWithHeader())) {
+      return this.isCharLikeStrict(type);
+    }
     return type instanceof CharacterType
       || type instanceof NumericType
       || type instanceof DateType
