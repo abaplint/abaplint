@@ -739,6 +739,38 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("class, nested structured constants and class-data values", () => {
+    const abap = `
+CLASS lcl_test_data DEFINITION FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_address,
+             street  TYPE char60,
+             city    TYPE char40,
+             country TYPE char3,
+           END OF ty_address.
+
+    CONSTANTS:
+      BEGIN OF test_constants,
+        BEGIN OF data_block,
+          customer_id  TYPE char10    VALUE \`1000000001\`,
+          address_info TYPE ty_address VALUE \`sf\`,
+        END OF data_block,
+      END OF test_constants.
+
+    CLASS-DATA:
+      BEGIN OF test_values,
+        BEGIN OF data_block,
+          customer_id  TYPE char10    VALUE \`1000000001\`,
+          address_info TYPE ty_address VALUE \`sdf\`,
+        END OF data_block,
+      END OF test_values.
+ENDCLASS.
+CLASS lcl_test_data IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("class, me, method call", () => {
     const abap = `
       CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
