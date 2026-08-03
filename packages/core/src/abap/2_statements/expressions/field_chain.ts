@@ -1,6 +1,6 @@
 import {seq, optPrio, star, tok, Expression, altPrio} from "../combi";
 import {AttributeName, ClassName, SourceField, SourceFieldSymbol, TableExpression, ComponentName, FieldOffset, FieldLength, TableBody, Dereference} from ".";
-import {InstanceArrow, StaticArrow, Dash, DashW} from "../../1_lexer/tokens";
+import {AssociationName, InstanceArrow, StaticArrow, Dash, DashW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 import {dynAttr, dynComp} from "./_dynamic_access";
 
@@ -16,6 +16,7 @@ export class FieldChain extends Expression {
       attr,
       dynComp(optPrio(FieldOffset), optPrio(FieldLength)),
       comp,
+      tok(AssociationName),
       TableExpression));
 
     const clas = seq(ClassName, tok(StaticArrow), AttributeName);
