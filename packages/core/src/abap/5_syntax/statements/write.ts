@@ -42,7 +42,8 @@ export class Write implements StatementSyntax {
     if (target) {
       const targetType = Target.runSyntax(target, input);
       if (new TypeUtils(input.scope).isCharLikeField(targetType) === false) {
-        const message = `"${target.getFirstToken().getStr()}" must be a character-like field (data type C, N, D, or T)`;
+        const message = `"${target.concatTokens()}" must be a character-like field (data type C, N, D, or T, got "${
+          targetType?.constructor.name}")`;
         input.issues.push(syntaxIssue(input, target.getFirstToken(), message));
       }
     }
