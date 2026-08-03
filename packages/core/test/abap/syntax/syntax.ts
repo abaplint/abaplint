@@ -9891,6 +9891,18 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
   });
 
+  it("packed, DECIMALS must be specified in local OO context", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p LENGTH 8.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
+  });
+
   it("INSERT INITIAL LINE, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_language,
