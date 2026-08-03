@@ -338,6 +338,10 @@ export class TypeUtils {
       return this.isAssignable(source, target);
     }
 
+    if (target instanceof CLikeType) {
+      return this.isCharLikeStrict(source);
+    }
+
     if (target instanceof PGenericType) {
       return source instanceof PackedType
         || source instanceof PGenericType

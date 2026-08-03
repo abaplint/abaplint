@@ -1883,6 +1883,21 @@ DATA(result) = to_lower( |bar| ).`;
     expect(issues.length).to.equals(0);
   });
 
+  it("built-in to_lower, xstring method result", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar RETURNING VALUE(xstr) TYPE xstring.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE to_lower( lcl=>bar( ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("infer type via NEW", () => {
     const abap = `
   CLASS lcl_bar DEFINITION.
@@ -4764,6 +4779,14 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("call strlen(), input must be charlike", () => {
+    const abap = `
+DATA int TYPE i.
+WRITE / strlen( int ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
   });
 
   it("FORM, TABLES", () => {

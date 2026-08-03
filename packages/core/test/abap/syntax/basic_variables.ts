@@ -1786,7 +1786,7 @@ DATA(sdf) = ref->*-int.`;
     FIELD-SYMBOLS <bar> TYPE simple.`;
     const identifier = resolveVariable(abap, "<bar>");
     expect(identifier).to.not.equal(undefined);
-    expect(identifier?.getType()).to.be.instanceof(Basic.SimpleType);
+    expect(identifier?.getType()).to.equal(Basic.SimpleType.get());
   });
 
   it("TABLE", () => {
