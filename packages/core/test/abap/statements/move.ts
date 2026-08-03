@@ -86,6 +86,7 @@ const tests = [
   "##called foo = bar.",
   "DATA(ints) = NEW tyt_integer( ( 1 ) ( 2 ) ( 3 ) ).",
   "DATA(lt_list) = VALUE mo_out->ty_list_tt( ( 1 ) ).",
+  `DATA(sdf) = VALUE numtp( me->s_mesh-t_mara\\_ean[ s_mesh-t_mara[ matnr = matnr ] eantp = 'AA' ]-bar ).`,
   "CAST cl_class( x )->property = blah.",
   "CAST cl_class( x )->property-component = blah.",
   "CAST cl_class( x->y->z )->property-component = blah.",

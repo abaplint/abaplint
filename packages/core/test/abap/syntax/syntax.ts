@@ -739,6 +739,38 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("class, nested structured constants and class-data values", () => {
+    const abap = `
+CLASS lcl_test_data DEFINITION FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_address,
+             street  TYPE char60,
+             city    TYPE char40,
+             country TYPE char3,
+           END OF ty_address.
+
+    CONSTANTS:
+      BEGIN OF test_constants,
+        BEGIN OF data_block,
+          customer_id  TYPE char10    VALUE \`1000000001\`,
+          address_info TYPE ty_address VALUE \`sf\`,
+        END OF data_block,
+      END OF test_constants.
+
+    CLASS-DATA:
+      BEGIN OF test_values,
+        BEGIN OF data_block,
+          customer_id  TYPE char10    VALUE \`1000000001\`,
+          address_info TYPE ty_address VALUE \`sdf\`,
+        END OF data_block,
+      END OF test_values.
+ENDCLASS.
+CLASS lcl_test_data IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("class, me, method call", () => {
     const abap = `
       CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
@@ -1954,6 +1986,21 @@ ENDCLASS.
 START-OF-SELECTION.
   DATA int TYPE i.
   lcl_exporting=>run( IMPORTING ev_bar = int ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("method EXPORTING result written in implementation", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar EXPORTING res TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE 'sdf' TO res.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -9875,6 +9922,21 @@ FIELD-SYMBOLS <ls_component> TYPE abap_componentdescr.
 INSERT INITIAL LINE INTO lt_components ASSIGNING <ls_component> INDEX 1.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("INSERT INITIAL LINE ASSIGNING inline field symbol", () => {
+    const abap = `
+TYPES: BEGIN OF ty_item,
+         a TYPE c LENGTH 1,
+         b TYPE c LENGTH 1,
+       END OF ty_item.
+TYPES tt_item TYPE STANDARD TABLE OF ty_item WITH EMPTY KEY.
+DATA lt_items TYPE tt_item.
+INSERT INITIAL LINE INTO lt_items INDEX 1 ASSIGNING FIELD-SYMBOL(<fs_item>).
+<fs_item>-a = 'A'.
+<fs_item>-b = 'B'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 
   it("packed1, DECIMALS must be specified in OO context", () => {
