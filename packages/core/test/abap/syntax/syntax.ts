@@ -5725,6 +5725,38 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
   });
 
+  it("negative character literal passed to NUMC method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_sales_item TYPE n LENGTH 6.
+    METHODS bar IMPORTING moo TYPE ty_sales_item.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    bar( '-1' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("alphabetic character literal passed to NUMC method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_sales_item TYPE n LENGTH 6.
+    METHODS bar IMPORTING moo TYPE ty_sales_item.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    bar( 'A' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
   it("inferred packed arithmetic is not compatible with differently typed method parameter", () => {
     const abap = `
 CLASS lcl DEFINITION.
