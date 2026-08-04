@@ -70,11 +70,11 @@ export class Interface extends ABAPObject {
 
     const parsed = super.parseRaw2();
     if (parsed === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+        || parsed?.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return;
     }
 
-    const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOINTERF;
+    const vseo = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.VSEOINTERF;
     if (vseo === undefined) {
       this.parsedXML.description = "";
       this.parsedXML.name = "";

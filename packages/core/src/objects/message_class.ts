@@ -79,10 +79,10 @@ export class MessageClass extends AbstractObject {
       return;
     }
 
-    this.xml.topName = parsed?.abapGit?.["asx:abap"]["asx:values"]?.T100A?.ARBGB;
-    this.xml.description = parsed?.abapGit?.["asx:abap"]["asx:values"]?.T100A?.STEXT;
+    this.xml.topName = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.T100A?.ARBGB;
+    this.xml.description = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.T100A?.STEXT;
 
-    const t100 = parsed?.abapGit?.["asx:abap"]["asx:values"]?.T100;
+    const t100 = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.T100;
     if (t100 === undefined) {
       return;
     }
@@ -90,7 +90,7 @@ export class MessageClass extends AbstractObject {
       this.xml.parsedMessages!.push(new Message(msg.MSGNR, unescape(msg.TEXT), msg.ARBGB));
     }
 
-    const t100_texts = parsed?.abapGit?.["asx:abap"]["asx:values"]?.T100_TEXTS;
+    const t100_texts = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.T100_TEXTS;
     if (t100_texts === undefined) {
       return;
     }

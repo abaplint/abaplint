@@ -48,11 +48,11 @@ export class ICFService extends AbstractObject {
     const parsed = super.parseRaw2();
     if (parsed === undefined
         || parsed.abapGit === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+        || parsed.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return {updated: false, runtime: 0};
     }
 
-    const table = parsed.abapGit["asx:abap"]["asx:values"].ICFHANDLER_TABLE;
+    const table = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.ICFHANDLER_TABLE;
     this.parsedXML.handlers = [];
     for (const h of xmlToArray(table)) {
       if (h.ICFHANDLER !== undefined) {
@@ -60,7 +60,7 @@ export class ICFService extends AbstractObject {
       }
     }
 
-    this.parsedXML.url = parsed.abapGit["asx:abap"]["asx:values"].URL;
+    this.parsedXML.url = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.URL;
 
     const end = Date.now();
     return {updated: true, runtime: end - start};
