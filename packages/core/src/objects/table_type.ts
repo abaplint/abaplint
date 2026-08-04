@@ -190,7 +190,7 @@ export class TableType extends AbstractObject {
       return;
     }
 
-    const values = parsed.abapGit["asx:abap"]["asx:values"];
+    const values = parsed?.abapGit?.["asx:abap"]?.["asx:values"];
     if (values === undefined) {
       return;
     }

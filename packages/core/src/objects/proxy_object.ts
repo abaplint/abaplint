@@ -77,7 +77,7 @@ export class ProxyObject extends AbstractObject {
       return result;
     }
 
-    const values = parsed.abapGit["asx:abap"]["asx:values"];
+    const values = parsed?.abapGit?.["asx:abap"]?.["asx:values"];
     result.proxyData = xmlToArray(values.PROXY_DATA?.item);
 
     return result;

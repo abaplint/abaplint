@@ -67,12 +67,12 @@ export class LockObject extends AbstractObject {
 
     if (parsed === undefined
         || parsed.abapGit === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+        || parsed.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return {updated: false, runtime: 0};
     }
 
-    this.parsedXML.primaryTable = parsed.abapGit["asx:abap"]["asx:values"].DD25V?.ROOTTAB;
-    this.parsedXML.description = parsed.abapGit["asx:abap"]["asx:values"].DD25V?.DDTEXT;
+    this.parsedXML.primaryTable = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD25V?.ROOTTAB;
+    this.parsedXML.description = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD25V?.DDTEXT;
 
     const end = Date.now();
     return {updated: true, runtime: end - start};

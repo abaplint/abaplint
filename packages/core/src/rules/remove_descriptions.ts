@@ -103,11 +103,11 @@ Consider using ABAP Doc for documentation.`,
   private checkXML(xml: string, file: IFile) {
     const parsed = new XMLParser({parseTagValue: false, ignoreAttributes: true, trimValues: false}).parse(xml) as any;
 
-    if (parsed === undefined || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+    if (parsed?.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return [];
     }
 
-    const desc = parsed.abapGit["asx:abap"]["asx:values"].DESCRIPTIONS;
+    const desc = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DESCRIPTIONS;
     if (desc === undefined) {
       return [];
     }

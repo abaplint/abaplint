@@ -61,13 +61,13 @@ export class WebMIME extends AbstractObject {
 
     if (parsed === undefined
         || parsed.abapGit === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+        || parsed.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return {updated: false, runtime: 0};
     }
 
-    this.parsedXML.description = parsed.abapGit["asx:abap"]["asx:values"].TEXT;
+    this.parsedXML.description = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.TEXT;
 
-    for (const param of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].PARAMS?.WWWPARAMS)) {
+    for (const param of xmlToArray(parsed.abapGit?.["asx:abap"]?.["asx:values"]?.PARAMS?.WWWPARAMS)) {
       this.parsedXML.params[param.NAME.toLowerCase()] = param.VALUE;
     }
 

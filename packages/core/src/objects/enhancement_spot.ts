@@ -46,7 +46,7 @@ export class EnhancementSpot extends AbstractObject {
     }
 
     const ret: IBadiDefinition[] = [];
-    for (const b of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"]?.BADI_DATA?.ENH_BADI_DATA)) {
+    for (const b of xmlToArray(parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.BADI_DATA?.ENH_BADI_DATA)) {
       ret.push({
         name: b.BADI_NAME,
         interface: b.INTERFACE_NAME,

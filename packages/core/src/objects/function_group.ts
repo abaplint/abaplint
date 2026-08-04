@@ -172,11 +172,11 @@ export class FunctionGroup extends ABAPObject {
       return;
     }
 
-    this.description = parsed.abapGit["asx:abap"]["asx:values"]?.AREAT;
+    this.description = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.AREAT;
     this.dynpros = parseDynpros(parsed);
 
     // INCLUDES
-    const includes = parsed.abapGit["asx:abap"]["asx:values"]?.INCLUDES;
+    const includes = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.INCLUDES;
     if (includes !== undefined) {
       for (const i of xmlToArray(includes.SOBJ_NAME)) {
         this.includes.push(i);
@@ -184,7 +184,7 @@ export class FunctionGroup extends ABAPObject {
     }
 
     // FUNCTION MODULES
-    const functions = parsed.abapGit["asx:abap"]["asx:values"]?.FUNCTIONS;
+    const functions = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.FUNCTIONS;
     for (const module of xmlToArray(functions?.item)) {
       this.modules.push(new FunctionModuleDefinition(module));
     }

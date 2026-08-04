@@ -8,6 +8,13 @@ describe("apack dependency provider", () => {
     expect(deps.length).to.equal(0);
   });
 
+  it("shouldn't throw if the file does not contain the expected APACK structure", () => {
+    for (const apack of ["<unexpected/>", "<asx:abap/>", "<asx:abap><unexpected/></asx:abap>"]) {
+      const deps = ApackDependencyProvider.fromManifest(apack);
+      expect(deps).to.deep.equal([]);
+    }
+  });
+
   it("shouldn't return anything if the file contains no dependencies (omitted)", () => {
     const apack = `
     <?xml version="1.0" encoding="utf-8"?>

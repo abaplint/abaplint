@@ -153,13 +153,13 @@ export class View extends AbstractObject {
       return;
     }
 
-    const header = parsed.abapGit["asx:abap"]["asx:values"]?.DD25V;
+    const header = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD25V;
     this.parsedData.header = {
       VIEWCLASS: header?.VIEWCLASS || "",
       DDTEXT: header?.DDTEXT || "",
     };
 
-    const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD27P_TABLE;
+    const fields = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD27P_TABLE;
     for (const field of xmlToArray(fields?.DD27P)) {
       this.parsedData.fields.push({
         VIEWFIELD: field.VIEWFIELD,
@@ -169,7 +169,7 @@ export class View extends AbstractObject {
       });
     }
 
-    const join = parsed.abapGit["asx:abap"]["asx:values"]?.DD28J_TABLE;
+    const join = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD28J_TABLE;
     for (const j of xmlToArray(join?.DD28J)) {
       this.parsedData.join.push({
         LTAB: j.LTAB,

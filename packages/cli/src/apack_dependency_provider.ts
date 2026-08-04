@@ -10,7 +10,7 @@ export class ApackDependencyProvider {
 
     const result: IDependency[] = [];
     const manifest = xml2js(manifestContents, {compact: true}) as any;
-    let apackDependencies = manifest["asx:abap"]["asx:values"]["DATA"]?.["DEPENDENCIES"]?.item;
+    let apackDependencies = manifest?.["asx:abap"]?.["asx:values"]?.["DATA"]?.["DEPENDENCIES"]?.item;
     if (!apackDependencies) {
       return [];
     } else if (!apackDependencies.length) {

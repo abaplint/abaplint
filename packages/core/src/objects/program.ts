@@ -83,7 +83,7 @@ export class Program extends ABAPObject {
 
     let description = "";
     const selectionTexts: ITextElements = {};
-    for (const t of xmlToArray(parsed.abapGit?.["asx:abap"]["asx:values"]?.TPOOL?.item)) {
+    for (const t of xmlToArray(parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.TPOOL?.item)) {
       if (t?.ID === "R") {
         description = t.ENTRY ? unescape(t.ENTRY) : "";
       } else if (t?.ID === "S" && t.KEY !== undefined) {

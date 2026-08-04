@@ -130,7 +130,7 @@ export abstract class ABAPObject extends AbstractObject {
       return;
     }
 
-    for (const t of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].TPOOL.item)) {
+    for (const t of xmlToArray(parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.TPOOL?.item)) {
       const id = t.ID?.toUpperCase();
       if (id === undefined) {
         continue;

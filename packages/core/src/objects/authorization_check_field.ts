@@ -69,11 +69,11 @@ export class AuthorizationCheckField extends AbstractObject {
 
     if (parsed === undefined
         || parsed.abapGit === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+        || parsed.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return {updated: false, runtime: 0};
     }
 
-    this.parsedXML.rollname = parsed.abapGit["asx:abap"]["asx:values"].AUTHX?.ROLLNAME;
+    this.parsedXML.rollname = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.AUTHX?.ROLLNAME;
 
     const end = Date.now();
     return {updated: true, runtime: end - start};

@@ -340,19 +340,19 @@ export class Table extends AbstractObject {
     }
 
 // enhancement category
-    if (parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.EXCLASS === undefined) {
+    if (parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD02V?.EXCLASS === undefined) {
       this.parsedData.enhancementCategory = EnhancementCategory.NotClassified;
     } else {
-      this.parsedData.enhancementCategory = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.EXCLASS;
+      this.parsedData.enhancementCategory = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD02V?.EXCLASS;
     }
 
 // table category
-    this.parsedData.tableCategory = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.TABCLASS;
-    this.parsedData.description = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.DDTEXT;
-    this.parsedData.dataClass = parsed.abapGit["asx:abap"]["asx:values"]?.DD09L?.TABART;
+    this.parsedData.tableCategory = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD02V?.TABCLASS;
+    this.parsedData.description = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD02V?.DDTEXT;
+    this.parsedData.dataClass = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD09L?.TABART;
 
 // fields
-    const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD03P_TABLE;
+    const fields = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD03P_TABLE;
     for (const field of xmlToArray(fields?.DD03P)) {
       this.parsedData.fields.push({
         FIELDNAME: field.FIELDNAME,
@@ -374,12 +374,12 @@ export class Table extends AbstractObject {
     }
 
 // secondary indexes
-    const indexes = parsed.abapGit["asx:abap"]["asx:values"]?.DD12V;;
+    const indexes = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD12V;;
     this.parsedData.secondaryIndexes = [];
     for (const index of xmlToArray(indexes?.DD12V)) {
       const indexName = index.INDEXNAME;
       const indexFields: string[] = [];
-      const indexFieldsXml = parsed.abapGit["asx:abap"]["asx:values"]?.DD17V;
+      const indexFieldsXml = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD17V;
       for (const indexField of xmlToArray(indexFieldsXml?.DD17V)) {
         if (indexField.INDEXNAME === indexName) {
           // assumption: fields are listed by POSITION in the xml

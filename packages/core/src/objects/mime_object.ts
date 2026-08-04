@@ -64,13 +64,13 @@ export class MIMEObject extends AbstractObject {
 
     if (parsed === undefined
         || parsed.abapGit === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+        || parsed.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return {updated: false, runtime: 0};
     }
 
-    this.parsedXML.URL = parsed.abapGit["asx:abap"]["asx:values"].URL;
-    this.parsedXML.CLASS = parsed.abapGit["asx:abap"]["asx:values"].CLASS;
-    this.parsedXML.FOLDER = parsed.abapGit["asx:abap"]["asx:values"].FOLDER;
+    this.parsedXML.URL = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.URL;
+    this.parsedXML.CLASS = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.CLASS;
+    this.parsedXML.FOLDER = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.FOLDER;
 
     const end = Date.now();
     return {updated: true, runtime: end - start};
