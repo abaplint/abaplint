@@ -354,6 +354,9 @@ export class Table extends AbstractObject {
 // fields
     const fields = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD03P_TABLE;
     for (const field of xmlToArray(fields?.DD03P)) {
+      if (typeof field?.FIELDNAME !== "string") {
+        continue;
+      }
       this.parsedData.fields.push({
         FIELDNAME: field.FIELDNAME,
         ROLLNAME: field.ROLLNAME,

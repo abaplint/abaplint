@@ -68,6 +68,9 @@ export class WebMIME extends AbstractObject {
     this.parsedXML.description = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.TEXT;
 
     for (const param of xmlToArray(parsed.abapGit?.["asx:abap"]?.["asx:values"]?.PARAMS?.WWWPARAMS)) {
+      if (typeof param?.NAME !== "string") {
+        continue;
+      }
       this.parsedXML.params[param.NAME.toLowerCase()] = param.VALUE;
     }
 

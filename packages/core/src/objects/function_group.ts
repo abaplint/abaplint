@@ -154,8 +154,12 @@ export class FunctionGroup extends ABAPObject {
         return {};
       }
 
-      const parsed = new XMLParser({parseTagValue: false, ignoreAttributes: true, trimValues: false}).parse(found.getRaw());
-      this.findTexts(parsed);
+      try {
+        const parsed = new XMLParser({parseTagValue: false, ignoreAttributes: true, trimValues: false}).parse(found.getRaw());
+        this.findTexts(parsed);
+      } catch {
+        this.texts = {};
+      }
     }
 
     return this.texts!["I"] ?? {};
@@ -179,14 +183,20 @@ export class FunctionGroup extends ABAPObject {
     const includes = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.INCLUDES;
     if (includes !== undefined) {
       for (const i of xmlToArray(includes.SOBJ_NAME)) {
-        this.includes.push(i);
+        if (typeof i === "string") {
+          this.includes.push(i);
+        }
       }
     }
 
     // FUNCTION MODULES
     const functions = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.FUNCTIONS;
     for (const module of xmlToArray(functions?.item)) {
-      this.modules.push(new FunctionModuleDefinition(module));
+      try {
+        this.modules.push(new FunctionModuleDefinition(module));
+      } catch {
+        // Ignore malformed function module metadata.
+      }
     }
   }
 

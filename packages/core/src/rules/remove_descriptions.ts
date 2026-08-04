@@ -101,7 +101,12 @@ Consider using ABAP Doc for documentation.`,
   }
 
   private checkXML(xml: string, file: IFile) {
-    const parsed = new XMLParser({parseTagValue: false, ignoreAttributes: true, trimValues: false}).parse(xml) as any;
+    let parsed: any;
+    try {
+      parsed = new XMLParser({parseTagValue: false, ignoreAttributes: true, trimValues: false}).parse(xml) as any;
+    } catch {
+      return [];
+    }
 
     if (parsed?.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return [];

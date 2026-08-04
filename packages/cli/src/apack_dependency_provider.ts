@@ -9,7 +9,12 @@ export class ApackDependencyProvider {
     }
 
     const result: IDependency[] = [];
-    const manifest = xml2js(manifestContents, {compact: true}) as any;
+    let manifest: any;
+    try {
+      manifest = xml2js(manifestContents, {compact: true}) as any;
+    } catch {
+      return [];
+    }
     let apackDependencies = manifest?.["asx:abap"]?.["asx:values"]?.["DATA"]?.["DEPENDENCIES"]?.item;
     if (!apackDependencies) {
       return [];
@@ -18,9 +23,13 @@ export class ApackDependencyProvider {
     }
 
     for (const dependency of apackDependencies) {
+      const url = dependency?.["GIT_URL"]?.["_text"];
+      if (typeof url !== "string") {
+        continue;
+      }
       result.push({
         files: "/src/**/*.*",
-        url: dependency["GIT_URL"]["_text"],
+        url,
       });
     }
 

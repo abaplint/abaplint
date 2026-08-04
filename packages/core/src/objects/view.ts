@@ -161,6 +161,11 @@ export class View extends AbstractObject {
 
     const fields = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD27P_TABLE;
     for (const field of xmlToArray(fields?.DD27P)) {
+      if (typeof field?.VIEWFIELD !== "string"
+          || typeof field?.TABNAME !== "string"
+          || typeof field?.FIELDNAME !== "string") {
+        continue;
+      }
       this.parsedData.fields.push({
         VIEWFIELD: field.VIEWFIELD,
         TABNAME: field.TABNAME,

@@ -131,7 +131,7 @@ export abstract class ABAPObject extends AbstractObject {
     }
 
     for (const t of xmlToArray(parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.TPOOL?.item)) {
-      const id = t.ID?.toUpperCase();
+      const id = typeof t?.ID === "string" ? t.ID.toUpperCase() : undefined;
       if (id === undefined) {
         continue;
       }
@@ -140,7 +140,8 @@ export abstract class ABAPObject extends AbstractObject {
         continue;
       }
 
-      const key = (t.KEY ?? t.ID)?.toUpperCase();
+      const rawKey = t.KEY ?? t.ID;
+      const key = typeof rawKey === "string" ? rawKey.toUpperCase() : undefined;
       if (key === undefined) {
         continue;
       }
@@ -162,7 +163,8 @@ export abstract class ABAPObject extends AbstractObject {
     for (const langItem of xmlToArray(values)) {
       const textElements: ITextElements = {};
       for (const item of xmlToArray(langItem.TEXTPOOL?.item)) {
-        const key = (item.KEY ?? item.ID)?.toUpperCase();
+        const rawKey = item.KEY ?? item.ID;
+        const key = typeof rawKey === "string" ? rawKey.toUpperCase() : undefined;
         if (key !== undefined) {
           textElements[key] = {entry: unescape(item.ENTRY), maxLength: parseInt(item.LENGTH, 10)};
         }

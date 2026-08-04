@@ -32,6 +32,9 @@ export function parseDynpros(parsed: any): DynproList {
   const xmlDynpros = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DYNPROS;
   if (xmlDynpros !== undefined) {
     for (const d of xmlToArray(xmlDynpros.item)) {
+      if (d?.HEADER === undefined) {
+        continue;
+      }
       const fields: DynproField[] = [];
       for (const f of xmlToArray(d.FIELDS?.RPY_DYFATC)) {
         fields.push({
@@ -46,10 +49,10 @@ export function parseDynpros(parsed: any): DynproList {
         });
       }
       dynpros.push({
-        number: d.HEADER.SCREEN,
-        description: d.HEADER.DESCRIPT,
-        nextScreen: d.HEADER.NEXTSCREEN,
-        type: d.HEADER.TYPE,
+        number: d.HEADER?.SCREEN,
+        description: d.HEADER?.DESCRIPT,
+        nextScreen: d.HEADER?.NEXTSCREEN,
+        type: d.HEADER?.TYPE,
         fields: fields,
       });
     }
