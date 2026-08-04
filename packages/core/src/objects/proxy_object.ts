@@ -73,7 +73,7 @@ export class ProxyObject extends AbstractObject {
 
     if (parsed === undefined
         || parsed.abapGit === undefined
-        || parsed.abapGit["asx:abap"]?.["asx:values"] === undefined) {
+        || parsed.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return result;
     }
 
