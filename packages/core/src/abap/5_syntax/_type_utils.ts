@@ -334,6 +334,18 @@ export class TypeUtils {
       return false;
     }
 
+    if (target instanceof NumericType
+        && (source instanceof CharacterType || source instanceof StringType)
+        && source.getAbstractTypeData()?.derivedFromConstant === true) {
+      const constant = node?.concatTokens();
+      if (constant !== undefined
+          && ((constant.startsWith("'") && constant.endsWith("'"))
+            || (constant.startsWith("`") && constant.endsWith("`")))
+          && /^\d*$/.test(constant.substring(1, constant.length - 1)) === false) {
+        return false;
+      }
+    }
+
     if (calculated) {
       return this.isAssignable(source, target);
     }
