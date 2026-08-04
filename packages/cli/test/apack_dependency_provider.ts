@@ -8,6 +8,33 @@ describe("apack dependency provider", () => {
     expect(deps.length).to.equal(0);
   });
 
+  it("shouldn't throw if the file does not contain the expected APACK structure", () => {
+    for (const apack of [
+      "<unexpected/>",
+      "<asx:abap/>",
+      "<asx:abap><unexpected/></asx:abap>",
+      "<asx:abap><unexpected></asx:abap>",
+    ]) {
+      const deps = ApackDependencyProvider.fromManifest(apack);
+      expect(deps).to.deep.equal([]);
+    }
+  });
+
+  it("should ignore dependencies without a string Git URL", () => {
+    const apack = `<asx:abap>
+      <asx:values>
+       <DATA>
+        <DEPENDENCIES>
+         <item><ARTIFACT_ID>missing-url</ARTIFACT_ID></item>
+         <item>not-an-object</item>
+        </DEPENDENCIES>
+       </DATA>
+      </asx:values>
+     </asx:abap>`;
+
+    expect(ApackDependencyProvider.fromManifest(apack)).to.deep.equal([]);
+  });
+
   it("shouldn't return anything if the file contains no dependencies (omitted)", () => {
     const apack = `
     <?xml version="1.0" encoding="utf-8"?>
