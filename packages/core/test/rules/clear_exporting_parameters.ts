@@ -103,6 +103,21 @@ describe("Rule: clear_exporting_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("GET REFERENCE OF, no issue", async () => {
+    const issues = await runSingle(wrap("    GET REFERENCE OF ev_result INTO DATA(lr_ref).\n    lr_ref->* = 1."));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("ASSIGN to field symbol, no issue", async () => {
+    const issues = await runSingle(wrap("    ASSIGN ev_result TO FIELD-SYMBOL(<lv_val>).\n    <lv_val> = 1."));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("read before GET REFERENCE OF, issue", async () => {
+    const issues = await runSingle(wrap("    DATA(lv_copy) = ev_result.\n    GET REFERENCE OF ev_result INTO DATA(lr_ref).\n    lr_ref->* = lv_copy."));
+    expect(issues.length).to.equal(1);
+  });
+
   it("IS NOT SUPPLIED check, no issue", async () => {
     const issues = await runSingle(wrap("    IF ev_result IS NOT SUPPLIED.\n      RETURN.\n    ENDIF.\n    ev_result = 1."));
     expect(issues.length).to.equal(0);
