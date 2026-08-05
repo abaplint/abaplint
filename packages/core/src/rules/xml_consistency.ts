@@ -154,6 +154,31 @@ export class XMLConsistency implements IRule {
     const issues: Issue[] = [];
     const texts = obj.getTexts();
     const maxLengths = obj.getTextMaxLengths();
+    const hasLabelTexts = texts?.short !== undefined
+      || texts?.medium !== undefined
+      || texts?.long !== undefined
+      || texts?.heading !== undefined;
+
+    if (texts?.short !== undefined) {
+      const issue = this.checkRequiredField(file, "SCRLEN1", maxLengths?.short);
+      if (issue) {issues.push(issue);}
+    }
+    if (texts?.medium !== undefined) {
+      const issue = this.checkRequiredField(file, "SCRLEN2", maxLengths?.medium);
+      if (issue) {issues.push(issue);}
+    }
+    if (texts?.long !== undefined) {
+      const issue = this.checkRequiredField(file, "SCRLEN3", maxLengths?.long);
+      if (issue) {issues.push(issue);}
+    }
+    if (texts?.heading !== undefined) {
+      const issue = this.checkRequiredField(file, "HEADLEN", maxLengths?.heading);
+      if (issue) {issues.push(issue);}
+    }
+    if (hasLabelTexts) {
+      const issue = this.checkRequiredField(file, "DTELMASTER", obj.getDtelMaster());
+      if (issue) {issues.push(issue);}
+    }
 
     for (const issue of [
       this.checkTextLength(file, "DDTEXT", obj.getDescription(), 60),
@@ -179,6 +204,14 @@ export class XMLConsistency implements IRule {
     }
 
     return issues;
+  }
+
+  private checkRequiredField(file: IFile, fieldName: string, value: string | undefined): Issue | undefined {
+    if (value === undefined || value === "") {
+      return Issue.atRow(file, 1, `Missing required field ${fieldName} in DD04V`,
+                         this.getMetadata().key, this.conf.severity);
+    }
+    return undefined;
   }
 
   private runDomain(obj: Objects.Domain, file: IFile): Issue[] {

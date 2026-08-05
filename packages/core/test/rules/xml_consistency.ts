@@ -340,6 +340,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <HEADLEN>10</HEADLEN>
     <SCRLEN1>05</SCRLEN1>
     <SCRLEN2>10</SCRLEN2>
@@ -403,6 +404,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN1>05</SCRLEN1>
     <SCRTEXT_S>TooLong</SCRTEXT_S>
     <DATATYPE>CHAR</DATATYPE>
@@ -449,6 +451,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN2>10</SCRLEN2>
     <SCRTEXT_M>Medium text too long</SCRTEXT_M>
     <DATATYPE>CHAR</DATATYPE>
@@ -469,6 +472,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN3>10</SCRLEN3>
     <SCRTEXT_L>Long label text exceeding limit</SCRTEXT_L>
     <DATATYPE>CHAR</DATATYPE>
@@ -489,6 +493,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <HEADLEN>05</HEADLEN>
     <REPTEXT>Heading too long</REPTEXT>
     <DATATYPE>CHAR</DATATYPE>
@@ -509,6 +514,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <HEADLEN>03</HEADLEN>
     <SCRLEN1>03</SCRLEN1>
     <REPTEXT>Heading too long</REPTEXT>
@@ -523,7 +529,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
     expect(issues.length).to.equal(2);
   });
 
-  it("no issue when label length fields are absent", async () => {
+  it("reports missing length fields for present labels", async () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -538,7 +544,35 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
  </asx:abap>
 </abapGit>`;
     const issues = await runDtel(xml);
-    expect(issues.length).to.equal(0);
+    expect(issues.length).to.equal(2);
+    expect(issues[0].getMessage()).to.include("SCRLEN1");
+    expect(issues[1].getMessage()).to.include("DTELMASTER");
+  });
+
+  it("reports all missing label length fields", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <SCRTEXT_S>Short</SCRTEXT_S>
+    <SCRTEXT_M>Medium</SCRTEXT_M>
+    <SCRTEXT_L>Long</SCRTEXT_L>
+    <REPTEXT>Heading</REPTEXT>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDtel(xml);
+    expect(issues.length).to.equal(5);
+    expect(issues.map((i) => i.getMessage()).join(" ")).to.include("SCRLEN1");
+    expect(issues.map((i) => i.getMessage()).join(" ")).to.include("SCRLEN2");
+    expect(issues.map((i) => i.getMessage()).join(" ")).to.include("SCRLEN3");
+    expect(issues.map((i) => i.getMessage()).join(" ")).to.include("HEADLEN");
+    expect(issues.map((i) => i.getMessage()).join(" ")).to.include("DTELMASTER");
   });
 
 
@@ -551,6 +585,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN1>10</SCRLEN1>
     <SCRLEN2>10</SCRLEN2>
     <SCRLEN3>40</SCRLEN3>
@@ -585,6 +620,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN1>05</SCRLEN1>
     <SCRLEN2>20</SCRLEN2>
     <SCRLEN3>40</SCRLEN3>
@@ -619,6 +655,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN1>05</SCRLEN1>
     <SCRLEN2>10</SCRLEN2>
     <SCRLEN3>40</SCRLEN3>
@@ -649,6 +686,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN1>10</SCRLEN1>
     <SCRLEN2>20</SCRLEN2>
     <SCRLEN3>40</SCRLEN3>
