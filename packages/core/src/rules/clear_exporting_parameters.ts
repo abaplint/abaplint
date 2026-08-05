@@ -13,6 +13,7 @@ import {ReferenceType, IReference} from "../abap/5_syntax/_reference";
 import {VoidType, UnknownType} from "../abap/types/basic";
 import {Position} from "../position";
 import {Unknown} from "../abap/2_statements/statements/_statement";
+import {Assign, GetReference} from "../abap/2_statements/statements";
 import {Compare} from "../abap/2_statements/expressions";
 
 export class ClearExportingParametersConf extends BasicRuleConfig {
@@ -43,6 +44,8 @@ Note: EXPORTING parameters passed by VALUE are always initialized and are theref
 Reading and writing the parameter in the same statement (e.g. "ev_result = ev_result + 1") is reported,
 as the source is evaluated before the parameter is assigned.
 Objects containing parser or syntax errors are not reported.
+"IS SUPPLIED"/"IS REQUESTED" checks are not considered reads, and "GET REFERENCE OF" plus
+"ASSIGN ... TO <fs>" are considered writes, as the value can be written via the reference.
 
 Class and interface method implementations and function modules are checked.`,
       tags: [RuleTag.Styleguide],
@@ -184,6 +187,13 @@ ENDCLASS.`,
         if (this.isSuppliedOrRequested(reference, obj)) {
           continue; // "IS SUPPLIED" / "IS REQUESTED" does not read the value
         }
+        if (this.isReferenceOrAssign(reference, obj)) {
+          // "GET REFERENCE OF" and "ASSIGN ... TO <fs>" may be used for writing the value
+          if (earliestWrite === undefined || pos.isBefore(earliestWrite.position.getStart())) {
+            earliestWrite = reference;
+          }
+          continue;
+        }
         if (firstRead === undefined || pos.isBefore(firstRead.position.getStart())) {
           firstRead = reference;
         }
@@ -207,6 +217,21 @@ ENDCLASS.`,
 
     const message = `EXPORTING parameter "${parameter.getName().toLowerCase()}" read before it is cleared or assigned`;
     return Issue.atIdentifier(firstRead.position, message, this.getMetadata().key, this.conf.severity);
+  }
+
+  private isReferenceOrAssign(reference: IReference, obj: ABAPObject): boolean {
+    const file = obj.getABAPFileByName(reference.position.getFilename());
+    const pos = reference.position.getStart();
+    for (const statement of file?.getStatements() || []) {
+      const start = statement.getStart();
+      const end = statement.getEnd();
+      if (pos.equals(start) === false && (pos.isAfter(start) === false || pos.isBefore(end) === false)) {
+        continue;
+      }
+      const type = statement.get();
+      return type instanceof GetReference || type instanceof Assign;
+    }
+    return false;
   }
 
   private isSuppliedOrRequested(reference: IReference, obj: ABAPObject): boolean {
