@@ -9,6 +9,7 @@ import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
 import {ApplyFixes} from "./fixes";
+import {buildGitCloneArguments} from "./git_clone";
 import {Rename} from "./rename";
 
 export const GENERIC_ERROR = "generic_error";
@@ -146,11 +147,8 @@ async function loadDependencies(config: Config, compress: boolean | undefined, b
     if (d.url) {
       process.stderr.write("Clone: " + d.url + "\n");
       const dir = fs.mkdtempSync(path.join(os.tmpdir(), "abaplint-"));
-      let branch = "";
-      if (d.branch) {
-        branch = "-b " + d.branch + " ";
-      }
-      childProcess.execSync("git clone --quiet --depth 1 " + branch + d.url + " .", {cwd: dir, stdio: "inherit"});
+      const args = buildGitCloneArguments(d.url, d.branch);
+      childProcess.execFileSync("git", args, {cwd: dir, stdio: "inherit"});
       const names = FileOperations.loadFileNames(FileOperations.toUnixPath(dir) + d.files);
       files = files.concat(await FileOperations.loadFiles(compress, names, bar));
       FileOperations.deleteFolderRecursive(dir);

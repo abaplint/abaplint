@@ -807,7 +807,7 @@ ENDCLASS.`;
     expect((type as Basic.VoidType).getVoided()?.toLowerCase()).to.equal("cl_abap_zip");
   });
 
-  it("Packed, 1", () => {
+  it("Packed, default length", () => {
     const abap = `
     DATA foo TYPE p.`;
     const identifier = resolveVariable(abap, "foo");
@@ -815,7 +815,7 @@ ENDCLASS.`;
     const type = identifier?.getType();
     expect(type).to.be.instanceof(Basic.PackedType);
     const p = type as Basic.PackedType;
-    expect(p.getLength()).to.equal(1);
+    expect(p.getLength()).to.equal(8);
     expect(p.getDecimals()).to.equal(0);
   });
 
@@ -1786,7 +1786,7 @@ DATA(sdf) = ref->*-int.`;
     FIELD-SYMBOLS <bar> TYPE simple.`;
     const identifier = resolveVariable(abap, "<bar>");
     expect(identifier).to.not.equal(undefined);
-    expect(identifier?.getType()).to.be.instanceof(Basic.SimpleType);
+    expect(identifier?.getType()).to.equal(Basic.SimpleType.get());
   });
 
   it("TABLE", () => {

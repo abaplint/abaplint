@@ -10,7 +10,7 @@ export class TableExpression extends Expression {
     const key = seq("KEY", SimpleName);
     const index = seq("INDEX", Source);
     const ret = seq(tok(BracketLeftW),
-                    alt(Source, seq(optPrio(key), opt("COMPONENTS"), altPrio(fields, index))),
+                    alt(seq(Source, fields), Source, seq(optPrio(key), opt("COMPONENTS"), altPrio(fields, index))),
                     altPrio(tok(WBracketRight), tok(WBracketRightW)));
     return ver(Release.v740sp02, ret, {also: AlsoIn.OpenABAP});
   }

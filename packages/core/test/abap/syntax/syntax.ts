@@ -739,6 +739,38 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("class, nested structured constants and class-data values", () => {
+    const abap = `
+CLASS lcl_test_data DEFINITION FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_address,
+             street  TYPE char60,
+             city    TYPE char40,
+             country TYPE char3,
+           END OF ty_address.
+
+    CONSTANTS:
+      BEGIN OF test_constants,
+        BEGIN OF data_block,
+          customer_id  TYPE char10    VALUE \`1000000001\`,
+          address_info TYPE ty_address VALUE \`sf\`,
+        END OF data_block,
+      END OF test_constants.
+
+    CLASS-DATA:
+      BEGIN OF test_values,
+        BEGIN OF data_block,
+          customer_id  TYPE char10    VALUE \`1000000001\`,
+          address_info TYPE ty_address VALUE \`sdf\`,
+        END OF data_block,
+      END OF test_values.
+ENDCLASS.
+CLASS lcl_test_data IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("class, me, method call", () => {
     const abap = `
       CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
@@ -1851,6 +1883,21 @@ DATA(result) = to_lower( |bar| ).`;
     expect(issues.length).to.equals(0);
   });
 
+  it("built-in to_lower, xstring method result", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar RETURNING VALUE(xstr) TYPE xstring.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE to_lower( lcl=>bar( ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("infer type via NEW", () => {
     const abap = `
   CLASS lcl_bar DEFINITION.
@@ -1954,6 +2001,21 @@ ENDCLASS.
 START-OF-SELECTION.
   DATA int TYPE i.
   lcl_exporting=>run( IMPORTING ev_bar = int ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("method EXPORTING result written in implementation", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar EXPORTING res TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE 'sdf' TO res.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -2379,6 +2441,15 @@ WRITE bar-bar.
     expect(issues.length).to.equals(0);
   });
 
+  it("Table with header line, WRITE TO component", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF voided WITH HEADER LINE.
+WRITE 'sdf' TO tab-bar.
+`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("LIKE DDIC structure, 2", () => {
     const xml = `
     <?xml version="1.0" encoding="utf-8"?>
@@ -2456,6 +2527,16 @@ DATA END OF tables_tab.
 
 tables_tab-foo = 'A'.
 `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("WRITE to substring of OCCURS header line", () => {
+    const abap = `
+DATA: BEGIN OF dirlines OCCURS 5,
+        text TYPE c LENGTH 10,
+      END OF dirlines.
+WRITE 'hello' TO dirlines(2).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -3390,6 +3471,23 @@ START-OF-SELECTION.
     const abap = `
     DATA result TYPE string.
     result = VALUE #( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("VALUE #, character literal in string table, error", () => {
+    const abap = `
+    DATA lt_values TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    lt_values = VALUE #( ( 'material' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with StringType");
+  });
+
+  it("VALUE #, string literal in string table, ok", () => {
+    const abap = `
+    DATA lt_values TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    lt_values = VALUE #( ( \`material\` ) ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -4683,6 +4781,14 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("call strlen(), input must be charlike", () => {
+    const abap = `
+DATA int TYPE i.
+WRITE / strlen( int ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   it("FORM, TABLES", () => {
     const abap = `
 TYPES: BEGIN OF ty,
@@ -5619,6 +5725,54 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
   });
 
+  it("negative character literal passed to NUMC method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_sales_item TYPE n LENGTH 6.
+    METHODS bar IMPORTING moo TYPE ty_sales_item.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    bar( '-1' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("alphabetic character literal passed to NUMC method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_sales_item TYPE n LENGTH 6.
+    METHODS bar IMPORTING moo TYPE ty_sales_item.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    bar( 'A' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("alphabetic string literal passed to NUMC method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_sales_item TYPE n LENGTH 6.
+    METHODS bar IMPORTING moo TYPE ty_sales_item.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    bar( \`B\` ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
   it("inferred packed arithmetic is not compatible with differently typed method parameter", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -6444,6 +6598,56 @@ WRITE tab.`;
     WRITE float.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("type checking, WRITE date TO string, error", () => {
+    const abap = `
+DATA bar TYPE string.
+DATA p_date TYPE d.
+WRITE p_date TO bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain(`"bar" must be a character-like field`);
+  });
+
+  it("type checking, WRITE TO fixed character-like targets, ok", () => {
+    const abap = `
+DATA char TYPE c LENGTH 10.
+DATA numeric TYPE n LENGTH 10.
+DATA date TYPE d.
+DATA time TYPE t.
+WRITE '1' TO char.
+WRITE '1' TO numeric.
+WRITE '1' TO date.
+WRITE '1' TO time.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("type checking, WRITE TO generic field-symbol, ok", () => {
+    const abap = `
+FIELD-SYMBOLS <fs> TYPE any.
+DATA p_date TYPE d.
+WRITE p_date TO <FS>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("type checking, WRITE TO generic clike parameter, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar
+      EXPORTING
+        VALUE(ev_text) TYPE clike.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE 'hello' TO ev_text.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 
   it("WRITE numeric, ok", () => {
@@ -9791,6 +9995,21 @@ INSERT INITIAL LINE INTO lt_components ASSIGNING <ls_component> INDEX 1.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("INSERT INITIAL LINE ASSIGNING inline field symbol", () => {
+    const abap = `
+TYPES: BEGIN OF ty_item,
+         a TYPE c LENGTH 1,
+         b TYPE c LENGTH 1,
+       END OF ty_item.
+TYPES tt_item TYPE STANDARD TABLE OF ty_item WITH EMPTY KEY.
+DATA lt_items TYPE tt_item.
+INSERT INITIAL LINE INTO lt_items INDEX 1 ASSIGNING FIELD-SYMBOL(<fs_item>).
+<fs_item>-a = 'A'.
+<fs_item>-b = 'B'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("packed1, DECIMALS must be specified in OO context", () => {
     const abap = `
 CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
@@ -9812,6 +10031,18 @@ ENDCLASS.
 CLASS zcl_foobar IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runClass(abap);
+    expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
+  });
+
+  it("packed, DECIMALS must be specified in local OO context", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p LENGTH 8.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
   });
 
@@ -9919,6 +10150,22 @@ CLASS lcl IMPLEMENTATION.
   METHOD moo.
     DATA short TYPE ty_short.
     moo( short ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, default packed into packed parameter", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p LENGTH 8 DECIMALS 0.
+    METHODS bar IMPORTING moo TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA lv_tstmp1 TYPE p.
+    bar( lv_tstmp1 ).
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
@@ -14515,6 +14762,17 @@ ENDLOOP.`;
     const abap = `FIELD-SYMBOLS <lv_set_proto_constructable_b> TYPE i.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("local class name too long", () => {
+    const abap = `
+CLASS lcl_failing_result_write_authority DEFINITION.
+ENDCLASS.
+CLASS lcl_failing_result_write_authority IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("Class name \"lcl_failing_result_write_authority\" is too long");
   });
 
   it("INTERFACES can only be declared in public sections", () => {

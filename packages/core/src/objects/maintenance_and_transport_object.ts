@@ -83,13 +83,13 @@ export class MaintenanceAndTransportObject extends AbstractObject {
 
     if (parsed === undefined
         || parsed.abapGit === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+        || parsed.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return {updated: false, runtime: 0};
     }
 
-    this.parsedXML.area = parsed.abapGit["asx:abap"]["asx:values"].TOBJ?.TVDIR?.AREA;
-    this.parsedXML.objectName = parsed.abapGit["asx:abap"]["asx:values"].OBJH?.OBJECTNAME;
-    this.parsedXML.objectType = parsed.abapGit["asx:abap"]["asx:values"].OBJH?.OBJECTTYPE;
+    this.parsedXML.area = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.TOBJ?.TVDIR?.AREA;
+    this.parsedXML.objectName = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.OBJH?.OBJECTNAME;
+    this.parsedXML.objectType = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.OBJH?.OBJECTTYPE;
 
     const end = Date.now();
     return {updated: true, runtime: end - start};

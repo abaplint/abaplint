@@ -24,7 +24,7 @@ export class Oauth2Profile extends AbstractObject {
 
     const parsed = super.parseRaw2();
 
-    for (const t of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"]?.PROFILE?.T_SCOPES?.OA2P_SCOPES)) {
+    for (const t of xmlToArray(parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.PROFILE?.T_SCOPES?.OA2P_SCOPES)) {
       ret.push(t.SCOPE);
     }
 

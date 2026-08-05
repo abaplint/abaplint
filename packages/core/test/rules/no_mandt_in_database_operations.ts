@@ -7,6 +7,12 @@ const tests = [
   {abap: "SELECT mandt FROM zfoo INTO TABLE @DATA(clients).", cnt: 0},
   {abap: "SELECT * FROM zfoo WHERE mandt = @sy-mandt INTO TABLE @DATA(rows).", cnt: 1},
   {abap: "SELECT * FROM zfoo AS foo WHERE foo~mandt = @sy-mandt INTO TABLE @DATA(rows).", cnt: 1},
+  {abap: `SELECT * FROM zfoo AS foo
+    INNER JOIN zbar AS bar ON bar~mandt = foo~mandt AND bar~id = foo~id
+    INTO TABLE @DATA(rows).`, cnt: 1},
+  {abap: `SELECT * FROM zfoo AS foo
+    INNER JOIN zbar AS bar ON bar~id = foo~id
+    INTO TABLE @DATA(rows).`, cnt: 0},
   {abap: "SELECT * FROM zfoo WHERE id = @mandt INTO TABLE @DATA(rows).", cnt: 0},
   {abap: "SELECT * FROM zfoo CLIENT SPECIFIED INTO TABLE @DATA(rows).", cnt: 1},
   {abap: "SELECT * FROM zfoo USING CLIENT @client INTO TABLE @DATA(rows).", cnt: 1},

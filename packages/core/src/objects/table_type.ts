@@ -190,12 +190,15 @@ export class TableType extends AbstractObject {
       return;
     }
 
-    const values = parsed.abapGit["asx:abap"]["asx:values"];
+    const values = parsed?.abapGit?.["asx:abap"]?.["asx:values"];
     if (values === undefined) {
       return;
     }
 
     const dd40v = values.DD40V;
+    if (dd40v === undefined) {
+      return;
+    }
     this.parsedXML.rowtype = dd40v.ROWTYPE ? dd40v.ROWTYPE : "";
     this.parsedXML.rowkind = dd40v.ROWKIND ? dd40v.ROWKIND : "";
     this.parsedXML.datatype = dd40v.DATATYPE;

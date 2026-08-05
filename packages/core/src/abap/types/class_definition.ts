@@ -95,6 +95,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     // perform checks after everything has been initialized
     this.checkInterfaceVisibility(input, node);
     this.checkMethodsFromSuperClasses(input);
+    this.checkClassNameLength(input);
     this.checkMethodNameLength(input);
     this.checkClassConstructorStatic(input);
   }
@@ -161,6 +162,13 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 */
 
   ///////////////////
+
+  private checkClassNameLength(input: SyntaxInput) {
+    if (this.getName().length > 30) {
+      const message = `Class name "${this.getName()}" is too long, maximum length is 30 characters`;
+      input.issues.push(syntaxIssue(input, this.getToken(), message));
+    }
+  }
 
   private findSuper(def: StatementNode | undefined, input: SyntaxInput): string | undefined {
     const token = def?.findDirectExpression(SuperClassName)?.getFirstToken();

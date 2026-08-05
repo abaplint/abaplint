@@ -48,6 +48,22 @@ export class TypeUtils {
     return false;
   }
 
+  public isCharLikeField(type: AbstractType | undefined): boolean {
+    if (type instanceof StructureType
+        || (type instanceof TableType && type.isWithHeader())) {
+      return this.isCharLikeStrict(type);
+    }
+    return type instanceof CharacterType
+      || type instanceof NumericType
+      || type instanceof DateType
+      || type instanceof TimeType
+      || type instanceof CGenericType
+      || type instanceof CLikeType
+      || type instanceof AnyType
+      || type instanceof UnknownType
+      || type instanceof VoidType;
+  }
+
   public isCharLike(type: AbstractType | undefined): boolean {
     if (type === undefined) {
       return false;
@@ -318,8 +334,24 @@ export class TypeUtils {
       return false;
     }
 
+    if (target instanceof NumericType
+        && (source instanceof CharacterType || source instanceof StringType)
+        && source.getAbstractTypeData()?.derivedFromConstant === true) {
+      const constant = node?.concatTokens();
+      if (constant !== undefined
+          && ((constant.startsWith("'") && constant.endsWith("'"))
+            || (constant.startsWith("`") && constant.endsWith("`")))
+          && /^\d*$/.test(constant.substring(1, constant.length - 1)) === false) {
+        return false;
+      }
+    }
+
     if (calculated) {
       return this.isAssignable(source, target);
+    }
+
+    if (target instanceof CLikeType) {
+      return this.isCharLikeStrict(source);
     }
 
     if (target instanceof PGenericType) {

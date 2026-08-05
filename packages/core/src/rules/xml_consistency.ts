@@ -26,6 +26,7 @@ export class XMLConsistency implements IRule {
       extendedInformation: `Checks:
 * XML is well-formed and parseable
 * Naming for CLAS and INTF objects
+* QUAN fields in TABL objects have reference table and field values
 * Texts and translations do not exceed maximum allowed length.`,
       tags: [RuleTag.Naming, RuleTag.Syntax],
     };
@@ -56,6 +57,13 @@ export class XMLConsistency implements IRule {
       const res = XMLValidator.validate(xml);
       if (res !== true) {
         issues.push(Issue.atRow(file, 1, "XML parser error: " + res.err.msg, this.getMetadata().key, this.conf.severity));
+      } else {
+        for (const attribute of ["version", "serializer_version"]) {
+          const value = xml.match(new RegExp(`<abapGit\\b[^>]*\\b${attribute}="([^"]+)"`))?.[1];
+          if (value !== undefined && value.match(/^v\d\.\d\.\d$/) === null) {
+            issues.push(Issue.atRow(file, 1, `Unexpected abapGit ${attribute} "${value}"`, this.getMetadata().key, this.conf.severity));
+          }
+        }
       }
     }
 
@@ -72,6 +80,8 @@ export class XMLConsistency implements IRule {
       issues.push(...this.runTransaction(obj, file));
     } else if (obj instanceof Objects.MessageClass) {
       issues.push(...this.runMessageClass(obj, file));
+    } else if (obj instanceof Objects.Table) {
+      issues.push(...this.runTable(obj, file));
     }
 
     if (obj instanceof ABAPObject) {
@@ -251,6 +261,17 @@ export class XMLConsistency implements IRule {
       push(this.checkTextLength(file, `TEXT[${translation.number}]`, translation.text, maxTextLength, translation.language));
     }
 
+    return issues;
+  }
+
+  private runTable(obj: Objects.Table, file: IFile): Issue[] {
+    const issues: Issue[] = [];
+    for (const field of obj.getFields() ?? []) {
+      if (field.DATATYPE === "QUAN" && (!field.REFTABLE?.trim() || !field.REFFIELD?.trim())) {
+        const message = `QUAN field ${field.FIELDNAME} must have REFTABLE and REFFIELD set`;
+        issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity));
+      }
+    }
     return issues;
   }
 }

@@ -1,5 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
-import {StatementNode} from "../../nodes";
+import {ExpressionNode, StatementNode} from "../../nodes";
 import {InlineFS} from "../expressions/inline_fs";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
@@ -32,9 +32,13 @@ export class InsertInternal implements StatementSyntax {
       targetType = targetType.getRowType();
     }
 
-    let source = node.findDirectExpression(Expressions.SimpleSource4);
-    if (source === undefined) {
-      source = node.findDirectExpression(Expressions.Source);
+    const initial = node.findDirectTokenByText("INITIAL") !== undefined;
+    let source: ExpressionNode | undefined;
+    if (initial === false) {
+      source = node.findDirectExpression(Expressions.SimpleSource4);
+      if (source === undefined) {
+        source = node.findDirectExpression(Expressions.Source);
+      }
     }
     const sourceType = source ? Source.runSyntax(source, input, targetType) : targetType;
 
@@ -58,7 +62,7 @@ export class InsertInternal implements StatementSyntax {
       }
     }
 
-    if (node.findDirectTokenByText("INITIAL") === undefined) {
+    if (initial === false) {
       let error = false;
       if (sourceType instanceof IntegerType && targetType instanceof Integer8Type) {
         error = true;

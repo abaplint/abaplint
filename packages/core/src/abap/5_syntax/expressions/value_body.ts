@@ -5,7 +5,7 @@ import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
-import {AnyType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, CharacterType, StringType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ValueBody {
@@ -83,7 +83,11 @@ export class ValueBody {
         FieldAssignment.runSyntax(s, input, rowType);
       }
       for (const s of foo.findDirectExpressions(Expressions.Source)) {
-        Source.runSyntax(s, input, rowType);
+        const sourceType = Source.runSyntax(s, input, rowType);
+        if (rowType instanceof StringType && sourceType instanceof CharacterType) {
+          const message = "VALUE, source type CharacterType not compatible with StringType";
+          input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+        }
       }
     }
 

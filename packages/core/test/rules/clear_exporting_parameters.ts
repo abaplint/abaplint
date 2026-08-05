@@ -93,6 +93,26 @@ describe("Rule: clear_exporting_parameters", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("IS SUPPLIED check, no issue", async () => {
+    const issues = await runSingle(wrap("    IF ev_result IS SUPPLIED.\n      ev_result = 1.\n    ENDIF."));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("IS REQUESTED check, no issue", async () => {
+    const issues = await runSingle(wrap("    IF ev_result IS REQUESTED.\n      ev_result = 1.\n    ENDIF."));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("IS NOT SUPPLIED check, no issue", async () => {
+    const issues = await runSingle(wrap("    IF ev_result IS NOT SUPPLIED.\n      RETURN.\n    ENDIF.\n    ev_result = 1."));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("IS SUPPLIED but read afterwards, issue", async () => {
+    const issues = await runSingle(wrap("    IF ev_result IS SUPPLIED.\n    ENDIF.\n    ev_result = ev_result + 1."));
+    expect(issues.length).to.equal(1);
+  });
+
   it("plain assignment only, no issue", async () => {
     const issues = await runSingle(wrap("    ev_result = 1."));
     expect(issues.length).to.equal(0);
