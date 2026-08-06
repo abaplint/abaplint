@@ -88,7 +88,7 @@ export class Target {
             && !(context instanceof VoidType)
             && !(context instanceof UnknownType)
             && !(context instanceof UnknownType)) {
-          const message = "Not a internal table, \"[]\"";
+          const message = `Not an internal table, "${node.concatTokens()}"`;
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return VoidType.get(CheckSyntaxKey);
         }
