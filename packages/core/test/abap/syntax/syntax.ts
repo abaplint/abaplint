@@ -14787,4 +14787,11 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("INTERFACES can only be declared in public sections");
   });
 
+  it("REFRESH, not an internal table", () => {
+    const abap = `DATA tab TYPE i.
+REFRESH tab[].`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("tab");
+  });
+
 });
