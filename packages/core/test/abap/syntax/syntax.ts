@@ -5,12 +5,12 @@ import {Issue} from "../../../src/issue";
 import {Config} from "../../../src/config";
 import {IRegistry} from "../../../src/_iregistry";
 import {getABAPObjects} from "../../get_abap";
-import {Version, LanguageVersion, Release, ReleaseName, versionToABAPRelease} from "../../../src/version";
+import {LanguageVersion, Release, ReleaseName, ABAPRelease} from "../../../src/version";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {applyEditSingle} from "../../../src/edit_helper";
 import {IReference, ReferenceType} from "../../../src/abap/5_syntax/_reference";
 
-function run(reg: IRegistry, globalConstants?: string[], version?: Version, errorNamespace?: string,
+function run(reg: IRegistry, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
              languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
   let ret: Issue[] = [];
 
@@ -21,15 +21,10 @@ function run(reg: IRegistry, globalConstants?: string[], version?: Version, erro
   if (ambigiousVoids) {
     config.syntax.ambigiousVoids = ambigiousVoids;
   }
-  if (version) {
-    config.syntax.version = version;
-  }
-  if (languageVersion) {
+  if (release || languageVersion) {
     config.syntax.version = {
-      release: version === undefined || version === Version.Cloud
-        ? Release.Newest.name as ReleaseName
-        : versionToABAPRelease(version).name as ReleaseName,
-      language: languageVersion,
+      release: (release ?? Release.Newest).name as ReleaseName,
+      language: languageVersion ?? LanguageVersion.Normal,
     };
   }
   if (errorNamespace) {
@@ -70,11 +65,11 @@ function runInterface(abap: string): Issue[] {
   return run(reg);
 }
 
-function runProgram(abap: string, globalConstants?: string[], version?: Version, errorNamespace?: string,
+function runProgram(abap: string, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
                     languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);
-  return run(reg, globalConstants, version, errorNamespace, languageVersion, ambigiousVoids);
+  return run(reg, globalConstants, release, errorNamespace, languageVersion, ambigiousVoids);
 }
 
 ////////////////////////////////////////////////////////////
@@ -1039,7 +1034,7 @@ ENDCLASS.`;
     const abap = `DATA casting_table TYPE REF TO data.
 DATA table_name TYPE string.
 CREATE DATA casting_table TYPE STANDARD TABLE OF (table_name) WITH EMPTY KEY.`;
-    const issues = runProgram(abap, [], Version.OpenABAP);
+    const issues = runProgram(abap, [], Release["open-abap"]);
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
@@ -2173,7 +2168,7 @@ DATA(bar) = foo->lif_def~foo.`;
   it("LOOP AT SCREEN, on 702", () => {
     const abap = `LOOP AT SCREEN.
     ENDLOOP.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues.length).to.equals(0);
   });
 
@@ -2182,7 +2177,7 @@ DATA(bar) = foo->lif_def~foo.`;
   DATA row TYPE string.
   LOOP AT tab INTO row FROM 3.
   ENDLOOP.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues.length).to.equals(0);
   });
 
@@ -3682,7 +3677,7 @@ ENDLOOP.`;
 
   it("MESSAGE WITH TEXT, on 702", () => {
     const abap = `MESSAGE e001(00) WITH TEXT-001.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues.length).to.equals(0);
   });
 
@@ -3692,7 +3687,7 @@ ENDLOOP.`;
   LOOP AT list.
     WRITE / list.
   ENDLOOP.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
@@ -3700,7 +3695,7 @@ ENDLOOP.`;
     const abap = `
     TYPES tab TYPE i OCCURS 150.
     DATA fieldtab TYPE tab WITH HEADER LINE.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues.length).to.equals(0);
   });
 
@@ -4408,7 +4403,7 @@ ENDFUNCTION.`;
     const abap = `FIELD-SYMBOLS <ls_table> TYPE any.
     DATA c_tabname TYPE string.
     INSERT (c_tabname) FROM <ls_table>.`;
-    const issues = runProgram(abap, [], Version.v702, ".");
+    const issues = runProgram(abap, [], Release.v702, ".");
     expect(issues.length).to.equals(0);
   });
 
@@ -4416,7 +4411,7 @@ ENDFUNCTION.`;
     const abap = `DATA table_name TYPE string.
     DATA casting_table TYPE REF TO data.
     INSERT (table_name) FROM TABLE @casting_table->*.`;
-    const issues = runProgram(abap, [], Version.OpenABAP);
+    const issues = runProgram(abap, [], Release["open-abap"]);
     expect(issues.length).to.equals(0);
   });
 
@@ -4424,14 +4419,14 @@ ENDFUNCTION.`;
     const abap = `DATA table_name TYPE string.
     SELECT COUNT( * ) FROM (table_name) INTO @DATA(num_of_ana_rows).
     WRITE / num_of_ana_rows.`;
-    const issues = runProgram(abap, [], Version.OpenABAP);
+    const issues = runProgram(abap, [], Release["open-abap"]);
     expect(issues.length).to.equals(0);
   });
 
   it("dynamic DELETE, full errornamespace", () => {
     const abap = `DATA c_tabname TYPE string.
     DELETE FROM (c_tabname) WHERE type = 2.`;
-    const issues = runProgram(abap, [], Version.v702, ".");
+    const issues = runProgram(abap, [], Release.v702, ".");
     expect(issues.length).to.equals(0);
   });
 
@@ -4439,7 +4434,7 @@ ENDFUNCTION.`;
     const abap = `DATA c_tabname TYPE string.
     FIELD-SYMBOLS <ls_table> TYPE any.
     MODIFY (c_tabname) FROM ls_content.`;
-    const issues = runProgram(abap, [], Version.v702, ".");
+    const issues = runProgram(abap, [], Release.v702, ".");
     expect(issues.length).to.equals(1);
   });
 
@@ -7346,7 +7341,7 @@ START-OF-SELECTION.
 DATA tab1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA tab2 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 MOVE-CORRESPONDING tab1 TO tab2.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.include("MOVE-CORRESPONDING with tables possible");
   });
 
@@ -7355,7 +7350,7 @@ MOVE-CORRESPONDING tab1 TO tab2.`;
 DATA tab1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA tab2 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 MOVE-CORRESPONDING tab1 TO tab2.`;
-    const issues = runProgram(abap, [], Version.OpenABAP);
+    const issues = runProgram(abap, [], Release["open-abap"]);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -7364,7 +7359,7 @@ MOVE-CORRESPONDING tab1 TO tab2.`;
 DATA chain_tokens TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA sfrom TYPE i.
 APPEND LINES OF <tokens> FROM sfrom TO chain_tokens.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.include("tokens");
   });
 
@@ -7372,7 +7367,7 @@ APPEND LINES OF <tokens> FROM sfrom TO chain_tokens.`;
     const abap = `
 DATA lo_dest TYPE REF TO voided.
 lo_dest->set('HELLO').`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8299,13 +8294,13 @@ ENDLOOP.`;
 
   it("CALL not found function module in cloud, should give error", () => {
     const abap = `CALL FUNCTION 'NOT_RELEASED'.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("found");
   });
 
   it("CALL not found function module in cloud destination, ok", () => {
     const abap = `CALL FUNCTION 'NOT_RELEASED' DESTINATION 'SDF'.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8321,7 +8316,7 @@ CREATE OBJECT foo.`;
 
   it("CALL not found class in cloud, should give error", () => {
     const abap = `CALL METHOD ('CL_NOT_RELEASED')=>foobar.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not found");
   });
 
@@ -8330,7 +8325,7 @@ CREATE OBJECT foo.`;
     DATA lv_name TYPE string.
     lv_name = 'CL_NOT_RELEASED'.
     CALL METHOD (lv_name)=>foobar.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8340,7 +8335,7 @@ INTERFACE lif.
 ENDINTERFACE.
 DATA li_auth TYPE REF TO lif.
 CREATE OBJECT li_auth TYPE ('ZCL_ABAPGIT_AUTH_EXIT').`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8360,7 +8355,7 @@ CLASS lcl IMPLEMENTATION.
     foo( input ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8380,7 +8375,7 @@ CLASS lcl IMPLEMENTATION.
     foo( var = input ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8398,7 +8393,7 @@ CLASS lcl IMPLEMENTATION.
     foo( 'foo' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8416,7 +8411,7 @@ CLASS lcl IMPLEMENTATION.
     foo( space ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8434,7 +8429,7 @@ CLASS lcl IMPLEMENTATION.
     foo( 'foo' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8450,7 +8445,7 @@ CLASS lcl IMPLEMENTATION.
     foo( 'sdf' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8466,7 +8461,7 @@ CLASS lcl IMPLEMENTATION.
     foo( 'sdf' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8487,7 +8482,7 @@ CLASS lcl IMPLEMENTATION.
     mt_result = foo( ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
@@ -8505,7 +8500,7 @@ TYPES: BEGIN OF ty_result,
 DATA tab2 TYPE STANDARD TABLE OF ty_result WITH DEFAULT KEY.
 
 tab1 = tab2.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
@@ -8523,7 +8518,7 @@ TYPES: BEGIN OF ty_result,
 DATA dat2 TYPE ty_result.
 
 dat1 = dat2.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
@@ -8562,7 +8557,7 @@ DATA: BEGIN OF data2,
 
 data2 = data1.
 data1 = data2.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8591,7 +8586,7 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8611,7 +8606,7 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8639,7 +8634,7 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8667,7 +8662,7 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8682,7 +8677,7 @@ CLASS lcl IMPLEMENTATION.
     foo( '1' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8701,7 +8696,7 @@ DATA lt_notif TYPE STANDARD TABLE OF lty_notif.
 DATA lt_notif_key TYPE STANDARD TABLE OF lty_notif_key.
 
 lt_notif_key = lt_notif.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8713,7 +8708,7 @@ TYPES: BEGIN OF ty,
 DATA voided TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
 DATA lv TYPE i.
 lv = lines( voided ).`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8902,13 +8897,13 @@ CLASS lcl IMPLEMENTATION.
     method1( sy ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("sy-repid", () => {
     const abap = `WRITE sy-repid.`;
-    const issues = runProgram(abap, [], Version.Cloud, ".", LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, ".", LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -12442,7 +12437,7 @@ TYPES ty_char TYPE c LENGTH 2.
 DATA lo_data TYPE REF TO ty_char.
 DATA lv_buffer TYPE c LENGTH 2.
 CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MODE.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -12451,7 +12446,7 @@ CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MOD
 DATA lo_data TYPE REF TO data.
 DATA lv_buffer TYPE c LENGTH 2.
 CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MODE.`;
-    const issues = runProgram(abap, [], Version.v740sp05);
+    const issues = runProgram(abap, [], Release.v740sp05);
     expect(issues[0]?.getMessage()).to.include("A generic reference cannot be dereferenced");
   });
 
@@ -12460,7 +12455,7 @@ CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MOD
 DATA mr_service_binding TYPE REF TO data.
 FIELD-SYMBOLS <lv_field> TYPE any.
 ASSIGN COMPONENT 'PUBLISHED' OF STRUCTURE mr_service_binding->* TO <lv_field>.`;
-    const issues = runProgram(abap, [], Version.v740sp05);
+    const issues = runProgram(abap, [], Release.v740sp05);
     expect(issues[0]?.getMessage()).to.include("A generic reference cannot be dereferenced");
   });
 
@@ -12473,7 +12468,7 @@ TYPES: BEGIN OF ty,
 DATA lt_hashed TYPE HASHED TABLE OF ty WITH UNIQUE KEY field1.
 DATA row LIKE LINE OF lt_hashed.
 INSERT row INTO lt_hashed.`;
-    const issues = runProgram(abap, [], Version.v740sp05);
+    const issues = runProgram(abap, [], Release.v740sp05);
     expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
   });
 
@@ -12486,7 +12481,7 @@ TYPES: BEGIN OF ty,
 DATA lt_hashed TYPE HASHED TABLE OF ty WITH UNIQUE KEY field1.
 DATA row LIKE LINE OF lt_hashed.
 INSERT row INTO TABLE lt_hashed.`;
-    const issues = runProgram(abap, [], Version.v740sp05);
+    const issues = runProgram(abap, [], Release.v740sp05);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -12495,10 +12490,10 @@ INSERT row INTO TABLE lt_hashed.`;
 DATA lo_data TYPE REF TO data.
 DATA lv_buffer TYPE c LENGTH 2.
 CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MODE.`;
-    let issues = runProgram(abap, [], Version.v756);
+    let issues = runProgram(abap, [], Release.v756);
     expect(issues[0]?.getMessage()).to.equal(undefined);
 
-    issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -12507,7 +12502,7 @@ CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MOD
 DATA lr_context TYPE REF TO data.
 FIELD-SYMBOLS <lg_context> TYPE any.
 ASSIGN lr_context->* TO <lg_context>.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -12734,7 +12729,7 @@ DATA foo type ty_results_tt.
 FIELD-SYMBOLS <style1> TYPE voided.
 LOOP AT foo ASSIGNING <style1> USING KEY sec_key WHERE obj_type IS INITIAL.
 ENDLOOP.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.include("key check with IS INITIAL");
   });
 
@@ -12757,7 +12752,7 @@ LOOP AT foo ASSIGNING <style1>
           AND obj_name = 'sdf'
           AND match IS INITIAL.
 ENDLOOP.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -13437,7 +13432,7 @@ SELECT * FROM t100
       WHERE carrid IN lr_carrid.`;
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
-    const issues = run(reg, [], Version.v702);
+    const issues = run(reg, [], Release.v702);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -13767,7 +13762,7 @@ TYPES tty TYPE STANDARD TABLE OF row WITH DEFAULT KEY.
 DATA mt_attri TYPE REF TO tty.
 DATA(lt_attri) = mt_attri->*.
 DELETE lt_attri WHERE bind_type IS INITIAL.`;
-    const issues = runProgram(abap, [], Version.v740sp08);
+    const issues = runProgram(abap, [], Release.v740sp08);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -13777,7 +13772,7 @@ TYPES ty TYPE x LENGTH 1.
 DATA ix_ TYPE x LENGTH 1.
 DATA lr_ TYPE REF TO ty.
 DATA(lx_) = ix_ BIT-XOR lr_->*.`;
-    const issues = runProgram(abap, [], Version.v740sp08);
+    const issues = runProgram(abap, [], Release.v740sp08);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -13816,7 +13811,7 @@ CLASS lcl IMPLEMENTATION.
     bar = 2.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.v740sp08);
+    const issues = runProgram(abap, [], Release.v740sp08);
     expect(issues[0]?.getMessage()).to.contain("cannot be modified");
   });
 
@@ -13834,7 +13829,7 @@ CLASS lcl IMPLEMENTATION.
         moo = bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.v740sp08);
+    const issues = runProgram(abap, [], Release.v740sp08);
     expect(issues[0]?.getMessage()).to.contain("cannot be modified");
   });
 
@@ -13845,7 +13840,7 @@ DATA: BEGIN OF structure,
         field TYPE i,
       END OF structure.
 structure-field = foo-nonfield.`;
-    const issues = runProgram(abap, [], Version.v740sp08);
+    const issues = runProgram(abap, [], Release.v740sp08);
     expect(issues[0]?.getMessage()).to.contain("FOO is not structured");
   });
 
@@ -13861,7 +13856,7 @@ CLASS lcl IMPLEMENTATION.
     bar = 2.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.v740sp08);
+    const issues = runProgram(abap, [], Release.v740sp08);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
