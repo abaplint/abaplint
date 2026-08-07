@@ -63,6 +63,11 @@ export class MethodCallChain {
             input.issues.push(syntaxIssue(input, methodToken!, message));
             return VoidType.get(CheckSyntaxKey);
           }
+          if (current === first && method?.isStatic() === false && input.scope.isInStaticMethod() === true) {
+            const message = "Method \"" + methodName + "\" not static";
+            input.issues.push(syntaxIssue(input, methodToken!, message));
+            return VoidType.get(CheckSyntaxKey);
+          }
           const voidedName = context instanceof VoidType ? context.getVoided() : undefined;
           const extra = helper.methodReferenceExtras(foundDef, className || voidedName);
           input.scope.addReference(methodToken, method, ReferenceType.MethodReference, input.filename, extra);

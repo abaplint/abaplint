@@ -29,9 +29,11 @@ export class MethodSource {
     }
 
     let context: AbstractType | IMethodDefinition | undefined = this.findTop(first, input, children);
+    let implicitMe = false;
     if (context === undefined) {
       context = input.scope.findVariable("me")?.getType();
       children.unshift(first);
+      implicitMe = true;
     }
 
     if (input.scope.getLanguageVersion() === LanguageVersion.Cloud
@@ -96,6 +98,12 @@ export class MethodSource {
         const def = input.scope.findObjectDefinition(className);
         // eslint-disable-next-line prefer-const
         let {method, def: foundDef} = helper.searchMethodName(def, methodName);
+
+        if (implicitMe && current === first && method?.isStatic() === false && input.scope.isInStaticMethod() === true) {
+          const message = "Method \"" + methodName + "\" not static";
+          input.issues.push(syntaxIssue(input, methodToken, message));
+          return VoidType.get(CheckSyntaxKey);
+        }
 
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = VoidType.get("CONSTRUCTOR"); // todo, this is a workaround, constructors always exists
