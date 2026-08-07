@@ -8379,6 +8379,25 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("call method, xstring is incompatible with character parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE c LENGTH 30.
+    CLASS-METHODS foo IMPORTING bar TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA xstr TYPE xstring.
+  lcl=>foo( xstr ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
   it("call method, ok, compatible", () => {
     const abap = `
 TYPES ty_char20 TYPE c LENGTH 20.
