@@ -10315,6 +10315,76 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain(" not static");
   });
 
+  it("error, calling instance method inside static method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD bar.
+    foo( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain(" not static");
+  });
+
+  it("ok, calling instance method inside instance method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD bar.
+    foo( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, calling static method inside static method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar.
+    CLASS-METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD bar.
+    foo( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("error, CALL METHOD instance method inside static method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD bar.
+    CALL METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain(" not static");
+  });
+
   it("error, component name is a ref to object", () => {
     const abap = `FIELD-SYMBOLS <lg_any> TYPE any.
 DATA compo TYPE REF TO object.
