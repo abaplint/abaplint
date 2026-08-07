@@ -554,6 +554,20 @@ export class CurrentScope {
     return false;
   }
 
+  public isInStaticMethod(): boolean {
+    let curr = this.current;
+    while (curr !== undefined) {
+      const stype = curr.getIdentifier().stype;
+      if (stype === ScopeType.MethodInstance) {
+        return false;
+      } else if (stype === ScopeType.ClassImplementation) {
+        return true;
+      }
+      curr = curr.getParent();
+    }
+    return false;
+  }
+
   public addLocalFriend(className: string, friendName: string): void {
     const key = className.toUpperCase();
     const list = this.localFriends.get(key) ?? [];
