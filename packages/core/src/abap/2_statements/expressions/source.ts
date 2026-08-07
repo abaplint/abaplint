@@ -98,7 +98,7 @@ export class Source extends Expression {
                                             tok(ParenLeftW),
                                             Source,
                                             rparen,
-                                            optPrio(after)));
+                                            optPrio(after)), {also: AlsoIn.OpenABAP});
 
     const filter = ver(Release.v740sp08,
                        seq("FILTER",
