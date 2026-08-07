@@ -959,6 +959,30 @@ ENDTRY.`;
     expect(type).to.be.instanceof(Basic.VoidType);
   });
 
+  it("CATCH multiple classes into DATA infers their common superclass", () => {
+    const abap = `
+CLASS cx_root DEFINITION.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_foo DEFINITION INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_foo IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_bar DEFINITION INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_bar IMPLEMENTATION.
+ENDCLASS.
+TRY.
+  CATCH cx_foo cx_bar INTO DATA(lx_error).
+ENDTRY.`;
+    const identifier = resolveVariable(abap, "lx_error");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.ObjectReferenceType);
+    expect((type as Basic.ObjectReferenceType).getIdentifierName().toLowerCase()).to.equal("cx_root");
+  });
+
   it("CATCH multiple classes into DATA uses first common superclass", () => {
     const abap = `
 CLASS cx_root DEFINITION.
