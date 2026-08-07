@@ -8,6 +8,9 @@ export class MessageSource {
     for (const f of node.findDirectExpressions(Expressions.Source)) {
       Source.runSyntax(f, input);
     }
+    for (const f of node.findDirectExpressions(Expressions.SimpleSource3)) {
+      Source.runSyntax(f, input);
+    }
 
     if (node.getFirstToken().getStr().toUpperCase() === "ID") {
       const id = node.findExpressionAfterToken("ID")?.concatTokens();
