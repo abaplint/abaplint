@@ -7,6 +7,9 @@ configOnlyConstants.checkData = false;
 const configDataAndConstants = new FullyTypeConsantsConf();
 configDataAndConstants.checkData = true;
 
+const configNoLength = new FullyTypeConsantsConf();
+configNoLength.checkLength = false;
+
 const testCases: string[] = [
   `CONSTANTS: tested_name VALUE \`blah\`.`,
   `CONSTANTS: tested_name3 VALUE 1234.`,
@@ -27,6 +30,14 @@ const testCases: string[] = [
     foo VALUE 1,
     bar TYPE i VALUE 1,
   END OF multi.`,
+
+  `DATA bar(1) TYPE c.`,
+  `TYPES bar(1) TYPE c.`,
+  `CONSTANTS bar(1) TYPE c VALUE 'a'.`,
+  `CLASS-DATA bar(1) TYPE c.`,
+  `STATICS bar(1) TYPE c.`,
+  `DATA bar TYPE c LENGTH 1.`,
+  `TYPES bar TYPE c LENGTH 1.`,
 ];
 
 const fullyTypeTests = [
@@ -125,6 +136,60 @@ const fullyTypeTests = [
     description: "both, data struc, one not typed",
     config: configDataAndConstants,
     issueLength: 1,
+  },
+  {
+    abap: testCases[8],
+    description: "data, obsolete length",
+    config: configDataAndConstants,
+    issueLength: 1,
+  },
+  {
+    abap: testCases[8],
+    description: "data, obsolete length, only constants",
+    config: configOnlyConstants,
+    issueLength: 1,
+  },
+  {
+    abap: testCases[8],
+    description: "data, obsolete length, check disabled",
+    config: configNoLength,
+    issueLength: 0,
+  },
+  {
+    abap: testCases[9],
+    description: "types, obsolete length",
+    config: configDataAndConstants,
+    issueLength: 1,
+  },
+  {
+    abap: testCases[10],
+    description: "constants, obsolete length",
+    config: configDataAndConstants,
+    issueLength: 1,
+  },
+  {
+    abap: testCases[11],
+    description: "class-data, obsolete length",
+    config: configDataAndConstants,
+    issueLength: 1,
+  },
+  {
+    abap: testCases[12],
+    description: "statics, obsolete length",
+    config: configDataAndConstants,
+    issueLength: 1,
+  },
+  {
+    abap: testCases[13],
+    description: "data, LENGTH keyword",
+    config: configDataAndConstants,
+    issueLength: 0,
+  },
+  {
+    abap: testCases[14],
+    description: "types, LENGTH keyword",
+    config: configDataAndConstants,
+    issueLength: 0,
   },
 ];
 

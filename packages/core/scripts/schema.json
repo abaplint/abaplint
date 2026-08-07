@@ -1661,6 +1661,10 @@
           "description": "Add check for implicit data definition, require full typing.",
           "type": "boolean"
         },
+        "checkLength": {
+          "description": "Check that the LENGTH keyword is used instead of the obsolete field length in parentheses.",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -1674,7 +1678,8 @@
         }
       },
       "required": [
-        "checkData"
+        "checkData",
+        "checkLength"
       ],
       "type": "object"
     },
@@ -2491,7 +2496,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks constants for full typing - no implicit typing allowed.\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_constants"
+              "description": "Checks constants, data and types for full typing - no implicit typing allowed.\nAlso checks that the LENGTH keyword is used instead of the obsolete field length in parentheses.\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_constants"
             },
             "fully_type_itabs": {
               "anyOf": [
@@ -4570,7 +4575,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks constants for full typing - no implicit typing allowed.\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_constants"
+              "description": "Checks constants, data and types for full typing - no implicit typing allowed.\nAlso checks that the LENGTH keyword is used instead of the obsolete field length in parentheses.\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_constants"
             },
             "fully_type_itabs": {
               "anyOf": [

@@ -3,13 +3,15 @@ import {ABAPRule} from "./_abap_rule";
 import {Issue} from "../issue";
 import * as Statements from "../abap/2_statements/statements";
 import {StatementNode} from "../abap/nodes/statement_node";
-import {Type, TypeTable, NamespaceSimpleName, DefinitionName} from "../abap/2_statements/expressions";
+import {Type, TypeTable, NamespaceSimpleName, DefinitionName, ConstantFieldLength} from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
 export class FullyTypeConsantsConf extends BasicRuleConfig {
   /** Add check for implicit data definition, require full typing. */
   public checkData: boolean = true;
+  /** Check that the LENGTH keyword is used instead of the obsolete field length in parentheses. */
+  public checkLength: boolean = true;
 }
 
 export class FullyTypeConstants extends ABAPRule {
@@ -18,10 +20,15 @@ export class FullyTypeConstants extends ABAPRule {
   public getMetadata(): IRuleMetadata {
     return {
       key: "fully_type_constants",
-      title: "Fully type constants",
-      shortDescription: `Checks constants for full typing - no implicit typing allowed.`,
-      badExample: "CONSTANTS foo VALUE 'a'.",
-      goodExample: "CONSTANTS foo TYPE c LENGTH 1 VALUE 'a'.",
+      title: "Fully type constants and data",
+      shortDescription: `Checks constants, data and types for full typing - no implicit typing allowed.
+Also checks that the LENGTH keyword is used instead of the obsolete field length in parentheses.`,
+      badExample: `CONSTANTS foo VALUE 'a'.
+DATA bar(1) TYPE c.
+TYPES moo(1) TYPE c.`,
+      goodExample: `CONSTANTS foo TYPE c LENGTH 1 VALUE 'a'.
+DATA bar TYPE c LENGTH 1.
+TYPES moo TYPE c LENGTH 1.`,
       tags: [RuleTag.SingleFile],
     };
   }
@@ -63,8 +70,29 @@ export class FullyTypeConstants extends ABAPRule {
             this.getMetadata().key,
             this.conf.severity));
       }
+
+      if (this.conf.checkLength === true && this.isDefinition(stat)) {
+        for (const l of stat.findAllExpressions(ConstantFieldLength)) {
+          issues.push(
+            Issue.atToken(
+              file,
+              l.getFirstToken(),
+              "Use the LENGTH keyword instead of the field length in parentheses",
+              this.getMetadata().key,
+              this.conf.severity));
+        }
+      }
     }
     return issues;
+  }
+
+  private isDefinition(stat: StatementNode): boolean {
+    const g = stat.get();
+    return g instanceof Statements.Constant
+      || g instanceof Statements.Data
+      || g instanceof Statements.ClassData
+      || g instanceof Statements.Static
+      || g instanceof Statements.Type;
   }
 
   private isTyped(stat: StatementNode) {
