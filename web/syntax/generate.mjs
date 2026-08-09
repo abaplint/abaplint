@@ -85,6 +85,13 @@ function filename(name) {
   return name.replace(/(.)([A-Z])/g, "$1_$2").toLowerCase() + ".ts";
 }
 
+function source(type, name) {
+  if (type === "function") {
+    return "packages/core/src/abap/5_syntax/_builtin.ts";
+  }
+  return "packages/core/src/abap/2_statements/" + type + "s/" + filename(name);
+}
+
 function run(data, language) {
   const file = data;
 
@@ -92,16 +99,24 @@ function run(data, language) {
     file.structures[index].svg = generateSVG(file.structures[index], language);
     file.structures[index].used_by = findUsedBy(file.structures[index], file);
     file.structures[index].filename = filename(file.structures[index].name);
+    file.structures[index].source = source(file.structures[index].type, file.structures[index].name);
   }
   for (const index in file.statements) {
     file.statements[index].svg = generateSVG(file.statements[index], language);
     file.statements[index].used_by = findUsedBy(file.statements[index], file);
     file.statements[index].filename = filename(file.statements[index].name);
+    file.statements[index].source = source(file.statements[index].type, file.statements[index].name);
   }
   for (const index in file.expressions) {
     file.expressions[index].svg = generateSVG(file.expressions[index], language);
     file.expressions[index].used_by = findUsedBy(file.expressions[index], file);
     file.expressions[index].filename = filename(file.expressions[index].name);
+    file.expressions[index].source = source(file.expressions[index].type, file.expressions[index].name);
+  }
+  for (const index in file.functions) {
+    file.functions[index].svg = generateSVG(file.functions[index], language);
+    file.functions[index].used_by = [];
+    file.functions[index].source = source(file.functions[index].type, file.functions[index].name);
   }
 
   return file;
