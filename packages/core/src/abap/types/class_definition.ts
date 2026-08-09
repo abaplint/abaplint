@@ -95,6 +95,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     // perform checks after everything has been initialized
     this.checkInterfaceVisibility(input, node);
     this.checkMethodsFromSuperClasses(input);
+    this.checkMethodNameConflicts(input);
     this.checkClassNameLength(input);
     this.checkMethodNameLength(input);
     this.checkClassConstructorStatic(input);
@@ -244,6 +245,15 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
           && superVisibility !== undefined
           && m.getVisibility() !== superVisibility) {
         input.issues.push(syntaxIssue(input, m.getToken(), `${m.getName().toUpperCase()} redefinition visibility cannot be changed`));
+      }
+    }
+  }
+
+  private checkMethodNameConflicts(input: SyntaxInput) {
+    for (const m of this.methodDefs.getAll()) {
+      if (this.attributes.findByName(m.getName()) !== undefined
+          || this.types.getByName(m.getName()) !== undefined) {
+        input.issues.push(syntaxIssue(input, m.getToken(), `"${m.getName()}" already defined`));
       }
     }
   }

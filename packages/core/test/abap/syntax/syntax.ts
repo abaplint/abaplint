@@ -13833,6 +13833,34 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.include("already defined");
   });
 
+  it("class type and method with same name", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES nucleotide_counts TYPE c LENGTH 1.
+    METHODS nucleotide_counts.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
+  it("class data and method with same name", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA nucleotide_counts TYPE c LENGTH 1.
+    METHODS nucleotide_counts.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
   it("Move is not compatible, its calculated", () => {
     const abap = `
 DATA lv_bits TYPE i.
