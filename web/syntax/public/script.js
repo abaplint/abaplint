@@ -50,6 +50,10 @@ function renderLeft() {
     html += "<br><br><b>Structures</b><br>\n";
     html += renderSidenavList(languages[currentLanguage].structures);
   }
+  if (languages[currentLanguage].functions.length > 0) {
+    html += "<br><br><b>Built-in functions</b><br>\n";
+    html += renderSidenavList(languages[currentLanguage].functions);
+  }
 
   document.getElementById("sidenav").innerHTML = html;
 }
@@ -82,6 +86,11 @@ function renderRight(filter) {
   const structures = renderList(filter, languages[currentLanguage].structures);
   if (structures !== "") {
     html = html + "<div style=\"page-break-before: always;\"><h1>Structures</h1>" + structures + "</div>";
+  }
+
+  const functions = renderList(filter, languages[currentLanguage].functions);
+  if (functions !== "") {
+    html = html + "<div style=\"page-break-before: always;\"><h1>Built-in functions</h1>" + functions + "</div>";
   }
 
   document.getElementById("main").innerHTML = html;
@@ -124,8 +133,17 @@ function renderSyntax(type, name) {
 
   html = html + found.svg + "<br>\n" +
     "<b>Using</b>: " + use.join(", ") + "<br>\n" +
-    "<b>Used by</b>: " + by.join(", ") + "<br>\n" +
-    "<b>Filename</b>: <a href=\"https://github.com/abaplint/abaplint/tree/main/packages/core/src/abap/2_statements/" + type + "s/" + found.filename + "\">" + found.filename + "</a><br>\n";
+    "<b>Used by</b>: " + by.join(", ") + "<br>\n";
+
+  if (found.return_type) {
+    html = html + "<b>Returns</b>: " + found.return_type + "<br>\n";
+  }
+  if (found.release) {
+    html = html + "<b>Release</b>: " + found.release + "<br>\n";
+  }
+  if (found.source) {
+    html = html + "<b>Source</b>: <a href=\"https://github.com/abaplint/abaplint/tree/main/" + found.source + "\">" + found.source.split("/").pop() + "</a><br>\n";
+  }
 
   document.getElementById("body").innerHTML = html;
 }
