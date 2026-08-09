@@ -1764,6 +1764,39 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("chained interface attribute access", () => {
+    const abap = `
+INTERFACE lif_value.
+  DATA value TYPE c LENGTH 20 READ-ONLY.
+ENDINTERFACE.
+
+INTERFACE lif_properties.
+  DATA task TYPE REF TO lif_value READ-ONLY.
+ENDINTERFACE.
+
+INTERFACE lif_receiver.
+  METHODS properties
+    RETURNING VALUE(result) TYPE REF TO lif_properties.
+ENDINTERFACE.
+
+CLASS lcl_repro DEFINITION.
+  PUBLIC SECTION.
+    METHODS run
+      IMPORTING receiver TYPE REF TO lif_receiver.
+ENDCLASS.
+
+CLASS lcl_repro IMPLEMENTATION.
+  METHOD run.
+    DATA task TYPE c LENGTH 20.
+
+    " False positive: Incompatible types
+    task = receiver->properties( )->task->value.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("chained call, component not found", () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
@@ -8376,6 +8409,25 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("call method, xstring is incompatible with character parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE c LENGTH 30.
+    CLASS-METHODS foo IMPORTING bar TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA xstr TYPE xstring.
+  lcl=>foo( xstr ).`;
+    const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 

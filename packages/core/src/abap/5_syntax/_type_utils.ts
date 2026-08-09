@@ -482,7 +482,8 @@ export class TypeUtils {
         return false;
       }
     } else if (source instanceof XStringType) {
-      if (target instanceof CLikeType
+      if (target instanceof CharacterType
+          || target instanceof CLikeType
           || target instanceof IntegerType
           || target instanceof StringType
           || target instanceof ObjectReferenceType
