@@ -96,6 +96,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.checkInterfaceVisibility(input, node);
     this.checkMethodsFromSuperClasses(input);
     this.checkMethodNameConflicts(input);
+    this.checkEventNameConflicts(input);
     this.checkClassNameLength(input);
     this.checkMethodNameLength(input);
     this.checkClassConstructorStatic(input);
@@ -254,6 +255,16 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       if (this.attributes.findByName(m.getName()) !== undefined
           || this.types.getByName(m.getName()) !== undefined) {
         input.issues.push(syntaxIssue(input, m.getToken(), `"${m.getName()}" already defined`));
+      }
+    }
+  }
+
+  private checkEventNameConflicts(input: SyntaxInput) {
+    for (const e of this.events) {
+      if (this.attributes.findByName(e.getName()) !== undefined
+          || this.types.getByName(e.getName()) !== undefined
+          || this.methodDefs.getByName(e.getName()) !== undefined) {
+        input.issues.push(syntaxIssue(input, (e as EventDefinition).getToken(), `"${e.getName()}" already defined`));
       }
     }
   }
