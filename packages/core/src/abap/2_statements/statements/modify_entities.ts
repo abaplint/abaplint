@@ -43,6 +43,10 @@ export class ModifyEntities implements IStatement {
                          opt("IN LOCAL MODE"),
                          plusPrio(seq("ENTITY", NamespaceSimpleName, plus(operation))));
 
+    const dynamic = seq("ENTITIES",
+                        optPrio(altPrio("IN LOCAL MODE", seq(opt("FORWARDING"), "PRIVILEGED"))),
+                        "OPERATIONS", Source);
+
     const create2 = seq("CREATE", fieldsWith, opt(seq("CREATE BY", EMLEntityPath, fieldsWith)));
     const create3 = seq("CREATE BY", EMLEntityPath, fieldsWith);
     const create4 = seq("CREATE FROM", Source, plus(seq("CREATE BY", EMLEntityPath, "FROM", Source)));
@@ -52,7 +56,7 @@ export class ModifyEntities implements IStatement {
                        alt(NamespaceSimpleName, EntityAssociation),
                        alt(execute, create, updateFields, deleteFrom, updateSetFields, updateFrom, create2, create3, create4));
 
-    return ver(Release.v754, seq("MODIFY", alt(entities, entity), end), {also: AlsoIn.OpenABAP});
+    return ver(Release.v754, seq("MODIFY", alt(entities, dynamic, entity), end), {also: AlsoIn.OpenABAP});
   }
 
 }
