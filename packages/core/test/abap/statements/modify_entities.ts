@@ -179,6 +179,14 @@ const tests = [
       MAPPED DATA(mapped_resp)
       FAILED DATA(failed_resp)
       REPORTED DATA(reported_resp).`,
+
+  `MODIFY ENTITIES PRIVILEGED OPERATIONS op_tab
+      MAPPED DATA(mapped)
+      FAILED DATA(failed)
+      REPORTED DATA(reported).`,
+
+  `MODIFY ENTITIES FORWARDING PRIVILEGED OPERATIONS op_tab
+      FAILED failed.`,
 ];
 
 statementType(tests, "MODIFY ENTITIES", Statements.ModifyEntities);
