@@ -5787,6 +5787,21 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
   });
 
+  it("integer arithmetic result passed to date method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING sdf TYPE d.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( sy-datum - 1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
   it("negative character literal passed to NUMC method parameter is not compatible", () => {
     const abap = `
 CLASS lcl DEFINITION.
