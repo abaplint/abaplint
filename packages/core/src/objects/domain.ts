@@ -24,6 +24,7 @@ export class Domain extends AbstractObject {
     length?: string,
     decimals?: string,
     conversionExit?: string,
+    appendName?: string,
     values?: DomainValue[],
     valuesTranslations?: DomainValueTranslation[],
   } | undefined;
@@ -38,6 +39,18 @@ export class Domain extends AbstractObject {
 
   public getConversionExit(): string | undefined {
     return this.parsedXML?.conversionExit;
+  }
+
+  /** name of the domain this object appends fixed values to, if it is an append */
+  public getAppendName(): string | undefined {
+    if (this.parsedXML === undefined) {
+      this.parse();
+    }
+    return this.parsedXML?.appendName;
+  }
+
+  public isAppend(): boolean {
+    return this.getAppendName() !== undefined && this.getAppendName() !== "";
   }
 
   public getAllowedNaming() {
@@ -114,6 +127,7 @@ export class Domain extends AbstractObject {
       datatype: dd01v?.DATATYPE,
       length: dd01v?.LENG,
       conversionExit: dd01v?.CONVEXIT,
+      appendName: dd01v?.APPENDNAME,
       decimals: dd01v?.DECIMALS,
       values: values,
       valuesTranslations: translationValues,

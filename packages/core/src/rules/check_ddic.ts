@@ -42,6 +42,11 @@ export class CheckDDIC implements IRule {
 
   public run(obj: IObject): Issue[] {
     let found: AbstractType | undefined = undefined;
+    if (obj instanceof Objects.Domain && obj.isAppend() === true) {
+      // domain appends only contain additional fixed values, no type information
+      return [];
+    }
+
     if (obj instanceof Objects.DataElement
         || obj instanceof Objects.Domain
         || obj instanceof Objects.Table

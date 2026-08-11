@@ -811,4 +811,33 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("append DOMA, no issue", async () => {
+    const zappend = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZDEVCLASS</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <VALEXI>X</VALEXI>
+    <DDTEXT>Package</DDTEXT>
+    <APPENDNAME>MENU_ATT3</APPENDNAME>
+   </DD01V>
+   <DD07V_TAB>
+    <DD07V>
+     <VALPOS>0001</VALPOS>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DOMVALUE_L>DEVCLASS</DOMVALUE_L>
+     <DDTEXT>Package</DDTEXT>
+    </DD07V>
+   </DD07V_TAB>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const files = [new MemoryFile(`zdevclass.doma.xml`, zappend)];
+    const issues = await run(files);
+    expect(issues.length).to.equal(0);
+  });
+
 });
