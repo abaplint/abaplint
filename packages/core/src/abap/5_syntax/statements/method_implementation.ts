@@ -33,7 +33,7 @@ export class MethodImplementation implements StatementSyntax {
     }
 
     const start = node.getFirstToken().getStart();
-    if (methodDefinition?.isStatic() === false) {
+    if (methodDefinition?.isStatic() === false || methodDefinition === undefined) {
       input.scope.push(ScopeType.MethodInstance, methodName, start, input.filename);
       input.scope.addList(classDefinition.getAttributes().getInstance());
     }

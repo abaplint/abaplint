@@ -969,6 +969,22 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("method call resolves when the implemented redefinition is invalid", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar REDEFINITION.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    foo( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("bar");
+  });
+
   it("redefined method with parameter, 2 steps up", () => {
     const clas =
       "CLASS zcl_foobar DEFINITION PUBLIC INHERITING FROM zcl_super1 FINAL CREATE PUBLIC.\n" +
