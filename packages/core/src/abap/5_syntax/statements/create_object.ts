@@ -139,8 +139,16 @@ export class CreateObject implements StatementSyntax {
         input.scope.isLocalFriend(cdef.getName(), enclosingClass)) {
       return undefined;
     }
+    const enclosingDefinition = input.scope.findClassDefinition(enclosingClass);
+    if (enclosingDefinition !== undefined) {
+      const implementedInterfaces = new ObjectOriented(input.scope).findInterfaces(enclosingDefinition);
+      if (cdef.getFriends().some(friend =>
+        implementedInterfaces.some(implemented => implemented.name.toUpperCase() === friend.toUpperCase()))) {
+        return undefined;
+      }
+    }
     // subclasses of friends also have friendship
-    let enclosingSup = input.scope.findClassDefinition(enclosingClass)?.getSuperClass();
+    let enclosingSup = enclosingDefinition?.getSuperClass();
     while (enclosingSup !== undefined) {
       if (cdef.getFriends().some(f => f.toUpperCase() === enclosingSup!.toUpperCase()) ||
           input.scope.isLocalFriend(cdef.getName(), enclosingSup)) {
