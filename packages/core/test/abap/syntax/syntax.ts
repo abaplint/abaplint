@@ -5151,6 +5151,40 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("interface friend can instantiate class with protected creation", () => {
+    const abap = `
+INTERFACE lif_factory.
+ENDINTERFACE.
+
+CLASS lcl_product DEFINITION
+  CREATE PROTECTED
+  FRIENDS lif_factory.
+ENDCLASS.
+
+CLASS lcl_factory DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_factory.
+
+    CLASS-METHODS create
+      RETURNING
+        VALUE(result) TYPE REF TO lcl_product.
+ENDCLASS.
+
+CLASS lcl_product IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_factory IMPLEMENTATION.
+  METHOD create.
+    CREATE OBJECT result.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl_factory=>create( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("FORM, untyped USING parameter, ok", () => {
     const abap = `
     FORM sdfsd USING p_sdfsd.
