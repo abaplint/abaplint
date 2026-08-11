@@ -334,6 +334,10 @@ export class TypeUtils {
       return false;
     }
 
+    if (calculated && source instanceof IntegerType && target instanceof DateType) {
+      return false;
+    }
+
     if (target instanceof NumericType
         && (source instanceof CharacterType || source instanceof StringType)
         && source.getAbstractTypeData()?.derivedFromConstant === true) {
