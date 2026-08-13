@@ -1,8 +1,9 @@
 import {Release, LanguageVersion} from "../../../version";
 import {IStatement} from "./_statement";
-import {seq, alt, altPrio, ver, optPrio, plus, opt, AlsoIn, verNotLang} from "../combi";
+import {seq, alt, altPrio, ver, optPrio, plus, opt, AlsoIn, verNotLang, tok} from "../combi";
 import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, MethodDefExceptions, MethodParamName, NamespaceSimpleName, TypeName, EntityAssociation} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 
 export class MethodDef implements IStatement {
 
@@ -32,6 +33,13 @@ export class MethodDef implements IStatement {
 
     const forRead = seq("FOR READ", alt(TypeName, EntityAssociation), optPrio(full), result, optPrio(link));
     const forfunction = seq("FOR FUNCTION", TypeName, result);
+
+    const entityEventReference = seq("REFERENCE", tok(ParenLeft), MethodParamName, tok(ParenRightW));
+    const entityEventParameter = seq(altPrio(entityEventReference, MethodParamName), "FOR", TypeName);
+    const entityEvent = seq(optPrio("FINAL"),
+                            "FOR ENTITY EVENT",
+                            optPrio("IMPORTING"),
+                            plus(entityEventParameter));
 
     const behavior = altPrio(
       "DDL OBJECT OPTIONS CDS SESSION CLIENT REQUIRED",  // todo, this is only from version something
@@ -64,15 +72,18 @@ export class MethodDef implements IStatement {
       optPrio(MethodDefRaising)));
 
     // FOR DDL OBJECT / FOR TABLE FUNCTION / FOR SCALAR FUNCTION blocked in KeyUser
-    const ret = seq(altPrio("CLASS-METHODS", "METHODS"),
-                    MethodName,
-                    alt(seq(optPrio(Abstract), optPrio(def), EventHandler),
-                        parameters,
-                        testing,
-                        verNotLang(LanguageVersion.KeyUser, seq("FOR", behavior)),
-                        amdp,
-                        "NOT AT END OF MODE",
-                        optPrio(Redefinition)));
+    const regular = seq(altPrio("CLASS-METHODS", "METHODS"),
+                        MethodName,
+                        alt(seq(optPrio(Abstract), optPrio(def), EventHandler),
+                            parameters,
+                            testing,
+                            verNotLang(LanguageVersion.KeyUser, seq("FOR", behavior)),
+                            amdp,
+                            "NOT AT END OF MODE",
+                            optPrio(Redefinition)));
+
+    // RAP event handlers are instance methods; CLASS-METHODS is not allowed.
+    const ret = alt(seq("METHODS", MethodName, verNotLang(LanguageVersion.KeyUser, entityEvent)), regular);
 
     return ret;
   }
