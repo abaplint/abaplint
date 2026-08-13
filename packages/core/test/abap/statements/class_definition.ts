@@ -1,5 +1,5 @@
-import {statementType, statementVersionOk} from "../_utils";
-import {Version} from "../../../src/version";
+import {statementType, statementVersion, statementVersionOk} from "../_utils";
+import {Release, Version} from "../../../src/version";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -27,6 +27,11 @@ const tests = [
   "CLASS cl_foo DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF blah.",
 
   "CLASS /foo/bar DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF /foo/bar.",
+
+  "CLASS cl_event_handler DEFINITION PUBLIC FOR EVENTS OF root_entity.",
+  "CLASS cl_event_handler DEFINITION PUBLIC ABSTRACT FOR EVENTS OF root_entity.",
+  "CLASS cl_event_handler DEFINITION PUBLIC ABSTRACT FINAL FOR EVENTS OF root_entity.",
+  "CLASS /foo/cl_event_handler DEFINITION PUBLIC FINAL FOR EVENTS OF /foo/root_entity.",
 ];
 
 statementType(tests, "CLASS Definition", Statements.ClassDefinition);
@@ -34,3 +39,7 @@ statementType(tests, "CLASS Definition", Statements.ClassDefinition);
 statementVersionOk([
   {abap: "CLASS cl_foo DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF blah.", rel: Version.OpenABAP},
 ], "CLASS Definition", Statements.ClassDefinition);
+
+statementVersion([
+  {abap: "CLASS cl_event_handler DEFINITION PUBLIC FOR EVENTS OF root_entity.", rel: Release.v758},
+], "CLASS Definition FOR EVENTS OF", Statements.ClassDefinition);
