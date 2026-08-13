@@ -5,7 +5,6 @@ import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodD
 import {IStatementRunnable} from "../statement_runnable";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 
-
 export class MethodDef implements IStatement {
 
   public getMatcher(): IStatementRunnable {
