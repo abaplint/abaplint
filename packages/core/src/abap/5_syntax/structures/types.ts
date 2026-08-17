@@ -8,7 +8,7 @@ import {IncludeType} from "../statements/include_type";
 import {Type} from "../statements/type";
 import * as Basic from "../../types/basic";
 import {ScopeType} from "../_scope_type";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Types {
   public runSyntax(node: StructureNode, input: SyntaxInput, qualifiedNamePrefix?: string): TypedIdentifier | undefined {
@@ -26,6 +26,9 @@ export class Types {
         if (ctyp instanceof Statements.Type) {
           const found = new Type().runSyntax(c, input, qualifiedNamePrefix + name.getStr() + "-");
           if (found) {
+            if (found.getName().length > 30) {
+              input.issues.push(syntaxIssue(input, found.getToken(), "Structure field name longer than 30 characters"));
+            }
             components.push({name: found.getName(), type: found.getType()});
           }
         } else if (ctyp instanceof Statements.IncludeType) {
@@ -39,6 +42,9 @@ export class Types {
       } else if (c instanceof StructureNode && ctyp instanceof Structures.Types) {
         const found = new Types().runSyntax(c, input, qualifiedNamePrefix + name.getStr() + "-");
         if (found) {
+          if (found.getName().length > 30) {
+            input.issues.push(syntaxIssue(input, found.getToken(), "Structure field name longer than 30 characters"));
+          }
           components.push({name: found.getName(), type: found.getType()});
         }
       }
