@@ -9,13 +9,21 @@ import {DatabaseTable} from "../expressions/database_table";
 import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput} from "../_syntax_input";
+import {checkDatabaseFields} from "../expressions/_check_database_fields";
 
 export class UpdateDatabase implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     const dbtab = node.findFirstExpression(Expressions.DatabaseTable);
     if (dbtab !== undefined) {
-      DatabaseTable.runSyntax(dbtab, input);
+      const dbSource = DatabaseTable.runSyntax(dbtab, input);
+      const fields = node.findAllExpressions(Expressions.SQLFieldAndValue)
+        .flatMap(fieldAndValue => fieldAndValue.findDirectExpressions(Expressions.SQLFieldName))
+        .map(field => field.concatTokens().toUpperCase());
+      fields.push(...node.findAllExpressions(Expressions.SQLCompare)
+        .map(compare => compare.findDirectExpression(Expressions.SQLFieldName)?.concatTokens().toUpperCase())
+        .filter(field => field !== undefined));
+      checkDatabaseFields(fields, [dbSource], input, node.getFirstToken());
     }
 
     const tableName = node.findDirectExpression(Expressions.DatabaseTable);

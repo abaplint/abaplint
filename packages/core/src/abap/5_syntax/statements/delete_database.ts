@@ -5,6 +5,7 @@ import {Dynamic} from "../expressions/dynamic";
 import {DatabaseTable} from "../expressions/database_table";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput} from "../_syntax_input";
+import {checkDatabaseFields} from "../expressions/_check_database_fields";
 
 export class DeleteDatabase implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -22,7 +23,14 @@ export class DeleteDatabase implements StatementSyntax {
 
     const dbtab = node.findFirstExpression(Expressions.DatabaseTable);
     if (dbtab !== undefined) {
-      DatabaseTable.runSyntax(dbtab, input);
+      const dbSource = DatabaseTable.runSyntax(dbtab, input);
+      const fields = node.findAllExpressions(Expressions.SQLCompare)
+        .map(compare => compare.findDirectExpression(Expressions.SQLFieldName)?.concatTokens().toUpperCase())
+        .filter(field => field !== undefined);
+      for (const orderBy of node.findAllExpressions(Expressions.SQLOrderBy)) {
+        fields.push(...orderBy.findAllExpressions(Expressions.SQLFieldName).map(field => field.concatTokens().toUpperCase()));
+      }
+      checkDatabaseFields(fields, [dbSource], input, node.getFirstToken());
     }
 
   }
