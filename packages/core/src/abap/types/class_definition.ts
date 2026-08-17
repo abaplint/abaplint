@@ -99,7 +99,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.checkEventNameConflicts(input);
     this.checkClassNameLength(input);
     this.checkMethodNameLength(input);
-    this.checkClassConstructorStatic(input);
+    this.checkClassConstructor(input);
   }
 
   public getFriends() {
@@ -188,10 +188,15 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
   }
 
-  private checkClassConstructorStatic(input: SyntaxInput) {
+  private checkClassConstructor(input: SyntaxInput) {
     for (const m of this.methodDefs.getAll()) {
-      if (m.getName().toUpperCase() === "CLASS_CONSTRUCTOR" && m.isStatic() === false) {
+      if (m.getName().toUpperCase() !== "CLASS_CONSTRUCTOR") {
+        continue;
+      }
+      if (m.isStatic() === false) {
         input.issues.push(syntaxIssue(input, m.getToken(), "CLASS_CONSTRUCTOR must be static"));
+      } else if (m.getVisibility() !== Visibility.Public) {
+        input.issues.push(syntaxIssue(input, m.getToken(), "CLASS_CONSTRUCTOR must be declared in the public section"));
       }
     }
   }

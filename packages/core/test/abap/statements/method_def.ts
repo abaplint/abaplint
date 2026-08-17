@@ -177,6 +177,14 @@ const tests = [
       importing value(iv_source) type /foo/bar.`,
 
   `METHODS reload FOR MODIFY abc FOR ACTION foo~reload.`,
+
+  `METHODS on_event FOR ENTITY EVENT events FOR root~raised.`,
+  `METHODS on_event FOR ENTITY EVENT IMPORTING events FOR root~raised.`,
+  `METHODS on_event FINAL FOR ENTITY EVENT IMPORTING REFERENCE(events) FOR root~raised.`,
+  `METHODS on_events FOR ENTITY EVENT
+    created_events FOR root~created
+    changed_events FOR root~changed
+    deleted_events FOR root~deleted.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
@@ -190,6 +198,7 @@ const fails = [
   "METHODS test1 FOR TESTING RETURNING VALUE(vbeln) TYPE string.",
   "METHODS foo EXPORTING bar TYPE ANY STRUCTURE.",
   "METHODS foo RETURNING VALUE(bar) TYPE ANY STRUCTURE.",
+  "CLASS-METHODS on_event FOR ENTITY EVENT events FOR root~raised.",
 ];
 statementExpectFail(fails, "MethodDef");
 
@@ -205,6 +214,7 @@ const keyUserFail = [
   {abap: `METHODS foo AMDP OPTIONS CDS SESSION CLIENT CURRENT.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
   {abap: `METHODS foo EXCEPTIONS bar.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
   {abap: `METHODS foo FOR TABLE FUNCTION zfoo.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
+  {abap: `METHODS on_event FOR ENTITY EVENT events FOR root~raised.`, rel: Release.Newest, langVer: LanguageVersion.KeyUser},
 ];
 
 statementVersionFail(keyUserFail, "METHODS KeyUser restrictions");

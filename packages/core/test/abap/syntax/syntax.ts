@@ -10817,6 +10817,51 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("CLASS_CONSTRUCTOR must be static");
   });
 
+  it("class_constructor in private section, error", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PRIVATE SECTION.
+    CLASS-METHODS class_constructor.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD class_constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("CLASS_CONSTRUCTOR must be declared in the public section");
+  });
+
+  it("class_constructor in protected section, error", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PROTECTED SECTION.
+    CLASS-METHODS class_constructor.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD class_constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("CLASS_CONSTRUCTOR must be declared in the public section");
+  });
+
+  it("class_constructor in private section of global class, error", () => {
+    const abap = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+  PRIVATE SECTION.
+    CLASS-METHODS class_constructor.
+    CLASS-DATA field TYPE i.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD class_constructor.
+    field = 1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("CLASS_CONSTRUCTOR must be declared in the public section");
+  });
+
   it("ok, select from internal tab", () => {
     const abap = `TYPES: BEGIN OF ty,
     dat TYPE d,
