@@ -5827,7 +5827,7 @@ TYPES: BEGIN OF ty_bar,
     expect(issues[0]?.getMessage()).to.equal("Structure field name longer than 30 characters");
   });
 
-  it.only("method parameter name longer than 30 characters", () => {
+  it("method parameter name longer than 30 characters", () => {
     const abap = `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
