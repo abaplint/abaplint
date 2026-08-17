@@ -11,6 +11,12 @@ import {IClassDefinition} from "../../types/_class_definition";
 
 export class Catch implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
+    const target = node.findDirectExpression(Expressions.Target);
+    const inlineTarget = target?.findDirectExpression(Expressions.InlineData)
+      ?.findFirstExpression(Expressions.TargetField)?.getFirstToken();
+    if (inlineTarget && inlineTarget.getStr().length > 30) {
+      input.issues.push(syntaxIssue(input, inlineTarget, "Inline exception name longer than 30 characters"));
+    }
 
     const names = new Set<string>();
     for (const c of node.findDirectExpressions(Expressions.ClassName)) {
@@ -34,8 +40,6 @@ export class Catch implements StatementSyntax {
       }
       names.add(className);
     }
-
-    const target = node.findDirectExpression(Expressions.Target);
 
     if (target?.findDirectExpression(Expressions.InlineData)) {
       const token = target.findFirstExpression(Expressions.TargetField)?.getFirstToken();

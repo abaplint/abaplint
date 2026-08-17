@@ -5843,7 +5843,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Method parameter name longer than 30 characters");
   });
 
-  it.only("inline exception longer than 30 characters", () => {
+  it("inline exception longer than 30 characters", () => {
     const abap = `
 TRY.
 CATCH zcx_stock_allocation INTO DATA(lo_nonnumeric_sales_document_error).
