@@ -259,6 +259,13 @@ export class TypeUtils {
       return false;
     }
 
+    if (source1 instanceof DateType && this.isCalculated(node2) && source2 instanceof IntegerType) {
+      return false;
+    }
+    if (source2 instanceof DateType && this.isCalculated(node1) && source1 instanceof IntegerType) {
+      return false;
+    }
+
     return true;
   }
 

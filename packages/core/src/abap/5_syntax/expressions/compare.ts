@@ -5,6 +5,7 @@ import {MethodCallChain} from "./method_call_chain";
 import {SourceFieldSymbol} from "./source_field_symbol";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {DateType, IntegerType} from "../../types/basic";
 import {TypeUtils} from "../_type_utils";
 
 export class Compare {
@@ -27,7 +28,15 @@ export class Compare {
     if (node.findDirectExpression(Expressions.CompareOperator)
         && new TypeUtils(input.scope).isCompareable(sourceTypes[0], sourceTypes[1], sources[0], sources[1]) === false
         && sourceTypes.length === 2) {
-      const message = "Incompatible types for comparison";
+      let message = "Incompatible types for comparison";
+      if ((sourceTypes[0] instanceof DateType
+          && sourceTypes[1] instanceof IntegerType
+          && sources[1].findFirstExpression(Expressions.ArithOperator))
+          || (sourceTypes[1] instanceof DateType
+          && sourceTypes[0] instanceof IntegerType
+          && sources[0].findFirstExpression(Expressions.ArithOperator))) {
+        message = "Date cannot be compared with arithmetic result of type Integer";
+      }
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
     }
   }
