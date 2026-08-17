@@ -5868,6 +5868,26 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
   });
 
+  it("date cannot be compared with integer 2", () => {
+    const abap = `
+DATA result TYPE abap_bool.
+DATA date1 TYPE d.
+DATA date2 TYPE d.
+result = xsdbool( date1 < date2 + 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Date cannot be compared with arithmetic result of type Integer");
+  });
+
+  it("but this is okay, comparing date with constant", () => {
+    const abap = `
+DATA result TYPE abap_bool.
+DATA date1 TYPE d.
+DATA date2 TYPE d.
+result = xsdbool( date1 < 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("alphabetic character literal passed to NUMC method parameter is not compatible", () => {
     const abap = `
 CLASS lcl DEFINITION.
