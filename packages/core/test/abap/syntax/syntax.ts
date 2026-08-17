@@ -5818,6 +5818,40 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
   });
 
+  it("structure field name longer than 30 characters", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         this_is_a_very_long_field_name_that_exceeds_the_limit TYPE i,
+       END OF ty_bar.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Structure field name longer than 30 characters");
+  });
+
+  it("method parameter name longer than 30 characters", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar
+      IMPORTING
+        iv_require_last_completed_success TYPE abap_bool OPTIONAL.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter name longer than 30 characters");
+  });
+
+  it("inline exception longer than 30 characters", () => {
+    const abap = `
+TRY.
+CATCH zcx_stock_allocation INTO DATA(lo_nonnumeric_sales_document_error).
+ENDTRY.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Inline exception name longer than 30 characters");
+  });
+
   it("negative character literal passed to NUMC method parameter is not compatible", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -5832,6 +5866,26 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("date cannot be compared with integer 2", () => {
+    const abap = `
+DATA result TYPE abap_bool.
+DATA date1 TYPE d.
+DATA date2 TYPE d.
+result = xsdbool( date1 < date2 + 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Date cannot be compared with arithmetic result of type Integer");
+  });
+
+  it("but this is okay, comparing date with constant", () => {
+    const abap = `
+DATA result TYPE abap_bool.
+DATA date1 TYPE d.
+DATA date2 TYPE d.
+result = xsdbool( date1 < 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("alphabetic character literal passed to NUMC method parameter is not compatible", () => {

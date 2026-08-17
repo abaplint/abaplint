@@ -12,7 +12,7 @@ import {ObjectOriented} from "../5_syntax/_object_oriented";
 import {ReferenceType} from "../5_syntax/_reference";
 import {Identifier as IdentifierToken} from "../1_lexer/tokens/identifier";
 import {ScopeType} from "../5_syntax/_scope_type";
-import {SyntaxInput} from "../5_syntax/_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 
 // todo:
 // this.exceptions = [];
@@ -49,6 +49,7 @@ export class MethodParameters implements IMethodParameters {
     input.scope.push(ScopeType.MethodDefinition, "method definition", node.getStart(), input.filename);
     try {
       this.parse(node, input, parentName, abstractMethod);
+      this.checkNameLengths(input);
       this.checkDuplicateNames();
     } finally {
       input.scope.pop(node.getEnd());
@@ -216,6 +217,14 @@ export class MethodParameters implements IMethodParameters {
         throw new Error(`Method parameter "${name}" already defined`);
       }
       names.add(name);
+    }
+  }
+
+  private checkNameLengths(input: SyntaxInput): void {
+    for (const parameter of this.getAll()) {
+      if (parameter.getName().length > 30) {
+        input.issues.push(syntaxIssue(input, parameter.getToken(), "Method parameter name longer than 30 characters"));
+      }
     }
   }
 
