@@ -15184,4 +15184,110 @@ REFRESH tab[].`;
     expect(issues[0]?.getMessage()).to.contain("tab");
   });
 
+  it("constructor must call super constructor", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("must call super->constructor");
+  });
+
+  it("constructor calls super constructor, ok", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD constructor.
+    super->constructor( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("constructor calls super constructor via CALL METHOD, ok", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING val TYPE i.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD constructor.
+    CALL METHOD super->constructor
+      EXPORTING
+        val = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("no super class, constructor, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("super class without constructor, ok", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
