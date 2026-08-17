@@ -5818,7 +5818,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
   });
 
-  it.only("structure field name longer than 30 characters", () => {
+  it("structure field name longer than 30 characters", () => {
     const abap = `
 TYPES: BEGIN OF ty_bar,
          this_is_a_very_long_field_name_that_exceeds_the_limit TYPE i,
