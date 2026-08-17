@@ -5827,6 +5827,22 @@ TYPES: BEGIN OF ty_bar,
     expect(issues[0]?.getMessage()).to.equal("Structure field name longer than 30 characters");
   });
 
+  it.only("method parameter name longer than 30 characters", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar
+      IMPORTING
+        iv_require_last_completed_success TYPE abap_bool OPTIONAL.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter name longer than 30 characters");
+  });
+
   it("negative character literal passed to NUMC method parameter is not compatible", () => {
     const abap = `
 CLASS lcl DEFINITION.
