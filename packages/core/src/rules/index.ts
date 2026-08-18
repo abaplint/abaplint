@@ -14,6 +14,7 @@ export * from "./begin_single_include";
 export * from "./call_transaction_authority_check";
 export * from "./catch_and_raise";
 export * from "./cds_association_name";
+export * from "./cds_check_syntax";
 export * from "./cds_comment_style";
 export * from "./cds_field_order";
 export * from "./cds_legacy_view";
