@@ -3886,6 +3886,29 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("ztab");
   });
 
+  it("DELETE, database field exists", () => {
+    const abap = `
+DATA lv_value TYPE i.
+DELETE FROM ztab WHERE value1 = @lv_value.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: ztab},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("DELETE, database field does not exist", () => {
+    const abap = `
+DATA lv_run_id TYPE i.
+DELETE FROM ztab WHERE allocation_run_id = @lv_run_id.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: ztab},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal("checkFields, field ALLOCATION_RUN_ID not found");
+  });
+
   it("INSERT, expect database table not found", () => {
     const abap = `
   FIELD-SYMBOLS <bar> TYPE any.
@@ -14261,7 +14284,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("Invalid escape sequence");
   });
 
-  it.skip("UPDATE database table with bad WHERE field reference", () => {
+  it("UPDATE database table with bad WHERE field reference", () => {
     const prog = `UPDATE ztab SET value1 = value1 + 1 WHERE badfield = 'abc'.`;
     const issues = runMulti([
       {filename: "ztab.tabl.xml", contents: ztab},
@@ -14270,7 +14293,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("not found");
   });
 
-  it.skip("UPDATE database table with bad WHERE field reference", () => {
+  it("UPDATE database table with bad SET field reference", () => {
     const prog = `UPDATE ztab SET badvalue = 1 WHERE field1 = 'abc'.`;
     const issues = runMulti([
       {filename: "ztab.tabl.xml", contents: ztab},

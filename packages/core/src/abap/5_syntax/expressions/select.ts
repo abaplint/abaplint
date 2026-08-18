@@ -17,6 +17,7 @@ import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 import {IEdit} from "../../../edit_helper";
+import {checkDatabaseFields} from "./_check_database_fields";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 const isSimple = /^\w+$/;
@@ -46,7 +47,7 @@ export class Select {
       return;
     }
 
-    this.checkFields(fields, dbSources, input, node);
+    checkDatabaseFields(fields.map(field => field.code), dbSources, input, node.getFirstToken());
 
     const intoExpression = this.handleInto(node, input, fields, dbSources);
 
@@ -304,40 +305,6 @@ export class Select {
     }
 
     return undefined;
-  }
-
-  private static checkFields(fields: FieldList, dbSources: DatabaseTableSource[], input: SyntaxInput, node: ExpressionNode) {
-    if (dbSources.length > 1) {
-      return;
-    }
-
-    const first = dbSources[0];
-    if (first === undefined) {
-      // then its voided
-      return;
-    }
-
-    const type = first.parseType(input.scope.getRegistry());
-    if (type instanceof VoidType || type instanceof UnknownType) {
-      return;
-    }
-    if (!(type instanceof StructureType)) {
-      const message = "checkFields, expected structure, " + type.constructor.name;
-      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return;
-    }
-
-    for (const field of fields) {
-      if (field.code === "*") {
-        continue;
-      }
-
-      if (isSimple.test(field.code) && type.getComponentByName(field.code) === undefined) {
-        const message = `checkFields, field ${field.code} not found`;
-        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return;
-      }
-    }
   }
 
   private static countResultType(scope: CurrentScope): AbstractType {
