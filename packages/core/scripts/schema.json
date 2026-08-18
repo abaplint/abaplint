@@ -307,6 +307,23 @@
       },
       "type": "object"
     },
+    "CDSCheckSyntaxConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CDSCommentStyleConf": {
       "additionalProperties": false,
       "properties": {
@@ -1975,6 +1992,17 @@
                 }
               ],
               "description": "CDS association names should start with an underscore\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_association_name"
+            },
+            "cds_check_syntax": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSCheckSyntaxConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks CDS source, field, and type references\nTags: Syntax\nhttps://rules.abaplint.org/cds_check_syntax"
             },
             "cds_comment_style": {
               "anyOf": [
@@ -4054,6 +4082,17 @@
                 }
               ],
               "description": "CDS association names should start with an underscore\nTags: SingleFile, Naming\nhttps://rules.abaplint.org/cds_association_name"
+            },
+            "cds_check_syntax": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CDSCheckSyntaxConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks CDS source, field, and type references\nTags: Syntax\nhttps://rules.abaplint.org/cds_check_syntax"
             },
             "cds_comment_style": {
               "anyOf": [
