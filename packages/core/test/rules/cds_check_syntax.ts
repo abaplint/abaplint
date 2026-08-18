@@ -225,4 +225,55 @@ define abstract entity ZA_BOM_CHG_QTY
     expect(issues[0].getMessage())
       .to.equal('CDS field "Currency" requires @Semantics.currencyCode: true');
   });
+
+  it("reports a root projection on a non-root entity", async () => {
+    const projectedEntity = new MemoryFile("zi_bom_chg_bo.ddls.asddls", `define view entity ZI_BOM_CHG_BO
+  as select from mara
+{
+  key matnr
+}`);
+    const issues = await findIssues(`@AccessControl.authorizationCheck: #NOT_REQUIRED
+@Metadata.allowExtensions: true
+@EndUserText.label: 'BOM Change Request'
+define root view entity ZR_BOM_CHG_TP
+  as projection on ZI_BOM_CHG_BO
+{
+  key BillOfMaterialCategory,
+  key BillOfMaterial,
+  key BillOfMaterialVariant,
+  key Material,
+  key Plant,
+      BillOfMaterialVariantUsage,
+      BOMHeaderQuantityInBaseUnit,
+      BOMHeaderBaseUnit,
+      EngineeringChangeNo,
+      ChangeCreatedBy,
+      ChangeCreatedAt,
+      ApprovedBy,
+      ApprovedAt,
+      LastChangedAt,
+
+      /* Associations */
+      _BOMItems,
+      _ChangeHistory
+}`, false, [projectedEntity]);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage())
+      .to.equal("ROOT keyword not valid since ZI_BOM_CHG_BO is not a root property");
+    expect(issues[0].getStart().getRow()).to.equal(4);
+  });
+
+  it("accepts a root projection on a root entity", async () => {
+    const projectedEntity = new MemoryFile("zi_bom_chg_bo.ddls.asddls", `define root view entity ZI_BOM_CHG_BO
+  as select from mara
+{
+  key matnr
+}`);
+    const issues = await findIssues(`define root view entity ZR_BOM_CHG_TP
+  as projection on ZI_BOM_CHG_BO
+{
+  key BillOfMaterialCategory
+}`, false, [projectedEntity]);
+    expect(issues.length).to.equal(0);
+  });
 });

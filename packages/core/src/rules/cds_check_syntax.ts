@@ -1,7 +1,8 @@
 import {ExpressionNode, TokenNode} from "../abap/nodes";
 import {StructureType, UnknownType, VoidType} from "../abap/types/basic";
 import {
-  CDSAnnotation, CDSAs, CDSDefineAbstract, CDSElement, CDSName, CDSPrefixedName, CDSRelation, CDSSource, CDSType,
+  CDSAnnotation, CDSAs, CDSDefineAbstract, CDSDefineProjection, CDSElement, CDSName, CDSPrefixedName, CDSRelation,
+  CDSSource, CDSType,
 } from "../cds/expressions";
 import {DDIC} from "../ddic";
 import {IFile} from "../files/_ifile";
@@ -70,6 +71,7 @@ Missing objects are only reported when their names match the configured errorNam
 
     this.checkRelations(tree, ddic, issues, file);
     this.checkTypes(tree, ddic, issues, file);
+    this.checkRootProjection(tree, ddic, issues, file);
     this.checkFieldAnnotations(tree, ddic, issues, file);
     this.checkFields(tree, sources, object, issues, file);
 
@@ -136,6 +138,28 @@ Missing objects are only reported when their names match the configured errorNam
         issues.push(Issue.atToken(file, typeNode.getFirstToken(), `CDS type "${typeName}" not found`,
                                   this.getMetadata().key, this.conf.severity));
       }
+    }
+  }
+
+  private checkRootProjection(tree: ExpressionNode, ddic: DDIC, issues: Issue[], file: IFile) {
+    const projection = tree.findFirstExpression(CDSDefineProjection);
+    const rootToken = projection?.findDirectTokenByText("ROOT");
+    if (projection === undefined || rootToken === undefined) {
+      return;
+    }
+
+    const names = projection.findDirectExpressions(CDSName);
+    const projectedEntityNode = names[1];
+    if (projectedEntityNode === undefined) {
+      return;
+    }
+
+    const projectedEntityName = this.name(projectedEntityNode);
+    const projectedEntity = ddic.lookupTableOrView(projectedEntityName).object;
+    if (projectedEntity instanceof DataDefinition
+        && projectedEntity.getTree()?.findDirectTokenByText("ROOT") === undefined) {
+      const message = `ROOT keyword not valid since ${projectedEntityName} is not a root property`;
+      issues.push(Issue.atToken(file, rootToken, message, this.getMetadata().key, this.conf.severity));
     }
   }
 
