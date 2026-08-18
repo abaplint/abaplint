@@ -36,6 +36,11 @@ export class UnusedDDIC implements IRule {
   }
 
   public run(obj: IObject): Issue[] {
+    if (obj instanceof Objects.Domain && obj.isAppend() === true) {
+      // domain appends are referenced from the domain they append to
+      return [];
+    }
+
     if (obj instanceof Objects.Domain
         || obj instanceof Objects.TableType
         || obj instanceof Objects.View

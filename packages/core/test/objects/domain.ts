@@ -262,4 +262,35 @@ describe("Domain, parse main xml", () => {
     expect(values[1].high).to.equal("9");
   });
 
+  it("append domain", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZDEVCLASS</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <VALEXI>X</VALEXI>
+    <DDTEXT>Package</DDTEXT>
+    <APPENDNAME>MENU_ATT3</APPENDNAME>
+   </DD01V>
+   <DD07V_TAB>
+    <DD07V>
+     <VALPOS>0001</VALPOS>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <DOMVALUE_L>DEVCLASS</DOMVALUE_L>
+     <DDTEXT>Package</DDTEXT>
+    </DD07V>
+   </DD07V_TAB>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const reg = new Registry().addFile(new MemoryFile("zdevclass.doma.xml", xml));
+    await reg.parseAsync();
+    const doma = reg.getFirstObject()! as Domain;
+    expect(doma.isAppend()).to.equal(true);
+    expect(doma.getAppendName()).to.equal("MENU_ATT3");
+    expect(doma.getFixedValues().length).to.equal(1);
+  });
+
 });
