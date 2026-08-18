@@ -3079,6 +3079,25 @@ endloop.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECT integer literal with alias", () => {
+    const prog = `
+TYPES: BEGIN OF ty_result,
+         field1 TYPE c LENGTH 20,
+         value1 TYPE x LENGTH 4,
+         d      TYPE i,
+       END OF ty_result.
+DATA lt_result TYPE STANDARD TABLE OF ty_result WITH EMPTY KEY.
+SELECT field1, value1, 111 AS d
+  FROM ztab
+  INTO CORRESPONDING FIELDS OF TABLE @lt_result
+  WHERE field1 IS NOT NULL.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: ztab},
+      {filename: "zfoobar.prog.abap", contents: prog},
+    ]);
+    expect(issues.length).to.equal(0, issues[0]?.getMessage());
+  });
+
   it("concat_lines_of", () => {
     const abap = `
     DATA tab TYPE STANDARD TABLE OF string.

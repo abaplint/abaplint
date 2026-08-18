@@ -34,7 +34,7 @@ export function checkDatabaseFields(
       continue;
     }
 
-    if (/^\w+$/.test(field) && type.getComponentByName(field) === undefined) {
+    if (/^[A-Z_]\w*$/i.test(field) && type.getComponentByName(field) === undefined) {
       const message = `checkFields, field ${field} not found`;
       input.issues.push(syntaxIssue(input, token, message));
       return;
