@@ -13,6 +13,44 @@ function resolveVariable(abap: string, name: string): TypedIdentifier | undefine
   return runMulti([{filename: filename, contents: abap}], name);
 }
 
+function buildDatabaseTable(name: string, fields: {name: string, length: number}[]): string {
+  const fieldDefinitions = fields.map((field, index) => `
+      <DD03P>
+       <TABNAME>${name}</TABNAME>
+       <FIELDNAME>${field.name}</FIELDNAME>
+       <POSITION>${(index + 1).toString().padStart(4, "0")}</POSITION>
+       ${index === 0 ? "<KEYFLAG>X</KEYFLAG>" : ""}
+       <ADMINFIELD>0</ADMINFIELD>
+       <INTTYPE>C</INTTYPE>
+       <INTLEN>${(field.length * 2).toString().padStart(6, "0")}</INTLEN>
+       <DATATYPE>CHAR</DATATYPE>
+       <LENG>${field.length.toString().padStart(6, "0")}</LENG>
+       <MASK>  CHAR</MASK>
+      </DD03P>`).join("");
+  return `<?xml version="1.0" encoding="utf-8"?>
+  <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+   <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+    <asx:values>
+     <DD02V>
+      <TABNAME>${name}</TABNAME>
+      <DDLANGUAGE>E</DDLANGUAGE>
+      <TABCLASS>TRANSP</TABCLASS>
+      <CONTFLAG>A</CONTFLAG>
+     </DD02V>
+     <DD09L>
+      <TABNAME>${name}</TABNAME>
+      <AS4LOCAL>A</AS4LOCAL>
+      <TABKAT>0</TABKAT>
+      <TABART>APPL0</TABART>
+      <BUFALLOW>N</BUFALLOW>
+     </DD09L>
+     <DD03P_TABLE>${fieldDefinitions}
+     </DD03P_TABLE>
+    </asx:values>
+   </asx:abap>
+  </abapGit>`;
+}
+
 function runMulti(files: {filename: string, contents: string}[], name: string): TypedIdentifier | undefined {
   const reg = new Registry();
   for (const file of files.reverse()) {
@@ -1141,6 +1179,50 @@ DATA moo TYPE REF TO lif_bar=>type.`;
     const tt = type!.getType();
     expect(tt).to.be.instanceof(Basic.TableType);
     expect((tt as Basic.TableType).getRowType()).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("SELECT join fields into inline table", () => {
+    const left = buildDatabaseTable("ZJOIN_LEFT", [{name: "ID", length: 2}]);
+    const right = buildDatabaseTable("ZJOIN_RIGHT", [{name: "ID", length: 4}]);
+    const abap = `SELECT l~id AS left_id, r~id AS right_id
+      FROM zjoin_left AS l
+      INNER JOIN zjoin_right AS r ON l~id = r~id
+      INTO TABLE @DATA(result).`;
+    const result = runMulti([
+      {filename: "zjoin_left.tabl.xml", contents: left},
+      {filename: "zjoin_right.tabl.xml", contents: right},
+      {filename: "zfoobar.prog.abap", contents: abap}], "result");
+
+    const rowType = expectTable(result);
+    expect(rowType).to.be.instanceof(Basic.StructureType);
+    const structure = rowType as Basic.StructureType;
+    expect(structure.getComponentByName("left_id")).to.be.instanceof(Basic.CharacterType);
+    expect((structure.getComponentByName("left_id") as Basic.CharacterType).getLength()).to.equal(2);
+    expect(structure.getComponentByName("right_id")).to.be.instanceof(Basic.CharacterType);
+    expect((structure.getComponentByName("right_id") as Basic.CharacterType).getLength()).to.equal(4);
+  });
+
+  it("SELECT join star into inline table", () => {
+    const left = buildDatabaseTable("ZJOIN_LEFT", [{name: "ID", length: 2}]);
+    const right = buildDatabaseTable("ZJOIN_RIGHT", [{name: "ID", length: 4}]);
+    const abap = `SELECT *
+      FROM zjoin_left AS l
+      INNER JOIN zjoin_right AS r ON l~id = r~id
+      INTO TABLE @DATA(result).`;
+    const result = runMulti([
+      {filename: "zjoin_left.tabl.xml", contents: left},
+      {filename: "zjoin_right.tabl.xml", contents: right},
+      {filename: "zfoobar.prog.abap", contents: abap}], "result");
+
+    const rowType = expectTable(result);
+    expect(rowType).to.be.instanceof(Basic.StructureType);
+    const structure = rowType as Basic.StructureType;
+    expect(structure.getComponentByName("l")).to.be.instanceof(Basic.StructureType);
+    expect(structure.getComponentByName("r")).to.be.instanceof(Basic.StructureType);
+    const leftId = (structure.getComponentByName("l") as Basic.StructureType).getComponentByName("id");
+    const rightId = (structure.getComponentByName("r") as Basic.StructureType).getComponentByName("id");
+    expect((leftId as Basic.CharacterType).getLength()).to.equal(2);
+    expect((rightId as Basic.CharacterType).getLength()).to.equal(4);
   });
 
   it("SELECT SINGLE, voided", () => {
