@@ -10,8 +10,57 @@ const source = `define view entity ZSOURCE as select from mara
   ExistingField
 }`;
 
-async function findIssues(cds: string, withSource = false): Promise<readonly Issue[]> {
-  const files = [new MemoryFile("ztarget.ddls.asddls", cds)];
+function dataElement(name: string, dataType: "QUAN" | "CURR"): MemoryFile {
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.abap.org/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>${name.toUpperCase()}</ROLLNAME>
+    <DATATYPE>${dataType}</DATATYPE>
+    <LENG>000013</LENG>
+    <DECIMALS>000003</DECIMALS>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  return new MemoryFile(`${name.toLowerCase()}.dtel.xml`, xml);
+}
+
+function domainDataElement(name: string, domainName: string, dataType: "QUAN" | "CURR"): MemoryFile[] {
+  const dataElementXML = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.abap.org/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>${name.toUpperCase()}</ROLLNAME>
+    <DOMNAME>${domainName.toUpperCase()}</DOMNAME>
+    <REFKIND>D</REFKIND>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  const domainXML = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.abap.org/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>${domainName.toUpperCase()}</DOMNAME>
+    <DATATYPE>${dataType}</DATATYPE>
+    <LENG>000013</LENG>
+    <DECIMALS>000003</DECIMALS>
+   </DD01V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  return [
+    new MemoryFile(`${name.toLowerCase()}.dtel.xml`, dataElementXML),
+    new MemoryFile(`${domainName.toLowerCase()}.doma.xml`, domainXML),
+  ];
+}
+
+async function findIssues(cds: string, withSource = false, dependencies: MemoryFile[] = []): Promise<readonly Issue[]> {
+  const files = [new MemoryFile("ztarget.ddls.asddls", cds), ...dependencies];
   if (withSource) {
     files.push(new MemoryFile("zsource.ddls.asddls", source));
   }
@@ -83,7 +132,7 @@ describe("Rule: cds_check_syntax", () => {
     const issues = await findIssues(`define abstract entity ZTARGET
 {
   CharacterField : abap.char(10);
-  QuantityField  : menge_d;
+  StandardField  : stlkn;
 }`);
     expect(issues.length).to.equal(0);
   });
@@ -94,5 +143,86 @@ describe("Rule: cds_check_syntax", () => {
   AnyField
 }`);
     expect(issues.length).to.equal(0);
+  });
+
+  it("reports a QUAN field without a unit annotation", async () => {
+    const issues = await findIssues(`@EndUserText.label: 'Change Quantity Parameters'
+define abstract entity ZA_BOM_CHG_QTY
+{
+  ItemNodeNumber : stlkn;
+  NewQuantity    : menge_d;
+}`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage())
+      .to.equal('CDS quantity field "NewQuantity" requires @Semantics.quantity.unitOfMeasure');
+    expect(issues[0].getStart().getRow()).to.equal(5);
+  });
+
+  it("accepts a QUAN field with a unit annotation", async () => {
+    const issues = await findIssues(`define abstract entity ZA_BOM_CHG_QTY
+{
+  ItemNodeNumber : stlkn;
+  @Semantics.quantity.unitOfMeasure: 'QuantityUnit'
+  NewQuantity    : menge_d;
+  @Semantics.unitOfMeasure: true
+  QuantityUnit   : meins;
+}`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("reports a missing referenced unit field", async () => {
+    const issues = await findIssues(`define abstract entity ZTARGET
+{
+  @Semantics.quantity.unitOfMeasure: 'QuantityUnit'
+  Quantity : zquantity;
+}`, false, domainDataElement("zquantity", "zquantity_domain", "QUAN"));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage())
+      .to.equal('CDS field "Quantity" references missing unit field "QuantityUnit"');
+  });
+
+  it("reports a CURR field without a currency annotation", async () => {
+    const issues = await findIssues(`define abstract entity ZTARGET
+{
+  Amount : zamount;
+}`, false, [dataElement("zamount", "CURR")]);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage())
+      .to.equal('CDS amount field "Amount" requires @Semantics.amount.currencyCode');
+  });
+
+  it("recognizes known CURR data elements without DDIC metadata", async () => {
+    for (const dataElementName of ["BWERT", "DZWERT"]) {
+      const issues = await findIssues(`define abstract entity ZTARGET
+{
+  Amount : ${dataElementName};
+}`);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage())
+        .to.equal('CDS amount field "Amount" requires @Semantics.amount.currencyCode');
+    }
+  });
+
+  it("accepts a CURR field with a currency annotation", async () => {
+    const issues = await findIssues(`define abstract entity ZTARGET
+{
+  @Semantics.amount.currencyCode: 'Currency'
+  Amount   : zamount;
+  @Semantics.currencyCode: true
+  Currency : waers;
+}`, false, [dataElement("zamount", "CURR")]);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("reports a currency field without its semantic annotation", async () => {
+    const issues = await findIssues(`define abstract entity ZTARGET
+{
+  @Semantics.amount.currencyCode: 'Currency'
+  Amount   : zamount;
+  Currency : waers;
+}`, false, [dataElement("zamount", "CURR")]);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage())
+      .to.equal('CDS field "Currency" requires @Semantics.currencyCode: true');
   });
 });

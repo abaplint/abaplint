@@ -2002,7 +2002,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks CDS source, field, and type references\nTags: Syntax\nhttps://rules.abaplint.org/cds_check_syntax"
+              "description": "Checks CDS source, field, type, and semantic annotation references\nTags: Syntax\nhttps://rules.abaplint.org/cds_check_syntax"
             },
             "cds_comment_style": {
               "anyOf": [
@@ -4092,7 +4092,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks CDS source, field, and type references\nTags: Syntax\nhttps://rules.abaplint.org/cds_check_syntax"
+              "description": "Checks CDS source, field, type, and semantic annotation references\nTags: Syntax\nhttps://rules.abaplint.org/cds_check_syntax"
             },
             "cds_comment_style": {
               "anyOf": [

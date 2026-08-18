@@ -5,6 +5,7 @@ import {DDIC, ILookupResult} from "../ddic";
 import * as Types from "../abap/types/basic";
 import {xmlToArray} from "../xml_utils";
 import {IObjectAndToken} from "../_iddic_references";
+import {Domain} from "./domain";
 
 export class DataElement extends AbstractObject {
   private parsedXML: {
@@ -63,6 +64,22 @@ export class DataElement extends AbstractObject {
   public getDomainName(): string | undefined {
     this.parse();
     return this.parsedXML?.domname;
+  }
+
+  /** parseType() cannot distinguish DEC, CURR, and QUAN because they all become PackedType.
+   * Return the original DDIC datatype instead, resolving domain-backed data elements when possible. */
+  public getDataType(reg?: IRegistry): string | undefined {
+    this.parse();
+    if (this.parsedXML?.datatype) {
+      return this.parsedXML.datatype;
+    }
+    if (reg && this.parsedXML?.refkind === "D" && this.parsedXML.domname) {
+      const domain = reg.getObject("DOMA", this.parsedXML.domname);
+      if (domain instanceof Domain) {
+        return domain.getDataType();
+      }
+    }
+    return undefined;
   }
 
   public getTexts() {
