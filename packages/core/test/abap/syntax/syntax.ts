@@ -11779,6 +11779,24 @@ stru = VALUE #(
     expect(issues[0].getMessage()).to.contain("Duplicate field assignment");
   });
 
+  it("Field defined twice in inline table value", () => {
+    const abap = `
+TYPES: BEGIN OF ty_probe,
+         a TYPE string,
+         b TYPE string,
+       END OF ty_probe.
+DATA lt_probe TYPE STANDARD TABLE OF ty_probe WITH EMPTY KEY.
+DATA ls_probe TYPE ty_probe.
+lt_probe = VALUE #(
+  a = 'DEF'
+  ( b = 'R1' )
+  ( b = 'R2' a = 'OVR' )
+  ( b = 'R3' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("Duplicate field assignment");
+  });
+
   it("KEY cannot be string", () => {
     const abap = `
 DATA mt_names TYPE STANDARD TABLE OF string WITH EMPTY KEY.
