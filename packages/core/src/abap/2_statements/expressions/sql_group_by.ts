@@ -1,4 +1,4 @@
-import {Expression, seq, plus, alt, altPrio, ver, optPrio, AlsoIn} from "../combi";
+import {Expression, seq, plus, alt, altPrio, ver, optPrio, AlsoIn, stopBefore} from "../combi";
 import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {Dynamic} from "./dynamic";
@@ -8,7 +8,7 @@ import {SQLGroupingSets} from "./sql_grouping_sets";
 
 export class SQLGroupBy extends Expression {
   public getRunnable(): IStatementRunnable {
-    const fieldName = alt(SQLFieldName, Dynamic);
+    const fieldName = seq(stopBefore("ORDER", "BY"), alt(SQLFieldName, Dynamic));
 
     const expr = ver(Release.v740sp02, SQLField, {also: AlsoIn.OpenABAP});
     const newGroup = ver(Release.v740sp02,
