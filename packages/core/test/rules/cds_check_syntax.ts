@@ -299,6 +299,53 @@ define view entity ZI_DOMVAL
     expect(issues.length).to.equal(0);
   });
 
+  it("reports @Semantics.unitOfMeasure in a view entity", async () => {
+    const table = transparentTable("zdb_pochg_req", [
+      "purchasing_document", "purchasing_doc_item", "new_order_quantity", "order_quantity_unit",
+      "new_delivery_date", "post_status", "posted_by", "posted_at", "approved_by", "approved_at",
+      "created_by", "created_at", "last_changed_by", "last_changed_at"]);
+    const issues = await findIssues(`@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'PO Change Request (Basic)'
+@VDM.viewType: #BASIC
+@Metadata.ignorePropagatedAnnotations: true
+@ObjectModel.representativeKey: 'PurchasingDocumentItem'
+define view entity ZI_POCHG_REQ
+  as select from zdb_pochg_req
+{
+  key purchasing_document              as PurchasingDocument,
+  key purchasing_doc_item              as PurchasingDocumentItem,
+
+      @Semantics.quantity.unitOfMeasure: 'OrderQuantityUnit'
+      new_order_quantity               as NewOrderQuantity,
+      @Semantics.unitOfMeasure: true
+      order_quantity_unit              as OrderQuantityUnit,
+      new_delivery_date                as NewDeliveryDate,
+      post_status                      as PostStatus,
+
+      @Semantics.user.createdBy: true
+      posted_by                        as PostedBy,
+      @Semantics.systemDateTime.createdAt: true
+      posted_at                        as PostedAt,
+      @Semantics.user.lastChangedBy: true
+      approved_by                      as ApprovedBy,
+      @Semantics.systemDateTime.lastChangedAt: true
+      approved_at                      as ApprovedAt,
+
+      @Semantics.user.createdBy: true
+      created_by                       as CreatedBy,
+      @Semantics.systemDateTime.createdAt: true
+      created_at                       as CreatedAt,
+      @Semantics.user.lastChangedBy: true
+      last_changed_by                  as LastChangedBy,
+      @Semantics.systemDateTime.lastChangedAt: true
+      last_changed_at                  as LastChangedAt
+}`, false, [table]);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage())
+      .to.equal("Annotation Semantics.unitOfMeasure is not allowed in view entities");
+    expect(issues[0].getStart().getRow()).to.equal(14);
+  });
+
   it("reports a reserved element name", async () => {
     const domainValues = new MemoryFile("zi_domval.ddls.asddls", `define view entity ZI_DOMVAL
   as select from dd07l

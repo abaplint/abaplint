@@ -1,8 +1,8 @@
 import {ExpressionNode, TokenNode} from "../abap/nodes";
 import {StructureType, UnknownType, VoidType} from "../abap/types/basic";
 import {
-  CDSAnnotation, CDSAs, CDSDefineAbstract, CDSDefineProjection, CDSElement, CDSName, CDSPrefixedName, CDSRelation,
-  CDSSource, CDSType,
+  CDSAnnotation, CDSAs, CDSDefineAbstract, CDSDefineProjection, CDSDefineView, CDSElement, CDSName, CDSPrefixedName,
+  CDSRelation, CDSSource, CDSType,
 } from "../cds/expressions";
 import {DDIC} from "../ddic";
 import {IFile} from "../files/_ifile";
@@ -29,6 +29,9 @@ const KNOWN_CURR_DATA_ELEMENTS = ["BWERT", "DZWERT"];
 const RESERVED_ELEMENT_NAMES = ["BEGIN", "NUMBER", "POSITION"];
 
 const MAX_LABEL_LENGTH = 40;
+
+// Annotations which are not supported in CDS view entities
+const VIEW_ENTITY_FORBIDDEN_ANNOTATIONS = ["Semantics.unitOfMeasure"];
 
 export class CDSCheckSyntax implements IRule {
   private reg: IRegistry;
@@ -79,6 +82,7 @@ Missing objects are only reported when their names match the configured errorNam
     this.checkRootProjection(tree, ddic, issues, file);
     this.checkFieldAnnotations(tree, ddic, issues, file);
     this.checkLabels(tree, issues, file);
+    this.checkViewEntityAnnotations(tree, issues, file);
     this.checkReservedNames(tree, issues, file);
     this.checkFields(tree, sources, object, issues, file);
 
@@ -309,6 +313,27 @@ Missing objects are only reported when their names match the configured errorNam
                                     this.getMetadata().key, this.conf.severity));
         }
         match = expression.exec(concatenated);
+      }
+    }
+  }
+
+  private checkViewEntityAnnotations(tree: ExpressionNode, issues: Issue[], file: IFile) {
+    const view = tree.findFirstExpression(CDSDefineView);
+    if (view === undefined || view.findDirectTokenByText("ENTITY") === undefined) {
+      return;
+    }
+
+    for (const annotation of tree.findAllExpressionsRecursive(CDSAnnotation)) {
+      const normalized = annotation.concatTokens().replace(/\s/g, "").toUpperCase().replace(/^@</, "@");
+      for (const forbidden of VIEW_ENTITY_FORBIDDEN_ANNOTATIONS) {
+        const upper = forbidden.toUpperCase();
+        if (normalized.startsWith("@" + upper) === false
+            && normalized.startsWith("@" + upper.replace(".", ":{")) === false) {
+          continue;
+        }
+        const message = `Annotation ${forbidden} is not allowed in view entities`;
+        issues.push(Issue.atToken(file, annotation.getFirstToken(), message,
+                                  this.getMetadata().key, this.conf.severity));
       }
     }
   }
