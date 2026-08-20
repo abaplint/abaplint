@@ -25,6 +25,9 @@ type Source = {
 const KNOWN_QUAN_DATA_ELEMENTS = ["MENGE_D"];
 const KNOWN_CURR_DATA_ELEMENTS = ["BWERT", "DZWERT"];
 
+// Reserved names, cannot be used as element names, see DDIC table TRESE
+const RESERVED_ELEMENT_NAMES = ["BEGIN", "NUMBER", "POSITION"];
+
 export class CDSCheckSyntax implements IRule {
   private reg: IRegistry;
   private conf = new CDSCheckSyntaxConf();
@@ -73,6 +76,7 @@ Missing objects are only reported when their names match the configured errorNam
     this.checkTypes(tree, ddic, issues, file);
     this.checkRootProjection(tree, ddic, issues, file);
     this.checkFieldAnnotations(tree, ddic, issues, file);
+    this.checkReservedNames(tree, issues, file);
     this.checkFields(tree, sources, object, issues, file);
 
     return issues;
@@ -282,6 +286,29 @@ Missing objects are only reported when their names match the configured errorNam
     } else {
       return annotations.some(a => a.toUpperCase().includes("@SEMANTICS.CURRENCYCODE:TRUE")
         || a.toUpperCase().includes("@SEMANTICS:{CURRENCYCODE:TRUE"));
+    }
+  }
+
+  private checkReservedNames(tree: ExpressionNode, issues: Issue[], file: IFile) {
+    for (const element of tree.findAllExpressionsRecursive(CDSElement)) {
+      if (element.findDirectTokenByText("INCLUDE") !== undefined) {
+        continue;
+      }
+
+      let nameNode = element.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
+      if (nameNode === undefined) {
+        const names = element.findDirectExpression(CDSPrefixedName)?.findDirectExpressions(CDSName) || [];
+        nameNode = names[names.length - 1];
+      }
+      if (nameNode === undefined) {
+        continue;
+      }
+
+      const name = this.name(nameNode);
+      if (RESERVED_ELEMENT_NAMES.includes(name.toUpperCase())) {
+        issues.push(Issue.atToken(file, nameNode.getFirstToken(), `CDS element name "${name}" is reserved`,
+                                  this.getMetadata().key, this.conf.severity));
+      }
     }
   }
 

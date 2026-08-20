@@ -240,6 +240,33 @@ define abstract entity ZA_CHG_REQ_PARAM
       .to.equal('CDS field "Currency" requires @Semantics.currencyCode: true');
   });
 
+  it("reports a reserved element name", async () => {
+    const domainValues = new MemoryFile("zi_domval.ddls.asddls", `define view entity ZI_DOMVAL
+  as select from dd07l
+{
+  key domname    as DomainField,
+  key domvalue_l as ValueCode,
+      ddtext     as ValueText,
+      valpos     as ValuePosition
+}`);
+    const issues = await findIssues(`@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Value Help - Priority'
+@ObjectModel.resultSet.sizeCategory: #XS
+define view entity ZI_PRIO_VH
+  as select from ZI_DOMVAL
+{
+  @UI.textArrangement: #TEXT_LAST
+  @ObjectModel.text.element: ['Description']
+  key cast(ValueCode as abap.char(1)) as Priority,
+      ValueText                       as Description,
+      ValuePosition                   as Position
+}
+where DomainField = 'PRIORITY'`, false, [domainValues]);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal('CDS element name "Position" is reserved');
+    expect(issues[0].getStart().getRow()).to.equal(11);
+  });
+
   it("reports a root projection on a non-root entity", async () => {
     const projectedEntity = new MemoryFile("zi_bom_chg_bo.ddls.asddls", `define view entity ZI_BOM_CHG_BO
   as select from mara
