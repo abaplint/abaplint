@@ -9,6 +9,7 @@ import {LanguageVersion, Release, ReleaseName, ABAPRelease} from "../../../src/v
 import {MemoryFile} from "../../../src/files/memory_file";
 import {applyEditSingle} from "../../../src/edit_helper";
 import {IReference, ReferenceType} from "../../../src/abap/5_syntax/_reference";
+import {tabl_t100xml} from "../../rules/sql_value_conversion";
 
 function run(reg: IRegistry, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
              languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
@@ -11246,6 +11247,19 @@ SELECT SINGLE * FROM t100 INTO @DATA(res) WHERE arbgb IN @lt_range.`;
     SELECT SINGLE * FROM t100 INTO @DATA(res) WHERE arbgb IN @lt_range.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal("IN, not a table");
+  });
+
+  it("DELETE, IN, not a range table", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF t100-TEXT WITH EMPTY KEY.
+    IF tab IS NOT INITIAL.
+      DELETE FROM t100 WHERE TEXT IN @tab.
+    ENDIF.`;
+    const issues = runMulti([
+      {filename: "zfoobar.prog.abap", contents: abap},
+      {filename: "t100.tabl.xml", contents: tabl_t100xml},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal("row structure of tab is not correct");
   });
 
   it("Error, run() does not return anything", () => {
