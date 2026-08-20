@@ -27,6 +27,37 @@ function dataElement(name: string, dataType: "QUAN" | "CURR"): MemoryFile {
   return new MemoryFile(`${name.toLowerCase()}.dtel.xml`, xml);
 }
 
+function transparentTable(name: string, fields: string[]): MemoryFile {
+  const columns = fields.map((field, index) => `    <DD03P>
+     <TABNAME>${name.toUpperCase()}</TABNAME>
+     <FIELDNAME>${field.toUpperCase()}</FIELDNAME>
+     <POSITION>000${index + 1}</POSITION>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000020</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+    </DD03P>`).join("\n");
+
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>${name.toUpperCase()}</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <CONTFLAG>A</CONTFLAG>
+   </DD02V>
+   <DD03P_TABLE>
+${columns}
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  return new MemoryFile(`${name.toLowerCase()}.tabl.xml`, xml);
+}
+
 function domainDataElement(name: string, domainName: string, dataType: "QUAN" | "CURR"): MemoryFile[] {
   const dataElementXML = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
@@ -238,6 +269,34 @@ define abstract entity ZA_CHG_REQ_PARAM
     expect(issues.length).to.equal(1);
     expect(issues[0].getMessage())
       .to.equal('CDS field "Currency" requires @Semantics.currencyCode: true');
+  });
+
+  it("reports a label which is too long", async () => {
+    const table = transparentTable("ztab_domval", ["domain_field", "value_code", "value_position", "value_text"]);
+    const issues = await findIssues(`@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Domain Values - Basic Interface Definition'
+define view entity ZI_DOMVAL
+  as select from ztab_domval
+{
+  key domain_field   as DomainField,
+  key value_code     as ValueCode,
+      value_position as ValuePosition,
+      value_text     as ValueText
+}`, false, [table]);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("CDS label is 42 characters, maximum is 40");
+    expect(issues[0].getStart().getRow()).to.equal(2);
+  });
+
+  it("accepts a label of maximum length", async () => {
+    const table = transparentTable("ztab_domval", ["domain_field"]);
+    const issues = await findIssues(`@EndUserText.label: 'Domain Values - Basic Interface Def View'
+define view entity ZI_DOMVAL
+  as select from ztab_domval
+{
+  key domain_field as DomainField
+}`, false, [table]);
+    expect(issues.length).to.equal(0);
   });
 
   it("reports a reserved element name", async () => {

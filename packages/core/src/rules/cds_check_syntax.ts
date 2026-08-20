@@ -28,6 +28,8 @@ const KNOWN_CURR_DATA_ELEMENTS = ["BWERT", "DZWERT"];
 // Reserved names, cannot be used as element names, see DDIC table TRESE
 const RESERVED_ELEMENT_NAMES = ["BEGIN", "NUMBER", "POSITION"];
 
+const MAX_LABEL_LENGTH = 40;
+
 export class CDSCheckSyntax implements IRule {
   private reg: IRegistry;
   private conf = new CDSCheckSyntaxConf();
@@ -76,6 +78,7 @@ Missing objects are only reported when their names match the configured errorNam
     this.checkTypes(tree, ddic, issues, file);
     this.checkRootProjection(tree, ddic, issues, file);
     this.checkFieldAnnotations(tree, ddic, issues, file);
+    this.checkLabels(tree, issues, file);
     this.checkReservedNames(tree, issues, file);
     this.checkFields(tree, sources, object, issues, file);
 
@@ -286,6 +289,27 @@ Missing objects are only reported when their names match the configured errorNam
     } else {
       return annotations.some(a => a.toUpperCase().includes("@SEMANTICS.CURRENCYCODE:TRUE")
         || a.toUpperCase().includes("@SEMANTICS:{CURRENCYCODE:TRUE"));
+    }
+  }
+
+  private checkLabels(tree: ExpressionNode, issues: Issue[], file: IFile) {
+    for (const annotation of tree.findAllExpressionsRecursive(CDSAnnotation)) {
+      const concatenated = annotation.concatTokens();
+      if (/@\s*<?\s*EndUserText/i.test(concatenated) === false) {
+        continue;
+      }
+
+      const expression = /label\s*:\s*'((?:[^']|'')*)'/gi;
+      let match = expression.exec(concatenated);
+      while (match !== null) {
+        const label = match[1].replace(/''/g, "'");
+        if (label.length > MAX_LABEL_LENGTH) {
+          const message = `CDS label is ${label.length} characters, maximum is ${MAX_LABEL_LENGTH}`;
+          issues.push(Issue.atToken(file, annotation.getFirstToken(), message,
+                                    this.getMetadata().key, this.conf.severity));
+        }
+        match = expression.exec(concatenated);
+      }
     }
   }
 
