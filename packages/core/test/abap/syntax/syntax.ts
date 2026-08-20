@@ -13829,6 +13829,30 @@ WRITE / data_to_write.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("utclong_current, incompatible with timestampl", () => {
+    const dtel = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>TIMESTAMPL</ROLLNAME>
+    <DATATYPE>DEC</DATATYPE>
+    <LENG>000021</LENG>
+    <DECIMALS>000007</DECIMALS>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const abap = `
+DATA ts TYPE timestampl.
+ts = utclong_current( ).`;
+    const issues = runMulti([
+      {filename: "zfoobar.prog.abap", contents: abap},
+      {filename: "timestampl.dtel.xml", contents: dtel},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal("Incompatible types");
+  });
+
   it("INSERT, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_cedi,
