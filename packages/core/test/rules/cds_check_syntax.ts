@@ -158,6 +158,20 @@ define abstract entity ZA_BOM_CHG_QTY
     expect(issues[0].getStart().getRow()).to.equal(5);
   });
 
+  it("reports an abap.quan field without a unit annotation", async () => {
+    const issues = await findIssues(`@EndUserText.label: 'Change Request Parameter'
+define abstract entity ZA_CHG_REQ_PARAM
+{
+  NewOrderQuantity  : abap.quan(13,3);
+  OrderQuantityUnit : abap.unit(3);
+  NewDeliveryDate   : abap.dats;
+}`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage())
+      .to.equal('CDS quantity field "NewOrderQuantity" requires @Semantics.quantity.unitOfMeasure');
+    expect(issues[0].getStart().getRow()).to.equal(4);
+  });
+
   it("accepts a QUAN field with a unit annotation", async () => {
     const issues = await findIssues(`define abstract entity ZA_BOM_CHG_QTY
 {
