@@ -73,7 +73,7 @@ export class MethodCallChain {
             input.issues.push(syntaxIssue(input, methodToken!, message));
             return VoidType.get(CheckSyntaxKey);
           }
-          const notVisible = method ? this.checkVisibility(method, foundDef, input) : undefined;
+          const notVisible = method ? this.checkVisibility(method, def, foundDef, input) : undefined;
           if (notVisible !== undefined) {
             const message = `Method "${methodName}" is ${notVisible} and cannot be accessed`;
             input.issues.push(syntaxIssue(input, methodToken!, message));
@@ -125,6 +125,7 @@ export class MethodCallChain {
   // returns the visibility as text if the method cannot be accessed from the current scope
   private static checkVisibility(
     method: IMethodDefinition,
+    def: IClassDefinition | IInterfaceDefinition | undefined,
     foundDef: IClassDefinition | IInterfaceDefinition | undefined,
     input: SyntaxInput): string | undefined {
 
@@ -142,9 +143,17 @@ export class MethodCallChain {
       return undefined;
     }
 
-    if (foundDef.getFriends().some(f => f.toUpperCase() === enclosing)
-        || input.scope.isLocalFriend(foundDef.getName(), enclosing)) {
-      return undefined;
+    // friendship with the class used at the call site also gives access to inherited members
+    const helper = new ObjectOriented(input.scope);
+    const visited: string[] = [];
+    let current: IClassDefinition | undefined = def instanceof ClassDefinition ? def : foundDef;
+    while (current !== undefined && visited.includes(current.getName().toUpperCase()) === false) {
+      visited.push(current.getName().toUpperCase());
+      if (helper.hasFriendship(current, enclosing)) {
+        return undefined;
+      }
+      const sup: string | undefined = current.getSuperClass();
+      current = sup === undefined ? undefined : input.scope.findClassDefinition(sup);
     }
 
     if (visibility === Visibility.Protected) {

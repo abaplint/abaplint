@@ -13887,6 +13887,337 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(`Method "get_pending" is private and cannot be accessed`);
   });
 
+  it("private methods, called from local friend testclass", () => {
+    const clas = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PUBLIC.
+  PRIVATE SECTION.
+    METHODS instance_method RETURNING VALUE(rv_val) TYPE i.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS zcl_sdfsdf IMPLEMENTATION.
+  METHOD instance_method.
+  ENDMETHOD.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const test = `
+CLASS ltcl_test DEFINITION DEFERRED.
+CLASS zcl_sdfsdf DEFINITION LOCAL FRIENDS ltcl_test.
+
+CLASS ltcl_test DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS test01 FOR TESTING.
+ENDCLASS.
+
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD test01.
+    DATA lo_ref TYPE REF TO zcl_sdfsdf.
+    CREATE OBJECT lo_ref.
+    DATA(lv_one) = lo_ref->instance_method( ).
+    DATA(lv_two) = zcl_sdfsdf=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("protected method, called from local friend testclass", () => {
+    const clas = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PUBLIC.
+  PROTECTED SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS zcl_sdfsdf IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const test = `
+CLASS ltcl_test DEFINITION DEFERRED.
+CLASS zcl_sdfsdf DEFINITION LOCAL FRIENDS ltcl_test.
+
+CLASS ltcl_test DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS test01 FOR TESTING.
+ENDCLASS.
+
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD test01.
+    DATA(lv_val) = zcl_sdfsdf=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("private method, called from global friend", () => {
+    const clas1 = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PUBLIC GLOBAL FRIENDS zcl_friend.
+  PRIVATE SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS zcl_sdfsdf IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const clas2 = `
+CLASS zcl_friend DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS zcl_friend IMPLEMENTATION.
+  METHOD run.
+    DATA(lv_val) = zcl_sdfsdf=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas1},
+      {filename: "zcl_friend.clas.abap", contents: clas2}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("private method, called from friend, local classes", () => {
+    const abap = `
+CLASS lcl_friend DEFINITION DEFERRED.
+
+CLASS lcl_bar DEFINITION FRIENDS lcl_friend.
+  PRIVATE SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_friend DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_friend IMPLEMENTATION.
+  METHOD run.
+    DATA(lv_val) = lcl_bar=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("private method, called from subclass of friend", () => {
+    const abap = `
+CLASS lcl_friend DEFINITION DEFERRED.
+
+CLASS lcl_bar DEFINITION FRIENDS lcl_friend.
+  PRIVATE SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_friend DEFINITION.
+ENDCLASS.
+
+CLASS lcl_friend IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_friend.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD run.
+    DATA(lv_val) = lcl_bar=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("private method, called from class implementing friended interface", () => {
+    const abap = `
+INTERFACE lif_friend.
+ENDINTERFACE.
+
+CLASS lcl_bar DEFINITION FRIENDS lif_friend.
+  PRIVATE SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_friend DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_friend.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_friend IMPLEMENTATION.
+  METHOD run.
+    DATA(lv_val) = lcl_bar=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("protected method, called from subclass", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PROTECTED SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_bar.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD run.
+    DATA(lv_val) = lcl_bar=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("inherited protected method, called from local friend testclass", () => {
+    const sup = `
+CLASS zcl_super DEFINITION PUBLIC CREATE PUBLIC.
+  PROTECTED SECTION.
+    METHODS instance_method.
+ENDCLASS.
+
+CLASS zcl_super IMPLEMENTATION.
+  METHOD instance_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const clas = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC INHERITING FROM zcl_super CREATE PUBLIC.
+ENDCLASS.
+
+CLASS zcl_sdfsdf IMPLEMENTATION.
+ENDCLASS.`;
+    const test = `
+CLASS ltcl_test DEFINITION DEFERRED.
+CLASS zcl_sdfsdf DEFINITION LOCAL FRIENDS ltcl_test.
+
+CLASS ltcl_test DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS test01 FOR TESTING.
+ENDCLASS.
+
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD test01.
+    DATA lo_ref TYPE REF TO zcl_sdfsdf.
+    CREATE OBJECT lo_ref.
+    lo_ref->instance_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_super.clas.abap", contents: sup},
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("protected method, called via me and super from subclass", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PROTECTED SECTION.
+    METHODS instance_method.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD instance_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_bar.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD run.
+    instance_method( ).
+    me->instance_method( ).
+    super->instance_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("private method, called from own class via me", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+  PRIVATE SECTION.
+    METHODS instance_method.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD instance_method.
+  ENDMETHOD.
+  METHOD run.
+    instance_method( ).
+    me->instance_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("private method, called from testclass without friends, expect error", () => {
+    const clas = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PUBLIC.
+  PRIVATE SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS zcl_sdfsdf IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const test = `
+CLASS ltcl_test DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS test01 FOR TESTING.
+ENDCLASS.
+
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD test01.
+    DATA(lv_val) = zcl_sdfsdf=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equal(`Method "static_method" is private and cannot be accessed`);
+  });
+
   it("INSERT, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_cedi,
