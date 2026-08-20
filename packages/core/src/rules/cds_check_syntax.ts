@@ -1,8 +1,8 @@
 import {ExpressionNode, TokenNode} from "../abap/nodes";
 import {StructureType, UnknownType, VoidType} from "../abap/types/basic";
 import {
-  CDSAnnotation, CDSAs, CDSDefineAbstract, CDSDefineProjection, CDSElement, CDSName, CDSPrefixedName, CDSRelation,
-  CDSSource, CDSType,
+  CDSAnnotation, CDSAs, CDSDefineAbstract, CDSDefineProjection, CDSDefineView, CDSElement, CDSName, CDSPrefixedName,
+  CDSRelation, CDSSource, CDSType,
 } from "../cds/expressions";
 import {DDIC} from "../ddic";
 import {IFile} from "../files/_ifile";
@@ -24,6 +24,14 @@ type Source = {
 
 const KNOWN_QUAN_DATA_ELEMENTS = ["MENGE_D"];
 const KNOWN_CURR_DATA_ELEMENTS = ["BWERT", "DZWERT"];
+
+// Reserved names, cannot be used as element names, see DDIC table TRESE
+const RESERVED_ELEMENT_NAMES = ["BEGIN", "NUMBER", "POSITION"];
+
+const MAX_LABEL_LENGTH = 40;
+
+// Annotations which are not supported in CDS view entities
+const VIEW_ENTITY_FORBIDDEN_ANNOTATIONS = ["Semantics.unitOfMeasure"];
 
 export class CDSCheckSyntax implements IRule {
   private reg: IRegistry;
@@ -73,6 +81,9 @@ Missing objects are only reported when their names match the configured errorNam
     this.checkTypes(tree, ddic, issues, file);
     this.checkRootProjection(tree, ddic, issues, file);
     this.checkFieldAnnotations(tree, ddic, issues, file);
+    this.checkLabels(tree, issues, file);
+    this.checkViewEntityAnnotations(tree, issues, file);
+    this.checkReservedNames(tree, issues, file);
     this.checkFields(tree, sources, object, issues, file);
 
     return issues;
@@ -282,6 +293,71 @@ Missing objects are only reported when their names match the configured errorNam
     } else {
       return annotations.some(a => a.toUpperCase().includes("@SEMANTICS.CURRENCYCODE:TRUE")
         || a.toUpperCase().includes("@SEMANTICS:{CURRENCYCODE:TRUE"));
+    }
+  }
+
+  private checkLabels(tree: ExpressionNode, issues: Issue[], file: IFile) {
+    for (const annotation of tree.findAllExpressionsRecursive(CDSAnnotation)) {
+      const concatenated = annotation.concatTokens();
+      if (/@\s*<?\s*EndUserText/i.test(concatenated) === false) {
+        continue;
+      }
+
+      const expression = /label\s*:\s*'((?:[^']|'')*)'/gi;
+      let match = expression.exec(concatenated);
+      while (match !== null) {
+        const label = match[1].replace(/''/g, "'");
+        if (label.length > MAX_LABEL_LENGTH) {
+          const message = `CDS label is ${label.length} characters, maximum is ${MAX_LABEL_LENGTH}`;
+          issues.push(Issue.atToken(file, annotation.getFirstToken(), message,
+                                    this.getMetadata().key, this.conf.severity));
+        }
+        match = expression.exec(concatenated);
+      }
+    }
+  }
+
+  private checkViewEntityAnnotations(tree: ExpressionNode, issues: Issue[], file: IFile) {
+    const view = tree.findFirstExpression(CDSDefineView);
+    if (view === undefined || view.findDirectTokenByText("ENTITY") === undefined) {
+      return;
+    }
+
+    for (const annotation of tree.findAllExpressionsRecursive(CDSAnnotation)) {
+      const normalized = annotation.concatTokens().replace(/\s/g, "").toUpperCase().replace(/^@</, "@");
+      for (const forbidden of VIEW_ENTITY_FORBIDDEN_ANNOTATIONS) {
+        const upper = forbidden.toUpperCase();
+        if (normalized.startsWith("@" + upper) === false
+            && normalized.startsWith("@" + upper.replace(".", ":{")) === false) {
+          continue;
+        }
+        const message = `Annotation ${forbidden} is not allowed in view entities`;
+        issues.push(Issue.atToken(file, annotation.getFirstToken(), message,
+                                  this.getMetadata().key, this.conf.severity));
+      }
+    }
+  }
+
+  private checkReservedNames(tree: ExpressionNode, issues: Issue[], file: IFile) {
+    for (const element of tree.findAllExpressionsRecursive(CDSElement)) {
+      if (element.findDirectTokenByText("INCLUDE") !== undefined) {
+        continue;
+      }
+
+      let nameNode = element.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
+      if (nameNode === undefined) {
+        const names = element.findDirectExpression(CDSPrefixedName)?.findDirectExpressions(CDSName) || [];
+        nameNode = names[names.length - 1];
+      }
+      if (nameNode === undefined) {
+        continue;
+      }
+
+      const name = this.name(nameNode);
+      if (RESERVED_ELEMENT_NAMES.includes(name.toUpperCase())) {
+        issues.push(Issue.atToken(file, nameNode.getFirstToken(), `CDS element name "${name}" is reserved`,
+                                  this.getMetadata().key, this.conf.severity));
+      }
     }
   }
 

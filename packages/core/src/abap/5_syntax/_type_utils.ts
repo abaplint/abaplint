@@ -1,5 +1,5 @@
 import {ClassDefinition, InterfaceDefinition} from "../types";
-import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DataType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, PGenericType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
+import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DataType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, PGenericType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, UTCLongType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
 import {TableKeyType} from "../types/basic/table_type";
 import {EnumType} from "../types/basic/enum_type";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -539,6 +539,10 @@ export class TypeUtils {
     console.dir(source);
     console.dir(target);
 */
+    if (source instanceof UTCLongType || target instanceof UTCLongType) {
+      return this.isUTCLongAssignable(source, target);
+    }
+
     if (target instanceof TableType) {
       if (target.isWithHeader()) {
         return this.isAssignable(source, target.getRowType());
@@ -672,5 +676,33 @@ export class TypeUtils {
     }
 
     return true;
+  }
+
+  // utclong can only be converted to and from character like types
+  private isUTCLongAssignable(source: AbstractType, target: AbstractType): boolean {
+    if (this.isGenericOrVoid(source) || this.isGenericOrVoid(target)) {
+      return true;
+    } else if (source instanceof UTCLongType && target instanceof UTCLongType) {
+      return true;
+    } else if (source instanceof UTCLongType) {
+      return this.isTextLike(target);
+    }
+    return this.isTextLike(source);
+  }
+
+  private isGenericOrVoid(type: AbstractType): boolean {
+    return type instanceof VoidType
+      || type instanceof AnyType
+      || type instanceof DataType
+      || type instanceof UnknownType;
+  }
+
+  private isTextLike(type: AbstractType): boolean {
+    return type instanceof CharacterType
+      || type instanceof StringType
+      || type instanceof CLikeType
+      || type instanceof CSequenceType
+      || type instanceof CGenericType
+      || type instanceof SimpleType;
   }
 }
