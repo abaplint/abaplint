@@ -13853,6 +13853,40 @@ ts = utclong_current( ).`;
     expect(issues[0]?.getMessage()).to.equal("Incompatible types");
   });
 
+  it("private static method, called from another class", () => {
+    const abap = `
+CLASS lhc_porequest DEFINITION.
+  PRIVATE SECTION.
+    TYPES:
+      BEGIN OF ts_pending,
+        purch_doc TYPE i,
+      END OF ts_pending,
+      tt_pending TYPE STANDARD TABLE OF ts_pending WITH EMPTY KEY.
+
+    CLASS-DATA gt_pending TYPE tt_pending.
+    CLASS-METHODS get_pending RETURNING VALUE(rt) TYPE tt_pending.
+ENDCLASS.
+
+CLASS lhc_porequest IMPLEMENTATION.
+  METHOD get_pending.
+    rt = gt_pending.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lsc_zpc_r_po_req_tp DEFINITION .
+  PROTECTED SECTION.
+    METHODS save_modified.
+ENDCLASS.
+
+CLASS lsc_zpc_r_po_req_tp IMPLEMENTATION.
+  METHOD save_modified.
+    DATA(lt_pending) = lhc_porequest=>get_pending( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`Method "get_pending" is private and cannot be accessed`);
+  });
+
   it("INSERT, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_cedi,
