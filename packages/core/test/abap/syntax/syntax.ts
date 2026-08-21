@@ -15669,4 +15669,16 @@ REFRESH tab[].`;
     expect(issues[0]?.getMessage()).to.contain("tab");
   });
 
+  it("VALUE sy-datum is not a constant", () => {
+    const abap = `DATA gv_date TYPE d VALUE sy-datum.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("VALUE, sy-datum is not a constant");
+  });
+
+  it("VALUE sy-uzeit is not a constant", () => {
+    const abap = `DATA gv_time TYPE t VALUE sy-uzeit.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("VALUE, sy-uzeit is not a constant");
+  });
+
 });
