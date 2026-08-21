@@ -32,6 +32,26 @@ describe("Rule: cloud_types", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("SMTG, cloud enabled", async () => {
+    const issues = await findIssues("zfoobar.smtg.xml");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("JOBD, cloud enabled", async () => {
+    const issues = await findIssues("zfoobar.jobd.xml");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CDBO, cloud enabled", async () => {
+    const issues = await findIssues("zfoobar.cdbo.xml");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("OA2P, cloud enabled", async () => {
+    const issues = await findIssues("zfoobar.oa2p.xml");
+    expect(issues.length).to.equal(0);
+  });
+
   it("PROG, not cloud enabled", async () => {
     const issues = await findIssues("zfoobar.prog.abap");
     expect(issues.length).to.equal(1);

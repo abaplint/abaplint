@@ -63,12 +63,14 @@ export class CloudTypes implements IRule {
       || obj instanceof Objects.CDSEntityBuffer
       || obj instanceof Objects.ApplicationLogObject
       || obj instanceof Objects.CommunicationScenario
+      || obj instanceof Objects.CustomDataBrowserObject
       || obj instanceof Objects.DataControl
       || obj instanceof Objects.Namespace
       || obj instanceof Objects.KnowledgeTransferDocument
       || obj instanceof Objects.DataDefinition
       || obj instanceof Objects.DataElement
       || obj instanceof Objects.Domain
+      || obj instanceof Objects.EmailTemplate
       || obj instanceof Objects.EventBinding
       || obj instanceof Objects.EventConsumer
       || obj instanceof Objects.FunctionGroup
@@ -81,6 +83,7 @@ export class CloudTypes implements IRule {
       || obj instanceof Objects.MaintenanceAndTransportObject
       || obj instanceof Objects.MessageClass
       || obj instanceof Objects.NumberRange
+      || obj instanceof Objects.Oauth2Profile
       || obj instanceof Objects.OutboundService
       || obj instanceof Objects.Package
       || obj instanceof Objects.RestrictionField
@@ -89,6 +92,7 @@ export class CloudTypes implements IRule {
       || obj instanceof Objects.ServiceDefinition
       || obj instanceof Objects.Table
       || obj instanceof Objects.TableType
+      || obj instanceof Objects.TechnicalJobDefinition
       || obj instanceof Objects.Transformation;
   }
 

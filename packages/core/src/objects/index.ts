@@ -60,7 +60,6 @@ export * from "./enhancement_implementation";
 export * from "./enhancement_spot";
 export * from "./entity_type";
 export * from "./event_binding";
-export * from "./event_binding";
 export * from "./event_consumer";
 export * from "./extension_index";
 export * from "./field_catalog";
