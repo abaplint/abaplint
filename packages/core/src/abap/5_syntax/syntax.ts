@@ -16,6 +16,7 @@ import {TypeEnum} from "./structures/type_enum";
 import {TypeMesh} from "./structures/type_mesh";
 import {Types} from "./structures/types";
 import {Statics} from "./structures/statics";
+import {Method as MethodStructure} from "./structures/method";
 import {Constants} from "./structures/constants";
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
@@ -500,6 +501,9 @@ export class SyntaxLogic {
     } else if (stru instanceof Structures.TestInjection) {
       // todo: skipped for now
       return true;
+    } else if (stru instanceof Structures.Method) {
+      new MethodStructure().runSyntax(node, input);
+      return false;
     }
     return false;
   }
