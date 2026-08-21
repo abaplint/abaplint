@@ -55,6 +55,7 @@ export class CloudTypes implements IRule {
       || obj instanceof Objects.BehaviorDefinition
       || obj instanceof Objects.BusinessCatalog
       || obj instanceof Objects.BusinessCatalogAppAssignment
+      || obj instanceof Objects.BusinessConfigurationMaintenanceObject
       || obj instanceof Objects.CDSMetadataExtension
       || obj instanceof Objects.Class
       || obj instanceof Objects.CDSType
@@ -71,11 +72,13 @@ export class CloudTypes implements IRule {
       || obj instanceof Objects.EventBinding
       || obj instanceof Objects.EventConsumer
       || obj instanceof Objects.FunctionGroup
+      || obj instanceof Objects.GatewayODataGroupAndAssignment
       || obj instanceof Objects.HttpService
       || obj instanceof Objects.IAMApp
       || obj instanceof Objects.InboundService
       || obj instanceof Objects.Interface
       || obj instanceof Objects.LockObject
+      || obj instanceof Objects.MaintenanceAndTransportObject
       || obj instanceof Objects.MessageClass
       || obj instanceof Objects.NumberRange
       || obj instanceof Objects.OutboundService
