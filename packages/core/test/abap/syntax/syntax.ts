@@ -5895,6 +5895,14 @@ ENDTRY.`;
     expect(issues[0]?.getMessage()).to.equal("Inline exception name longer than 30 characters");
   });
 
+  it("FORM name longer than 30 characters", () => {
+    const abap = `
+FORM unregister_native_hierseq_events.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("FORM name longer than 30 characters");
+  });
+
   it("negative character literal passed to NUMC method parameter is not compatible", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -11367,6 +11375,20 @@ MODIFY TABLE rt_variables FROM ls_variable.`;
 PARAMETERS p_conf TYPE c LENGTH 1 RADIOBUTTON GROUP g1 DEFAULT 'X'.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal("RADIOBUTTON and LENGTH not possible together");
+  });
+
+  it("USER-COMMAND and LENGTH not possible together", () => {
+    const abap = `
+PARAMETERS p_view   TYPE c LENGTH 10 AS LISTBOX VISIBLE LENGTH 18 USER-COMMAND view.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("USER-COMMAND and LENGTH not possible together");
+  });
+
+  it("ok, USER-COMMAND and VISIBLE LENGTH", () => {
+    const abap = `
+PARAMETERS p_view TYPE c AS LISTBOX VISIBLE LENGTH 18 USER-COMMAND view.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("DATA REF TO ANY is generic", () => {
