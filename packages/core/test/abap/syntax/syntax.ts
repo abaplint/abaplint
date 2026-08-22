@@ -15681,4 +15681,143 @@ REFRESH tab[].`;
     expect(issues[0]?.getMessage()).to.equal("VALUE, sy-uzeit is not a constant");
   });
 
+  it("RADIOBUTTON GROUP name too long", () => {
+    const abap = `
+PARAMETERS p_red   RADIOBUTTON GROUP color DEFAULT 'X'.
+PARAMETERS p_green RADIOBUTTON GROUP color.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Radio button group name too long, color");
+  });
+
+  it("ok, RADIOBUTTON GROUP name, 4 characters", () => {
+    const abap = `
+PARAMETERS p_red   RADIOBUTTON GROUP colr DEFAULT 'X'.
+PARAMETERS p_green RADIOBUTTON GROUP colr.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("PERFORM USING, string not compatible with c", () => {
+    const abap = `
+FORM add_leaf USING iv_id TYPE c.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA(lv_id) = |Psdf|.
+  PERFORM add_leaf USING lv_id.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("PERFORM CHANGING, string not compatible with c", () => {
+    const abap = `
+FORM add_leaf CHANGING cv_id TYPE c.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA(lv_id) = |Psdf|.
+  PERFORM add_leaf CHANGING lv_id.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("ok, PERFORM CHANGING, c is generic", () => {
+    const abap = `
+FORM add_leaf CHANGING cv_id TYPE c.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lv_id TYPE c LENGTH 4.
+  PERFORM add_leaf CHANGING lv_id.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, PERFORM USING, p and x are generic", () => {
+    const abap = `
+FORM add_leaf USING iv_packed TYPE p iv_hex TYPE x.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lv_packed TYPE p LENGTH 8 DECIMALS 2.
+  DATA lv_hex TYPE x LENGTH 16.
+  PERFORM add_leaf USING lv_packed lv_hex.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("PERFORM, too few parameters", () => {
+    const abap = `
+FORM add_leaf USING iv_a TYPE i iv_b TYPE i.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lv_a TYPE i.
+  PERFORM add_leaf USING lv_a.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("PERFORM, expected 2 USING/CHANGING parameters, found 1");
+  });
+
+  it("PERFORM, too many parameters", () => {
+    const abap = `
+FORM add_leaf USING iv_a TYPE i.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lv_a TYPE i.
+  PERFORM add_leaf USING lv_a lv_a.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("PERFORM, expected 1 USING/CHANGING parameters, found 2");
+  });
+
+  it("PERFORM, no parameters supplied", () => {
+    const abap = `
+FORM add_leaf USING iv_a TYPE i.
+ENDFORM.
+
+START-OF-SELECTION.
+  PERFORM add_leaf.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("PERFORM, expected 1 USING/CHANGING parameters, found 0");
+  });
+
+  it("PERFORM TABLES, wrong number of parameters", () => {
+    const abap = `
+FORM add_leaf TABLES it_tab1 it_tab2.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lt_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  PERFORM add_leaf TABLES lt_tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("PERFORM, expected 2 TABLES parameters, found 1");
+  });
+
+  it("ok, PERFORM USING and CHANGING are interchangeable", () => {
+    const abap = `
+FORM add_leaf USING iv_a TYPE i CHANGING cv_b TYPE i.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lv_a TYPE i.
+  DATA lv_b TYPE i.
+  PERFORM add_leaf USING lv_a lv_b.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, PERFORM TABLES USING CHANGING", () => {
+    const abap = `
+FORM add_leaf TABLES it_tab USING iv_a TYPE i CHANGING cv_b TYPE i.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lt_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA lv_a TYPE i.
+  DATA lv_b TYPE i.
+  PERFORM add_leaf TABLES lt_tab USING lv_a CHANGING lv_b.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

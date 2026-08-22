@@ -1,6 +1,6 @@
 import {ExpressionNode} from "../../nodes";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {AnyType, CGenericType, CharacterType, UnknownType} from "../../types/basic";
+import {AnyType, CGenericType, CharacterType, HexType, PackedType, PGenericType, UnknownType, XGenericType} from "../../types/basic";
 import {ConstantFieldLength, FormParamName, Length, SimpleFieldChain, TypeName} from "../../2_statements/expressions";
 import {BasicTypes} from "../basic_types";
 import {AbstractType} from "../../types/basic/_abstract_type";
@@ -42,11 +42,18 @@ export class FormParam {
     }
 
     let bfound = new BasicTypes(input).parseType(node);
-    const isTypeC = node.findFirstExpression(TypeName)?.concatTokens().toUpperCase() === "C";
+    const typeName = node.findFirstExpression(TypeName)?.concatTokens().toUpperCase();
     const hasExplicitLength = node.findFirstExpression(Length) !== undefined
       || node.findFirstExpression(ConstantFieldLength) !== undefined;
-    if (isTypeC && hasExplicitLength === false && bfound instanceof CharacterType) {
-      bfound = CGenericType.get();
+    // the length cannot be specified for FORM parameters, so these types are generic
+    if (hasExplicitLength === false) {
+      if (typeName === "C" && bfound instanceof CharacterType) {
+        bfound = CGenericType.get();
+      } else if (typeName === "X" && bfound instanceof HexType) {
+        bfound = XGenericType.get();
+      } else if (typeName === "P" && bfound instanceof PackedType) {
+        bfound = PGenericType.get();
+      }
     }
 
     if (nameToken && bfound) {
