@@ -7,11 +7,16 @@ import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Form implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
-    const name = node.findDirectExpression(FormName)?.concatTokens();
-    if (name === undefined) {
+    const nameExpression = node.findDirectExpression(FormName);
+    const name = nameExpression?.concatTokens();
+    if (nameExpression === undefined || name === undefined) {
       const message = "Form, could not find name";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
+    }
+    if (name.length > 30) {
+      const message = "FORM name longer than 30 characters";
+      input.issues.push(syntaxIssue(input, nameExpression.getFirstToken(), message));
     }
     input.scope.push(ScopeType.Form, name, node.getFirstToken().getStart(), input.filename);
 

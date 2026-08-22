@@ -33,6 +33,12 @@ export class Parameter implements StatementSyntax {
       return;
     }
 
+    if (this.hasUserCommand(node) && this.hasLength(node)) {
+      const message = "USER-COMMAND and LENGTH not possible together";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
+    }
+
     const bfound = new BasicTypes(input).parseType(node);
     if (bfound) {
       input.scope.addIdentifier(new TypedIdentifier(nameToken, input.filename, bfound));
@@ -43,5 +49,30 @@ export class Parameter implements StatementSyntax {
     const magicName = "%_" + nameToken.getStr() + "_%_app_%";
     const magicToken = new Identifier(nameToken.getStart(), magicName);
     input.scope.addIdentifier(new TypedIdentifier(magicToken, input.filename, VoidType.get("PARAMETER-MAGIC")));
+  }
+
+  // "USER-COMMAND" is lexed as three tokens
+  private hasUserCommand(node: StatementNode): boolean {
+    const tokens = node.getTokens();
+    for (let i = 0; i < tokens.length - 2; i++) {
+      if (tokens[i].getStr().toUpperCase() === "USER"
+          && tokens[i + 1].getStr() === "-"
+          && tokens[i + 2].getStr().toUpperCase() === "COMMAND") {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // "VISIBLE LENGTH" is not the same as "LENGTH"
+  private hasLength(node: StatementNode): boolean {
+    const tokens = node.getTokens();
+    for (let i = 0; i < tokens.length; i++) {
+      if (tokens[i].getStr().toUpperCase() === "LENGTH"
+          && tokens[i - 1]?.getStr().toUpperCase() !== "VISIBLE") {
+        return true;
+      }
+    }
+    return false;
   }
 }

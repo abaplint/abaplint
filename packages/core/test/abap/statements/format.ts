@@ -1,4 +1,4 @@
-import {statementType, statementVersionFail} from "../_utils";
+import {statementExpectFail, statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release, LanguageVersion} from "../../../src";
 
@@ -30,3 +30,9 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "FORMAT");
+
+const fail = [
+  `FORMAT COLOR = COND #( WHEN ls_product-active = abap_true THEN COL_NORMAL ELSE COL_NEGATIVE ).`,
+];
+
+statementExpectFail(fail, "FORMAT");

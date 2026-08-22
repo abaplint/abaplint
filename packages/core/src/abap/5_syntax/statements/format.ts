@@ -7,7 +7,7 @@ import {SyntaxInput} from "../_syntax_input";
 export class Format implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
-    for (const s of node.findAllExpressions(Expressions.Source)) {
+    for (const s of node.findAllExpressionsMulti([Expressions.Source, Expressions.SimpleSource3])) {
       Source.runSyntax(s, input);
     }
 
