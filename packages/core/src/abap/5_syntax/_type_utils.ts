@@ -374,7 +374,9 @@ export class TypeUtils {
         || source instanceof UnknownType;
     }
 
-    if (source instanceof CharacterType) {
+    if (source instanceof CGenericType && target instanceof StringType) {
+      return false;
+    } else if (source instanceof CharacterType) {
       if (target instanceof CharacterType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
           return source.getLength() <= target.getLength();
