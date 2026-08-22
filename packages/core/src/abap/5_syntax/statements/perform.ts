@@ -10,6 +10,9 @@ import {AssertError} from "../assert_error";
 import {Dynamic} from "../expressions/dynamic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TypeUtils} from "../_type_utils";
+import {TypedIdentifier} from "../../types/_typed_identifier";
+
+type Parameter = {node: ExpressionNode, type: AbstractType | undefined};
 
 export class Perform implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -20,20 +23,22 @@ export class Perform implements StatementSyntax {
     ////////////////////////////
     // check parameters are defined
 
+    const changing: Parameter[] = [];
     for (const c of node.findDirectExpressions(Expressions.PerformChanging)) {
       for (const s of c.findDirectExpressions(Expressions.Target)) {
-        Target.runSyntax(s, input);
+        changing.push({node: s, type: Target.runSyntax(s, input)});
       }
     }
+    const tables: Parameter[] = [];
     for (const t of node.findDirectExpressions(Expressions.PerformTables)) {
       for (const s of t.findDirectExpressions(Expressions.Source)) {
-        Source.runSyntax(s, input);
+        tables.push({node: s, type: Source.runSyntax(s, input)});
       }
     }
-    const using: {source: ExpressionNode, type: AbstractType | undefined}[] = [];
+    const using: Parameter[] = [];
     for (const u of node.findDirectExpressions(Expressions.PerformUsing)) {
       for (const s of u.findDirectExpressions(Expressions.SimpleSource3)) {
-        using.push({source: s, type: Source.runSyntax(s, input)});
+        using.push({node: s, type: Source.runSyntax(s, input)});
       }
     }
 
@@ -69,20 +74,38 @@ export class Perform implements StatementSyntax {
     ////////////////////////////
     // check parameters match
 
-    const usingParameters = found.getUsingParameters();
-    for (let i = 0; i < using.length && i < usingParameters.length; i++) {
-      const {source, type} = using[i];
+    // USING and CHANGING are interchangeable, the actual parameters form a single positional list
+    if (this.checkParameters(node, tables, found.getTablesParameters(), "TABLES", input) === false) {
+      return;
+    }
+    const formal = found.getUsingParameters().concat(found.getChangingParameters());
+    this.checkParameters(node, using.concat(changing), formal, "USING/CHANGING", input);
+  }
+
+  // returns false if an issue was reported
+  private checkParameters(node: StatementNode, actual: Parameter[], formal: readonly TypedIdentifier[],
+                          kind: string, input: SyntaxInput): boolean {
+
+    if (actual.length !== formal.length) {
+      const message = `PERFORM, expected ${formal.length} ${kind} parameters, found ${actual.length}`;
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return false;
+    }
+
+    const typeUtils = new TypeUtils(input.scope);
+    for (let i = 0; i < actual.length; i++) {
+      const {node: source, type} = actual[i];
       if (type === undefined) {
         continue;
       }
-      const parameter = usingParameters[i];
-      if (new TypeUtils(input.scope).isAssignableStrict(type, parameter.getType(), source) === false) {
+      const parameter = formal[i];
+      if (typeUtils.isAssignableStrict(type, parameter.getType(), source) === false) {
         const message = `PERFORM parameter type not compatible, ${parameter.getName()}`;
         input.issues.push(syntaxIssue(input, source.getFirstToken(), message));
-        return;
+        return false;
       }
     }
 
-    // todo, also check number of parameters match
+    return true;
   }
 }
