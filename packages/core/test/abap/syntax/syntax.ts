@@ -15681,4 +15681,16 @@ REFRESH tab[].`;
     expect(issues[0]?.getMessage()).to.equal("VALUE, sy-uzeit is not a constant");
   });
 
+  it("PERFORM USING, string not compatible with c", () => {
+    const abap = `
+FORM add_leaf USING iv_id TYPE c.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA(lv_id) = |Psdf|.
+  PERFORM add_leaf USING lv_id.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
 });

@@ -1,6 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
-import {StatementNode} from "../../nodes";
+import {ExpressionNode, StatementNode} from "../../nodes";
 import {ReferenceType} from "../_reference";
 import {Source} from "../expressions/source";
 import {StatementSyntax} from "../_statement_syntax";
@@ -8,6 +8,8 @@ import {Target} from "../expressions/target";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 import {Dynamic} from "../expressions/dynamic";
+import {AbstractType} from "../../types/basic/_abstract_type";
+import {TypeUtils} from "../_type_utils";
 
 export class Perform implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -28,9 +30,10 @@ export class Perform implements StatementSyntax {
         Source.runSyntax(s, input);
       }
     }
+    const using: {source: ExpressionNode, type: AbstractType | undefined}[] = [];
     for (const u of node.findDirectExpressions(Expressions.PerformUsing)) {
       for (const s of u.findDirectExpressions(Expressions.SimpleSource3)) {
-        Source.runSyntax(s, input);
+        using.push({source: s, type: Source.runSyntax(s, input)});
       }
     }
 
@@ -63,6 +66,23 @@ export class Perform implements StatementSyntax {
 
     input.scope.addReference(expr.getFirstToken(), found, ReferenceType.FormReference, input.filename);
 
-    // todo, also check parameters match
+    ////////////////////////////
+    // check parameters match
+
+    const usingParameters = found.getUsingParameters();
+    for (let i = 0; i < using.length && i < usingParameters.length; i++) {
+      const {source, type} = using[i];
+      if (type === undefined) {
+        continue;
+      }
+      const parameter = usingParameters[i];
+      if (new TypeUtils(input.scope).isAssignableStrict(type, parameter.getType(), source) === false) {
+        const message = `PERFORM parameter type not compatible, ${parameter.getName()}`;
+        input.issues.push(syntaxIssue(input, source.getFirstToken(), message));
+        return;
+      }
+    }
+
+    // todo, also check number of parameters match
   }
 }
