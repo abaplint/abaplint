@@ -15681,6 +15681,22 @@ REFRESH tab[].`;
     expect(issues[0]?.getMessage()).to.equal("VALUE, sy-uzeit is not a constant");
   });
 
+  it("RADIOBUTTON GROUP name too long", () => {
+    const abap = `
+PARAMETERS p_red   RADIOBUTTON GROUP color DEFAULT 'X'.
+PARAMETERS p_green RADIOBUTTON GROUP color.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Radio button group name too long, color");
+  });
+
+  it("ok, RADIOBUTTON GROUP name, 4 characters", () => {
+    const abap = `
+PARAMETERS p_red   RADIOBUTTON GROUP colr DEFAULT 'X'.
+PARAMETERS p_green RADIOBUTTON GROUP colr.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("PERFORM USING, string not compatible with c", () => {
     const abap = `
 FORM add_leaf USING iv_id TYPE c.

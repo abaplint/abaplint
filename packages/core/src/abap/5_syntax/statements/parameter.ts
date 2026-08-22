@@ -33,6 +33,12 @@ export class Parameter implements StatementSyntax {
       return;
     }
 
+    const radioGroup = node.findFirstExpression(Expressions.RadioGroupName);
+    if (radioGroup && radioGroup.concatTokens().length > 4) {
+      const message = "Radio button group name too long, " + radioGroup.concatTokens();
+      input.issues.push(syntaxIssue(input, radioGroup.getFirstToken(), message));
+    }
+
     if (this.hasUserCommand(node) && this.hasLength(node)) {
       const message = "USER-COMMAND and LENGTH not possible together";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
