@@ -15861,4 +15861,20 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("integer literal not compatible with c length 33", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE c LENGTH 33.
+    CLASS-METHODS bar IMPORTING foo TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>bar( foo = 0 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
 });

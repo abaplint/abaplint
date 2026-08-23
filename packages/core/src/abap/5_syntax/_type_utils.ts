@@ -467,7 +467,9 @@ export class TypeUtils {
         return false;
       }
     } else if (source instanceof IntegerType) {
-      if (target instanceof StringType || target instanceof DateType) {
+      if (target instanceof StringType
+          || target instanceof DateType
+          || target instanceof CharacterType) {
         return false;
       } else if (target instanceof Integer8Type || target instanceof PackedType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
