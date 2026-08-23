@@ -412,6 +412,10 @@ export class TypeUtils {
         }
         return false;
       }
+    } else if (source instanceof DateType || source instanceof TimeType) {
+      if (target instanceof CharacterType || target instanceof StringType) {
+        return false;
+      }
     } else if (source instanceof StringType) {
       if (target instanceof StructureType && this.structureContainsString(target)) {
         return false;
