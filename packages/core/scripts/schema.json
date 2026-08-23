@@ -3027,6 +3027,17 @@
               ],
               "description": "It's not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
             },
+            "no_dynamic_stuff": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoDynamicStuffConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects dynamic calls and other dynamic language constructs\nTags: SingleFile, Security\nhttps://rules.abaplint.org/no_dynamic_stuff"
+            },
             "no_exclamation_escape": {
               "anyOf": [
                 {
@@ -5127,6 +5138,17 @@
                 }
               ],
               "description": "It's not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
+            },
+            "no_dynamic_stuff": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoDynamicStuffConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects dynamic calls and other dynamic language constructs\nTags: SingleFile, Security\nhttps://rules.abaplint.org/no_dynamic_stuff"
             },
             "no_exclamation_escape": {
               "anyOf": [
@@ -7282,6 +7304,90 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "NoDynamicStuffConf": {
+      "additionalProperties": false,
+      "properties": {
+        "assign": {
+          "description": "Detects dynamic ASSIGN, including ASSIGN COMPONENT",
+          "type": "boolean"
+        },
+        "callDatabaseProcedure": {
+          "description": "Detects CALL DATABASE PROCEDURE, the procedure name is always dynamic",
+          "type": "boolean"
+        },
+        "callFunction": {
+          "description": "Detects dynamic CALL FUNCTION, ie. the function module name is not a literal",
+          "type": "boolean"
+        },
+        "callMethod": {
+          "description": "Detects dynamic method calls, ie. CALL METHOD (name), SET HANDLER and CALL BADI",
+          "type": "boolean"
+        },
+        "callTransaction": {
+          "description": "Detects dynamic CALL TRANSACTION, ie. the transaction code is not a literal",
+          "type": "boolean"
+        },
+        "callTransformation": {
+          "description": "Detects dynamic CALL TRANSFORMATION",
+          "type": "boolean"
+        },
+        "createData": {
+          "description": "Detects dynamic CREATE DATA",
+          "type": "boolean"
+        },
+        "createObject": {
+          "description": "Detects dynamic CREATE OBJECT",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "exportImport": {
+          "description": "Detects dynamic EXPORT and IMPORT",
+          "type": "boolean"
+        },
+        "getBadi": {
+          "description": "Detects dynamic GET BADI",
+          "type": "boolean"
+        },
+        "internalTable": {
+          "description": "Detects dynamic internal table access, ie. dynamic WHERE, keys, SORT BY and TRANSPORTING",
+          "type": "boolean"
+        },
+        "perform": {
+          "description": "Detects dynamic PERFORM",
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "submit": {
+          "description": "Detects dynamic SUBMIT",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "callMethod",
+        "callFunction",
+        "callDatabaseProcedure",
+        "callTransformation",
+        "callTransaction",
+        "perform",
+        "submit",
+        "createObject",
+        "createData",
+        "getBadi",
+        "assign",
+        "internalTable",
+        "exportImport"
+      ],
       "type": "object"
     },
     "NoExclamationEscapeConf": {

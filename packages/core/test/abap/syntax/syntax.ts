@@ -9898,6 +9898,24 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("error expected, generic C is not compatible with string", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS add_log IMPORTING event TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD add_log.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM add_log USING iv_text TYPE c.
+  lcl=>add_log( EXPORTING event = iv_text ).
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
   it("error expected, obj into xsequence", () => {
     const abap = `
 CLASS lcl DEFINITION.
