@@ -90,7 +90,7 @@ ENDCLASS.`);
 
     const xml = new MemoryFile(
       "zcl_foobar.clas.xml",
-      `<?xml version="1.0" encoding="utf-8"?>
+      `\uFEFF<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
@@ -142,7 +142,7 @@ ENDCLASS.`);
 
     const xml = new MemoryFile(
       "zcl_foobar.clas.xml",
-      `<?xml version="1.0" encoding="utf-8"?>
+      `\uFEFF<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
