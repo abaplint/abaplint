@@ -186,6 +186,7 @@ import {UseLineExistsConf} from "../src/rules/use_line_exists";
 import {UseNewConf} from "../src/rules/use_new";
 import {WhenOthersLastConf} from "../src/rules/when_others_last";
 import {WhitespaceEndConf} from "../src/rules/whitespace_end";
+import {XMLBOMConf} from "../src/rules/xml_bom";
 import {XMLConsistencyConf} from "../src/rules/xml_consistency";
 
 export interface IConfig {
@@ -387,6 +388,7 @@ export interface IConfig {
     "use_new"?: UseNewConf | boolean,
     "when_others_last"?: WhenOthersLastConf | boolean,
     "whitespace_end"?: WhitespaceEndConf | boolean,
+    "xml_bom"?: XMLBOMConf | boolean,
     "xml_consistency"?: XMLConsistencyConf | boolean,
   };
   /** see https://abaplint.app */
@@ -577,6 +579,7 @@ export interface IConfig {
     "use_new"?: UseNewConf | boolean,
     "when_others_last"?: WhenOthersLastConf | boolean,
     "whitespace_end"?: WhitespaceEndConf | boolean,
+    "xml_bom"?: XMLBOMConf | boolean,
     "xml_consistency"?: XMLConsistencyConf | boolean,
   };
 }
