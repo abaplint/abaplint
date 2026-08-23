@@ -48,17 +48,19 @@ export class NoDynamicStuff extends ABAPRule {
       extendedInformation: `Dynamic constructs cannot be checked statically, they are not found by
 where-used lists and refactorings, and they can introduce injection vulnerabilities.
 
-Dynamic tokens containing a literal, eg. CALL METHOD ('CL_FOO')=>('BAR'), are not reported,
-as these are equivalent to the static variant.
+Dynamic tokens are also reported when containing a literal, eg. CALL METHOD go_calendar->('RESET_DAY_INFO'),
+the syntax check does not resolve these either, so they behave like any other dynamic token.
 
 Dynamic SQL is reported by rule dangerous_statement.`,
       tags: [RuleTag.SingleFile, RuleTag.Security],
       badExample: `CALL METHOD (lv_class)=>(lv_method).
+CALL METHOD go_calendar->('RESET_DAY_INFO').
 CALL FUNCTION lv_function_module.
 CREATE OBJECT ref TYPE (lv_class).
 ASSIGN (lv_name) TO <fs>.
 SORT tab BY (lv_field).`,
       goodExample: `cl_class=>method( ).
+go_calendar->reset_day_info( ).
 CALL FUNCTION 'ZFOO'.
 CREATE OBJECT ref TYPE cl_class.
 ASSIGN foo TO <fs>.
@@ -169,10 +171,8 @@ SORT tab BY field.`,
     for (const source of node.findAllExpressions(Expressions.MethodSource)) {
 // Dynamic is always a direct child of MethodSource, dynamics further down
 // are parameters of the method call and not part of the method name
-      for (const dynamic of source.findDirectExpressions(Expressions.Dynamic)) {
-        if (this.isLiteral(dynamic) === false) {
-          return true;
-        }
+      if (source.findDirectExpression(Expressions.Dynamic) !== undefined) {
+        return true;
       }
     }
     return false;
@@ -184,12 +184,7 @@ SORT tab BY field.`,
   }
 
   private hasDynamic(node: StatementNode): boolean {
-    for (const dynamic of node.findAllExpressions(Expressions.Dynamic)) {
-      if (this.isLiteral(dynamic) === false) {
-        return true;
-      }
-    }
-    return false;
+    return node.findFirstExpression(Expressions.Dynamic) !== undefined;
   }
 
   private notLiteral(node: ExpressionNode | undefined): boolean {
