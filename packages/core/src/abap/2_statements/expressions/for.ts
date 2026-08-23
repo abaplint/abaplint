@@ -20,7 +20,7 @@ export class For extends Expression {
                         opt("WITHOUT MEMBERS"));
 
     const t = alt(TargetField, TargetFieldSymbol);
-    const groups = ver(Release.v740sp08, seq("GROUPS", t, "OF", t, "IN", Source, optPrio(groupBy)));
+    const groups = ver(Release.v740sp08, seq("GROUPS", t, "OF", t, "IN", Source, optPrio(groupBy)), {also: AlsoIn.OpenABAP});
 
     const f = seq("FOR", alt(itera, inn, groups), optPrio(Let));
 

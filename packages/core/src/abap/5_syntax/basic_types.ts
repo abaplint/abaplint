@@ -15,7 +15,7 @@ import {ClassDefinition, InterfaceDefinition} from "../types";
 import {Field, FieldSub, TypeTableKey} from "../2_statements/expressions";
 import {BuiltIn} from "./_builtin";
 import {Position} from "../../position";
-import {SyntaxInput} from "./_syntax_input";
+import {SyntaxInput, syntaxIssue} from "./_syntax_input";
 import {IObjectAndToken} from "../../_iddic_references";
 
 export class BasicTypes {
@@ -994,6 +994,13 @@ export class BasicTypes {
 
     const chain = val.findFirstExpression(Expressions.SimpleFieldChain);
     if (chain) {
+// todo, hardcoded for now, should be a generic check that the chain is a constant
+      const concat = chain.concatTokens().toUpperCase();
+      if (concat === "SY-DATUM" || concat === "SY-UZEIT") {
+        const message = "VALUE, " + concat.toLowerCase() + " is not a constant";
+        this.input.issues.push(syntaxIssue(this.input, chain.getFirstToken(), message));
+        return undefined;
+      }
       return this.resolveConstantValue(chain);
     }
 
@@ -1030,7 +1037,7 @@ export class BasicTypes {
     }
 
     if (val === undefined) {
-      return 1;
+      return undefined;
     }
 
     const intExpr = val.findFirstExpression(Expressions.Integer);

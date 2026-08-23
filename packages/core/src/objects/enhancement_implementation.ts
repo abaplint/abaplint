@@ -42,12 +42,12 @@ export class EnhancementImplementation extends AbstractObject {
     const parsed = super.parseRaw2();
     if (parsed === undefined
         || parsed.abapGit === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+        || parsed.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return {updated: false, runtime: 0};
     }
 
-    this.parsedXML.className = parsed.abapGit["asx:abap"]["asx:values"].CLASS;
-    this.parsedXML.description = parsed.abapGit["asx:abap"]["asx:values"].SHORTTEXT;
+    this.parsedXML.className = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.CLASS;
+    this.parsedXML.description = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.SHORTTEXT;
 
     const end = Date.now();
     return {updated: true, runtime: end - start};

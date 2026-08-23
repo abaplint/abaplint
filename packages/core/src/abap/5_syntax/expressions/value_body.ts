@@ -5,7 +5,7 @@ import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
-import {AnyType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, CharacterType, StringType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ValueBody {
@@ -33,21 +33,38 @@ export class ValueBody {
     }
 
     const fields = new Set<string>();
-    for (const s of node.findDirectExpressions(Expressions.FieldAssignment)) {
-      FieldAssignment.runSyntax(s, input, targetType);
-
-      if (node.findDirectExpression(Expressions.ValueBodyLine) === undefined) {
-        // todo: refine, still needs to be checked when there are table lines
-        const fieldname = s.findDirectExpression(Expressions.FieldSub)?.concatTokens().toUpperCase();
+    const hasTableLines = node.findDirectExpression(Expressions.ValueBodyLine) !== undefined;
+    for (const child of node.getChildren()) {
+      if (!(child instanceof ExpressionNode)) {
+        continue;
+      } else if (child.get() instanceof Expressions.FieldAssignment) {
+        const fieldname = child.findDirectExpression(Expressions.FieldSub)?.concatTokens().toUpperCase();
+        if (fieldname && hasTableLines === false && fields.has(fieldname)) {
+          const message = "Duplicate field assignment";
+          input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
+          return VoidType.get(CheckSyntaxKey);
+        }
         if (fieldname) {
-          if (fields.has(fieldname)) {
-            const message = "Duplicate field assignment";
-            input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
-            return VoidType.get(CheckSyntaxKey);
-          }
           fields.add(fieldname);
         }
+      } else if (child.get() instanceof Expressions.ValueBodyLine) {
+        const rowFields = new Set(fields);
+        for (const assignment of child.findDirectExpressions(Expressions.FieldAssignment)) {
+          const fieldname = assignment.findDirectExpression(Expressions.FieldSub)?.concatTokens().toUpperCase();
+          if (fieldname && rowFields.has(fieldname)) {
+            const message = "Duplicate field assignment";
+            input.issues.push(syntaxIssue(input, assignment.getFirstToken(), message));
+            return VoidType.get(CheckSyntaxKey);
+          }
+          if (fieldname) {
+            rowFields.add(fieldname);
+          }
+        }
       }
+    }
+
+    for (const s of node.findDirectExpressions(Expressions.FieldAssignment)) {
+      FieldAssignment.runSyntax(s, input, targetType);
     }
 
     let type: AbstractType | undefined = undefined; // todo, this is only correct if there is a single source in the body
@@ -83,7 +100,11 @@ export class ValueBody {
         FieldAssignment.runSyntax(s, input, rowType);
       }
       for (const s of foo.findDirectExpressions(Expressions.Source)) {
-        Source.runSyntax(s, input, rowType);
+        const sourceType = Source.runSyntax(s, input, rowType);
+        if (rowType instanceof StringType && sourceType instanceof CharacterType) {
+          const message = "VALUE, source type CharacterType not compatible with StringType";
+          input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+        }
       }
     }
 

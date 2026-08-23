@@ -1,9 +1,12 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
-import {TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, StructureType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {SQLSetOpGroup} from "./sql_set_op_group";
 import {SQLSource} from "./sql_source";
+
+const RANGE_COMPONENTS = ["SIGN", "OPTION", "LOW", "HIGH"];
 
 export class SQLIn {
 
@@ -27,6 +30,12 @@ export class SQLIn {
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return;
         }
+        if (intype instanceof TableType && this.isRangeRow(intype.getRowType()) === false) {
+          const name = insource.concatTokens().replace(/^@/, "").replace(/\[\]$/, "");
+          const message = `row structure of ${name} is not correct`;
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
+        }
       }
       return;
     }
@@ -38,6 +47,16 @@ export class SQLIn {
       SQLSource.runSyntax(s, input);
     }
 
+  }
+
+  // "IN itab" expects a ranges table, ie. the row must have SIGN, OPTION, LOW and HIGH
+  private static isRangeRow(rowType: AbstractType): boolean {
+    if (rowType instanceof VoidType || rowType instanceof UnknownType || rowType instanceof AnyType) {
+      return true;
+    } else if (!(rowType instanceof StructureType)) {
+      return false;
+    }
+    return RANGE_COMPONENTS.every(c => rowType.getComponentByName(c) !== undefined);
   }
 
 }

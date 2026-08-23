@@ -40,7 +40,12 @@ export class Write implements StatementSyntax {
 
     const target = node.findDirectExpression(Expressions.Target);
     if (target) {
-      Target.runSyntax(target, input);
+      const targetType = Target.runSyntax(target, input);
+      if (new TypeUtils(input.scope).isCharLikeField(targetType) === false) {
+        const message = `"${target.concatTokens()}" must be a character-like field (data type C, N, D, or T, got "${
+          targetType?.constructor.name}")`;
+        input.issues.push(syntaxIssue(input, target.getFirstToken(), message));
+      }
     }
 
   }

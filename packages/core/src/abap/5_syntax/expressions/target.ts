@@ -54,9 +54,10 @@ export class Target {
           return VoidType.get(CheckSyntaxKey);
         } else if (context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof UnknownType) {
           return VoidType.get(CheckSyntaxKey);
+        } else if (context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof VoidType) {
+          return context.getRowType();
         } else if (!(context instanceof StructureType)
             && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof StructureType)
-            && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof VoidType)
             && !(context instanceof VoidType)) {
           const message = "Not a structure, target, " + context?.constructor.name + ", " + current.concatTokens();
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -87,7 +88,7 @@ export class Target {
             && !(context instanceof VoidType)
             && !(context instanceof UnknownType)
             && !(context instanceof UnknownType)) {
-          const message = "Not a internal table, \"[]\"";
+          const message = `Not an internal table, "${node.concatTokens()}"`;
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return VoidType.get(CheckSyntaxKey);
         }

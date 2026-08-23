@@ -211,6 +211,58 @@ describe("xml consistency", () => {
     expect(issues.length).to.equals(1);
   });
 
+  it("unexpected abapGit version", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_LARS</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Description</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`)).addFile(new MemoryFile("zcl_lars.clas.abap", `
+CLASS zcl_lars DEFINITION PUBLIC CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_lars IMPLEMENTATION.
+ENDCLASS.`));
+    const issues = await run(reg);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Unexpected abapGit version");
+  });
+
+  it("unexpected abapGit serializer_version", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_LARS</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Description</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`)).addFile(new MemoryFile("zcl_lars.clas.abap", `
+CLASS zcl_lars DEFINITION PUBLIC CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_lars IMPLEMENTATION.
+ENDCLASS.`));
+    const issues = await run(reg);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Unexpected abapGit serializer_version");
+  });
+
   it("parser error, DTEL", async () => {
     const reg = new Registry().addFile(new MemoryFile("zdtel.dtel.xml", `parser error`));
     const issues = await run(reg);
@@ -230,6 +282,50 @@ describe("xml consistency", () => {
   });
 });
 
+async function runTabl(fields: string): Promise<Issue[]> {
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTABL</TABNAME>
+    <TABCLASS>INTTAB</TABCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    ${fields}
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  const reg = new Registry().addFile(new MemoryFile("ztabl.tabl.xml", xml));
+  return run(reg);
+}
+
+describe("rule, xml_consistency, TABL QUAN reference fields", () => {
+  it("errors when reference fields are not set", async () => {
+    const issues = await runTabl(`<DD03P>
+     <FIELDNAME>QUANTITY</FIELDNAME>
+     <DATATYPE>QUAN</DATATYPE>
+     <LENG>000013</LENG>
+     <DECIMALS>000003</DECIMALS>
+    </DD03P>`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("QUAN field QUANTITY must have REFTABLE and REFFIELD set");
+  });
+
+  it("allows QUAN fields with reference fields set", async () => {
+    const issues = await runTabl(`<DD03P>
+     <FIELDNAME>QUANTITY</FIELDNAME>
+     <DATATYPE>QUAN</DATATYPE>
+     <LENG>000013</LENG>
+     <DECIMALS>000003</DECIMALS>
+     <REFTABLE>ZTABL</REFTABLE>
+     <REFFIELD>UNIT</REFFIELD>
+    </DD03P>`);
+    expect(issues.length).to.equal(0);
+  });
+});
+
 async function runDtel(xml: string, conf?: XMLConsistencyConf): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zdtel.dtel.xml", xml));
   return run(reg, conf);
@@ -244,6 +340,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <HEADLEN>10</HEADLEN>
     <SCRLEN1>05</SCRLEN1>
     <SCRLEN2>10</SCRLEN2>
@@ -307,6 +404,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN1>05</SCRLEN1>
     <SCRTEXT_S>TooLong</SCRTEXT_S>
     <DATATYPE>CHAR</DATATYPE>
@@ -353,6 +451,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN2>10</SCRLEN2>
     <SCRTEXT_M>Medium text too long</SCRTEXT_M>
     <DATATYPE>CHAR</DATATYPE>
@@ -373,6 +472,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN3>10</SCRLEN3>
     <SCRTEXT_L>Long label text exceeding limit</SCRTEXT_L>
     <DATATYPE>CHAR</DATATYPE>
@@ -393,6 +493,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <HEADLEN>05</HEADLEN>
     <REPTEXT>Heading too long</REPTEXT>
     <DATATYPE>CHAR</DATATYPE>
@@ -413,6 +514,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <HEADLEN>03</HEADLEN>
     <SCRLEN1>03</SCRLEN1>
     <REPTEXT>Heading too long</REPTEXT>
@@ -427,7 +529,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
     expect(issues.length).to.equal(2);
   });
 
-  it("no issue when label length fields are absent", async () => {
+  it("reports missing length fields for present labels", async () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -442,7 +544,35 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
  </asx:abap>
 </abapGit>`;
     const issues = await runDtel(xml);
-    expect(issues.length).to.equal(0);
+    expect(issues.length).to.equal(2);
+    expect(issues[0].getMessage()).to.include("SCRLEN1");
+    expect(issues[1].getMessage()).to.include("DTELMASTER");
+  });
+
+  it("reports all missing label length fields", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <SCRTEXT_S>Short</SCRTEXT_S>
+    <SCRTEXT_M>Medium</SCRTEXT_M>
+    <SCRTEXT_L>Long</SCRTEXT_L>
+    <REPTEXT>Heading</REPTEXT>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runDtel(xml);
+    expect(issues.length).to.equal(5);
+    expect(issues.map((i) => i.getMessage()).join(" ")).to.include("SCRLEN1");
+    expect(issues.map((i) => i.getMessage()).join(" ")).to.include("SCRLEN2");
+    expect(issues.map((i) => i.getMessage()).join(" ")).to.include("SCRLEN3");
+    expect(issues.map((i) => i.getMessage()).join(" ")).to.include("HEADLEN");
+    expect(issues.map((i) => i.getMessage()).join(" ")).to.include("DTELMASTER");
   });
 
 
@@ -455,6 +585,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN1>10</SCRLEN1>
     <SCRLEN2>10</SCRLEN2>
     <SCRLEN3>40</SCRLEN3>
@@ -489,6 +620,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN1>05</SCRLEN1>
     <SCRLEN2>20</SCRLEN2>
     <SCRLEN3>40</SCRLEN3>
@@ -523,6 +655,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN1>05</SCRLEN1>
     <SCRLEN2>10</SCRLEN2>
     <SCRLEN3>40</SCRLEN3>
@@ -553,6 +686,7 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
   <asx:values>
    <DD04V>
     <ROLLNAME>ZDTEL</ROLLNAME>
+    <DTELMASTER>E</DTELMASTER>
     <SCRLEN1>10</SCRLEN1>
     <SCRLEN2>20</SCRLEN2>
     <SCRLEN3>40</SCRLEN3>

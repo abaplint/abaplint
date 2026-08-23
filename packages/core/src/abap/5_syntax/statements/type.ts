@@ -22,7 +22,7 @@ export class Type {
         return new TypedIdentifier(found.getToken(), input.filename, VoidType.get(CheckSyntaxKey));
       }
 
-      if (input.scope.isGlobalOO() && found.getType() instanceof PackedType) {
+      if (input.scope.isAnyOO() && found.getType() instanceof PackedType) {
         const concat = node.concatTokens().toUpperCase();
         if ((concat.includes(" TYPE P ") || concat.includes(" TYPE P."))
             && concat.includes(" DECIMALS ") === false) {

@@ -61,6 +61,7 @@ statementVersionOk(testsVersionOk, "MESSAGE", Statements.Message);
 const testsVersionFail = [
   {abap: `MESSAGE |sdf| TYPE 'S'.`, rel: Release.v702},
   {abap: `message e101(00) with io_cx_excel->if_message~get_text( ) into lv_dummy.`, rel: Release.v702},
+  {abap: `MESSAGE ID get_msg_id( ) TYPE 'E' NUMBER '004'.`, rel: Release.Newest},
   {abap: `MESSAGE s000(oo) WITH mv_text rv_result.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
   {abap: `MESSAGE ix_exception TYPE 'S' DISPLAY LIKE 'E'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
   {abap: `MESSAGE 'Commit was successful' TYPE 'S'.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},

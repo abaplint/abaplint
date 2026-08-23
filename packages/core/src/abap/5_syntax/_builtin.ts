@@ -1,5 +1,5 @@
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType, UTCLongType, CLikeType, TableKeyType, HexType, PackedType, XSequenceType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType, UTCLongType, CLikeType, TableKeyType, HexType, PackedType, XSequenceType, SimpleType} from "../types/basic";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -438,7 +438,7 @@ export class BuiltIn {
       counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
-        "format": CLikeType.get(),
+        "format": SimpleType.get(),
       },
       return: StringType.get(),
       release: Release.v702,
@@ -647,17 +647,17 @@ export class BuiltIn {
     "NMAX": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val1": CLikeType.get(),
-        "val2": CLikeType.get(),
+        "val1": SimpleType.get(),
+        "val2": SimpleType.get(),
       },
       optional: {
-        "val3": CLikeType.get(),
-        "val4": CLikeType.get(),
-        "val5": CLikeType.get(),
-        "val6": CLikeType.get(),
-        "val7": CLikeType.get(),
-        "val8": CLikeType.get(),
-        "val9": CLikeType.get(),
+        "val3": SimpleType.get(),
+        "val4": SimpleType.get(),
+        "val5": SimpleType.get(),
+        "val6": SimpleType.get(),
+        "val7": SimpleType.get(),
+        "val8": SimpleType.get(),
+        "val9": SimpleType.get(),
       },
       return: IntegerType.get(),
       release: Release.v702,
@@ -666,17 +666,17 @@ export class BuiltIn {
     "NMIN": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val1": CLikeType.get(),
-        "val2": CLikeType.get(),
+        "val1": SimpleType.get(),
+        "val2": SimpleType.get(),
       },
       optional: {
-        "val3": CLikeType.get(),
-        "val4": CLikeType.get(),
-        "val5": CLikeType.get(),
-        "val6": CLikeType.get(),
-        "val7": CLikeType.get(),
-        "val8": CLikeType.get(),
-        "val9": CLikeType.get(),
+        "val3": SimpleType.get(),
+        "val4": SimpleType.get(),
+        "val5": SimpleType.get(),
+        "val6": SimpleType.get(),
+        "val7": SimpleType.get(),
+        "val8": SimpleType.get(),
+        "val9": SimpleType.get(),
       },
       return: IntegerType.get(),
       release: Release.v702,
@@ -694,7 +694,7 @@ export class BuiltIn {
       counter: BuiltIn.counter++,
       mandatory: {
         "val": CLikeType.get(),
-        "occ": CLikeType.get(),
+        "occ": SimpleType.get(),
       },
       return: StringType.get(),
       release: Release.v702,

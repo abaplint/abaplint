@@ -5,12 +5,13 @@ import {Issue} from "../../../src/issue";
 import {Config} from "../../../src/config";
 import {IRegistry} from "../../../src/_iregistry";
 import {getABAPObjects} from "../../get_abap";
-import {Version, LanguageVersion, Release, ReleaseName, versionToABAPRelease} from "../../../src/version";
+import {LanguageVersion, Release, ReleaseName, ABAPRelease} from "../../../src/version";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {applyEditSingle} from "../../../src/edit_helper";
 import {IReference, ReferenceType} from "../../../src/abap/5_syntax/_reference";
+import {tabl_t100xml} from "../../rules/sql_value_conversion";
 
-function run(reg: IRegistry, globalConstants?: string[], version?: Version, errorNamespace?: string,
+function run(reg: IRegistry, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
              languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
   let ret: Issue[] = [];
 
@@ -21,15 +22,10 @@ function run(reg: IRegistry, globalConstants?: string[], version?: Version, erro
   if (ambigiousVoids) {
     config.syntax.ambigiousVoids = ambigiousVoids;
   }
-  if (version) {
-    config.syntax.version = version;
-  }
-  if (languageVersion) {
+  if (release || languageVersion) {
     config.syntax.version = {
-      release: version === undefined || version === Version.Cloud
-        ? Release.Newest.name as ReleaseName
-        : versionToABAPRelease(version).name as ReleaseName,
-      language: languageVersion,
+      release: (release ?? Release.Newest).name as ReleaseName,
+      language: languageVersion ?? LanguageVersion.Normal,
     };
   }
   if (errorNamespace) {
@@ -70,11 +66,11 @@ function runInterface(abap: string): Issue[] {
   return run(reg);
 }
 
-function runProgram(abap: string, globalConstants?: string[], version?: Version, errorNamespace?: string,
+function runProgram(abap: string, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
                     languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);
-  return run(reg, globalConstants, version, errorNamespace, languageVersion, ambigiousVoids);
+  return run(reg, globalConstants, release, errorNamespace, languageVersion, ambigiousVoids);
 }
 
 ////////////////////////////////////////////////////////////
@@ -739,6 +735,38 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("class, nested structured constants and class-data values", () => {
+    const abap = `
+CLASS lcl_test_data DEFINITION FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_address,
+             street  TYPE char60,
+             city    TYPE char40,
+             country TYPE char3,
+           END OF ty_address.
+
+    CONSTANTS:
+      BEGIN OF test_constants,
+        BEGIN OF data_block,
+          customer_id  TYPE char10    VALUE \`1000000001\`,
+          address_info TYPE ty_address VALUE \`sf\`,
+        END OF data_block,
+      END OF test_constants.
+
+    CLASS-DATA:
+      BEGIN OF test_values,
+        BEGIN OF data_block,
+          customer_id  TYPE char10    VALUE \`1000000001\`,
+          address_info TYPE ty_address VALUE \`sdf\`,
+        END OF data_block,
+      END OF test_values.
+ENDCLASS.
+CLASS lcl_test_data IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("class, me, method call", () => {
     const abap = `
       CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
@@ -942,6 +970,22 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("method call resolves when the implemented redefinition is invalid", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar REDEFINITION.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    foo( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("bar");
+  });
+
   it("redefined method with parameter, 2 steps up", () => {
     const clas =
       "CLASS zcl_foobar DEFINITION PUBLIC INHERITING FROM zcl_super1 FINAL CREATE PUBLIC.\n" +
@@ -1007,7 +1051,7 @@ ENDCLASS.`;
     const abap = `DATA casting_table TYPE REF TO data.
 DATA table_name TYPE string.
 CREATE DATA casting_table TYPE STANDARD TABLE OF (table_name) WITH EMPTY KEY.`;
-    const issues = runProgram(abap, [], Version.OpenABAP);
+    const issues = runProgram(abap, [], Release["open-abap"]);
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
@@ -1737,6 +1781,39 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("chained interface attribute access", () => {
+    const abap = `
+INTERFACE lif_value.
+  DATA value TYPE c LENGTH 20 READ-ONLY.
+ENDINTERFACE.
+
+INTERFACE lif_properties.
+  DATA task TYPE REF TO lif_value READ-ONLY.
+ENDINTERFACE.
+
+INTERFACE lif_receiver.
+  METHODS properties
+    RETURNING VALUE(result) TYPE REF TO lif_properties.
+ENDINTERFACE.
+
+CLASS lcl_repro DEFINITION.
+  PUBLIC SECTION.
+    METHODS run
+      IMPORTING receiver TYPE REF TO lif_receiver.
+ENDCLASS.
+
+CLASS lcl_repro IMPLEMENTATION.
+  METHOD run.
+    DATA task TYPE c LENGTH 20.
+
+    " False positive: Incompatible types
+    task = receiver->properties( )->task->value.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("chained call, component not found", () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
@@ -1851,6 +1928,21 @@ DATA(result) = to_lower( |bar| ).`;
     expect(issues.length).to.equals(0);
   });
 
+  it("built-in to_lower, xstring method result", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar RETURNING VALUE(xstr) TYPE xstring.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE to_lower( lcl=>bar( ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("infer type via NEW", () => {
     const abap = `
   CLASS lcl_bar DEFINITION.
@@ -1954,6 +2046,21 @@ ENDCLASS.
 START-OF-SELECTION.
   DATA int TYPE i.
   lcl_exporting=>run( IMPORTING ev_bar = int ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("method EXPORTING result written in implementation", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar EXPORTING res TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE 'sdf' TO res.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -2111,7 +2218,7 @@ DATA(bar) = foo->lif_def~foo.`;
   it("LOOP AT SCREEN, on 702", () => {
     const abap = `LOOP AT SCREEN.
     ENDLOOP.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues.length).to.equals(0);
   });
 
@@ -2120,7 +2227,7 @@ DATA(bar) = foo->lif_def~foo.`;
   DATA row TYPE string.
   LOOP AT tab INTO row FROM 3.
   ENDLOOP.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues.length).to.equals(0);
   });
 
@@ -2379,6 +2486,15 @@ WRITE bar-bar.
     expect(issues.length).to.equals(0);
   });
 
+  it("Table with header line, WRITE TO component", () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF voided WITH HEADER LINE.
+WRITE 'sdf' TO tab-bar.
+`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("LIKE DDIC structure, 2", () => {
     const xml = `
     <?xml version="1.0" encoding="utf-8"?>
@@ -2460,12 +2576,38 @@ tables_tab-foo = 'A'.
     expect(issues.length).to.equals(0);
   });
 
+  it("WRITE to substring of OCCURS header line", () => {
+    const abap = `
+DATA: BEGIN OF dirlines OCCURS 5,
+        text TYPE c LENGTH 10,
+      END OF dirlines.
+WRITE 'hello' TO dirlines(2).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("RANGES, with header line", () => {
     const abap = `
   RANGES foo FOR sy-mandt.
   foo-low = '123'.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
+  });
+
+  it("RANGES is not possible within classes", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA int TYPE i.
+    RANGES bar FOR int.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals("RANGES is not allowed within classes");
   });
 
   it("FORM TABLES STRUCTURE, contains header line", () => {
@@ -2938,6 +3080,25 @@ endloop.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECT integer literal with alias", () => {
+    const prog = `
+TYPES: BEGIN OF ty_result,
+         field1 TYPE c LENGTH 20,
+         value1 TYPE x LENGTH 4,
+         d      TYPE i,
+       END OF ty_result.
+DATA lt_result TYPE STANDARD TABLE OF ty_result WITH EMPTY KEY.
+SELECT field1, value1, 111 AS d
+  FROM ztab
+  INTO CORRESPONDING FIELDS OF TABLE @lt_result
+  WHERE field1 IS NOT NULL.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: ztab},
+      {filename: "zfoobar.prog.abap", contents: prog},
+    ]);
+    expect(issues.length).to.equal(0, issues[0]?.getMessage());
+  });
+
   it("concat_lines_of", () => {
     const abap = `
     DATA tab TYPE STANDARD TABLE OF string.
@@ -3378,6 +3539,23 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("VALUE #, character literal in string table, error", () => {
+    const abap = `
+    DATA lt_values TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    lt_values = VALUE #( ( 'material' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with StringType");
+  });
+
+  it("VALUE #, string literal in string table, ok", () => {
+    const abap = `
+    DATA lt_values TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    lt_values = VALUE #( ( \`material\` ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("void method, value with row", () => {
     const abap = `cl_void=>method( VALUE #( ( row = 2 ) ) ).`;
     const issues = runProgram(abap);
@@ -3568,7 +3746,7 @@ ENDLOOP.`;
 
   it("MESSAGE WITH TEXT, on 702", () => {
     const abap = `MESSAGE e001(00) WITH TEXT-001.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues.length).to.equals(0);
   });
 
@@ -3578,7 +3756,7 @@ ENDLOOP.`;
   LOOP AT list.
     WRITE / list.
   ENDLOOP.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
@@ -3586,7 +3764,7 @@ ENDLOOP.`;
     const abap = `
     TYPES tab TYPE i OCCURS 150.
     DATA fieldtab TYPE tab WITH HEADER LINE.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues.length).to.equals(0);
   });
 
@@ -3726,6 +3904,29 @@ ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.contain("ztab");
+  });
+
+  it("DELETE, database field exists", () => {
+    const abap = `
+DATA lv_value TYPE i.
+DELETE FROM ztab WHERE value1 = @lv_value.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: ztab},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("DELETE, database field does not exist", () => {
+    const abap = `
+DATA lv_run_id TYPE i.
+DELETE FROM ztab WHERE allocation_run_id = @lv_run_id.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: ztab},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal("checkFields, field ALLOCATION_RUN_ID not found");
   });
 
   it("INSERT, expect database table not found", () => {
@@ -4294,7 +4495,7 @@ ENDFUNCTION.`;
     const abap = `FIELD-SYMBOLS <ls_table> TYPE any.
     DATA c_tabname TYPE string.
     INSERT (c_tabname) FROM <ls_table>.`;
-    const issues = runProgram(abap, [], Version.v702, ".");
+    const issues = runProgram(abap, [], Release.v702, ".");
     expect(issues.length).to.equals(0);
   });
 
@@ -4302,7 +4503,7 @@ ENDFUNCTION.`;
     const abap = `DATA table_name TYPE string.
     DATA casting_table TYPE REF TO data.
     INSERT (table_name) FROM TABLE @casting_table->*.`;
-    const issues = runProgram(abap, [], Version.OpenABAP);
+    const issues = runProgram(abap, [], Release["open-abap"]);
     expect(issues.length).to.equals(0);
   });
 
@@ -4310,14 +4511,14 @@ ENDFUNCTION.`;
     const abap = `DATA table_name TYPE string.
     SELECT COUNT( * ) FROM (table_name) INTO @DATA(num_of_ana_rows).
     WRITE / num_of_ana_rows.`;
-    const issues = runProgram(abap, [], Version.OpenABAP);
+    const issues = runProgram(abap, [], Release["open-abap"]);
     expect(issues.length).to.equals(0);
   });
 
   it("dynamic DELETE, full errornamespace", () => {
     const abap = `DATA c_tabname TYPE string.
     DELETE FROM (c_tabname) WHERE type = 2.`;
-    const issues = runProgram(abap, [], Version.v702, ".");
+    const issues = runProgram(abap, [], Release.v702, ".");
     expect(issues.length).to.equals(0);
   });
 
@@ -4325,7 +4526,7 @@ ENDFUNCTION.`;
     const abap = `DATA c_tabname TYPE string.
     FIELD-SYMBOLS <ls_table> TYPE any.
     MODIFY (c_tabname) FROM ls_content.`;
-    const issues = runProgram(abap, [], Version.v702, ".");
+    const issues = runProgram(abap, [], Release.v702, ".");
     expect(issues.length).to.equals(1);
   });
 
@@ -4667,6 +4868,14 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("call strlen(), input must be charlike", () => {
+    const abap = `
+DATA int TYPE i.
+WRITE / strlen( int ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   it("FORM, TABLES", () => {
     const abap = `
 TYPES: BEGIN OF ty,
@@ -4997,6 +5206,40 @@ CLASS lcl_sub_factory IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("interface friend can instantiate class with protected creation", () => {
+    const abap = `
+INTERFACE lif_factory.
+ENDINTERFACE.
+
+CLASS lcl_product DEFINITION
+  CREATE PROTECTED
+  FRIENDS lif_factory.
+ENDCLASS.
+
+CLASS lcl_factory DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_factory.
+
+    CLASS-METHODS create
+      RETURNING
+        VALUE(result) TYPE REF TO lcl_product.
+ENDCLASS.
+
+CLASS lcl_product IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_factory IMPLEMENTATION.
+  METHOD create.
+    CREATE OBJECT result.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl_factory=>create( ).`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
@@ -5581,6 +5824,166 @@ ENDCLASS.
 CLASS lcl_bar IMPLEMENTATION.
   METHOD run.
     run( 1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("integer passed to date method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING moo TYPE d.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA int TYPE i.
+    bar( int ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("integer arithmetic result passed to date method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING sdf TYPE d.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    foo( sy-datum - 1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("structure field name longer than 30 characters", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         this_is_a_very_long_field_name_that_exceeds_the_limit TYPE i,
+       END OF ty_bar.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Structure field name longer than 30 characters");
+  });
+
+  it("method parameter name longer than 30 characters", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar
+      IMPORTING
+        iv_require_last_completed_success TYPE abap_bool OPTIONAL.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter name longer than 30 characters");
+  });
+
+  it("inline exception longer than 30 characters", () => {
+    const abap = `
+TRY.
+CATCH zcx_stock_allocation INTO DATA(lo_nonnumeric_sales_document_error).
+ENDTRY.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Inline exception name longer than 30 characters");
+  });
+
+  it("FORM name longer than 30 characters", () => {
+    const abap = `
+FORM unregister_native_hierseq_events.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("FORM name longer than 30 characters");
+  });
+
+  it("negative character literal passed to NUMC method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_sales_item TYPE n LENGTH 6.
+    METHODS bar IMPORTING moo TYPE ty_sales_item.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    bar( '-1' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("date cannot be compared with integer 2", () => {
+    const abap = `
+DATA result TYPE abap_bool.
+DATA date1 TYPE d.
+DATA date2 TYPE d.
+result = xsdbool( date1 < date2 + 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Date cannot be compared with arithmetic result of type Integer");
+  });
+
+  it("but this is okay, comparing date with constant", () => {
+    const abap = `
+DATA result TYPE abap_bool.
+DATA date1 TYPE d.
+DATA date2 TYPE d.
+result = xsdbool( date1 < 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("alphabetic character literal passed to NUMC method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_sales_item TYPE n LENGTH 6.
+    METHODS bar IMPORTING moo TYPE ty_sales_item.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    bar( 'A' ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("alphabetic string literal passed to NUMC method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_sales_item TYPE n LENGTH 6.
+    METHODS bar IMPORTING moo TYPE ty_sales_item.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    bar( \`B\` ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
+  });
+
+  it("inferred packed arithmetic is not compatible with differently typed method parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_quantity TYPE p LENGTH 8 DECIMALS 3.
+    METHODS bar IMPORTING moo TYPE ty_quantity.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA iv_reserve TYPE ty_quantity.
+    DATA val TYPE ty_quantity.
+    DATA(lv_allocatable) = val - iv_reserve.
+    bar( lv_allocatable ).
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
@@ -6395,6 +6798,56 @@ WRITE tab.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("type checking, WRITE date TO string, error", () => {
+    const abap = `
+DATA bar TYPE string.
+DATA p_date TYPE d.
+WRITE p_date TO bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain(`"bar" must be a character-like field`);
+  });
+
+  it("type checking, WRITE TO fixed character-like targets, ok", () => {
+    const abap = `
+DATA char TYPE c LENGTH 10.
+DATA numeric TYPE n LENGTH 10.
+DATA date TYPE d.
+DATA time TYPE t.
+WRITE '1' TO char.
+WRITE '1' TO numeric.
+WRITE '1' TO date.
+WRITE '1' TO time.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("type checking, WRITE TO generic field-symbol, ok", () => {
+    const abap = `
+FIELD-SYMBOLS <fs> TYPE any.
+DATA p_date TYPE d.
+WRITE p_date TO <FS>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("type checking, WRITE TO generic clike parameter, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar
+      EXPORTING
+        VALUE(ev_text) TYPE clike.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    WRITE 'hello' TO ev_text.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("WRITE numeric, ok", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -7091,7 +7544,7 @@ START-OF-SELECTION.
 DATA tab1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA tab2 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 MOVE-CORRESPONDING tab1 TO tab2.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.include("MOVE-CORRESPONDING with tables possible");
   });
 
@@ -7100,7 +7553,7 @@ MOVE-CORRESPONDING tab1 TO tab2.`;
 DATA tab1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 DATA tab2 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
 MOVE-CORRESPONDING tab1 TO tab2.`;
-    const issues = runProgram(abap, [], Version.OpenABAP);
+    const issues = runProgram(abap, [], Release["open-abap"]);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -7109,7 +7562,7 @@ MOVE-CORRESPONDING tab1 TO tab2.`;
 DATA chain_tokens TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA sfrom TYPE i.
 APPEND LINES OF <tokens> FROM sfrom TO chain_tokens.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.include("tokens");
   });
 
@@ -7117,7 +7570,7 @@ APPEND LINES OF <tokens> FROM sfrom TO chain_tokens.`;
     const abap = `
 DATA lo_dest TYPE REF TO voided.
 lo_dest->set('HELLO').`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8044,13 +8497,13 @@ ENDLOOP.`;
 
   it("CALL not found function module in cloud, should give error", () => {
     const abap = `CALL FUNCTION 'NOT_RELEASED'.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("found");
   });
 
   it("CALL not found function module in cloud destination, ok", () => {
     const abap = `CALL FUNCTION 'NOT_RELEASED' DESTINATION 'SDF'.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8066,7 +8519,7 @@ CREATE OBJECT foo.`;
 
   it("CALL not found class in cloud, should give error", () => {
     const abap = `CALL METHOD ('CL_NOT_RELEASED')=>foobar.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not found");
   });
 
@@ -8075,7 +8528,7 @@ CREATE OBJECT foo.`;
     DATA lv_name TYPE string.
     lv_name = 'CL_NOT_RELEASED'.
     CALL METHOD (lv_name)=>foobar.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8085,7 +8538,7 @@ INTERFACE lif.
 ENDINTERFACE.
 DATA li_auth TYPE REF TO lif.
 CREATE OBJECT li_auth TYPE ('ZCL_ABAPGIT_AUTH_EXIT').`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8105,7 +8558,7 @@ CLASS lcl IMPLEMENTATION.
     foo( input ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8125,7 +8578,26 @@ CLASS lcl IMPLEMENTATION.
     foo( var = input ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("call method, xstring is incompatible with character parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE c LENGTH 30.
+    CLASS-METHODS foo IMPORTING bar TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA xstr TYPE xstring.
+  lcl=>foo( xstr ).`;
+    const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8143,7 +8615,7 @@ CLASS lcl IMPLEMENTATION.
     foo( 'foo' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8161,7 +8633,7 @@ CLASS lcl IMPLEMENTATION.
     foo( space ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8179,7 +8651,7 @@ CLASS lcl IMPLEMENTATION.
     foo( 'foo' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8195,7 +8667,7 @@ CLASS lcl IMPLEMENTATION.
     foo( 'sdf' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8211,7 +8683,7 @@ CLASS lcl IMPLEMENTATION.
     foo( 'sdf' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8232,7 +8704,7 @@ CLASS lcl IMPLEMENTATION.
     mt_result = foo( ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
@@ -8250,7 +8722,7 @@ TYPES: BEGIN OF ty_result,
 DATA tab2 TYPE STANDARD TABLE OF ty_result WITH DEFAULT KEY.
 
 tab1 = tab2.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
@@ -8268,7 +8740,7 @@ TYPES: BEGIN OF ty_result,
 DATA dat2 TYPE ty_result.
 
 dat1 = dat2.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("Incompatible types");
   });
 
@@ -8307,7 +8779,7 @@ DATA: BEGIN OF data2,
 
 data2 = data1.
 data1 = data2.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8336,7 +8808,7 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8356,7 +8828,7 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8384,7 +8856,7 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8412,7 +8884,7 @@ CLASS lcl IMPLEMENTATION.
   METHOD bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
@@ -8427,7 +8899,7 @@ CLASS lcl IMPLEMENTATION.
     foo( '1' ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8446,7 +8918,7 @@ DATA lt_notif TYPE STANDARD TABLE OF lty_notif.
 DATA lt_notif_key TYPE STANDARD TABLE OF lty_notif_key.
 
 lt_notif_key = lt_notif.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8458,7 +8930,7 @@ TYPES: BEGIN OF ty,
 DATA voided TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
 DATA lv TYPE i.
 lv = lines( voided ).`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -8647,13 +9119,13 @@ CLASS lcl IMPLEMENTATION.
     method1( sy ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("sy-repid", () => {
     const abap = `WRITE sy-repid.`;
-    const issues = runProgram(abap, [], Version.Cloud, ".", LanguageVersion.Cloud);
+    const issues = runProgram(abap, [], Release.Newest, ".", LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -9740,6 +10212,21 @@ INSERT INITIAL LINE INTO lt_components ASSIGNING <ls_component> INDEX 1.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("INSERT INITIAL LINE ASSIGNING inline field symbol", () => {
+    const abap = `
+TYPES: BEGIN OF ty_item,
+         a TYPE c LENGTH 1,
+         b TYPE c LENGTH 1,
+       END OF ty_item.
+TYPES tt_item TYPE STANDARD TABLE OF ty_item WITH EMPTY KEY.
+DATA lt_items TYPE tt_item.
+INSERT INITIAL LINE INTO lt_items INDEX 1 ASSIGNING FIELD-SYMBOL(<fs_item>).
+<fs_item>-a = 'A'.
+<fs_item>-b = 'B'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("packed1, DECIMALS must be specified in OO context", () => {
     const abap = `
 CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
@@ -9761,6 +10248,18 @@ ENDCLASS.
 CLASS zcl_foobar IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runClass(abap);
+    expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
+  });
+
+  it("packed, DECIMALS must be specified in local OO context", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p LENGTH 8.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
   });
 
@@ -9852,6 +10351,53 @@ ENDCLASS.
 CLASS lcl IMPLEMENTATION.
   METHOD foo.
     foo( 22 ) .
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, packed into generic packed parameter", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_short TYPE p LENGTH 2 DECIMALS 0.
+    METHODS moo IMPORTING bar TYPE p.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+    DATA short TYPE ty_short.
+    moo( short ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, default packed into packed parameter", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p LENGTH 8 DECIMALS 0.
+    METHODS bar IMPORTING moo TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA lv_tstmp1 TYPE p.
+    bar( lv_tstmp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, decfloat34 assigned to generic packed parameter", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo EXPORTING val TYPE p.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD moo.
+    DATA i TYPE decfloat34.
+    val = i.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
@@ -9986,6 +10532,76 @@ ENDCLASS.
 
 START-OF-SELECTION.
   lcl=>foo( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain(" not static");
+  });
+
+  it("error, calling instance method inside static method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD bar.
+    foo( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain(" not static");
+  });
+
+  it("ok, calling instance method inside instance method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD bar.
+    foo( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, calling static method inside static method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar.
+    CLASS-METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD bar.
+    foo( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("error, CALL METHOD instance method inside static method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD bar.
+    CALL METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.contain(" not static");
@@ -10306,6 +10922,51 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("CLASS_CONSTRUCTOR must be static");
   });
 
+  it("class_constructor in private section, error", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PRIVATE SECTION.
+    CLASS-METHODS class_constructor.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD class_constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("CLASS_CONSTRUCTOR must be declared in the public section");
+  });
+
+  it("class_constructor in protected section, error", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PROTECTED SECTION.
+    CLASS-METHODS class_constructor.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD class_constructor.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("CLASS_CONSTRUCTOR must be declared in the public section");
+  });
+
+  it("class_constructor in private section of global class, error", () => {
+    const abap = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+  PRIVATE SECTION.
+    CLASS-METHODS class_constructor.
+    CLASS-DATA field TYPE i.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD class_constructor.
+    field = 1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("CLASS_CONSTRUCTOR must be declared in the public section");
+  });
+
   it("ok, select from internal tab", () => {
     const abap = `TYPES: BEGIN OF ty,
     dat TYPE d,
@@ -10596,6 +11257,19 @@ SELECT SINGLE * FROM t100 INTO @DATA(res) WHERE arbgb IN @lt_range.`;
     expect(issues[0]?.getMessage()).to.equal("IN, not a table");
   });
 
+  it("DELETE, IN, not a range table", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF t100-TEXT WITH EMPTY KEY.
+    IF tab IS NOT INITIAL.
+      DELETE FROM t100 WHERE TEXT IN @tab.
+    ENDIF.`;
+    const issues = runMulti([
+      {filename: "zfoobar.prog.abap", contents: abap},
+      {filename: "t100.tabl.xml", contents: tabl_t100xml},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal("row structure of tab is not correct");
+  });
+
   it("Error, run() does not return anything", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -10701,6 +11375,20 @@ MODIFY TABLE rt_variables FROM ls_variable.`;
 PARAMETERS p_conf TYPE c LENGTH 1 RADIOBUTTON GROUP g1 DEFAULT 'X'.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal("RADIOBUTTON and LENGTH not possible together");
+  });
+
+  it("USER-COMMAND and LENGTH not possible together", () => {
+    const abap = `
+PARAMETERS p_view   TYPE c LENGTH 10 AS LISTBOX VISIBLE LENGTH 18 USER-COMMAND view.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("USER-COMMAND and LENGTH not possible together");
+  });
+
+  it("ok, USER-COMMAND and VISIBLE LENGTH", () => {
+    const abap = `
+PARAMETERS p_view TYPE c AS LISTBOX VISIBLE LENGTH 18 USER-COMMAND view.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("DATA REF TO ANY is generic", () => {
@@ -11143,6 +11831,24 @@ stru = VALUE #(
   field1 = 2
   field1 = 2 ).`;
     const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Duplicate field assignment");
+  });
+
+  it("Field defined twice in inline table value", () => {
+    const abap = `
+TYPES: BEGIN OF ty_probe,
+         a TYPE string,
+         b TYPE string,
+       END OF ty_probe.
+DATA lt_probe TYPE STANDARD TABLE OF ty_probe WITH EMPTY KEY.
+DATA ls_probe TYPE ty_probe.
+lt_probe = VALUE #(
+  a = 'DEF'
+  ( b = 'R1' )
+  ( b = 'R2' a = 'OVR' )
+  ( b = 'R3' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.contain("Duplicate field assignment");
   });
 
@@ -12113,7 +12819,7 @@ TYPES ty_char TYPE c LENGTH 2.
 DATA lo_data TYPE REF TO ty_char.
 DATA lv_buffer TYPE c LENGTH 2.
 CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MODE.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -12122,7 +12828,7 @@ CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MOD
 DATA lo_data TYPE REF TO data.
 DATA lv_buffer TYPE c LENGTH 2.
 CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MODE.`;
-    const issues = runProgram(abap, [], Version.v740sp05);
+    const issues = runProgram(abap, [], Release.v740sp05);
     expect(issues[0]?.getMessage()).to.include("A generic reference cannot be dereferenced");
   });
 
@@ -12131,7 +12837,7 @@ CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MOD
 DATA mr_service_binding TYPE REF TO data.
 FIELD-SYMBOLS <lv_field> TYPE any.
 ASSIGN COMPONENT 'PUBLISHED' OF STRUCTURE mr_service_binding->* TO <lv_field>.`;
-    const issues = runProgram(abap, [], Version.v740sp05);
+    const issues = runProgram(abap, [], Release.v740sp05);
     expect(issues[0]?.getMessage()).to.include("A generic reference cannot be dereferenced");
   });
 
@@ -12144,7 +12850,7 @@ TYPES: BEGIN OF ty,
 DATA lt_hashed TYPE HASHED TABLE OF ty WITH UNIQUE KEY field1.
 DATA row LIKE LINE OF lt_hashed.
 INSERT row INTO lt_hashed.`;
-    const issues = runProgram(abap, [], Version.v740sp05);
+    const issues = runProgram(abap, [], Release.v740sp05);
     expect(issues[0]?.getMessage()).to.include("Implicit or explicit index operation on hashed table is not possible");
   });
 
@@ -12157,7 +12863,7 @@ TYPES: BEGIN OF ty,
 DATA lt_hashed TYPE HASHED TABLE OF ty WITH UNIQUE KEY field1.
 DATA row LIKE LINE OF lt_hashed.
 INSERT row INTO TABLE lt_hashed.`;
-    const issues = runProgram(abap, [], Version.v740sp05);
+    const issues = runProgram(abap, [], Release.v740sp05);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -12166,10 +12872,10 @@ INSERT row INTO TABLE lt_hashed.`;
 DATA lo_data TYPE REF TO data.
 DATA lv_buffer TYPE c LENGTH 2.
 CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MODE.`;
-    let issues = runProgram(abap, [], Version.v756);
+    let issues = runProgram(abap, [], Release.v756);
     expect(issues[0]?.getMessage()).to.equal(undefined);
 
-    issues = runProgram(abap, [], Version.Cloud, undefined, LanguageVersion.Cloud);
+    issues = runProgram(abap, [], Release.Newest, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -12178,7 +12884,7 @@ CONCATENATE lv_buffer '' INTO lv_buffer SEPARATED BY lo_data->* IN CHARACTER MOD
 DATA lr_context TYPE REF TO data.
 FIELD-SYMBOLS <lg_context> TYPE any.
 ASSIGN lr_context->* TO <lg_context>.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -12285,6 +12991,36 @@ et_list = FILTER #( et_list EXCEPT IN lt_exclude WHERE field1 = field1 ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("FILTER IN resolves WHERE operands against different row types", () => {
+    const abap = `
+TYPES: BEGIN OF input_row,
+         input_key TYPE i,
+       END OF input_row,
+       BEGIN OF filter_row,
+         filter_key TYPE i,
+       END OF filter_row.
+DATA input TYPE SORTED TABLE OF input_row WITH UNIQUE KEY input_key.
+DATA filter TYPE SORTED TABLE OF filter_row WITH UNIQUE KEY filter_key.
+DATA(result) = FILTER #( input IN filter WHERE input_key = filter_key ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FILTER EXCEPT IN validates WHERE conditions", () => {
+    const abap = `
+TYPES: BEGIN OF input_row,
+         input_key TYPE i,
+       END OF input_row,
+       BEGIN OF filter_row,
+         filter_key TYPE i,
+       END OF filter_row.
+DATA input TYPE SORTED TABLE OF input_row WITH UNIQUE KEY input_key.
+DATA filter TYPE SORTED TABLE OF filter_row WITH UNIQUE KEY filter_key.
+DATA(result) = FILTER #( input EXCEPT IN filter WHERE input_key = unknown_filter_key ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("unknown_filter_key");
+  });
+
   it("LINES OF must be a table", () => {
     const abap = `
 DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
@@ -12375,7 +13111,7 @@ DATA foo type ty_results_tt.
 FIELD-SYMBOLS <style1> TYPE voided.
 LOOP AT foo ASSIGNING <style1> USING KEY sec_key WHERE obj_type IS INITIAL.
 ENDLOOP.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.include("key check with IS INITIAL");
   });
 
@@ -12398,7 +13134,7 @@ LOOP AT foo ASSIGNING <style1>
           AND obj_name = 'sdf'
           AND match IS INITIAL.
 ENDLOOP.`;
-    const issues = runProgram(abap, [], Version.v702);
+    const issues = runProgram(abap, [], Release.v702);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -13078,7 +13814,7 @@ SELECT * FROM t100
       WHERE carrid IN lr_carrid.`;
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
-    const issues = run(reg, [], Version.v702);
+    const issues = run(reg, [], Release.v702);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -13113,6 +13849,395 @@ DATA(data_to_write) = |at { lv_created_at }|.
 WRITE / data_to_write.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("utclong_current, incompatible with timestampl", () => {
+    const dtel = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>TIMESTAMPL</ROLLNAME>
+    <DATATYPE>DEC</DATATYPE>
+    <LENG>000021</LENG>
+    <DECIMALS>000007</DECIMALS>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const abap = `
+DATA ts TYPE timestampl.
+ts = utclong_current( ).`;
+    const issues = runMulti([
+      {filename: "zfoobar.prog.abap", contents: abap},
+      {filename: "timestampl.dtel.xml", contents: dtel},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal("Incompatible types");
+  });
+
+  it("private static method, called from another class", () => {
+    const abap = `
+CLASS lhc_porequest DEFINITION.
+  PRIVATE SECTION.
+    TYPES:
+      BEGIN OF ts_pending,
+        purch_doc TYPE i,
+      END OF ts_pending,
+      tt_pending TYPE STANDARD TABLE OF ts_pending WITH EMPTY KEY.
+
+    CLASS-DATA gt_pending TYPE tt_pending.
+    CLASS-METHODS get_pending RETURNING VALUE(rt) TYPE tt_pending.
+ENDCLASS.
+
+CLASS lhc_porequest IMPLEMENTATION.
+  METHOD get_pending.
+    rt = gt_pending.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lsc_zpc_r_po_req_tp DEFINITION .
+  PROTECTED SECTION.
+    METHODS save_modified.
+ENDCLASS.
+
+CLASS lsc_zpc_r_po_req_tp IMPLEMENTATION.
+  METHOD save_modified.
+    DATA(lt_pending) = lhc_porequest=>get_pending( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`Method "get_pending" is private and cannot be accessed`);
+  });
+
+  it("private methods, called from local friend testclass", () => {
+    const clas = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PUBLIC.
+  PRIVATE SECTION.
+    METHODS instance_method RETURNING VALUE(rv_val) TYPE i.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS zcl_sdfsdf IMPLEMENTATION.
+  METHOD instance_method.
+  ENDMETHOD.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const test = `
+CLASS ltcl_test DEFINITION DEFERRED.
+CLASS zcl_sdfsdf DEFINITION LOCAL FRIENDS ltcl_test.
+
+CLASS ltcl_test DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS test01 FOR TESTING.
+ENDCLASS.
+
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD test01.
+    DATA lo_ref TYPE REF TO zcl_sdfsdf.
+    CREATE OBJECT lo_ref.
+    DATA(lv_one) = lo_ref->instance_method( ).
+    DATA(lv_two) = zcl_sdfsdf=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("protected method, called from local friend testclass", () => {
+    const clas = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PUBLIC.
+  PROTECTED SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS zcl_sdfsdf IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const test = `
+CLASS ltcl_test DEFINITION DEFERRED.
+CLASS zcl_sdfsdf DEFINITION LOCAL FRIENDS ltcl_test.
+
+CLASS ltcl_test DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS test01 FOR TESTING.
+ENDCLASS.
+
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD test01.
+    DATA(lv_val) = zcl_sdfsdf=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("private method, called from global friend", () => {
+    const clas1 = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PUBLIC GLOBAL FRIENDS zcl_friend.
+  PRIVATE SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS zcl_sdfsdf IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const clas2 = `
+CLASS zcl_friend DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS zcl_friend IMPLEMENTATION.
+  METHOD run.
+    DATA(lv_val) = zcl_sdfsdf=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas1},
+      {filename: "zcl_friend.clas.abap", contents: clas2}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("private method, called from friend, local classes", () => {
+    const abap = `
+CLASS lcl_friend DEFINITION DEFERRED.
+
+CLASS lcl_bar DEFINITION FRIENDS lcl_friend.
+  PRIVATE SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_friend DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_friend IMPLEMENTATION.
+  METHOD run.
+    DATA(lv_val) = lcl_bar=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("private method, called from subclass of friend", () => {
+    const abap = `
+CLASS lcl_friend DEFINITION DEFERRED.
+
+CLASS lcl_bar DEFINITION FRIENDS lcl_friend.
+  PRIVATE SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_friend DEFINITION.
+ENDCLASS.
+
+CLASS lcl_friend IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_friend.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD run.
+    DATA(lv_val) = lcl_bar=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("private method, called from class implementing friended interface", () => {
+    const abap = `
+INTERFACE lif_friend.
+ENDINTERFACE.
+
+CLASS lcl_bar DEFINITION FRIENDS lif_friend.
+  PRIVATE SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_friend DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_friend.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_friend IMPLEMENTATION.
+  METHOD run.
+    DATA(lv_val) = lcl_bar=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("protected method, called from subclass", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PROTECTED SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_bar.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD run.
+    DATA(lv_val) = lcl_bar=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("inherited protected method, called from local friend testclass", () => {
+    const sup = `
+CLASS zcl_super DEFINITION PUBLIC CREATE PUBLIC.
+  PROTECTED SECTION.
+    METHODS instance_method.
+ENDCLASS.
+
+CLASS zcl_super IMPLEMENTATION.
+  METHOD instance_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const clas = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC INHERITING FROM zcl_super CREATE PUBLIC.
+ENDCLASS.
+
+CLASS zcl_sdfsdf IMPLEMENTATION.
+ENDCLASS.`;
+    const test = `
+CLASS ltcl_test DEFINITION DEFERRED.
+CLASS zcl_sdfsdf DEFINITION LOCAL FRIENDS ltcl_test.
+
+CLASS ltcl_test DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS test01 FOR TESTING.
+ENDCLASS.
+
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD test01.
+    DATA lo_ref TYPE REF TO zcl_sdfsdf.
+    CREATE OBJECT lo_ref.
+    lo_ref->instance_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_super.clas.abap", contents: sup},
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("protected method, called via me and super from subclass", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PROTECTED SECTION.
+    METHODS instance_method.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD instance_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_bar.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD run.
+    instance_method( ).
+    me->instance_method( ).
+    super->instance_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("private method, called from own class via me", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+  PRIVATE SECTION.
+    METHODS instance_method.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD instance_method.
+  ENDMETHOD.
+  METHOD run.
+    instance_method( ).
+    me->instance_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("private method, called from testclass without friends, expect error", () => {
+    const clas = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PUBLIC.
+  PRIVATE SECTION.
+    CLASS-METHODS static_method RETURNING VALUE(rv_val) TYPE i.
+ENDCLASS.
+
+CLASS zcl_sdfsdf IMPLEMENTATION.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const test = `
+CLASS ltcl_test DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS test01 FOR TESTING.
+ENDCLASS.
+
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD test01.
+    DATA(lv_val) = zcl_sdfsdf=>static_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas},
+      {filename: "zcl_sdfsdf.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equal(`Method "static_method" is private and cannot be accessed`);
   });
 
   it("INSERT, ok", () => {
@@ -13328,6 +14453,87 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("already defined");
   });
 
+  it("identical EVENTS name, with parameters", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS button_click
+      EXPORTING
+        VALUE(es_col_id) TYPE lvc_s_col OPTIONAL
+        VALUE(es_row_no) TYPE lvc_s_roid OPTIONAL.
+    EVENTS button_click
+      EXPORTING
+        VALUE(es_col_id) TYPE lvc_s_col OPTIONAL
+        VALUE(es_row_no) TYPE lvc_s_roid OPTIONAL.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
+  it("EVENTS and METHODS with same name", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS foo.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
+  it("EVENTS and DATA with same name", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA foo TYPE i.
+    EVENTS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
+  it("EVENTS and TYPES with same name", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES foo TYPE i.
+    EVENTS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
+  it("EVENTS with unique name, no error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA bar TYPE i.
+    TYPES moo TYPE i.
+    EVENTS foo.
+    METHODS boo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD boo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("identical EVENTS name in interface", () => {
     const abap = `
 INTERFACE zif_foobar PUBLIC.
@@ -13354,6 +14560,34 @@ INTERFACE lif.
       VALUE(rv_value) TYPE string.
 ENDINTERFACE.`;
     const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
+  it("class type and method with same name", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES nucleotide_counts TYPE c LENGTH 1.
+    METHODS nucleotide_counts.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
+  it("class data and method with same name", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA nucleotide_counts TYPE c LENGTH 1.
+    METHODS nucleotide_counts.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
     expect(issues[0]?.getMessage()).to.include("already defined");
   });
 
@@ -13408,7 +14642,7 @@ TYPES tty TYPE STANDARD TABLE OF row WITH DEFAULT KEY.
 DATA mt_attri TYPE REF TO tty.
 DATA(lt_attri) = mt_attri->*.
 DELETE lt_attri WHERE bind_type IS INITIAL.`;
-    const issues = runProgram(abap, [], Version.v740sp08);
+    const issues = runProgram(abap, [], Release.v740sp08);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -13418,7 +14652,7 @@ TYPES ty TYPE x LENGTH 1.
 DATA ix_ TYPE x LENGTH 1.
 DATA lr_ TYPE REF TO ty.
 DATA(lx_) = ix_ BIT-XOR lr_->*.`;
-    const issues = runProgram(abap, [], Version.v740sp08);
+    const issues = runProgram(abap, [], Release.v740sp08);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -13457,7 +14691,7 @@ CLASS lcl IMPLEMENTATION.
     bar = 2.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.v740sp08);
+    const issues = runProgram(abap, [], Release.v740sp08);
     expect(issues[0]?.getMessage()).to.contain("cannot be modified");
   });
 
@@ -13475,7 +14709,7 @@ CLASS lcl IMPLEMENTATION.
         moo = bar.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.v740sp08);
+    const issues = runProgram(abap, [], Release.v740sp08);
     expect(issues[0]?.getMessage()).to.contain("cannot be modified");
   });
 
@@ -13486,7 +14720,7 @@ DATA: BEGIN OF structure,
         field TYPE i,
       END OF structure.
 structure-field = foo-nonfield.`;
-    const issues = runProgram(abap, [], Version.v740sp08);
+    const issues = runProgram(abap, [], Release.v740sp08);
     expect(issues[0]?.getMessage()).to.contain("FOO is not structured");
   });
 
@@ -13502,7 +14736,7 @@ CLASS lcl IMPLEMENTATION.
     bar = 2.
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap, [], Version.v740sp08);
+    const issues = runProgram(abap, [], Release.v740sp08);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -13512,7 +14746,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("Invalid escape sequence");
   });
 
-  it.skip("UPDATE database table with bad WHERE field reference", () => {
+  it("UPDATE database table with bad WHERE field reference", () => {
     const prog = `UPDATE ztab SET value1 = value1 + 1 WHERE badfield = 'abc'.`;
     const issues = runMulti([
       {filename: "ztab.tabl.xml", contents: ztab},
@@ -13521,7 +14755,7 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("not found");
   });
 
-  it.skip("UPDATE database table with bad WHERE field reference", () => {
+  it("UPDATE database table with bad SET field reference", () => {
     const prog = `UPDATE ztab SET badvalue = 1 WHERE field1 = 'abc'.`;
     const issues = runMulti([
       {filename: "ztab.tabl.xml", contents: ztab},
@@ -14405,6 +15639,17 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("local class name too long", () => {
+    const abap = `
+CLASS lcl_failing_result_write_authority DEFINITION.
+ENDCLASS.
+CLASS lcl_failing_result_write_authority IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("Class name \"lcl_failing_result_write_authority\" is too long");
+  });
+
   it("INTERFACES can only be declared in public sections", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -14415,6 +15660,164 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal("INTERFACES can only be declared in public sections");
+  });
+
+  it("REFRESH, not an internal table", () => {
+    const abap = `DATA tab TYPE i.
+REFRESH tab[].`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("tab");
+  });
+
+  it("VALUE sy-datum is not a constant", () => {
+    const abap = `DATA gv_date TYPE d VALUE sy-datum.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("VALUE, sy-datum is not a constant");
+  });
+
+  it("VALUE sy-uzeit is not a constant", () => {
+    const abap = `DATA gv_time TYPE t VALUE sy-uzeit.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("VALUE, sy-uzeit is not a constant");
+  });
+
+  it("RADIOBUTTON GROUP name too long", () => {
+    const abap = `
+PARAMETERS p_red   RADIOBUTTON GROUP color DEFAULT 'X'.
+PARAMETERS p_green RADIOBUTTON GROUP color.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Radio button group name too long, color");
+  });
+
+  it("ok, RADIOBUTTON GROUP name, 4 characters", () => {
+    const abap = `
+PARAMETERS p_red   RADIOBUTTON GROUP colr DEFAULT 'X'.
+PARAMETERS p_green RADIOBUTTON GROUP colr.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("PERFORM USING, string not compatible with c", () => {
+    const abap = `
+FORM add_leaf USING iv_id TYPE c.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA(lv_id) = |Psdf|.
+  PERFORM add_leaf USING lv_id.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("PERFORM CHANGING, string not compatible with c", () => {
+    const abap = `
+FORM add_leaf CHANGING cv_id TYPE c.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA(lv_id) = |Psdf|.
+  PERFORM add_leaf CHANGING lv_id.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("ok, PERFORM CHANGING, c is generic", () => {
+    const abap = `
+FORM add_leaf CHANGING cv_id TYPE c.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lv_id TYPE c LENGTH 4.
+  PERFORM add_leaf CHANGING lv_id.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, PERFORM USING, p and x are generic", () => {
+    const abap = `
+FORM add_leaf USING iv_packed TYPE p iv_hex TYPE x.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lv_packed TYPE p LENGTH 8 DECIMALS 2.
+  DATA lv_hex TYPE x LENGTH 16.
+  PERFORM add_leaf USING lv_packed lv_hex.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("PERFORM, too few parameters", () => {
+    const abap = `
+FORM add_leaf USING iv_a TYPE i iv_b TYPE i.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lv_a TYPE i.
+  PERFORM add_leaf USING lv_a.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("PERFORM, expected 2 USING/CHANGING parameters, found 1");
+  });
+
+  it("PERFORM, too many parameters", () => {
+    const abap = `
+FORM add_leaf USING iv_a TYPE i.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lv_a TYPE i.
+  PERFORM add_leaf USING lv_a lv_a.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("PERFORM, expected 1 USING/CHANGING parameters, found 2");
+  });
+
+  it("PERFORM, no parameters supplied", () => {
+    const abap = `
+FORM add_leaf USING iv_a TYPE i.
+ENDFORM.
+
+START-OF-SELECTION.
+  PERFORM add_leaf.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("PERFORM, expected 1 USING/CHANGING parameters, found 0");
+  });
+
+  it("PERFORM TABLES, wrong number of parameters", () => {
+    const abap = `
+FORM add_leaf TABLES it_tab1 it_tab2.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lt_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  PERFORM add_leaf TABLES lt_tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("PERFORM, expected 2 TABLES parameters, found 1");
+  });
+
+  it("ok, PERFORM USING and CHANGING are interchangeable", () => {
+    const abap = `
+FORM add_leaf USING iv_a TYPE i CHANGING cv_b TYPE i.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lv_a TYPE i.
+  DATA lv_b TYPE i.
+  PERFORM add_leaf USING lv_a lv_b.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, PERFORM TABLES USING CHANGING", () => {
+    const abap = `
+FORM add_leaf TABLES it_tab USING iv_a TYPE i CHANGING cv_b TYPE i.
+ENDFORM.
+
+START-OF-SELECTION.
+  DATA lt_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA lv_a TYPE i.
+  DATA lv_b TYPE i.
+  PERFORM add_leaf TABLES lt_tab USING lv_a CHANGING lv_b.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
 });

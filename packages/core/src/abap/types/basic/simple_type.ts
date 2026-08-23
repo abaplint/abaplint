@@ -1,6 +1,16 @@
 import {AbstractType} from "./_abstract_type";
 
 export class SimpleType extends AbstractType {
+  private static readonly singleton = new SimpleType();
+
+  public static get(): SimpleType {
+    return this.singleton;
+  }
+
+  private constructor() {
+    super();
+  }
+
   public toText() {
     return "```simple```";
   }

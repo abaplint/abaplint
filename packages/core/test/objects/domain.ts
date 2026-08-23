@@ -96,6 +96,8 @@ describe("Domain, parse main xml", () => {
     const dtel = reg.getFirstObject()! as Domain;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(BasicTypes.PackedType);
+    expect((type as BasicTypes.PackedType).getLength()).to.equal(8);
+    expect((type as BasicTypes.PackedType).getDecimals()).to.equal(0);
   });
 
   it("Has fixed values", async () => {

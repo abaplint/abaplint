@@ -95,8 +95,11 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     // perform checks after everything has been initialized
     this.checkInterfaceVisibility(input, node);
     this.checkMethodsFromSuperClasses(input);
+    this.checkMethodNameConflicts(input);
+    this.checkEventNameConflicts(input);
+    this.checkClassNameLength(input);
     this.checkMethodNameLength(input);
-    this.checkClassConstructorStatic(input);
+    this.checkClassConstructor(input);
   }
 
   public getFriends() {
@@ -162,6 +165,13 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
   ///////////////////
 
+  private checkClassNameLength(input: SyntaxInput) {
+    if (this.getName().length > 30) {
+      const message = `Class name "${this.getName()}" is too long, maximum length is 30 characters`;
+      input.issues.push(syntaxIssue(input, this.getToken(), message));
+    }
+  }
+
   private findSuper(def: StatementNode | undefined, input: SyntaxInput): string | undefined {
     const token = def?.findDirectExpression(SuperClassName)?.getFirstToken();
     this.addReference(token, input);
@@ -178,10 +188,15 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
   }
 
-  private checkClassConstructorStatic(input: SyntaxInput) {
+  private checkClassConstructor(input: SyntaxInput) {
     for (const m of this.methodDefs.getAll()) {
-      if (m.getName().toUpperCase() === "CLASS_CONSTRUCTOR" && m.isStatic() === false) {
+      if (m.getName().toUpperCase() !== "CLASS_CONSTRUCTOR") {
+        continue;
+      }
+      if (m.isStatic() === false) {
         input.issues.push(syntaxIssue(input, m.getToken(), "CLASS_CONSTRUCTOR must be static"));
+      } else if (m.getVisibility() !== Visibility.Public) {
+        input.issues.push(syntaxIssue(input, m.getToken(), "CLASS_CONSTRUCTOR must be declared in the public section"));
       }
     }
   }
@@ -236,6 +251,25 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
           && superVisibility !== undefined
           && m.getVisibility() !== superVisibility) {
         input.issues.push(syntaxIssue(input, m.getToken(), `${m.getName().toUpperCase()} redefinition visibility cannot be changed`));
+      }
+    }
+  }
+
+  private checkMethodNameConflicts(input: SyntaxInput) {
+    for (const m of this.methodDefs.getAll()) {
+      if (this.attributes.findByName(m.getName()) !== undefined
+          || this.types.getByName(m.getName()) !== undefined) {
+        input.issues.push(syntaxIssue(input, m.getToken(), `"${m.getName()}" already defined`));
+      }
+    }
+  }
+
+  private checkEventNameConflicts(input: SyntaxInput) {
+    for (const e of this.events) {
+      if (this.attributes.findByName(e.getName()) !== undefined
+          || this.types.getByName(e.getName()) !== undefined
+          || this.methodDefs.getByName(e.getName()) !== undefined) {
+        input.issues.push(syntaxIssue(input, (e as EventDefinition).getToken(), `"${e.getName()}" already defined`));
       }
     }
   }

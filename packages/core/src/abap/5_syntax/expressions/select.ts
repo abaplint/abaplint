@@ -17,8 +17,10 @@ import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 import {IEdit} from "../../../edit_helper";
+import {checkDatabaseFields} from "./_check_database_fields";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
+type DatabaseSourceInfo = {source: DatabaseTableSource, name: string, alias: string};
 const isSimple = /^\w+$/;
 
 export class Select {
@@ -46,9 +48,9 @@ export class Select {
       return;
     }
 
-    this.checkFields(fields, dbSources, input, node);
+    checkDatabaseFields(fields.map(field => field.code), dbSources, input, node.getFirstToken());
 
-    const intoExpression = this.handleInto(node, input, fields, dbSources);
+    const intoExpression = this.handleInto(node, input, fields, dbSources, from);
 
     const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
     if (fae) {
@@ -233,12 +235,13 @@ export class Select {
   private static handleInto(node: ExpressionNode,
                             input: SyntaxInput,
                             fields: FieldList,
-                            dbSources: DatabaseTableSource[]): ExpressionNode | undefined {
+                            dbSources: DatabaseTableSource[],
+                            from: ExpressionNode): ExpressionNode | undefined {
     const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
     if (intoTable) {
       const inline = intoTable.findFirstExpression(Expressions.InlineData);
       if (inline) {
-        InlineData.runSyntax(inline, input, this.buildTableType(fields, dbSources, input.scope));
+        InlineData.runSyntax(inline, input, this.buildTableType(fields, dbSources, input.scope, from));
       }
       return intoTable;
     }
@@ -304,40 +307,6 @@ export class Select {
     }
 
     return undefined;
-  }
-
-  private static checkFields(fields: FieldList, dbSources: DatabaseTableSource[], input: SyntaxInput, node: ExpressionNode) {
-    if (dbSources.length > 1) {
-      return;
-    }
-
-    const first = dbSources[0];
-    if (first === undefined) {
-      // then its voided
-      return;
-    }
-
-    const type = first.parseType(input.scope.getRegistry());
-    if (type instanceof VoidType || type instanceof UnknownType) {
-      return;
-    }
-    if (!(type instanceof StructureType)) {
-      const message = "checkFields, expected structure, " + type.constructor.name;
-      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      return;
-    }
-
-    for (const field of fields) {
-      if (field.code === "*") {
-        continue;
-      }
-
-      if (isSimple.test(field.code) && type.getComponentByName(field.code) === undefined) {
-        const message = `checkFields, field ${field.code} not found`;
-        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-        return;
-      }
-    }
   }
 
   private static countResultType(scope: CurrentScope): AbstractType {
@@ -419,12 +388,39 @@ export class Select {
     }
   }
 
-  private static buildTableType(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope) {
-    if (dbSources.length !== 1) {
+  private static buildTableType(fields: FieldList,
+                                dbSources: DatabaseTableSource[],
+                                scope: CurrentScope,
+                                from: ExpressionNode) {
+    const tableOptions: ITableOptions = {withHeader: false, keyType: TableKeyType.empty};
+
+    if (dbSources.length > 1) {
+      const sourceInfos = this.buildDatabaseSourceInfos(from, dbSources);
+      if (fields.length === 1 && fields[0].code === "*") {
+        const components: IStructureComponent[] = [];
+        for (const info of sourceInfos) {
+          const type = info.source?.parseType(scope.getRegistry());
+          if (!(type instanceof StructureType)) {
+            return VoidType.get("SELECT_todo3");
+          }
+          components.push({name: info.alias || info.name, type});
+        }
+        return new TableType(new StructureType(components), tableOptions, undefined);
+      }
+
+      const components: IStructureComponent[] = [];
+      for (const field of fields) {
+        const type = this.findFieldType(field.code, sourceInfos, scope);
+        if (type === undefined) {
+          return VoidType.get("SELECT_todo3");
+        }
+        const name = field.as || field.code.split("~").pop()!;
+        components.push({name, type});
+      }
+      return new TableType(new StructureType(components), tableOptions, undefined);
+    } else if (dbSources.length !== 1) {
       return VoidType.get("SELECT_todo3");
     }
-
-    const tableOptions: ITableOptions = {withHeader: false, keyType: TableKeyType.empty};
 
     if (dbSources[0] === undefined) {
       // then its a voided table
@@ -455,6 +451,44 @@ export class Select {
     return VoidType.get("SELECT_todo7");
   }
 
+  private static buildDatabaseSourceInfos(from: ExpressionNode,
+                                          dbSources: DatabaseTableSource[]): DatabaseSourceInfo[] {
+    const fromSources = from.findAllExpressions(Expressions.SQLFromSource);
+    return dbSources.map((source, index) => {
+      const fromSource = fromSources[index];
+      const name = fromSource?.findFirstExpression(Expressions.DatabaseTable)
+        ?.getFirstToken().getStr().replace(/^\*/, "").toUpperCase() || "";
+      const alias = fromSource?.findDirectExpression(Expressions.SQLAsName)?.concatTokens().toUpperCase() || "";
+      return {source, name, alias};
+    });
+  }
+
+  private static findFieldType(code: string,
+                               sourceInfos: DatabaseSourceInfo[],
+                               scope: CurrentScope): AbstractType | undefined {
+    const separator = code.indexOf("~");
+    const qualifier = separator >= 0 ? code.substring(0, separator) : undefined;
+    const fieldName = separator >= 0 ? code.substring(separator + 1) : code;
+    const candidates = qualifier === undefined
+      ? sourceInfos
+      : sourceInfos.filter(info => info.alias === qualifier || info.name === qualifier);
+
+    for (const candidate of candidates) {
+      let type = candidate.source?.parseType(scope.getRegistry());
+      for (const component of fieldName.split("-")) {
+        if (!(type instanceof StructureType)) {
+          type = undefined;
+          break;
+        }
+        type = type.getComponentByName(component);
+      }
+      if (type) {
+        return type;
+      }
+    }
+    return undefined;
+  }
+
   private static findFields(node: ExpressionNode, input: SyntaxInput): FieldList {
     let expr: ExpressionNode | undefined = undefined;
     const ret = [];
@@ -469,7 +503,7 @@ export class Select {
       let code = field.concatTokens().toUpperCase();
       const as = field.findDirectExpression(Expressions.SQLAsName)?.concatTokens() || "";
       if (as !== "") {
-        code = code.replace(" AS " + as, "");
+        code = code.replace(" AS " + as.toUpperCase(), "");
       }
       ret.push({code, as, expression: field});
     }

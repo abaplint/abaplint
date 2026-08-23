@@ -8,14 +8,14 @@ export function xmlToArray(data: any): any[] {
   }
 }
 
-export function unescape(str: string | undefined): string {
-  if (str === undefined) {
+export function unescape(str: unknown): string {
+  if (typeof str !== "string") {
     return "";
   }
-  str = str.replace(/&amp;/g, "&");
-  str = str.replace(/&gt;/g, ">");
-  str = str.replace(/&lt;/g, "<");
-  str = str.replace(/&quot;/g, "\"");
-  str = str.replace(/&apos;/g, "'");
-  return str;
+  let result = str.replace(/&amp;/g, "&");
+  result = result.replace(/&gt;/g, ">");
+  result = result.replace(/&lt;/g, "<");
+  result = result.replace(/&quot;/g, "\"");
+  result = result.replace(/&apos;/g, "'");
+  return result;
 }

@@ -105,13 +105,11 @@ export class Class extends ABAPObject {
     this.parsedXML = {};
 
     const parsed = super.parseRaw2();
-    if (parsed === undefined
-        || parsed.abapGit["asx:abap"] === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+    if (parsed?.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return;
     }
 
-    const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOCLASS;
+    const vseo = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.VSEOCLASS;
     if (vseo === undefined) {
       return;
     }

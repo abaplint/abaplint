@@ -26,6 +26,7 @@ export class XMLConsistency implements IRule {
       extendedInformation: `Checks:
 * XML is well-formed and parseable
 * Naming for CLAS and INTF objects
+* QUAN fields in TABL objects have reference table and field values
 * Texts and translations do not exceed maximum allowed length.`,
       tags: [RuleTag.Naming, RuleTag.Syntax],
     };
@@ -56,6 +57,13 @@ export class XMLConsistency implements IRule {
       const res = XMLValidator.validate(xml);
       if (res !== true) {
         issues.push(Issue.atRow(file, 1, "XML parser error: " + res.err.msg, this.getMetadata().key, this.conf.severity));
+      } else {
+        for (const attribute of ["version", "serializer_version"]) {
+          const value = xml.match(new RegExp(`<abapGit\\b[^>]*\\b${attribute}="([^"]+)"`))?.[1];
+          if (value !== undefined && value.match(/^v\d\.\d\.\d$/) === null) {
+            issues.push(Issue.atRow(file, 1, `Unexpected abapGit ${attribute} "${value}"`, this.getMetadata().key, this.conf.severity));
+          }
+        }
       }
     }
 
@@ -72,6 +80,8 @@ export class XMLConsistency implements IRule {
       issues.push(...this.runTransaction(obj, file));
     } else if (obj instanceof Objects.MessageClass) {
       issues.push(...this.runMessageClass(obj, file));
+    } else if (obj instanceof Objects.Table) {
+      issues.push(...this.runTable(obj, file));
     }
 
     if (obj instanceof ABAPObject) {
@@ -144,6 +154,31 @@ export class XMLConsistency implements IRule {
     const issues: Issue[] = [];
     const texts = obj.getTexts();
     const maxLengths = obj.getTextMaxLengths();
+    const hasLabelTexts = texts?.short !== undefined
+      || texts?.medium !== undefined
+      || texts?.long !== undefined
+      || texts?.heading !== undefined;
+
+    if (texts?.short !== undefined) {
+      const issue = this.checkRequiredField(file, "SCRLEN1", maxLengths?.short);
+      if (issue) {issues.push(issue);}
+    }
+    if (texts?.medium !== undefined) {
+      const issue = this.checkRequiredField(file, "SCRLEN2", maxLengths?.medium);
+      if (issue) {issues.push(issue);}
+    }
+    if (texts?.long !== undefined) {
+      const issue = this.checkRequiredField(file, "SCRLEN3", maxLengths?.long);
+      if (issue) {issues.push(issue);}
+    }
+    if (texts?.heading !== undefined) {
+      const issue = this.checkRequiredField(file, "HEADLEN", maxLengths?.heading);
+      if (issue) {issues.push(issue);}
+    }
+    if (hasLabelTexts) {
+      const issue = this.checkRequiredField(file, "DTELMASTER", obj.getDtelMaster());
+      if (issue) {issues.push(issue);}
+    }
 
     for (const issue of [
       this.checkTextLength(file, "DDTEXT", obj.getDescription(), 60),
@@ -169,6 +204,14 @@ export class XMLConsistency implements IRule {
     }
 
     return issues;
+  }
+
+  private checkRequiredField(file: IFile, fieldName: string, value: string | undefined): Issue | undefined {
+    if (value === undefined || value === "") {
+      return Issue.atRow(file, 1, `Missing required field ${fieldName} in DD04V`,
+                         this.getMetadata().key, this.conf.severity);
+    }
+    return undefined;
   }
 
   private runDomain(obj: Objects.Domain, file: IFile): Issue[] {
@@ -218,6 +261,17 @@ export class XMLConsistency implements IRule {
       push(this.checkTextLength(file, `TEXT[${translation.number}]`, translation.text, maxTextLength, translation.language));
     }
 
+    return issues;
+  }
+
+  private runTable(obj: Objects.Table, file: IFile): Issue[] {
+    const issues: Issue[] = [];
+    for (const field of obj.getFields() ?? []) {
+      if (field.DATATYPE === "QUAN" && (!field.REFTABLE?.trim() || !field.REFFIELD?.trim())) {
+        const message = `QUAN field ${field.FIELDNAME} must have REFTABLE and REFFIELD set`;
+        issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity));
+      }
+    }
     return issues;
   }
 }

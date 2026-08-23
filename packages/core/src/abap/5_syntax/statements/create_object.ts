@@ -135,18 +135,8 @@ export class CreateObject implements StatementSyntax {
     if (enclosingClass.toUpperCase() === cdef.getName().toUpperCase()) {
       return undefined;
     }
-    if (cdef.getFriends().some(f => f.toUpperCase() === enclosingClass.toUpperCase()) ||
-        input.scope.isLocalFriend(cdef.getName(), enclosingClass)) {
+    if (new ObjectOriented(input.scope).hasFriendship(cdef, enclosingClass)) {
       return undefined;
-    }
-    // subclasses of friends also have friendship
-    let enclosingSup = input.scope.findClassDefinition(enclosingClass)?.getSuperClass();
-    while (enclosingSup !== undefined) {
-      if (cdef.getFriends().some(f => f.toUpperCase() === enclosingSup!.toUpperCase()) ||
-          input.scope.isLocalFriend(cdef.getName(), enclosingSup)) {
-        return undefined;
-      }
-      enclosingSup = input.scope.findClassDefinition(enclosingSup)?.getSuperClass();
     }
     if (createVis === Visibility.Protected) {
       // subclasses are also allowed

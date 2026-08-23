@@ -166,6 +166,37 @@ export class ObjectOriented {
     return ret;
   }
 
+  // does the supplied class have friendship with "friendName"?
+  // note that interfaces of the friend, and subclasses of the friend also have friendship
+  public hasFriendship(cd: IClassDefinition, friendName: string): boolean {
+    const friends = cd.getFriends().map(f => f.toUpperCase());
+    const isFriend = (name: string) =>
+      friends.includes(name.toUpperCase()) || this.scope.isLocalFriend(cd.getName(), name);
+
+    if (isFriend(friendName)) {
+      return true;
+    }
+
+    const friendDefinition = this.scope.findClassDefinition(friendName);
+    if (friendDefinition === undefined) {
+      return false;
+    }
+
+    if (this.findInterfaces(friendDefinition).some(i => friends.includes(i.name.toUpperCase()))) {
+      return true;
+    }
+
+    let sup = friendDefinition.getSuperClass();
+    while (sup !== undefined) {
+      if (isFriend(sup)) {
+        return true;
+      }
+      sup = this.scope.findClassDefinition(sup)?.getSuperClass();
+    }
+
+    return false;
+  }
+
   public searchEvent(
     def: IClassDefinition | IInterfaceDefinition | undefined,
     name: string | undefined): IEventDefinition | undefined {

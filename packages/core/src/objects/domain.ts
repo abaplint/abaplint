@@ -40,6 +40,11 @@ export class Domain extends AbstractObject {
     return this.parsedXML?.conversionExit;
   }
 
+  public getDataType(): string | undefined {
+    this.parse();
+    return this.parsedXML?.datatype;
+  }
+
   public getAllowedNaming() {
     return {
       maxLength: 30,

@@ -73,11 +73,11 @@ export class ProxyObject extends AbstractObject {
 
     if (parsed === undefined
         || parsed.abapGit === undefined
-        || parsed.abapGit["asx:abap"]?.["asx:values"] === undefined) {
+        || parsed.abapGit?.["asx:abap"]?.["asx:values"] === undefined) {
       return result;
     }
 
-    const values = parsed.abapGit["asx:abap"]["asx:values"];
+    const values = parsed?.abapGit?.["asx:abap"]?.["asx:values"];
     result.proxyData = xmlToArray(values.PROXY_DATA?.item);
 
     return result;
@@ -93,7 +93,7 @@ export class ProxyObject extends AbstractObject {
 
     // Find interface definition
     const intfItem = this.parsedXML.proxyData.find(i => i.R3_TYPE === "INTF");
-    if (!intfItem || !intfItem.R3_NAME) {
+    if (!intfItem || typeof intfItem.R3_NAME !== "string") {
       return result;
     }
 
@@ -106,10 +106,10 @@ export class ProxyObject extends AbstractObject {
     let code = `INTERFACE ${intfName} PUBLIC.\n`;
 
     for (const method of methods) {
-      const methodName = method.R3_NAME?.toLowerCase();
-      if (!methodName) {
+      if (typeof method.R3_NAME !== "string") {
         continue;
       }
+      const methodName = method.R3_NAME.toLowerCase();
 
       // Find parameters for this method
       const importingParameters = this.parsedXML.proxyData.filter(
@@ -125,8 +125,8 @@ export class ProxyObject extends AbstractObject {
         code += `    IMPORTING\n`;
         for (let i = 0; i < importingParameters.length; i++) {
           const param = importingParameters[i];
-          const paramName = param.OBJ_NAME2?.toLowerCase();
-          const paramType = param.OBJ_NAME_R?.toLowerCase();
+          const paramName = typeof param.OBJ_NAME2 === "string" ? param.OBJ_NAME2.toLowerCase() : undefined;
+          const paramType = typeof param.OBJ_NAME_R === "string" ? param.OBJ_NAME_R.toLowerCase() : undefined;
           const isLast = i === importingParameters.length - 1 && exportingParameters.length === 0;
           code += `      ${paramName} TYPE ${paramType}${isLast ? "." : ""}\n`;
         }
@@ -136,8 +136,8 @@ export class ProxyObject extends AbstractObject {
         code += `    EXPORTING\n`;
         for (let i = 0; i < exportingParameters.length; i++) {
           const param = exportingParameters[i];
-          const paramName = param.OBJ_NAME2?.toLowerCase();
-          const paramType = param.OBJ_NAME_R?.toLowerCase();
+          const paramName = typeof param.OBJ_NAME2 === "string" ? param.OBJ_NAME2.toLowerCase() : undefined;
+          const paramType = typeof param.OBJ_NAME_R === "string" ? param.OBJ_NAME_R.toLowerCase() : undefined;
           const isLast = i === exportingParameters.length - 1;
           code += `      ${paramName} TYPE ${paramType}${isLast ? "." : ""}\n`;
         }

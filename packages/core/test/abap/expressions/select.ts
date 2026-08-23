@@ -1,8 +1,8 @@
 import {expect} from "chai";
 import * as Combi from "../../../src/abap/2_statements/combi";
-import {getTokens, statementVersionOk, statementVersionFail} from "../_utils";
+import {getTokens, parse, statementVersionOk, statementVersionFail} from "../_utils";
 import {Config} from "../../../src/config";
-import {Select} from "../../../src/abap/2_statements/expressions";
+import {Select, SQLFieldName, SQLOrderBy} from "../../../src/abap/2_statements/expressions";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release, LanguageVersion} from "../../../src/version";
 
@@ -21,6 +21,21 @@ describe("Test expression, Select", () => {
     const match = Combi.Combi.run(new Select().getRunnable(), tokens, Config.getDefault().getVersion());
 //    console.dir(match);
     expect(match).to.not.equal(undefined);
+  });
+
+  it("GROUP BY followed by ORDER BY", () => {
+    const abap = `SELECT lgort,
+       SUM( bdmng ) AS requirement,
+       SUM( enmng ) AS withdrawn
+      FROM resb
+      WHERE matnr = '12'
+      GROUP BY lgort
+      ORDER BY lgort
+      INTO TABLE @DATA(lt_reserved).`;
+    const statement = parse(abap, Config.getDefault()).getStatements()[0];
+
+    expect(statement.findFirstExpression(SQLOrderBy)?.concatTokens()).to.equal("ORDER BY lgort");
+    expect(statement.findAllExpressions(SQLFieldName).map(f => f.concatTokens())).to.not.include("ORDER");
   });
 });
 

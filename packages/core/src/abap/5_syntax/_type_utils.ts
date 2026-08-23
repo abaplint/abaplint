@@ -1,5 +1,5 @@
 import {ClassDefinition, InterfaceDefinition} from "../types";
-import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DataType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
+import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DataType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, PGenericType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, UTCLongType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
 import {TableKeyType} from "../types/basic/table_type";
 import {EnumType} from "../types/basic/enum_type";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -48,6 +48,22 @@ export class TypeUtils {
     return false;
   }
 
+  public isCharLikeField(type: AbstractType | undefined): boolean {
+    if (type instanceof StructureType
+        || (type instanceof TableType && type.isWithHeader())) {
+      return this.isCharLikeStrict(type);
+    }
+    return type instanceof CharacterType
+      || type instanceof NumericType
+      || type instanceof DateType
+      || type instanceof TimeType
+      || type instanceof CGenericType
+      || type instanceof CLikeType
+      || type instanceof AnyType
+      || type instanceof UnknownType
+      || type instanceof VoidType;
+  }
+
   public isCharLike(type: AbstractType | undefined): boolean {
     if (type === undefined) {
       return false;
@@ -81,6 +97,7 @@ export class TypeUtils {
         || type instanceof DataType
         || type instanceof CLikeType
         || type instanceof PackedType
+        || type instanceof PGenericType
         || type instanceof TimeType
         || type instanceof EnumType) {
       return true;
@@ -242,6 +259,13 @@ export class TypeUtils {
       return false;
     }
 
+    if (source1 instanceof DateType && this.isCalculated(node2) && source2 instanceof IntegerType) {
+      return false;
+    }
+    if (source2 instanceof DateType && this.isCalculated(node1) && source1 instanceof IntegerType) {
+      return false;
+    }
+
     return true;
   }
 
@@ -317,8 +341,37 @@ export class TypeUtils {
       return false;
     }
 
+    if (calculated && source instanceof IntegerType && target instanceof DateType) {
+      return false;
+    }
+
+    if (target instanceof NumericType
+        && (source instanceof CharacterType || source instanceof StringType)
+        && source.getAbstractTypeData()?.derivedFromConstant === true) {
+      const constant = node?.concatTokens();
+      if (constant !== undefined
+          && ((constant.startsWith("'") && constant.endsWith("'"))
+            || (constant.startsWith("`") && constant.endsWith("`")))
+          && /^\d*$/.test(constant.substring(1, constant.length - 1)) === false) {
+        return false;
+      }
+    }
+
     if (calculated) {
       return this.isAssignable(source, target);
+    }
+
+    if (target instanceof CLikeType) {
+      return this.isCharLikeStrict(source);
+    }
+
+    if (target instanceof PGenericType) {
+      return source instanceof PackedType
+        || source instanceof PGenericType
+        || source instanceof VoidType
+        || source instanceof AnyType
+        || source instanceof DataType
+        || source instanceof UnknownType;
     }
 
     if (source instanceof CharacterType) {
@@ -408,7 +461,7 @@ export class TypeUtils {
         return false;
       }
     } else if (source instanceof IntegerType) {
-      if (target instanceof StringType) {
+      if (target instanceof StringType || target instanceof DateType) {
         return false;
       } else if (target instanceof Integer8Type || target instanceof PackedType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
@@ -416,6 +469,9 @@ export class TypeUtils {
         }
         return false;
       }
+    } else if (source instanceof PackedType && target instanceof PackedType) {
+      return source.getLength() === target.getLength()
+        && source.getDecimals() === target.getDecimals();
     } else if (source instanceof FloatType) {
       if (target instanceof IntegerType) {
         return false;
@@ -437,7 +493,8 @@ export class TypeUtils {
         return false;
       }
     } else if (source instanceof XStringType) {
-      if (target instanceof CLikeType
+      if (target instanceof CharacterType
+          || target instanceof CLikeType
           || target instanceof IntegerType
           || target instanceof StringType
           || target instanceof ObjectReferenceType
@@ -482,6 +539,10 @@ export class TypeUtils {
     console.dir(source);
     console.dir(target);
 */
+    if (source instanceof UTCLongType || target instanceof UTCLongType) {
+      return this.isUTCLongAssignable(source, target);
+    }
+
     if (target instanceof TableType) {
       if (target.isWithHeader()) {
         return this.isAssignable(source, target.getRowType());
@@ -615,5 +676,33 @@ export class TypeUtils {
     }
 
     return true;
+  }
+
+  // utclong can only be converted to and from character like types
+  private isUTCLongAssignable(source: AbstractType, target: AbstractType): boolean {
+    if (this.isGenericOrVoid(source) || this.isGenericOrVoid(target)) {
+      return true;
+    } else if (source instanceof UTCLongType && target instanceof UTCLongType) {
+      return true;
+    } else if (source instanceof UTCLongType) {
+      return this.isTextLike(target);
+    }
+    return this.isTextLike(source);
+  }
+
+  private isGenericOrVoid(type: AbstractType): boolean {
+    return type instanceof VoidType
+      || type instanceof AnyType
+      || type instanceof DataType
+      || type instanceof UnknownType;
+  }
+
+  private isTextLike(type: AbstractType): boolean {
+    return type instanceof CharacterType
+      || type instanceof StringType
+      || type instanceof CLikeType
+      || type instanceof CSequenceType
+      || type instanceof CGenericType
+      || type instanceof SimpleType;
   }
 }

@@ -16,6 +16,7 @@ import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
 import {CallTransactionAuthorityCheckConf} from "../src/rules/call_transaction_authority_check";
 import {CatchAndRaiseConf} from "../src/rules/catch_and_raise";
 import {CDSAssociationNameConf} from "../src/rules/cds_association_name";
+import {CDSCheckSyntaxConf} from "../src/rules/cds_check_syntax";
 import {CDSCommentStyleConf} from "../src/rules/cds_comment_style";
 import {CDSFieldOrderConf} from "../src/rules/cds_field_order";
 import {CDSLegacyViewConf} from "../src/rules/cds_legacy_view";
@@ -113,6 +114,7 @@ import {NoExclamationEscapeConf} from "../src/rules/no_exclamation_escape";
 import {NoExternalFormCallsConf} from "../src/rules/no_external_form_calls";
 import {NoInlineInOptionalBranchesConf} from "../src/rules/no_inline_in_optional_branches";
 import {NoMacrosConf} from "../src/rules/no_macros";
+import {NoMandtInDatabaseOperationsConf} from "../src/rules/no_mandt_in_database_operations";
 import {NoPrefixesConf} from "../src/rules/no_prefixes";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {NoYodaConditionsConf} from "../src/rules/no_yoda_conditions";
@@ -218,6 +220,7 @@ export interface IConfig {
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
+    "cds_check_syntax"?: CDSCheckSyntaxConf | boolean,
     "cds_comment_style"?: CDSCommentStyleConf | boolean,
     "cds_field_order"?: CDSFieldOrderConf | boolean,
     "cds_legacy_view"?: CDSLegacyViewConf | boolean,
@@ -315,6 +318,7 @@ export interface IConfig {
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
     "no_macros"?: NoMacrosConf | boolean,
+    "no_mandt_in_database_operations"?: NoMandtInDatabaseOperationsConf | boolean,
     "no_prefixes"?: NoPrefixesConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
@@ -409,6 +413,7 @@ export interface IConfig {
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
+    "cds_check_syntax"?: CDSCheckSyntaxConf | boolean,
     "cds_comment_style"?: CDSCommentStyleConf | boolean,
     "cds_field_order"?: CDSFieldOrderConf | boolean,
     "cds_legacy_view"?: CDSLegacyViewConf | boolean,
@@ -506,6 +511,7 @@ export interface IConfig {
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
     "no_macros"?: NoMacrosConf | boolean,
+    "no_mandt_in_database_operations"?: NoMandtInDatabaseOperationsConf | boolean,
     "no_prefixes"?: NoPrefixesConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "no_yoda_conditions"?: NoYodaConditionsConf | boolean,
