@@ -3885,6 +3885,17 @@
               ],
               "description": "Checks for redundant whitespace at the end of each line.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/whitespace_end"
             },
+            "xml_bom": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/XMLBOMConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that XML files start with a UTF-8 byte order mark\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/xml_bom"
+            },
             "xml_consistency": {
               "anyOf": [
                 {
@@ -5974,6 +5985,17 @@
                 }
               ],
               "description": "Checks for redundant whitespace at the end of each line.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/whitespace_end"
+            },
+            "xml_bom": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/XMLBOMConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that XML files start with a UTF-8 byte order mark\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/xml_bom"
             },
             "xml_consistency": {
               "anyOf": [
@@ -9330,6 +9352,23 @@
       "type": "object"
     },
     "WhitespaceEndConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "XMLBOMConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
