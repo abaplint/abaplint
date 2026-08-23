@@ -7,7 +7,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ExpressionNode, StatementNode} from "../abap/nodes";
 
-export class NoDynamicCallsConf extends BasicRuleConfig {
+export class NoDynamicStuffConf extends BasicRuleConfig {
   /** Detects dynamic method calls, ie. CALL METHOD (name), SET HANDLER and CALL BADI */
   public callMethod: boolean = true;
   /** Detects dynamic CALL FUNCTION, ie. the function module name is not a literal */
@@ -36,14 +36,14 @@ export class NoDynamicCallsConf extends BasicRuleConfig {
   public exportImport: boolean = true;
 }
 
-export class NoDynamicCalls extends ABAPRule {
+export class NoDynamicStuff extends ABAPRule {
 
-  private conf = new NoDynamicCallsConf();
+  private conf = new NoDynamicStuffConf();
 
   public getMetadata(): IRuleMetadata {
     return {
-      key: "no_dynamic_calls",
-      title: "No dynamic calls",
+      key: "no_dynamic_stuff",
+      title: "No dynamic stuff",
       shortDescription: `Detects dynamic calls and other dynamic language constructs`,
       extendedInformation: `Dynamic constructs cannot be checked statically, they are not found by
 where-used lists and refactorings, and they can introduce injection vulnerabilities.
@@ -70,7 +70,7 @@ SORT tab BY field.`,
     return this.conf;
   }
 
-  public setConfig(conf: NoDynamicCallsConf): void {
+  public setConfig(conf: NoDynamicStuffConf): void {
     this.conf = conf;
   }
 

@@ -3027,16 +3027,16 @@
               ],
               "description": "It's not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
             },
-            "no_dynamic_calls": {
+            "no_dynamic_stuff": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/NoDynamicCallsConf"
+                  "$ref": "#/definitions/NoDynamicStuffConf"
                 },
                 {
                   "type": "boolean"
                 }
               ],
-              "description": "Detects dynamic calls and other dynamic language constructs\nTags: SingleFile, Security\nhttps://rules.abaplint.org/no_dynamic_calls"
+              "description": "Detects dynamic calls and other dynamic language constructs\nTags: SingleFile, Security\nhttps://rules.abaplint.org/no_dynamic_stuff"
             },
             "no_exclamation_escape": {
               "anyOf": [
@@ -5139,16 +5139,16 @@
               ],
               "description": "It's not possible to have comments between methods in global classes.\nTags: SingleFile, Syntax\nhttps://rules.abaplint.org/no_comments_between_methods"
             },
-            "no_dynamic_calls": {
+            "no_dynamic_stuff": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/NoDynamicCallsConf"
+                  "$ref": "#/definitions/NoDynamicStuffConf"
                 },
                 {
                   "type": "boolean"
                 }
               ],
-              "description": "Detects dynamic calls and other dynamic language constructs\nTags: SingleFile, Security\nhttps://rules.abaplint.org/no_dynamic_calls"
+              "description": "Detects dynamic calls and other dynamic language constructs\nTags: SingleFile, Security\nhttps://rules.abaplint.org/no_dynamic_stuff"
             },
             "no_exclamation_escape": {
               "anyOf": [
@@ -7306,7 +7306,7 @@
       },
       "type": "object"
     },
-    "NoDynamicCallsConf": {
+    "NoDynamicStuffConf": {
       "additionalProperties": false,
       "properties": {
         "assign": {

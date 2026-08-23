@@ -110,7 +110,7 @@ import {NewlineBetweenMethodsConf} from "../src/rules/newline_between_methods";
 import {NoAliasesConf} from "../src/rules/no_aliases";
 import {NoChainedAssignmentConf} from "../src/rules/no_chained_assignment";
 import {NoCommentsBetweenMethodsConf} from "../src/rules/no_comments_between_methods";
-import {NoDynamicCallsConf} from "../src/rules/no_dynamic_calls";
+import {NoDynamicStuffConf} from "../src/rules/no_dynamic_stuff";
 import {NoExclamationEscapeConf} from "../src/rules/no_exclamation_escape";
 import {NoExternalFormCallsConf} from "../src/rules/no_external_form_calls";
 import {NoInlineInOptionalBranchesConf} from "../src/rules/no_inline_in_optional_branches";
@@ -315,7 +315,7 @@ export interface IConfig {
     "no_aliases"?: NoAliasesConf | boolean,
     "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_comments_between_methods"?: NoCommentsBetweenMethodsConf | boolean,
-    "no_dynamic_calls"?: NoDynamicCallsConf | boolean,
+    "no_dynamic_stuff"?: NoDynamicStuffConf | boolean,
     "no_exclamation_escape"?: NoExclamationEscapeConf | boolean,
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
@@ -509,7 +509,7 @@ export interface IConfig {
     "no_aliases"?: NoAliasesConf | boolean,
     "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_comments_between_methods"?: NoCommentsBetweenMethodsConf | boolean,
-    "no_dynamic_calls"?: NoDynamicCallsConf | boolean,
+    "no_dynamic_stuff"?: NoDynamicStuffConf | boolean,
     "no_exclamation_escape"?: NoExclamationEscapeConf | boolean,
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,

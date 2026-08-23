@@ -108,7 +108,7 @@ export * from "./newline_between_methods";
 export * from "./no_aliases";
 export * from "./no_chained_assignment";
 export * from "./no_comments_between_methods";
-export * from "./no_dynamic_calls";
+export * from "./no_dynamic_stuff";
 export * from "./no_external_form_calls";
 export * from "./no_inline_in_optional_branches";
 export * from "./no_macros";

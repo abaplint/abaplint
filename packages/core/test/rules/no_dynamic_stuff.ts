@@ -1,4 +1,4 @@
-import {NoDynamicCalls, NoDynamicCallsConf} from "../../src/rules";
+import {NoDynamicStuff, NoDynamicStuffConf} from "../../src/rules";
 import {testRule} from "./_utils";
 
 const tests = [
@@ -83,10 +83,10 @@ const tests = [
   {abap: "SELECT * FROM (lv_table) INTO TABLE @DATA(lt_rows).", cnt: 0},
 ];
 
-testRule(tests, NoDynamicCalls);
+testRule(tests, NoDynamicStuff);
 
-function conf(enable: keyof NoDynamicCallsConf): NoDynamicCallsConf {
-  const config = new NoDynamicCallsConf();
+function conf(enable: keyof NoDynamicStuffConf): NoDynamicStuffConf {
+  const config = new NoDynamicStuffConf();
   for (const key of Object.keys(config)) {
     if (typeof (config as any)[key] === "boolean") {
       (config as any)[key] = false;
@@ -103,7 +103,7 @@ const onlyCallMethod = [
   {abap: "SORT tab BY (lv_field).", cnt: 0},
 ];
 
-testRule(onlyCallMethod, NoDynamicCalls, conf("callMethod"), "test no_dynamic_calls rule, only callMethod");
+testRule(onlyCallMethod, NoDynamicStuff, conf("callMethod"), "test no_dynamic_stuff rule, only callMethod");
 
 const onlyInternalTable = [
   {abap: "CALL METHOD lo_obj->(lv_method).", cnt: 0},
@@ -112,4 +112,4 @@ const onlyInternalTable = [
   {abap: "DELETE tab WHERE (lv_cond).", cnt: 1},
 ];
 
-testRule(onlyInternalTable, NoDynamicCalls, conf("internalTable"), "test no_dynamic_calls rule, only internalTable");
+testRule(onlyInternalTable, NoDynamicStuff, conf("internalTable"), "test no_dynamic_stuff rule, only internalTable");
