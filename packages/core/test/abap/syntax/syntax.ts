@@ -15951,4 +15951,19 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("error, ALIASES for method not existing in the referenced interface", () => {
+    const abap = `
+INTERFACE lif_base.
+  METHODS real_method.
+ENDINTERFACE.
+
+INTERFACE lif_derived.
+  INTERFACES lif_base.
+  ALIASES real_method FOR lif_base~real_method.
+  ALIASES bogus_method FOR lif_base~does_not_exist.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("does_not_exist");
+  });
+
 });
