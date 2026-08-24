@@ -210,6 +210,12 @@ export class ObjectOriented {
       return found;
     }
 
+    if (name.includes("~")) {
+      // event of an implemented interface, ie. "if_name~event_name"
+      const [interfaceName, eventName] = name.split("~");
+      return this.searchEvent(this.scope.findInterfaceDefinition(interfaceName), eventName);
+    }
+
     for (const a of def.getAliases() || []) {
       if (a.getName().toUpperCase() === name.toUpperCase()) {
         const comp = a.getComponent();
