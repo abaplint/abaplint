@@ -39,7 +39,7 @@ export class Procedural {
         issues: [],
       };
       for (const found of structure.findAllStructures(Structures.Form)) {
-        this.scope.addFormDefinitions([new FormDefinition(found, input)]);
+        this.scope.addFormDefinitions([new FormDefinition(found, input, true)]);
       }
     }
 

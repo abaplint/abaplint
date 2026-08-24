@@ -13,11 +13,14 @@ import {SyntaxInput} from "../5_syntax/_syntax_input";
 export class FormDefinition extends Identifier implements IFormDefinition {
   private readonly node: StatementNode;
   private readonly input: SyntaxInput;
+  private readonly upFront: boolean;
   private tableParameters: TypedIdentifier[] | undefined;
   private usingParameters: TypedIdentifier[] | undefined;
   private changingParameters: TypedIdentifier[] | undefined;
 
-  public constructor(node: StructureNode | StatementNode, input: SyntaxInput) {
+  /** set upFront when building the definitions of a program before traversing it, the parameters
+   * are then resolved lazily, and without recording references */
+  public constructor(node: StructureNode | StatementNode, input: SyntaxInput, upFront = false) {
     const st = node instanceof StructureNode ? node.findFirstStatement(Statements.Form)! : node;
 
     // FORMs can contain a dash in the name
@@ -28,33 +31,39 @@ export class FormDefinition extends Identifier implements IFormDefinition {
 
     super(nameToken, input.filename);
     this.node = st;
-    // the parameters are resolved lazily, the FORM definitions of a program are built up front,
-    // at that point the program level TYPES are not yet known
     this.input = input;
+    this.upFront = upFront;
   }
 
   public getTablesParameters(): TypedIdentifier[] {
     if (this.tableParameters === undefined) {
-      this.tableParameters = this.findTables(this.input);
+      this.tableParameters = this.resolve(() => this.findTables(this.input));
     }
     return this.tableParameters;
   }
 
   public getUsingParameters(): TypedIdentifier[] {
     if (this.usingParameters === undefined) {
-      this.usingParameters = this.findType(Expressions.FormUsing, this.input);
+      this.usingParameters = this.resolve(() => this.findType(Expressions.FormUsing, this.input));
     }
     return this.usingParameters;
   }
 
   public getChangingParameters(): TypedIdentifier[] {
     if (this.changingParameters === undefined) {
-      this.changingParameters = this.findType(Expressions.FormChanging, this.input);
+      this.changingParameters = this.resolve(() => this.findType(Expressions.FormChanging, this.input));
     }
     return this.changingParameters;
   }
 
 ///////////////
+
+  private resolve(f: () => TypedIdentifier[]): TypedIdentifier[] {
+    if (this.upFront === false) {
+      return f();
+    }
+    return this.input.scope.runWithoutReferences(f);
+  }
 
   private findTables(input: SyntaxInput): TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];

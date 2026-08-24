@@ -15877,4 +15877,66 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("ok, PERFORM passing structured FORM parameter", () => {
+    const abap = `
+TYPES: BEGIN OF ty_event_list,
+         kunnr TYPE kunnr,
+         matnr TYPE matnr,
+         subrc TYPE sysubrc,
+        END OF ty_event_list.
+
+FORM inner USING pw_event_list TYPE ty_event_list.
+  WRITE pw_event_list-kunnr.
+ENDFORM.
+
+FORM outer USING pw_event_list TYPE ty_event_list.
+  PERFORM inner USING pw_event_list.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, PERFORM, program local table type", () => {
+    const abap = `
+TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+
+START-OF-SELECTION.
+  DATA lt TYPE ty.
+  PERFORM main USING lt.
+
+FORM main USING p TYPE ty.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("PERFORM, program local type, FORM defined after the PERFORM", () => {
+    const abap = `
+TYPES: BEGIN OF ty, f TYPE i, END OF ty.
+TYPES: BEGIN OF ty2, f TYPE i, g TYPE i, END OF ty2.
+
+START-OF-SELECTION.
+  DATA ls TYPE ty2.
+  PERFORM main USING ls.
+
+FORM main USING p TYPE ty.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("PERFORM, program local type, not compatible", () => {
+    const abap = `
+TYPES: BEGIN OF ty, f TYPE i, END OF ty.
+
+START-OF-SELECTION.
+  DATA lv TYPE i.
+  PERFORM main USING lv.
+
+FORM main USING p TYPE ty.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
 });
