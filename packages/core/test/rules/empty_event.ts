@@ -67,6 +67,15 @@ TOP-OF-PAGE.`);
     expect(issues.length).to.equal(3);
   });
 
+  it("issue, only declarations in event", async () => {
+    const issues = await findIssues(`REPORT zfoo.
+START-OF-SELECTION.
+  FIELD-SYMBOLS <fs> TYPE i.
+  RANGES gr_foo FOR sy-tabix.
+  STATICS sv_foo TYPE i.`);
+    expect(issues.length).to.equal(1);
+  });
+
   it("load of program", async () => {
     const issues = await findIssues(`REPORT zfoo.
 LOAD-OF-PROGRAM.`);

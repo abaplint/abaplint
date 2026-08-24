@@ -22,6 +22,10 @@ export const DECLARATION_STUFF = [
   Statements.DataBegin,
   Statements.Constant,
   Statements.ConstantBegin,
+  Statements.Static,
+  Statements.StaticBegin,
+  Statements.FieldSymbol,
+  Statements.Ranges,
   Statements.Tables,
   Statements.Include, // this is not super correct, but anyhow
   Statements.Parameter,

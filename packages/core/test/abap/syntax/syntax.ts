@@ -15877,4 +15877,78 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("ok, PERFORM passing structured FORM parameter", () => {
+    const abap = `
+TYPES: BEGIN OF ty_event_list,
+         kunnr TYPE kunnr,
+         matnr TYPE matnr,
+         subrc TYPE sysubrc,
+        END OF ty_event_list.
+
+FORM inner USING pw_event_list TYPE ty_event_list.
+  WRITE pw_event_list-kunnr.
+ENDFORM.
+
+FORM outer USING pw_event_list TYPE ty_event_list.
+  PERFORM inner USING pw_event_list.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("string not compatible with internal table", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    CLASS-METHODS bar IMPORTING foo TYPE ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv TYPE string.
+  lcl=>bar( foo = lv ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("string not compatible with data reference", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar IMPORTING foo TYPE REF TO data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv TYPE string.
+  lcl=>bar( foo = lv ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("string not compatible with object reference", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar IMPORTING foo TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv TYPE string.
+  lcl=>bar( foo = lv ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
 });
