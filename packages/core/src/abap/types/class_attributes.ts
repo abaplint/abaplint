@@ -18,9 +18,10 @@ import {IAttributes} from "./_class_attributes";
 import {TypeDefinitions} from "./type_definitions";
 import {Types} from "../5_syntax/structures/types";
 import {Type} from "../5_syntax/statements/type";
-import {SyntaxInput} from "../5_syntax/_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 import {ReferenceType} from "../5_syntax/_reference";
 import {Alias} from "./alias";
+import {IInterfaceDefinition} from "./_interface_definition";
 
 export class Attributes implements IAttributes {
   private readonly static: ClassAttribute[];
@@ -264,12 +265,50 @@ export class Attributes implements IAttributes {
         if (foundAttribute) {
           input.scope.addNamedIdentifier(aliasName.getStr(), foundAttribute);
         }
+
+        const component = compName.split("~")[1];
+        if (foundType === undefined
+            && foundAttribute === undefined
+            && this.existsInInterface(idef, component, input, []) === false) {
+          const message = "Component " + component + " not found in interface " + idef.getName();
+          input.issues.push(syntaxIssue(input, compToken, message));
+        }
       } else if (this.declaredInterfaces.includes(name.toUpperCase()) || input.scope.getDDIC().inErrorNamespace(name) === false) {
         input.scope.addReference(compToken, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename);
       } else {
         throw new Error("Interface " + name + " not found");
       }
     }
+  }
+
+  /** does the component exist in the interface, or in one of its aliases or included interfaces? */
+  private existsInInterface(idef: IInterfaceDefinition, component: string, input: SyntaxInput, visited: string[]): boolean {
+    const upperName = idef.getName().toUpperCase();
+    if (visited.includes(upperName)) {
+      return false;
+    }
+    visited.push(upperName);
+
+    const upper = component.toUpperCase();
+    if (idef.getTypeDefinitions().getByName(component) !== undefined
+        || idef.getAttributes().findByName(component) !== undefined
+        || idef.getMethodDefinitions().getByName(component) !== undefined
+        || idef.getEvents().some(e => e.getName().toUpperCase() === upper)
+        || idef.getAliases().some(a => a.getName().toUpperCase() === upper)) {
+      return true;
+    }
+
+    for (const i of idef.getImplementing()) {
+      const sub = input.scope.findInterfaceDefinition(i.name);
+      if (sub === undefined) {
+        // voided or not found, assume the component exists
+        return true;
+      } else if (this.existsInInterface(sub, component, input, visited)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private parseAttribute(node: StatementNode, visibility: Visibility, input: SyntaxInput): ClassAttribute {
