@@ -31,15 +31,13 @@ export class Procedural {
     const structure = file.getStructure();
     if (structure) {
       const input = {
-        // the parameters are resolved lazily, ie. when the FORM is PERFORMed, at that point
-        // the program level TYPES are known. Issues are discarded, they are reported when the
-        // FORM statement itself is traversed
-        scope: this.scope,
+        scope: CurrentScope.buildDefault(this.reg, obj),
         filename: file.getFilename(),
         issues: [],
+        deferred: [],
       };
       for (const found of structure.findAllStructures(Structures.Form)) {
-        this.scope.addFormDefinitions([new FormDefinition(found, input, true)]);
+        this.scope.addFormDefinitions([new FormDefinition(found, input)]);
       }
     }
 

@@ -21,6 +21,9 @@ export class Form implements StatementSyntax {
     input.scope.push(ScopeType.Form, name, node.getFirstToken().getStart(), input.filename);
 
     const form = new FormDefinition(node, input);
+    // the definitions are built up front, before the program level types are known, replace it
+    // with this one, which is resolved in the scope of the FORM
+    input.scope.updateFormDefinition(form);
     input.scope.addList(form.getUsingParameters());
     input.scope.addList(form.getChangingParameters());
     input.scope.addList(form.getTablesParameters());
