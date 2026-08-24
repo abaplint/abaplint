@@ -15877,4 +15877,23 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("ok, PERFORM passing structured FORM parameter", () => {
+    const abap = `
+TYPES: BEGIN OF ty_event_list,
+         kunnr TYPE kunnr,
+         matnr TYPE matnr,
+         subrc TYPE sysubrc,
+        END OF ty_event_list.
+
+FORM inner USING pw_event_list TYPE ty_event_list.
+  WRITE pw_event_list-kunnr.
+ENDFORM.
+
+FORM outer USING pw_event_list TYPE ty_event_list.
+  PERFORM inner USING pw_event_list.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
