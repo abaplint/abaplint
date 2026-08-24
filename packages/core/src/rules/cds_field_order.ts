@@ -4,7 +4,7 @@ import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {DataDefinition} from "../objects";
-import {CDSSelect, CDSElement, CDSAssociation, CDSAs, CDSName, CDSRelation} from "../cds/expressions";
+import {CDSSelect, CDSElement, CDSAssociation, CDSComposition, CDSAs, CDSName, CDSRelation} from "../cds/expressions";
 import {ExpressionNode} from "../abap/nodes/expression_node";
 
 export class CDSFieldOrderConf extends BasicRuleConfig {
@@ -103,7 +103,8 @@ export class CDSFieldOrder implements IRule {
 
   private getAssociationNames(tree: ExpressionNode): Set<string> {
     const names = new Set<string>();
-    for (const assoc of tree.findAllExpressions(CDSAssociation)) {
+    const found = [...tree.findAllExpressions(CDSAssociation), ...tree.findAllExpressions(CDSComposition)];
+    for (const assoc of found) {
       const relation = assoc.findDirectExpression(CDSRelation);
       if (relation === undefined) {
         continue;
