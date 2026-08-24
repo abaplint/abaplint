@@ -93,6 +93,22 @@ describe("Rule: cds_field_order", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("no issues, compositions after associations", async () => {
+    const cds = `define view entity test as select from source
+  association [1..1] to target1 as _Assoc on $projection.field1 = _Assoc.field1
+  composition [0..*] of target3 as _Comp
+{
+  key id,
+  key id2,
+  field1,
+  field2,
+  _Assoc,
+  _Comp
+}`;
+    const issues = await findIssues(cds);
+    expect(issues.length).to.equal(0);
+  });
+
   it("no issues, single key field only", async () => {
     const cds = `define view entity test as select from source {
   key id
