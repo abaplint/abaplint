@@ -5,7 +5,6 @@ import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {DataDefinition} from "../objects";
 import {CDSDefineView, CDSDefineAbstract, CDSDefineCustom, CDSDefineTableFunction, CDSExtendView, CDSDefineProjection} from "../cds/expressions";
-import {CDSName} from "../cds/expressions/cds_name";
 import {ExpressionNode} from "../abap/nodes/expression_node";
 
 export class CDSNamingConf extends BasicRuleConfig {
@@ -82,7 +81,7 @@ https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/ee6ff9b281d8448f96b4fe6c89f2bdc8
       return [];
     }
 
-    const name = this.getCDSName(tree);
+    const name = o.getDefinitionName();
     if (name === undefined) {
       return [];
     }
@@ -101,14 +100,6 @@ https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/ee6ff9b281d8448f96b4fe6c89f2bdc8
     }
 
     return [];
-  }
-
-  private getCDSName(tree: ExpressionNode): string | undefined {
-    const nameNodes = tree.findDirectExpressions(CDSName);
-    if (nameNodes.length > 0) {
-      return nameNodes[0].getFirstToken().getStr();
-    }
-    return undefined;
   }
 
   private getAllowedPrefixes(tree: ExpressionNode): string[] {
