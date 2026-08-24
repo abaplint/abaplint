@@ -532,6 +532,61 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("events, via interface", () => {
+    const abap1 = `
+INTERFACE lif_source.
+  EVENTS intf_event
+    EXPORTING
+      VALUE(name) TYPE string.
+ENDINTERFACE.
+
+CLASS lcl_source DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_source.
+
+    EVENTS own_event
+      EXPORTING
+        VALUE(name) TYPE string.
+ENDCLASS.
+
+CLASS lcl_source IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_handler DEFINITION.
+  PUBLIC SECTION.
+    METHODS on_own
+      FOR EVENT own_event OF lcl_source
+      IMPORTING name.
+
+    METHODS on_via_intf
+      FOR EVENT intf_event OF lif_source
+      IMPORTING name.
+
+    METHODS on_via_class
+      FOR EVENT lif_source~intf_event OF lcl_source
+      IMPORTING name.
+ENDCLASS.
+
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_own.
+    WRITE name.
+  ENDMETHOD.
+
+  METHOD on_via_intf.
+    WRITE name.
+  ENDMETHOD.
+
+  METHOD on_via_class.
+    WRITE name.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
   it("types, zcl_zlib", () => {
     const abap1 = `
 CLASS zcl_zlib DEFINITION PUBLIC.

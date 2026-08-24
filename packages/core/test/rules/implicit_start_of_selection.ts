@@ -71,4 +71,35 @@ START-OF-SELECTION.
     expect(issues.length).to.equal(0);
   });
 
+  it("ok, FIELD-SYMBOLS", async () => {
+    const issues = await findIssues(`REPORT zfoo.
+FIELD-SYMBOLS <gt_output> TYPE STANDARD TABLE.
+
+START-OF-SELECTION.
+  WRITE 'world'.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("ok, RANGES", async () => {
+    const issues = await findIssues(`REPORT zfoo.
+RANGES gr_foo FOR sy-tabix.
+
+START-OF-SELECTION.
+  WRITE 'world'.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("ok, STATICS", async () => {
+    const issues = await findIssues(`REPORT zfoo.
+STATICS sv_foo TYPE i.
+
+STATICS BEGIN OF bar.
+STATICS int TYPE i.
+STATICS END OF bar.
+
+START-OF-SELECTION.
+  WRITE 'world'.`);
+    expect(issues.length).to.equal(0);
+  });
+
 });
