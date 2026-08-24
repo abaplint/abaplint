@@ -437,6 +437,10 @@ export class TypeUtils {
           return true;
         }
         return false;
+      } else if (target instanceof TableType
+          || target instanceof DataReference
+          || target instanceof ObjectReferenceType) {
+        return false;
       }
       return true;
     } else if (source instanceof StructureType) {
