@@ -15966,4 +15966,70 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.contain("does_not_exist");
   });
 
+  it("error, ALIASES in class for method not existing in the referenced interface", () => {
+    const abap = `
+INTERFACE lif_base.
+  METHODS real_method.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_base.
+    ALIASES bogus_method FOR lif_base~does_not_exist.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD lif_base~real_method.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("does_not_exist");
+  });
+
+  it("ok, ALIASES for event", () => {
+    const abap = `
+INTERFACE lif_base.
+  EVENTS bar.
+ENDINTERFACE.
+
+INTERFACE lif_derived.
+  INTERFACES lif_base.
+  ALIASES bar FOR lif_base~bar.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, ALIASES for method of interface included in the referenced interface", () => {
+    const abap = `
+INTERFACE lif_toptop.
+  METHODS bar.
+ENDINTERFACE.
+
+INTERFACE lif_top.
+  INTERFACES lif_toptop.
+ENDINTERFACE.
+
+INTERFACE lif_sub.
+  INTERFACES lif_top.
+  ALIASES bar FOR lif_top~bar.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, ALIASES for component of voided interface", () => {
+    const abap = `
+INTERFACE lif_top.
+  INTERFACES if_voided.
+ENDINTERFACE.
+
+INTERFACE lif_sub.
+  INTERFACES lif_top.
+  ALIASES bar FOR lif_top~bar.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
