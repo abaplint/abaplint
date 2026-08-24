@@ -15939,4 +15939,21 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("ok, PERFORM, FORM local type shadowing the program level type", () => {
+// "main" refers to the program level "ty", not the one local to "caller"
+    const abap = `
+TYPES ty TYPE i.
+
+FORM caller.
+  TYPES ty TYPE string.
+  DATA lv TYPE i.
+  PERFORM main USING lv.
+ENDFORM.
+
+FORM main USING p TYPE ty.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

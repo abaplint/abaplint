@@ -217,6 +217,27 @@ export class CurrentScope {
     }
   }
 
+  /** Runs the callback with the scope positioned at the enclosing program scope. Used for resolving
+   * FORM parameters lazily, ie. after the program level types are known, but without picking up
+   * types local to eg. the FORM containing the PERFORM */
+  public runAtProgramScope<T>(f: () => T): T {
+    let node = this.current;
+    while (node !== undefined
+        && node.getIdentifier().stype !== ScopeType.Program
+        && node.getIdentifier().stype !== ScopeType.FunctionGroup
+        && node.getIdentifier().stype !== ScopeType.Global) {
+      node = node.getParent();
+    }
+
+    const saved = this.current;
+    this.current = node ?? saved;
+    try {
+      return f();
+    } finally {
+      this.current = saved;
+    }
+  }
+
   /** The FORM definitions of a program are built up front, and again when the FORM statement is
    * traversed, only the latter should record references */
   public runWithoutReferences<T>(f: () => T): T {

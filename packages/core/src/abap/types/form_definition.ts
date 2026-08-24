@@ -62,7 +62,8 @@ export class FormDefinition extends Identifier implements IFormDefinition {
     if (this.upFront === false) {
       return f();
     }
-    return this.input.scope.runWithoutReferences(f);
+    // resolve at the program scope, and let the FORM statement itself record the references
+    return this.input.scope.runAtProgramScope(() => this.input.scope.runWithoutReferences(f));
   }
 
   private findTables(input: SyntaxInput): TypedIdentifier[] {
