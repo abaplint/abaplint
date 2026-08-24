@@ -3,11 +3,15 @@ import {Registry} from "../../src/registry";
 import {expect} from "chai";
 import {Issue} from "../../src/issue";
 import {CDSNaming} from "../../src/rules";
+import {CDSNamingConf} from "../../src/rules/cds_naming";
 
-async function findIssues(cds: string): Promise<readonly Issue[]> {
+async function findIssues(cds: string, config?: CDSNamingConf): Promise<readonly Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("foobar.ddls.asddls", cds));
   await reg.parseAsync();
   const rule = new CDSNaming();
+  if (config !== undefined) {
+    rule.setConfig(config);
+  }
   return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
@@ -108,4 +112,26 @@ describe("Rule: cds_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("error, namespaced name does not match the plain configured prefix", async () => {
+    const cds = `define view entity /FOO/ZI_MY_VIEW as select from source { key id }`;
+    const issues = await findIssues(cds);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`"/FOO/ZI_MY_VIEW"`);
+  });
+
+  it("no issues, namespaced name, configured prefix includes namespace", async () => {
+    const cds = `define view entity /FOO/I_MY_VIEW as select from source { key id }`;
+    const config = new CDSNamingConf();
+    config.basicInterfaceView = "/FOO/I_";
+    config.compositeInterfaceView = "/FOO/I_";
+    const issues = await findIssues(cds, config);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("error, namespaced name without valid prefix", async () => {
+    const cds = `define view entity /FOO/MY_VIEW as select from source { key id }`;
+    const issues = await findIssues(cds);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`"/FOO/MY_VIEW"`);
+  });
 });
