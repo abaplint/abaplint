@@ -11061,6 +11061,21 @@ TYPES: BEGIN OF ty_internal,
     expect(issues[0].getMessage()).to.contain("generic");
   });
 
+  it.skip("named generic table type cannot be used inside TYPES structure", () => {
+    const abap = `
+TYPES: BEGIN OF st_responsible,
+         usrtyp TYPE i,
+       END OF st_responsible.
+TYPES: tt_responsibles TYPE TABLE OF st_responsible.
+
+TYPES: BEGIN OF st_messagetype,
+         type         TYPE char10,
+         responsibles TYPE tt_responsibles,
+       END OF st_messagetype.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("generic");
+  });
+
   it("ref into structure, expect error", () => {
     const abap = `
 CLASS lcl DEFINITION.
