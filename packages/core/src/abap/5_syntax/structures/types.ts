@@ -29,6 +29,11 @@ export class Types {
             if (found.getName().length > 30) {
               input.issues.push(syntaxIssue(input, found.getToken(), "Structure field name longer than 30 characters"));
             }
+            const ftype = found.getType();
+            if (ftype instanceof Basic.TableType && ftype.hasGenericKey() === true) {
+              const message = "Structure field cannot be generic, specify the table key for " + found.getName();
+              input.issues.push(syntaxIssue(input, found.getToken(), message));
+            }
             components.push({name: found.getName(), type: found.getType()});
           }
         } else if (ctyp instanceof Statements.IncludeType) {

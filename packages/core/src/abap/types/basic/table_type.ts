@@ -26,6 +26,8 @@ export type ITableOptions = {
   keyType: TableKeyType,
   primaryKey?: ITableKey,
   secondary?: ITableKey[],
+  /** table type defined via TYPES without specifying the key, ie. generic regarding the key */
+  genericKey?: boolean,
 };
 
 export class TableType extends AbstractType {
@@ -73,6 +75,12 @@ export class TableType extends AbstractType {
     } else {
       return "Table of " + type.toText(level + 1);
     }
+  }
+
+  /** the table key is not specified, so the type is generic regarding the key,
+   * it can be used for typing, but not as a structure component */
+  public hasGenericKey(): boolean {
+    return this.options.genericKey === true;
   }
 
   public isGeneric() {

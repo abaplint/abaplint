@@ -408,11 +408,18 @@ export class BasicTypes {
       keyType = Types.TableKeyType.default;
     }
 
+    // in TYPES the key is not implicitly completed, so the type stays generic regarding the key,
+    // note that in DATA the standard key is used implicitly
+    const genericKey = node.getFirstToken().getStr().toUpperCase() === "TYPES"
+      && keyType === Types.TableKeyType.user
+      && typeTableKeys.length === 0;
+
     const options: Types.ITableOptions = {
       withHeader: text.includes(" WITH HEADER LINE"),
       keyType: keyType,
       primaryKey: primaryKey,
       secondary: secondaryKeys,
+      genericKey: genericKey,
     };
 
     let found: AbstractType | undefined = undefined;
@@ -459,6 +466,8 @@ export class BasicTypes {
         {name: "high", type: found},
       ]);
       options.primaryKey!.type = TableAccessType.standard;
+      // RANGE OF defines the key, so its not generic
+      options.genericKey = false;
       return new Types.TableType(structure, options, name);
     } else if (text.startsWith("LIKE RANGE OF ")) {
       const sub = node.findFirstExpression(Expressions.FieldChain);
@@ -473,6 +482,8 @@ export class BasicTypes {
         {name: "high", type: found},
       ], name);
       options.primaryKey!.type = TableAccessType.standard;
+      // RANGE OF defines the key, so its not generic
+      options.genericKey = false;
       return new Types.TableType(structure, options);
     } else if (typename && this.isRAPTableFor(text)) {
       const name = typename.concatTokens();

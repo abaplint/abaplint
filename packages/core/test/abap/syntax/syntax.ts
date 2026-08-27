@@ -11049,7 +11049,7 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("fields inside TYPES cannot be generic", () => {
+  it("fields inside TYPES cannot be generic", () => {
     const abap = `
 TYPES: BEGIN OF ty,
          foo TYPE i,
@@ -11061,7 +11061,7 @@ TYPES: BEGIN OF ty_internal,
     expect(issues[0].getMessage()).to.contain("generic");
   });
 
-  it.skip("named generic table type cannot be used inside TYPES structure", () => {
+  it("named generic table type cannot be used inside TYPES structure", () => {
     const abap = `
 TYPES: BEGIN OF st_responsible,
          usrtyp TYPE i,
@@ -11074,6 +11074,58 @@ TYPES: BEGIN OF st_messagetype,
        END OF st_messagetype.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("generic");
+  });
+
+  it("ok, generic table type used for typing and DATA", () => {
+    const abap = `
+TYPES: BEGIN OF st_responsible,
+         usrtyp TYPE i,
+       END OF st_responsible.
+TYPES: tt_responsibles TYPE TABLE OF st_responsible.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING it TYPE tt_responsibles.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lt TYPE tt_responsibles.
+    lt = it.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, RANGE OF inside TYPES structure", () => {
+    const abap = `
+TYPES: ty_range TYPE RANGE OF i.
+TYPES: BEGIN OF st_messagetype,
+         range1 TYPE RANGE OF i,
+         range2 TYPE ty_range,
+       END OF st_messagetype.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, table type with key inside TYPES structure", () => {
+    const abap = `
+TYPES: BEGIN OF st_responsible,
+         usrtyp TYPE i,
+       END OF st_responsible.
+TYPES: tt_default TYPE TABLE OF st_responsible WITH DEFAULT KEY.
+TYPES: tt_empty   TYPE STANDARD TABLE OF st_responsible WITH EMPTY KEY.
+TYPES: tt_sorted  TYPE SORTED TABLE OF st_responsible WITH NON-UNIQUE KEY usrtyp.
+
+TYPES: BEGIN OF st_messagetype,
+         default_key TYPE tt_default,
+         empty_key   TYPE tt_empty,
+         sorted_key  TYPE tt_sorted,
+         inline      TYPE TABLE OF st_responsible WITH DEFAULT KEY,
+       END OF st_messagetype.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("ref into structure, expect error", () => {
