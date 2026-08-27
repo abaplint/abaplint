@@ -13,6 +13,7 @@ export const enum IdentifierMeta {
   FunctionModuleTables = "function_module_tables",
   EventParameter = "event_parameter",
   FormParameter = "form_parameter",
+  FormParameterStructure = "form_parameter_structure",
   ReadOnly = "read_only",
   Tables = "tables",
   Abstract = "abstract",
