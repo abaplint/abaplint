@@ -185,6 +185,15 @@ const tests = [
     created_events FOR root~created
     changed_events FOR root~changed
     deleted_events FOR root~deleted.`,
+
+  `METHODS m_returning_table_for_create
+    RETURNING VALUE(instances) TYPE TABLE FOR CREATE z_i_entity.`,
+  `METHODS m_importing_response_mapped
+    IMPORTING mapped TYPE RESPONSE FOR MAPPED EARLY z_i_entity OPTIONAL.`,
+  `METHODS m_importing_action_result
+    IMPORTING result TYPE TABLE FOR ACTION RESULT z_i_entity~Approve OPTIONAL.`,
+  `METHODS m_importing_read_result
+    IMPORTING result TYPE TABLE FOR READ RESULT z_i_entity OPTIONAL.`,
 ];
 statementType(tests, "METHODS", Statements.MethodDef);
 
