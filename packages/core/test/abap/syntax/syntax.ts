@@ -3223,6 +3223,21 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECT-OPTIONS for structure component", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         line TYPE c LENGTH 10,
+       END OF ty_bar.
+DATA ty_where TYPE ty_bar.
+
+SELECT-OPTIONS s_where FOR ty_where NO-DISPLAY.
+
+START-OF-SELECTION.
+  WRITE s_where-low-line.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("RAP for global authorization", () => {
     const abap = `
 CLASS lhc_ZASIS_I_RULESET DEFINITION.
