@@ -3223,6 +3223,55 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECT-OPTIONS for structure component", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         line TYPE c LENGTH 10,
+       END OF ty_bar.
+DATA ty_where TYPE ty_bar.
+
+SELECT-OPTIONS s_where FOR ty_where NO-DISPLAY.
+
+START-OF-SELECTION.
+  WRITE s_where-low-line.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("SELECT-OPTIONS passed as a range of a structure", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         line TYPE c LENGTH 10,
+       END OF ty_bar.
+DATA ty_where TYPE ty_bar.
+
+CLASS lcl_par DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA lr_where LIKE RANGE OF ty_where.
+ENDCLASS.
+
+CLASS lcl_sel DEFINITION.
+  PUBLIC SECTION.
+    METHODS select
+      CHANGING
+        VALUE(xr_where) LIKE lcl_par=>lr_where.
+ENDCLASS.
+
+CLASS lcl_sel IMPLEMENTATION.
+  METHOD select.
+  ENDMETHOD.
+ENDCLASS.
+
+SELECT-OPTIONS s_where FOR ty_where NO-DISPLAY.
+
+START-OF-SELECTION.
+  DATA lo_sel TYPE REF TO lcl_sel.
+  CREATE OBJECT lo_sel.
+  lo_sel->select( CHANGING xr_where = s_where[] ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("RAP for global authorization", () => {
     const abap = `
 CLASS lhc_ZASIS_I_RULESET DEFINITION.

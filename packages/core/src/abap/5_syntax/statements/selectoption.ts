@@ -36,22 +36,8 @@ export class SelectOption implements StatementSyntax {
     }
 
     const nameChain = node.findFirstExpression(Expressions.FieldChain);
-    let found = new BasicTypes(input).resolveLikeName(nameChain);
+    const found = new BasicTypes(input).resolveLikeName(nameChain);
     if (found) {
-      if (found instanceof StructureType) {
-        let length = 0;
-        for (const c of found.getComponents()) {
-          if (c.type instanceof CharacterType) {
-            length += c.type.getLength();
-          }
-        }
-        if (length === 0) {
-          found = VoidType.get("Selectoption, fallback");
-        } else {
-          found = new CharacterType(length);
-        }
-      }
-
       const stru = new StructureType([
         {name: "SIGN", type: new CharacterType(1)},
         {name: "OPTION", type: new CharacterType(2)},
