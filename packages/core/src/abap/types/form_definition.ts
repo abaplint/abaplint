@@ -75,7 +75,8 @@ export class FormDefinition extends Identifier implements IFormDefinition {
           type = new UnknownType("FORM TABLES type must be table type");
         }
 
-        ret.push(new TypedIdentifier(p.getToken(), input.filename, type, [IdentifierMeta.FormParameter]));
+        // keep the meta from FormParam, so STRUCTURE typing can be recognized later
+        ret.push(new TypedIdentifier(p.getToken(), input.filename, type, p.getMeta()));
       }
     }
 

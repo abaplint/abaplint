@@ -10,7 +10,7 @@ import {AssertError} from "../assert_error";
 import {Dynamic} from "../expressions/dynamic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TypeUtils} from "../_type_utils";
-import {TypedIdentifier} from "../../types/_typed_identifier";
+import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 
 type Parameter = {node: ExpressionNode, type: AbstractType | undefined};
 
@@ -105,7 +105,11 @@ export class Perform implements StatementSyntax {
         continue;
       }
       const parameter = formal[i];
-      if (typeUtils.isAssignableStrict(type, parameter.getType(), source) === false) {
+      const structureTyping = parameter.getMeta().includes(IdentifierMeta.FormParameterStructure);
+      const assignable = structureTyping
+        ? typeUtils.isAssignableStructureTyping(type, parameter.getType(), source)
+        : typeUtils.isAssignableStrict(type, parameter.getType(), source);
+      if (assignable === false) {
         const message = `PERFORM parameter type not compatible, ${parameter.getName()}`;
         input.issues.push(syntaxIssue(input, source.getFirstToken(), message));
         return false;

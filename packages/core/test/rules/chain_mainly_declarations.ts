@@ -17,6 +17,7 @@ const tests = [
       pbo.
 ENDCLASS.`, cnt: 0},
   {abap: `LOCAL: foo, bar.`, cnt: 0},
+  {abap: `NODES: foo, bar.`, cnt: 0},
   {abap: `TYPES:
   BEGIN OF ENUM te_content_type STRUCTURE content_type,
     right,

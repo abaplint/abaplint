@@ -110,6 +110,11 @@ CLASS lcl_foobar IMPLEMENTATION.
   METHOD moo.
   ENDMETHOD.
 ENDCLASS.`, cnt: 0},
+
+  {abap: `
+TYPES ty_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA lt_tab TYPE ty_tab.
+DATA wk_row LIKE LINE OF lt_tab OCCURS 0 WITH HEADER LINE.`, cnt: 0},
 ];
 
 testRule(tests, UnknownTypes);

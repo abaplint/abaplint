@@ -2,6 +2,7 @@ import * as Statements from "./abap/2_statements/statements";
 
 export const SELECTION_EVENTS = [
   Statements.StartOfSelection,
+  Statements.Get,
   Statements.AtSelectionScreen,
   Statements.AtLineSelection,
   Statements.AtPF,

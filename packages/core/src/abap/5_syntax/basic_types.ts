@@ -525,7 +525,7 @@ export class BasicTypes {
     if (this.isRAPTypeStructure(text)) {
       return Types.VoidType.get(node.findFirstExpression(Expressions.TypeStructure)?.concatTokens());
     } else if (text.startsWith("LIKE LINE OF ")) {
-      const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
+      let name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
 
       let e = node.findFirstExpression(Expressions.Type);
       if (e === undefined) {
@@ -534,18 +534,31 @@ export class BasicTypes {
       if (e === undefined) {
         e = node.findFirstExpression(Expressions.FieldChain);
       }
+      if (e === undefined) {
+        // old style, eg "LIKE LINE OF tab OCCURS 0 WITH HEADER LINE", it is parsed as TypeName
+        e = typeName;
+        name = typeName?.concatTokens();
+      }
 
       const type = this.resolveLikeName(e, false);
 
+      let row: AbstractType | undefined = undefined;
       if (type === undefined) {
         return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
       } else if (type instanceof Types.TableType) {
-        return type.getRowType();
+        row = type.getRowType();
       } else if (type instanceof Types.VoidType) {
-        return type;
+        row = type;
       } else {
         return new Types.UnknownType("Type error, not a table type " + name);
       }
+
+      if (this.isOccurs(node)) {
+        return new Types.TableType(row, {
+          withHeader: text.includes(" WITH HEADER LINE"),
+          keyType: Types.TableKeyType.default}, qualifiedName);
+      }
+      return row;
     } else if (text.startsWith("LIKE REF TO ")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
       const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);

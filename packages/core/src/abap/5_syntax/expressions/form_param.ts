@@ -31,7 +31,8 @@ export class FormParam {
       } else {
         type = new UnknownType("todo, FORM STRUCTURES typing");
       }
-      return new TypedIdentifier(nameToken, input.filename, type, [IdentifierMeta.FormParameter]);
+      return new TypedIdentifier(nameToken, input.filename, type,
+                                 [IdentifierMeta.FormParameter, IdentifierMeta.FormParameterStructure]);
     }
 
 

@@ -107,6 +107,7 @@ https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenchained_stat
           || statement instanceof Statements.Ranges
           || statement instanceof Statements.TypePools
           || statement instanceof Statements.FieldSymbol
+          || statement instanceof Statements.Nodes
           || statement instanceof Statements.Data
           || statement instanceof Statements.DataBegin
           || statement instanceof Statements.DataEnd)) {
