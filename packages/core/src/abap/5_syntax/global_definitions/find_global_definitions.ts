@@ -133,6 +133,7 @@ export class FindGlobalDefinitions {
       filename: file.getFilename(),
       scope: CurrentScope.buildDefault(this.reg, obj),
       issues: [],
+      deferred: [],
     };
 
     if (obj instanceof Interface) {

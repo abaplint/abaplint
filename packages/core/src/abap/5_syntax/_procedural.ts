@@ -34,6 +34,7 @@ export class Procedural {
         scope: CurrentScope.buildDefault(this.reg, obj),
         filename: file.getFilename(),
         issues: [],
+        deferred: [],
       };
       for (const found of structure.findAllStructures(Structures.Form)) {
         this.scope.addFormDefinitions([new FormDefinition(found, input)]);

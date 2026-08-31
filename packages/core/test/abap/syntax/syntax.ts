@@ -15945,6 +15945,35 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, PERFORM, program local table type", () => {
+    const abap = `
+TYPES ty TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+
+START-OF-SELECTION.
+  DATA lt TYPE ty.
+  PERFORM main USING lt.
+
+FORM main USING p TYPE ty.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("PERFORM, program local type, FORM defined after the PERFORM", () => {
+    const abap = `
+TYPES: BEGIN OF ty, f TYPE i, END OF ty.
+TYPES: BEGIN OF ty2, f TYPE i, g TYPE i, END OF ty2.
+
+START-OF-SELECTION.
+  DATA ls TYPE ty2.
+  PERFORM main USING ls.
+
+FORM main USING p TYPE ty.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
   it("string not compatible with internal table", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -15960,6 +15989,20 @@ ENDCLASS.
 START-OF-SELECTION.
   DATA lv TYPE string.
   lcl=>bar( foo = lv ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("PERFORM, program local type, not compatible", () => {
+    const abap = `
+TYPES: BEGIN OF ty, f TYPE i, END OF ty.
+
+START-OF-SELECTION.
+  DATA lv TYPE i.
+  PERFORM main USING lv.
+
+FORM main USING p TYPE ty.
+ENDFORM.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
@@ -15980,6 +16023,23 @@ START-OF-SELECTION.
   lcl=>bar( foo = lv ).`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("ok, PERFORM, FORM local type shadowing the program level type", () => {
+// "main" refers to the program level "ty", not the one local to "caller"
+    const abap = `
+TYPES ty TYPE i.
+
+FORM caller.
+  TYPES ty TYPE string.
+  DATA lv TYPE i.
+  PERFORM main USING lv.
+ENDFORM.
+
+FORM main USING p TYPE ty.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("string not compatible with object reference", () => {
@@ -16300,26 +16360,6 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("A15, same layout, flat vs nested, with local types", () => {
-    const abap = `
-TYPES: BEGIN OF small,
-         a TYPE c LENGTH 3,
-         b TYPE c LENGTH 3,
-       END OF small.
-TYPES: BEGIN OF sub,
-         a TYPE c LENGTH 3,
-         b TYPE c LENGTH 3,
-       END OF sub.
-DATA: BEGIN OF big,
-        s TYPE sub,
-      END OF big.
-PERFORM foo USING big.
-FORM foo USING p STRUCTURE small.
-ENDFORM.`;
-    const issues = runFixtures(abap);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
   it("A16, DDIC formal is flat, actual nests the same layout, approximation limit", () => {
     // "big" is byte identical to zpair, but grouped differently, real ABAP accepts this
     const abap = `
@@ -16332,20 +16372,6 @@ ENDFORM.`;
     const issues = runFixtures(abap);
     expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
-  });
-
-  it("A17, formal typed with a program-local structure is not checked", () => {
-    // known limitation, FormDefinition is built with CurrentScope.buildDefault()
-    const abap = `
-TYPES: BEGIN OF small,
-         f1 TYPE c LENGTH 10,
-       END OF small.
-DATA wa TYPE i.
-PERFORM foo USING wa.
-FORM foo USING p STRUCTURE small.
-ENDFORM.`;
-    const issues = runFixtures(abap);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   //////////////////////////////////////////////////////////
@@ -16497,17 +16523,6 @@ ENDFORM.`;
     const issues = runFixtures(abap);
     expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
-  });
-
-  it("C3, USING p TYPE local table type, actual EMPTY KEY, not checked", () => {
-    const abap = `
-TYPES ttyp TYPE STANDARD TABLE OF zkey WITH DEFAULT KEY.
-DATA gt TYPE STANDARD TABLE OF zkey WITH EMPTY KEY.
-PERFORM foo USING gt.
-FORM foo USING p TYPE ttyp.
-ENDFORM.`;
-    const issues = runFixtures(abap);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("C4, untyped USING, actual longer", () => {

@@ -74,12 +74,18 @@ export class Perform implements StatementSyntax {
     ////////////////////////////
     // check parameters match
 
-    // USING and CHANGING are interchangeable, the actual parameters form a single positional list
-    if (this.checkParameters(node, tables, found.getTablesParameters(), "TABLES", input) === false) {
-      return;
-    }
-    const formal = found.getUsingParameters().concat(found.getChangingParameters());
-    this.checkParameters(node, using.concat(changing), formal, "USING/CHANGING", input);
+    // deferred, the FORM might be defined after the PERFORM, its parameters are only typed
+    // once the FORM statement itself has been traversed
+    input.deferred.push(() => {
+      // look up again, the definition is replaced when the FORM statement is traversed
+      const def = input.scope.findFormDefinition(name) ?? found;
+      if (this.checkParameters(node, tables, def.getTablesParameters(), "TABLES", input) === false) {
+        return;
+      }
+      // USING and CHANGING are interchangeable, the actual parameters form a single positional list
+      const formal = def.getUsingParameters().concat(def.getChangingParameters());
+      this.checkParameters(node, using.concat(changing), formal, "USING/CHANGING", input);
+    });
   }
 
   // returns false if an issue was reported
