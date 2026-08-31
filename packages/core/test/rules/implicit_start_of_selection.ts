@@ -40,6 +40,13 @@ START-OF-SELECTION.
     expect(issues.length).to.equal(0);
   });
 
+  it("ok, GET", async () => {
+    const issues = await findIssues(`REPORT zfoo.
+GET mara.
+  WRITE 'world'.`);
+    expect(issues.length).to.equal(0);
+  });
+
   it("ok, FORM", async () => {
     const issues = await findIssues(`REPORT zfoo.
 

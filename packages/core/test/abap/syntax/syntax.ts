@@ -3223,6 +3223,55 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("SELECT-OPTIONS for structure component", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         line TYPE c LENGTH 10,
+       END OF ty_bar.
+DATA ty_where TYPE ty_bar.
+
+SELECT-OPTIONS s_where FOR ty_where NO-DISPLAY.
+
+START-OF-SELECTION.
+  WRITE s_where-low-line.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("SELECT-OPTIONS passed as a range of a structure", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         line TYPE c LENGTH 10,
+       END OF ty_bar.
+DATA ty_where TYPE ty_bar.
+
+CLASS lcl_par DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA lr_where LIKE RANGE OF ty_where.
+ENDCLASS.
+
+CLASS lcl_sel DEFINITION.
+  PUBLIC SECTION.
+    METHODS select
+      CHANGING
+        VALUE(xr_where) LIKE lcl_par=>lr_where.
+ENDCLASS.
+
+CLASS lcl_sel IMPLEMENTATION.
+  METHOD select.
+  ENDMETHOD.
+ENDCLASS.
+
+SELECT-OPTIONS s_where FOR ty_where NO-DISPLAY.
+
+START-OF-SELECTION.
+  DATA lo_sel TYPE REF TO lcl_sel.
+  CREATE OBJECT lo_sel.
+  lo_sel->select( CHANGING xr_where = s_where[] ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("RAP for global authorization", () => {
     const abap = `
 CLASS lhc_ZASIS_I_RULESET DEFINITION.
@@ -16030,6 +16079,600 @@ INTERFACE lif_sub.
 ENDINTERFACE.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+});
+
+////////////////////////////////////////////////////////////
+
+describe("syntax.ts, PERFORM parameters, STRUCTURE typing", () => {
+
+  function tabl(name: string, fields: string[]): string {
+    return `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>${name}</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+${fields.join("\n")}
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  }
+
+  function char(name: string, leng: string): string {
+    return `    <DD03P>
+     <FIELDNAME>${name}</FIELDNAME>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>${leng}</LENG>
+    </DD03P>`;
+  }
+
+  function include(name: string): string {
+    return `    <DD03P>
+     <FIELDNAME>.INCLUDE</FIELDNAME>
+     <PRECFIELD>${name}</PRECFIELD>
+     <COMPTYPE>S</COMPTYPE>
+    </DD03P>`;
+  }
+
+  const zttyp = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZTTYP</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>ZKEY</ROWTYPE>
+    <ROWKIND>S</ROWKIND>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+  // the formal structure, plus a few actuals with the various interesting shapes
+  const fixtures = [
+    {filename: "zkey.tabl.xml", contents: tabl("ZKEY", [char("FIELD1", "000010"), char("FIELD2", "000010")])},
+    {filename: "zbig.tabl.xml", contents: tabl("ZBIG", [include("ZKEY"), char("EXTRA", "000010")])},
+    {filename: "zshort.tabl.xml", contents: tabl("ZSHORT", [char("FIELD1", "000010")])},
+    {filename: "zother.tabl.xml", contents: tabl("ZOTHER", [char("FIELD1", "000010"), char("FIELD2", "000020")])},
+    {filename: "zpair.tabl.xml", contents: tabl("ZPAIR", [char("A", "000005"), char("B", "000009")])},
+    {filename: "zswap.tabl.xml", contents: tabl("ZSWAP", [char("A", "000009"), char("B", "000005")])},
+    {filename: "zttyp.ttyp.xml", contents: zttyp},
+  ];
+
+  function runFixtures(abap: string, extra?: {filename: string, contents: string}[]): Issue[] {
+    return runMulti(fixtures.concat([{filename: "zfoobar.prog.abap", contents: abap}], extra ?? []));
+  }
+
+  //////////////////////////////////////////////////////////
+  // A. USING / CHANGING + STRUCTURE
+
+  it("A1, actual is the same DDIC structure", () => {
+    const abap = `
+DATA wa TYPE zkey.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A2, actual includes the formal structure plus extra fields", () => {
+    const abap = `
+DATA wa TYPE zbig.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A4, prefix component type differs", () => {
+    const abap = `
+DATA wa TYPE zother.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("A5, actual shorter than formal", () => {
+    const abap = `
+DATA wa TYPE zshort.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("A6, actual is elementary", () => {
+    const abap = `
+DATA wa TYPE i.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("A7, actual is an internal table", () => {
+    const abap = `
+DATA wa TYPE STANDARD TABLE OF zkey WITH EMPTY KEY.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("A8, actual is an object reference", () => {
+    const abap = `
+DATA wa TYPE REF TO object.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("A9, VALUE() pass-by-value variant", () => {
+    const abap = `
+DATA wa TYPE zbig.
+PERFORM foo USING wa.
+FORM foo USING VALUE(p) STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A10, CHANGING instead of USING", () => {
+    const abap = `
+DATA wa TYPE zbig.
+PERFORM foo CHANGING wa.
+FORM foo CHANGING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A11, merged USING + CHANGING positional list", () => {
+    const abap = `
+DATA wa TYPE zbig.
+PERFORM foo USING wa CHANGING wa.
+FORM foo USING p1 STRUCTURE zkey CHANGING p2 STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A12, formal STRUCTURE of a voided DDIC name", () => {
+    const abap = `
+DATA wa TYPE zbig.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE mara.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A13, actual is a generic field symbol", () => {
+    const abap = `
+FIELD-SYMBOLS <fs> TYPE any.
+PERFORM foo USING <fs>.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A14, nested, formal has a substructure, actual has it plus extra", () => {
+    const abap = `
+TYPES: BEGIN OF sub,
+         a TYPE c LENGTH 3,
+       END OF sub.
+TYPES: BEGIN OF small,
+         s TYPE sub,
+       END OF small.
+DATA: BEGIN OF big,
+        s     TYPE sub,
+        extra TYPE i,
+      END OF big.
+PERFORM foo USING big.
+FORM foo USING p STRUCTURE small.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A15, same layout, flat vs nested, with local types", () => {
+    const abap = `
+TYPES: BEGIN OF small,
+         a TYPE c LENGTH 3,
+         b TYPE c LENGTH 3,
+       END OF small.
+TYPES: BEGIN OF sub,
+         a TYPE c LENGTH 3,
+         b TYPE c LENGTH 3,
+       END OF sub.
+DATA: BEGIN OF big,
+        s TYPE sub,
+      END OF big.
+PERFORM foo USING big.
+FORM foo USING p STRUCTURE small.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A16, DDIC formal is flat, actual nests the same layout, approximation limit", () => {
+    // "big" is byte identical to zpair, but grouped differently, real ABAP accepts this
+    const abap = `
+DATA: BEGIN OF big,
+        s TYPE zpair,
+      END OF big.
+PERFORM foo USING big.
+FORM foo USING p STRUCTURE zpair.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("A17, formal typed with a program-local structure is not checked", () => {
+    // known limitation, FormDefinition is built with CurrentScope.buildDefault()
+    const abap = `
+TYPES: BEGIN OF small,
+         f1 TYPE c LENGTH 10,
+       END OF small.
+DATA wa TYPE i.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE small.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  //////////////////////////////////////////////////////////
+  // B. TABLES + STRUCTURE
+
+  it("B1, actual is STANDARD TABLE OF ddic WITH DEFAULT KEY", () => {
+    const abap = `
+DATA gt TYPE STANDARD TABLE OF zkey WITH DEFAULT KEY.
+PERFORM foo TABLES gt.
+FORM foo TABLES p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B2, actual is WITH EMPTY KEY", () => {
+    const abap = `
+DATA gt TYPE STANDARD TABLE OF zkey WITH EMPTY KEY.
+PERFORM foo TABLES gt.
+FORM foo TABLES p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B3, actual from SELECT ... INTO TABLE @DATA()", () => {
+    const abap = `
+FORM bar.
+  SELECT * FROM zkey INTO TABLE @DATA(gt).
+  PERFORM foo TABLES gt.
+ENDFORM.
+FORM foo TABLES p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B4, actual is LIKE ddic OCCURS 0 WITH HEADER LINE", () => {
+    const abap = `
+DATA gt LIKE zkey OCCURS 0 WITH HEADER LINE.
+PERFORM foo TABLES gt.
+FORM foo TABLES p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B5, actual row includes the formal structure plus extra fields", () => {
+    const abap = `
+DATA: BEGIN OF gt OCCURS 0.
+        INCLUDE STRUCTURE zkey.
+DATA:   extra TYPE i,
+      END OF gt.
+PERFORM foo TABLES gt.
+FORM foo TABLES p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B6, actual is a SORTED TABLE, known gap", () => {
+    // real ABAP requires a standard table for a TABLES parameter
+    const abap = `
+DATA gt TYPE SORTED TABLE OF zkey WITH NON-UNIQUE KEY field1.
+PERFORM foo TABLES gt.
+FORM foo TABLES p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B7, actual row shorter than formal", () => {
+    const abap = `
+DATA gt TYPE STANDARD TABLE OF zshort WITH EMPTY KEY.
+PERFORM foo TABLES gt.
+FORM foo TABLES p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("B8, actual row component type differs", () => {
+    const abap = `
+DATA gt TYPE STANDARD TABLE OF zother WITH EMPTY KEY.
+PERFORM foo TABLES gt.
+FORM foo TABLES p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("B9, actual is a flat structure, not a table", () => {
+    const abap = `
+DATA wa TYPE zkey.
+PERFORM foo TABLES wa.
+FORM foo TABLES p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("B10, TABLES formal STRUCTURE of a voided DDIC name", () => {
+    const abap = `
+DATA gt TYPE STANDARD TABLE OF zkey WITH EMPTY KEY.
+PERFORM foo TABLES gt.
+FORM foo TABLES p STRUCTURE mara.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B11, TABLES and USING STRUCTURE params in one FORM", () => {
+    const abap = `
+DATA wa TYPE zbig.
+DATA: BEGIN OF gt OCCURS 0.
+        INCLUDE STRUCTURE zkey.
+DATA:   extra TYPE i,
+      END OF gt.
+PERFORM foo TABLES gt USING wa.
+FORM foo TABLES p1 STRUCTURE zkey USING p2 STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  //////////////////////////////////////////////////////////
+  // C. non-STRUCTURE typing must not loosen
+
+  it("C1, USING p TYPE ddic, actual longer", () => {
+    const abap = `
+DATA wa TYPE zbig.
+PERFORM foo USING wa.
+FORM foo USING p TYPE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("C2, USING p LIKE ddic, actual longer", () => {
+    const abap = `
+DATA wa TYPE zbig.
+PERFORM foo USING wa.
+FORM foo USING p LIKE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("C3, USING p TYPE local table type, actual EMPTY KEY, not checked", () => {
+    const abap = `
+TYPES ttyp TYPE STANDARD TABLE OF zkey WITH DEFAULT KEY.
+DATA gt TYPE STANDARD TABLE OF zkey WITH EMPTY KEY.
+PERFORM foo USING gt.
+FORM foo USING p TYPE ttyp.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("C4, untyped USING, actual longer", () => {
+    const abap = `
+DATA wa TYPE zbig.
+PERFORM foo USING wa.
+FORM foo USING p.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("C5, untyped TABLES", () => {
+    const abap = `
+DATA gt TYPE STANDARD TABLE OF zkey WITH EMPTY KEY.
+PERFORM foo TABLES gt.
+FORM foo TABLES p.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  //////////////////////////////////////////////////////////
+  // D. plumbing
+
+  it("D1, wrong number of parameters", () => {
+    const abap = `
+DATA wa TYPE zbig.
+PERFORM foo USING wa wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM, expected 1 USING/CHANGING parameters, found 2");
+  });
+
+  it("D2, two bad STRUCTURE params, only the first is reported", () => {
+    const abap = `
+DATA wa TYPE zshort.
+PERFORM foo USING wa wa.
+FORM foo USING p1 STRUCTURE zkey p2 STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p1");
+  });
+
+  it("D3, PERFORM ... IN PROGRAM is skipped", () => {
+    const abap = `
+DATA wa TYPE i.
+PERFORM foo IN PROGRAM zother_prog USING wa.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("D4, dynamic PERFORM is skipped", () => {
+    const abap = `
+DATA wa TYPE i.
+DATA name TYPE string.
+PERFORM (name) IN PROGRAM zother_prog USING wa.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  //////////////////////////////////////////////////////////
+  // E. cross cutting
+
+  it("E1, actual is the header line of a LIKE ddic OCCURS table", () => {
+    const abap = `
+DATA gt LIKE zbig OCCURS 0 WITH HEADER LINE.
+PERFORM foo USING gt.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("E2, TABLES actual passed as an explicit table body", () => {
+    const abap = `
+DATA: BEGIN OF gt OCCURS 0.
+        INCLUDE STRUCTURE zkey.
+DATA:   extra TYPE i,
+      END OF gt.
+PERFORM foo TABLES gt[].
+FORM foo TABLES p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("E3, per parameter dispatch, STRUCTURE relaxed but TYPE still strict", () => {
+    const abap = `
+DATA wa TYPE zbig.
+PERFORM foo USING wa wa.
+FORM foo USING p1 STRUCTURE zkey p2 TYPE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p2");
+  });
+
+  it("E4, reordered components with differing lengths", () => {
+    const abap = `
+DATA wa TYPE zswap.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zpair.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("E5, FORM in an INCLUDE, PERFORM in the main program", () => {
+    const abap = `
+DATA wa TYPE zbig.
+INCLUDE zincl.
+PERFORM foo USING wa.`;
+    const zincl = `
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap, [
+      {filename: "zincl.prog.abap", contents: zincl},
+      {filename: "zincl.prog.xml", contents: "<SUBC>I</SUBC>"}]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("E6, formal typed via a DDIC table type, actual EMPTY KEY", () => {
+    const abap = `
+DATA gt TYPE STANDARD TABLE OF zkey WITH EMPTY KEY.
+PERFORM foo USING gt.
+FORM foo USING p TYPE zttyp.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  //////////////////////////////////////////////////////////
+  // known gaps, not addressed by the STRUCTURE relaxation
+
+  it.skip("gap, FORM parameters typed against program-local names are never checked", () => {
+    // FormDefinition is built with CurrentScope.buildDefault(), so "STRUCTURE small"
+    // resolves to Void/Unknown instead of the program-local TYPES, see A17
+    const abap = `
+TYPES: BEGIN OF small,
+         f1 TYPE c LENGTH 10,
+       END OF small.
+DATA wa TYPE i.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE small.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it.skip("gap, TABLES accepts sorted and hashed tables", () => {
+    // real ABAP requires a standard table for a TABLES parameter, abaplint accepts any
+    // table because keyType "user" bypasses the key comparison, see B6
+    const abap = `
+DATA gt TYPE SORTED TABLE OF zkey WITH NON-UNIQUE KEY field1.
+PERFORM foo TABLES gt.
+FORM foo TABLES p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
   });
 
 });

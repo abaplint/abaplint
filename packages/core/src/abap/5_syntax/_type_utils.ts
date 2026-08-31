@@ -543,6 +543,32 @@ export class TypeUtils {
     return this.isAssignable(source, target);
   }
 
+  // Typing with the classic STRUCTURE addition, ie. "FORM foo USING bar STRUCTURE zkey",
+  // is not a compatibility check: ABAP only checks the fragment view up to the end of the
+  // formal structure, so the actual parameter is allowed to be longer. For TABLES parameters
+  // the table key is not part of the check at all.
+  public isAssignableStructureTyping(source: AbstractType | undefined,
+                                     target: AbstractType | undefined,
+                                     node?: ExpressionNode): boolean {
+    if (source instanceof StructureType && target instanceof StructureType) {
+      const sourceComponents = source.getComponents();
+      const targetComponents = target.getComponents();
+      if (sourceComponents.length < targetComponents.length) {
+        return false;
+      }
+      for (let i = 0; i < targetComponents.length; i++) {
+        if (this.isAssignableStrict(sourceComponents[i].type, targetComponents[i].type) === false) {
+          return false;
+        }
+      }
+      return true;
+    } else if (source instanceof TableType && target instanceof TableType) {
+      return this.isAssignableStructureTyping(source.getRowType(), target.getRowType());
+    }
+
+    return this.isAssignableStrict(source, target, node);
+  }
+
   public isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
     if (source === undefined || target === undefined) {
       return true;
