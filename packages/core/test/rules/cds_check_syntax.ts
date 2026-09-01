@@ -373,6 +373,73 @@ where DomainField = 'PRIORITY'`, false, [domainValues]);
     expect(issues[0].getStart().getRow()).to.equal(11);
   });
 
+  it("reports searchable without any default search element", async () => {
+    const table = transparentTable("ztab_domval", ["domain_field", "value_text"]);
+    const issues = await findIssues(`@EndUserText.label: 'Domain Values'
+@Search.searchable: true
+define view entity ZI_DOMVAL
+  as select from ztab_domval
+{
+  key domain_field as DomainField,
+      value_text   as ValueText
+}`, false, [table]);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal(
+      "@Search.defaultSearchElement: true required on at least one element when @Search.searchable: true");
+    expect(issues[0].getStart().getRow()).to.equal(2);
+  });
+
+  it("accepts searchable with a default search element", async () => {
+    const table = transparentTable("ztab_domval", ["domain_field", "value_text"]);
+    const issues = await findIssues(`@Search.searchable: true
+define view entity ZI_DOMVAL
+  as select from ztab_domval
+{
+  key domain_field as DomainField,
+      @Search.defaultSearchElement: true
+      @Search.fuzzinessThreshold: 0.8
+      value_text   as ValueText
+}`, false, [table]);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("accepts searchable with a default search element, nested annotation syntax", async () => {
+    const table = transparentTable("ztab_domval", ["domain_field", "value_text"]);
+    const issues = await findIssues(`@Search: { searchable: true }
+define view entity ZI_DOMVAL
+  as select from ztab_domval
+{
+  key domain_field as DomainField,
+      @Search: { ranking: #HIGH, defaultSearchElement: true }
+      value_text   as ValueText
+}`, false, [table]);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("accepts a default search element without searchable", async () => {
+    const table = transparentTable("ztab_domval", ["domain_field", "value_text"]);
+    const issues = await findIssues(`define view entity ZI_DOMVAL
+  as select from ztab_domval
+{
+  key domain_field as DomainField,
+      @Search.defaultSearchElement: true
+      value_text   as ValueText
+}`, false, [table]);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("accepts searchable set to false", async () => {
+    const table = transparentTable("ztab_domval", ["domain_field", "value_text"]);
+    const issues = await findIssues(`@Search.searchable: false
+define view entity ZI_DOMVAL
+  as select from ztab_domval
+{
+  key domain_field as DomainField,
+      value_text   as ValueText
+}`, false, [table]);
+    expect(issues.length).to.equal(0);
+  });
+
   it("reports a root projection on a non-root entity", async () => {
     const projectedEntity = new MemoryFile("zi_bom_chg_bo.ddls.asddls", `define view entity ZI_BOM_CHG_BO
   as select from mara
