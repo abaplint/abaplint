@@ -146,6 +146,22 @@ export class CurrentScope {
     this.current.getData().forms.push(...f);
   }
 
+  /** The FORM definitions are built up front, at that point the program level types are not known.
+   * When the FORM statement is traversed it is replaced with one resolved in the scope of the FORM */
+  public updateFormDefinition(f: IFormDefinition) {
+    let search = this.current;
+    while (search !== undefined) {
+      const forms = search.getData().forms;
+      for (let i = 0; i < forms.length; i++) {
+        if (forms[i].equals(f)) {
+          forms[i] = f;
+          return;
+        }
+      }
+      search = search.getParent();
+    }
+  }
+
   public addInterfaceDefinition(i: IInterfaceDefinition) {
     if (this.current === undefined) {
       return;

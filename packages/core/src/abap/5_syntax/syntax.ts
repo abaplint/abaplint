@@ -313,6 +313,7 @@ if (Object.keys(map).length === 0) {
 export class SyntaxLogic {
   private currentFile: ABAPFile;
   private issues: Issue[];
+  private deferred: (() => void)[];
 
   private readonly object: ABAPObject;
   private readonly reg: IRegistry;
@@ -327,6 +328,7 @@ export class SyntaxLogic {
   public constructor(reg: IRegistry, object: ABAPObject) {
     this.reg = reg;
     this.issues = [];
+    this.deferred = [];
 
     this.object = object;
   }
@@ -344,6 +346,7 @@ export class SyntaxLogic {
     };
 
     this.issues = [];
+    this.deferred = [];
     this.reg.getDDICReferences().clear(this.object);
     this.reg.getMSAGReferences().clear(this.object);
 
@@ -353,6 +356,12 @@ export class SyntaxLogic {
     }
 
     this.traverseObject();
+
+    // the FORM definitions are now all traversed, ie. their parameters are typed
+    for (const d of this.deferred) {
+      d();
+    }
+    this.deferred = [];
 
     for (;;) {
       const spaghetti = this.scope.pop(new Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)); // pop built-in scopes
@@ -467,6 +476,7 @@ export class SyntaxLogic {
       scope: this.scope,
       filename,
       issues: this.issues,
+      deferred: this.deferred,
     };
 
     if (stru instanceof Structures.ClassDefinition) {
@@ -514,6 +524,7 @@ export class SyntaxLogic {
       scope: this.scope,
       filename,
       issues: this.issues,
+      deferred: this.deferred,
     };
 
     // todo, refactor
