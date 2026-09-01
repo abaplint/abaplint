@@ -346,6 +346,40 @@ define view entity ZI_POCHG_REQ
     expect(issues[0].getStart().getRow()).to.equal(14);
   });
 
+  it("reports @Semantics.currencyCode in a view entity", async () => {
+    const table = transparentTable("zdb_amount", ["doc_id", "amount", "currency"]);
+    const issues = await findIssues(`define view entity ZI_AMOUNT
+  as select from zdb_amount
+{
+  key doc_id   as DocumentId,
+      @Semantics.amount.currencyCode: 'Currency'
+      amount   as Amount,
+      @Semantics.currencyCode: true
+      currency as Currency
+}`, false, [table]);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage())
+      .to.equal("Annotation Semantics.currencyCode is not allowed in view entities");
+    expect(issues[0].getStart().getRow()).to.equal(7);
+  });
+
+  it("reports @Semantics.currencyCode in a view entity, nested annotation syntax", async () => {
+    const table = transparentTable("zdb_amount", ["doc_id", "amount", "currency"]);
+    const issues = await findIssues(`define view entity ZI_AMOUNT
+  as select from zdb_amount
+{
+  key doc_id   as DocumentId,
+      @Semantics: { amount: { currencyCode: 'Currency' } }
+      amount   as Amount,
+      @Semantics: { currencyCode: true }
+      currency as Currency
+}`, false, [table]);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage())
+      .to.equal("Annotation Semantics.currencyCode is not allowed in view entities");
+    expect(issues[0].getStart().getRow()).to.equal(7);
+  });
+
   it("reports a reserved element name", async () => {
     const domainValues = new MemoryFile("zi_domval.ddls.asddls", `define view entity ZI_DOMVAL
   as select from dd07l

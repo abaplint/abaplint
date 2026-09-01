@@ -31,7 +31,7 @@ const RESERVED_ELEMENT_NAMES = ["BEGIN", "NUMBER", "POSITION"];
 const MAX_LABEL_LENGTH = 40;
 
 // Annotations which are not supported in CDS view entities
-const VIEW_ENTITY_FORBIDDEN_ANNOTATIONS = ["Semantics.unitOfMeasure"];
+const VIEW_ENTITY_FORBIDDEN_ANNOTATIONS = ["Semantics.unitOfMeasure", "Semantics.currencyCode"];
 
 export class CDSCheckSyntax implements IRule {
   private reg: IRegistry;
