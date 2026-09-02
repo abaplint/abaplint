@@ -2761,7 +2761,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enforces LF as newlines in ABAP files\n\nabapGit does not work with CRLF\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/line_break_style"
+              "description": "Enforces LF as newlines in ABAP and XML files\n\nabapGit does not work with CRLF\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/line_break_style"
             },
             "line_length": {
               "anyOf": [
@@ -4873,7 +4873,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enforces LF as newlines in ABAP files\n\nabapGit does not work with CRLF\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/line_break_style"
+              "description": "Enforces LF as newlines in ABAP and XML files\n\nabapGit does not work with CRLF\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/line_break_style"
             },
             "line_length": {
               "anyOf": [
