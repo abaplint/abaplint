@@ -14,6 +14,7 @@ import {SQLLocateRegexpr} from "./sql_locate_regexpr";
 
 const VARIADIC = -1;
 
+
 type SQLFunctionDef = [string, number, ABAPRelease];
 
 export const sqlFunctionDefs: SQLFunctionDef[] = [
