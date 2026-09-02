@@ -1,6 +1,6 @@
 import {ABAPRelease, Release} from "../../../version";
 import {ParenLeftW, WAt, WParenRightW} from "../../1_lexer/tokens";
-import {Expression, ver, seq, tok, altPrio, optPrio, starPrio, regex as reg} from "../combi";
+import {Expression, ver, seq, tok, altPrio, optPrio, starPrio, regex as reg, AlsoIn} from "../combi";
 import {IStatementRunnable} from "../statement_runnable";
 import {Integer} from "./integer";
 import {SQLFunctionInput} from "./sql_function_input";
@@ -369,20 +369,23 @@ export class SQLFunction extends Expression {
     const fn = (name: string, params: number, v: ABAPRelease): IStatementRunnable => {
       const nameReg = reg(new RegExp("^" + name + "$", "i"));
       if (params === 0) {
-        return ver(v, seq(nameReg, tok(ParenLeftW), tok(WParenRightW)));
+        return ver(v, seq(nameReg, tok(ParenLeftW), tok(WParenRightW)), {also: AlsoIn.OpenABAP});
       } else if (params === VARIADIC) {
-        return ver(v, seq(nameReg, tok(ParenLeftW), SQLFunctionInput, starPrio(commaParam), tok(WParenRightW)));
+        return ver(v, seq(nameReg, tok(ParenLeftW), SQLFunctionInput, starPrio(commaParam), tok(WParenRightW)),
+                   {also: AlsoIn.OpenABAP});
       } else {
         const extra: IStatementRunnable[] = [];
         for (let i = 1; i < params; i++) {
           extra.push(commaParam);
         }
-        return ver(v, seq(nameReg, tok(ParenLeftW), SQLFunctionInput, ...extra, tok(WParenRightW)));
+        return ver(v, seq(nameReg, tok(ParenLeftW), SQLFunctionInput, ...extra, tok(WParenRightW)),
+                   {also: AlsoIn.OpenABAP});
       }
     };
 
     const castInput = altPrio(SQLCase, SQLFunctionInput);
-    const cast = ver(Release.v750, seq(reg(/^cast$/i), tok(ParenLeftW), castInput, "AS", castTypes, tok(WParenRightW)));
+    const cast = ver(Release.v750, seq(reg(/^cast$/i), tok(ParenLeftW), castInput, "AS", castTypes, tok(WParenRightW)),
+                     {also: AlsoIn.OpenABAP});
 
     const hostParen = seq(tok(ParenLeftW), SQLFunctionInput, tok(WParenRightW));
     const hostVar = seq(tok(WAt), altPrio(SimpleSource3, hostParen));
@@ -394,7 +397,7 @@ export class SQLFunction extends Expression {
       const kvs = params.map(p => seq(reg(new RegExp("^" + p.name + "$", "i")), "=", valueFor(p)));
       const anyKv = kvs.length === 1 ? kvs[0] : altPrio(kvs[0], kvs[1], ...kvs.slice(2));
       const body = optPrio(seq(anyKv, starPrio(seq(",", anyKv))));
-      return ver(v, seq(nameReg, tok(ParenLeftW), body, tok(WParenRightW)));
+      return ver(v, seq(nameReg, tok(ParenLeftW), body, tok(WParenRightW)), {also: AlsoIn.OpenABAP});
     };
 
     return altPrio(
