@@ -32,9 +32,11 @@ class Macros {
   }
 
   public addMacro(name: string, contents: StatementNode[], filename: string): void {
-    if (this.isMacro(name)) {
-      return;
+    const existing = this.macros[name.toUpperCase()];
+    if (existing !== undefined && existing.filename === undefined) {
+      return; // dont overwrite global macros supplied via configuration
     }
+    // macros can be redefined, the definition seen last wins
     this.macros[name.toUpperCase()] = {
       statements: contents,
       filename: filename,
