@@ -444,6 +444,38 @@ describe("rule, xml_consistency, DTEL label lengths", () => {
     expect(issues[0].getSeverity()).to.equal(Severity.Warning);
   });
 
+  it("dataElementSeverity is independent of textAndTranslationLengthSeverity", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <DDTEXT>This description is way too long and definitely exceeds sixty characters total</DDTEXT>
+    <SCRLEN1>05</SCRLEN1>
+    <SCRTEXT_S>TooLong</SCRTEXT_S>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000010</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const conf = new XMLConsistencyConf();
+    conf.severity = Severity.Error;
+
+    // DTELMASTER is missing, plus DDTEXT and SCRTEXT_S are too long
+    let issues = await runDtel(xml, conf);
+    expect(issues.length).to.equal(3);
+    expect(issues[0].getMessage()).to.include("DTELMASTER");
+    expect(issues.map(i => i.getSeverity())).to.deep.equal([Severity.Error, Severity.Error, Severity.Error]);
+
+    conf.dataElementSeverity = Severity.Info;
+    conf.textAndTranslationLengthSeverity = Severity.Warning;
+    issues = await runDtel(xml, conf);
+    expect(issues.length).to.equal(3);
+    expect(issues.map(i => i.getSeverity())).to.deep.equal([Severity.Info, Severity.Warning, Severity.Warning]);
+  });
+
   it("SCRTEXT_M exceeds SCRLEN2", async () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">

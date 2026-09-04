@@ -9494,6 +9494,10 @@
     "XMLConsistencyConf": {
       "additionalProperties": false,
       "properties": {
+        "dataElementSeverity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity for data element(DTEL) field checks"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
