@@ -12,6 +12,8 @@ import {Severity} from "../severity";
 export class XMLConsistencyConf extends BasicRuleConfig {
   /** Problem severity for text and translation length checks */
   public textAndTranslationLengthSeverity?: Severity = Severity.Error;
+  /** Problem severity for data element(DTEL) field checks */
+  public dataElementSeverity?: Severity = Severity.Error;
 }
 
 export class XMLConsistency implements IRule {
@@ -209,7 +211,7 @@ export class XMLConsistency implements IRule {
   private checkRequiredField(file: IFile, fieldName: string, value: string | undefined): Issue | undefined {
     if (value === undefined || value === "") {
       return Issue.atRow(file, 1, `Missing required field ${fieldName} in DD04V`,
-                         this.getMetadata().key, this.conf.severity);
+                         this.getMetadata().key, this.conf.dataElementSeverity);
     }
     return undefined;
   }

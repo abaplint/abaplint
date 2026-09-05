@@ -78,6 +78,8 @@ const tests = [
   "WRITE |{ bar DECIMALS = 0 ALIGN = RIGHT WIDTH = 15 }|.",
   "WRITE AT /.",
   "WRITE AT / 'sdf'.",
+  "WRITE AT / 'sdf' AS LINE.",
+  "WRITE AT / 'sdf' COLOR 3.",
   `WRITE (variable) TO var-txt(len).`,
   `WRITE (var) TO dr-txt LEFT-JUSTIFIED.`,
   `WRITE / <pnumber>.`,
