@@ -475,22 +475,29 @@ export class BasicTypes {
       options.primaryKey!.type = TableAccessType.standard;
       return new Types.TableType(structure, options);
     } else if (typename && this.isRAPTableFor(text)) {
-      const name = typename.concatTokens();
-      const ddlsName = this.getRAPBaseEntityName(name);
-      const type = this.input.scope.getDDIC().lookupDDLS(ddlsName)?.type;
-      if (type) {
-        return new Types.TableType(VoidType.get("RAP-TODO"), options);
-      } else if (this.isRAPDerivedEntityName(name)) {
-        return Types.VoidType.get(name);
-      } else if (this.input.scope.getDDIC().inErrorNamespace(ddlsName)) {
-        return new Types.UnknownType(`DDLS ${ddlsName} not found`);
-      } else {
-        return Types.VoidType.get(name);
-      }
+      return this.rapTableFor(typename.concatTokens(), options);
     }
 
     // fallback to old style syntax, OCCURS etc
     return this.parseType(node, name);
+  }
+
+  /** type of a RAP derived table type, ie the "TABLE FOR LOCK zentity" part of a type */
+  public rapTableFor(entityName: string, options?: Types.ITableOptions): AbstractType {
+    const ddlsName = this.getRAPBaseEntityName(entityName);
+    if (this.input.scope.getDDIC().lookupDDLS(ddlsName)?.type) {
+      return new Types.TableType(VoidType.get("RAP-TODO"), options ?? {
+        withHeader: false,
+        keyType: Types.TableKeyType.user,
+        primaryKey: {name: "primary_key", type: TableAccessType.standard, isUnique: false, keyFields: []},
+        secondary: [],
+      });
+    } else if (this.isRAPDerivedEntityName(entityName)) {
+      return Types.VoidType.get(entityName);
+    } else if (this.input.scope.getDDIC().inErrorNamespace(ddlsName)) {
+      return new Types.UnknownType(`DDLS ${ddlsName} not found`);
+    }
+    return Types.VoidType.get(entityName);
   }
 
   public parseType(node: ExpressionNode | StatementNode, qualifiedName?: string): AbstractType | undefined {
