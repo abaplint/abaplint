@@ -16141,6 +16141,12 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, WRITE AT / with options", () => {
+    const abap = `WRITE AT / 'sdfsd' AS LINE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
 
 ////////////////////////////////////////////////////////////

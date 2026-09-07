@@ -44,10 +44,11 @@ export class CDSDetermineTypes {
             continue;
           }
 
+          const nameInSource = f.nameInSource ?? f.name;
           const lookup = ddic.lookupTableOrView(source.name);
           if (lookup.type) {
             if (lookup.type instanceof StructureType) {
-              const type = lookup.type.getComponentByName(f.name);
+              const type = lookup.type.getComponentByName(nameInSource);
               if (type) {
                 components.push({
                   name: f.name,
@@ -56,7 +57,7 @@ export class CDSDetermineTypes {
               } else {
                 components.push({
                   name: f.name,
-                  type: new UnknownType(f.name + " not found in " + source.name + ", CDSDetermineTypes"),
+                  type: new UnknownType(nameInSource + " not found in " + source.name + ", CDSDetermineTypes"),
                 });
               }
             } else {
