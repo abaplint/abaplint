@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {DataDefinition} from "../../src/objects";
-import {StructureType, VoidType} from "../../src/abap/types/basic";
+import {CharacterType, PackedType, StructureType, UnknownType, VoidType} from "../../src/abap/types/basic";
 
 describe("Object: DDLS - Data Definition", () => {
 
@@ -479,5 +479,148 @@ define view entity ZTEST_C_ITEM
     const parsed = ddls.parseType(reg) as StructureType;
     const names = parsed.getComponents().map(c => c.name.toUpperCase());
     expect(names).to.include("ITEMTYPETEXT");
+  });
+
+  it("prefixed, with as, type is determined from the prefixed source", async () => {
+    const source = `
+define root view entity ZPOC_I_PoItem
+  as select from I_PurchaseOrderItem as PoItem
+
+  left outer join zpoc_change as Request
+    on  Request.purchasingdocument     = PoItem.PurchaseOrder
+    and Request.purchasingdocumentitem = PoItem.PurchaseOrderItem
+
+{
+  key PoItem.PurchaseOrder      as PurchasingDocument,
+      Request.neworderquantity  as NewOrderQuantity,
+      Request.orderquantityunit as OrderQuantityUnit,
+      Request.doesnotexist      as DoesNotExist
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zpoc_i_poitem.ddls.asddls", source),
+      new MemoryFile("zpoc_change.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZPOC_CHANGE</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>test</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZPOC_CHANGE</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL1</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>PURCHASINGDOCUMENT</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000020</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+     <MASK>  CHAR</MASK>
+     <DDTEXT>document</DDTEXT>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>NEWORDERQUANTITY</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>P</INTTYPE>
+     <INTLEN>000007</INTLEN>
+     <DATATYPE>QUAN</DATATYPE>
+     <LENG>000013</LENG>
+     <DECIMALS>000003</DECIMALS>
+     <MASK>  QUAN</MASK>
+     <DDTEXT>quantity</DDTEXT>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>ORDERQUANTITYUNIT</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000006</INTLEN>
+     <DATATYPE>UNIT</DATATYPE>
+     <LENG>000003</LENG>
+     <MASK>  UNIT</MASK>
+     <DDTEXT>unit</DDTEXT>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZPOC_I_POITEM") as DataDefinition;
+    expect(ddls).to.not.equal(undefined);
+    const parsed = ddls.parseType(reg) as StructureType;
+
+    // voided source, but the prefix is known
+    const void1 = parsed.getComponentByName("PurchasingDocument");
+    expect(void1).to.be.instanceof(VoidType);
+    expect((void1 as VoidType).getVoided()).to.equal("I_PURCHASEORDERITEM");
+
+    const quantity = parsed.getComponentByName("NewOrderQuantity");
+    expect(quantity).to.be.instanceof(PackedType);
+    expect((quantity as PackedType).getLength()).to.equal(7);
+    expect((quantity as PackedType).getDecimals()).to.equal(3);
+
+    expect(parsed.getComponentByName("OrderQuantityUnit")).to.be.instanceof(CharacterType);
+
+    expect(parsed.getComponentByName("DoesNotExist")).to.be.instanceof(UnknownType);
+
+    expect(ddls.listKeys()).to.deep.equal(["PurchasingDocument"]);
+  });
+
+  it("prefixed, with as, voided sources", async () => {
+    const source = `
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'PO Item with Change Request'
+@Metadata.ignorePropagatedAnnotations: true
+@ObjectModel.usageType: { serviceQuality: #X, sizeCategory: #M, dataClass: #MIXED }
+define root view entity ZPOC_I_PoItem
+  as select from I_PurchaseOrderItem as PoItem
+
+  inner join      I_PurchaseOrder as PoHeader
+    on PoHeader.PurchaseOrder = PoItem.PurchaseOrder
+
+  left outer join I_ProductText   as MaterialText
+    on  MaterialText.Product  = PoItem.Material
+    and MaterialText.Language = $session.system_language
+
+{
+  key PoItem.PurchaseOrder        as PurchasingDocument,
+  key PoItem.PurchaseOrderItem    as PurchasingDocumentItem,
+
+      PoHeader.PurchaseOrderType  as PurchasingDocumentType,
+
+      @Semantics.quantity.unitOfMeasure: 'OrderQuantityUnit'
+      PoItem.OrderQuantity        as OrderQuantity,
+      // the annotation above ties the quantity to its unit
+      MaterialText.ProductName    as MaterialName
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zpoc_i_poitem.ddls.asddls", source),
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls.hasParserError()).to.equal(undefined);
+    const parsed = ddls.parseType(reg) as StructureType;
+    expect(parsed.getComponents().length).to.equal(5);
+
+    // all voided via the source, none of them "DDLS:fieldname"
+    for (const component of parsed.getComponents()) {
+      expect(component.type).to.be.instanceof(VoidType);
+      expect((component.type as VoidType).getVoided()).to.not.contain("DDLS:fieldname");
+    }
+    expect((parsed.getComponentByName("MaterialName") as VoidType).getVoided()).to.equal("I_PRODUCTTEXT");
+
+    expect(ddls.listKeys()).to.deep.equal(["PurchasingDocument", "PurchasingDocumentItem"]);
   });
 });
