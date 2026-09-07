@@ -484,7 +484,7 @@ export class BasicTypes {
 
   /** type of a RAP derived table type, ie the "TABLE FOR LOCK zentity" part of a type */
   public rapTableFor(entityName: string, options?: Types.ITableOptions): AbstractType {
-    const ddlsName = this.getRAPBaseEntityName(entityName);
+    const ddlsName = this.resolveRAPAlias(this.getRAPBaseEntityName(entityName));
     if (this.input.scope.getDDIC().lookupDDLS(ddlsName)?.type) {
       return new Types.TableType(VoidType.get("RAP-TODO"), options ?? {
         withHeader: false,
@@ -690,6 +690,11 @@ export class BasicTypes {
     const candidates = [association, path, action].filter(i => i !== -1);
     const splitAt = Math.min(...candidates);
     return name.substring(0, splitAt);
+  }
+
+  /** inside a behavior pool the entities are referenced via the aliases defined in the BDEF */
+  private resolveRAPAlias(name: string): string {
+    return this.input.scope.findBehaviorDefinition()?.findEntityNameByAlias(name) ?? name;
   }
 
   private isRAPDerivedEntityName(name: string): boolean {

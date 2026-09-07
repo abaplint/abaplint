@@ -100,6 +100,8 @@ export interface InfoClassDefinition extends InfoInterfaceDefinition {
   duration: Duration | undefined,
   riskLevel: RiskLevel | undefined,
   isSharedMemory: boolean;
+  /** name of the BDEF from "FOR BEHAVIOR OF", undefined if not a behavior pool */
+  behaviorDefinitionName: string | undefined;
 }
 
 export interface InfoClassImplementation {
