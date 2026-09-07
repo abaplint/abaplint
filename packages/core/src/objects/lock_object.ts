@@ -5,11 +5,17 @@ import {IObjectAndToken} from "../_iddic_references";
 import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 import {IAllowedNaming} from "./_iobject";
+import {xmlToArray} from "../xml_utils";
 
 export class LockObject extends AbstractObject {
   private parsedXML: {
     primaryTable?: string,
     description?: string,
+    parameters?: {
+      VIEWFIELD: string,
+      TABNAME?: string,
+      FIELDNAME?: string,
+    }[],
   } | undefined;
 
   public getType(): string {
@@ -32,6 +38,11 @@ export class LockObject extends AbstractObject {
   public getPrimaryTable(): string | undefined {
     this.parse();
     return this.parsedXML?.primaryTable;
+  }
+
+  public getParameters() {
+    this.parse();
+    return this.parsedXML?.parameters;
   }
 
   public parseType(reg: IRegistry): AbstractType {
@@ -73,6 +84,19 @@ export class LockObject extends AbstractObject {
 
     this.parsedXML.primaryTable = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD25V?.ROOTTAB;
     this.parsedXML.description = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD25V?.DDTEXT;
+
+    this.parsedXML.parameters = [];
+    const parameters = parsed.abapGit?.["asx:abap"]?.["asx:values"]?.DD27P_TABLE;
+    for (const parameter of xmlToArray(parameters?.DD27P)) {
+      if (typeof parameter?.VIEWFIELD !== "string") {
+        continue;
+      }
+      this.parsedXML.parameters.push({
+        VIEWFIELD: parameter.VIEWFIELD,
+        TABNAME: parameter.TABNAME,
+        FIELDNAME: parameter.FIELDNAME,
+      });
+    }
 
     const end = Date.now();
     return {updated: true, runtime: end - start};
