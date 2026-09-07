@@ -569,4 +569,34 @@ ENDCLASS.`);
     expect(lcl?.duration).to.equal(Duration.short);
   });
 
+  it("get info on FOR BEHAVIOR OF", async () => {
+    const registry = new Registry();
+
+    registry.addFile(new MemoryFile("zbp_i_booking.clas.abap", `
+CLASS zbp_i_booking DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zi_booking.
+ENDCLASS.
+CLASS zbp_i_booking IMPLEMENTATION.
+ENDCLASS.`));
+    registry.parse();
+
+    const file = (registry.getFirstObject() as Class).getABAPFiles()[0];
+    const def = file.getInfo().getClassDefinitionByName("zbp_i_booking");
+    expect(def?.behaviorDefinitionName).to.equal("zi_booking");
+  });
+
+  it("get info on FOR EVENTS OF, not a behavior pool", async () => {
+    const registry = new Registry();
+
+    registry.addFile(new MemoryFile("zbp_e_booking.clas.abap", `
+CLASS zbp_e_booking DEFINITION PUBLIC ABSTRACT FINAL FOR EVENTS OF zi_booking.
+ENDCLASS.
+CLASS zbp_e_booking IMPLEMENTATION.
+ENDCLASS.`));
+    registry.parse();
+
+    const file = (registry.getFirstObject() as Class).getABAPFiles()[0];
+    const def = file.getInfo().getClassDefinitionByName("zbp_e_booking");
+    expect(def?.behaviorDefinitionName).to.equal(undefined);
+  });
+
 });

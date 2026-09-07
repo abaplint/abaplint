@@ -16,6 +16,7 @@ import {ReferenceType, IReferenceExtras} from "./_reference";
 
 import {IObject} from "../../objects/_iobject";
 import {Class} from "../../objects/class";
+import {BehaviorDefinition} from "../../objects/behavior_definition";
 import {Interface} from "../../objects/interface";
 import {EnhancementSpot} from "../../objects/enhancement_spot";
 import {TypePool} from "../../objects/type_pool";
@@ -285,6 +286,18 @@ export class CurrentScope {
       return intf;
     }
     return undefined;
+  }
+
+  /** the BDEF from "FOR BEHAVIOR OF" of the enclosing global class, undefined if not a behavior pool */
+  public findBehaviorDefinition(): BehaviorDefinition | undefined {
+    if (this.parentObj.getType() !== "CLAS") {
+      return undefined;
+    }
+    const name = (this.parentObj as Class).getClassDefinition()?.behaviorDefinitionName;
+    if (name === undefined) {
+      return undefined;
+    }
+    return this.reg.getObject("BDEF", name) as BehaviorDefinition | undefined;
   }
 
   public isBadiDef(name: string): boolean {

@@ -3,7 +3,7 @@ import {Registry} from "../../../src/registry";
 import {Class} from "../../../src/objects";
 import {Visibility} from "../../../src/abap/4_file_information/visibility";
 import {getABAPObjects} from "../../get_abap";
-import {UnknownType} from "../../../src/abap/types/basic";
+import {TableType, UnknownType, VoidType} from "../../../src/abap/types/basic";
 import {IClassDefinition} from "../../../src/abap/types/_class_definition";
 import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
 import {IRegistry} from "../../../src/_iregistry";
@@ -86,6 +86,49 @@ describe("Types, class_definition", () => {
     expect(pub!.isEventHandler()).to.equal(true);
     expect(pub!.getVisibility()).to.equal(Visibility.Public);
     expect(pub!.getParameters().getAll().length).to.equal(2);
+  });
+
+  it("method, FOR LOCK, derived signature, entity found", () => {
+    const ddls = `
+define root view entity zi_lockentity as select from zfoo {
+  key field1
+}`;
+    const abap = `CLASS zcl_moo DEFINITION CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS lock FOR LOCK IMPORTING keys FOR LOCK zi_lockentity.
+ENDCLASS.
+CLASS zcl_moo IMPLEMENTATION.
+  METHOD lock.
+  ENDMETHOD.
+ENDCLASS.`;
+    const reg = new Registry()
+      .addFile(new MemoryFile("zi_lockentity.ddls.asddls", ddls))
+      .addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
+    const parameters = run(reg)!.getMethodDefinitions().getByName("lock")!.getParameters();
+
+    expect(parameters.getImporting().map(p => p.getName())).to.deep.equal(["keys"]);
+    expect(parameters.getImporting()[0].getType()).to.be.instanceof(TableType);
+    // "mapped" is not part of the "FOR LOCK" signature
+    expect(parameters.getExporting().map(p => p.getName())).to.deep.equal(["failed", "reported"]);
+    for (const exporting of parameters.getExporting()) {
+      expect(exporting.getType()).to.be.instanceof(VoidType);
+    }
+  });
+
+  it("method, FOR LOCK, derived signature, entity voided", () => {
+    const abap = `CLASS zcl_moo DEFINITION CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS lock FOR LOCK IMPORTING keys FOR LOCK i_lockentity.
+ENDCLASS.
+CLASS zcl_moo IMPLEMENTATION.
+  METHOD lock.
+  ENDMETHOD.
+ENDCLASS.`;
+    const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
+    const parameters = run(reg)!.getMethodDefinitions().getByName("lock")!.getParameters();
+
+    expect(parameters.getImporting()[0].getType()).to.be.instanceof(VoidType);
+    expect(parameters.getExporting().map(p => p.getName())).to.deep.equal(["failed", "reported"]);
   });
 
   it("method alias", () => {
