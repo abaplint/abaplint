@@ -1617,3 +1617,93 @@ describe("rule, xml_consistency, DOMA text lengths", () => {
   });
 
 });
+
+async function runEnqu(parameters: string): Promise<Issue[]> {
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_ENQU" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD25V>
+    <VIEWNAME>EZENQU</VIEWNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <AGGTYPE>E</AGGTYPE>
+    <ROOTTAB>ZENQU</ROOTTAB>
+    <DDTEXT>Test</DDTEXT>
+   </DD25V>
+   <DD27P_TABLE>
+    ${parameters}
+   </DD27P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  const reg = new Registry().addFile(new MemoryFile("ezenqu.enqu.xml", xml));
+  return run(reg);
+}
+
+describe("rule, xml_consistency, ENQU lock parameter name length", () => {
+
+  it("no issues when parameter names are within limit", async () => {
+    const issues = await runEnqu(`<DD27P>
+     <VIEWNAME>EZENQU</VIEWNAME>
+     <OBJPOS>0001</OBJPOS>
+     <VIEWFIELD>SIXTEENCHARACTER</VIEWFIELD>
+     <TABNAME>ZENQU</TABNAME>
+     <FIELDNAME>SIXTEENCHARACTER</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ENQMODE>E</ENQMODE>
+    </DD27P>`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("errors when parameter name is too long", async () => {
+    const issues = await runEnqu(`<DD27P>
+     <VIEWNAME>EZENQU</VIEWNAME>
+     <OBJPOS>0001</OBJPOS>
+     <VIEWFIELD>SEVENTEENCHARACTE</VIEWFIELD>
+     <TABNAME>ZENQU</TABNAME>
+     <FIELDNAME>SEVENTEENCHARACTE</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ENQMODE>E</ENQMODE>
+    </DD27P>`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal(
+      "Lock parameter SEVENTEENCHARACTE exceeds maximum length of 16 characters (actual: 17)");
+  });
+
+  it("errors for each too long parameter name", async () => {
+    const issues = await runEnqu(`<DD27P>
+     <VIEWNAME>EZENQU</VIEWNAME>
+     <OBJPOS>0001</OBJPOS>
+     <VIEWFIELD>MANDT</VIEWFIELD>
+     <TABNAME>ZENQU</TABNAME>
+     <FIELDNAME>MANDT</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ENQMODE>E</ENQMODE>
+    </DD27P>
+    <DD27P>
+     <VIEWNAME>EZENQU</VIEWNAME>
+     <OBJPOS>0002</OBJPOS>
+     <VIEWFIELD>THIS_PARAMETER_NAME_IS_TOO_LON</VIEWFIELD>
+     <TABNAME>ZENQU</TABNAME>
+     <FIELDNAME>THIS_PARAMETER_NAME_IS_TOO_LON</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ENQMODE>E</ENQMODE>
+    </DD27P>
+    <DD27P>
+     <VIEWNAME>EZENQU</VIEWNAME>
+     <OBJPOS>0003</OBJPOS>
+     <VIEWFIELD>ANOTHER_LONG_PARAMETER</VIEWFIELD>
+     <TABNAME>ZENQU</TABNAME>
+     <FIELDNAME>ANOTHER_LONG_PARAMETER</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ENQMODE>E</ENQMODE>
+    </DD27P>`);
+    expect(issues.length).to.equal(2);
+  });
+
+  it("no issues when no parameters present", async () => {
+    const issues = await runEnqu("");
+    expect(issues.length).to.equal(0);
+  });
+
+});

@@ -29,6 +29,7 @@ export class XMLConsistency implements IRule {
 * XML is well-formed and parseable
 * Naming for CLAS and INTF objects
 * QUAN fields in TABL objects have reference table and field values
+* Lock parameter names in ENQU objects are max 16 characters
 * Texts and translations do not exceed maximum allowed length.`,
       tags: [RuleTag.Naming, RuleTag.Syntax],
     };
@@ -84,6 +85,8 @@ export class XMLConsistency implements IRule {
       issues.push(...this.runMessageClass(obj, file));
     } else if (obj instanceof Objects.Table) {
       issues.push(...this.runTable(obj, file));
+    } else if (obj instanceof Objects.LockObject) {
+      issues.push(...this.runLockObject(obj, file));
     }
 
     if (obj instanceof ABAPObject) {
@@ -263,6 +266,19 @@ export class XMLConsistency implements IRule {
       push(this.checkTextLength(file, `TEXT[${translation.number}]`, translation.text, maxTextLength, translation.language));
     }
 
+    return issues;
+  }
+
+  private runLockObject(obj: Objects.LockObject, file: IFile): Issue[] {
+    const maxParameterLength = 16;
+    const issues: Issue[] = [];
+    for (const parameter of obj.getParameters() ?? []) {
+      if (parameter.VIEWFIELD.length > maxParameterLength) {
+        const message = `Lock parameter ${parameter.VIEWFIELD} exceeds maximum length of ` +
+          `${maxParameterLength} characters (actual: ${parameter.VIEWFIELD.length})`;
+        issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity));
+      }
+    }
     return issues;
   }
 
