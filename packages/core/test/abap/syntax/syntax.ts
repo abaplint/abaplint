@@ -3624,6 +3624,61 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("not compatible with StringType");
   });
 
+  it("VALUE #, too short character literal in sorted table, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tchar TYPE c LENGTH 10.
+    TYPES ty TYPE SORTED TABLE OF tchar WITH UNIQUE KEY table_line.
+    METHODS bar IMPORTING moo TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    bar( VALUE #( ( '' ) ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with row type c LENGTH 10");
+  });
+
+  it("VALUE #, too short character literal in standard table, ok, padded", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tchar TYPE c LENGTH 10.
+    TYPES ty TYPE STANDARD TABLE OF tchar WITH EMPTY KEY.
+    METHODS bar IMPORTING moo TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    bar( VALUE #( ( '' ) ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("VALUE #, compatible character literal in sorted table, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES tchar TYPE c LENGTH 10.
+    TYPES ty TYPE SORTED TABLE OF tchar WITH UNIQUE KEY table_line.
+    METHODS bar IMPORTING moo TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    bar( VALUE #( ( 'abcdefghij' ) ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("VALUE #, string literal in string table, ok", () => {
     const abap = `
     DATA lt_values TYPE STANDARD TABLE OF string WITH EMPTY KEY.

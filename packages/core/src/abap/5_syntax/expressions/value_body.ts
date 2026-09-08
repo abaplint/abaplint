@@ -5,7 +5,7 @@ import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
-import {AnyType, CharacterType, StringType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, CharacterType, StringType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ValueBody {
@@ -104,6 +104,14 @@ export class ValueBody {
         if (rowType instanceof StringType && sourceType instanceof CharacterType) {
           const message = "VALUE, source type CharacterType not compatible with StringType";
           input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+        } else if (this.insertsUsingTableKey(targetType)
+            && rowType instanceof CharacterType
+            && sourceType instanceof CharacterType
+            && rowType.getLength() !== sourceType.getLength()) {
+// only STANDARD tables append the rows, and thus allow padding of shorter c values
+          const message = `VALUE, source type c LENGTH ${sourceType.getLength()} not compatible ` +
+            `with row type c LENGTH ${rowType.getLength()}`;
+          input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
         }
       }
     }
@@ -120,5 +128,16 @@ export class ValueBody {
       return type;
     }
     return targetType ? targetType : type;
+  }
+
+  /** SORTED and HASHED tables insert the constructed rows using the table key, which
+   * requires the rows to be compatible with the row type. STANDARD tables only append
+   * the rows, so shorter c and x values are padded on the right instead. */
+  private static insertsUsingTableKey(targetType: AbstractType | undefined): boolean {
+    if (!(targetType instanceof TableType)) {
+      return false;
+    }
+    const accessType = targetType.getAccessType();
+    return accessType === TableAccessType.sorted || accessType === TableAccessType.hashed;
   }
 }
