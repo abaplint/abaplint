@@ -45,6 +45,9 @@ abapGit does not work with CRLF`,
     for (const file of obj.getFiles()) {
       const filename = file.getFilename();
       if (filename.endsWith(".abap") || filename.endsWith(".xml")) {
+        if (filename.endsWith(".xslt.source.xml")) {
+          continue;
+        }
         const rows = file.getRawRows();
         for (let i = 0; i < rows.length; i++) {
           if (rows[i].endsWith("\r") === true) {
