@@ -3597,6 +3597,33 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.contain("not compatible with StringType");
   });
 
+  it("VALUE #, empty character literal in string table, error", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    tab = VALUE #( ( '' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with StringType");
+  });
+
+  it("VALUE #, empty character literal in string table method parameter, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    METHODS bar IMPORTING moo TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    bar( VALUE #( ( '' ) ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with StringType");
+  });
+
   it("VALUE #, string literal in string table, ok", () => {
     const abap = `
     DATA lt_values TYPE STANDARD TABLE OF string WITH EMPTY KEY.
