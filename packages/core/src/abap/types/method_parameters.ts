@@ -7,6 +7,7 @@ import {TypedIdentifier, IdentifierMeta} from "./_typed_identifier";
 import {ObjectReferenceType, UnknownType, VoidType} from "./basic";
 import {MethodDefReturning} from "../5_syntax/expressions/method_def_returning";
 import {MethodParam} from "../5_syntax/expressions/method_param";
+import {BasicTypes} from "../5_syntax/basic_types";
 import {IMethodParameters} from "./_method_parameters";
 import {ObjectOriented} from "../5_syntax/_object_oriented";
 import {ReferenceType} from "../5_syntax/_reference";
@@ -234,20 +235,32 @@ export class MethodParameters implements IMethodParameters {
     const isRap = node.findExpressionAfterToken("IMPORTING")
       || (concat.includes(" IMPORTING REQUEST ") ? node.findExpressionAfterToken("REQUEST") : undefined);
     if (isRap) {
+      // "FOR LOCK" handlers have a well defined signature, so the types can be derived
+      const lockEntity = concat.includes(" FOR LOCK ")
+        ? node.findExpressionAfterToken("LOCK")?.concatTokens()
+        : undefined;
+
       for (const foo of node.findDirectExpressions(Expressions.MethodParamName)) {
         if (foo === resultName) {
           continue;
         }
-        this.importing.push(new TypedIdentifier(foo.getFirstToken(), input.filename, VoidType.get("RapMethodParameter"), [IdentifierMeta.MethodImporting]));
+        const type = lockEntity === undefined
+          ? VoidType.get("RapMethodParameter")
+          : new BasicTypes(input).rapTableFor(lockEntity);
+        this.importing.push(new TypedIdentifier(foo.getFirstToken(), input.filename, type, [IdentifierMeta.MethodImporting]));
       }
 
-      if (concat.includes(" FOR VALIDATE ")
+      if (lockEntity !== undefined) {
+        // note: "mapped" is not part of the signature for "FOR LOCK"
+        const token = isRap.getFirstToken();
+        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "failed"), input.filename, VoidType.get(`RESPONSE FOR FAILED EARLY ${lockEntity}`), [IdentifierMeta.MethodExporting]));
+        this.exporting.push(new TypedIdentifier(new IdentifierToken(token.getStart(), "reported"), input.filename, VoidType.get(`RESPONSE FOR REPORTED EARLY ${lockEntity}`), [IdentifierMeta.MethodExporting]));
+      } else if (concat.includes(" FOR VALIDATE ")
           || concat.includes(" FOR BEHAVIOR ")
           || concat.includes(" FOR DETERMINE ")
           || concat.includes(" FOR FEATURES ")
           || concat.includes(" FOR INSTANCE FEATURES ")
           || concat.includes(" FOR GLOBAL AUTHORIZATION ")
-          || concat.includes(" FOR LOCK ")
           || concat.includes(" FOR PRECHECK ")
           || concat.includes(" FOR NUMBERING ")
           || concat.includes(" FOR READ ")

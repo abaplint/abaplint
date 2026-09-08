@@ -13133,6 +13133,55 @@ WRITE / lines( rulesets_cba ).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("FOR LOCK, keys is a table, failed and reported are voided", () => {
+    const ddls = `
+define root view entity zi_lockentity as select from zfoo {
+  key field1
+}`;
+    const abap = `
+CLASS lcl_lock DEFINITION.
+  PRIVATE SECTION.
+    METHODS lock FOR LOCK IMPORTING keys FOR LOCK zi_lockentity.
+ENDCLASS.
+CLASS lcl_lock IMPLEMENTATION.
+  METHOD lock.
+    LOOP AT keys INTO DATA(key).
+      WRITE / key.
+    ENDLOOP.
+    CLEAR failed.
+    CLEAR reported.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zi_lockentity.ddls.asddls", contents: ddls},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR LOCK, mapped is not part of the signature", () => {
+    const ddls = `
+define root view entity zi_lockentity as select from zfoo {
+  key field1
+}`;
+    const abap = `
+CLASS lcl_lock DEFINITION.
+  PRIVATE SECTION.
+    METHODS lock FOR LOCK IMPORTING keys FOR LOCK zi_lockentity.
+ENDCLASS.
+CLASS lcl_lock IMPLEMENTATION.
+  METHOD lock.
+    CLEAR mapped.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zi_lockentity.ddls.asddls", contents: ddls},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("mapped");
+  });
+
   it("basic WITH INDICATORS", () => {
     const abap = `
 TYPES: BEGIN OF ty,
@@ -16137,6 +16186,12 @@ INTERFACE lif_sub.
   INTERFACES lif_top.
   ALIASES bar FOR lif_top~bar.
 ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, WRITE AT / with options", () => {
+    const abap = `WRITE AT / 'sdfsd' AS LINE.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });

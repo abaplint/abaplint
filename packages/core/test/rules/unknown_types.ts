@@ -2565,4 +2565,70 @@ DATA foo LIKE sy-datum(4).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  const ddlsBooking = `
+define root view entity zi_booking_hvam as select from zbooking {
+  key booking
+}`;
+
+  const bdefBooking = `
+unmanaged implementation in class zbp_i_booking_hvam unique;
+//define behavior for zi_commented_out_hvam alias commented
+
+define behavior for zi_booking_hvam alias booking
+lock master
+{
+  create;
+  update;
+  delete;
+}`;
+
+  const clasBooking = `
+CLASS zbp_i_booking_hvam DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zi_booking_hvam.
+ENDCLASS.
+CLASS zbp_i_booking_hvam IMPLEMENTATION.
+ENDCLASS.`;
+
+  it("FOR LOCK, entity referenced via BDEF alias", () => {
+    const localsImp = `
+CLASS lcl_handler DEFINITION FINAL.
+  PRIVATE SECTION.
+    METHODS lock FOR BEHAVIOR
+      IMPORTING it_booking_key FOR LOCK booking.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD lock.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zi_booking_hvam.ddls.asddls", contents: ddlsBooking},
+      {filename: "zi_booking_hvam.bdef.asbdef", contents: bdefBooking},
+      {filename: "zbp_i_booking_hvam.clas.abap", contents: clasBooking},
+      {filename: "zbp_i_booking_hvam.clas.locals_imp.abap", contents: localsImp},
+    ], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR LOCK, alias not defined in BDEF", () => {
+    const localsImp = `
+CLASS lcl_handler DEFINITION FINAL.
+  PRIVATE SECTION.
+    METHODS lock FOR BEHAVIOR
+      IMPORTING it_booking_key FOR LOCK commented.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD lock.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zi_booking_hvam.ddls.asddls", contents: ddlsBooking},
+      {filename: "zi_booking_hvam.bdef.asbdef", contents: bdefBooking},
+      {filename: "zbp_i_booking_hvam.clas.abap", contents: clasBooking},
+      {filename: "zbp_i_booking_hvam.clas.locals_imp.abap", contents: localsImp},
+    ], fullErrorNamespace());
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("DDLS commented not found");
+  });
+
 });

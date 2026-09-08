@@ -31,7 +31,7 @@ const RESERVED_ELEMENT_NAMES = ["BEGIN", "NUMBER", "POSITION"];
 const MAX_LABEL_LENGTH = 40;
 
 // Annotations which are not supported in CDS view entities
-const VIEW_ENTITY_FORBIDDEN_ANNOTATIONS = ["Semantics.unitOfMeasure"];
+const VIEW_ENTITY_FORBIDDEN_ANNOTATIONS = ["Semantics.unitOfMeasure", "Semantics.currencyCode"];
 
 export class CDSCheckSyntax implements IRule {
   private reg: IRegistry;
@@ -83,6 +83,7 @@ Missing objects are only reported when their names match the configured errorNam
     this.checkFieldAnnotations(tree, ddic, issues, file);
     this.checkLabels(tree, issues, file);
     this.checkViewEntityAnnotations(tree, issues, file);
+    this.checkSearchable(tree, issues, file);
     this.checkReservedNames(tree, issues, file);
     this.checkFields(tree, sources, object, issues, file);
 
@@ -336,6 +337,33 @@ Missing objects are only reported when their names match the configured errorNam
                                   this.getMetadata().key, this.conf.severity));
       }
     }
+  }
+
+  private checkSearchable(tree: ExpressionNode, issues: Issue[], file: IFile) {
+    let searchable: ExpressionNode | undefined;
+
+    for (const annotation of tree.findAllExpressionsRecursive(CDSAnnotation)) {
+      const normalized = annotation.concatTokens().replace(/\s/g, "").toUpperCase().replace(/^@</, "@");
+      if (this.hasSearchAnnotation(normalized, "defaultSearchElement")) {
+        return;
+      } else if (searchable === undefined && this.hasSearchAnnotation(normalized, "searchable")) {
+        searchable = annotation;
+      }
+    }
+
+    if (searchable !== undefined) {
+      const message = "@Search.defaultSearchElement: true required on at least one element " +
+        "when @Search.searchable: true";
+      issues.push(Issue.atToken(file, searchable.getFirstToken(), message,
+                                this.getMetadata().key, this.conf.severity));
+    }
+  }
+
+  private hasSearchAnnotation(normalized: string, name: string): boolean {
+    if (normalized.startsWith("@SEARCH") === false) {
+      return false;
+    }
+    return new RegExp("[.{,]" + name.toUpperCase() + ":TRUE").test(normalized);
   }
 
   private checkReservedNames(tree: ExpressionNode, issues: Issue[], file: IFile) {

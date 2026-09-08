@@ -1,7 +1,7 @@
 import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
-import {StructureNode, StatementNode} from "../nodes";
+import {StructureNode, StatementNode, ExpressionNode} from "../nodes";
 import {Identifier} from "./_identifier";
 import * as Tokens from "../1_lexer/tokens";
 import {Visibility} from "./visibility";
@@ -164,6 +164,7 @@ export class ABAPFileInformationParser {
         riskLevel,
         isAbstract: cdef?.findDirectTokenByText("ABSTRACT") !== undefined,
         isSharedMemory: concat.includes(" SHARED MEMORY ENABLED"),
+        behaviorDefinitionName: this.findBehaviorDefinitionName(cdef),
         isFinal: found.findFirstExpression(Expressions.ClassFinal) !== undefined,
         aliases,
         attributes,
@@ -175,6 +176,21 @@ export class ABAPFileInformationParser {
   }
 
   ///////////////////
+
+  /** "FOR BEHAVIOR OF" and "FOR EVENTS OF" both use the BehaviorDefinitionName expression,
+   * so look at the token two positions before the expression to tell them apart */
+  private findBehaviorDefinitionName(cdef: StatementNode | undefined): string | undefined {
+    const children = cdef?.getChildren() || [];
+    for (let i = 2; i < children.length; i++) {
+      const child = children[i];
+      if (child instanceof ExpressionNode
+          && child.get() instanceof Expressions.BehaviorDefinitionName
+          && children[i - 2].concatTokens().toUpperCase() === "BEHAVIOR") {
+        return child.concatTokens();
+      }
+    }
+    return undefined;
+  }
 
   private getImplementing(input: StructureNode): InfoImplementing[] {
     const ret: InfoImplementing[] = [];
