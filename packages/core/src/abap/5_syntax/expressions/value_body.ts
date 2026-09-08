@@ -5,7 +5,7 @@ import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
-import {AnyType, CharacterType, StringType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, CharacterType, HexType, StringType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ValueBody {
@@ -104,14 +104,18 @@ export class ValueBody {
         if (rowType instanceof StringType && sourceType instanceof CharacterType) {
           const message = "VALUE, source type CharacterType not compatible with StringType";
           input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
-        } else if (this.insertsUsingTableKey(targetType)
-            && rowType instanceof CharacterType
-            && sourceType instanceof CharacterType
-            && rowType.getLength() !== sourceType.getLength()) {
-// only STANDARD tables append the rows, and thus allow padding of shorter c values
-          const message = `VALUE, source type c LENGTH ${sourceType.getLength()} not compatible ` +
-            `with row type c LENGTH ${rowType.getLength()}`;
-          input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+        } else if (this.insertsUsingTableKey(targetType)) {
+// only STANDARD tables append the rows, and thus allow padding of shorter c and x values
+          const row = this.characterOrHexLength(rowType);
+          const source = this.characterOrHexLength(sourceType);
+          if (row !== undefined
+              && source !== undefined
+              && row.abap === source.abap
+              && row.length !== source.length) {
+            const message = `VALUE, source type ${source.abap} LENGTH ${source.length} not compatible ` +
+              `with row type ${row.abap} LENGTH ${row.length}`;
+            input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+          }
         }
       }
     }
@@ -139,5 +143,14 @@ export class ValueBody {
     }
     const accessType = targetType.getAccessType();
     return accessType === TableAccessType.sorted || accessType === TableAccessType.hashed;
+  }
+
+  private static characterOrHexLength(type: AbstractType | undefined): {abap: string, length: number} | undefined {
+    if (type instanceof CharacterType) {
+      return {abap: "c", length: type.getLength()};
+    } else if (type instanceof HexType) {
+      return {abap: "x", length: type.getLength()};
+    }
+    return undefined;
   }
 }
