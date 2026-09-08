@@ -3,6 +3,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IObject} from "../objects/_iobject";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IRegistry} from "../_iregistry";
+import {MIMEObject, WebMIME} from "../objects";
 
 export class LineBreakStyleConf extends BasicRuleConfig {
 }
@@ -13,10 +14,11 @@ export class LineBreakStyle implements IRule {
   public getMetadata(): IRuleMetadata {
     return {
       key: "line_break_style",
-      title: "Makes sure line breaks are consistent in the ABAP code",
-      shortDescription: `Enforces LF as newlines in ABAP files
+      title: "Makes sure line breaks are consistent",
+      shortDescription: `Enforces LF as newlines in ABAP and XML files
 
 abapGit does not work with CRLF`,
+      extendedInformation: `SMIM and W3MI files are not checked.`,
       tags: [RuleTag.Whitespace, RuleTag.SingleFile],
     };
   }
@@ -36,8 +38,13 @@ abapGit does not work with CRLF`,
   public run(obj: IObject): Issue[] {
     const output: Issue[] = [];
 
+    if (obj instanceof MIMEObject || obj instanceof WebMIME) {
+      return output;
+    }
+
     for (const file of obj.getFiles()) {
-      if (file.getFilename().endsWith(".abap")) {
+      const filename = file.getFilename();
+      if (filename.endsWith(".abap") || filename.endsWith(".xml")) {
         const rows = file.getRawRows();
         for (let i = 0; i < rows.length; i++) {
           if (rows[i].endsWith("\r") === true) {
