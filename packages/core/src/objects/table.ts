@@ -36,6 +36,8 @@ export class Table extends AbstractObject {
   private parsedData: {
     tableCategory?: TableCategory | undefined,
     dataClass?: string,
+    deliveryClass?: string,
+    sizeCategory?: string,
     enhancementCategory?: EnhancementCategory,
     description?: string,
     secondaryIndexes?: SecondaryIndex[],
@@ -301,6 +303,22 @@ export class Table extends AbstractObject {
     return this.parsedData?.tableCategory;
   }
 
+  public getDeliveryClass(): string | undefined {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+
+    return this.parsedData?.deliveryClass;
+  }
+
+  public getSizeCategory(): string | undefined {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+
+    return this.parsedData?.sizeCategory;
+  }
+
   public getEnhancementCategory(): EnhancementCategory {
     if (this.parsedData === undefined) {
       this.parseXML();
@@ -350,6 +368,8 @@ export class Table extends AbstractObject {
     this.parsedData.tableCategory = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD02V?.TABCLASS;
     this.parsedData.description = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD02V?.DDTEXT;
     this.parsedData.dataClass = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD09L?.TABART;
+    this.parsedData.deliveryClass = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD02V?.CONTFLAG;
+    this.parsedData.sizeCategory = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD09L?.TABKAT;
 
 // fields
     const fields = parsed?.abapGit?.["asx:abap"]?.["asx:values"]?.DD03P_TABLE;

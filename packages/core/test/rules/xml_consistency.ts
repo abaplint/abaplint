@@ -326,6 +326,103 @@ describe("rule, xml_consistency, TABL QUAN reference fields", () => {
   });
 });
 
+async function runTablXml(xml: string): Promise<Issue[]> {
+  const reg = new Registry().addFile(new MemoryFile("ztabl.tabl.xml", xml));
+  return run(reg);
+}
+
+function transparentTabl(dd02v: string, dd09l: string): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTABL</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>Description</DDTEXT>
+${dd02v}
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZTABL</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+${dd09l}
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>FIELD</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+}
+
+describe("rule, xml_consistency, TABL delivery class and size category", () => {
+
+  it("no issues when both are set", async () => {
+    const issues = await runTablXml(transparentTabl(`    <CONTFLAG>A</CONTFLAG>`, `    <TABKAT>0</TABKAT>\n    <TABART>APPL0</TABART>`));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("errors when delivery class is missing", async () => {
+    const issues = await runTablXml(transparentTabl(``, `    <TABKAT>0</TABKAT>\n    <TABART>APPL0</TABART>`));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Transparent table must have delivery class(CONTFLAG in DD02V) set");
+  });
+
+  it("errors when size category is missing", async () => {
+    const issues = await runTablXml(transparentTabl(`    <CONTFLAG>A</CONTFLAG>`, `    <TABART>APPL0</TABART>`));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Transparent table must have size category(TABKAT in DD09L) set");
+  });
+
+  it("errors when delivery class is empty", async () => {
+    const issues = await runTablXml(transparentTabl(`    <CONTFLAG/>`, `    <TABKAT>0</TABKAT>`));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("delivery class");
+  });
+
+  it("errors when size category is empty", async () => {
+    const issues = await runTablXml(transparentTabl(`    <CONTFLAG>A</CONTFLAG>`, `    <TABKAT/>`));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("size category");
+  });
+
+  it("errors when both are missing", async () => {
+    const issues = await runTablXml(transparentTabl(``, ``));
+    expect(issues.length).to.equal(2);
+  });
+
+  it("no issues for structures", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTABL</TABNAME>
+    <TABCLASS>INTTAB</TABCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>FIELD</FIELDNAME>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await runTablXml(xml);
+    expect(issues.length).to.equal(0);
+  });
+
+});
+
 async function runDtel(xml: string, conf?: XMLConsistencyConf): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zdtel.dtel.xml", xml));
   return run(reg, conf);
