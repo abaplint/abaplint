@@ -29,6 +29,7 @@ export class XMLConsistency implements IRule {
 * XML is well-formed and parseable
 * Naming for CLAS and INTF objects
 * QUAN fields in TABL objects have reference table and field values
+* Transparent TABL objects have delivery class and size category set
 * Lock parameter names in ENQU objects are max 16 characters
 * Texts and translations do not exceed maximum allowed length.`,
       tags: [RuleTag.Naming, RuleTag.Syntax],
@@ -290,6 +291,18 @@ export class XMLConsistency implements IRule {
         issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity));
       }
     }
+
+    if (obj.getTableCategory() === Objects.TableCategory.Transparent) {
+      if (!obj.getDeliveryClass()?.trim()) {
+        const message = `Transparent table must have delivery class(CONTFLAG in DD02V) set`;
+        issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity));
+      }
+      if (!obj.getSizeCategory()?.trim()) {
+        const message = `Transparent table must have size category(TABKAT in DD09L) set`;
+        issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity));
+      }
+    }
+
     return issues;
   }
 }
