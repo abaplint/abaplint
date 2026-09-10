@@ -67,6 +67,8 @@ export class TypeUtils {
   public isCharLikeForCompare(type: AbstractType | undefined): boolean {
     return type === undefined
       || type instanceof StringType
+      || type instanceof CLikeType
+      || type instanceof CSequenceType
       || this.isCharLikeField(type);
   }
 
