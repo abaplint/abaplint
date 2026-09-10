@@ -16353,6 +16353,15 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("GET TIME STAMP FIELD, string target is not compatible", () => {
+    const abap = `
+DATA lv_str TYPE string.
+GET TIME STAMP FIELD lv_str.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal("GET TIME STAMP FIELD, target type not compatible");
+  });
+
 });
 
 ////////////////////////////////////////////////////////////
