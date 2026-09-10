@@ -6050,6 +6050,23 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible");
   });
 
+  it("inline character literal passed to string method parameter is not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS open_issue IMPORTING iv_repository_id TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD open_issue.
+    DATA(lv_repository) = 'issue-numbering-1'.
+    open_issue( iv_repository_id = lv_repository ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal("Method parameter type not compatible, IV_REPOSITORY_ID");
+  });
+
   it("structure field name longer than 30 characters", () => {
     const abap = `
 TYPES: BEGIN OF ty_bar,
@@ -16334,6 +16351,15 @@ ENDINTERFACE.`;
     const abap = `WRITE AT / 'sdfsd' AS LINE.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("GET TIME STAMP FIELD, string target is not compatible", () => {
+    const abap = `
+DATA lv_str TYPE string.
+GET TIME STAMP FIELD lv_str.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal("GET TIME STAMP FIELD, target type not compatible");
   });
 
 });

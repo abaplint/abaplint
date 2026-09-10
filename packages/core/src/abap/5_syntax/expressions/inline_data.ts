@@ -1,7 +1,7 @@
 import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {CGenericType, CLikeType, CSequenceType, StringType, UnknownType, VoidType, XSequenceType} from "../../types/basic";
+import {CGenericType, CharacterType, CLikeType, CSequenceType, IntegerType, StringType, UnknownType, VoidType, XSequenceType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
@@ -30,7 +30,7 @@ export class InlineData {
         type = VoidType.get(CheckSyntaxKey);
       }
 
-      const identifier = new TypedIdentifier(token, input.filename, type, [IdentifierMeta.InlineDefinition]);
+      const identifier = new TypedIdentifier(token, input.filename, this.stripDerivedFromConstant(type), [IdentifierMeta.InlineDefinition]);
       input.scope.addIdentifier(identifier);
       input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
     } else if (token) {
@@ -39,5 +39,24 @@ export class InlineData {
       input.scope.addIdentifier(identifier);
       input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
     }
+  }
+
+  // The inferred type is taken from the source expression, which might be a literal.
+  // The variable itself is not a constant, so the relaxations that apply to literals
+  // must not be inherited, eg. a "c" variable is not assignable to a "string" parameter
+  private static stripDerivedFromConstant(type: AbstractType): AbstractType {
+    const data = type.getAbstractTypeData();
+    if (data?.derivedFromConstant !== true) {
+      return type;
+    }
+    const {derivedFromConstant, ...rest} = data;
+    if (type instanceof CharacterType) {
+      return new CharacterType(type.getLength(), rest);
+    } else if (type instanceof IntegerType) {
+      return IntegerType.get(rest);
+    } else if (type instanceof StringType) {
+      return StringType.get(rest);
+    }
+    return type;
   }
 }
