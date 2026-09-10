@@ -64,6 +64,14 @@ export class TypeUtils {
       || type instanceof VoidType;
   }
 
+  public isCharLikeForCompare(type: AbstractType | undefined): boolean {
+    return type === undefined
+      || type instanceof StringType
+      || type instanceof CLikeType
+      || type instanceof CSequenceType
+      || this.isCharLikeField(type);
+  }
+
   public isCharLike(type: AbstractType | undefined): boolean {
     if (type === undefined) {
       return false;

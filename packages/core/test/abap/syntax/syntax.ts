@@ -14900,6 +14900,33 @@ ENDIF.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CS operands must be character-like", () => {
+    const abap = `
+DATA lv_nul TYPE xstring.
+DATA lv_payload TYPE xstring.
+IF lv_payload CS lv_nul.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal("CS operands must be character-like (data type C, N, D, T, or STRING)");
+  });
+
+  it("CS operands allow clike and csequence", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS compare IMPORTING iv_clike TYPE clike iv_csequence TYPE csequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD compare.
+    IF iv_clike CS iv_csequence.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("ok string template format", () => {
     const abap = `write |\\\\\\n\\r\\t|.
 write |\\\\xC2|.`;
