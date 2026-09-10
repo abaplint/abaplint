@@ -3089,10 +3089,15 @@ ${indentation}    output = ${uniqueName}.\n`;
       }
 
       const uniqueName = this.uniqueName(i.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
-      const type = this.findType(i, lowFile, highSyntax);
       const indent = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
 
-      const abap = `DATA ${uniqueName} TYPE ${type}.\n` +
+      // the CONV type might just be a component of the row type, so prefer the row type
+      const rowOf = this.findRowTypeOf(high, i);
+      const declaration = rowOf === undefined
+        ? `DATA ${uniqueName} TYPE ${this.findType(i, lowFile, highSyntax)}.`
+        : `DATA ${uniqueName} LIKE LINE OF ${rowOf}.`;
+
+      const abap = declaration + "\n" +
         indent + `${uniqueName} = ${body}.\n` +
         indent;
       const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), abap);
@@ -3103,6 +3108,18 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     return undefined;
+  }
+
+  /** if the source expression is the complete source of an INSERT or APPEND statement, then the
+   * outlined variable must be typed via the row type of the table, returns the table name */
+  private findRowTypeOf(high: StatementNode, source: ExpressionNode): string | undefined {
+    if (!(high.get() instanceof Statements.InsertInternal)
+        && !(high.get() instanceof Statements.Append)) {
+      return undefined;
+    } else if (high.getChildren()[1] !== source) {
+      return undefined;
+    }
+    return high.findDirectExpression(Expressions.Target)?.concatTokens();
   }
 
   // "CAST" to "?="
