@@ -14900,6 +14900,17 @@ ENDIF.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CS operands must be character-like", () => {
+    const abap = `
+DATA lv_nul TYPE xstring.
+DATA lv_payload TYPE xstring.
+IF lv_payload CS lv_nul.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal("CS operands must be character-like (data type C, N, D, T, or STRING)");
+  });
+
   it("ok string template format", () => {
     const abap = `write |\\\\\\n\\r\\t|.
 write |\\\\xC2|.`;

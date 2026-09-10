@@ -25,8 +25,16 @@ export class Compare {
       MethodCallChain.runSyntax(t, input);
     }
 
-    if (node.findDirectExpression(Expressions.CompareOperator)
-        && new TypeUtils(input.scope).isCompareable(sourceTypes[0], sourceTypes[1], sources[0], sources[1]) === false
+    const typeUtils = new TypeUtils(input.scope);
+    const compareOperator = node.findDirectExpression(Expressions.CompareOperator)?.concatTokens().toUpperCase();
+
+    if (compareOperator === "CS"
+        && sourceTypes.length === 2
+        && sourceTypes.some((type) => typeUtils.isCharLikeForCompare(type) === false)) {
+      const message = "CS operands must be character-like (data type C, N, D, T, or STRING)";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+    } else if (node.findDirectExpression(Expressions.CompareOperator)
+        && typeUtils.isCompareable(sourceTypes[0], sourceTypes[1], sources[0], sources[1]) === false
         && sourceTypes.length === 2) {
       let message = "Incompatible types for comparison";
       if ((sourceTypes[0] instanceof DateType
