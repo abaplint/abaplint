@@ -2713,10 +2713,73 @@ INSERT CONV #( 'a' ) INTO TABLE rt_letter.`;
     const expected = `TYPES type_e_letter TYPE c LENGTH 1.
 TYPES type_t_letter TYPE STANDARD TABLE OF type_e_letter WITH NON-UNIQUE DEFAULT KEY.
 DATA rt_letter TYPE type_t_letter.
-DATA temp1 TYPE type_e_letter.
+DATA temp1 LIKE LINE OF rt_letter.
 temp1 = 'a'.
 INSERT temp1 INTO TABLE rt_letter.`;
     testFix(abap, expected);
+  });
+
+  it("INSERT CONV INTO TABLE, use row type of table", async () => {
+    const abap = `TYPES ty_key TYPE c LENGTH 4.
+TYPES: BEGIN OF ty_row,
+         key   TYPE ty_key,
+         begda TYPE d,
+       END OF ty_row.
+TYPES ty_tab TYPE SORTED TABLE OF ty_row WITH UNIQUE KEY table_line.
+DATA mt_tab TYPE ty_tab.
+DATA lv_key TYPE ty_key.
+INSERT CONV ty_key( lv_key ) INTO TABLE mt_tab.`;
+    const expected = `TYPES ty_key TYPE c LENGTH 4.
+TYPES: BEGIN OF ty_row,
+         key   TYPE ty_key,
+         begda TYPE d,
+       END OF ty_row.
+TYPES ty_tab TYPE SORTED TABLE OF ty_row WITH UNIQUE KEY table_line.
+DATA mt_tab TYPE ty_tab.
+DATA lv_key TYPE ty_key.
+DATA temp1 LIKE LINE OF mt_tab.
+temp1 = lv_key.
+INSERT temp1 INTO TABLE mt_tab.`;
+    testFix(abap, expected);
+  });
+
+  it("APPEND CONV TO, use row type of table", async () => {
+    const abap = `TYPES ty_key TYPE c LENGTH 4.
+TYPES ty_tab TYPE STANDARD TABLE OF ty_key WITH DEFAULT KEY.
+DATA mt_tab TYPE ty_tab.
+DATA lv_key TYPE ty_key.
+APPEND CONV ty_key( lv_key ) TO mt_tab.`;
+    const expected = `TYPES ty_key TYPE c LENGTH 4.
+TYPES ty_tab TYPE STANDARD TABLE OF ty_key WITH DEFAULT KEY.
+DATA mt_tab TYPE ty_tab.
+DATA lv_key TYPE ty_key.
+DATA temp1 LIKE LINE OF mt_tab.
+temp1 = lv_key.
+APPEND temp1 TO mt_tab.`;
+    testFix(abap, expected);
+  });
+
+  it("CONV nested inside VALUE, keep CONV type", async () => {
+    const abap = `TYPES ty_key TYPE c LENGTH 4.
+TYPES: BEGIN OF ty_row,
+         key TYPE ty_key,
+       END OF ty_row.
+DATA mt_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA lv_key TYPE string.
+INSERT VALUE ty_row( key = CONV ty_key( lv_key ) ) INTO TABLE mt_tab.`;
+    const expected = `TYPES ty_key TYPE c LENGTH 4.
+TYPES: BEGIN OF ty_row,
+         key TYPE ty_key,
+       END OF ty_row.
+DATA mt_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA lv_key TYPE string.
+DATA temp1 TYPE ty_row.
+CLEAR temp1.
+DATA temp2 TYPE ty_key.
+temp2 = lv_key.
+temp1-key = temp2.
+INSERT temp1 INTO TABLE mt_tab.`;
+    testFixAll(abap, expected);
   });
 
   it("VALUE with BASE", async () => {
@@ -4968,7 +5031,7 @@ foo = 2.`;
 APPEND CONV #( 'ABC' ) TO itab.`;
 
     const expected = `DATA itab TYPE string_table.
-DATA temp1 TYPE string.
+DATA temp1 LIKE LINE OF itab.
 temp1 = 'ABC'.
 APPEND temp1 TO itab.`;
 
