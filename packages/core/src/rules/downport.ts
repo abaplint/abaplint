@@ -433,6 +433,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.outlineTableExpressionKeyBuiltin(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.assignWithTable(low, high, lowFile);
     if (found) {
       return found;
@@ -1230,6 +1235,79 @@ ${indentation}`);
       condition += c.concatTokens() + " ";
     }
     return condition;
+  }
+
+  /** A built-in function is only recognized as one in an operand position that admits an
+   * expression, and "WITH KEY comp = ..." does not become such a position until v740. The
+   * table expression rewrites carry the key operand over verbatim, so
+   * "tab[ comp = to_upper( x ) ]" downports to a READ TABLE that a 702 or 731 compiler can
+   * only read as a functional method call - "method TO_UPPER is unknown", reported as a
+   * SYNTAX_ERROR of the whole class pool. Hoist the call into a variable first, an
+   * assignment IS an expression position at 702.
+   *
+   * Built-ins that predate 702 (lines, strlen, numofchar, ...) carry no release in
+   * BuiltIn.methods; they are accepted in the operand as they are and stay untouched. So do
+   * functional method calls, which are exactly the reading that makes the built-in fail, and
+   * the INDEX operand of "tab[ 1 ]", which is not a key operand. */
+  private outlineTableExpressionKeyBuiltin(low: StatementNode, high: StatementNode, lowFile: ABAPFile,
+                                           highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    }
+
+    for (const tableExpression of high.findAllExpressionsRecursive(Expressions.TableExpression)) {
+      let afterComponent = false;
+      for (const child of tableExpression.getChildren()) {
+        if (child.get() instanceof Expressions.ComponentChainSimple) {
+          afterComponent = true;
+          continue;
+        } else if (afterComponent === false
+            || !(child.get() instanceof Expressions.Source)
+            || !(child instanceof ExpressionNode)) {
+          continue;
+        }
+
+        const type = this.builtinReturnType(child, lowFile, highSyntax);
+        if (type === undefined) {
+          continue;
+        }
+
+        const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+        const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+        const code = `DATA ${uniqueName} TYPE ${type}.\n` +
+          indentation + `${uniqueName} = ${child.concatTokens()}.\n` +
+          indentation;
+
+        const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+        const fix2 = EditHelper.replaceRange(lowFile, child.getFirstToken().getStart(), child.getLastToken().getEnd(), uniqueName);
+        const fix = EditHelper.merge(fix2, fix1);
+
+        return Issue.atToken(lowFile, child.getFirstToken(), "Outline built-in function in table expression key",
+                             this.getMetadata().key, this.conf.severity, fix);
+      }
+    }
+
+    return undefined;
+  }
+
+  /** the ABAP type returned by the built-in function this Source starts with, or undefined
+   * if it does not start with one, or with one that predates 702 */
+  private builtinReturnType(source: ExpressionNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): string | undefined {
+    const spag = highSyntax.spaghetti.lookupPosition(source.getFirstToken().getStart(), lowFile.getFilename());
+
+    for (const r of spag?.getData().references || []) {
+      if (r.referenceType !== ReferenceType.BuiltinMethodReference
+          || r.position.getStart().equals(source.getFirstToken().getStart()) === false) {
+        continue;
+      }
+      const name = r.position.getName().toUpperCase();
+      if (BuiltIn.methods[name]?.release === undefined) {
+        return undefined;
+      }
+      return BuiltIn.searchBuiltin(name)?.getParameters().getReturning()?.getType().toABAP();
+    }
+
+    return undefined;
   }
 
   private outlineCatchSimple(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
