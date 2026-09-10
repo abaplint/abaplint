@@ -1185,15 +1185,19 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
 
       const condition = this.tableCondition(tableExpression);
 
-      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      // ASSIGNING, not INTO: from v740 a table expression in a read position addresses the
+      // row rather than copying it, so "REF #( tab[ i ]-comp )" and "ASSIGN tab[ i ]-comp"
+      // hand back an address INTO a work area would not preserve. The write path
+      // (moveWithTableTarget) already lowers to ASSIGNING for the same reason.
+      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
       const tabixBackup = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       const firstToken = high.getFirstToken();
       // note that the tabix restore should be done before throwing the exception
-      const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${uniqueName} LIKE LINE OF ${pre}.
+      const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `FIELD-SYMBOLS ${uniqueName} LIKE LINE OF ${pre}.
 ${indentation}DATA ${tabixBackup} LIKE sy-tabix.
 ${indentation}${tabixBackup} = sy-tabix.
-${indentation}READ TABLE ${pre} ${condition}INTO ${uniqueName}.
+${indentation}READ TABLE ${pre} ${condition}ASSIGNING ${uniqueName}.
 ${indentation}sy-tabix = ${tabixBackup}.
 ${indentation}IF sy-subrc <> 0.
 ${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
@@ -2035,8 +2039,7 @@ CONSTANTS: BEGIN OF ${structureName},\n`;
       return undefined;
     }
 
-    let uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
-    uniqueName = `<${uniqueName}>`;
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
 
     const tName = target.concatTokens().split("[")[0];
     const condition = this.tableCondition(tableExpression);
@@ -3130,12 +3133,17 @@ ${indentation}    output = ${uniqueName}.\n`;
     return undefined;
   }
 
-  private uniqueName(position: Position, filename: string, highSyntax: ISyntaxResult): string {
+  /** a FIELD-SYMBOLS declaration is known to the scope under its bracketed spelling, so
+   * the collision check has to use that spelling too - otherwise a second outline in the
+   * same method is handed a name that is already taken and the result does not compile */
+  private uniqueName(position: Position, filename: string, highSyntax: ISyntaxResult, fieldSymbol = false): string {
+    const decorate = (name: string) => fieldSymbol === true ? `<${name}>` : name;
+
     const spag = highSyntax.spaghetti.lookupPosition(position, filename);
     if (spag === undefined) {
       const name = "temprr" + this.counter;
       this.counter++;
-      return name;
+      return decorate(name);
     }
 
     let postfix = "";
@@ -3146,7 +3154,7 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     while (true) {
-      const name = "temp" + this.counter + postfix;
+      const name = decorate("temp" + this.counter + postfix);
       const exists = this.existsRecursive(spag, name);
       this.counter++;
       if (exists === false) {
