@@ -39,6 +39,7 @@ Suggest starting by running only the syntax check relevant rules, having this wo
   "rules": {
     "begin_end_names": true,
     "cds_parser_error": true,
+    "allowed_object_naming": true,
     "check_ddic": true,
     "check_include": true,
     "check_syntax": true,
@@ -81,6 +82,7 @@ Suggest starting by running only the syntax check relevant rules, having this wo
     "check_ddic": true,
     "strict_sql": true,
     "sql_escape_host_variables": true,
+    "allowed_object_naming": true,
     "check_include": true,
     "check_syntax": true,
     "cloud_types": true,
@@ -163,6 +165,7 @@ Note: `select_single_full_key` to give all findings, abaplint must know the data
     "check_ddic": true,
     "check_include": true,
     "check_syntax": true,
+    "allowed_object_naming": true,
     "check_transformation_exists": true,
     "dynpro_checks": true,
     "global_class": true,
