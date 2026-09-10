@@ -6099,4 +6099,152 @@ SELECT * FROM sdfsdfsdf INTO CORRESPONDING FIELDS OF TABLE result
     testFixAll(abap, expected);
   });
 
+  it("table expression key, hoist 702 built-in out of the generated WITH KEY operand", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  IF line_exists( lt_list[ table_line = to_upper( lv_name ) ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  DATA temp1 TYPE string.
+  temp1 = to_upper( lv_name ).
+  DATA temp2 LIKE sy-subrc.
+  READ TABLE lt_list WITH KEY table_line = temp1 TRANSPORTING NO FIELDS.
+  temp2 = sy-subrc.
+  IF temp2 = 0.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("table expression key, hoist 702 built-in, plain table expression", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  DATA lv_row TYPE string.
+  lv_row = lt_list[ table_line = to_upper( lv_name ) ].
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  DATA lv_row TYPE string.
+  DATA temp1 TYPE string.
+  temp1 = to_upper( lv_name ).
+  DATA temp2 LIKE LINE OF lt_list.
+  DATA temp3 LIKE sy-tabix.
+  temp3 = sy-tabix.
+  READ TABLE lt_list WITH KEY table_line = temp1 INTO temp2.
+  sy-tabix = temp3.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  lv_row = temp2.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("table expression key, built-in older than 702 stays in the operand", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  IF line_exists( lt_list[ table_line = lines( lt_list ) ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE lt_list WITH KEY table_line = lines( lt_list ) TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  IF temp1 = 0.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("table expression key, functional method call stays in the operand", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS name RETURNING VALUE(rv_name) TYPE string.
+    METHODS run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+  METHOD run.
+    DATA lt_list TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    IF line_exists( lt_list[ table_line = me->name( ) ] ).
+      WRITE / 'hello'.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS name RETURNING VALUE(rv_name) TYPE string.
+    METHODS run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+  METHOD run.
+    DATA lt_list TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA temp1 LIKE sy-subrc.
+    READ TABLE lt_list WITH KEY table_line = me->name( ) TRANSPORTING NO FIELDS.
+    temp1 = sy-subrc.
+    IF temp1 = 0.
+      WRITE / 'hello'.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("table expression key, built-in in the INDEX operand is not a key operand", async () => {
+    const abap = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_row TYPE string.
+  lv_row = lt_list[ lines( lt_list ) ].
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_row TYPE string.
+  DATA temp1 LIKE LINE OF lt_list.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_list INDEX lines( lt_list ) INTO temp1.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  lv_row = temp1.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("table expression key, no downport at v740sp02", async () => {
+    const issues = await findIssues(`FORM bar.
+  DATA lt_list TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  IF line_exists( lt_list[ table_line = to_upper( lv_name ) ] ).
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`, Version.v740sp02);
+    expect(issues.length).to.equal(0);
+  });
+
 });
