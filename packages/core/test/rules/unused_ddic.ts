@@ -193,6 +193,56 @@ describe("Rule: unused_ddic", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("Unused AFF DOMA", async () => {
+    const zunused = JSON.stringify({
+      formatVersion: "1",
+      header: {
+        description: "Unused domain",
+        originalLanguage: "en",
+      },
+      format: {
+        dataType: "CHAR",
+        length: 1,
+      },
+    });
+
+    const files = [new MemoryFile("zunused.doma.json", zunused)];
+    const issues = await run(files);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("AFF DOMA used by AFF DTEL", async () => {
+    const doma = JSON.stringify({
+      formatVersion: "1",
+      header: {
+        description: "Used domain",
+        originalLanguage: "en",
+      },
+      format: {
+        dataType: "CHAR",
+        length: 1,
+      },
+    });
+    const dtel = JSON.stringify({
+      formatVersion: "1",
+      header: {
+        description: "Used data element",
+        originalLanguage: "en",
+      },
+      dataTypeInformation: {
+        category: "domain",
+        typeName: "ZUSED",
+      },
+    });
+
+    const files = [
+      new MemoryFile("zused.doma.json", doma),
+      new MemoryFile("zused_dtel.dtel.json", dtel),
+    ];
+    const issues = await run(files);
+    expect(issues.length).to.equal(0);
+  });
+
   it("DTEL used in TABL", async () => {
     const dtel = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">

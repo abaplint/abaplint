@@ -47,6 +47,55 @@ describe("Rule: no_unknown_ddic", () => {
     expect(issues[0].getMessage()).to.include("Z_AFF_EXAMPLE_DOMA, lookupDomain");
   });
 
+  it("AFF DTEL example, domain, AFF DOMA exists", async () => {
+    const dtel = `{
+  "formatVersion": "1",
+  "header": {
+    "description": "Domain-based data element",
+    "originalLanguage": "en"
+  },
+  "dataTypeInformation": {
+    "category": "domain",
+    "typeName": "ZDTEL_EXAMPLE_BASE"
+  },
+  "fieldLabels": {
+    "short": "Domain",
+    "shortLength": 10,
+    "medium": "Domain value",
+    "mediumLength": 15,
+    "long": "Domain-based example value",
+    "longLength": 30,
+    "heading": "Domain Value",
+    "headingLength": 15
+  }
+}`;
+    const doma = `{
+  "formatVersion": "1",
+  "header": {
+    "description": "Example domain",
+    "originalLanguage": "en"
+  },
+  "format": {
+    "dataType": "CHAR",
+    "length": 10
+  },
+  "outputCharacteristics": {
+    "length": 10
+  }
+}`;
+    const reg = new Registry()
+      .addFile(new MemoryFile("zdtel_example.dtel.json", dtel))
+      .addFile(new MemoryFile("zdtel_example_base.doma.json", doma));
+    await reg.parseAsync();
+
+    const issues: string[] = [];
+    const rule = new CheckDDIC().initialize(reg);
+    for (const obj of reg.getObjects()) {
+      issues.push(...rule.run(obj).map(i => i.getMessage()));
+    }
+    expect(issues).to.deep.equal([]);
+  });
+
   it("AFF DTEL example, predefined type", async () => {
     const json = `{
   "formatVersion": "1",
