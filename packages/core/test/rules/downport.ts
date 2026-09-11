@@ -1051,15 +1051,15 @@ ENDFORM.`;
 ENDFORM.`;
 
     const expected = `FORM bar.
-  DATA temp1 LIKE LINE OF lt_lognumbers.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_lognumbers.
   DATA temp2 LIKE sy-tabix.
   temp2 = sy-tabix.
-  READ TABLE lt_lognumbers INDEX 1 INTO temp1.
+  READ TABLE lt_lognumbers INDEX 1 ASSIGNING <temp1>.
   sy-tabix = temp2.
   IF sy-subrc <> 0.
     RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
   ENDIF.
-  rv_lognumber = temp1-lognumber.
+  rv_lognumber = <temp1>-lognumber.
 ENDFORM.`;
 
     testFix(abap, expected);
@@ -1815,15 +1815,15 @@ TYPES: BEGIN OF ty_type,
          foo TYPE i,
        END OF ty_type.
 DATA tab TYPE STANDARD TABLE OF ty_type WITH DEFAULT KEY.
-DATA temp1 LIKE LINE OF tab.
+FIELD-SYMBOLS <temp1> LIKE LINE OF tab.
 DATA temp2 LIKE sy-tabix.
 temp2 = sy-tabix.
-READ TABLE tab WITH KEY foo = 2 INTO temp1.
+READ TABLE tab WITH KEY foo = 2 ASSIGNING <temp1>.
 sy-tabix = temp2.
 IF sy-subrc <> 0.
   RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ENDIF.
-WRITE temp1-foo.`;
+WRITE <temp1>-foo.`;
 
     testFix(abap, expected);
   });
@@ -2101,15 +2101,15 @@ ENDTRY.`;
   DATA(lv_text) = it_operations[ activity = 2 ]-description.`;
     const expected = `
   DATA it_operations TYPE voided.
-  DATA temp1 LIKE LINE OF it_operations.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF it_operations.
   DATA temp2 LIKE sy-tabix.
   temp2 = sy-tabix.
-  READ TABLE it_operations WITH KEY activity = 2 INTO temp1.
+  READ TABLE it_operations WITH KEY activity = 2 ASSIGNING <temp1>.
   sy-tabix = temp2.
   IF sy-subrc <> 0.
     RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
   ENDIF.
-  DATA(lv_text) = temp1-description.`;
+  DATA(lv_text) = <temp1>-description.`;
     testFix(abap, expected);
   });
 
@@ -2616,15 +2616,15 @@ ENDCLASS.`;
         WITH UNIQUE KEY plain
         WITH UNIQUE HASHED KEY cipher_key COMPONENTS cipher.
     DATA foo TYPE c LENGTH 1.
-    DATA temp1 LIKE LINE OF cipher_dict.
+    FIELD-SYMBOLS <temp1> LIKE LINE OF cipher_dict.
     DATA temp2 LIKE sy-tabix.
     temp2 = sy-tabix.
-    READ TABLE cipher_dict WITH TABLE KEY cipher_key COMPONENTS cipher = '' INTO temp1.
+    READ TABLE cipher_dict WITH TABLE KEY cipher_key COMPONENTS cipher = '' ASSIGNING <temp1>.
     sy-tabix = temp2.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
-    foo = temp1-plain.`;
+    foo = <temp1>-plain.`;
     testFix(abap, expected);
   });
 
@@ -6201,15 +6201,15 @@ ENDFORM.`;
   DATA lv_row TYPE string.
   DATA temp1 TYPE string.
   temp1 = to_upper( lv_name ).
-  DATA temp2 LIKE LINE OF lt_list.
-  DATA temp3 LIKE sy-tabix.
-  temp3 = sy-tabix.
-  READ TABLE lt_list WITH KEY table_line = temp1 INTO temp2.
-  sy-tabix = temp3.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_list.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_list WITH KEY table_line = temp1 ASSIGNING <temp1>.
+  sy-tabix = temp2.
   IF sy-subrc <> 0.
     RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
   ENDIF.
-  lv_row = temp2.
+  lv_row = <temp1>.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -6285,15 +6285,15 @@ ENDFORM.`;
     const expected = `FORM bar.
   DATA lt_list TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA lv_row TYPE string.
-  DATA temp1 LIKE LINE OF lt_list.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_list.
   DATA temp2 LIKE sy-tabix.
   temp2 = sy-tabix.
-  READ TABLE lt_list INDEX lines( lt_list ) INTO temp1.
+  READ TABLE lt_list INDEX lines( lt_list ) ASSIGNING <temp1>.
   sy-tabix = temp2.
   IF sy-subrc <> 0.
     RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
   ENDIF.
-  lv_row = temp1.
+  lv_row = <temp1>.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -6308,6 +6308,71 @@ ENDFORM.`;
   ENDIF.
 ENDFORM.`, Version.v740sp02);
     expect(issues.length).to.equal(0);
+  });
+
+  it("table expression, outlined with ASSIGNING so a component keeps the row address", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_row, name TYPE string, END OF ty_row.
+  DATA lt_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  DATA lr_ref TYPE REF TO data.
+  lr_ref = REF #( lt_tab[ 1 ]-name ).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_row, name TYPE string, END OF ty_row.
+  DATA lt_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  DATA lr_ref TYPE REF TO data.
+  FIELD-SYMBOLS <temp1> TYPE ty_row-name.
+  FIELD-SYMBOLS <temp2> LIKE LINE OF lt_tab.
+  DATA temp3 LIKE sy-tabix.
+  temp3 = sy-tabix.
+  READ TABLE lt_tab INDEX 1 ASSIGNING <temp2>.
+  sy-tabix = temp3.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  ASSIGN <temp2>-name TO <temp1>.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+GET REFERENCE OF <temp1> INTO lr_ref.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("table expression, two outlines in one statement get distinct field symbols", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_row, name TYPE string, END OF ty_row.
+  DATA lt_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  DATA lv_text TYPE string.
+  lv_text = |{ lt_tab[ 1 ]-name }{ lt_tab[ 2 ]-name }|.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_row, name TYPE string, END OF ty_row.
+  DATA lt_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  DATA lv_text TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_tab.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_tab INDEX 1 ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  FIELD-SYMBOLS <temp2> LIKE LINE OF lt_tab.
+  DATA temp3 LIKE sy-tabix.
+  temp3 = sy-tabix.
+  READ TABLE lt_tab INDEX 2 ASSIGNING <temp2>.
+  sy-tabix = temp3.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  lv_text = |{ <temp1>-name }{ <temp2>-name }|.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
   });
 
 });
