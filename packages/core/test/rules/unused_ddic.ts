@@ -172,6 +172,27 @@ describe("Rule: unused_ddic", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("Unused AFF DTEL", async () => {
+    const zunused = JSON.stringify({
+      formatVersion: "1",
+      header: {
+        description: "Unused data element",
+        originalLanguage: "en",
+      },
+      dataTypeInformation: {
+        category: "predefinedType",
+        predefinedType: {
+          dataType: "CHAR",
+          length: 1,
+        },
+      },
+    });
+
+    const files = [new MemoryFile("zunused.dtel.json", zunused)];
+    const issues = await run(files);
+    expect(issues.length).to.equal(1);
+  });
+
   it("DTEL used in TABL", async () => {
     const dtel = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">

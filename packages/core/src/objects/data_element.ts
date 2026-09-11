@@ -6,6 +6,9 @@ import * as Types from "../abap/types/basic";
 import {xmlToArray} from "../xml_utils";
 import {IObjectAndToken} from "../_iddic_references";
 import {Domain} from "./domain";
+import {Identifier} from "../abap/4_file_information/_identifier";
+import {Identifier as IdentifierToken} from "../abap/1_lexer/tokens/identifier";
+import {Position} from "../position";
 
 export class DataElement extends AbstractObject {
   private parsedXML: {
@@ -36,6 +39,7 @@ export class DataElement extends AbstractObject {
     }[]
     decimals?: string,
     dtelmaster?: string,
+    affCategory?: string,
   } | undefined = undefined;
   private parsedType: AbstractType | undefined = undefined;
 
@@ -53,6 +57,19 @@ export class DataElement extends AbstractObject {
       maxLength: 30,
       allowNamespace: true,
     };
+  }
+
+  public getIdentifier(): Identifier | undefined {
+    const xmlIdentifier = super.getIdentifier();
+    if (xmlIdentifier) {
+      return xmlIdentifier;
+    }
+
+    const file = this.getAFFFile();
+    if (file === undefined) {
+      return undefined;
+    }
+    return new Identifier(new IdentifierToken(new Position(1, 1), this.getName()), file.getFilename());
   }
 
   public setDirty(): void {
@@ -116,7 +133,48 @@ export class DataElement extends AbstractObject {
       }
 
       const ddic = new DDIC(reg);
-      if (this.parsedXML.refkind === "D") {
+      const lookupPredefinedType = (): ILookupResult => {
+        if (this.parsedXML?.datatype === undefined || this.parsedXML.datatype === "") {
+          return {type: new Types.UnknownType("DATATYPE unexpectely empty in " + this.getName())};
+        }
+        return {type: ddic.textToType({
+          text: this.parsedXML.datatype,
+          length: this.parsedXML.leng,
+          decimals: this.parsedXML.decimals,
+          infoText: this.getName(),
+          qualifiedName: this.getName(),
+          conversionExit: undefined,
+          ddicName: this.getName(),
+          description: this.parsedXML.texts?.heading,
+        })};
+      };
+
+      if (this.parsedXML.affCategory === "referenceToPredefinedType") {
+        const predefined = lookupPredefinedType();
+        lookup = predefined.type instanceof Types.UnknownType
+          ? predefined
+          : {type: new Types.DataReference(predefined.type, this.getName())};
+      } else if (this.parsedXML.affCategory === "referenceDictionaryType") {
+        if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {
+          lookup = {type: new Types.UnknownType("Type name unexpectely empty in " + this.getName())};
+        } else {
+          const referenced = ddic.lookup(this.parsedXML.domname);
+          lookup = referenced.type instanceof Types.UnknownType
+            ? referenced
+            : {...referenced, type: new Types.DataReference(referenced.type, this.getName())};
+        }
+      } else if (this.parsedXML.affCategory === "referenceClasIntType") {
+        if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {
+          lookup = {type: new Types.UnknownType("Type name unexpectely empty in " + this.getName())};
+        } else {
+          lookup = ddic.lookupObject(this.parsedXML.domname);
+        }
+      } else if (this.parsedXML.affCategory !== undefined
+          && this.parsedXML.affCategory !== "domain"
+          && this.parsedXML.affCategory !== "predefinedType") {
+        lookup = {type: new Types.UnknownType(
+          "Unknown AFF data type category " + this.parsedXML.affCategory + " in " + this.getName())};
+      } else if (this.parsedXML.refkind === "D") {
         if (this.parsedXML.domname === undefined || this.parsedXML.domname === "") {
           lookup = {type: new Types.UnknownType("DOMNAME unexpectely empty in " + this.getName())};
         } else {
@@ -129,20 +187,7 @@ export class DataElement extends AbstractObject {
           lookup = ddic.lookupObject(this.parsedXML.domname);
         }
       } else {
-        if (this.parsedXML.datatype === undefined || this.parsedXML.datatype === "") {
-          lookup = {type: new Types.UnknownType("DATATYPE unexpectely empty in " + this.getName())};
-        } else {
-          lookup = {type: ddic.textToType({
-            text: this.parsedXML.datatype,
-            length: this.parsedXML.leng,
-            decimals: this.parsedXML.decimals,
-            infoText: this.getName(),
-            qualifiedName: this.getName(),
-            conversionExit: undefined,
-            ddicName: this.getName(),
-            description: this.parsedXML.texts?.heading,
-          })};
-        }
+        lookup = lookupPredefinedType();
       }
     }
 
@@ -167,7 +212,7 @@ export class DataElement extends AbstractObject {
     const start = Date.now();
     this.parsedXML = {};
 
-    const jsonFile = this.getFiles().find(file => file.getFilename().toLowerCase().endsWith(".dtel.json"));
+    const jsonFile = this.getAFFFile();
     if (jsonFile) {
       try {
         const parsed = JSON.parse(jsonFile.getRaw());
@@ -176,6 +221,7 @@ export class DataElement extends AbstractObject {
         const fieldLabels = parsed.fieldLabels;
         this.parsedXML = {
           description: parsed.header?.description,
+          affCategory: typeInformation?.category,
           refkind: typeInformation?.category === "domain" ? "D" : undefined,
           domname: typeInformation?.typeName,
           datatype: predefinedType?.dataType,
@@ -243,6 +289,10 @@ export class DataElement extends AbstractObject {
 
     const end = Date.now();
     return {updated: true, runtime: end - start};
+  }
+
+  private getAFFFile() {
+    return this.getFiles().find(file => file.getFilename().toLowerCase().endsWith(".dtel.json"));
   }
 
 }

@@ -2,7 +2,28 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {DataElement} from "../../src/objects";
-import {CharacterType, UnknownType, HexType, VoidType, StringType, PackedType, FloatingPointType} from "../../src/abap/types/basic";
+import {
+  CharacterType,
+  DataReference,
+  FloatingPointType,
+  HexType,
+  ObjectReferenceType,
+  PackedType,
+  StringType,
+  UnknownType,
+  VoidType,
+} from "../../src/abap/types/basic";
+
+function affDataElement(dataTypeInformation: object): string {
+  return JSON.stringify({
+    formatVersion: "1",
+    header: {
+      description: "AFF data element",
+      originalLanguage: "en",
+    },
+    dataTypeInformation,
+  });
+}
 
 describe("Data element, parse main xml", () => {
 
@@ -223,6 +244,61 @@ describe("Data element, parse main xml", () => {
     const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(FloatingPointType);
+  });
+
+  it("AFF reference to predefined type", async () => {
+    const json = affDataElement({
+      category: "referenceToPredefinedType",
+      predefinedType: {
+        dataType: "CHAR",
+        length: 3,
+      },
+    });
+    const reg = new Registry().addFile(new MemoryFile("zref.dtel.json", json));
+
+    await reg.parseAsync();
+    const type = (reg.getFirstObject() as DataElement).parseType(reg);
+
+    expect(type).to.be.instanceof(DataReference);
+    expect((type as DataReference).getType()).to.be.instanceof(CharacterType);
+  });
+
+  it("AFF reference to Dictionary type", async () => {
+    const target = affDataElement({
+      category: "predefinedType",
+      predefinedType: {
+        dataType: "CHAR",
+        length: 3,
+      },
+    });
+    const reference = affDataElement({
+      category: "referenceDictionaryType",
+      typeName: "ZTARGET",
+    });
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zref.dtel.json", reference));
+    reg.addFile(new MemoryFile("ztarget.dtel.json", target));
+
+    await reg.parseAsync();
+    const type = (reg.getObject("DTEL", "ZREF") as DataElement).parseType(reg);
+
+    expect(type).to.be.instanceof(DataReference);
+    expect((type as DataReference).getType()).to.be.instanceof(CharacterType);
+  });
+
+  it("AFF reference to class or interface type", async () => {
+    const json = affDataElement({
+      category: "referenceClasIntType",
+      typeName: "ZIF_TARGET",
+    });
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zref.dtel.json", json));
+    reg.addFile(new MemoryFile("zif_target.intf.abap", "INTERFACE zif_target PUBLIC. ENDINTERFACE."));
+
+    await reg.parseAsync();
+    const type = (reg.getObject("DTEL", "ZREF") as DataElement).parseType(reg);
+
+    expect(type).to.be.instanceof(ObjectReferenceType);
   });
 
 });
