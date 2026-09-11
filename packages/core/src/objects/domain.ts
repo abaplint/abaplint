@@ -4,6 +4,9 @@ import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 import {xmlToArray} from "../xml_utils";
+import {Identifier} from "../abap/4_file_information/_identifier";
+import {Identifier as IdentifierToken} from "../abap/1_lexer/tokens/identifier";
+import {Position} from "../position";
 
 export interface DomainValue {
   language: string,
@@ -33,10 +36,12 @@ export class Domain extends AbstractObject {
   }
 
   public getDescription(): string | undefined {
+    this.parse();
     return this.parsedXML?.description;
   }
 
   public getConversionExit(): string | undefined {
+    this.parse();
     return this.parsedXML?.conversionExit;
   }
 
@@ -50,6 +55,19 @@ export class Domain extends AbstractObject {
       maxLength: 30,
       allowNamespace: true,
     };
+  }
+
+  public getIdentifier(): Identifier | undefined {
+    const xmlIdentifier = super.getIdentifier();
+    if (xmlIdentifier) {
+      return xmlIdentifier;
+    }
+
+    const file = this.getAFFFile();
+    if (file === undefined) {
+      return undefined;
+    }
+    return new Identifier(new IdentifierToken(new Position(1, 1), this.getName()), file.getFilename());
   }
 
   public setDirty(): void {
@@ -86,6 +104,45 @@ export class Domain extends AbstractObject {
 
     const start = Date.now();
     this.parsedXML = {};
+
+    const jsonFile = this.getAFFFile();
+    if (jsonFile) {
+      try {
+        const parsed = JSON.parse(jsonFile.getRaw());
+        const language = parsed.header?.originalLanguage;
+        const values: DomainValue[] = [];
+        for (const fixedValue of parsed.fixedValues ?? []) {
+          values.push({
+            low: fixedValue?.fixedValue,
+            high: "",
+            description: fixedValue?.description,
+            language: language,
+          });
+        }
+        for (const interval of parsed.fixedValueIntervals ?? []) {
+          values.push({
+            low: interval?.lowLimit,
+            high: interval?.highLimit,
+            description: interval?.description,
+            language: language,
+          });
+        }
+        this.parsedXML = {
+          description: parsed.header?.description,
+          datatype: parsed.format?.dataType,
+          length: parsed.format?.length?.toString(),
+          decimals: parsed.format?.decimals?.toString(),
+          conversionExit: parsed.outputCharacteristics?.conversionRoutine,
+          values: values,
+          valuesTranslations: [],
+        };
+      } catch {
+        // handled by parseType()
+      }
+      const end = Date.now();
+      return {updated: true, runtime: end - start};
+    }
+
     const parsed = super.parseRaw2();
     if (parsed === undefined) {
       return {updated: false, runtime: 0};
@@ -133,6 +190,10 @@ export class Domain extends AbstractObject {
 
   public getFixedValuesTranslations() {
     return this.parsedXML?.valuesTranslations ?? [];
+  }
+
+  private getAFFFile() {
+    return this.getFiles().find(file => file.getFilename().toLowerCase().endsWith(".doma.json"));
   }
 
 }

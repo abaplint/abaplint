@@ -6,6 +6,139 @@ import {fullErrorNamespace} from "./_utils";
 
 describe("Rule: no_unknown_ddic", () => {
 
+  it("AFF DTEL example, domain", async () => {
+    const json = `{
+  "formatVersion": "1",
+  "header": {
+    "description": "Example data element",
+    "originalLanguage": "en"
+  },
+  "dataTypeInformation": {
+    "category": "domain",
+    "typeName": "Z_AFF_EXAMPLE_DOMA"
+  },
+  "fieldLabels": {
+    "short": "Example",
+    "shortLength": 10,
+    "medium": "Example field",
+    "mediumLength": 13,
+    "long": "Example data element field",
+    "longLength": 26,
+    "heading": "Example data element",
+    "headingLength": 20
+  },
+  "additionalProperties": {
+    "searchHelp": {
+      "name": "ZAS_AFF_EXAMPLE_SH",
+      "parameter": "LAND1"
+    },
+    "bidirectionalOptions": {
+      "basicDirection": "rightToLeft"
+    },
+    "parameterId": "LND",
+    "defaultComponentName": "LAND1"
+  }
+}`;
+    const reg = new Registry().addFile(new MemoryFile("z_aff_example_domain.dtel.json", json));
+    await reg.parseAsync();
+
+    const issues = new CheckDDIC().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("Z_AFF_EXAMPLE_DOMA, lookupDomain");
+  });
+
+  it("AFF DTEL example, domain, AFF DOMA exists", async () => {
+    const dtel = `{
+  "formatVersion": "1",
+  "header": {
+    "description": "Domain-based data element",
+    "originalLanguage": "en"
+  },
+  "dataTypeInformation": {
+    "category": "domain",
+    "typeName": "ZDTEL_EXAMPLE_BASE"
+  },
+  "fieldLabels": {
+    "short": "Domain",
+    "shortLength": 10,
+    "medium": "Domain value",
+    "mediumLength": 15,
+    "long": "Domain-based example value",
+    "longLength": 30,
+    "heading": "Domain Value",
+    "headingLength": 15
+  }
+}`;
+    const doma = `{
+  "formatVersion": "1",
+  "header": {
+    "description": "Example domain",
+    "originalLanguage": "en"
+  },
+  "format": {
+    "dataType": "CHAR",
+    "length": 10
+  },
+  "outputCharacteristics": {
+    "length": 10
+  }
+}`;
+    const reg = new Registry()
+      .addFile(new MemoryFile("zdtel_example.dtel.json", dtel))
+      .addFile(new MemoryFile("zdtel_example_base.doma.json", doma));
+    await reg.parseAsync();
+
+    const issues: string[] = [];
+    const rule = new CheckDDIC().initialize(reg);
+    for (const obj of reg.getObjects()) {
+      issues.push(...rule.run(obj).map(i => i.getMessage()));
+    }
+    expect(issues).to.deep.equal([]);
+  });
+
+  it("AFF DTEL example, predefined type", async () => {
+    const json = `{
+  "formatVersion": "1",
+  "header": {
+    "description": "Example data element",
+    "originalLanguage": "en"
+  },
+  "dataTypeInformation": {
+    "category": "predefinedType",
+    "predefinedType": {
+      "dataType": "CHAR",
+      "length": 3
+    }
+  },
+  "fieldLabels": {
+    "short": "Example",
+    "shortLength": 10,
+    "medium": "Example field",
+    "mediumLength": 13,
+    "long": "Example data element field",
+    "longLength": 26,
+    "heading": "Example data element",
+    "headingLength": 20
+  },
+  "additionalProperties": {
+    "searchHelp": {
+      "name": "ZAS_AFF_EXAMPLE_SH",
+      "parameter": "LAND1"
+    },
+    "bidirectionalOptions": {
+      "basicDirection": "rightToLeft"
+    },
+    "parameterId": "LND",
+    "defaultComponentName": "LAND1"
+  }
+}`;
+    const reg = new Registry().addFile(new MemoryFile("z_aff_example_predefined_type.dtel.json", json));
+    await reg.parseAsync();
+
+    const issues = new CheckDDIC().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equal(0);
+  });
+
   it("ok, resolved, dtel", async () => {
     const xml = `
 <?xml version="1.0" encoding="utf-8"?>

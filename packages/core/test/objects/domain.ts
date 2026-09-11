@@ -4,6 +4,100 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Domain} from "../../src/objects";
 import * as BasicTypes from "../../src/abap/types/basic";
 
+describe("Domain, parse AFF json", () => {
+
+  const json = `{
+  "formatVersion": "1",
+  "header": {
+    "description": "Example domain",
+    "originalLanguage": "en"
+  },
+  "format": {
+    "dataType": "CHAR",
+    "length": 10
+  },
+  "outputCharacteristics": {
+    "length": 10,
+    "conversionRoutine": "ALPHA"
+  },
+  "fixedValues": [
+    {
+      "fixedValue": "F",
+      "description": "fixed"
+    }
+  ],
+  "fixedValueIntervals": [
+    {
+      "lowLimit": "1",
+      "highLimit": "9",
+      "description": "numbers"
+    }
+  ]
+}`;
+
+  it("CharacterType", async () => {
+    const reg = new Registry().addFile(new MemoryFile("z_aff_example_doma.doma.json", json));
+    await reg.parseAsync();
+    const doma = reg.getFirstObject()! as Domain;
+    const type = doma.parseType(reg);
+    expect(type).to.be.instanceof(BasicTypes.CharacterType);
+    expect((type as BasicTypes.CharacterType).getLength()).to.equal(10);
+    expect(doma.getDescription()).to.equal("Example domain");
+    expect(doma.getDataType()).to.equal("CHAR");
+    expect(doma.getConversionExit()).to.equal("ALPHA");
+  });
+
+  it("fixed values", async () => {
+    const reg = new Registry().addFile(new MemoryFile("z_aff_example_doma.doma.json", json));
+    await reg.parseAsync();
+    const doma = reg.getFirstObject()! as Domain;
+    const values = doma.getFixedValues();
+    expect(values.length).to.equal(2);
+    expect(values[0].low).to.equal("F");
+    expect(values[0].high).to.equal("");
+    expect(values[0].description).to.equal("fixed");
+    expect(values[1].low).to.equal("1");
+    expect(values[1].high).to.equal("9");
+    expect(values[1].description).to.equal("numbers");
+  });
+
+  it("getIdentifier", async () => {
+    const reg = new Registry().addFile(new MemoryFile("z_aff_example_doma.doma.json", json));
+    await reg.parseAsync();
+    const doma = reg.getFirstObject()! as Domain;
+    expect(doma.getIdentifier()?.getFilename()).to.equal("z_aff_example_doma.doma.json");
+  });
+
+  it("decimals", async () => {
+    const packed = `{
+  "formatVersion": "1",
+  "header": {
+    "description": "Example domain",
+    "originalLanguage": "en"
+  },
+  "format": {
+    "dataType": "DEC",
+    "length": 10,
+    "decimals": 2
+  }
+}`;
+    const reg = new Registry().addFile(new MemoryFile("z_aff_example_doma.doma.json", packed));
+    await reg.parseAsync();
+    const doma = reg.getFirstObject()! as Domain;
+    const type = doma.parseType(reg);
+    expect(type).to.be.instanceof(BasicTypes.PackedType);
+    expect((type as BasicTypes.PackedType).getDecimals()).to.equal(2);
+  });
+
+  it("parser error", async () => {
+    const reg = new Registry().addFile(new MemoryFile("z_aff_example_doma.doma.json", `sdfsdf`));
+    await reg.parseAsync();
+    const doma = reg.getFirstObject()! as Domain;
+    expect(doma.parseType(reg)).to.be.instanceof(BasicTypes.UnknownType);
+  });
+
+});
+
 describe("Domain, parse main xml", () => {
 
   it("CharacterType", async () => {
