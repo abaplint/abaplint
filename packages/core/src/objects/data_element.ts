@@ -166,6 +166,41 @@ export class DataElement extends AbstractObject {
 
     const start = Date.now();
     this.parsedXML = {};
+
+    const jsonFile = this.getFiles().find(file => file.getFilename().toLowerCase().endsWith(".dtel.json"));
+    if (jsonFile) {
+      try {
+        const parsed = JSON.parse(jsonFile.getRaw());
+        const typeInformation = parsed.dataTypeInformation;
+        const predefinedType = typeInformation?.predefinedType;
+        const fieldLabels = parsed.fieldLabels;
+        this.parsedXML = {
+          description: parsed.header?.description,
+          refkind: typeInformation?.category === "domain" ? "D" : undefined,
+          domname: typeInformation?.typeName,
+          datatype: predefinedType?.dataType,
+          leng: predefinedType?.length?.toString(),
+          decimals: predefinedType?.decimals?.toString(),
+          texts: {
+            short: fieldLabels?.short,
+            medium: fieldLabels?.medium,
+            long: fieldLabels?.long,
+            heading: fieldLabels?.heading,
+          },
+          textMaxLengths: {
+            short: fieldLabels?.shortLength?.toString(),
+            medium: fieldLabels?.mediumLength?.toString(),
+            long: fieldLabels?.longLength?.toString(),
+            heading: fieldLabels?.headingLength?.toString(),
+          },
+        };
+      } catch {
+        // handled by parseType()
+      }
+      const end = Date.now();
+      return {updated: true, runtime: end - start};
+    }
+
     const parsed = super.parseRaw2();
     if (parsed === undefined) {
       return {updated: false, runtime: 0};
