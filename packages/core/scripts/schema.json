@@ -3896,6 +3896,17 @@
               ],
               "description": "Checks for redundant whitespace at the end of each line.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/whitespace_end"
             },
+            "wrong_abapdoc_position": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/WrongAbapdocPositionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "ABAP Doc must be placed directly in front of the declaration it documents.\nTags: SingleFile\nhttps://rules.abaplint.org/wrong_abapdoc_position"
+            },
             "xml_bom": {
               "anyOf": [
                 {
@@ -6007,6 +6018,17 @@
                 }
               ],
               "description": "Checks for redundant whitespace at the end of each line.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/whitespace_end"
+            },
+            "wrong_abapdoc_position": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/WrongAbapdocPositionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "ABAP Doc must be placed directly in front of the declaration it documents.\nTags: SingleFile\nhttps://rules.abaplint.org/wrong_abapdoc_position"
             },
             "xml_bom": {
               "anyOf": [
@@ -9458,6 +9480,23 @@
       "type": "object"
     },
     "WhitespaceEndConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "WrongAbapdocPositionConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
