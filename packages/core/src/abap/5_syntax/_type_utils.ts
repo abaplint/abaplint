@@ -323,6 +323,21 @@ export class TypeUtils {
     return calculated;
   }
 
+  // a character constant is only assignable to a hexadecimal target if it can be
+  // interpreted as a hexadecimal value
+  private isHexConstant(node: ExpressionNode | undefined): boolean {
+    const constant = node?.concatTokens();
+    if (constant === undefined) {
+      return true;
+    }
+    if ((constant.startsWith("'") && constant.endsWith("'"))
+        || (constant.startsWith("`") && constant.endsWith("`"))) {
+      const value = constant.substring(1, constant.length - 1);
+      return value.length > 0 && /^[0-9A-Fa-f]+$/.test(value);
+    }
+    return true;
+  }
+
   public isAssignableNew(source: AbstractType | undefined,
                          target: AbstractType | undefined,
                          node: ExpressionNode | undefined): boolean {
@@ -397,7 +412,7 @@ export class TypeUtils {
         return false;
       } else if (target instanceof XStringType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
-          return node?.concatTokens() !== "''";
+          return this.isHexConstant(node);
         }
         return false;
       } else if (target instanceof StringType) {
