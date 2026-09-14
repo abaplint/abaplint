@@ -221,6 +221,12 @@ export class ImplementMethods extends ABAPRule {
       }
 
       for (const m of this.findInterfaceMethods(idef)) {
+        if (m.method.isDefaultIgnore === true || m.method.isDefaultFail === true) {
+          // the interface says an implementation is optional, so asking for one
+          // reports an error where ABAP reports none
+          continue;
+        }
+
         if (this.isAbstract(m, interfaceInfo, def)) {
           if (def.isAbstract) {
             continue;
