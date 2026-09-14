@@ -39,6 +39,12 @@ export interface InfoMethodDefinition {
   isForTesting: boolean,
   isAbstract: boolean,
   isFinal: boolean,
+  /** "DEFAULT IGNORE", 7.40 SP08: an implementing class need not implement this method,
+   * and a call of it on an unimplemented method does nothing */
+  isDefaultIgnore: boolean,
+  /** "DEFAULT FAIL", 7.40 SP08: an implementing class need not implement this method,
+   * and a call of it raises CX_SY_DYN_CALL_ILLEGAL_METHOD */
+  isDefaultFail: boolean,
   visibility: Visibility,
   parameters: InfoMethodParameter[],
   exceptions: string[],
