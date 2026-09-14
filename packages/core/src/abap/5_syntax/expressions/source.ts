@@ -134,6 +134,7 @@ export class Source {
             return VoidType.get(CheckSyntaxKey);
           }
           this.addIfInferred(node, input, foundType);
+          this.traverseRemainingChildren(children, input);
           return foundType;
         }
         case "REF":
