@@ -2100,6 +2100,67 @@ DATA(lower_mask) = val1 + val2.`;
     expect(identifier!.getType()).to.be.instanceof(Basic.FloatType);
   });
 
+  it("arithmetic, a character literal does not become the result type", () => {
+    // the calculation type of an arithmetic expression is the most general of
+    // the operand types; an operand of type c is converted into it
+    const abap = `DATA val TYPE f.
+DATA(res) = val * '0.25'.`;
+    const identifier = resolveVariable(abap, "res");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("arithmetic, a character variable does not become the result type", () => {
+    const abap = `DATA val TYPE f.
+DATA cha TYPE c LENGTH 10.
+DATA(res) = val * cha.`;
+    const identifier = resolveVariable(abap, "res");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("arithmetic, integer stays integer next to a character literal", () => {
+    const abap = `DATA val TYPE i.
+DATA(res) = val * '0.25'.`;
+    const identifier = resolveVariable(abap, "res");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, packed stays packed next to a character literal", () => {
+    const abap = `DATA val TYPE p LENGTH 8 DECIMALS 2.
+DATA(res) = val * '0.25'.`;
+    const identifier = resolveVariable(abap, "res");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
+  it("arithmetic, the most general operand wins", () => {
+    const abap = `DATA int TYPE i.
+DATA flo TYPE f.
+DATA(res) = int + flo.`;
+    const identifier = resolveVariable(abap, "res");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("arithmetic, float and packed gives float in either order", () => {
+    const abap = `DATA pac TYPE p LENGTH 8 DECIMALS 2.
+DATA flo TYPE f.
+DATA(one) = pac * flo.
+DATA(two) = flo * pac.`;
+    expect(resolveVariable(abap, "one")!.getType()).to.be.instanceof(Basic.FloatType);
+    expect(resolveVariable(abap, "two")!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("concatenation is not arithmetic, a character result stays character", () => {
+    const abap = `DATA cha TYPE c LENGTH 10.
+DATA(res) = cha && cha.`;
+    const identifier = resolveVariable(abap, "res");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.StringType);
+  });
+
   it("%_NEWLINE", () => {
     const identifier = resolveVariable("", "%_NEWLINE");
     expect(identifier).to.not.equal(undefined);

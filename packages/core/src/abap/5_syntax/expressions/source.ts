@@ -4,7 +4,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, XSequenceType, XStringType, HexType, XGenericType, AnyType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -230,31 +230,37 @@ export class Source {
 
     let hexExpected = false;
     let hexNext = false;
+    // an arithmetic operator has been seen, so the operands that follow
+    // determine a calculation type rather than simply replacing the context
+    let arithmetic = false;
     while (children.length >= 0) {
       if (first instanceof ExpressionNode) {
         const get = first.get();
         if (get instanceof Expressions.MethodCallChain) {
-          context = MethodCallChain.runSyntax(first, input, targetType);
+          const found = MethodCallChain.runSyntax(first, input, targetType);
+          context = arithmetic === true ? this.infer(context, found, true) : found;
           if (context === undefined) {
             const message = "Method has no RETURNING value";
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
             return VoidType.get(CheckSyntaxKey);
           }
         } else if (get instanceof Expressions.FieldChain) {
-          context = FieldChain.runSyntax(first, input, type, allowGenericDeference);
+          const found = FieldChain.runSyntax(first, input, type, allowGenericDeference);
+          context = arithmetic === true ? this.infer(context, found, true) : found;
         } else if (get instanceof Expressions.StringTemplate) {
           context = StringTemplate.runSyntax(first, input);
         } else if (get instanceof Expressions.Source) {
           const found = Source.runSyntax(first, input);
-          context = this.infer(context, found);
+          context = this.infer(context, found, arithmetic);
         } else if (get instanceof Expressions.Constant) {
           const found = Constant.runSyntax(first);
-          context = this.infer(context, found);
+          context = this.infer(context, found, arithmetic);
         } else if (get instanceof Expressions.Dereference) {
           context = Dereference.runSyntax(first, context, input);
         } else if (get instanceof Expressions.ComponentChain) {
           context = ComponentChain.runSyntax(context, first, input);
         } else if (get instanceof Expressions.ArithOperator) {
+          arithmetic = true;
           if (first.concatTokens() === "**") {
             context = new FloatType();
           }
@@ -307,7 +313,13 @@ export class Source {
     }
   }
 
-  private static infer(context: AbstractType | undefined, found: AbstractType | undefined) {
+  private static infer(context: AbstractType | undefined, found: AbstractType | undefined, arithmetic = false) {
+    if (arithmetic === true) {
+      const calculation = this.calculationType(context, found);
+      if (calculation !== undefined) {
+        return calculation;
+      }
+    }
     if (context instanceof FloatType && found instanceof IntegerType) {
       return context;
     } else if (context instanceof IntegerType && found instanceof HexType) {
@@ -317,6 +329,50 @@ export class Source {
     } else {
       return found;
     }
+  }
+
+  /** The calculation type of an arithmetic expression is the most general of the
+   * operand types. An operand of type c, n, d, t or string is converted into it and
+   * never becomes the result: "lv_f * '0.25'" is a float, not a character field of
+   * length four. Returns undefined when neither operand is numeric, leaving the
+   * decision to the caller. */
+  private static calculationType(left: AbstractType | undefined, right: AbstractType | undefined) {
+    if (left === undefined || right === undefined) {
+      return undefined;
+    } else if (left instanceof VoidType || left instanceof UnknownType) {
+      // not knowing an operand means not knowing the result
+      return left;
+    } else if (right instanceof VoidType || right instanceof UnknownType) {
+      return right;
+    }
+
+    const leftRank = this.numericRank(left);
+    const rightRank = this.numericRank(right);
+    if (leftRank === undefined && rightRank === undefined) {
+      return undefined;
+    } else if (rightRank === undefined) {
+      return left;
+    } else if (leftRank === undefined) {
+      return right;
+    }
+    return leftRank >= rightRank ? left : right;
+  }
+
+  private static numericRank(type: AbstractType): number | undefined {
+    if (type instanceof DecFloat34Type) {
+      return 6;
+    } else if (type instanceof DecFloat16Type) {
+      return 5;
+    } else if (type instanceof FloatType) {
+      return 4;
+    } else if (type instanceof PackedType) {
+      return 3;
+    } else if (type instanceof Integer8Type) {
+      return 2;
+    } else if (type instanceof IntegerType) {
+      return 1;
+    }
+    return undefined;
   }
 
   public static addIfInferred(
