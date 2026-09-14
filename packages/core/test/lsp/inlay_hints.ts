@@ -37,6 +37,17 @@ START-OF-SELECTION.
     expect(found.length).to.equal(2);
   });
 
+  it("CONV, arithmetics", () => {
+    const file = new MemoryFile(filename, `
+  DATA foo TYPE f.
+  foo = CONV f( 1 ) + CONV f( 2 ).`);
+    const reg = new Registry().addFiles([file]).parse();
+    const found = new InlayHints(reg).list({uri: filename});
+    expect(found.length).to.equal(3);
+    expect(found[1].label).to.equal("TYPE f");
+    expect(found[2].label).to.equal("TYPE f");
+  });
+
   it("INSERT VALUE", () => {
     const file = new MemoryFile(filename, `
 TYPES: BEGIN OF ty,

@@ -1855,6 +1855,21 @@ SELECT SINGLE * FROM *zmmvef.`;
     }
   });
 
+  it("Hover CONV type, both sides of arithmetics", () => {
+    const abap = `DATA foo TYPE f.
+foo = CONV f( 1 ) + CONV f( 2 ).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+
+    const left = new Hover(reg).find(buildPosition(file, 1, 11));
+    expect(left).to.not.equal(undefined);
+    expect(left?.value).to.contain("Inferred Type ```f```");
+
+    const right = new Hover(reg).find(buildPosition(file, 1, 25));
+    expect(right).to.not.equal(undefined);
+    expect(right?.value).to.contain("Inferred Type ```f```");
+  });
+
   it("hover, type alias", () => {
     const abap = `
 TYPES ty_char1 TYPE c LENGTH 1.
