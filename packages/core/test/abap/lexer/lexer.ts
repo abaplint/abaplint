@@ -97,6 +97,19 @@ describe("lexer", () => {
     expect(tokens[0].getStr()).to.equal("`x`b");
   });
 
+  it("quoted literal, no separator after", () => {
+    const tokens = getTokens("'x'b");
+    expect(tokens.length).to.equal(1);
+    expect(tokens[0]).to.not.be.instanceof(StringToken);
+    expect(tokens[0].getStr()).to.equal("'x'b");
+  });
+
+  it("quoted literal, text element", () => {
+    const tokens = getTokens("'x'(001)");
+    expect(tokens[0]).to.be.instanceof(StringToken);
+    expect(tokens[0].getStr()).to.equal("'x'");
+  });
+
   it("string template, no separator after", () => {
     const tokens = getTokens("|x|b");
     expect(tokens.length).to.equal(1);
@@ -111,7 +124,7 @@ describe("lexer", () => {
   });
 
   it("ping literal, separator after", () => {
-    for (const after of [" ", ".", ",", ":", `"`, ")", "]", ""]) {
+    for (const after of [" ", ".", ",", ":", `"`, "(", ")", "[", "]", ""]) {
       const tokens = getTokens("`x`" + after);
       expect(tokens[0], after).to.be.instanceof(StringToken);
       expect(tokens[0].getStr(), after).to.equal("`x`");
@@ -119,7 +132,7 @@ describe("lexer", () => {
   });
 
   it("string template, separator after", () => {
-    for (const after of [" ", ".", ",", ":", `"`, ")", "]", ""]) {
+    for (const after of [" ", ".", ",", ":", `"`, "(", ")", "[", "]", ""]) {
       const tokens = getTokens("|x|" + after);
       expect(tokens[0], after).to.be.instanceof(StringTemplate);
       expect(tokens[0].getStr(), after).to.equal("|x|");

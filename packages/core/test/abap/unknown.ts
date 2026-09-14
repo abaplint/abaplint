@@ -12,6 +12,7 @@ describe("unknown statements", () => {
     "REPLACE REGEX 'ab' IN SECTION LENGTH 2 OF 'error' WITH 'bar'.",
     "METHODS run RETURNING str TYPE string.", // VALUE is missing
     "m( a = `x`b = `y` ).", // no separator after the literal
+    "m( a = 'x'b = `y` ).", // no separator after the literal
     "m( a = |x|b = `y` ).", // no separator after the literal
     "WRITE `x`&&`y`.", // no separator after the literal
   ];
