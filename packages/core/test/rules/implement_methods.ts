@@ -23,6 +23,97 @@ function testFix(input: string, expected: string) {
 }
 
 describe("Rules, implement_methods", () => {
+  it("interface method with DEFAULT IGNORE, not required", async () => {
+    // 7.40 SP08: the interface says an implementation is optional, and a call
+    // of an unimplemented one does nothing
+    const intf = `INTERFACE zif_foobar PUBLIC.
+  METHODS required.
+  METHODS optional DEFAULT IGNORE.
+ENDINTERFACE.`;
+    const clas = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_foobar.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD zif_foobar~required.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_foobar.intf.abap", contents: intf},
+      {filename: "zcl_foobar.clas.abap", contents: clas}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("interface method with DEFAULT FAIL, not required", async () => {
+    // same, except that a call of an unimplemented one raises
+    const intf = `INTERFACE zif_foobar PUBLIC.
+  METHODS optional DEFAULT FAIL.
+ENDINTERFACE.`;
+    const clas = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_foobar.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_foobar.intf.abap", contents: intf},
+      {filename: "zcl_foobar.clas.abap", contents: clas}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("interface method without the modifier is still required", async () => {
+    // the control: without DEFAULT IGNORE the same class must still be told
+    const intf = `INTERFACE zif_foobar PUBLIC.
+  METHODS optional.
+ENDINTERFACE.`;
+    const clas = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_foobar.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_foobar.intf.abap", contents: intf},
+      {filename: "zcl_foobar.clas.abap", contents: clas}]);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("DEFAULT IGNORE on one method does not excuse its neighbour", async () => {
+    const intf = `INTERFACE zif_foobar PUBLIC.
+  METHODS optional DEFAULT IGNORE.
+  METHODS required.
+ENDINTERFACE.`;
+    const clas = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_foobar.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_foobar.intf.abap", contents: intf},
+      {filename: "zcl_foobar.clas.abap", contents: clas}]);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("required");
+  });
+
+  it("an implemented DEFAULT IGNORE method is fine too", async () => {
+    const intf = `INTERFACE zif_foobar PUBLIC.
+  METHODS optional DEFAULT IGNORE.
+ENDINTERFACE.`;
+    const clas = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_foobar.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD zif_foobar~optional.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_foobar.intf.abap", contents: intf},
+      {filename: "zcl_foobar.clas.abap", contents: clas}]);
+    expect(issues.length).to.equals(0);
+  });
+
   it("parser error", async () => {
     const issues = await runMulti([{filename: "cl_foo.clas.abap", contents: "parase error"}]);
     expect(issues.length).to.equals(0);

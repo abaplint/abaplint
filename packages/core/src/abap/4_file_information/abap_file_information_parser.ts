@@ -332,13 +332,16 @@ export class ABAPFileInformationParser {
       }
 
       const parameters = this.parseMethodParameters(def);
+      const concatenated = def.concatTokens().toUpperCase();
 
       methods.push({
         name: methodName.getStr(),
         identifier: new Identifier(methodName, this.filename),
         isRedefinition: def.findDirectExpression(Expressions.Redefinition) !== undefined,
-        isForTesting: def.concatTokens().toUpperCase().includes(" FOR TESTING"),
-        isFinal: def.concatTokens().toUpperCase().includes(" FINAL"),
+        isForTesting: concatenated.includes(" FOR TESTING"),
+        isFinal: concatenated.includes(" FINAL"),
+        isDefaultIgnore: concatenated.includes(" DEFAULT IGNORE"),
+        isDefaultFail: concatenated.includes(" DEFAULT FAIL"),
         isAbstract: def.findDirectExpression(Expressions.Abstract) !== undefined,
         isEventHandler: def.findDirectExpression(Expressions.EventHandler) !== undefined,
         visibility,
