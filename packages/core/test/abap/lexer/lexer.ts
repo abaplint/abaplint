@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {Identifier, AssociationName, StringTemplateBegin, StringTemplateEnd, WInstanceArrow} from "../../../src/abap/1_lexer/tokens";
+import {Identifier, AssociationName, StringTemplate, StringTemplateBegin, StringTemplateEnd, StringToken, WInstanceArrow} from "../../../src/abap/1_lexer/tokens";
 import {getTokens} from "../_utils";
 
 describe("lexer", () => {
@@ -88,6 +88,55 @@ describe("lexer", () => {
     expect(tokens[0]).to.be.instanceof(Identifier);
     expect(tokens[0].getStr()).to.equal("t1~");
     expect(tokens[1]).to.be.instanceof(AssociationName);
+  });
+
+  it("ping literal, no separator after", () => {
+    const tokens = getTokens("`x`b");
+    expect(tokens.length).to.equal(1);
+    expect(tokens[0]).to.not.be.instanceof(StringToken);
+    expect(tokens[0].getStr()).to.equal("`x`b");
+  });
+
+  it("quoted literal, no separator after", () => {
+    const tokens = getTokens("'x'b");
+    expect(tokens.length).to.equal(1);
+    expect(tokens[0]).to.not.be.instanceof(StringToken);
+    expect(tokens[0].getStr()).to.equal("'x'b");
+  });
+
+  it("quoted literal, text element", () => {
+    const tokens = getTokens("'x'(001)");
+    expect(tokens[0]).to.be.instanceof(StringToken);
+    expect(tokens[0].getStr()).to.equal("'x'");
+  });
+
+  it("string template, no separator after", () => {
+    const tokens = getTokens("|x|b");
+    expect(tokens.length).to.equal(1);
+    expect(tokens[0]).to.not.be.instanceof(StringTemplate);
+    expect(tokens[0].getStr()).to.equal("|x|b");
+  });
+
+  it("string template end, no separator after", () => {
+    const tokens = getTokens("|{ a }b|c");
+    expect(tokens[tokens.length - 1]).to.not.be.instanceof(StringTemplateEnd);
+    expect(tokens[tokens.length - 1].getStr()).to.equal("}b|c");
+  });
+
+  it("ping literal, separator after", () => {
+    for (const after of [" ", ".", ",", ":", `"`, "(", ")", "[", "]", ""]) {
+      const tokens = getTokens("`x`" + after);
+      expect(tokens[0], after).to.be.instanceof(StringToken);
+      expect(tokens[0].getStr(), after).to.equal("`x`");
+    }
+  });
+
+  it("string template, separator after", () => {
+    for (const after of [" ", ".", ",", ":", `"`, "(", ")", "[", "]", ""]) {
+      const tokens = getTokens("|x|" + after);
+      expect(tokens[0], after).to.be.instanceof(StringTemplate);
+      expect(tokens[0].getStr(), after).to.equal("|x|");
+    }
   });
 
   it("AssociationName: backslash inside string template is Identifier", () => {
