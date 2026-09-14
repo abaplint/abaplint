@@ -46,6 +46,12 @@ const BUFS = new Set<number>([
   CH_DOT, CH_COMMA, CH_COLON, 40 /* ( */, 41 /* ) */, 91 /* [ */,
   93 /* ] */, 43 /* + */, CH_AT]);
 
+// characters that may follow the closing "`" or "|" of a literal,
+// anything else is a syntax error, "there must be a space or equivalent character after ..."
+const AFTER_LITERAL = new Set<number>([
+  EOF, CH_SPACE, CH_TAB, CH_NL, CH_DOT, CH_COMMA, CH_COLON, CH_DQUOTE,
+  40 /* ( */, 41 /* ) */, 91 /* [ */, 93 /* ] */]);
+
 export class Lexer {
 
   private virtual: Position | undefined;
@@ -288,7 +294,11 @@ export class Lexer {
           && ahead !== CH_BACKTICK
           && this.buffer.countIsEven(CH_BACKTICK)) {
 // end of ping
-        this.add();
+        if (AFTER_LITERAL.has(ahead)) {
+          this.add();
+        }
+// else: no separator after the literal, keep the buffer so the following
+// characters are glued onto the token, the parser will report the error
         if (ahead === CH_DQUOTE) {
           this.m = ModeComment;
         } else {
@@ -299,7 +309,9 @@ export class Lexer {
           && (current === CH_PIPE || current === CH_LBRACE)
           && (stream.prevChar() !== CH_BACKSLASH || (stream.prevPrevChar() === CH_BACKSLASH && stream.prevChar() === CH_BACKSLASH))) {
 // end of template
-        this.add();
+        if (current === CH_LBRACE || AFTER_LITERAL.has(ahead)) {
+          this.add();
+        }
         this.m = ModeNormal;
       } else if (this.m === ModeTemplate
           && ahead === CH_RBRACE
