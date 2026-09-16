@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNotLang, seq, opt, altPrio, per, optPrio} from "../combi";
+import {verNotLang, seq, opt, altPrio, per, optPrio, ver} from "../combi";
 import {Target, Source} from "../expressions";
-import {LanguageVersion} from "../../../version";
+import {LanguageVersion, Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class CallTransaction implements IStatement {
@@ -11,7 +11,7 @@ export class CallTransaction implements IStatement {
     const options = seq("OPTIONS FROM", Source);
     const messages = seq("MESSAGES INTO", Target);
 
-    const auth = seq(altPrio("WITH", "WITHOUT"), "AUTHORITY-CHECK");
+    const auth = ver(Release.v740sp02, seq(altPrio("WITH", "WITHOUT"), "AUTHORITY-CHECK"));
 
     const perm = per(seq("UPDATE", Source),
                      "AND SKIP FIRST SCREEN",
