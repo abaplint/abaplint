@@ -352,6 +352,21 @@ Make sure to test the downported code, it might not always be completely correct
         }
       }
 
+      // WITHOUT AUTHORITY-CHECK on CALL TRANSACTION parses fine on every classic release
+      // (it is not release gated, unlike the constructs handled above), so the statement is
+      // never Unknown in the low version and never reaches the loop at the top of this method.
+      // Some v702 target systems still reject it at runtime/activation for reasons unrelated
+      // to the ABAP language version, so stripping it is opt-in downport behavior rather than
+      // a syntax-availability fix, and runs unconditionally like the two passes above.
+      if (ret.length === 0 && lowFile.getRaw().toUpperCase().includes("WITHOUT AUTHORITY-CHECK")) {
+        for (const low of lowStatements) {
+          const issue = this.stripCallTransactionAuthorityCheck(low, lowFile);
+          if (issue) {
+            ret.push(issue);
+          }
+        }
+      }
+
     }
 
     return ret;
@@ -3194,6 +3209,28 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     return false;
+  }
+
+  private stripCallTransactionAuthorityCheck(low: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (!(low.get() instanceof Statements.CallTransaction)) {
+      return undefined;
+    }
+
+    const tokens = low.getTokens();
+    // the lexer splits "AUTHORITY-CHECK" into three tokens: AUTHORITY, -, CHECK
+    for (let i = 1; i < tokens.length - 3; i++) {
+      if (tokens[i].getStr().toUpperCase() === "WITHOUT"
+          && tokens[i + 1].getStr().toUpperCase() === "AUTHORITY"
+          && tokens[i + 2].getStr() === "-"
+          && tokens[i + 3].getStr().toUpperCase() === "CHECK") {
+        // also remove the preceding space so no double space is left behind
+        const fix = EditHelper.deleteRange(lowFile, tokens[i - 1].getEnd(), tokens[i + 3].getEnd());
+        const message = "Remove WITHOUT AUTHORITY-CHECK from CALL TRANSACTION";
+        return Issue.atToken(lowFile, tokens[i], message, this.getMetadata().key, this.conf.severity, fix);
+      }
+    }
+
+    return undefined;
   }
 
   private replaceXsdBool(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {

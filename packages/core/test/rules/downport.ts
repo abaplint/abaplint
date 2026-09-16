@@ -6375,4 +6375,21 @@ ENDFORM.`;
     testFixAll(abap, expected);
   });
 
+  it("strip WITHOUT AUTHORITY-CHECK from CALL TRANSACTION", async () => {
+    const abap = `CALL TRANSACTION 'PA20' WITHOUT AUTHORITY-CHECK AND SKIP FIRST SCREEN.`;
+    const expected = `CALL TRANSACTION 'PA20' AND SKIP FIRST SCREEN.`;
+    testFix(abap, expected);
+  });
+
+  it("strip WITHOUT AUTHORITY-CHECK from CALL TRANSACTION, no other clauses", async () => {
+    const abap = `CALL TRANSACTION 'PA20' WITHOUT AUTHORITY-CHECK.`;
+    const expected = `CALL TRANSACTION 'PA20'.`;
+    testFix(abap, expected);
+  });
+
+  it("does not touch WITH AUTHORITY-CHECK on CALL TRANSACTION", async () => {
+    const issues = await findIssues(`CALL TRANSACTION 'PA20' WITH AUTHORITY-CHECK AND SKIP FIRST SCREEN.`);
+    expect(issues.length).to.equal(0);
+  });
+
 });
