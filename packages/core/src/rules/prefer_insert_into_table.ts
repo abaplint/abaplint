@@ -17,7 +17,7 @@ export class PreferInsertIntoTable extends ABAPRule {
       key: "prefer_insert_into_table",
       title: "Prefer INSERT INTO TABLE over APPEND",
       shortDescription: `Prefer INSERT INTO TABLE over APPEND`,
-      extendedInformation: `INSERT INTO TABLE respects the table type — sorted and hashed tables insert at the correct position, while APPEND always adds to the end regardless of table type.
+      extendedInformation: `INSERT INTO TABLE respects the table type, while APPEND always adds to the end regardless of table type.
 
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md`,
       tags: [RuleTag.SingleFile, RuleTag.Styleguide, RuleTag.Quickfix],
@@ -41,9 +41,8 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md`,
       }
 
       const fix = this.buildFix(file, stat);
-      issues.push(Issue.atStatement(file, stat,
-        "Prefer INSERT INTO TABLE over APPEND",
-        this.getMetadata().key, this.conf.severity, fix));
+      const message = "Prefer INSERT INTO TABLE over APPEND";
+      issues.push(Issue.atStatement(file, stat, message, this.getMetadata().key, this.conf.severity, fix));
     }
 
     return issues;
