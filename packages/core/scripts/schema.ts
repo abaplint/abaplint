@@ -132,6 +132,7 @@ import {ParserMissingSpaceConf} from "../src/rules/parser_missing_space";
 import {PragmaStyleConf} from "../src/rules/pragma_style";
 import {PreferCorrespondingConf} from "../src/rules/prefer_corresponding";
 import {PreferInlineConf} from "../src/rules/prefer_inline";
+import {PreferInsertIntoTableConf} from "../src/rules/prefer_insert_into_table";
 import {PreferIsNotConf} from "../src/rules/prefer_is_not";
 import {PreferPragmasConf} from "../src/rules/prefer_pragmas";
 import {PreferRaiseExceptionNewConf} from "../src/rules/prefer_raise_exception_new";
@@ -338,6 +339,7 @@ export interface IConfig {
     "pragma_style"?: PragmaStyleConf | boolean,
     "prefer_corresponding"?: PreferCorrespondingConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,
+    "prefer_insert_into_table"?: PreferInsertIntoTableConf | boolean,
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_pragmas"?: PreferPragmasConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,
@@ -533,6 +535,7 @@ export interface IConfig {
     "pragma_style"?: PragmaStyleConf | boolean,
     "prefer_corresponding"?: PreferCorrespondingConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,
+    "prefer_insert_into_table"?: PreferInsertIntoTableConf | boolean,
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_pragmas"?: PreferPragmasConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,

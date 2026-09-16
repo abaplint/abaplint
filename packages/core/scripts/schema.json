@@ -3269,6 +3269,17 @@
               ],
               "description": "Prefer inline to up-front declarations.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
             },
+            "prefer_insert_into_table": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferInsertIntoTableConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer INSERT INTO TABLE over APPEND\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/prefer_insert_into_table"
+            },
             "prefer_is_not": {
               "anyOf": [
                 {
@@ -5391,6 +5402,17 @@
                 }
               ],
               "description": "Prefer inline to up-front declarations.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
+            },
+            "prefer_insert_into_table": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferInsertIntoTableConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer INSERT INTO TABLE over APPEND\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/prefer_insert_into_table"
             },
             "prefer_is_not": {
               "anyOf": [
@@ -8118,6 +8140,23 @@
       "type": "object"
     },
     "PreferInlineConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "PreferInsertIntoTableConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
