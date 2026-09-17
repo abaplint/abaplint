@@ -25,6 +25,7 @@ export class SequentialBlank extends ABAPRule {
       key: "sequential_blank",
       title: "Sequential blank lines",
       shortDescription: `Checks that code does not contain more than the configured number of blank lines in a row.`,
+      // eslint-disable-next-line max-len
       extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#add-a-single-blank-line-to-separate-things-but-not-more`,
       tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.SingleFile],
     };
