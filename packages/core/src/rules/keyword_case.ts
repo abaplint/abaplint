@@ -115,7 +115,7 @@ export class KeywordCase extends ABAPRule {
       key: "keyword_case",
       title: "Keyword case",
       shortDescription: `Checks that keywords have the same case. Non-keywords must be lower case.`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-your-pretty-printer-team-settings`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-your-teams-abap-formatter-settings`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `write 'hello world'.`,
       goodExample: `WRITE 'hello world'.`,

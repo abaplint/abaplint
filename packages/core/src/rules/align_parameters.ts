@@ -41,7 +41,7 @@ export class AlignParameters extends ABAPRule {
 * CREATE OBJECT statements
 * RAISE EVENT statements
 
-https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#align-parameters
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#align-parameters
 
 Does not take effect on non functional method calls, use https://rules.abaplint.org/functional_writing/
 

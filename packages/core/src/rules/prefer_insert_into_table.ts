@@ -17,9 +17,9 @@ export class PreferInsertIntoTable extends ABAPRule {
       key: "prefer_insert_into_table",
       title: "Prefer INSERT INTO TABLE over APPEND",
       shortDescription: `Prefer INSERT INTO TABLE over APPEND`,
-      extendedInformation: `INSERT INTO TABLE respects the table type, while APPEND always adds to the end regardless of table type.
+      extendedInformation: `INSERT INTO TABLE respects the table type, while APPEND always tries to add to the end. This will dump if the sort order of a sorted table would change.
 
-https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md`,
+https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-insert-into-table-to-append-to`,
       tags: [RuleTag.SingleFile, RuleTag.Styleguide, RuleTag.Quickfix],
       badExample: `APPEND row TO itab.`,
       goodExample: `INSERT row INTO TABLE itab.`,
