@@ -3206,6 +3206,9 @@ ${indentation}    output = ${uniqueName}.\n`;
   private stripCallTransactionAuthorityCheck(high: StatementNode, lowFile: ABAPFile): Issue | undefined {
     if (!(high.get() instanceof Statements.CallTransaction)) {
       return undefined;
+    } else if (this.lowReg.getConfig().isOpenABAP()) {
+      // open-abap supports the addition
+      return undefined;
     }
 
     const tokens = high.getTokens();

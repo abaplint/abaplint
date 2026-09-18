@@ -21,6 +21,8 @@ statementType(tests, "CALL TRANSACTION", Statements.CallTransaction);
 const versionsOk = [
   {abap: `CALL TRANSACTION 'FOO' WITH AUTHORITY-CHECK.`, rel: Release.v740sp02},
   {abap: `CALL TRANSACTION 'FOO' WITHOUT AUTHORITY-CHECK.`, rel: Release.v740sp02},
+  {abap: `CALL TRANSACTION 'FOO' WITH AUTHORITY-CHECK.`, rel: Release["open-abap"]},
+  {abap: `CALL TRANSACTION 'FOO' WITHOUT AUTHORITY-CHECK.`, rel: Release["open-abap"]},
 ];
 
 statementVersionOk(versionsOk, "CALL TRANSACTION", Statements.CallTransaction);
