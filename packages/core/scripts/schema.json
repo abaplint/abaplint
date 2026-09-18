@@ -3247,6 +3247,17 @@
               ],
               "description": "Check pragmas placement and case\nTags: SingleFile\nhttps://rules.abaplint.org/pragma_style"
             },
+            "prefer_abap_bool": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferAbapBoolConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Use abap_bool instead of XFELD, SAP_BOOL, BOOLE_D, FLAG for boolean variables\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/prefer_abap_bool"
+            },
             "prefer_corresponding": {
               "anyOf": [
                 {
@@ -5380,6 +5391,17 @@
                 }
               ],
               "description": "Check pragmas placement and case\nTags: SingleFile\nhttps://rules.abaplint.org/pragma_style"
+            },
+            "prefer_abap_bool": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferAbapBoolConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Use abap_bool instead of XFELD, SAP_BOOL, BOOLE_D, FLAG for boolean variables\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/prefer_abap_bool"
             },
             "prefer_corresponding": {
               "anyOf": [
@@ -8120,6 +8142,23 @@
       "required": [
         "style"
       ],
+      "type": "object"
+    },
+    "PreferAbapBoolConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "PreferCorrespondingConf": {
