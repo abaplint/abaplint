@@ -34,7 +34,10 @@ testRule(tests, PreferAbapBool);
 const fixTests = [
   {input: `DATA foo TYPE xfeld.`, output: `DATA foo TYPE abap_bool.`},
   {input: `DATA foo TYPE XFELD.`, output: `DATA foo TYPE abap_bool.`},
-  {input: `CLASS lcl DEFINITION. PUBLIC SECTION. CLASS-DATA foo TYPE sap_bool. ENDCLASS. CLASS lcl IMPLEMENTATION. ENDCLASS.`, output: `CLASS lcl DEFINITION. PUBLIC SECTION. CLASS-DATA foo TYPE abap_bool. ENDCLASS. CLASS lcl IMPLEMENTATION. ENDCLASS.`},
+  {
+    input: `CLASS lcl DEFINITION. PUBLIC SECTION. CLASS-DATA foo TYPE sap_bool. ENDCLASS. CLASS lcl IMPLEMENTATION. ENDCLASS.`,
+    output: `CLASS lcl DEFINITION. PUBLIC SECTION. CLASS-DATA foo TYPE abap_bool. ENDCLASS. CLASS lcl IMPLEMENTATION. ENDCLASS.`,
+  },
   {input: `CONSTANTS c TYPE boole_d VALUE 'X'.`, output: `CONSTANTS c TYPE abap_bool VALUE 'X'.`},
   {input: `TYPES ty TYPE flag.`, output: `TYPES ty TYPE abap_bool.`},
   {input: `FIELD-SYMBOLS <fs> TYPE xfeld.`, output: `FIELD-SYMBOLS <fs> TYPE abap_bool.`},
