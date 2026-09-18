@@ -36,7 +36,7 @@ export class ConstantClasses implements IRule {
       title: "Validate constant classes",
       shortDescription: `Checks that a class contains exactly the constants corresponding to a domain's fixed values.`,
       extendedInformation:
-        `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-enumeration-classes-to-constants-interfaces`,
+        `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#prefer-enum-to-constants-interfaces`,
       tags: [RuleTag.Styleguide],
     };
   }
