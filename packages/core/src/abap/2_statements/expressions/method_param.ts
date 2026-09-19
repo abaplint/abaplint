@@ -5,12 +5,15 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class MethodParam extends Expression {
   public getRunnable(): IStatementRunnable {
-    const ref = seq("REFERENCE",
+    // The escape is part of the token: the lexer gives "!VALUE" as a single
+    // Identifier, so a literal "VALUE" cannot match it and the whole METHODS
+    // statement falls back to Unknown.
+    const ref = seq(altPrio("REFERENCE", "!REFERENCE"),
                     tok(ParenLeft),
                     Expressions.MethodParamName,
                     tok(ParenRightW));
 
-    const value = seq("VALUE",
+    const value = seq(altPrio("VALUE", "!VALUE"),
                       tok(ParenLeft),
                       Expressions.MethodParamName,
                       tok(ParenRightW));

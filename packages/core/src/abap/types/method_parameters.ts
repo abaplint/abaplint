@@ -337,7 +337,9 @@ export class MethodParameters implements IMethodParameters {
   }
 
   private isPassByValue(param: ExpressionNode): boolean {
-    return param.getFirstToken().getStr().toUpperCase() === "VALUE"
+    // "!" is the identifier escape, generated code has eg. "IMPORTING !VALUE(iv_foo)"
+    const first = param.getFirstToken().getStr().toUpperCase();
+    return (first === "VALUE" || first === "!VALUE")
       && param.getChildren()[1]?.getFirstToken().getStr() === "(";
   }
 
