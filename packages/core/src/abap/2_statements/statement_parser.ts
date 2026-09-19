@@ -323,6 +323,10 @@ export class StatementParser {
     let add: AbstractToken[] = [];
     let pre: AbstractToken[] = [];
     let colon: AbstractToken | undefined = undefined;
+    // inside EXEC SQL and an AMDP body a colon reads a host variable, ":lv_a",
+    // and is not the chaining marker; recognized here because nativeSQL() runs
+    // afterwards and can only re-wrap what this has already cut
+    let native = false;
 
     for (const token of wa.tokens) {
       if (token instanceof Tokens.Comment) {
@@ -335,6 +339,7 @@ export class StatementParser {
       const str = token.getStr();
       if (str.length === 1) {
         if (str === ".") {
+          native = this.nativeAfter(native, add, colon);
           wa.addUnknown(pre, add, colon);
           add = [];
           pre = [];
@@ -342,12 +347,12 @@ export class StatementParser {
         } else if (str === "," && pre.length > 0) {
           wa.addUnknown(pre, add, colon);
           add = [];
-        } else if (str === ":" && colon === undefined) {
+        } else if (str === ":" && colon === undefined && native === false) {
           colon = token;
           add.pop(); // do not add colon token to statement
           pre.push(...add);
           add = [];
-        } else if (str === ":") {
+        } else if (str === ":" && native === false) {
           add.pop(); // do not add colon token to statement
         }
       }
@@ -356,5 +361,36 @@ export class StatementParser {
     if (add.length > 0) {
       wa.addUnknown(pre, add, colon);
     }
+  }
+
+  /** whether the statement that just ended opens or closes a region where a
+   * colon belongs to the statement rather than chaining it */
+  private nativeAfter(native: boolean, tokens: readonly AbstractToken[], colon: AbstractToken | undefined): boolean {
+    // a pragma sits between the closing keyword and the period, so it is left
+    // out before the last word is read: "ENDEXEC ##NEEDED." closes the region
+    const words = tokens.filter(t => !(t instanceof Tokens.Pragma)).map(t => t.getStr().toUpperCase());
+    // a native body usually arrives as one blob terminated by its own closing
+    // keyword, so the terminator is the word before the period
+    if (words[words.length - 2] === "ENDEXEC" || words[words.length - 2] === "ENDMETHOD") {
+      return false;
+    }
+    if (colon !== undefined) {
+      // a fragment of a chain cannot OPEN a region: it is only part of a
+      // statement, and taking "DATA: lv_a TYPE i, exec sql." for one would
+      // turn chaining off for the rest of the file
+      return native;
+    }
+    if (words[0] === "EXEC" && words[1] === "SQL") {
+      return true;
+    }
+    // "BY DATABASE" as well as LANGUAGE, and not LANGUAGE alone: a method
+    // may be NAMED language
+    if (words[0] === "METHOD"
+        && words.includes("BY")
+        && words.includes("DATABASE")
+        && words.includes("LANGUAGE")) {
+      return true;
+    }
+    return native;
   }
 }
