@@ -21,10 +21,10 @@
   },
   "homepage": "https://abaplint.org",
   "devDependencies": {
-    "monaco-editor-core": "^0.44.0",
+    "monaco-editor-core": "^0.56.0",
     "rimraf": "^6.1.3",
     "typescript": "^7.0.2",
-    "vscode-languageserver-types": "^3.18.0"
+    "vscode-languageserver-types": "^3.18.3"
   },
   "dependencies": {
     "@abaplint/core": "^2.120.55"
