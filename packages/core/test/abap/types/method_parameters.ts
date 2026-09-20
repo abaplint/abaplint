@@ -6,6 +6,7 @@ import {IClassDefinition} from "../../../src/abap/types/_class_definition";
 import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
 import {IRegistry} from "../../../src/_iregistry";
 import {MemoryFile} from "../../../src/files/memory_file";
+import {IdentifierMeta} from "../../../src/abap/types/_typed_identifier";
 
 function run(reg: IRegistry): IClassDefinition | undefined {
   const clas = getABAPObjects(reg)[0] as Class;
@@ -15,6 +16,30 @@ function run(reg: IRegistry): IClassDefinition | undefined {
 }
 
 describe("Types, method_parameters", () => {
+  it("VALUE with the identifier escape is still pass by value", () => {
+    // Generated sources write the escape in front of the keyword:
+    // "IMPORTING !VALUE(iv_x)". Parsing it is not enough -- classified by
+    // reference, an importing parameter is read only, and assigning to it
+    // reports check_syntax on correct code.
+    const abap = `CLASS cl DEFINITION.
+  PUBLIC SECTION.
+    METHODS name IMPORTING !VALUE(iv_x) TYPE i.
+ENDCLASS.
+CLASS cl IMPLEMENTATION.
+  METHOD name.
+    iv_x = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const reg = new Registry().addFile(new MemoryFile("cl.clas.abap", abap)).parse();
+    const cdef = run(reg);
+    const def = cdef!.getMethodDefinitions().getByName("name");
+    const param = def!.getParameters().getImporting()[0];
+    expect(param?.getName()).to.equal("iv_x");
+    expect(param?.getMeta()).to.include(IdentifierMeta.PassByValue);
+    expect(reg.findIssues().map((i) => i.getKey())).to.not.include("check_syntax");
+  });
+
   it("default importing, with DEFAULT", () => {
     const abap = `CLASS cl DEFINITION.
   PUBLIC SECTION.
