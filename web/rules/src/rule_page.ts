@@ -7,8 +7,12 @@ const rawSchema = fs.readFileSync("../../packages/core/scripts/schema.json");
 
 function findDefault(ruleKey: string) {
   const def = abaplint.Config.getDefault();
-  const res = JSON.stringify(def.readByRule(ruleKey), null, 2);
-  return res.replace("\\", "\\\\");
+  return JSON.stringify(def.readByRule(ruleKey), null, 2);
+}
+
+// the value is embedded inside a javascript template literal in the generated html
+function escapeTemplateLiteral(str: string): string {
+  return str.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/g, "\\${");
 }
 
 function renderExtended(str: string) {
@@ -33,7 +37,7 @@ function schemaEditor(json: string, schema: string, ruleName: string) {
     require.config({ paths: { 'vs': '/_monaco/vs' }});
     require(['vs/editor/editor.main'], function() {
       var modelUri = monaco.Uri.parse("a://b/foo.json");
-      var model = monaco.editor.createModel(\`${json}\`, "json", modelUri);
+      var model = monaco.editor.createModel(\`${escapeTemplateLiteral(json)}\`, "json", modelUri);
 
       const schema = abaplintSchema;
       schema["$ref"] = "#/definitions/${schema}",
@@ -66,7 +70,7 @@ function examplesEditor(abap: string, ruleName: string) {
   <script>
     require.config({ paths: { 'vs': '/_monaco/vs' }});
     require(['vs/editor/editor.main'], function() {
-      initABAP(\`${abap}\`, "${ruleName}");
+      initABAP(\`${escapeTemplateLiteral(abap)}\`, "${ruleName}");
     });
   </script>`;
 }
