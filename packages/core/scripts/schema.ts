@@ -139,6 +139,7 @@ import {PreferIsNotConf} from "../src/rules/prefer_is_not";
 import {PreferPragmasConf} from "../src/rules/prefer_pragmas";
 import {PreferRaiseExceptionNewConf} from "../src/rules/prefer_raise_exception_new";
 import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_exporting";
+import {PreferStringTemplateConf} from "../src/rules/prefer_string_template";
 import {PreferXsdboolConf} from "../src/rules/prefer_xsdbool";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
 import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
@@ -348,6 +349,7 @@ export interface IConfig {
     "prefer_pragmas"?: PreferPragmasConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
+    "prefer_string_template"?: PreferStringTemplateConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
@@ -546,6 +548,7 @@ export interface IConfig {
     "prefer_pragmas"?: PreferPragmasConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
+    "prefer_string_template"?: PreferStringTemplateConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,

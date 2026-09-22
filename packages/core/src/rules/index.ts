@@ -135,6 +135,7 @@ export * from "./prefer_pragmas";
 export * from "./prefer_abap_bool";
 export * from "./prefer_abap_bool_values";
 export * from "./prefer_raise_exception_new";
+export * from "./prefer_string_template";
 export * from "./prefer_returning_to_exporting";
 export * from "./prefer_xsdbool";
 export * from "./preferred_compare_operator";
