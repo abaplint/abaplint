@@ -133,6 +133,7 @@ export * from "./prefer_insert_into_table";
 export * from "./prefer_is_not";
 export * from "./prefer_pragmas";
 export * from "./prefer_abap_bool";
+export * from "./prefer_abap_bool_values";
 export * from "./prefer_raise_exception_new";
 export * from "./prefer_returning_to_exporting";
 export * from "./prefer_xsdbool";

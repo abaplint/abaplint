@@ -3258,6 +3258,17 @@
               ],
               "description": "Use abap_bool instead of XFELD, SAP_BOOL, BOOLE_D, FLAG for boolean variables\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/prefer_abap_bool"
             },
+            "prefer_abap_bool_values": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferAbapBoolValuesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Use abap_true and abap_false instead of 'X' and ' ' for abap_bool variables\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/prefer_abap_bool_values"
+            },
             "prefer_corresponding": {
               "anyOf": [
                 {
@@ -5402,6 +5413,17 @@
                 }
               ],
               "description": "Use abap_bool instead of XFELD, SAP_BOOL, BOOLE_D, FLAG for boolean variables\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/prefer_abap_bool"
+            },
+            "prefer_abap_bool_values": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferAbapBoolValuesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Use abap_true and abap_false instead of 'X' and ' ' for abap_bool variables\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/prefer_abap_bool_values"
             },
             "prefer_corresponding": {
               "anyOf": [
@@ -8145,6 +8167,23 @@
       "type": "object"
     },
     "PreferAbapBoolConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "PreferAbapBoolValuesConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
