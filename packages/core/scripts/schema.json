@@ -3346,6 +3346,17 @@
               ],
               "description": "Prefer RETURNING to EXPORTING. Generic types cannot be RETURNING.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/prefer_returning_to_exporting"
             },
+            "prefer_string_template": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferStringTemplateConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Use string templates instead of && to assemble text\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/prefer_string_template"
+            },
             "prefer_xsdbool": {
               "anyOf": [
                 {
@@ -5501,6 +5512,17 @@
                 }
               ],
               "description": "Prefer RETURNING to EXPORTING. Generic types cannot be RETURNING.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/prefer_returning_to_exporting"
+            },
+            "prefer_string_template": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferStringTemplateConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Use string templates instead of && to assemble text\nTags: Styleguide, SingleFile, Quickfix\nhttps://rules.abaplint.org/prefer_string_template"
             },
             "prefer_xsdbool": {
               "anyOf": [
@@ -8325,6 +8347,23 @@
       "type": "object"
     },
     "PreferReturningToExportingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "PreferStringTemplateConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
