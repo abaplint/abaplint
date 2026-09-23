@@ -3784,7 +3784,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects unnecessary IS [NOT] INITIAL check before LOOP AT\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/unnecessary_loop_guard"
+              "description": "Detects unnecessary IS [NOT] INITIAL check before LOOP AT\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/unnecessary_loop_guard"
             },
             "unnecessary_pragma": {
               "anyOf": [
@@ -5962,7 +5962,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects unnecessary IS [NOT] INITIAL check before LOOP AT\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/unnecessary_loop_guard"
+              "description": "Detects unnecessary IS [NOT] INITIAL check before LOOP AT\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/unnecessary_loop_guard"
             },
             "unnecessary_pragma": {
               "anyOf": [

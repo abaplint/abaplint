@@ -6,6 +6,7 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {EditHelper} from "../edit_helper";
 
 export class UnnecessaryLoopGuardConf extends BasicRuleConfig {
 }
@@ -20,7 +21,7 @@ export class UnnecessaryLoopGuard extends ABAPRule {
       title: "Unnecessary loop guard",
       shortDescription: `Detects unnecessary IS [NOT] INITIAL check before LOOP AT`,
       extendedInformation: `LOOP AT iterates zero times on an empty table, so an IS [NOT] INITIAL guard is redundant.`,
-      tags: [RuleTag.SingleFile, RuleTag.Styleguide],
+      tags: [RuleTag.SingleFile, RuleTag.Styleguide, RuleTag.Quickfix],
       badExample: `IF lt_data IS NOT INITIAL.
   LOOP AT lt_data INTO DATA(ls_item).
     WRITE ls_item-name.
@@ -101,12 +102,16 @@ ENDLOOP.`,
         continue;
       }
 
+      const endifStatement = ifStru.findDirectStatement(Statements.EndIf)!;
+      const fix = EditHelper.merge(EditHelper.deleteStatement(file, ifStatement), EditHelper.deleteStatement(file, endifStatement));
+
       issues.push(Issue.atStatement(
         file,
         ifStatement,
         "Unnecessary IS [NOT] INITIAL check before LOOP AT",
         this.getMetadata().key,
         this.conf.severity,
+        fix,
       ));
     }
 
