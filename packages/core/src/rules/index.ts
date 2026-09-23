@@ -175,6 +175,7 @@ export * from "./types_naming";
 export * from "./uncaught_exception";
 export * from "./unknown_types";
 export * from "./unnecessary_chaining";
+export * from "./unnecessary_loop_guard";
 export * from "./unnecessary_pragma";
 export * from "./unnecessary_return";
 export * from "./unreachable_code";
