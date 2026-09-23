@@ -10,8 +10,8 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@abaplint/core": "^2.120.58",
-    "@abaplint/monaco": "^2.120.58",
+    "@abaplint/core": "^2.120.59",
+    "@abaplint/monaco": "^2.120.59",
     "@types/node": "^25.9.8",
     "buffer": "^6.0.3",
     "fuse.js": "=7.1.0",
