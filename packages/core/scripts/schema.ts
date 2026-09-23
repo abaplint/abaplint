@@ -191,6 +191,7 @@ import {UnusedVariablesConf} from "../src/rules/unused_variables";
 import {UseBoolExpressionConf} from "../src/rules/use_bool_expression";
 import {UseClassBasedExceptionsConf} from "../src/rules/use_class_based_exceptions";
 import {UseLineExistsConf} from "../src/rules/use_line_exists";
+import {UseMessageClassConf} from "../src/rules/use_message_class";
 import {UseNewConf} from "../src/rules/use_new";
 import {WhenOthersLastConf} from "../src/rules/when_others_last";
 import {WhitespaceEndConf} from "../src/rules/whitespace_end";
@@ -402,6 +403,7 @@ export interface IConfig {
     "use_bool_expression"?: UseBoolExpressionConf | boolean,
     "use_class_based_exceptions"?: UseClassBasedExceptionsConf | boolean,
     "use_line_exists"?: UseLineExistsConf | boolean,
+    "use_message_class"?: UseMessageClassConf | boolean,
     "use_new"?: UseNewConf | boolean,
     "when_others_last"?: WhenOthersLastConf | boolean,
     "whitespace_end"?: WhitespaceEndConf | boolean,
@@ -602,6 +604,7 @@ export interface IConfig {
     "use_bool_expression"?: UseBoolExpressionConf | boolean,
     "use_class_based_exceptions"?: UseClassBasedExceptionsConf | boolean,
     "use_line_exists"?: UseLineExistsConf | boolean,
+    "use_message_class"?: UseMessageClassConf | boolean,
     "use_new"?: UseNewConf | boolean,
     "when_others_last"?: WhenOthersLastConf | boolean,
     "whitespace_end"?: WhitespaceEndConf | boolean,

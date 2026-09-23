@@ -188,6 +188,7 @@ export * from "./unused_variables";
 export * from "./use_bool_expression";
 export * from "./use_class_based_exceptions";
 export * from "./use_line_exists";
+export * from "./use_message_class";
 export * from "./use_new";
 export * from "./when_others_last";
 export * from "./whitespace_end";

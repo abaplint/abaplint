@@ -3918,6 +3918,17 @@
               ],
               "description": "Use line_exists, from 740sp02 and up\nTags: Upport, Styleguide, SingleFile\nhttps://rules.abaplint.org/use_line_exists"
             },
+            "use_message_class": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UseMessageClassConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Define messages in SE91 instead of using inline text or variables\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/use_message_class"
+            },
             "use_new": {
               "anyOf": [
                 {
@@ -6095,6 +6106,17 @@
                 }
               ],
               "description": "Use line_exists, from 740sp02 and up\nTags: Upport, Styleguide, SingleFile\nhttps://rules.abaplint.org/use_line_exists"
+            },
+            "use_message_class": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UseMessageClassConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Define messages in SE91 instead of using inline text or variables\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/use_message_class"
             },
             "use_new": {
               "anyOf": [
@@ -9575,6 +9597,23 @@
       "type": "object"
     },
     "UseLineExistsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "UseMessageClassConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
