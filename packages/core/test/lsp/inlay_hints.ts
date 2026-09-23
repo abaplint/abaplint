@@ -37,6 +37,29 @@ START-OF-SELECTION.
     expect(found.length).to.equal(2);
   });
 
+  it("CONV, generic target, infer from body", () => {
+    const file = new MemoryFile(filename, `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING p_name TYPE any.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    WRITE p_name.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv_column TYPE string.
+    lv_column = 'MAPPING_VALUE'.
+    take( CONV #( lv_column ) ).
+  ENDMETHOD.
+ENDCLASS.`);
+    const reg = new Registry().addFiles([file]).parse();
+    const found = new InlayHints(reg).list({uri: filename});
+    expect(found.length).to.equal(2);
+    expect(found[1].label).to.equal("TYPE string");
+  });
+
   it("CONV, arithmetics", () => {
     const file = new MemoryFile(filename, `
   DATA foo TYPE f.

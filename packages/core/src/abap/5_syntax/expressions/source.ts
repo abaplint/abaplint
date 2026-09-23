@@ -133,6 +133,11 @@ export class Source {
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
             return VoidType.get(CheckSyntaxKey);
           }
+          if (foundType?.isGeneric() && bodyType !== undefined) {
+            this.addIfInferred(node, input, bodyType);
+            this.traverseRemainingChildren(children, input);
+            return bodyType;
+          }
           this.addIfInferred(node, input, foundType);
           this.traverseRemainingChildren(children, input);
           return foundType;
