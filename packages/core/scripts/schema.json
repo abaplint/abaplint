@@ -3775,6 +3775,17 @@
               ],
               "description": "Find unnecessary chaining, all statements are checked\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_chaining"
             },
+            "unnecessary_loop_guard": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnnecessaryLoopGuardConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects unnecessary IS [NOT] INITIAL check before LOOP AT\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/unnecessary_loop_guard"
+            },
             "unnecessary_pragma": {
               "anyOf": [
                 {
@@ -5952,6 +5963,17 @@
                 }
               ],
               "description": "Find unnecessary chaining, all statements are checked\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_chaining"
+            },
+            "unnecessary_loop_guard": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnnecessaryLoopGuardConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects unnecessary IS [NOT] INITIAL check before LOOP AT\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/unnecessary_loop_guard"
             },
             "unnecessary_pragma": {
               "anyOf": [
@@ -9327,6 +9349,23 @@
       "required": [
         "ignoreExceptions"
       ],
+      "type": "object"
+    },
+    "UnnecessaryLoopGuardConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "UnnecessaryPragmaConf": {
