@@ -31,6 +31,7 @@ const repos = [
   "larshp/abapNTLM",
   "larshp/abapOpenChecks",
   "larshp/abapPGP",
+  "larshp/gg-gui",
   "larshp/rap_tutorial",
   "MagPasulke/abap-string-interpreter",
   "Marc-Bernard-Tools/MBT-Base",
@@ -48,7 +49,7 @@ const repos = [
   "open-abap/open-abap-cds",
   "open-abap/open-abap-ci",
   "open-abap/open-abap-core",
-//  "open-abap/open-abap-deprecated",  no files
+  "open-abap/open-abap-deprecated",
   "open-abap/open-abap-gui",
   "open-abap/open-abap-jobs",
   "open-abap/open-abap-lock",
