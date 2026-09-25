@@ -213,6 +213,9 @@ const fails = [
   "METHODS foo EXPORTING bar TYPE ANY STRUCTURE.",
   "METHODS foo RETURNING VALUE(bar) TYPE ANY STRUCTURE.",
   "CLASS-METHODS on_event FOR ENTITY EVENT events FOR root~raised.",
+  "CLASS-METHODS determine_parameters RETURNING VALUE(rs_parameters) TYPE ty_parameters RAISING ycx_see IMPORTING io_owner TYPE REF TO ycl_see_history io_session TYPE REF TO zif_gg_session_v1.",
+  "METHODS foo RAISING cx_foo EXPORTING bar TYPE i.",
+  "METHODS foo EXCEPTIONS bar IMPORTING baz TYPE i.",
 ];
 statementExpectFail(fails, "MethodDef");
 
