@@ -14896,6 +14896,22 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("already defined");
   });
 
+  it("method and structured type with same name, method first", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS get_field_association_scheme.
+    TYPES: BEGIN OF get_field_association_scheme,
+             int TYPE i,
+           END OF get_field_association_scheme.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
   it("Move is not compatible, its calculated", () => {
     const abap = `
 DATA lv_bits TYPE i.
