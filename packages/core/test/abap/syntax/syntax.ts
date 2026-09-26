@@ -5911,6 +5911,28 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("AMDP OPTIONS, implementation and definition, #4333", () => {
+    const abap = `
+CLASS zcl_x DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES if_amdp_marker_hdb.
+    CLASS-METHODS m IMPORTING VALUE(iv) TYPE i EXPORTING VALUE(ev) TYPE i.
+    CLASS-METHODS n AMDP OPTIONS READ-ONLY IMPORTING VALUE(iv) TYPE i EXPORTING VALUE(ev) TYPE i.
+ENDCLASS.
+CLASS zcl_x IMPLEMENTATION.
+  METHOD m BY DATABASE PROCEDURE FOR HDB LANGUAGE SQLSCRIPT
+    OPTIONS READ-ONLY SUPPRESS SYNTAX ERRORS.
+    ev = :iv;
+  ENDMETHOD.
+  METHOD n BY DATABASE PROCEDURE FOR HDB LANGUAGE SQLSCRIPT
+    OPTIONS SUPPRESS SYNTAX ERRORS.
+    ev = :iv;
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([{filename: "zcl_x.clas.abap", contents: abap}]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("check constructor parameters, dynamic type, required parameter of static type not checked", () => {
     const abap = `
 CLASS sup DEFINITION ABSTRACT.
