@@ -5911,6 +5911,53 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CREATE DATA LIKE LINE OF generic data, not a table, #4332", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m CHANGING data TYPE data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    DATA ref TYPE REF TO data.
+    CREATE DATA ref LIKE LINE OF data.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`"data" is not an internal table`);
+  });
+
+  it("CREATE DATA LIKE LINE OF structure, not a table", () => {
+    const abap = `
+DATA: BEGIN OF struc,
+        field TYPE i,
+      END OF struc.
+DATA ref TYPE REF TO data.
+CREATE DATA ref LIKE LINE OF struc.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`"struc" is not an internal table`);
+  });
+
+  it("CREATE DATA LIKE LINE OF, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m CHANGING data TYPE data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    DATA ref TYPE REF TO data.
+    DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    FIELD-SYMBOLS <at> TYPE ANY TABLE.
+    ASSIGN data TO <at>.
+    CREATE DATA ref LIKE LINE OF <at>.
+    CREATE DATA ref LIKE LINE OF tab.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("AMDP OPTIONS, implementation and definition, #4333", () => {
     const abap = `
 CLASS zcl_x DEFINITION PUBLIC.
