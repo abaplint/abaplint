@@ -5911,6 +5911,60 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("check constructor parameters, dynamic type, required parameter of static type not checked", () => {
+    const abap = `
+CLASS sup DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE string.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA ref TYPE REF TO sup.
+  CREATE OBJECT ref TYPE ('SUB').`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("check constructor parameters, dynamic type, unknown parameter of static type not checked", () => {
+    const abap = `
+CLASS sup DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE string.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA ref TYPE REF TO sup.
+  CREATE OBJECT ref TYPE ('SUB') EXPORTING other = 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("check constructor parameters, dynamic type, sources still checked", () => {
+    const abap = `
+CLASS sup DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE string.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA ref TYPE REF TO sup.
+  CREATE OBJECT ref TYPE ('SUB') EXPORTING other = does_not_exist.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("does_not_exist");
+  });
+
   it("method parameter must be supplied", () => {
     const abap = `
 CLASS bar DEFINITION.

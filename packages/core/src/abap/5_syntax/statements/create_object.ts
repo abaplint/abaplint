@@ -111,6 +111,12 @@ export class CreateObject implements StatementSyntax {
     input.scope.addReference(t?.getFirstToken(), cdef, ReferenceType.ConstructorReference, input.filename,
                              {ooName: ooName});
 
+    if (type && type.get() instanceof Expressions.Dynamic) {
+      // the class is only known at runtime, cdef is the static type of the target
+      this.validateParameters(undefined, node, input);
+      return;
+    }
+
     if (cdef !== undefined) {
       const err = CreateObject.checkInstantiationAllowed(cdef, input);
       if (err) {
