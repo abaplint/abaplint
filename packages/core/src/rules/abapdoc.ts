@@ -119,12 +119,12 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#abap-doc-on
 
   private getAbapdoc(rows: readonly string[], pos: Position): string[] {
     let previousRow = pos.getRow() - 2;
-    let rowText = rows[previousRow].trim().toUpperCase();
+    let rowText = (rows[previousRow] ?? "").trim().toUpperCase();
     const text: string[] = [];
 
     if (rowText === "METHODS" || rowText === "CLASS-METHODS") {
       previousRow--;
-      rowText = rows[previousRow].trim().toUpperCase();
+      rowText = (rows[previousRow] ?? "").trim().toUpperCase();
     }
     text.push(rowText);
     //we need to push the first row despite if it is actually an abapdoc or not
@@ -132,7 +132,7 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#abap-doc-on
     if (rowText.trim().substring(0, 2) === "\"!") {
       while (previousRow >= 0) {
         previousRow--;
-        rowText = rows[previousRow].trim().toUpperCase();
+        rowText = (rows[previousRow] ?? "").trim().toUpperCase();
         if (rowText.trim().substring(0, 2) !== "\"!") {
           break;
         }
