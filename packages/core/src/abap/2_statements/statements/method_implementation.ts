@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, opt, optPrio, alt, plus, altPrio, regex as reg, verNotLang} from "../combi";
+import {seq, opt, optPrio, alt, plus, altPrio, per, regex as reg, verNotLang} from "../combi";
 import {MethodName, Language, SimpleFieldChain} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {LanguageVersion} from "../../../version";
@@ -15,9 +15,11 @@ export class MethodImplementation implements IStatement {
 
     const using = seq("USING", plus(SimpleFieldChain));
 
+    const options = seq("OPTIONS", per("READ-ONLY", "SUPPRESS SYNTAX ERRORS", "DETERMINISTIC"));
+
     const database = seq("DATABASE", alt("PROCEDURE", "FUNCTION", "GRAPH WORKSPACE"), "FOR HDB",
                          Language,
-                         opt("OPTIONS READ-ONLY"),
+                         opt(options),
                          opt(using));
 
     // BY DATABASE and BY KERNEL both blocked in KeyUser

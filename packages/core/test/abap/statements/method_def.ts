@@ -99,6 +99,8 @@ const tests = [
     OPTIONS CDS SESSION CLIENT REQUIRED.`,
   `CLASS-METHODS get_shortest_path AMDP OPTIONS CDS SESSION CLIENT current.`,
   `METHODS moo AMDP OPTIONS READ-ONLY CDS SESSION CLIENT current.`,
+  `CLASS-METHODS m AMDP OPTIONS READ-ONLY IMPORTING VALUE(iv) TYPE i EXPORTING VALUE(ev) TYPE i.`,
+  `CLASS-METHODS m AMDP OPTIONS READ-ONLY.`,
   `METHODS /ui2/bar.`,
   `METHODS /ui2/foo_bar RETURNING VALUE(ro_/ui2/moo) TYPE REF TO /ui2/boo.`,
 
@@ -213,6 +215,10 @@ const fails = [
   "METHODS foo EXPORTING bar TYPE ANY STRUCTURE.",
   "METHODS foo RETURNING VALUE(bar) TYPE ANY STRUCTURE.",
   "CLASS-METHODS on_event FOR ENTITY EVENT events FOR root~raised.",
+  "CLASS-METHODS determine_parameters RETURNING VALUE(rs_parameters) TYPE ty_parameters RAISING ycx_see IMPORTING io_owner TYPE REF TO ycl_see_history io_session TYPE REF TO zif_gg_session_v1.",
+  "METHODS foo RAISING cx_foo EXPORTING bar TYPE i.",
+  "METHODS foo RETURNING VALUE(rv_bar) TYPE i IMPORTING baz TYPE i.",
+  "METHODS foo EXCEPTIONS bar IMPORTING baz TYPE i.",
 ];
 statementExpectFail(fails, "MethodDef");
 

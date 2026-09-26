@@ -5911,6 +5911,129 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CREATE DATA LIKE LINE OF generic data, not a table, #4332", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m CHANGING data TYPE data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    DATA ref TYPE REF TO data.
+    CREATE DATA ref LIKE LINE OF data.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`"data" is not an internal table`);
+  });
+
+  it("CREATE DATA LIKE LINE OF structure, not a table", () => {
+    const abap = `
+DATA: BEGIN OF struc,
+        field TYPE i,
+      END OF struc.
+DATA ref TYPE REF TO data.
+CREATE DATA ref LIKE LINE OF struc.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`"struc" is not an internal table`);
+  });
+
+  it("CREATE DATA LIKE LINE OF, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m CHANGING data TYPE data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    DATA ref TYPE REF TO data.
+    DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    FIELD-SYMBOLS <at> TYPE ANY TABLE.
+    ASSIGN data TO <at>.
+    CREATE DATA ref LIKE LINE OF <at>.
+    CREATE DATA ref LIKE LINE OF tab.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("AMDP OPTIONS, implementation and definition, #4333", () => {
+    const abap = `
+CLASS zcl_x DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES if_amdp_marker_hdb.
+    CLASS-METHODS m IMPORTING VALUE(iv) TYPE i EXPORTING VALUE(ev) TYPE i.
+    CLASS-METHODS n AMDP OPTIONS READ-ONLY IMPORTING VALUE(iv) TYPE i EXPORTING VALUE(ev) TYPE i.
+ENDCLASS.
+CLASS zcl_x IMPLEMENTATION.
+  METHOD m BY DATABASE PROCEDURE FOR HDB LANGUAGE SQLSCRIPT
+    OPTIONS READ-ONLY SUPPRESS SYNTAX ERRORS.
+    ev = :iv;
+  ENDMETHOD.
+  METHOD n BY DATABASE PROCEDURE FOR HDB LANGUAGE SQLSCRIPT
+    OPTIONS SUPPRESS SYNTAX ERRORS.
+    ev = :iv;
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([{filename: "zcl_x.clas.abap", contents: abap}]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("check constructor parameters, dynamic type, required parameter of static type not checked", () => {
+    const abap = `
+CLASS sup DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE string.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA ref TYPE REF TO sup.
+  CREATE OBJECT ref TYPE ('SUB').`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("check constructor parameters, dynamic type, unknown parameter of static type not checked", () => {
+    const abap = `
+CLASS sup DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE string.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA ref TYPE REF TO sup.
+  CREATE OBJECT ref TYPE ('SUB') EXPORTING other = 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("check constructor parameters, dynamic type, sources still checked", () => {
+    const abap = `
+CLASS sup DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING bar TYPE string.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA ref TYPE REF TO sup.
+  CREATE OBJECT ref TYPE ('SUB') EXPORTING other = does_not_exist.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("does_not_exist");
+  });
+
   it("method parameter must be supplied", () => {
     const abap = `
 CLASS bar DEFINITION.
@@ -14888,6 +15011,22 @@ CLASS lcl DEFINITION.
   PUBLIC SECTION.
     DATA nucleotide_counts TYPE c LENGTH 1.
     METHODS nucleotide_counts.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("already defined");
+  });
+
+  it("method and structured type with same name, method first", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS get_field_association_scheme.
+    TYPES: BEGIN OF get_field_association_scheme,
+             int TYPE i,
+           END OF get_field_association_scheme.
 ENDCLASS.
 CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;

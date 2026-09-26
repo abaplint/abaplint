@@ -1,6 +1,6 @@
 import {Release, LanguageVersion} from "../../../version";
 import {IStatement} from "./_statement";
-import {seq, alt, altPrio, ver, optPrio, plus, opt, AlsoIn, verNotLang, tok} from "../combi";
+import {seq, alt, altPrio, ver, optPrio, plus, opt, per, AlsoIn, verNotLang, tok} from "../combi";
 import {MethodDefChanging, MethodDefReturning, Redefinition, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract, MethodDefRaising, MethodDefExceptions, MethodParamName, NamespaceSimpleName, TypeName, EntityAssociation} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
@@ -67,7 +67,7 @@ export class MethodDef implements IStatement {
 // todo, this is only from version something
     // AMDP OPTIONS clause blocked in KeyUser
     const amdp = verNotLang(LanguageVersion.KeyUser, seq(
-      "AMDP OPTIONS", optPrio("READ-ONLY"), "CDS SESSION CLIENT", alt("CURRENT", "DEPENDENT"),
+      "AMDP OPTIONS", per("READ-ONLY", seq("CDS SESSION CLIENT", alt("CURRENT", "DEPENDENT"))),
       optPrio(MethodDefImporting),
       optPrio(MethodDefExporting),
       optPrio(MethodDefRaising)));

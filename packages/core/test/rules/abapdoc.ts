@@ -243,6 +243,10 @@ ENDINTERFACE.`, cnt: 0,
           moobar FOR TESTING.
     ENDCLASS.`, cnt: 0,
   },
+  // method identifier on first row, https://github.com/abaplint/abaplint/issues/4335
+  {
+    abap: `INTERFACE zif_x PUBLIC. METHODS m. ENDINTERFACE.`, cnt: 1,
+  },
 ];
 
 testRule(defaultConfigTests, Abapdoc, undefined, `rule: abapdoc`);
@@ -275,6 +279,19 @@ const localCheckActiveTests = [
                 "! doc
                 moobar RETURNING VALUE(rv_string) TYPE string.
           ENDCLASS.`, cnt: 0,
+  },
+
+  // method identifier on first row, https://github.com/abaplint/abaplint/issues/4335
+  {
+    abap: `CLASS lcl DEFINITION. PUBLIC SECTION. METHODS m. ENDCLASS. CLASS lcl IMPLEMENTATION. METHOD m. ENDMETHOD. ENDCLASS.`,
+    cnt: 1,
+  },
+
+  // abapdoc on first row, method on second row
+  {
+    abap: `"! doc
+CLASS lcl DEFINITION. PUBLIC SECTION. METHODS m. ENDCLASS. CLASS lcl IMPLEMENTATION. METHOD m. ENDMETHOD. ENDCLASS.`,
+    cnt: 0,
   },
 
 ];
