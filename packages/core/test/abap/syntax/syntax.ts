@@ -2215,6 +2215,81 @@ DATA(bar) = foo->lif_def~foo.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("CASE, built-in function with named argument, 702", () => {
+    const abap = `DATA foo TYPE string.
+CASE to_upper( foo ).
+  WHEN 'A'.
+ENDCASE.`;
+    const issues = runProgram(abap, [], Release.v702);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("to_upper");
+  });
+
+  it("WHEN, built-in function with named argument, 702", () => {
+    const abap = `DATA foo TYPE string.
+CASE foo.
+  WHEN to_lower( foo ).
+ENDCASE.`;
+    const issues = runProgram(abap, [], Release.v702);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("CASE, built-in function with named argument, 740sp02", () => {
+    const abap = `DATA foo TYPE string.
+CASE to_upper( foo ).
+  WHEN to_lower( foo ).
+ENDCASE.`;
+    const issues = runProgram(abap, [], Release.v740sp02);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CASE, built-in function with unnamed argument, 702", () => {
+    const abap = `DATA foo TYPE string.
+CASE strlen( foo ).
+  WHEN strlen( foo ).
+ENDCASE.`;
+    const issues = runProgram(abap, [], Release.v702);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CASE, local method named like a built-in function, 702", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS to_upper RETURNING VALUE(rv) TYPE string.
+    METHODS run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD to_upper.
+  ENDMETHOD.
+  METHOD run.
+    CASE to_upper( ).
+      WHEN 'A'.
+    ENDCASE.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Release.v702);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CASE, variable and nested built-in function in a method argument, 702", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get IMPORTING iv TYPE string RETURNING VALUE(rv) TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE string.
+  CASE foo.
+    WHEN lcl=>get( to_upper( foo ) ).
+  ENDCASE.`;
+    const issues = runProgram(abap, [], Release.v702);
+    expect(issues.length).to.equals(0);
+  });
+
   it("LOOP AT SCREEN, on 702", () => {
     const abap = `LOOP AT SCREEN.
     ENDLOOP.`;
