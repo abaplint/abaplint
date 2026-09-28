@@ -1061,6 +1061,19 @@ export class BuiltIn {
     return this.buildDefinition(def, name);
   }
 
+  // functions called with exactly one unnamed argument, all others take named arguments like "val"
+  private static readonly unnamedArgument = new Set([
+    "ABS", "ACOS", "ASIN", "ATAN", "BOOLC", "CEIL", "CHARLEN", "COS", "COSH", "DBMAXLEN", "EXP", "FLOOR",
+    "FRAC", "LINES", "LOG", "LOG10", "NUMOFCHAR", "SIGN", "SIN", "SINH", "SQRT", "STRLEN", "TAN", "TANH",
+    "TRUNC", "XSTRLEN"]);
+
+  public static hasUnnamedArgument(name: string | undefined): boolean {
+    if (name === undefined) {
+      return false;
+    }
+    return BuiltIn.unnamedArgument.has(name.toUpperCase());
+  }
+
   public static isPredicate(name: string | undefined): boolean | undefined {
     if (name === undefined) {
       return undefined;

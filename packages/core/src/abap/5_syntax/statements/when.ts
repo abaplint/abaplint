@@ -3,12 +3,16 @@ import {StatementNode} from "../../nodes";
 import {Source} from "../expressions/source";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput} from "../_syntax_input";
+import {checkCaseOperand} from "./case";
 
 export class When implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findAllExpressions(Expressions.Source)) {
       Source.runSyntax(s, input);
+    }
+    for (const s of node.findDirectExpressions(Expressions.Source)) {
+      checkCaseOperand(s, input);
     }
 
   }
