@@ -9785,6 +9785,10 @@
         "textAndTranslationLengthSeverity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity for text and translation length checks"
+        },
+        "transparentTableSeverity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity for transparent table checks"
         }
       },
       "type": "object"
