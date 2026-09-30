@@ -99,9 +99,10 @@ describe("lexer", () => {
 
   it("quoted literal, no separator after", () => {
     const tokens = getTokens("'x'b");
-    expect(tokens.length).to.equal(1);
-    expect(tokens[0]).to.not.be.instanceof(StringToken);
-    expect(tokens[0].getStr()).to.equal("'x'b");
+    expect(tokens.length).to.equal(2);
+    expect(tokens[0]).to.be.instanceof(StringToken);
+    expect(tokens[0].getStr()).to.equal("'x'");
+    expect(tokens[1].getStr()).to.equal("b");
   });
 
   it("quoted literal, text element", () => {
