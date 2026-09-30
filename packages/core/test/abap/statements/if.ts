@@ -102,6 +102,7 @@ const tests = [
   "IF ('bar' = foo ).",
   "IF |{ lv_host CASE = (cl_abap_format=>c_lower) }| EQ 'http'.",
   "IF <foo>-bar IS ASSIGNED.",
+  "IF p_all = 'X'OR p_app = 'X'.",
 ];
 
 statementType(tests, "IF", Statements.If);
