@@ -14,6 +14,8 @@ export class XMLConsistencyConf extends BasicRuleConfig {
   public textAndTranslationLengthSeverity?: Severity = Severity.Error;
   /** Problem severity for data element(DTEL) field checks */
   public dataElementSeverity?: Severity = Severity.Error;
+  /** Problem severity for transparent table checks */
+  public transparentTableSeverity?: Severity = Severity.Error;
 }
 
 export class XMLConsistency implements IRule {
@@ -295,11 +297,11 @@ export class XMLConsistency implements IRule {
     if (obj.getTableCategory() === Objects.TableCategory.Transparent) {
       if (!obj.getDeliveryClass()?.trim()) {
         const message = `Transparent table must have delivery class(CONTFLAG in DD02V) set`;
-        issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity));
+        issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.transparentTableSeverity));
       }
       if (!obj.getSizeCategory()?.trim()) {
         const message = `Transparent table must have size category(TABKAT in DD09L) set`;
-        issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity));
+        issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.transparentTableSeverity));
       }
     }
 
