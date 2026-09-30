@@ -129,4 +129,18 @@ top.`;
     expect(clears.length).to.equal(2);
   });
 
+  it("argument containing dollar followed by quote or backtick", () => {
+    const abap = `
+DATA foo TYPE string.
+DEFINE _set.
+  &1 = &2.
+END-OF-DEFINITION.
+_set foo \` - $\`.
+_set foo ' - $'.
+_set foo \`$\`.`;
+    const lexerResult = new Lexer().run(new MemoryFile("zmacrosdollar.prog.abap", abap));
+    const result = new StatementParser(defaultRelease).run([lexerResult], [])[0];
+    const moves = result.statements.filter(s => s.get() instanceof Statements.Move);
+    expect(moves.map(m => m.getTokens()[2].getStr())).to.deep.equal(["\` - $\`", "' - $'", "\`$\`"]);
+  });
 });
