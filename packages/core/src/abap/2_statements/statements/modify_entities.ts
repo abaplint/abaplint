@@ -40,7 +40,7 @@ export class ModifyEntities implements IStatement {
                             reported));
 
     const entities = seq(optPrio("AUGMENTING"), "ENTITIES OF", NamespaceSimpleName,
-                         opt("IN LOCAL MODE"),
+                         optPrio(altPrio("IN LOCAL MODE", seq(opt("FORWARDING"), "PRIVILEGED"))),
                          plusPrio(seq("ENTITY", NamespaceSimpleName, plus(operation))));
 
     const dynamic = seq("ENTITIES",
