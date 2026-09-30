@@ -9,6 +9,12 @@ const tests = [
   FAILED DATA(failed)
   REPORTED DATA(reported).`,
 
+  `MODIFY ENTITIES OF a_product_2 PRIVILEGED
+    ENTITY ProductPlantSupplyPlanning
+      UPDATE SET FIELDS WITH lt_update
+    FAILED DATA(ls_failed)
+    REPORTED DATA(ls_reported).`,
+
   `MODIFY ENTITIES OF foo
   ENTITY bar
   CREATE FIELDS ( fielda fieldb ) WITH create

@@ -46,9 +46,8 @@ const BUFS = new Set<number>([
   CH_DOT, CH_COMMA, CH_COLON, 40 /* ( */, 41 /* ) */, 91 /* [ */,
   93 /* ] */, 43 /* + */, CH_AT]);
 
-// characters that may follow the closing "'", "`" or "|" of a literal, anything else
-// is a syntax error, "There must be a space or equivalent character after ...",
-// note that "(" is allowed, ie. text elements like 'text'(001)
+// characters treated as separators after ping literals and string templates.
+// Single-quoted text literals always end at their closing quote.
 const AFTER_LITERAL = new Set<number>([
   EOF, CH_SPACE, CH_TAB, CH_NL, CH_DOT, CH_COMMA, CH_COLON, CH_DQUOTE,
   40 /* ( */, 41 /* ) */, 91 /* [ */, 93 /* ] */]);
@@ -325,9 +324,7 @@ export class Lexer {
           && ahead !== CH_QUOTE
           && this.buffer.countIsEven(CH_QUOTE)) {
 // end of string
-        if (AFTER_LITERAL.has(ahead)) {
-          this.add();
-        }
+        this.add();
         if (ahead === CH_DQUOTE) {
           this.m = ModeComment;
         } else {

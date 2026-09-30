@@ -15,6 +15,7 @@ const tests = [
   "write coltext to header_text(4) as icon left-justified.",
   "write lv_foo no-gap.",
   "WRITE 'Hello' COLOR 6.",
+  "WRITE (3) ''NO-GAP.",
   "write /(100) 'foobar'.",
   "WRITE foo COLOR 1 INTENSIFIED.",
   "write mark as checkbox.",
