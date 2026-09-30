@@ -200,7 +200,8 @@ export class ExpandMacros {
     for (const input of inputs) {
       const search = "&" + i;
       const reg = new RegExp(search, "g");
-      str = str.replace(reg, input);
+      // a function replacement: "$`" and "$'" in the argument are text, not patterns
+      str = str.replace(reg, () => input);
       i++;
     }
 
