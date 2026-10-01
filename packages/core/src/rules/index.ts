@@ -53,6 +53,7 @@ export * from "./empty_event";
 export * from "./empty_line_in_statement";
 export * from "./empty_statement";
 export * from "./empty_structure";
+export * from "./else_after_all_returns";
 export * from "./exit_or_check";
 export * from "./expand_macros";
 export * from "./exporting";
