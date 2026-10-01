@@ -1350,6 +1350,23 @@
       },
       "type": "object"
     },
+    "ElseAfterAllReturnsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "EmptyEventConf": {
       "additionalProperties": false,
       "properties": {
@@ -2377,6 +2394,17 @@
                 }
               ],
               "description": "Make messages easy to find\nTags: Styleguide\nhttps://rules.abaplint.org/easy_to_find_messages"
+            },
+            "else_after_all_returns": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ElseAfterAllReturnsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds ELSE branches that are redundant because all prior branches exit unconditionally.\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/else_after_all_returns"
             },
             "empty_event": {
               "anyOf": [
@@ -4566,6 +4594,17 @@
                 }
               ],
               "description": "Make messages easy to find\nTags: Styleguide\nhttps://rules.abaplint.org/easy_to_find_messages"
+            },
+            "else_after_all_returns": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ElseAfterAllReturnsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds ELSE branches that are redundant because all prior branches exit unconditionally.\nTags: SingleFile, Styleguide, Quickfix\nhttps://rules.abaplint.org/else_after_all_returns"
             },
             "empty_event": {
               "anyOf": [
