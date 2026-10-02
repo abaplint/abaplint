@@ -13721,6 +13721,18 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("LOOP USING KEY primary_key, top-level OR, ok", () => {
+    const abap = `
+TYPES: BEGIN OF ty, a TYPE i, b TYPE i, END OF ty.
+DATA t TYPE STANDARD TABLE OF ty WITH NON-UNIQUE KEY a b
+       WITH NON-UNIQUE SORTED KEY k COMPONENTS a.
+DATA r TYPE ty.
+LOOP AT t INTO r USING KEY primary_key WHERE a = 1 OR b = 2.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("infer BASE value", () => {
     const abap = `
 TYPES: BEGIN OF ty,
