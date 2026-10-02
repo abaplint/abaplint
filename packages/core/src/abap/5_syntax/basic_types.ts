@@ -642,6 +642,8 @@ export class BasicTypes {
           if (int) {
             length = parseInt(int.concatTokens(), 10);
           }
+        } else if (node.get() instanceof Statements.Parameter) {
+          length = this.findParameterLength(node) ?? length;
         }
 
         found = new Types.CharacterType(length, {qualifiedName: qualifiedName}); // fallback
@@ -1037,6 +1039,41 @@ export class BasicTypes {
     if (dec) {
       return parseInt(dec, 10);
     }
+
+    if (node.get() instanceof Statements.Parameter) {
+      // PARAMETERS spells it seq("DECIMALS", Source) instead of the Decimals expression
+      const source = this.findParameterAddition(node, "DECIMALS")?.concatTokens();
+      if (source && /^\d+$/.test(source)) {
+        return parseInt(source, 10);
+      }
+    }
+
+    return undefined;
+  }
+
+  // PARAMETERS spells it seq("LENGTH", Constant) instead of the Length expression
+  private findParameterLength(node: StatementNode | ExpressionNode): number | undefined {
+    const constant = this.findParameterAddition(node, "LENGTH");
+    if (constant === undefined) {
+      return undefined;
+    }
+    const length = this.parseInt(constant.concatTokens());
+    return length === undefined || isNaN(length) ? undefined : length;
+  }
+
+  // finds the expression following a direct keyword token, "VISIBLE LENGTH" is not "LENGTH"
+  private findParameterAddition(node: StatementNode | ExpressionNode, keyword: string): ExpressionNode | undefined {
+    const children = node.getChildren();
+    for (let i = 0; i < children.length - 1; i++) {
+      const child = children[i];
+      const next = children[i + 1];
+      if (child instanceof ExpressionNode
+          || child.getFirstToken().getStr().toUpperCase() !== keyword
+          || children[i - 1]?.getFirstToken().getStr().toUpperCase() === "VISIBLE") {
+        continue;
+      }
+      return next instanceof ExpressionNode ? next : undefined;
+    }
     return undefined;
   }
 
@@ -1062,6 +1099,9 @@ export class BasicTypes {
     }
 
     if (val === undefined) {
+      if (node.get() instanceof Statements.Parameter) {
+        return this.findParameterLength(node);
+      }
       return undefined;
     }
 
