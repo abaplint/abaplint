@@ -116,6 +116,12 @@ export class Loop implements StatementSyntax {
           return;
         }
 
+        if (cond.findDirectTokenByText("OR") !== undefined) {
+          const message = "Loop, secondary key requires an optimizable WHERE, top-level OR not allowed";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
+        }
+
         if (!releaseAtLeast(input.scope.getRelease(), Release.v740sp02)) {
           const compares = cond.findAllExpressionsRecursive(Expressions.ComponentCompare).map(c => c.concatTokens().toUpperCase());
           for (const keyField of key.keyFields) {
