@@ -67,7 +67,8 @@ testRule(tests, PreferredParameterIgnored);
 
 const fixes = [
   {
-    // the addition goes, the mandatory parameter stays mandatory
+    // declared OPTIONAL, as the compiler asks: a call that leaves val out
+    // compiles with the ignored addition, and keeps compiling
     input: `CLASS lcl DEFINITION.
   PUBLIC SECTION.
     METHODS meth
@@ -80,9 +81,30 @@ ENDCLASS.`,
   PUBLIC SECTION.
     METHODS meth
       IMPORTING
-        val   TYPE string
+        val   TYPE string OPTIONAL
         other TYPE i OPTIONAL
-          .
+          PREFERRED PARAMETER val.
+ENDCLASS.`,
+  },
+  {
+    // every mandatory importing parameter
+    input: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS meth
+      IMPORTING
+        val   TYPE string
+        other TYPE i
+        third TYPE i DEFAULT 1
+          PREFERRED PARAMETER val.
+ENDCLASS.`,
+    output: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS meth
+      IMPORTING
+        val   TYPE string OPTIONAL
+        other TYPE i OPTIONAL
+        third TYPE i DEFAULT 1
+          PREFERRED PARAMETER val.
 ENDCLASS.`,
   },
 ];

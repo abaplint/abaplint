@@ -26,12 +26,12 @@ one parameter positionally fills. That question only arises when a parameter
 may be LEFT OUT, so the addition is ignored while any importing parameter is
 neither \`OPTIONAL\` nor carries a \`DEFAULT\`.
 
-The quick fix REMOVES the addition rather than making the parameter optional.
-The compiler's own wording suggests the opposite, and that is the more
-dangerous of the two: making a mandatory parameter optional widens the
-contract, so a call that forgets it compiles and the method runs on an
-unfilled parameter. Removing an addition that is already ignored changes
-nothing at all.`,
+The compiler warns "Declare the parameter as OPTIONAL. The addition PREFERRED
+PARAMETER is ignored if non-optional parameters are used", yet it still lets a
+call leave the preferred parameter out. So the quick fix declares the mandatory
+importing parameters OPTIONAL, as the compiler asks: every call that compiles
+today keeps compiling. Removing the addition instead would turn the calls that
+leave the preferred parameter out into syntax errors.`,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `METHODS meth
   IMPORTING
@@ -67,14 +67,14 @@ nothing at all.`,
         continue;
       }
 
-      const mandatory = this.firstMandatory(importing);
-      if (mandatory === undefined) {
+      const mandatory = this.mandatoryParameters(importing);
+      if (mandatory.length === 0) {
         continue;
       }
 
-      const fix: IEdit = EditHelper.replaceRange(file,
-                                                 preferred.start, preferred.end, "");
-      const message = `PREFERRED PARAMETER is ignored while ${mandatory} is not optional`;
+      const fix: IEdit = EditHelper.mergeList(mandatory.map(p => EditHelper.insertAt(file, p.getLastToken().getEnd(), " OPTIONAL")));
+      const name = mandatory[0].findFirstExpression(Expressions.MethodParamName)?.concatTokens() ?? mandatory[0].concatTokens();
+      const message = `PREFERRED PARAMETER is ignored while ${name} is not optional`;
       issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, fix));
     }
 
@@ -96,18 +96,18 @@ nothing at all.`,
     return undefined;
   }
 
-  /** The first importing parameter that is neither OPTIONAL nor has a
-   *  DEFAULT, or undefined when every one of them may be left out. */
-  private firstMandatory(importing: ExpressionNode): string | undefined {
+  /** The importing parameters that are neither OPTIONAL nor have a DEFAULT,
+   *  empty when every one of them may be left out. */
+  private mandatoryParameters(importing: ExpressionNode): ExpressionNode[] {
+    const ret: ExpressionNode[] = [];
     for (const param of importing.findDirectExpressions(Expressions.MethodParamOptional)) {
       const concat = param.concatTokens().toUpperCase();
       if (concat.endsWith(" OPTIONAL") || concat.includes(" DEFAULT ")) {
         continue;
       }
-      const name = param.findFirstExpression(Expressions.MethodParamName)?.concatTokens();
-      return name ?? param.concatTokens();
+      ret.push(param);
     }
-    return undefined;
+    return ret;
   }
 
 }
