@@ -9,7 +9,8 @@ import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Dereference} from "../expressions/dereference";
 import {IdentifierMeta} from "../../types/_typed_identifier";
-import {PackedType} from "../../types/basic";
+import {AnyType, DataType, PackedType} from "../../types/basic";
+import {ExpressionNode, TokenNode} from "../../nodes";
 
 export class Move implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -47,6 +48,14 @@ export class Move implements StatementSyntax {
       return;
     }
 
+    if (inline === undefined
+        && node.findDirectTokenByText("=") !== undefined
+        && Move.isRefInferIntoGenericFieldSymbol(targets, source, targetType)) {
+      const message = "REF #( ) cannot infer a type from a generic target, use REF data( ) or a named type";
+      input.issues.push(syntaxIssue(input, source!.getFirstToken(), message));
+      return;
+    }
+
     if (node.findDirectExpression(Expressions.Dereference)) {
       sourceType = Dereference.runSyntax(node, sourceType, input);
     }
@@ -71,5 +80,29 @@ export class Move implements StatementSyntax {
       return;
     }
 
+  }
+
+  /** target = REF #( ... ), with the single target being a field symbol typed "any" or "data",
+   *  the type of REF # is inferred from the target, which is generic */
+  private static isRefInferIntoGenericFieldSymbol(targets: readonly ExpressionNode[],
+                                                  source: ExpressionNode | undefined,
+                                                  targetType: AbstractType | undefined): boolean {
+    if (targets.length !== 1 || source === undefined) {
+      return false;
+    } else if (!(targetType instanceof AnyType) && !(targetType instanceof DataType)) {
+      return false;
+    }
+
+    const targetChildren = targets[0].getChildren();
+    if (targetChildren.length !== 1 || !(targetChildren[0].get() instanceof Expressions.TargetFieldSymbol)) {
+      return false;
+    }
+
+    const first = source.getFirstChild();
+    if (!(first instanceof TokenNode) || first.getFirstToken().getStr().toUpperCase() !== "REF") {
+      return false;
+    }
+
+    return source.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens() === "#";
   }
 }
