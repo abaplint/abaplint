@@ -16635,6 +16635,18 @@ GET TIME STAMP FIELD lv_str.`;
     expect(issues[0]?.getMessage()).to.equal("GET TIME STAMP FIELD, target type not compatible");
   });
 
+  it("ok, CS with dereferenced generic data reference", () => {
+    const abap = `
+DATA c TYPE c LENGTH 6 VALUE 'ABCDEF'.
+DATA r TYPE REF TO data.
+GET REFERENCE OF c INTO r.
+IF r->* CS 'ABC'.
+  WRITE 'OK'.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
 
 ////////////////////////////////////////////////////////////
