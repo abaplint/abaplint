@@ -5986,6 +5986,76 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CREATE DATA TYPE HANDLE, static method call", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+DATA lo_struct TYPE REF TO cl_abap_structdescr.
+DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+CREATE DATA lr_data TYPE HANDLE cl_abap_structdescr=>create( lt_comp ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("TYPE HANDLE: no method call");
+  });
+
+  it("CREATE DATA TYPE HANDLE, variable, ok", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+DATA lo_struct TYPE REF TO cl_abap_structdescr.
+DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+lo_struct = cl_abap_structdescr=>create( lt_comp ).
+CREATE DATA lr_data TYPE HANDLE lo_struct.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CREATE DATA TYPE HANDLE, field symbol, ok", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+DATA lo_struct TYPE REF TO cl_abap_structdescr.
+DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+FIELD-SYMBOLS <lo_type> TYPE REF TO cl_abap_datadescr.
+ASSIGN lo_struct TO <lo_type>.
+CREATE DATA lr_data TYPE HANDLE <lo_type>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CREATE DATA TYPE HANDLE, structure component, ok", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+DATA lo_struct TYPE REF TO cl_abap_structdescr.
+DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+DATA: BEGIN OF ls_meta,
+        type TYPE REF TO cl_abap_datadescr,
+      END OF ls_meta.
+CREATE DATA lr_data TYPE HANDLE ls_meta-type.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CREATE DATA TYPE HANDLE, dereferenced reference, ok", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+DATA lo_struct TYPE REF TO cl_abap_structdescr.
+DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+DATA lr_type TYPE REF TO data.
+FIELD-SYMBOLS <any> TYPE any.
+ASSIGN lr_type->* TO <any>.
+CREATE DATA lr_data TYPE HANDLE lr_type->*.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CREATE DATA TYPE dynamic, ok", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+DATA lo_struct TYPE REF TO cl_abap_structdescr.
+DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+DATA lv_name TYPE string VALUE 'I'.
+CREATE DATA lr_data TYPE (lv_name).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("CREATE DATA LIKE LINE OF generic data, not a table, #4332", () => {
     const abap = `
 CLASS lcl DEFINITION.

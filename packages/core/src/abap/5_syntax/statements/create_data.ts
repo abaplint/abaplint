@@ -1,5 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
-import {StatementNode} from "../../nodes";
+import {ExpressionNode, StatementNode} from "../../nodes";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {Dynamic} from "../expressions/dynamic";
@@ -26,6 +26,23 @@ export class CreateData implements StatementSyntax {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
+    }
+
+    // TYPE HANDLE takes a data object holding the descriptor, a method call is refused
+    const children = node.getChildren();
+    let handle: ExpressionNode | undefined = undefined;
+    for (let i = 0; i + 2 < children.length; i++) {
+      if (children[i].concatTokens().toUpperCase() === "TYPE"
+          && children[i + 1].concatTokens().toUpperCase() === "HANDLE") {
+        const next = children[i + 2];
+        handle = next instanceof ExpressionNode ? next : undefined;
+        break;
+      }
+    }
+    if (handle?.getFirstChild()?.get() instanceof Expressions.MethodCallChain) {
+      const message = "TYPE HANDLE: no method call in this position, assign the descriptor to a variable first";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {
