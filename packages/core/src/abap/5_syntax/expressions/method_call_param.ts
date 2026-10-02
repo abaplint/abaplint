@@ -10,6 +10,7 @@ import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Constant} from "./constant";
 import {checkOffsetLength} from "./_check_offset_length";
+import {checkTextSymbol} from "./_check_text_symbol";
 
 export class MethodCallParam {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, method: IMethodDefinition | VoidType): void {
@@ -81,6 +82,8 @@ export class MethodCallParam {
       if (sourceType === undefined) {
         const message = "No source type determined, method source";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      } else if (checkTextSymbol(child, targetType, input)) {
         return;
       } else if (new TypeUtils(input.scope).isAssignableStrict(sourceType, targetType, child) === false) {
         const message = "Method parameter type not compatible";
