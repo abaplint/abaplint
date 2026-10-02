@@ -486,6 +486,103 @@ DATA: lv_i TYPE i,
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("PARAMETER, TYPE c LENGTH", () => {
+    const abap = `PARAMETERS p_c TYPE c LENGTH 3.`;
+    const type = resolveVariable(abap, "p_c")?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+    expect((type as Basic.CharacterType).getLength()).to.equal(3);
+  });
+
+  it("PARAMETER, TYPE n LENGTH", () => {
+    const abap = `PARAMETERS p_n TYPE n LENGTH 4.`;
+    const type = resolveVariable(abap, "p_n")?.getType();
+    expect(type).to.be.instanceof(Basic.NumericType);
+    expect((type as Basic.NumericType).getLength()).to.equal(4);
+  });
+
+  it("PARAMETER, TYPE p LENGTH DECIMALS", () => {
+    const abap = `PARAMETERS p_p TYPE p LENGTH 8 DECIMALS 2.`;
+    const type = resolveVariable(abap, "p_p")?.getType();
+    expect(type).to.be.instanceof(Basic.PackedType);
+    expect((type as Basic.PackedType).getLength()).to.equal(8);
+    expect((type as Basic.PackedType).getDecimals()).to.equal(2);
+  });
+
+  it("PARAMETER, LENGTH before TYPE", () => {
+    const abap = `PARAMETERS p_c LENGTH 5 TYPE c.`;
+    const type = resolveVariable(abap, "p_c")?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+    expect((type as Basic.CharacterType).getLength()).to.equal(5);
+  });
+
+  it("PARAMETER, LENGTH without TYPE", () => {
+    const abap = `PARAMETERS p_c LENGTH 6.`;
+    const type = resolveVariable(abap, "p_c")?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+    expect((type as Basic.CharacterType).getLength()).to.equal(6);
+  });
+
+  it("PARAMETER, VISIBLE LENGTH is not the field length", () => {
+    const abap = `PARAMETERS p_c TYPE c LENGTH 10 AS LISTBOX VISIBLE LENGTH 18.`;
+    const type = resolveVariable(abap, "p_c")?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+    expect((type as Basic.CharacterType).getLength()).to.equal(10);
+  });
+
+  it("PARAMETER, only VISIBLE LENGTH", () => {
+    const abap = `PARAMETERS p_c TYPE c AS LISTBOX VISIBLE LENGTH 18.`;
+    const type = resolveVariable(abap, "p_c")?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+    expect((type as Basic.CharacterType).getLength()).to.equal(1);
+  });
+
+  it("PARAMETER, LENGTH as quoted constant", () => {
+    const abap = `PARAMETERS p_c TYPE c LENGTH '7'.`;
+    const type = resolveVariable(abap, "p_c")?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+    expect((type as Basic.CharacterType).getLength()).to.equal(7);
+  });
+
+  it("PARAMETER, TYPE p DECIMALS without LENGTH", () => {
+    const abap = `PARAMETERS p_p TYPE p DECIMALS 3.`;
+    const type = resolveVariable(abap, "p_p")?.getType();
+    expect(type).to.be.instanceof(Basic.PackedType);
+    expect((type as Basic.PackedType).getLength()).to.equal(8);
+    expect((type as Basic.PackedType).getDecimals()).to.equal(3);
+  });
+
+  it("DATA, TYPE p DECIMALS without LENGTH", () => {
+    const abap = `DATA d_p TYPE p DECIMALS 3.`;
+    const type = resolveVariable(abap, "d_p")?.getType();
+    expect(type).to.be.instanceof(Basic.PackedType);
+    expect((type as Basic.PackedType).getLength()).to.equal(8);
+    expect((type as Basic.PackedType).getDecimals()).to.equal(3);
+  });
+
+  it("PARAMETER, issue 4347, PARAMETERS typed like DATA", () => {
+    const abap = `
+PARAMETERS p_c TYPE c LENGTH 3.
+PARAMETERS p_n TYPE n LENGTH 4.
+PARAMETERS p_p TYPE p LENGTH 8 DECIMALS 2.
+PARAMETERS p_x(3) TYPE c.
+DATA d_c TYPE c LENGTH 3.
+DATA d_p TYPE p LENGTH 8 DECIMALS 2.`;
+    const expected: {[name: string]: string} = {
+      p_c: "c LENGTH 3", p_n: "n LENGTH 4", p_p: "p LENGTH 8 DECIMALS 2",
+      p_x: "c LENGTH 3", d_c: "c LENGTH 3", d_p: "p LENGTH 8 DECIMALS 2"};
+    for (const name of Object.keys(expected)) {
+      const type = resolveVariable(abap, name)?.getType();
+      expect(type?.toABAP(), name).to.equal(expected[name]);
+    }
+  });
+
+  it("PARAMETER, (len) form", () => {
+    const abap = `PARAMETERS p_x(3) TYPE c.`;
+    const type = resolveVariable(abap, "p_x")?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+    expect((type as Basic.CharacterType).getLength()).to.equal(3);
+  });
+
   it("basic FORM", () => {
     const abap = `FORM select CHANGING import TYPE i.
 ENDFORM.`;

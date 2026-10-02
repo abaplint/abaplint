@@ -118,11 +118,17 @@ export class Table extends AbstractObject {
 
     const ret: string[] = [];
     for (const p of this.parsedData.fields) {
-      if (p.KEYFLAG === "X" && p.FIELDNAME === ".INCLUDE") {
-        const lookup = new DDIC(reg).lookupTableOrView(p.PRECFIELD).type;
+      if (p.KEYFLAG === "X" && (p.FIELDNAME === ".INCLUDE" || p.FIELDNAME.startsWith(".INCLU-"))) {
+        let lookup = new DDIC(reg).lookupTableOrView(p.PRECFIELD).type;
+        if (lookup instanceof TypedIdentifier) {
+          lookup = lookup.getType();
+        }
+        // same naming as in parseType(), "--AP" are .APPENDS and get no suffix
+        const postfix = p.FIELDNAME.startsWith(".INCLU-") && p.FIELDNAME !== ".INCLU--AP"
+          ? p.FIELDNAME.substring(".INCLU-".length) : "";
         if (lookup instanceof Types.StructureType) {
           for (const c of lookup.getComponents()) {
-            ret.push(c.name);
+            ret.push(c.name + postfix);
           }
         }
       } else if (p.KEYFLAG === "X") {

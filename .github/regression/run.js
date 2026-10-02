@@ -76,6 +76,29 @@ const repos = [
 
 console.dir(repos);
 
+
+// old format: "version": "v750"
+// new format: "version": {"release": "v750", "language": "Normal"}
+function getVersion(raw) {
+  const match = raw.match(/"version"\s*:\s*(?:"([^"]+)"|\{([^}]*)\})/);
+  if (match === null) {
+    return "?";
+  } else if (match[1] !== undefined) {
+    return match[1].trim();
+  }
+
+  const release = match[2].match(/"release"\s*:\s*"([^"]+)"/);
+  const language = match[2].match(/"language"\s*:\s*"([^"]+)"/);
+  const parts = [];
+  if (release) {
+    parts.push(release[1].trim());
+  }
+  if (language) {
+    parts.push(language[1].trim());
+  }
+  return parts.length > 0 ? parts.join(", ") : "?";
+}
+
 let map = {};
 for (let r of repos) {
   map[r] = {};
@@ -100,10 +123,7 @@ for (let r of repos) {
   map[r].after = JSON.parse(fs.readFileSync("output.json", "utf-8"));
 
   try {
-    const raw = fs.readFileSync(configFile).toString();
-    const reg = new RegExp(/"version": "([\w-]+)"/);
-    const match = raw.match(reg);
-    map[r].version = match[1].trim();
+    map[r].version = getVersion(fs.readFileSync(configFile).toString());
   } catch {
     map[r].version = "?";
   }

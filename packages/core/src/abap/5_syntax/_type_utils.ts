@@ -69,6 +69,7 @@ export class TypeUtils {
       || type instanceof StringType
       || type instanceof CLikeType
       || type instanceof CSequenceType
+      || type instanceof DataType
       || this.isCharLikeField(type);
   }
 
