@@ -8379,6 +8379,37 @@ ENDLOOP.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("loop USING KEY primary_key WHERE, sorted table", () => {
+    const abap = `
+TYPES: BEGIN OF ty, a TYPE i, b TYPE i, END OF ty.
+DATA tab TYPE SORTED TABLE OF ty WITH NON-UNIQUE KEY a
+         WITH NON-UNIQUE SORTED KEY sec COMPONENTS b.
+LOOP AT tab INTO DATA(row) USING KEY primary_key WHERE a = 1.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("loop USING KEY primary_key WHERE, standard table, field symbol", () => {
+    const abap = `
+TYPES: BEGIN OF ty, a TYPE i, b TYPE i, END OF ty.
+DATA tab TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+LOOP AT tab ASSIGNING FIELD-SYMBOL(<row>) USING KEY primary_key WHERE a = 1.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("loop USING KEY with WHERE, a key the table does not have", () => {
+    const abap = `
+TYPES: BEGIN OF ty, a TYPE i, b TYPE i, END OF ty.
+DATA tab TYPE SORTED TABLE OF ty WITH NON-UNIQUE KEY a.
+LOOP AT tab INTO DATA(row) USING KEY nope WHERE a = 1.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Key nope not found in table type");
+  });
+
   it("classic delete FROM database table", () => {
     const abap = `
 DATA row TYPE zrst.
