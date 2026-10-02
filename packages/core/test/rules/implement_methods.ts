@@ -755,4 +755,146 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("local interface shadows global interface with the same name", async () => {
+    const intf = `INTERFACE zif_x PUBLIC.
+  METHODS global_only.
+ENDINTERFACE.`;
+    const prog = `REPORT zprog.
+INTERFACE zif_x.
+  METHODS local_only.
+ENDINTERFACE.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_x.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD zif_x~local_only.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_x.intf.abap", contents: intf},
+      {filename: "zprog.prog.abap", contents: prog}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("local interface shadows global interface, local method not implemented", async () => {
+    const intf = `INTERFACE zif_x PUBLIC.
+  METHODS global_only.
+ENDINTERFACE.`;
+    const prog = `REPORT zprog.
+INTERFACE zif_x.
+  METHODS local_only.
+ENDINTERFACE.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_x.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_x.intf.abap", contents: intf},
+      {filename: "zprog.prog.abap", contents: prog}]);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("local_only");
+  });
+
+  it("local class implementing global interface, not implemented", async () => {
+    const intf = `INTERFACE zif_x PUBLIC.
+  METHODS global_only.
+ENDINTERFACE.`;
+    const prog = `REPORT zprog.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_x.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_x.intf.abap", contents: intf},
+      {filename: "zprog.prog.abap", contents: prog}]);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("global_only");
+  });
+
+  it("local class implementing global interface, implemented", async () => {
+    const intf = `INTERFACE zif_x PUBLIC.
+  METHODS global_only.
+ENDINTERFACE.`;
+    const prog = `REPORT zprog.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_x.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD zif_x~global_only.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_x.intf.abap", contents: intf},
+      {filename: "zprog.prog.abap", contents: prog}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("class pool, local interface in testclasses does not shadow global interface used in locals", async () => {
+    const intf = `INTERFACE zif_x PUBLIC.
+  METHODS global_only.
+ENDINTERFACE.`;
+    const def = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_x.
+ENDCLASS.`;
+    const imp = `
+CLASS lcl IMPLEMENTATION.
+  METHOD zif_x~global_only.
+  ENDMETHOD.
+ENDCLASS.`;
+    const testclasses = `
+INTERFACE zif_x.
+  METHODS local_only.
+ENDINTERFACE.`;
+    const main = `
+CLASS zcl_x DEFINITION PUBLIC FINAL CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_x IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_x.intf.abap", contents: intf},
+      {filename: "zcl_x.clas.locals_def.abap", contents: def},
+      {filename: "zcl_x.clas.locals_imp.abap", contents: imp},
+      {filename: "zcl_x.clas.testclasses.abap", contents: testclasses},
+      {filename: "zcl_x.clas.abap", contents: main}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("class pool, local interface in locals_def shadows global interface used in locals_imp", async () => {
+    const intf = `INTERFACE zif_x PUBLIC.
+  METHODS global_only.
+ENDINTERFACE.`;
+    const def = `
+INTERFACE zif_x.
+  METHODS local_only.
+ENDINTERFACE.`;
+    const imp = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_x.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD zif_x~local_only.
+  ENDMETHOD.
+ENDCLASS.`;
+    const main = `
+CLASS zcl_x DEFINITION PUBLIC FINAL CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_x IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_x.intf.abap", contents: intf},
+      {filename: "zcl_x.clas.locals_def.abap", contents: def},
+      {filename: "zcl_x.clas.locals_imp.abap", contents: imp},
+      {filename: "zcl_x.clas.abap", contents: main}]);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
 });

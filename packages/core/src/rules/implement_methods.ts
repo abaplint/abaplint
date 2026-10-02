@@ -10,6 +10,8 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {ABAPFile} from "../abap/abap_file";
 import {EditHelper, IEdit} from "../edit_helper";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {ReferenceType} from "../abap/5_syntax/_reference";
 
 // todo: abstract methods from superclass parents(might be multiple), if class is not abstract
 
@@ -142,7 +144,7 @@ export class ImplementMethods extends ABAPRule {
   }
 
   private findInterface(identifier: Identifier, name: string): InfoInterfaceDefinition | Issue | undefined {
-    const idef = this.findInterfaceByName(name);
+    const idef = this.findInterfaceByName(name, identifier);
 
     if (idef === undefined) {
       const message = "Implemented interface \"" + name + "\" not found";
@@ -153,24 +155,48 @@ export class ImplementMethods extends ABAPRule {
     return idef;
   }
 
-  private findInterfaceByName(name: string): InfoInterfaceDefinition | undefined {
-    let idef: InfoInterfaceDefinition | undefined = undefined;
-
+  private findInterfaceByName(name: string, usedAt: Identifier): InfoInterfaceDefinition | undefined {
     const intf = this.reg.getObject("INTF", name) as Interface | undefined;
-    if (intf === undefined) {
-      // lookup in localfiles
-      for (const file of this.obj.getABAPFiles()) {
-        const found = file.getInfo().getInterfaceDefinitionByName(name);
-        if (found) {
-          idef = found;
-          break;
-        }
+    const global = intf?.getMainABAPFile()?.getInfo().listInterfaceDefinitions()[0];
+
+    let local: InfoInterfaceDefinition | undefined = undefined;
+    for (const file of this.obj.getABAPFiles()) {
+      local = file.getInfo().getInterfaceDefinitionByName(name);
+      if (local) {
+        break;
       }
-    } else {
-      idef = intf.getMainABAPFile()?.getInfo().listInterfaceDefinitions()[0];
     }
 
-    return idef;
+    if (local === undefined || global === undefined) {
+      return global || local;
+    }
+
+    // both a local and a global interface exist with the same name, use what the syntax check resolved
+    const resolved = this.findResolvedInterface(name, usedAt);
+    if (resolved !== undefined) {
+      for (const file of this.obj.getABAPFiles()) {
+        for (const idef of file.getInfo().listInterfaceDefinitions()) {
+          if (idef.identifier.equals(resolved)) {
+            return idef;
+          }
+        }
+      }
+    }
+
+    return global;
+  }
+
+  private findResolvedInterface(name: string, usedAt: Identifier): Identifier | undefined {
+    const scope = new SyntaxLogic(this.reg, this.obj).run().spaghetti.lookupPosition(usedAt.getStart(), usedAt.getFilename());
+    const upper = name.toUpperCase();
+    for (const ref of scope?.getData().references || []) {
+      if (ref.referenceType === ReferenceType.ObjectOrientedReference
+          && ref.extra?.ooType === "INTF"
+          && ref.extra?.ooName?.toUpperCase() === upper) {
+        return ref.resolved;
+      }
+    }
+    return undefined;
   }
 
   /** including implemented super interfaces */
@@ -302,7 +328,7 @@ export class ImplementMethods extends ABAPRule {
 
     if (found === undefined) {
       for (const i of def.interfaces) {
-        const idef = this.findInterfaceByName(i.name);
+        const idef = this.findInterfaceByName(i.name, def.identifier);
         if (idef === undefined) {
           continue;
         }
