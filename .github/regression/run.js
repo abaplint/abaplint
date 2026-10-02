@@ -76,6 +76,7 @@ const repos = [
 
 console.dir(repos);
 
+
 // old format: "version": "v750"
 // new format: "version": {"release": "v750", "language": "Normal"}
 function getVersion(raw) {
