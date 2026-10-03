@@ -466,6 +466,11 @@ const versions = [
 
   {abap: "lv_foo *= 2.", rel: Version.OpenABAP},
 
+  {abap: "lv_value = get_ref( )->*.", rel: Release.v756},
+  {abap: "lv_value = zcl_foo=>get_ref( )->*.", rel: Release.v756},
+  {abap: "lv_value = lo_obj->get_ref( iv_name )->*.", rel: Release.v756},
+  {abap: "lv_value = NEW zcl_foo( )->get_ref( )->*.", rel: Release.v756},
+
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);
