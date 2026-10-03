@@ -13,6 +13,7 @@ import {AssertError} from "../assert_error";
 import {FieldChain} from "./field_chain";
 import {ReferenceType} from "../_reference";
 import {checkOffsetLength} from "./_check_offset_length";
+import {checkTextSymbol} from "./_check_text_symbol";
 
 interface IListItemT {
   name: string;
@@ -184,6 +185,8 @@ export class MethodParameters {
         const message = "Method importing parameter \"" + item.name + "\" does not exist";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         continue;
+      } else if (checkTextSymbol(item.source, parameter.getType(), input)) {
+        return;
       } else if (new TypeUtils(input.scope).isAssignableStrict(item.sourceType, parameter.getType(), item.source) === false) {
         const message = "Method parameter type not compatible, " + item.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));

@@ -5986,6 +5986,140 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("text symbol to a STRING parameter, named", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  lcl=>m( v = 'Hello'(001) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("is a character literal");
+  });
+
+  it("text symbol to a STRING parameter, positional", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  lcl=>m( 'Hello'(001) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("is a character literal");
+  });
+
+  it("plain literal to a STRING parameter, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  lcl=>m( v = 'Hello' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("text symbol to a C parameter, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  lcl=>c( v = 'Hello'(001) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("text symbol assigned to a STRING variable, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA lv TYPE string.
+  lv = 'Hello'(001).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("text symbol inside a string template to a STRING parameter, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  lcl=>m( v = |{ 'Hello'(001) }| ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("text symbol converted with CONV to a STRING parameter, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  lcl=>m( v = CONV string( 'Hello'(001) ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("CREATE DATA LIKE LINE OF generic data, not a table, #4332", () => {
     const abap = `
 CLASS lcl DEFINITION.
