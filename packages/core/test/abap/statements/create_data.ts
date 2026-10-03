@@ -1,4 +1,4 @@
-import {statementType, statementVersionOk, statementVersionFail} from "../_utils";
+import {statementType, statementVersionOk, statementVersionFail, statementExpectFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version, Release, LanguageVersion} from "../../../src/version";
 
@@ -10,6 +10,10 @@ const tests = [
   "CREATE DATA lr_format TYPE STANDARD TABLE OF (<ls_foo>-tabname) WITH DEFAULT KEY.",
   "CREATE DATA lr_area TYPE REF TO zcl_area.",
   "CREATE DATA wo_data   TYPE HANDLE lo_table.",
+  "CREATE DATA lr_data TYPE HANDLE <lo_type>.",
+  "CREATE DATA lr_data TYPE HANDLE ls_meta-type.",
+  "CREATE DATA lr_data TYPE HANDLE lr_type->*.",
+  "CREATE DATA lr_data TYPE HANDLE me->mo_type.",
   "CREATE DATA result TYPE n LENGTH lv_length.",
   "CREATE DATA result TYPE p LENGTH lv_length DECIMALS lv_decimals.",
   "CREATE DATA dref.",
@@ -39,3 +43,7 @@ statementVersionOk([
 statementVersionFail([
   {abap: "CREATE DATA lr_ref TYPE REF TO data.", rel: Release.Newest, langVer: LanguageVersion.KeyUser},
 ], "CREATE DATA not allowed in KeyUser");
+
+statementExpectFail([
+  "CREATE DATA lr_data TYPE HANDLE cl_abap_structdescr=>create( lt_comp ).",
+], "CREATE DATA TYPE HANDLE, method call");

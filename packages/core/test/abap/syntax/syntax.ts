@@ -5986,14 +5986,12 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("CREATE DATA TYPE HANDLE, static method call", () => {
+  it("CREATE DATA TYPE HANDLE, unknown variable", () => {
     const abap = `
 DATA lr_data TYPE REF TO data.
-DATA lo_struct TYPE REF TO cl_abap_structdescr.
-DATA lt_comp TYPE cl_abap_structdescr=>component_table.
-CREATE DATA lr_data TYPE HANDLE cl_abap_structdescr=>create( lt_comp ).`;
+CREATE DATA lr_data TYPE HANDLE lo_unknown.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.contain("TYPE HANDLE: no method call");
+    expect(issues[0]?.getMessage()).to.contain("lo_unknown");
   });
 
   it("CREATE DATA TYPE HANDLE, variable, ok", () => {
