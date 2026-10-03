@@ -87,6 +87,7 @@ export class ArtifactsABAP {
     return ret;
   }
 
+  /*
   public static getKeywords(): IKeyword[] {
     const list: List = new List();
 
@@ -100,5 +101,6 @@ export class ArtifactsABAP {
 
     return list.get();
   }
+  */
 
 }
