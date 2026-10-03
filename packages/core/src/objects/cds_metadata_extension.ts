@@ -23,6 +23,12 @@ export class CDSMetadataExtension extends AbstractObject {
     };
   }
 
+  public setDirty(): void {
+    this.parsedData = undefined;
+    this.parserError = undefined;
+    super.setDirty();
+  }
+
   public hasParserError() {
     return this.parserError;
   }
@@ -45,11 +51,6 @@ export class CDSMetadataExtension extends AbstractObject {
 
     this.dirty = false;
     return {updated: true, runtime: Date.now() - start};
-  }
-
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
   }
 
   public findSourceFile() {

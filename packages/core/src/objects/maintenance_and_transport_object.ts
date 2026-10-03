@@ -21,11 +21,6 @@ export class MaintenanceAndTransportObject extends AbstractObject {
     return "TOBJ";
   }
 
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
-  }
-
   public getAllowedNaming() {
     return {
       maxLength: 31,

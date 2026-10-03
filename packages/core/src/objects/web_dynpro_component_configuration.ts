@@ -12,9 +12,4 @@ export class WebDynproComponentConfiguration extends AbstractObject {
       allowNamespace: true,
     };
   }
-
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
-  }
 }

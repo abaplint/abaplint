@@ -12,7 +12,7 @@ export class Loop implements IStatement {
 
     const group = ver(Release.v740sp08, seq("GROUP BY", LoopGroupBy), {also: AlsoIn.OpenABAP});
 
-    const step = ver(Release.v757, seq("STEP", Source));
+    const step = ver(Release.v757, seq("STEP", Source), {also: AlsoIn.OpenABAP});
 
     const from = seq("FROM", Source);
 

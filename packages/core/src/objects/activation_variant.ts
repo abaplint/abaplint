@@ -12,9 +12,4 @@ export class ActivationVariant extends AbstractObject {
       allowNamespace: true,
     };
   }
-
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
-  }
 }

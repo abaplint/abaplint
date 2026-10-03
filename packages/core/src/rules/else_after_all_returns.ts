@@ -63,8 +63,8 @@ export class ElseAfterAllReturns extends ABAPRule {
           EditHelper.replaceRange(file, elseStatement.getFirstToken().getStart(), elseStatement.getLastToken().getEnd(), "ENDIF."),
           EditHelper.deleteStatement(file, endifStatement),
         );
-        // eslint-disable-next-line max-len
-        issues.push(Issue.atStatement(file, elseStatement, "Redundant ELSE: all prior branches exit unconditionally", this.getMetadata().key, this.conf.severity, fix));
+        const message = "Redundant ELSE: all prior branches exit unconditionally";
+        issues.push(Issue.atStatement(file, elseStatement, message, this.getMetadata().key, this.conf.severity, fix));
       }
     }
 

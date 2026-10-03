@@ -14,9 +14,4 @@ export class NeptuneAPI extends AbstractObject {
       customRegex: /.*/i,
     };
   }
-
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
-  }
 }

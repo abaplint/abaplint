@@ -1,6 +1,6 @@
 import * as Statements from "./2_statements/statements";
 import * as Expressions from "./2_statements/expressions";
-import {Combi, Expression} from "./2_statements/combi";
+import {Expression} from "./2_statements/combi";
 import {IStatement} from "./2_statements/statements/_statement";
 import * as Structures from "./3_structures/structures";
 import {IStructure} from "./3_structures/structures/_structure";
@@ -10,6 +10,7 @@ export interface IKeyword {
   source: string[];
 }
 
+/*
 class List {
   private readonly words: IKeyword[];
 
@@ -42,9 +43,11 @@ class List {
   }
 }
 
+
 function className(cla: any) {
   return cla.constructor.name;
 }
+  */
 
 export class ArtifactsABAP {
 
@@ -87,6 +90,7 @@ export class ArtifactsABAP {
     return ret;
   }
 
+  /*
   public static getKeywords(): IKeyword[] {
     const list: List = new List();
 
@@ -100,5 +104,6 @@ export class ArtifactsABAP {
 
     return list.get();
   }
+  */
 
 }

@@ -23,6 +23,7 @@ export class MIMEObject extends AbstractObject {
   }
 
   public isFolder() {
+    this.parse();
     return this.parsedXML?.FOLDER === "X";
   }
 
@@ -46,11 +47,6 @@ export class MIMEObject extends AbstractObject {
   public setDirty(): void {
     this.parsedXML = undefined;
     super.setDirty();
-  }
-
-  public getDescription(): string | undefined {
-// this object type does not have a description
-    return undefined;
   }
 
   public parse() {
