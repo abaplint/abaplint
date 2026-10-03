@@ -23,6 +23,7 @@ export class MIMEObject extends AbstractObject {
   }
 
   public isFolder() {
+    this.parse();
     return this.parsedXML?.FOLDER === "X";
   }
 

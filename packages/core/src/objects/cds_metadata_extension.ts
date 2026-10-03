@@ -23,6 +23,12 @@ export class CDSMetadataExtension extends AbstractObject {
     };
   }
 
+  public setDirty(): void {
+    this.parsedData = undefined;
+    this.parserError = undefined;
+    super.setDirty();
+  }
+
   public hasParserError() {
     return this.parserError;
   }

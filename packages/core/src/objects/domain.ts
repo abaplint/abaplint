@@ -185,10 +185,12 @@ export class Domain extends AbstractObject {
   }
 
   public getFixedValues() {
+    this.parse();
     return this.parsedXML?.values ?? [];
   }
 
   public getFixedValuesTranslations() {
+    this.parse();
     return this.parsedXML?.valuesTranslations ?? [];
   }
 

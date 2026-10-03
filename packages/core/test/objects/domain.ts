@@ -61,6 +61,13 @@ describe("Domain, parse AFF json", () => {
     expect(values[1].description).to.equal("numbers");
   });
 
+  it("fixed values, without explicit parse", async () => {
+    const reg = new Registry().addFile(new MemoryFile("z_aff_example_doma.doma.json", json));
+    const doma = reg.getFirstObject()! as Domain;
+    expect(doma.getFixedValues().length).to.equal(2);
+    expect(doma.getFixedValuesTranslations().length).to.equal(0);
+  });
+
   it("getIdentifier", async () => {
     const reg = new Registry().addFile(new MemoryFile("z_aff_example_doma.doma.json", json));
     await reg.parseAsync();
