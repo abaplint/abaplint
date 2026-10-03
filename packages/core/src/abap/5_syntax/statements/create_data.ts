@@ -28,6 +28,10 @@ export class CreateData implements StatementSyntax {
       }
     }
 
+    for (const s of node.findDirectExpressions(Expressions.SimpleSource3)) {
+      Source.runSyntax(s, input);
+    }
+
     for (const t of node.findDirectExpressions(Expressions.Target)) {
       Target.runSyntax(t, input);
     }

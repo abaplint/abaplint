@@ -6120,6 +6120,74 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("CREATE DATA TYPE HANDLE, unknown variable", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+CREATE DATA lr_data TYPE HANDLE lo_unknown.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("lo_unknown");
+  });
+
+  it("CREATE DATA TYPE HANDLE, variable, ok", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+DATA lo_struct TYPE REF TO cl_abap_structdescr.
+DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+lo_struct = cl_abap_structdescr=>create( lt_comp ).
+CREATE DATA lr_data TYPE HANDLE lo_struct.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CREATE DATA TYPE HANDLE, field symbol, ok", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+DATA lo_struct TYPE REF TO cl_abap_structdescr.
+DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+FIELD-SYMBOLS <lo_type> TYPE REF TO cl_abap_datadescr.
+ASSIGN lo_struct TO <lo_type>.
+CREATE DATA lr_data TYPE HANDLE <lo_type>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CREATE DATA TYPE HANDLE, structure component, ok", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+DATA lo_struct TYPE REF TO cl_abap_structdescr.
+DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+DATA: BEGIN OF ls_meta,
+        type TYPE REF TO cl_abap_datadescr,
+      END OF ls_meta.
+CREATE DATA lr_data TYPE HANDLE ls_meta-type.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CREATE DATA TYPE HANDLE, dereferenced reference, ok", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+DATA lo_struct TYPE REF TO cl_abap_structdescr.
+DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+DATA lr_type TYPE REF TO data.
+FIELD-SYMBOLS <any> TYPE any.
+ASSIGN lr_type->* TO <any>.
+CREATE DATA lr_data TYPE HANDLE lr_type->*.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("CREATE DATA TYPE dynamic, ok", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+DATA lo_struct TYPE REF TO cl_abap_structdescr.
+DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+DATA lv_name TYPE string VALUE 'I'.
+CREATE DATA lr_data TYPE (lv_name).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("CREATE DATA LIKE LINE OF generic data, not a table, #4332", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -17465,4 +17533,165 @@ ENDFORM.`;
     expect(issues.length).to.equal(1);
   });
 
+});
+
+describe("syntax.ts, REF # into a generic target", () => {
+  const message = "REF #( ) cannot infer a type from a generic target";
+
+  it("error, field symbol TYPE any", () => {
+    const abap = `
+DATA lr_data TYPE REF TO data.
+DATA lv_source TYPE i.
+FIELD-SYMBOLS <val> TYPE any.
+ASSIGN lr_data->* TO <val>.
+<val> = REF #( lv_source ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, field symbol TYPE data", () => {
+    const abap = `
+DATA lv_source TYPE i.
+FIELD-SYMBOLS <val> TYPE data.
+<val> = REF #( lv_source ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, field symbol TYPE any, Cloud", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    DATA lv_source TYPE i.
+    FIELD-SYMBOLS <val> TYPE any.
+    <val> = REF #( lv_source ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Cloud);
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("ok, target TYPE REF TO data", () => {
+    const abap = `
+DATA lv_source TYPE i.
+DATA lr TYPE REF TO data.
+lr = REF #( lv_source ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, target TYPE REF TO typed", () => {
+    const abap = `
+TYPES ty TYPE i.
+DATA lv_source TYPE ty.
+DATA lr TYPE REF TO ty.
+lr = REF #( lv_source ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, method parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run IMPORTING ir TYPE REF TO data.
+    CLASS-METHODS run_any IMPORTING ia TYPE any.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+  METHOD run_any.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_source TYPE i.
+  lcl=>run( REF #( lv_source ) ).
+  lcl=>run( ir = REF #( lv_source ) ).
+  lcl=>run_any( REF #( lv_source ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, inside VALUE #( ) and NEW #( )", () => {
+    const abap = `
+TYPES: BEGIN OF ty_s,
+         ref TYPE REF TO data,
+       END OF ty_s.
+DATA lv_source TYPE i.
+DATA ls TYPE ty_s.
+DATA lr_s TYPE REF TO ty_s.
+FIELD-SYMBOLS <val> TYPE any.
+ASSIGN ls TO <val>.
+ls = VALUE #( ref = REF #( lv_source ) ).
+lr_s = NEW #( ref = REF #( lv_source ) ).
+<val> = VALUE ty_s( ref = REF #( lv_source ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, explicit type REF data( ) and REF ty( )", () => {
+    const abap = `
+TYPES ty TYPE i.
+DATA lr_data TYPE REF TO data.
+DATA lv_source TYPE ty.
+FIELD-SYMBOLS <val> TYPE any.
+ASSIGN lr_data->* TO <val>.
+<val> = REF data( lv_source ).
+<val> = REF ty( lv_source ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, field symbol TYPE REF TO data", () => {
+    const abap = `
+DATA lv_source TYPE i.
+FIELD-SYMBOLS <ref> TYPE REF TO data.
+<ref> = REF #( lv_source ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, inline declaration", () => {
+    const abap = `
+DATA lv_source TYPE i.
+DATA(lr) = REF #( lv_source ).
+FINAL(lr2) = REF #( lv_source ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, returning parameter TYPE REF TO data", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run IMPORTING iv TYPE i RETURNING VALUE(rv) TYPE REF TO data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    rv = REF #( iv ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, REF # nested in a source, target field symbol TYPE any", () => {
+    const abap = `
+DATA lv_source TYPE i.
+DATA lr_data TYPE REF TO data.
+FIELD-SYMBOLS <val> TYPE any.
+ASSIGN lr_data TO <val>.
+<val> = CAST data( REF #( lv_source ) ).
+<val> = COND #( WHEN 1 = 1 THEN REF data( lv_source ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
 });
