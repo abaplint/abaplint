@@ -17695,3 +17695,59 @@ ASSIGN lr_data TO <val>.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, generic data reference dereferenced as a target", () => {
+  const message = "A generic reference cannot be dereferenced";
+  const method = (body: string) => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run IMPORTING ir TYPE REF TO data ir_typed TYPE REF TO i.
+    METHODS give EXPORTING ev TYPE any.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD give.
+  ENDMETHOD.
+  METHOD run.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error below v756, CLEAR", () => {
+    const issues = runProgram(method(`    CLEAR ir->*.`), [], Release.v750);
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error below v756, IMPORTING target", () => {
+    const issues = runProgram(method(`    give( IMPORTING ev = ir->* ).`), [], Release.v750);
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error below v756, assignment target", () => {
+    const issues = runProgram(method(`    ir->* = 5.`), [], Release.v750);
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("ok from v756 on, CLEAR", () => {
+    const issues = runProgram(method(`    CLEAR ir->*.`), [], Release.v756);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok in Cloud, IMPORTING target", () => {
+    const issues = runProgram(method(`    give( IMPORTING ev = ir->* ).`), [], Release.Newest, undefined, LanguageVersion.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok below v756, ASSIGN of the generic reference", () => {
+    const issues = runProgram(method(`    FIELD-SYMBOLS <val> TYPE any.
+    ASSIGN ir->* TO <val>.
+    CLEAR <val>.`), [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok below v756, typed reference", () => {
+    const issues = runProgram(method(`    CLEAR ir_typed->*.
+    ir_typed->* = 5.`), [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
