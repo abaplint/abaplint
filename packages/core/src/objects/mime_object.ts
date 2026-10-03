@@ -49,11 +49,6 @@ export class MIMEObject extends AbstractObject {
     super.setDirty();
   }
 
-  public getDescription(): string | undefined {
-// this object type does not have a description
-    return undefined;
-  }
-
   public parse() {
     if (this.parsedXML) {
       return {updated: false, runtime: 0};

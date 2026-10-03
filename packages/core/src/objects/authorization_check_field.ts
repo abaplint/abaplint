@@ -26,11 +26,6 @@ export class AuthorizationCheckField extends AbstractObject {
     super.setDirty();
   }
 
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
-  }
-
   public getDataElementName(): string | undefined {
     this.parse();
     return this.parsedXML?.rollname;

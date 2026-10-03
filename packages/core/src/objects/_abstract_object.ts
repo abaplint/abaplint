@@ -16,13 +16,16 @@ export abstract class AbstractObject implements IObject {
 
   public abstract getType(): string;
   public abstract getAllowedNaming(): IAllowedNaming;
-  public abstract getDescription(): string | undefined;
 
   public constructor(name: string) {
     this.name = name;
     this.files = [];
     this.old = [];
     this.dirty = false;
+  }
+
+  public getDescription(): string | undefined {
+    return undefined;
   }
 
   public getParsingIssues() {

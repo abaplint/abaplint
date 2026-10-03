@@ -12,9 +12,4 @@ export class AuthorizationObjectClass extends AbstractObject {
       allowNamespace: false,
     };
   }
-
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
-  }
 }

@@ -14,11 +14,6 @@ export class Oauth2Profile extends AbstractObject {
     };
   }
 
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
-  }
-
   public listScopes(): string[] {
     const ret: string[] = [];
 

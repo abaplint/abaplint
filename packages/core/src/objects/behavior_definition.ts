@@ -19,11 +19,6 @@ export class BehaviorDefinition extends AbstractObject {
     };
   }
 
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
-  }
-
   public setDirty(): void {
     this.parsedData = undefined;
     super.setDirty();

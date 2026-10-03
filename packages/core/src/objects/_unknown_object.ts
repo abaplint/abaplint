@@ -22,10 +22,6 @@ export class UnknownObject extends AbstractObject {
     };
   }
 
-  public getDescription(): string | undefined {
-    return undefined;
-  }
-
   public getParsingIssues() {
     const pos = new Position(1, 1);
     const file = this.getFiles()[0]!;

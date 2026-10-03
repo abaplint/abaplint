@@ -23,11 +23,6 @@ export class ICFService extends AbstractObject {
     super.setDirty();
   }
 
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
-  }
-
   public getURL(): string | undefined {
     this.parse();
     return this.parsedXML?.url;

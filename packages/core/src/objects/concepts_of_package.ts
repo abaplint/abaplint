@@ -14,9 +14,4 @@ export class ConceptsOfPackage extends AbstractObject {
       customRegex: new RegExp(/^(\/[A-Z_\d]{3,8}\/)?[A-Z_-\d<> ]+$/i),
     };
   }
-
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
-  }
 }

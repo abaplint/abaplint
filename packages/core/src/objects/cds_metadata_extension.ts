@@ -53,11 +53,6 @@ export class CDSMetadataExtension extends AbstractObject {
     return {updated: true, runtime: Date.now() - start};
   }
 
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
-  }
-
   public findSourceFile() {
     return this.getFiles().find(f => f.getFilename().endsWith(".asddlxs") || f.getFilename().endsWith(".acds"));
   }

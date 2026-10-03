@@ -14,9 +14,4 @@ export class Namespace extends AbstractObject {
       customRegex: new RegExp(/^\/[A-Z_\d]{3,8}\/$/i),
     };
   }
-
-  public getDescription(): string | undefined {
-    // todo
-    return undefined;
-  }
 }
