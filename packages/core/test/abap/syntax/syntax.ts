@@ -15882,6 +15882,49 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, below 7.55", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues[0]?.getMessage()).to.contain("requires 7.55");
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, 7.55", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap, [], Release.v755);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, no version set", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, Cloud", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT INTO TABLE @DATA, below 7.55, ok", () => {
+    const abap = `
+SELECT * FROM t100 INTO TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE, declared target, below 7.55, ok", () => {
+    const abap = `
+DATA lt_t100 TYPE STANDARD TABLE OF t100 WITH EMPTY KEY.
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @lt_t100.`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("SELECT INLINE, ok", () => {
     const abap = `
 CLASS lcl DEFINITION.
