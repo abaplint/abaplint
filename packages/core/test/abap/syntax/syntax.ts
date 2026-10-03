@@ -5986,6 +5986,140 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("text symbol to a STRING parameter, named", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  lcl=>m( v = 'Hello'(001) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("is a character literal");
+  });
+
+  it("text symbol to a STRING parameter, positional", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  lcl=>m( 'Hello'(001) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("is a character literal");
+  });
+
+  it("plain literal to a STRING parameter, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  lcl=>m( v = 'Hello' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("text symbol to a C parameter, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  lcl=>c( v = 'Hello'(001) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("text symbol assigned to a STRING variable, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA lv TYPE string.
+  lv = 'Hello'(001).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("text symbol inside a string template to a STRING parameter, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  lcl=>m( v = |{ 'Hello'(001) }| ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("text symbol converted with CONV to a STRING parameter, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING v TYPE string.
+    CLASS-METHODS c IMPORTING v TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+  METHOD c.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  lcl=>m( v = CONV string( 'Hello'(001) ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("CREATE DATA LIKE LINE OF generic data, not a table, #4332", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -15746,6 +15880,49 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, below 7.55", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues[0]?.getMessage()).to.contain("requires 7.55");
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, 7.55", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap, [], Release.v755);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, no version set", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, Cloud", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT INTO TABLE @DATA, below 7.55, ok", () => {
+    const abap = `
+SELECT * FROM t100 INTO TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE, declared target, below 7.55, ok", () => {
+    const abap = `
+DATA lt_t100 TYPE STANDARD TABLE OF t100 WITH EMPTY KEY.
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @lt_t100.`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("SELECT INLINE, ok", () => {
