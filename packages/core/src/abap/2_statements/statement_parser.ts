@@ -116,6 +116,17 @@ export class StatementParser {
     for (const w of wa) {
       this.process(w);
       this.categorize(w);
+    }
+
+    // macro includes are placed at the top of the class pool, so find macro
+    // definitions there first regardless of input file order, letting
+    // inline DEFINEs in the main file redefine them
+    const sequenced = [...wa].sort((a, b) => {
+      const aMacros = a.file.getFilename().endsWith(".clas.macros.abap") ? 0 : 1;
+      const bMacros = b.file.getFilename().endsWith(".clas.macros.abap") ? 0 : 1;
+      return aMacros - bMacros;
+    });
+    for (const w of sequenced) {
       macros.find(w.statements, w.file);
     }
 
