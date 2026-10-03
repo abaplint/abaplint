@@ -17695,3 +17695,256 @@ ASSIGN lr_data TO <val>.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, attribute visibility", () => {
+  const owner = `
+CLASS lcl_owner DEFINITION.
+  PUBLIC SECTION.
+    DATA mv_pub TYPE i READ-ONLY.
+  PROTECTED SECTION.
+    DATA mv_prot TYPE i.
+    CLASS-DATA gv_prot TYPE i.
+  PRIVATE SECTION.
+    DATA mv_priv TYPE i.
+    CLASS-DATA gv_priv TYPE i.
+    CONSTANTS gc_priv TYPE i VALUE 1.
+    METHODS own_access IMPORTING io_other TYPE REF TO lcl_owner.
+ENDCLASS.
+
+CLASS lcl_owner IMPLEMENTATION.
+  METHOD own_access.
+    mv_priv = io_other->mv_priv.
+  ENDMETHOD.
+ENDCLASS.`;
+
+  const user = (body: string) => owner + `
+
+CLASS lcl_user DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_user IMPLEMENTATION.
+  METHOD run.
+    DATA lo TYPE REF TO lcl_owner.
+    DATA lv TYPE i.
+    CREATE OBJECT lo.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error, private instance attribute read from another class", () => {
+    const issues = runProgram(user(`    lv = lo->mv_priv.`));
+    expect(issues[0]?.getMessage()).to.equal(`Attribute "mv_priv" is private and cannot be accessed`);
+  });
+
+  it("error, private instance attribute written from another class", () => {
+    const issues = runProgram(user(`    lo->mv_priv = 1.`));
+    expect(issues[0]?.getMessage()).to.equal(`Attribute "mv_priv" is private and cannot be accessed`);
+  });
+
+  it("error, private static attribute", () => {
+    const issues = runProgram(user(`    lv = lcl_owner=>gv_priv.`));
+    expect(issues[0]?.getMessage()).to.equal(`Attribute "gv_priv" is private and cannot be accessed`);
+  });
+
+  it("error, private constant", () => {
+    const issues = runProgram(user(`    lv = lcl_owner=>gc_priv.`));
+    expect(issues[0]?.getMessage()).to.equal(`Attribute "gc_priv" is private and cannot be accessed`);
+  });
+
+  it("error, protected instance attribute from an unrelated class", () => {
+    const issues = runProgram(user(`    lv = lo->mv_prot.`));
+    expect(issues[0]?.getMessage()).to.equal(`Attribute "mv_prot" is protected and cannot be accessed`);
+  });
+
+  it("error, protected static attribute from an unrelated class", () => {
+    const issues = runProgram(user(`    lcl_owner=>gv_prot = 1.`));
+    expect(issues[0]?.getMessage()).to.equal(`Attribute "gv_prot" is protected and cannot be accessed`);
+  });
+
+  it("ok, public read-only attribute", () => {
+    const issues = runProgram(user(`    lv = lo->mv_pub.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, private attribute of another instance of the own class", () => {
+    const issues = runProgram(owner);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, protected attribute from a subclass", () => {
+    const abap = owner + `
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_owner.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD run.
+    mv_prot = 1.
+    gv_prot = 2.
+    me->mv_prot = 3.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, private attribute of the super class from a subclass", () => {
+    const abap = owner + `
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_owner.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD run.
+    DATA lv TYPE i.
+    lv = me->mv_priv.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`Attribute "mv_priv" is private and cannot be accessed`);
+  });
+
+  it("ok, private attribute from a friend", () => {
+    const abap = `
+CLASS lcl_user DEFINITION DEFERRED.
+CLASS lcl_owner DEFINITION FRIENDS lcl_user.
+  PRIVATE SECTION.
+    DATA mv_priv TYPE i.
+ENDCLASS.
+
+CLASS lcl_owner IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_user DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_user IMPLEMENTATION.
+  METHOD run.
+    DATA lo TYPE REF TO lcl_owner.
+    CREATE OBJECT lo.
+    lo->mv_priv = 1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, interface attribute", () => {
+    const abap = `
+INTERFACE lif.
+  DATA mv TYPE i.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  CREATE OBJECT lo.
+  lo->lif~mv = 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, global class reads a PRIVATE attribute of another global class", () => {
+    const handler = `
+CLASS zcl_handler DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS run.
+  PRIVATE SECTION.
+    CLASS-DATA mv_session_sticky TYPE abap_bool.
+ENDCLASS.
+
+CLASS zcl_handler IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.`;
+    const action = `
+CLASS zcl_action DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS zcl_action IMPLEMENTATION.
+  METHOD run.
+    DATA(lv) = zcl_handler=>mv_session_sticky.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_handler.clas.abap", contents: handler},
+      {filename: "zcl_action.clas.abap", contents: action}]);
+    expect(issues[0]?.getMessage()).to.equal(`Attribute "mv_session_sticky" is private and cannot be accessed`);
+  });
+
+  it("ok, local friend test class reads a private attribute", () => {
+    const clas = `
+CLASS zcl_owner DEFINITION PUBLIC CREATE PUBLIC.
+  PRIVATE SECTION.
+    DATA mv_priv TYPE i.
+ENDCLASS.
+
+CLASS zcl_owner IMPLEMENTATION.
+ENDCLASS.`;
+    const test = `
+CLASS ltcl_test DEFINITION DEFERRED.
+CLASS zcl_owner DEFINITION LOCAL FRIENDS ltcl_test.
+
+CLASS ltcl_test DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS test01 FOR TESTING.
+ENDCLASS.
+
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD test01.
+    DATA lo TYPE REF TO zcl_owner.
+    CREATE OBJECT lo.
+    lo->mv_priv = 1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_owner.clas.abap", contents: clas},
+      {filename: "zcl_owner.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, test class without LOCAL FRIENDS reads a private attribute", () => {
+    const clas = `
+CLASS zcl_owner DEFINITION PUBLIC CREATE PUBLIC.
+  PRIVATE SECTION.
+    DATA mv_priv TYPE i.
+ENDCLASS.
+
+CLASS zcl_owner IMPLEMENTATION.
+ENDCLASS.`;
+    const test = `
+CLASS ltcl_test DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS test01 FOR TESTING.
+ENDCLASS.
+
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD test01.
+    DATA lo TYPE REF TO zcl_owner.
+    CREATE OBJECT lo.
+    lo->mv_priv = 1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_owner.clas.abap", contents: clas},
+      {filename: "zcl_owner.clas.testclasses.abap", contents: test}]);
+    expect(issues[0]?.getMessage()).to.equal(`Attribute "mv_priv" is private and cannot be accessed`);
+  });
+});

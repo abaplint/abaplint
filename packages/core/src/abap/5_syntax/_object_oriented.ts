@@ -168,6 +168,73 @@ export class ObjectOriented {
 
   // does the supplied class have friendship with "friendName"?
   // note that interfaces of the friend, and subclasses of the friend also have friendship
+  // returns the visibility as text if a member declared in foundDef, reached via def, cannot be accessed from enclosing
+  public memberNotVisible(
+    visibility: Visibility,
+    def: IClassDefinition | IInterfaceDefinition | undefined,
+    foundDef: IClassDefinition | IInterfaceDefinition | undefined,
+    enclosing: string | undefined): string | undefined {
+
+    if (visibility === Visibility.Public || foundDef === undefined) {
+      return undefined;
+    } else if (!(foundDef instanceof ClassDefinition)) {
+      // interface members are always public
+      return undefined;
+    }
+
+    const name = foundDef.getName().toUpperCase();
+    enclosing = enclosing?.toUpperCase();
+    if (enclosing === undefined || enclosing === name) {
+      return undefined;
+    }
+
+    // friendship with the class used at the call site also gives access to inherited members
+    const visited: string[] = [];
+    let current: IClassDefinition | undefined = def instanceof ClassDefinition ? def : foundDef;
+    while (current !== undefined && visited.includes(current.getName().toUpperCase()) === false) {
+      visited.push(current.getName().toUpperCase());
+      if (this.hasFriendship(current, enclosing)) {
+        return undefined;
+      }
+      const sup: string | undefined = current.getSuperClass();
+      current = sup === undefined ? undefined : this.scope.findClassDefinition(sup);
+    }
+
+    if (visibility === Visibility.Protected) {
+      // subclasses can access protected members
+      let sup = this.scope.findClassDefinition(enclosing)?.getSuperClass();
+      while (sup !== undefined) {
+        if (sup.toUpperCase() === name) {
+          return undefined;
+        }
+        sup = this.scope.findClassDefinition(sup)?.getSuperClass();
+      }
+      return "protected";
+    }
+
+    return "private";
+  }
+
+  // the class declaring the attribute or constant, searched from def up through the super classes
+  public findAttributeOwner(
+    def: IClassDefinition | IInterfaceDefinition | undefined,
+    found: ClassAttribute | ClassConstant): IClassDefinition | undefined {
+
+    const visited: string[] = [];
+    let current: IClassDefinition | IInterfaceDefinition | undefined = def;
+    while (current instanceof ClassDefinition && visited.includes(current.getName().toUpperCase()) === false) {
+      visited.push(current.getName().toUpperCase());
+      const attributes = current.getAttributes();
+      if (attributes.getAll().includes(found as ClassAttribute)
+          || attributes.getConstants().includes(found as ClassConstant)) {
+        return current;
+      }
+      const sup: string | undefined = current.getSuperClass();
+      current = sup === undefined ? undefined : this.findSuperDefinition(sup);
+    }
+    return undefined;
+  }
+
   public hasFriendship(cd: IClassDefinition, friendName: string): boolean {
     const friends = cd.getFriends().map(f => f.toUpperCase());
     const isFriend = (name: string) =>
