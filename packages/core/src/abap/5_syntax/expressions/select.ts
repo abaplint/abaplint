@@ -240,6 +240,13 @@ export class Select {
     const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
     if (intoTable) {
       const inline = intoTable.findFirstExpression(Expressions.InlineData);
+      if (inline
+          && intoTable.findDirectTokenByText("INTO") !== undefined
+          && intoTable.findDirectTokenByText("CORRESPONDING") !== undefined
+          && !releaseAtLeast(input.scope.getRelease(), Release.v755)) {
+        const message = "INTO CORRESPONDING FIELDS OF TABLE with an inline declaration requires 7.55";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      }
       if (inline) {
         InlineData.runSyntax(inline, input, this.buildTableType(fields, dbSources, input.scope, from));
       }
