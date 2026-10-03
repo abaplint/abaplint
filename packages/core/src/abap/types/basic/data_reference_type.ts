@@ -1,5 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 import {AnyType} from "./any_type";
+import {TableType} from "./table_type";
 
 export class DataReference extends AbstractType {
   private readonly type: AbstractType;
@@ -27,6 +28,10 @@ export class DataReference extends AbstractType {
 
   public isGeneric() {
     if (this.type instanceof AnyType) {
+      return true;
+    }
+    // LIKE REF TO a generic table, eg. a field symbol TYPE STANDARD TABLE
+    if (this.type instanceof TableType && this.type.isGeneric()) {
       return true;
     }
     return false;
