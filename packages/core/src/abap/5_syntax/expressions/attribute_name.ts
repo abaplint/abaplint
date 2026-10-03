@@ -8,6 +8,8 @@ import {DataReference} from "../../types/basic/data_reference_type";
 import {ReferenceType} from "../_reference";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {AnyType} from "../../types/basic";
+import {ClassAttribute} from "../../types/class_attribute";
+import {ClassConstant} from "../../types/class_constant";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class AttributeName {
@@ -45,6 +47,15 @@ export class AttributeName {
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         }
         return VoidType.get(CheckSyntaxKey);
+      }
+      if (found instanceof ClassAttribute || found instanceof ClassConstant) {
+        const owner = helper.findAttributeOwner(def, found);
+        const notVisible = helper.memberNotVisible(found.getVisibility(), def, owner, input.scope.getEnclosingClassName());
+        if (notVisible !== undefined) {
+          const message = `Attribute "${name}" is ${notVisible} and cannot be accessed`;
+          input.issues.push(syntaxIssue(input, token, message));
+          return VoidType.get(CheckSyntaxKey);
+        }
       }
       if (type) {
         input.scope.addReference(token, found, type, input.filename);
