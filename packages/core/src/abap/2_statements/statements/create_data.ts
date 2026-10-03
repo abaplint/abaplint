@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {seq, alt, opt, plus, ver, AlsoIn, verNotLang} from "../combi";
-import {Target, Source, Dynamic, Field, TypeName} from "../expressions";
+import {Target, Source, Dynamic, Field, TypeName, SimpleSource3} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Release, LanguageVersion} from "../../../version";
 
@@ -10,7 +10,7 @@ export class CreateData implements IStatement {
   public getMatcher(): IStatementRunnable {
 
     const areaHandle = seq("AREA HANDLE", Source);
-    const typeHandle = seq("TYPE HANDLE", Source);
+    const typeHandle = seq("TYPE HANDLE", SimpleSource3);
 
     const type = seq(alt("TYPE",
                          "TYPE REF TO",
