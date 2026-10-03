@@ -140,6 +140,7 @@ export * from "./prefer_string_template";
 export * from "./prefer_returning_to_exporting";
 export * from "./prefer_xsdbool";
 export * from "./preferred_compare_operator";
+export * from "./preferred_parameter_ignored";
 export * from "./prefix_is_current_class";
 export * from "./reduce_procedural_code";
 export * from "./reduce_string_templates";
