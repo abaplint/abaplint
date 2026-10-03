@@ -3407,6 +3407,17 @@
               ],
               "description": "Configure undesired operator variants\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/preferred_compare_operator"
             },
+            "preferred_parameter_ignored": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferredParameterIgnoredConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "PREFERRED PARAMETER on an IMPORTING clause that still has a mandatory\nparameter. The addition names the parameter a positional call fills, which only\nmeans something when every parameter may be left out - so with a mandatory one\npresent it does nothing.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/preferred_parameter_ignored"
+            },
             "prefix_is_current_class": {
               "anyOf": [
                 {
@@ -5606,6 +5617,17 @@
                 }
               ],
               "description": "Configure undesired operator variants\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/preferred_compare_operator"
+            },
+            "preferred_parameter_ignored": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferredParameterIgnoredConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "PREFERRED PARAMETER on an IMPORTING clause that still has a mandatory\nparameter. The addition names the parameter a positional call fills, which only\nmeans something when every parameter may be left out - so with a mandatory one\npresent it does nothing.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/preferred_parameter_ignored"
             },
             "prefix_is_current_class": {
               "anyOf": [
@@ -8505,6 +8527,23 @@
       "required": [
         "badOperators"
       ],
+      "type": "object"
+    },
+    "PreferredParameterIgnoredConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "PrefixIsCurrentClassConf": {

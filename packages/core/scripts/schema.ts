@@ -143,6 +143,7 @@ import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_e
 import {PreferStringTemplateConf} from "../src/rules/prefer_string_template";
 import {PreferXsdboolConf} from "../src/rules/prefer_xsdbool";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
+import {PreferredParameterIgnoredConf} from "../src/rules/preferred_parameter_ignored";
 import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
 import {ReduceProceduralCodeConf} from "../src/rules/reduce_procedural_code";
 import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
@@ -356,6 +357,7 @@ export interface IConfig {
     "prefer_string_template"?: PreferStringTemplateConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
+    "preferred_parameter_ignored"?: PreferredParameterIgnoredConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
@@ -558,6 +560,7 @@ export interface IConfig {
     "prefer_string_template"?: PreferStringTemplateConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
+    "preferred_parameter_ignored"?: PreferredParameterIgnoredConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
