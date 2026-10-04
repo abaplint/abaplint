@@ -90,6 +90,7 @@ export class Indent {
         || type instanceof Statements.ProcessBeforeOutput
         || type instanceof Statements.ProcessOnValueRequest
         || type instanceof Statements.TopOfPage
+        || type instanceof Statements.EndOfPage
         || type instanceof Statements.Get
         || type instanceof Statements.EndOfSelection
         || type instanceof Statements.LoadOfProgram) {
@@ -179,6 +180,7 @@ export class Indent {
         || type instanceof Statements.Initialization
         || type instanceof Statements.AtUserCommand
         || type instanceof Statements.TopOfPage
+        || type instanceof Statements.EndOfPage
         || type instanceof Statements.EndOfSelection
         || type instanceof Statements.Public
         || type instanceof Statements.Protected

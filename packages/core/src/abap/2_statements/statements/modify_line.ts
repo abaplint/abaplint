@@ -21,8 +21,10 @@ export class ModifyLine implements IStatement {
     const ocp = str("OF CURRENT PAGE");
     const intensified = seq("INTENSIFIED", onOff);
     const intensifiedOpt = seq("INTENSIFIED", opt(onOff));
+    const inputOpt = seq("INPUT", opt(alt(eq, onOff)));
+    const inverseOpt = seq("INVERSE", opt(alt(eq, onOff)));
     const lineFormat = seq("LINE FORMAT",
-                           per("INPUT OFF", "INVERSE", "RESET", intensifiedOpt, Color));
+                           per(inputOpt, inverseOpt, "RESET", intensifiedOpt, Color));
 
     const options = per(index, value, format, page, lineFormat, lineValue, ocp, intensified, Color);
 
