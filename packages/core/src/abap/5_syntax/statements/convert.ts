@@ -47,7 +47,7 @@ export class Convert implements StatementSyntax {
     if (stampTarget?.get() instanceof Expressions.Target) {
       const inline = stampTarget?.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        InlineData.runSyntax(inline, input, new PackedType(8, 4));
+        InlineData.runSyntax(inline, input, new PackedType(8, 0));
       } else {
         Target.runSyntax(stampTarget, input);
       }
