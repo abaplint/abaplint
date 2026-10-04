@@ -490,6 +490,7 @@ export class CurrentScope {
     if (name === undefined) {
       return undefined;
     }
+    name = name.replace(/^!/, "");
     const found = this.current?.findVariable(name);
     if (found) {
       return found;
