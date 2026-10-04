@@ -49,15 +49,15 @@ export class MethodCallChain {
         const className = context instanceof ObjectReferenceType ? context.getIdentifierName() : undefined;
         const methodToken = current.findDirectExpression(Expressions.MethodName)?.getFirstToken();
         const methodName = methodToken?.getStr();
+        const def = input.scope.findObjectDefinition(className);
         const superMessage = current === children[2]
           && first.get() instanceof Expressions.FieldChain
           && first.concatTokens().toUpperCase() === "SUPER"
-          ? helper.checkSuperCall(methodName) : undefined;
+          ? helper.checkSuperCall(def, methodName) : undefined;
         if (superMessage !== undefined) {
           input.issues.push(syntaxIssue(input, methodToken!, superMessage));
           return VoidType.get(CheckSyntaxKey);
         }
-        const def = input.scope.findObjectDefinition(className);
         // eslint-disable-next-line prefer-const
         let {method, def: foundDef} = helper.searchMethodName(def, methodName);
         if (method === undefined && current === first) {

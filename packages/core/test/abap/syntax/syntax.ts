@@ -18169,3 +18169,54 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(message);
   });
 });
+
+describe("syntax.ts, SUPER-> calling another method, aliases", () => {
+  const program = (runBody: string, loadBody: string): string => `
+INTERFACE lif_intf.
+  METHODS run.
+ENDINTERFACE.
+
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_intf.
+    ALIASES run FOR lif_intf~run.
+    METHODS load_data.
+ENDCLASS.
+
+CLASS lcl_super IMPLEMENTATION.
+  METHOD lif_intf~run.
+  ENDMETHOD.
+  METHOD load_data.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    METHODS lif_intf~run REDEFINITION.
+    METHODS load_data REDEFINITION.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD lif_intf~run.
+${runBody}
+  ENDMETHOD.
+  METHOD load_data.
+${loadBody}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("ok, the alias of the same interface method", () => {
+    const issues = runProgram(program(`    super->run( ).`, ``));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, CALL METHOD via the alias of the same interface method", () => {
+    const issues = runProgram(program(`    CALL METHOD super->run.`, ``));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, the alias of another method", () => {
+    const issues = runProgram(program(``, `    super->run( ).`));
+    expect(issues[0]?.getMessage()).to.equal("SUPER-> can only be used to call the previous implementation of the same method");
+  });
+});
