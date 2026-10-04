@@ -113,6 +113,14 @@ TOP-OF-PAGE.
   PERFORM TOP.`, cnt: 0},
 
   {abap: `
+TOP-OF-PAGE.
+  WRITE 'top'.
+END-OF-PAGE.
+  WRITE 'end'.
+START-OF-SELECTION.
+  WRITE 'hello'.`, cnt: 0},
+
+  {abap: `
 INITIALIZATION.
   PERFORM INIT.
 AT USER-COMMAND.
