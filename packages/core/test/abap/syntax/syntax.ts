@@ -14994,12 +14994,16 @@ ENDCLASS.
 CLASS lcl_sub DEFINITION INHERITING FROM lcl_bar.
   PUBLIC SECTION.
     METHODS run.
+  PROTECTED SECTION.
+    METHODS instance_method REDEFINITION.
 ENDCLASS.
 
 CLASS lcl_sub IMPLEMENTATION.
   METHOD run.
     instance_method( ).
     me->instance_method( ).
+  ENDMETHOD.
+  METHOD instance_method.
     super->instance_method( ).
   ENDMETHOD.
 ENDCLASS.`;
@@ -18079,5 +18083,89 @@ ENDCLASS.`;
       {filename: "zcl_owner.clas.abap", contents: clas},
       {filename: "zcl_owner.clas.testclasses.abap", contents: test}]);
     expect(issues[0]?.getMessage()).to.equal(`Attribute "mv_priv" is private and cannot be accessed`);
+  });
+});
+
+describe("syntax.ts, SUPER-> calling another method", () => {
+  const superClass = `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_intf.
+    METHODS constructor.
+    METHODS load_data.
+    METHODS get_where_clause RETURNING VALUE(rv) TYPE string.
+ENDCLASS.
+
+CLASS lcl_super IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+  METHOD load_data.
+  ENDMETHOD.
+  METHOD get_where_clause.
+  ENDMETHOD.
+  METHOD lif_intf~run.
+  ENDMETHOD.
+ENDCLASS.`;
+
+  const program = (body: string): string => `
+INTERFACE lif_intf.
+  METHODS run.
+ENDINTERFACE.
+${superClass}
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    METHODS constructor.
+    METHODS load_data REDEFINITION.
+    METHODS lif_intf~run REDEFINITION.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD constructor.
+    super->constructor( ).
+  ENDMETHOD.
+  METHOD load_data.
+${body}
+  ENDMETHOD.
+  METHOD lif_intf~run.
+    super->lif_intf~run( ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+  const message = "SUPER-> can only be used to call the previous implementation of the same method";
+
+  it("ok, the previous implementation of the same method", () => {
+    const issues = runProgram(program(`    super->load_data( ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, CALL METHOD of the same method", () => {
+    const issues = runProgram(program(`    CALL METHOD super->load_data.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, another method via me->", () => {
+    const issues = runProgram(program(`    DATA(lv_where) = me->get_where_clause( ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, functional call of another method", () => {
+    const issues = runProgram(program(`    DATA(lv_where) = super->get_where_clause( ).`));
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
+
+  it("error, statement call of another method", () => {
+    const issues = runProgram(program(`    super->get_where_clause( ).`));
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
+
+  it("error, CALL METHOD of another method", () => {
+    const issues = runProgram(program(`    CALL METHOD super->get_where_clause.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
+
+  it("error, the constructor from another method", () => {
+    const issues = runProgram(program(`    super->constructor( ).`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 });

@@ -215,6 +215,17 @@ export class ObjectOriented {
     return "private";
   }
 
+  // SUPER-> can only call the previous implementation of the method it is used in, returns the message otherwise
+  public checkSuperCall(methodName: string | undefined): string | undefined {
+    const enclosing = this.scope.getEnclosingMethodName();
+    if (methodName === undefined
+        || enclosing === undefined
+        || methodName.toUpperCase() === enclosing.toUpperCase()) {
+      return undefined;
+    }
+    return "SUPER-> can only be used to call the previous implementation of the same method";
+  }
+
   // the class declaring the attribute or constant, searched from def up through the super classes
   public findAttributeOwner(
     def: IClassDefinition | IInterfaceDefinition | undefined,
