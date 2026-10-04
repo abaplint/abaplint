@@ -18168,6 +18168,32 @@ ENDCLASS.`;
     const issues = runProgram(program(`    super->constructor( ).`));
     expect(issues[0]?.getMessage()).to.equal(message);
   });
+
+  it("error, a method that is not a redefinition", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+  PROTECTED SECTION.
+    METHODS instance_method.
+ENDCLASS.
+
+CLASS lcl_super IMPLEMENTATION.
+  METHOD instance_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    METHODS other.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD other.
+    super->instance_method( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
 });
 
 describe("syntax.ts, SUPER-> calling another method, aliases", () => {

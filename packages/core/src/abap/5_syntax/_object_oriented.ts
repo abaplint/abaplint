@@ -227,12 +227,19 @@ export class ObjectOriented {
         || methodName.toUpperCase() === enclosing.toUpperCase()) {
       return undefined;
     }
+    const message = "SUPER-> can only be used to call the previous implementation of the same method";
+    // a method that is not a redefinition has no previous implementation
+    const enclosingClass = this.scope.findClassDefinition(this.scope.getEnclosingClassName());
+    const ownDefinition = enclosingClass?.getMethodDefinitions().getByName(enclosing);
+    if (ownDefinition !== undefined && ownDefinition.isRedefinition() === false) {
+      return message;
+    }
     const called = this.searchMethodName(superDef, methodName).method;
     const own = this.searchMethodName(superDef, enclosing).method;
     if (called === undefined || own === undefined || called === own) {
       return undefined;
     }
-    return "SUPER-> can only be used to call the previous implementation of the same method";
+    return message;
   }
 
   // the class declaring the attribute or constant, searched from def up through the super classes
