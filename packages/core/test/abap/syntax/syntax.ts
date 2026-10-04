@@ -2069,6 +2069,22 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("method argument with escaping identifier", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING moo TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA val TYPE i.
+    bar( moo = !val ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("method EXPORTING result written in implementation", () => {
     const abap = `
 CLASS lcl DEFINITION.
