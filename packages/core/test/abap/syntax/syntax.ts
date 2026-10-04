@@ -17695,3 +17695,61 @@ ASSIGN lr_data TO <val>.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, DATA LIKE REF TO a generic table", () => {
+  const message = "DATA definition cannot be generic";
+  const method = (body: string) => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run IMPORTING it TYPE STANDARD TABLE it_typed TYPE string_table.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error, field symbol TYPE STANDARD TABLE", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    ASSIGN it TO <tab>.
+    DATA lr LIKE REF TO <tab>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, field symbol TYPE ANY TABLE", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+    ASSIGN it TO <tab>.
+    DATA lr LIKE REF TO <tab>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, generic table parameter", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO it.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("ok, fully typed table parameter", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO it_typed.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, field symbol typed with a table type", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE string_table.
+    ASSIGN it_typed TO <tab>.
+    DATA lr LIKE REF TO <tab>.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, TYPE REF TO data", () => {
+    const issues = runProgram(method(`
+    DATA lr TYPE REF TO data.
+    GET REFERENCE OF it INTO lr.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
