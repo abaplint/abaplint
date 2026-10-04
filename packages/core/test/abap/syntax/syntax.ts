@@ -2050,6 +2050,25 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("method parameter name with escaping identifier", () => {
+    const abap = `
+CLASS lcl_importing DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: run
+      IMPORTING iv_bar TYPE i.
+ENDCLASS.
+CLASS lcl_importing IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA int TYPE i.
+  lcl_importing=>run( EXPORTING !iv_bar = int ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("method EXPORTING result written in implementation", () => {
     const abap = `
 CLASS lcl DEFINITION.
