@@ -104,7 +104,6 @@ export class ExpandMacros {
       } else if (type instanceof Statements.Include) {
         const includeName = statement.findDirectExpression(Expressions.IncludeName)?.concatTokens();
         // todo, this does not take function module includes into account
-        // todo, workaround for cyclic includes?
         const prog = this.reg?.getObject("PROG", includeName) as Program | undefined;
         if (prog) {
           prog.parse(this.release, this.globalMacros, this.reg, this.languageVersion);

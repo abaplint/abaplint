@@ -27,7 +27,13 @@ export class Procedural {
     this.reg = reg;
   }
 
-  public addAllFormDefinitions(file: ABAPFile, obj: ABAPObject) {
+  public addAllFormDefinitions(file: ABAPFile, obj: ABAPObject, visited = new Set<string>()) {
+    // an include reached again through a cycle of INCLUDEs is not walked twice
+    if (visited.has(file.getFilename())) {
+      return;
+    }
+    visited.add(file.getFilename());
+
     const structure = file.getStructure();
     if (structure) {
       const input = {
@@ -50,7 +56,7 @@ export class Procedural {
     for (const node of includes) {
       const found = this.findInclude(node, obj);
       if (found) {
-        this.addAllFormDefinitions(found, obj);
+        this.addAllFormDefinitions(found, obj, visited);
       }
     }
   }
