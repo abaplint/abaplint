@@ -27,6 +27,10 @@ interface IListItemS {
   sourceType: AbstractType | undefined;
 }
 
+function normalizeParameterName(name: string): string {
+  return name.replace(/^!/, "").toUpperCase();
+}
+
 export class MethodParameters {
 
   private requiredParameters: Set<string> | undefined = undefined;
@@ -227,7 +231,7 @@ export class MethodParameters {
       }
 
       const nameNode = c.findDirectExpression(Expressions.ParameterName);
-      const name = nameNode?.getFirstToken().getStr().toUpperCase();
+      const name = nameNode === undefined ? undefined : normalizeParameterName(nameNode.getFirstToken().getStr());
       if (name === undefined || nameNode === undefined) {
         throw new AssertError("parameterListS, no name determined");
       }
@@ -293,7 +297,7 @@ export class MethodParameters {
       }
 
       const nameNode = c.findDirectExpression(Expressions.ParameterName);
-      const name = nameNode?.getFirstToken().getStr().toUpperCase();
+      const name = nameNode === undefined ? undefined : normalizeParameterName(nameNode.getFirstToken().getStr());
       if (name === undefined || nameNode === undefined) {
         throw new AssertError("parameterListT, no name determined");
       }

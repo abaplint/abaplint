@@ -1,6 +1,6 @@
 import {ver, seq, tok, altPrio, optPrio, regex, Expression, starPrio, star, AlsoIn} from "../combi";
 import {WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW, Dash, ParenRightW, ParenLeft} from "../../1_lexer/tokens";
-import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TypeNameOrInfer,
+import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TypeNameOrInfer, Cast,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody, Arrow} from ".";
 import {Release} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -19,7 +19,9 @@ export class Source extends Expression {
     const attr = seq(Arrow, AttributeChain);
     const deref = optPrio(ver(Release.v756, Dereference));
 
-    const dynChain = star(altPrio(dynAttr(), dynComp(), Dereference));
+// below v756 "->*" directly after a functional method call is a syntax error, CAST can be dereferenced
+    const dynChain = star(seq(altPrio(dynAttr(), dynComp()), optPrio(Dereference)));
+    const castDeref = seq(Cast, Dereference);
 
     const method = seq(MethodCallChain, optPrio(altPrio(attr, comp)), deref, dynChain);
 
@@ -46,6 +48,7 @@ export class Source extends Expression {
                                              StringTemplate,
                                              TextElement,
                                              bool,
+                                             castDeref,
                                              method,
                                              seq(FieldChain, deref),
                                              paren),

@@ -2050,6 +2050,25 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("method parameter name with escaping identifier", () => {
+    const abap = `
+CLASS lcl_importing DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: run
+      IMPORTING iv_bar TYPE i.
+ENDCLASS.
+CLASS lcl_importing IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA int TYPE i.
+  lcl_importing=>run( EXPORTING !iv_bar = int ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("method EXPORTING result written in implementation", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -17692,6 +17711,64 @@ ASSIGN lr_data TO <val>.
 <val> = CAST data( REF #( lv_source ) ).
 <val> = COND #( WHEN 1 = 1 THEN REF data( lv_source ) ).`;
     const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
+
+describe("syntax.ts, DATA LIKE REF TO a generic table", () => {
+  const message = "DATA definition cannot be generic";
+  const method = (body: string) => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run IMPORTING it TYPE STANDARD TABLE it_typed TYPE string_table.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error, field symbol TYPE STANDARD TABLE", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    ASSIGN it TO <tab>.
+    DATA lr LIKE REF TO <tab>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, field symbol TYPE ANY TABLE", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+    ASSIGN it TO <tab>.
+    DATA lr LIKE REF TO <tab>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, generic table parameter", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO it.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("ok, fully typed table parameter", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO it_typed.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, field symbol typed with a table type", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE string_table.
+    ASSIGN it_typed TO <tab>.
+    DATA lr LIKE REF TO <tab>.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, TYPE REF TO data", () => {
+    const issues = runProgram(method(`
+    DATA lr TYPE REF TO data.
+    GET REFERENCE OF it INTO lr.`));
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
