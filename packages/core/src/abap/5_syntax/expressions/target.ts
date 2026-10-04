@@ -14,6 +14,7 @@ import {Dereference} from "../../2_statements/expressions";
 import {FieldLength} from "./field_length";
 import {Cast} from "./cast";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 export class Target {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType | undefined {
@@ -80,6 +81,12 @@ export class Target {
 
         if (!(context instanceof VoidType)) {
           context = context.getType();
+        }
+        if (context?.isGeneric() === true
+            && !releaseAtLeast(input.scope.getRelease(), Release.v756)
+            && input.scope.getLanguageVersion() !== LanguageVersion.Cloud
+            && !input.scope.getOpenABAP()) {
+          throw new Error("A generic reference cannot be dereferenced");
         }
       } else if (current.get() instanceof Expressions.ComponentName) {
         context = ComponentName.runSyntax(context, current, input);
