@@ -609,6 +609,18 @@ export class CurrentScope {
     return this.localFriends.get(className.toUpperCase())?.includes(friendName.toUpperCase()) === true;
   }
 
+  public getEnclosingMethodName(): string | undefined {
+    let curr = this.current;
+    while (curr !== undefined) {
+      const stype = curr.getIdentifier().stype;
+      if (stype === ScopeType.Method || stype === ScopeType.MethodInstance) {
+        return curr.getIdentifier().sname;
+      }
+      curr = curr.getParent();
+    }
+    return undefined;
+  }
+
   public getEnclosingClassName(): string | undefined {
     let curr = this.current;
     while (curr !== undefined) {

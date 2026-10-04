@@ -96,6 +96,14 @@ export class MethodSource {
         const methodToken = current.getFirstToken();
         const methodName = methodToken?.getStr();
         const def = input.scope.findObjectDefinition(className);
+        const superMessage = implicitMe === false
+          && first.get() instanceof Expressions.SourceField
+          && first.concatTokens().toUpperCase() === "SUPER"
+          ? helper.checkSuperCall(def, methodName) : undefined;
+        if (superMessage !== undefined) {
+          input.issues.push(syntaxIssue(input, methodToken, superMessage));
+          return VoidType.get(CheckSyntaxKey);
+        }
         // eslint-disable-next-line prefer-const
         let {method, def: foundDef} = helper.searchMethodName(def, methodName);
 

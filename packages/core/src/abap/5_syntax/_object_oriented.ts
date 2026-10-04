@@ -215,6 +215,33 @@ export class ObjectOriented {
     return "private";
   }
 
+  // SUPER-> can only call the previous implementation of the method it is used in, returns the message otherwise
+  // both names are resolved in the super class, so an alias and the method it stands for are the same
+  public checkSuperCall(
+    superDef: IClassDefinition | IInterfaceDefinition | undefined,
+    methodName: string | undefined): string | undefined {
+
+    const enclosing = this.scope.getEnclosingMethodName();
+    if (methodName === undefined
+        || enclosing === undefined
+        || methodName.toUpperCase() === enclosing.toUpperCase()) {
+      return undefined;
+    }
+    const message = "SUPER-> can only be used to call the previous implementation of the same method";
+    // a method that is not a redefinition has no previous implementation
+    const enclosingClass = this.scope.findClassDefinition(this.scope.getEnclosingClassName());
+    const ownDefinition = enclosingClass?.getMethodDefinitions().getByName(enclosing);
+    if (ownDefinition !== undefined && ownDefinition.isRedefinition() === false) {
+      return message;
+    }
+    const called = this.searchMethodName(superDef, methodName).method;
+    const own = this.searchMethodName(superDef, enclosing).method;
+    if (called === undefined || own === undefined || called === own) {
+      return undefined;
+    }
+    return message;
+  }
+
   // the class declaring the attribute or constant, searched from def up through the super classes
   public findAttributeOwner(
     def: IClassDefinition | IInterfaceDefinition | undefined,
