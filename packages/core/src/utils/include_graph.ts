@@ -10,7 +10,6 @@ import {IRegistry} from "../_iregistry";
 import {ABAPObject} from "../objects/_abap_object";
 import {Severity} from "../severity";
 
-// todo, check for cycles/circular dependencies, method findTop
 // todo, add configurable error for multiple use includes
 
 const FMXXINCLUDE = /^(\/\w+\/)?L.+XX$/;
@@ -64,11 +63,17 @@ class Graph {
     this.edges[from.filename].push(toFilename);
   }
 
-  public findTop(filename: string): IVertex[] {
+  public findTop(filename: string, path: Set<string> = new Set()): IVertex[] {
     const ret: IVertex[] = [];
+    path.add(filename);
     for (const to of this.edges[filename] || []) {
-      ret.push(...this.findTop(to));
+      // an INCLUDE cycle, the file is already on the current path
+      if (path.has(to)) {
+        continue;
+      }
+      ret.push(...this.findTop(to, path));
     }
+    path.delete(filename);
     if (ret.length === 0) {
       const found = this.findVertexByFilename(filename);
       if (found !== undefined) {

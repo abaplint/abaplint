@@ -82,8 +82,6 @@ ENDFORM.`;
     expect(issues[0].getFilename()).to.equal("zf1.prog.abap");
   });
 
-
-
   it("a program that includes itself does not recurse", async () => {
     const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", "REPORT zfoo.\nINCLUDE zfoo.\n"));
 
@@ -91,7 +89,7 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
-  it("includes that include each other do not recurse, and macros still resolve", async () => {
+  it("a program and an include that include each other do not recurse", async () => {
     const zmain = `REPORT zcyc_main.
 INCLUDE zcyc_top.
 set_value lv_value.`;
@@ -106,6 +104,27 @@ END-OF-DEFINITION.`;
       new MemoryFile("zcyc_main.prog.abap", zmain),
       new MemoryFile("zcyc_top.prog.abap", ztop),
       new MemoryFile("zcyc_top.prog.xml", "<SUBC>I</SUBC>"),
+    ]);
+
+    const issues = reg.parse().findIssues().filter(i => i.getKey() === "parser_error");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("an include that includes itself, used from a program, does not recurse", async () => {
+    const reg = new Registry().addFiles([
+      new MemoryFile("zcyc_prog.prog.abap", "REPORT zcyc_prog.\nINCLUDE zcyc_self."),
+      new MemoryFile("zcyc_self.prog.abap", "INCLUDE zcyc_self.\nDATA lv_value TYPE i."),
+      new MemoryFile("zcyc_self.prog.xml", "<SUBC>I</SUBC>"),
+    ]);
+
+    const issues = reg.parse().findIssues().filter(i => i.getKey() === "parser_error");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("an include that includes itself, on its own, does not recurse", async () => {
+    const reg = new Registry().addFiles([
+      new MemoryFile("zcyc_self.prog.abap", "INCLUDE zcyc_self.\nDATA lv_value TYPE i."),
+      new MemoryFile("zcyc_self.prog.xml", "<SUBC>I</SUBC>"),
     ]);
 
     const issues = reg.parse().findIssues().filter(i => i.getKey() === "parser_error");

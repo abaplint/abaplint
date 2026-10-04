@@ -82,7 +82,7 @@ export class ExpandMacros {
     return this.macros.listMacroNames();
   }
 
-  public find(statements: StatementNode[], file: IFile, clear = true) {
+  public find(statements: StatementNode[], file: IFile, clear = true, includePath: Set<string> = new Set()) {
     let nameToken: AbstractToken | undefined = undefined;
     let start: Position | undefined = undefined;
     let contents: StatementNode[] = [];
@@ -108,9 +108,12 @@ export class ExpandMacros {
         if (prog) {
           prog.parse(this.release, this.globalMacros, this.reg, this.languageVersion);
           const includeMainFile = prog.getMainABAPFile();
-          if (includeMainFile) {
+          // an include that is already on the current include path is not walked again
+          if (includeMainFile && includePath.has(includeMainFile.getFilename()) === false) {
+            includePath.add(includeMainFile.getFilename());
             // slow, this copies everything,
-            this.find([...includeMainFile.getStatements()], includeMainFile, false);
+            this.find([...includeMainFile.getStatements()], includeMainFile, false, includePath);
+            includePath.delete(includeMainFile.getFilename());
           }
         }
       } else if (nameToken) {
