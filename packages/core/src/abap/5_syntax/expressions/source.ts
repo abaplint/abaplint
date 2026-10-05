@@ -21,6 +21,7 @@ import {CorrespondingBody} from "./corresponding_body";
 import {BuiltIn} from "../_builtin";
 import {AttributeChain} from "./attribute_chain";
 import {Dereference} from "./dereference";
+import {Cast} from "./cast";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {TypeUtils} from "../_type_utils";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
@@ -249,6 +250,9 @@ export class Source {
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
             return VoidType.get(CheckSyntaxKey);
           }
+        } else if (get instanceof Expressions.Cast) {
+          const found = Cast.runSyntax(first, input, targetType);
+          context = arithmetic === true ? this.infer(context, found, true) : found;
         } else if (get instanceof Expressions.FieldChain) {
           const found = FieldChain.runSyntax(first, input, type, allowGenericDeference);
           context = arithmetic === true ? this.infer(context, found, true) : found;

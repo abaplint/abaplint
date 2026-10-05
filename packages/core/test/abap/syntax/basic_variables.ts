@@ -1075,6 +1075,13 @@ DATA(lv_allocatable) = val - iv_reserve.`;
     expect(type).to.be.instanceof(Basic.ObjectReferenceType);
   });
 
+  it("CAST dereference infers the referenced type", () => {
+    const abap = `
+FIELD-SYMBOLS <fs> TYPE REF TO data.
+DATA(sdf) = CAST i( <fs> )->*.`;
+    expectInteger(resolveVariable(abap, "sdf"));
+  });
+
   it("CAST void types", () => {
     const abap = `DATA(li_source) = CAST if_oo_clif_source( cl_global=>bar( ) ).`;
     const identifier = resolveVariable(abap, "li_source");
