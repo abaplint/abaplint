@@ -96,10 +96,10 @@ export class MethodSource {
         const methodToken = current.getFirstToken();
         const methodName = methodToken?.getStr();
         const def = input.scope.findObjectDefinition(className);
-        const superMessage = implicitMe === false
+        const isSuper = implicitMe === false
           && first.get() instanceof Expressions.SourceField
-          && first.concatTokens().toUpperCase() === "SUPER"
-          ? helper.checkSuperCall(def, methodName) : undefined;
+          && first.concatTokens().toUpperCase() === "SUPER";
+        const superMessage = isSuper ? helper.checkSuperCall(def, methodName) : undefined;
         if (superMessage !== undefined) {
           input.issues.push(syntaxIssue(input, methodToken, superMessage));
           return VoidType.get(CheckSyntaxKey);
@@ -120,6 +120,11 @@ export class MethodSource {
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return VoidType.get(CheckSyntaxKey);
         } else if (method) {
+          const specialMessage = isSuper ? undefined : helper.checkSpecialTestMethodCall(method, foundDef);
+          if (specialMessage !== undefined) {
+            input.issues.push(syntaxIssue(input, methodToken, specialMessage));
+            return VoidType.get(CheckSyntaxKey);
+          }
           const extra = helper.methodReferenceExtras(foundDef, className);
           input.scope.addReference(methodToken, method, ReferenceType.MethodReference, input.filename, extra);
 

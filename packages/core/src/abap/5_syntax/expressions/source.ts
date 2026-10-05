@@ -261,6 +261,11 @@ export class Source {
           const found = Constant.runSyntax(first);
           context = this.infer(context, found, arithmetic);
         } else if (get instanceof Expressions.Dereference) {
+          if (this.isNewObjectDereference(node, first)) {
+            const message = "NEW cannot be dereferenced directly";
+            input.issues.push(syntaxIssue(input, first.getFirstToken(), message));
+            return VoidType.get(CheckSyntaxKey);
+          }
           context = Dereference.runSyntax(first, context, input);
         } else if (get instanceof Expressions.ComponentChain) {
           context = ComponentChain.runSyntax(context, first, input);
@@ -453,6 +458,16 @@ export class Source {
     }
 
     return targetType;
+  }
+
+  // "NEW ty( )->*" is a syntax error, also in releases where a method call can be dereferenced
+  private static isNewObjectDereference(node: ExpressionNode, deref: ExpressionNode): boolean {
+    const children = node.getChildren();
+    const before = children[children.indexOf(deref) - 1];
+    return before instanceof ExpressionNode
+      && before.get() instanceof Expressions.MethodCallChain
+      && before.getChildren().length === 1
+      && before.getFirstChild()?.get() instanceof Expressions.NewObject;
   }
 
 }
