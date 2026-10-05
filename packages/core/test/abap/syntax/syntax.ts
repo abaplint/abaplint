@@ -18263,6 +18263,90 @@ ENDCLASS.`;
   });
 });
 
+describe("syntax.ts, special test methods called directly", () => {
+  const program = (setupBody: string, testBody: string): string => `
+CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+  PRIVATE SECTION.
+    CLASS-METHODS class_setup.
+    CLASS-METHODS class_teardown.
+    METHODS setup.
+    METHODS teardown.
+    METHODS helper.
+    METHODS test01 FOR TESTING.
+ENDCLASS.
+
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD class_setup.
+  ENDMETHOD.
+  METHOD class_teardown.
+  ENDMETHOD.
+  METHOD setup.
+${setupBody}
+  ENDMETHOD.
+  METHOD teardown.
+  ENDMETHOD.
+  METHOD helper.
+  ENDMETHOD.
+  METHOD test01.
+${testBody}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error, teardown( ) in setup", () => {
+    const issues = runProgram(program(`    teardown( ).`, ``));
+    expect(issues[0]?.getMessage()).to.equal(`The special method "TEARDOWN" cannot be called directly`);
+  });
+
+  it("error, me->teardown( ) in setup", () => {
+    const issues = runProgram(program(`    me->teardown( ).`, ``));
+    expect(issues[0]?.getMessage()).to.equal(`The special method "TEARDOWN" cannot be called directly`);
+  });
+
+  it("error, CALL METHOD teardown in setup", () => {
+    const issues = runProgram(program(`    CALL METHOD teardown.`, ``));
+    expect(issues[0]?.getMessage()).to.equal(`The special method "TEARDOWN" cannot be called directly`);
+  });
+
+  it("error, setup( ) in a test method", () => {
+    const issues = runProgram(program(``, `    setup( ).`));
+    expect(issues[0]?.getMessage()).to.equal(`The special method "SETUP" cannot be called directly`);
+  });
+
+  it("error, class_setup( ) in a test method", () => {
+    const issues = runProgram(program(``, `    class_setup( ).`));
+    expect(issues[0]?.getMessage()).to.equal(`The special method "CLASS_SETUP" cannot be called directly`);
+  });
+
+  it("error, class_teardown( ) via the class name", () => {
+    const issues = runProgram(program(``, `    ltcl_test=>class_teardown( ).`));
+    expect(issues[0]?.getMessage()).to.equal(`The special method "CLASS_TEARDOWN" cannot be called directly`);
+  });
+
+  it("ok, another method in setup", () => {
+    const issues = runProgram(program(`    helper( ).`, ``));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, a method named setup in a class that is not for testing", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS setup.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD setup.
+  ENDMETHOD.
+  METHOD run.
+    setup( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
+
 describe("syntax.ts, NEW dereferenced directly", () => {
   const message = "NEW cannot be dereferenced directly";
   const lcl = `

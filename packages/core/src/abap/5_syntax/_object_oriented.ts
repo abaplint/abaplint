@@ -215,6 +215,23 @@ export class ObjectOriented {
     return "private";
   }
 
+  // the fixture methods of a test class are called by ABAP Unit only, returns the message otherwise
+  public checkSpecialTestMethodCall(
+    method: IMethodDefinition | undefined,
+    foundDef: IClassDefinition | IInterfaceDefinition | undefined): string | undefined {
+
+    if (method === undefined
+        || !(foundDef instanceof ClassDefinition)
+        || foundDef.isForTesting() === false) {
+      return undefined;
+    }
+    const name = method.getName().toUpperCase();
+    if (["SETUP", "TEARDOWN", "CLASS_SETUP", "CLASS_TEARDOWN"].includes(name) === false) {
+      return undefined;
+    }
+    return `The special method "${name}" cannot be called directly`;
+  }
+
   // SUPER-> can only call the previous implementation of the method it is used in, returns the message otherwise
   // both names are resolved in the super class, so an alias and the method it stands for are the same
   public checkSuperCall(
