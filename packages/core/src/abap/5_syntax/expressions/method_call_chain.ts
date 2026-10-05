@@ -50,10 +50,10 @@ export class MethodCallChain {
         const methodToken = current.findDirectExpression(Expressions.MethodName)?.getFirstToken();
         const methodName = methodToken?.getStr();
         const def = input.scope.findObjectDefinition(className);
-        const superMessage = current === children[2]
+        const isSuper = current === children[2]
           && first.get() instanceof Expressions.FieldChain
-          && first.concatTokens().toUpperCase() === "SUPER"
-          ? helper.checkSuperCall(def, methodName) : undefined;
+          && first.concatTokens().toUpperCase() === "SUPER";
+        const superMessage = isSuper ? helper.checkSuperCall(def, methodName) : undefined;
         if (superMessage !== undefined) {
           input.issues.push(syntaxIssue(input, methodToken!, superMessage));
           return VoidType.get(CheckSyntaxKey);
@@ -82,6 +82,11 @@ export class MethodCallChain {
           if (notVisible !== undefined) {
             const message = `Method "${methodName}" is ${notVisible} and cannot be accessed`;
             input.issues.push(syntaxIssue(input, methodToken!, message));
+            return VoidType.get(CheckSyntaxKey);
+          }
+          const specialMessage = isSuper ? undefined : helper.checkSpecialTestMethodCall(method, foundDef);
+          if (specialMessage !== undefined) {
+            input.issues.push(syntaxIssue(input, methodToken!, specialMessage));
             return VoidType.get(CheckSyntaxKey);
           }
           const voidedName = context instanceof VoidType ? context.getVoided() : undefined;
