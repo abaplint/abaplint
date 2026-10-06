@@ -36,6 +36,8 @@ export class MethodParam {
       return new TypedIdentifier(name.getFirstToken(), input.filename, XGenericType.get(), meta);
     } else if (concat === "TYPE P" || concat.startsWith("TYPE P ")) {
       return new TypedIdentifier(name.getFirstToken(), input.filename, PGenericType.get(), meta);
+    } else if (concat === "TYPE N" || concat.startsWith("TYPE N ")) {
+      return new TypedIdentifier(name.getFirstToken(), input.filename, NGenericType.get(), meta);
     }
 
     const found = new BasicTypes(input).parseType(type);
