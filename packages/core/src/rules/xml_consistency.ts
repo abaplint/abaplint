@@ -295,6 +295,15 @@ export class XMLConsistency implements IRule {
     }
 
     if (obj.getTableCategory() === Objects.TableCategory.Transparent) {
+      // Confirmed reserved database field names, see issue #4331.
+      // TRESE also contains names such as TEXT and LENGTH which are allowed here.
+      const reservedFieldNames = ["ZONE", "HANDLER", "SECTION", "PARAMETER"];
+      for (const field of obj.getFields() ?? []) {
+        if (reservedFieldNames.includes(field.FIELDNAME.toUpperCase())) {
+          issues.push(Issue.atRow(file, 1, `Table field name "${field.FIELDNAME}" is reserved`,
+                                  this.getMetadata().key, this.conf.severity));
+        }
+      }
       if (!obj.getDeliveryClass()?.trim()) {
         const message = `Transparent table must have delivery class(CONTFLAG in DD02V) set`;
         issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.transparentTableSeverity));

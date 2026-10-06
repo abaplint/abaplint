@@ -26,7 +26,7 @@ const KNOWN_QUAN_DATA_ELEMENTS = ["MENGE_D"];
 const KNOWN_CURR_DATA_ELEMENTS = ["BWERT", "DZWERT"];
 
 // Reserved names, cannot be used as element names, see DDIC table TRESE
-const RESERVED_ELEMENT_NAMES = ["BEGIN", "NUMBER", "POSITION"];
+const RESERVED_ELEMENT_NAMES = ["BEGIN", "NUMBER", "POSITION", "ZONE", "HANDLER", "SECTION"];
 
 const MAX_LABEL_LENGTH = 40;
 
