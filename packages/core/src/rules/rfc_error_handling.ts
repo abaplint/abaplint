@@ -18,7 +18,9 @@ export class RFCErrorHandling extends ABAPRule {
       title: "RFC error handling",
       tags: [RuleTag.SingleFile],
       shortDescription: `Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls`,
-      extendedInformation: `https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenrfc_exception.html`,
+      extendedInformation: `RESOURCE_FAILURE is also required for asynchronous calls with DESTINATION IN GROUP.
+
+https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abenrfc_exception.html`,
       badExample: `CALL FUNCTION 'ZRFC'
   DESTINATION lv_rfc.`,
       goodExample: `CALL FUNCTION 'ZRFC'
@@ -26,13 +28,13 @@ export class RFCErrorHandling extends ABAPRule {
   EXCEPTIONS
     system_failure        = 1 MESSAGE msg
     communication_failure = 2 MESSAGE msg
-    resource_failure      = 3
-    OTHERS                = 4.`,
+    OTHERS                = 3.`,
     };
   }
 
-  private getMessage(): string {
-    return "RFC error handling: At least one unhandled exception from SYSTEM_FAILURE, COMMUNICATION_FAILURE, RESOURCE_FAILURE";
+  private getMessage(requireResourceFailure: boolean): string {
+    return "RFC error handling: At least one unhandled exception from SYSTEM_FAILURE, COMMUNICATION_FAILURE"
+      + (requireResourceFailure ? ", RESOURCE_FAILURE" : "");
   }
 
   public getConfig() {
@@ -53,13 +55,16 @@ export class RFCErrorHandling extends ABAPRule {
         continue;
       }
 
-      if (!stat.findFirstExpression(Expressions.Destination)) {
+      const destination = stat.findFirstExpression(Expressions.Destination);
+      if (destination === undefined) {
         continue;
       }
 
+      const requireResourceFailure = stat.findDirectTokenByText("STARTING") !== undefined
+        && destination.findDirectTokenByText("GROUP") !== undefined;
       const list = stat.findFirstExpression(Expressions.ParameterListExceptions);
       if (list === undefined) {
-        const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
+        const issue = Issue.atToken(file, token, this.getMessage(requireResourceFailure), this.getMetadata().key, this.conf.severity);
         output.push(issue);
         continue;
       }
@@ -72,8 +77,8 @@ export class RFCErrorHandling extends ABAPRule {
 
       if (names.indexOf("SYSTEM_FAILURE") < 0
           || names.indexOf("COMMUNICATION_FAILURE") < 0
-          || names.indexOf("RESOURCE_FAILURE") < 0) {
-        const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
+          || (requireResourceFailure && names.indexOf("RESOURCE_FAILURE") < 0)) {
+        const issue = Issue.atToken(file, token, this.getMessage(requireResourceFailure), this.getMetadata().key, this.conf.severity);
         output.push(issue);
         continue;
       }
