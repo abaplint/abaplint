@@ -1,6 +1,6 @@
 import {ExpressionNode} from "../../nodes";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {PGenericType, UnknownType, XGenericType} from "../../types/basic";
+import {NGenericType, PGenericType, UnknownType, XGenericType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import * as Expressions from "../../2_statements/expressions";
 import {Default} from "./default";
@@ -36,6 +36,8 @@ export class MethodParam {
       return new TypedIdentifier(name.getFirstToken(), input.filename, XGenericType.get(), meta);
     } else if (concat === "TYPE P" || concat.startsWith("TYPE P ")) {
       return new TypedIdentifier(name.getFirstToken(), input.filename, PGenericType.get(), meta);
+    } else if (concat === "TYPE N" || concat.startsWith("TYPE N ")) {
+      return new TypedIdentifier(name.getFirstToken(), input.filename, NGenericType.get(), meta);
     }
 
     const found = new BasicTypes(input).parseType(type);
