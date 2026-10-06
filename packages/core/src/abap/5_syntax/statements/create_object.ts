@@ -179,10 +179,10 @@ export class CreateObject implements StatementSyntax {
         continue;
       }
 
-      const source = p.findDirectExpression(Expressions.Source);
-      const sourceType = Source.runSyntax(source, input);
-
       const found = allImporting?.find(p => p.getName().toUpperCase() === name);
+      const source = p.findDirectExpression(Expressions.Source);
+      const sourceType = Source.runSyntax(source, input, found?.getType());
+
       if (found === undefined) {
         const message = `constructor parameter "${name}" does not exist`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
