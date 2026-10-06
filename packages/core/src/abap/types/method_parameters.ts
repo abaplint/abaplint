@@ -295,10 +295,14 @@ export class MethodParameters implements IMethodParameters {
   }
 
   private add(target: TypedIdentifier[], source: ExpressionNode, input: SyntaxInput, meta: IdentifierMeta[], abstractMethod: boolean): void {
+    let index = 0;
     for (const opt of source.findAllExpressions(Expressions.MethodParamOptional)) {
       const p = opt.findDirectExpression(Expressions.MethodParam);
       if (p === undefined) {
         continue;
+      }
+      if (index++ > 0) {
+        this.checkNamedDefault(p, input);
       }
       const extraMeta: IdentifierMeta[] = [];
       if (this.isPassByValue(p)) {
@@ -333,6 +337,18 @@ export class MethodParameters implements IMethodParameters {
     for (const param of params) {
       const extraMeta = this.isPassByValue(param) ? [IdentifierMeta.PassByValue] : [];
       target.push(MethodParam.runSyntax(param, input, [...meta, ...extraMeta]));
+    }
+  }
+
+  // A system reads a parameter named DEFAULT as the DEFAULT addition of the parameter before it,
+  // "val TYPE clike default TYPE i" then fails with "Unable to interpret ..." on what follows
+  private checkNamedDefault(param: ExpressionNode, input: SyntaxInput): void {
+    const first = param.getFirstToken();
+    if (first.getStr().toUpperCase() === "DEFAULT"
+        && param.getChildren()[0]?.get() instanceof Expressions.MethodParamName) {
+      const message = "Parameter \"" + first.getStr() + "\" is read as the DEFAULT addition of the parameter before it, " +
+        "rename it or escape it as !" + first.getStr();
+      input.issues.push(syntaxIssue(input, first, message));
     }
   }
 
