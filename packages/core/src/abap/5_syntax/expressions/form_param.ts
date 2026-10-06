@@ -54,7 +54,6 @@ export class FormParam {
         bfound = XGenericType.get();
       } else if (typeName === "P" && bfound instanceof PackedType) {
         bfound = PGenericType.get();
-      }
       } else if (typeName === "N" && bfound instanceof NumericType) {
         bfound = NGenericType.get();
       }
