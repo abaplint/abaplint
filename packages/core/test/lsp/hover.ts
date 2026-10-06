@@ -1675,6 +1675,50 @@ START-OF-SELECTION.
     expect(hover?.value).to.contain("Type: Data REF TO ```i```");
   });
 
+  it("Hover inferred type, CONV as CREATE OBJECT parameter", () => {
+    const abap = `TYPES ty_object_id TYPE c LENGTH 20.
+
+CLASS lcl_object DEFINITION FINAL.
+  PUBLIC SECTION.
+    METHODS constructor
+      IMPORTING iv_object_id TYPE ty_object_id.
+    METHODS get_id
+      RETURNING VALUE(rv_object_id) TYPE ty_object_id.
+  PRIVATE SECTION.
+    DATA mv_object_id TYPE ty_object_id.
+ENDCLASS.
+
+CLASS lcl_object IMPLEMENTATION.
+  METHOD constructor.
+    mv_object_id = iv_object_id.
+  ENDMETHOD.
+
+  METHOD get_id.
+    rv_object_id = mv_object_id.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA: BEGIN OF ls_data,
+          source_id TYPE string,
+        END OF ls_data.
+  DATA lo_object TYPE REF TO lcl_object.
+
+  ls_data-source_id = 'DEMO-000001'.
+
+  CREATE OBJECT lo_object
+    EXPORTING
+      iv_object_id = CONV #( ls_data-source_id ).
+
+  WRITE lo_object->get_id( ).`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 32, 26));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Inferred");
+    expect(hover?.value).to.contain("ty_object_id");
+  });
+
   it("Hover inferred type, named NEW", () => {
     const abap = `CLASS lcl DEFINITION.
 ENDCLASS.
