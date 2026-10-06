@@ -407,6 +407,46 @@ where DomainField = 'PRIORITY'`, false, [domainValues]);
     expect(issues[0].getStart().getRow()).to.equal(11);
   });
 
+  for (const definition of ["define view", "define view entity"]) {
+    for (const name of ["Zone", "HANDLER", "section"]) {
+      it(`reports reserved alias ${name} in ${definition}`, async () => {
+        const table = transparentTable("ztab", ["id"]);
+        const issues = await findIssues(`${definition} ZI_TEST as select from ztab {
+  key id as ${name}
+}`, false, [table]);
+        expect(issues.length).to.equal(1);
+        expect(issues[0].getMessage()).to.equal(`CDS element name "${name}" is reserved`);
+        expect(issues[0].getStart().getRow()).to.equal(2);
+      });
+    }
+
+    it(`allows ordinary aliases in ${definition}`, async () => {
+      const table = transparentTable("ztab", ["id"]);
+      const issues = await findIssues(`${definition} ZI_TEST as select from ztab {
+  key id as ZoneId,
+      id as HandlerId,
+      id as SectionId,
+      id as Text,
+      id as Length
+}`, false, [table]);
+      expect(issues.length).to.equal(0);
+    });
+  }
+
+  it("reports reserved CDS element names without aliases", async () => {
+    const table = transparentTable("ztab", ["zone", "handler", "section"]);
+    const issues = await findIssues(`define view entity ZI_TEST as select from ztab {
+  key ztab.zone,
+      handler,
+      section
+}`, false, [table]);
+    expect(issues.map(i => i.getMessage())).to.deep.equal([
+      'CDS element name "zone" is reserved',
+      'CDS element name "handler" is reserved',
+      'CDS element name "section" is reserved',
+    ]);
+  });
+
   it("reports searchable without any default search element", async () => {
     const table = transparentTable("ztab_domval", ["domain_field", "value_text"]);
     const issues = await findIssues(`@EndUserText.label: 'Domain Values'
