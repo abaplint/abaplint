@@ -18346,3 +18346,55 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, NEW dereferenced directly", () => {
+  const message = "NEW cannot be dereferenced directly";
+  const lcl = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA mv_value TYPE i.
+    METHODS get_ref RETURNING VALUE(rr) TYPE REF TO i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_ref.
+    rr = REF #( mv_value ).
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.`;
+
+  it("error, NEW i( )->* at v758", () => {
+    const issues = runProgram(`DATA(lv) = NEW i( 7 )->*.`, [], Release.v758);
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
+
+  it("error, NEW i( )->* as WRITE operand at v758", () => {
+    const issues = runProgram(`WRITE NEW i( 7 )->*.`, [], Release.v758);
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
+
+  it("error, NEW i( )->* in an arithmetic expression at v758", () => {
+    const issues = runProgram(`DATA lv TYPE i.
+lv = NEW i( 7 )->* + 1.`, [], Release.v758);
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
+
+  it("ok, a method call on NEW, dereferenced, at v758", () => {
+    const issues = runProgram(lcl + `
+  DATA(lv) = NEW lcl( )->get_ref( )->*.`, [], Release.v758);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, an attribute of NEW at v758", () => {
+    const issues = runProgram(lcl + `
+  DATA(lv) = NEW lcl( )->mv_value.`, [], Release.v758);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, a reference from NEW dereferenced afterwards", () => {
+    const issues = runProgram(`DATA(lr) = NEW i( 7 ).
+DATA(lv) = lr->*.`, [], Release.v758);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});

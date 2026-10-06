@@ -2237,6 +2237,324 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("VALUE, row leaves out a component an earlier row set, CLEAR the row", async () => {
+    const abap = `
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             qty  TYPE i,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    tab = VALUE #( ( name = 'A' qty = 5 ) ( name = 'B' ) ).`;
+    const expected = `
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             qty  TYPE i,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    DATA temp1 LIKE tab.
+    CLEAR temp1.
+    DATA temp2 LIKE LINE OF temp1.
+    CLEAR temp2.
+    temp2-name = 'A'.
+    temp2-qty = 5.
+    INSERT temp2 INTO TABLE temp1.
+    CLEAR temp2.
+    temp2-name = 'B'.
+    INSERT temp2 INTO TABLE temp1.
+    tab = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE, row leaves out a nested table", async () => {
+    const abap = `
+    TYPES: BEGIN OF ty_row,
+             name  TYPE string,
+             t_sub TYPE string_table,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    tab = VALUE #( ( name = 'A' t_sub = VALUE #( ( 'x' ) ) ) ( name = 'B' ) ).`;
+    const expected = `
+    TYPES: BEGIN OF ty_row,
+             name  TYPE string,
+             t_sub TYPE string_table,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    DATA temp1 LIKE tab.
+    CLEAR temp1.
+    DATA temp2 LIKE LINE OF temp1.
+    CLEAR temp2.
+    temp2-name = 'A'.
+    temp2-t_sub = VALUE #( ( 'x' ) ).
+    INSERT temp2 INTO TABLE temp1.
+    CLEAR temp2.
+    temp2-name = 'B'.
+    INSERT temp2 INTO TABLE temp1.
+    tab = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE, row leaves out a sub-structure", async () => {
+    const abap = `
+    TYPES: BEGIN OF ty_sub,
+             a TYPE string,
+             b TYPE string,
+           END OF ty_sub.
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             sub  TYPE ty_sub,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    tab = VALUE #( ( name = 'A' sub-a = 'x' ) ( name = 'B' sub-b = 'y' ) ).`;
+    const expected = `
+    TYPES: BEGIN OF ty_sub,
+             a TYPE string,
+             b TYPE string,
+           END OF ty_sub.
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             sub  TYPE ty_sub,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    DATA temp1 LIKE tab.
+    CLEAR temp1.
+    DATA temp2 LIKE LINE OF temp1.
+    CLEAR temp2.
+    temp2-name = 'A'.
+    temp2-sub-a = 'x'.
+    INSERT temp2 INTO TABLE temp1.
+    CLEAR temp2.
+    temp2-name = 'B'.
+    temp2-sub-b = 'y'.
+    INSERT temp2 INTO TABLE temp1.
+    tab = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE, empty row after a filled row", async () => {
+    const abap = `
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             qty  TYPE i,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    tab = VALUE #( ( name = 'A' qty = 5 ) ( ) ).`;
+    const expected = `
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             qty  TYPE i,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    DATA temp1 LIKE tab.
+    CLEAR temp1.
+    DATA temp2 LIKE LINE OF temp1.
+    CLEAR temp2.
+    temp2-name = 'A'.
+    temp2-qty = 5.
+    INSERT temp2 INTO TABLE temp1.
+    CLEAR temp2.
+    INSERT temp2 INTO TABLE temp1.
+    tab = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE with BASE, rows of different shapes", async () => {
+    const abap = `
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             qty  TYPE i,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    DATA row TYPE ty_row.
+    tab = VALUE #( BASE tab ( name = 'A' qty = 5 ) ( row ) ( name = 'B' ) ).`;
+    const expected = `
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             qty  TYPE i,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    DATA row TYPE ty_row.
+    DATA temp1 LIKE tab.
+    CLEAR temp1.
+    temp1 = tab.
+    DATA temp2 LIKE LINE OF temp1.
+    CLEAR temp2.
+    temp2-name = 'A'.
+    temp2-qty = 5.
+    INSERT temp2 INTO TABLE temp1.
+    INSERT row INTO TABLE temp1.
+    CLEAR temp2.
+    temp2-name = 'B'.
+    INSERT temp2 INTO TABLE temp1.
+    tab = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE, inline target, rows of different shapes", async () => {
+    const abap = `
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             qty  TYPE i,
+           END OF ty_row.
+    TYPES ty_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    DATA(tab) = VALUE ty_tab( ( name = 'A' qty = 5 ) ( name = 'B' ) ).`;
+    const expected = `
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             qty  TYPE i,
+           END OF ty_row.
+    TYPES ty_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    DATA temp1 TYPE ty_tab.
+    CLEAR temp1.
+    DATA temp2 LIKE LINE OF temp1.
+    CLEAR temp2.
+    temp2-name = 'A'.
+    temp2-qty = 5.
+    INSERT temp2 INTO TABLE temp1.
+    CLEAR temp2.
+    temp2-name = 'B'.
+    INSERT temp2 INTO TABLE temp1.
+    DATA(tab) = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE, shared prefix, row leaves out a component", async () => {
+    const abap = `
+    DATA range TYPE RANGE OF i.
+    range = VALUE #( sign = 'I' ( option = 'BT' low = 1 high = 5 ) ( option = 'EQ' low = 9 ) ).`;
+    const expected = `
+    DATA range TYPE RANGE OF i.
+    DATA temp1 LIKE range.
+    CLEAR temp1.
+    DATA temp2 LIKE LINE OF temp1.
+    CLEAR temp2.
+    temp2-sign = 'I'.
+    temp2-option = 'BT'.
+    temp2-low = 1.
+    temp2-high = 5.
+    INSERT temp2 INTO TABLE temp1.
+    CLEAR temp2.
+    temp2-sign = 'I'.
+    temp2-option = 'EQ'.
+    temp2-low = 9.
+    INSERT temp2 INTO TABLE temp1.
+    range = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE, shared prefix changed between rows", async () => {
+    const abap = `
+    DATA range TYPE RANGE OF i.
+    range = VALUE #( ( sign = 'E' option = 'EQ' low = 1 ) sign = 'I' option = 'EQ' ( low = 2 ) ).`;
+    const expected = `
+    DATA range TYPE RANGE OF i.
+    DATA temp1 LIKE range.
+    CLEAR temp1.
+    DATA temp2 LIKE LINE OF temp1.
+    CLEAR temp2.
+    temp2-sign = 'E'.
+    temp2-option = 'EQ'.
+    temp2-low = 1.
+    INSERT temp2 INTO TABLE temp1.
+    CLEAR temp2.
+    temp2-sign = 'I'.
+    temp2-option = 'EQ'.
+    temp2-low = 2.
+    INSERT temp2 INTO TABLE temp1.
+    range = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE inside a loop, rows of different shapes", async () => {
+    const abap = `
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             qty  TYPE i,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    DO 2 TIMES.
+      tab = VALUE #( ( name = 'A' ) ( name = 'B' qty = 5 ) ).
+    ENDDO.`;
+    const expected = `
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             qty  TYPE i,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    DO 2 TIMES.
+      DATA temp1 LIKE tab.
+      CLEAR temp1.
+      DATA temp2 LIKE LINE OF temp1.
+      CLEAR temp2.
+      temp2-name = 'A'.
+      INSERT temp2 INTO TABLE temp1.
+      CLEAR temp2.
+      temp2-name = 'B'.
+      temp2-qty = 5.
+      INSERT temp2 INTO TABLE temp1.
+      tab = temp1.
+    ENDDO.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE with FOR, rows of different shapes", async () => {
+    const abap = `
+    DATA range TYPE RANGE OF i.
+    range = VALUE #( FOR i = 1 UNTIL i > 3 ( sign = 'I' option = 'BT' low = i high = 9 ) ( sign = 'I' option = 'EQ' low = i ) ).`;
+    const expected = `
+    DATA range TYPE RANGE OF i.
+    DATA temp1 LIKE range.
+    CLEAR temp1.
+    DATA i TYPE i.
+    i = 1.
+    DATA temp3 LIKE sy-index.
+    temp3 = sy-index.
+    WHILE NOT i > 3.
+      sy-index = temp3.
+      DATA temp2 LIKE LINE OF temp1.
+      CLEAR temp2.
+      temp2-sign = 'I'.
+      temp2-option = 'BT'.
+      temp2-low = i.
+      temp2-high = 9.
+      INSERT temp2 INTO TABLE temp1.
+      CLEAR temp2.
+      temp2-sign = 'I'.
+      temp2-option = 'EQ'.
+      temp2-low = i.
+      INSERT temp2 INTO TABLE temp1.
+      i = i + 1.
+    ENDWHILE.
+    range = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE, rows assign the same components in a different order, no CLEAR", async () => {
+    const abap = `
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             qty  TYPE i,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    tab = VALUE #( ( name = 'A' qty = 5 ) ( qty = 6 name = 'B' ) ).`;
+    const expected = `
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             qty  TYPE i,
+           END OF ty_row.
+    DATA tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+    DATA temp1 LIKE tab.
+    CLEAR temp1.
+    DATA temp2 LIKE LINE OF temp1.
+    temp2-name = 'A'.
+    temp2-qty = 5.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-qty = 6.
+    temp2-name = 'B'.
+    INSERT temp2 INTO TABLE temp1.
+    tab = temp1.`;
+    testFix(abap, expected);
+  });
+
   it("Another REDUCE testcase", async () => {
     const abap = `
     DATA int TYPE string.

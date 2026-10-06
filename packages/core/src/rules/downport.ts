@@ -2701,8 +2701,18 @@ ${indentation}    output = ${uniqueName}.\n`;
         data = indentation + extra + `DATA ${structureName} LIKE LINE OF ${uniqueName}.\n`;
       }
 
+      // all rows are built in the same work area, a component a row leaves out must be initial,
+      // not what an earlier row (or an earlier pass of a surrounding loop) put there
+      const clearRows = valueBody !== undefined && this.valueRowsNeedClear(valueBody);
+      const prefix: string[] = [];
+
       for (const a of valueBody?.getChildren() || []) {
         if (a.get() instanceof Expressions.FieldAssignment) {
+          if (clearRows === true) {
+            // the shared prefix applies to every following row, re-applied after each CLEAR
+            prefix.push(a.concatTokens());
+            continue;
+          }
           if (added === false) {
             body += data;
             added = true;
@@ -2723,6 +2733,16 @@ ${indentation}    output = ${uniqueName}.\n`;
         }
         if (a instanceof ExpressionNode && a.get() instanceof Expressions.ValueBodyLine) {
           let skip = false;
+          if (clearRows === true && this.isStructuredValueRow(a)) {
+            if (added === false) {
+              body += data;
+              added = true;
+            }
+            body += indentation + `CLEAR ${structureName}.\n`;
+            for (const p of prefix) {
+              body += indentation + structureName + "-" + p + ".\n";
+            }
+          }
           for (const b of a?.getChildren() || []) {
             if (b.get() instanceof Expressions.FieldAssignment) {
               if (added === false) {
@@ -2803,6 +2823,40 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     return undefined;
+  }
+
+  /** a row that is built in the work area, ie. not "( source )" or "( LINES OF source )" */
+  private isStructuredValueRow(row: ExpressionNode): boolean {
+    return row.findDirectExpression(Expressions.Source) === undefined
+      && row.findDirectExpression(Expressions.ValueBodyLines) === undefined;
+  }
+
+  /** true if a row can observe a component that an earlier row, or an earlier pass of a surrounding loop,
+   * left in the shared work area. Not the case if all rows assign the same components, and the shared
+   * prefix is not changed between rows, eg. FOR rows or "( a = 1 b = 2 ) ( a = 3 b = 4 )" */
+  private valueRowsNeedClear(valueBody: ExpressionNode): boolean {
+    let shape: string | undefined = undefined;
+    let rowSeen = false;
+    for (const c of valueBody.getChildren()) {
+      if (c.get() instanceof Expressions.FieldAssignment) {
+        if (rowSeen === true) {
+          return true;
+        }
+      } else if (c instanceof ExpressionNode
+          && c.get() instanceof Expressions.ValueBodyLine
+          && this.isStructuredValueRow(c)) {
+        rowSeen = true;
+        const current = c.findDirectExpressions(Expressions.FieldAssignment)
+          .map(f => f.findDirectExpression(Expressions.FieldSub)?.concatTokens().toUpperCase().replace(/\s/g, ""))
+          .sort()
+          .join(",");
+        if (shape !== undefined && shape !== current) {
+          return true;
+        }
+        shape = current;
+      }
+    }
+    return false;
   }
 
   private outlineLet(node: ExpressionNode, indentation: string, highSyntax: ISyntaxResult, lowFile: ABAPFile): string {

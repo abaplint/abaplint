@@ -21,6 +21,7 @@ import {CorrespondingBody} from "./corresponding_body";
 import {BuiltIn} from "../_builtin";
 import {AttributeChain} from "./attribute_chain";
 import {Dereference} from "./dereference";
+import {Cast} from "./cast";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {TypeUtils} from "../_type_utils";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
@@ -249,6 +250,9 @@ export class Source {
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
             return VoidType.get(CheckSyntaxKey);
           }
+        } else if (get instanceof Expressions.Cast) {
+          const found = Cast.runSyntax(first, input, targetType);
+          context = arithmetic === true ? this.infer(context, found, true) : found;
         } else if (get instanceof Expressions.FieldChain) {
           const found = FieldChain.runSyntax(first, input, type, allowGenericDeference);
           context = arithmetic === true ? this.infer(context, found, true) : found;
@@ -261,6 +265,11 @@ export class Source {
           const found = Constant.runSyntax(first);
           context = this.infer(context, found, arithmetic);
         } else if (get instanceof Expressions.Dereference) {
+          if (this.isNewObjectDereference(node, first)) {
+            const message = "NEW cannot be dereferenced directly";
+            input.issues.push(syntaxIssue(input, first.getFirstToken(), message));
+            return VoidType.get(CheckSyntaxKey);
+          }
           context = Dereference.runSyntax(first, context, input);
         } else if (get instanceof Expressions.ComponentChain) {
           context = ComponentChain.runSyntax(context, first, input);
@@ -453,6 +462,16 @@ export class Source {
     }
 
     return targetType;
+  }
+
+  // "NEW ty( )->*" is a syntax error, also in releases where a method call can be dereferenced
+  private static isNewObjectDereference(node: ExpressionNode, deref: ExpressionNode): boolean {
+    const children = node.getChildren();
+    const before = children[children.indexOf(deref) - 1];
+    return before instanceof ExpressionNode
+      && before.get() instanceof Expressions.MethodCallChain
+      && before.getChildren().length === 1
+      && before.getFirstChild()?.get() instanceof Expressions.NewObject;
   }
 
 }
