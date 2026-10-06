@@ -16,6 +16,7 @@ export * from "./generic_object_reference_type";
 export * from "./hex_type";
 export * from "./integer_type";
 export * from "./integer8_type";
+export * from "./ngeneric_type";
 export * from "./numeric_generic_type";
 export * from "./numeric_type";
 export * from "./object_reference_type";
