@@ -1,5 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
-import {ExpressionNode, StatementNode} from "../../nodes";
+import {StatementNode} from "../../nodes";
 import {Source} from "../expressions/source";
 import {ScopeType} from "../_scope_type";
 import {StructureType} from "../../types/basic";
@@ -10,17 +10,13 @@ import {Dynamic} from "../expressions/dynamic";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput} from "../_syntax_input";
 import {checkDatabaseFields} from "../expressions/_check_database_fields";
-import {AbstractType} from "../../types/basic/_abstract_type";
-import {DatabaseTableSource} from "../expressions/database_table";
-import {checkDatabaseWorkArea} from "../expressions/_check_database_work_area";
 
 export class UpdateDatabase implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
-    let dbSource: DatabaseTableSource = undefined;
     const dbtab = node.findFirstExpression(Expressions.DatabaseTable);
     if (dbtab !== undefined) {
-      dbSource = DatabaseTable.runSyntax(dbtab, input);
+      const dbSource = DatabaseTable.runSyntax(dbtab, input);
       const fields = node.findAllExpressions(Expressions.SQLFieldAndValue)
         .flatMap(fieldAndValue => fieldAndValue.findDirectExpressions(Expressions.SQLFieldName))
         .map(field => field.concatTokens().toUpperCase());
@@ -45,19 +41,16 @@ export class UpdateDatabase implements StatementSyntax {
       }
     }
 
-    const sourceTypes = new Map<ExpressionNode, AbstractType | undefined>();
     for (const s of node.findAllExpressions(Expressions.Source)) {
-      sourceTypes.set(s, Source.runSyntax(s, input));
+      Source.runSyntax(s, input);
     }
     for (const s of node.findAllExpressions(Expressions.SimpleSource3)) {
-      sourceTypes.set(s, Source.runSyntax(s, input));
+      Source.runSyntax(s, input);
     }
 
     for (const d of node.findAllExpressions(Expressions.Dynamic)) {
       Dynamic.runSyntax(d, input);
     }
-
-    checkDatabaseWorkArea(node, dbSource, sourceTypes, input);
 
     if (input.scope.getType() === ScopeType.OpenSQL) {
       input.scope.pop(node.getLastToken().getEnd());
