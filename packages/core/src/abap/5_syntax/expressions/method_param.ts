@@ -1,6 +1,6 @@
 import {ExpressionNode} from "../../nodes";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {PGenericType, UnknownType, XGenericType} from "../../types/basic";
+import {NGenericType, PGenericType, UnknownType, XGenericType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import * as Expressions from "../../2_statements/expressions";
 import {Default} from "./default";
