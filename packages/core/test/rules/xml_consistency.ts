@@ -423,6 +423,48 @@ describe("rule, xml_consistency, TABL delivery class and size category", () => {
 
 });
 
+describe("rule, xml_consistency, reserved transparent table field names", () => {
+  for (const name of ["ZONE", "Handler", "section", "PARAMETER"]) {
+    it(`reports reserved field ${name}`, async () => {
+      const xml = transparentTabl("    <CONTFLAG>A</CONTFLAG>", "    <TABKAT>0</TABKAT>")
+        .replace("<FIELDNAME>FIELD</FIELDNAME>", `<FIELDNAME>${name}</FIELDNAME>`);
+      const issues = await runTablXml(xml);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.equal(`Table field name "${name}" is reserved`);
+    });
+  }
+
+  it("reports reserved fields using a data element", async () => {
+    const xml = transparentTabl("    <CONTFLAG>A</CONTFLAG>", "    <TABKAT>0</TABKAT>")
+      .replace(/<DD03P>[\s\S]*?<\/DD03P>/, `<DD03P>
+     <FIELDNAME>ZONE</FIELDNAME>
+     <ROLLNAME>CHAR80</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>`);
+    const issues = await runTablXml(xml);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal('Table field name "ZONE" is reserved');
+  });
+
+  for (const name of ["TEXT", "LENGTH", "ZONE_ID", "HANDLER_ID", "SECTION_ID", "PARAMETER_ID"]) {
+    it(`allows ordinary field ${name}`, async () => {
+      const xml = transparentTabl("    <CONTFLAG>A</CONTFLAG>", "    <TABKAT>0</TABKAT>")
+        .replace("<FIELDNAME>FIELD</FIELDNAME>", `<FIELDNAME>${name}</FIELDNAME>`);
+      expect((await runTablXml(xml)).length).to.equal(0);
+    });
+  }
+
+  it("does not apply database field restrictions to structures", async () => {
+    const issues = await runTabl(`<DD03P>
+     <FIELDNAME>ZONE</FIELDNAME>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+    </DD03P>`);
+    expect(issues.length).to.equal(0);
+  });
+});
+
 async function runDtel(xml: string, conf?: XMLConsistencyConf): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zdtel.dtel.xml", xml));
   return run(reg, conf);
