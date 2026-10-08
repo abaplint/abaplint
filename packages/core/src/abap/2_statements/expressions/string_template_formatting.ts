@@ -48,12 +48,11 @@ export class StringTemplateFormatting extends Expression {
     const formatting = altPrio(seq("TIME =", dateTimeOptions),
                                seq("DATE =", dateTimeOptions),
                                seq("CASE =", caseOptions),
-                               seq("EXPONENT", Source),
                                seq("ZERO =", zeroXSDOptions),
                                xsd,
                                seq("STYLE =", styleOptions),
                                seq("CURRENCY =", Source),
-                               per(sign, number, decimals, width, pad, alpha, align, country),
+                               per(sign, number, decimals, width, pad, alpha, align, country, seq("EXPONENT =", Source)),
                                per(timezone, timestamp));
 
     return formatting;
