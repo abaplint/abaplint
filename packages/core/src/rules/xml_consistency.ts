@@ -295,9 +295,9 @@ export class XMLConsistency implements IRule {
     }
 
     if (obj.getTableCategory() === Objects.TableCategory.Transparent) {
-      // Confirmed reserved database field names, see issue #4331.
+      // Confirmed reserved database field names, see issue #4331, DAY and HOUR reported by activation.
       // TRESE also contains names such as TEXT and LENGTH which are allowed here.
-      const reservedFieldNames = ["ZONE", "HANDLER", "SECTION", "PARAMETER"];
+      const reservedFieldNames = ["ZONE", "HANDLER", "SECTION", "PARAMETER", "DAY", "HOUR"];
       for (const field of obj.getFields() ?? []) {
         if (reservedFieldNames.includes(field.FIELDNAME.toUpperCase())) {
           issues.push(Issue.atRow(file, 1, `Table field name "${field.FIELDNAME}" is reserved`,
