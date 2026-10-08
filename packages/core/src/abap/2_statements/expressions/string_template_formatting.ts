@@ -5,6 +5,7 @@ import {Release} from "../../../version";
 import {Dynamic} from "./dynamic";
 
 export class StringTemplateFormatting extends Expression {
+
   public getRunnable(): IStatementRunnable {
 
     // https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-us/abapcompute_string_format_options.html
