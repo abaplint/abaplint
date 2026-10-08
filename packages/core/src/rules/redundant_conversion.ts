@@ -25,12 +25,23 @@ export class RedundantConversion implements IRule {
   private reg: IRegistry;
   private conf = new RedundantConversionConf();
 
+  // built-in functions that always return a string, whatever their arguments
+  private static readonly stringResult = new Set([
+    "BOOLC", "CONCAT_LINES_OF", "CONDENSE", "ESCAPE", "FROM_MIXED", "INSERT", "REPEAT", "REPLACE",
+    "REVERSE", "SEGMENT", "SHIFT_LEFT", "SHIFT_RIGHT", "SUBSTRING", "SUBSTRING_AFTER", "SUBSTRING_BEFORE",
+    "SUBSTRING_FROM", "SUBSTRING_TO", "TO_LOWER", "TO_MIXED", "TO_UPPER", "TRANSLATE"]);
+  // built-in functions that always return an i
+  private static readonly integerResult = new Set([
+    "CHARLEN", "COUNT", "COUNT_ANY_NOT_OF", "COUNT_ANY_OF", "DBMAXLEN", "DISTANCE", "FIND", "FIND_ANY_NOT_OF",
+    "FIND_ANY_OF", "FIND_END", "LINES", "NUMOFCHAR", "STRLEN", "XSTRLEN"]);
+
   public getMetadata(): IRuleMetadata {
     return {
       key: "redundant_conversion",
       title: "Redundant Conversion",
       shortDescription: `Find redundant CONV expressions`,
-      extendedInformation: `Reports CONV expressions whose operand already has the conversion's target type.`,
+      extendedInformation: `Reports CONV expressions whose operand already has the conversion's target type,
+including the result of a built-in function with a fixed result type, like to_upper( ) or strlen( ).`,
       tags: [RuleTag.Quickfix],
       badExample: `DATA text TYPE string.
 text = CONV string( text ).`,
@@ -74,7 +85,8 @@ text = text.`,
         continue;
       }
 
-      for (const source of structure.findAllExpressions(Expressions.Source)) {
+      // recursive, a CONV can be the argument of a built-in function, which is itself a Source
+      for (const source of structure.findAllExpressionsRecursive(Expressions.Source)) {
         if (source.getFirstToken().getStr().toUpperCase() !== "CONV") {
           continue;
         }
@@ -166,11 +178,30 @@ text = text.`,
   private sourceType(source: ExpressionNode, scope: ISpaghettiScopeNode): AbstractType | undefined {
     let context: AbstractType | undefined;
 
+    // boolc( <condition> ) is not a MethodCallChain, xsdbool( ) has the same shape but is not reported
+    const first = source.getFirstToken();
+    if (first.getStr().toUpperCase() === "BOOLC"
+        && source.findDirectExpression(Expressions.Cond) !== undefined
+        && source.getChildren().length === 4
+        && scope.getData().references.some(reference =>
+          reference.referenceType === ReferenceType.BuiltinMethodReference
+          && reference.position.getStart().equals(first.getStart()))) {
+      return StringType.get();
+    }
+
     for (const child of source.getChildren()) {
       if (!(child instanceof ExpressionNode)) {
         continue;
       } else if (child.get() instanceof Expressions.FieldChain) {
         context = this.fieldChainType(child, scope);
+        if (context === undefined) {
+          return undefined;
+        }
+      } else if (child.get() instanceof Expressions.MethodCallChain) {
+        if (source.getChildren().length !== 1) {
+          return undefined;
+        }
+        context = this.builtinResultType(child, scope);
         if (context === undefined) {
           return undefined;
         }
@@ -191,6 +222,33 @@ text = text.`,
       return StringType.get();
     }
     return context;
+  }
+
+  /** The result type of a call to a built-in function whose result type does not depend on its arguments,
+   *  undefined for anything else, e.g. abs( ) or xsdbool( ), or a method of the same name */
+  private builtinResultType(chain: ExpressionNode, scope: ISpaghettiScopeNode): AbstractType | undefined {
+    const children = chain.getChildren();
+    if (children.length !== 1 || !(children[0].get() instanceof Expressions.MethodCall)) {
+      return undefined;
+    }
+    const name = (children[0] as ExpressionNode).findDirectExpression(Expressions.MethodName)?.getFirstToken();
+    if (name === undefined) {
+      return undefined;
+    }
+    const isBuiltin = scope.getData().references.some(reference =>
+      reference.referenceType === ReferenceType.BuiltinMethodReference
+      && reference.position.getStart().equals(name.getStart()));
+    if (isBuiltin === false) {
+      return undefined;
+    }
+
+    const upper = name.getStr().toUpperCase();
+    if (RedundantConversion.stringResult.has(upper)) {
+      return StringType.get();
+    } else if (RedundantConversion.integerResult.has(upper)) {
+      return IntegerType.get();
+    }
+    return undefined;
   }
 
   private fieldChainType(fieldChain: ExpressionNode, scope: ISpaghettiScopeNode): AbstractType | undefined {
