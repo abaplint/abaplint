@@ -58,6 +58,15 @@ export class LexerStream {
     return this.raw.charCodeAt(o);
   }
 
+  /** number of consecutive occurrences of the character directly before the current one */
+  public countPrevious(code: number): number {
+    let count = 0;
+    for (let o = this.offset - 1; o >= 0 && this.raw.charCodeAt(o) === code; o--) {
+      count++;
+    }
+    return count;
+  }
+
   public currentChar(): number {
     if (this.offset < 0) {
       return NL; // simulate newline at start of file to handle star(*) comments
