@@ -3602,6 +3602,77 @@ GET REFERENCE OF iv_data INTO temp1.`;
     testFix(abap, expected);
   });
 
+  it("GET REFERENCE of a generically typed field symbol INTO inline, REF TO data", async () => {
+    const abap = `FORM run.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  GET REFERENCE OF <tab> INTO DATA(temp1).
+ENDFORM.`;
+    const expected = `FORM run.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  DATA temp1 TYPE REF TO data.
+  GET REFERENCE OF <tab> INTO temp1.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("GET REFERENCE of a TYPE any parameter INTO inline, REF TO data", async () => {
+    const abap = `FORM run USING iv_data TYPE any.
+  GET REFERENCE OF iv_data INTO DATA(temp1).
+ENDFORM.`;
+    const expected = `FORM run USING iv_data TYPE any.
+  DATA temp1 TYPE REF TO data.
+  GET REFERENCE OF iv_data INTO temp1.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("GET REFERENCE of a typed field symbol INTO inline, LIKE REF TO", async () => {
+    const abap = `FORM run.
+  FIELD-SYMBOLS <tab> TYPE string_table.
+  GET REFERENCE OF <tab> INTO DATA(temp1).
+ENDFORM.`;
+    const expected = `FORM run.
+  FIELD-SYMBOLS <tab> TYPE string_table.
+  DATA temp1 LIKE REF TO <tab>.
+  GET REFERENCE OF <tab> INTO temp1.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("REF #( ) of a generically typed field symbol as a method argument", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bind IMPORTING ir TYPE REF TO data.
+    CLASS-METHODS go.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bind.
+  ENDMETHOD.
+  METHOD go.
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    bind( REF #( <tab> ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bind IMPORTING ir TYPE REF TO data.
+    CLASS-METHODS go.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bind.
+  ENDMETHOD.
+  METHOD go.
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    DATA temp1 TYPE REF TO data.
+    GET REFERENCE OF <tab> INTO temp1.
+bind( temp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFixAll(abap, expected);
+  });
+
   it("CALL FUNCTION, not simple", async () => {
     const abap = `
 CALL FUNCTION 'SCMS_BASE64_ENCODE_STR'
