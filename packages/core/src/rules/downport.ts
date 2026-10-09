@@ -581,7 +581,7 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
-    found = this.outlineGetReferenceSimple(high, lowFile);
+    found = this.outlineGetReferenceSimple(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -1352,7 +1352,17 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
     return Issue.atToken(lowFile, node.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  private outlineGetReferenceSimple(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
+  /** the type of a reference to the source: LIKE REF TO it, or REF TO data when its type is generic,
+   *  as LIKE REF TO a generically typed field symbol or parameter does not activate */
+  private refTypeOf(sourceName: string, node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): string {
+    const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
+    if (spag?.findVariable(sourceName)?.getType().isGeneric() === true) {
+      return "TYPE REF TO data";
+    }
+    return "LIKE REF TO " + sourceName;
+  }
+
+  private outlineGetReferenceSimple(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(node.get() instanceof Statements.GetReference)) {
       return undefined;
     }
@@ -1371,7 +1381,8 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
     const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
     const firstToken = target.getFirstToken();
     const lastToken = target.getLastToken();
-    const fix1 = EditHelper.insertAt(lowFile, node.getStart(), `DATA ${targetName} LIKE REF TO ${source.concatTokens()}.\n${indentation}`);
+    const refType = this.refTypeOf(source.concatTokens(), node, lowFile, highSyntax);
+    const fix1 = EditHelper.insertAt(lowFile, node.getStart(), `DATA ${targetName} ${refType}.\n${indentation}`);
     const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), lastToken.getEnd(), targetName);
     const fix = EditHelper.merge(fix2, fix1);
 
@@ -3361,7 +3372,7 @@ ${indentation}    output = ${uniqueName}.\n`;
     return undefined;
   }
 
-  private getReference(node: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+  private getReference(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(node.get() instanceof Statements.GetReference)) {
       return undefined;
     }
@@ -3376,7 +3387,7 @@ ${indentation}    output = ${uniqueName}.\n`;
       return undefined;
     }
 
-    const code = `DATA ${targetName} LIKE REF TO ${sourceName}.\n`;
+    const code = `DATA ${targetName} ${this.refTypeOf(sourceName, node, lowFile, highSyntax)}.\n`;
     const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
     const fix2 = EditHelper.replaceRange(lowFile, inline.getFirstToken().getStart(), inline.getLastToken().getEnd(), targetName);
     const fix = EditHelper.merge(fix2, fix1);
