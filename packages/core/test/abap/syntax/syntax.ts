@@ -18398,3 +18398,94 @@ DATA(lv) = lr->*.`, [], Release.v758);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, built-in function as the operand of IS INITIAL", () => {
+  const program = (cond: string): string => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS get_text RETURNING VALUE(r) TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get_text.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv_s TYPE string.
+    DATA lt TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    IF ${cond}.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error, condense( ) IS INITIAL", () => {
+    const issues = runProgram(program(`condense( lv_s ) IS INITIAL`));
+    expect(issues[0]?.getMessage()).to.equal(`Built-in function "condense" cannot be the operand of IS INITIAL`);
+  });
+
+  it("error, to_upper( ) IS NOT INITIAL", () => {
+    const issues = runProgram(program(`to_upper( lv_s ) IS NOT INITIAL`));
+    expect(issues[0]?.getMessage()).to.equal(`Built-in function "to_upper" cannot be the operand of IS INITIAL`);
+  });
+
+  it("error, xsdbool( ) IS INITIAL", () => {
+    const issues = runProgram(program(`xsdbool( lv_s = \`\` ) IS INITIAL`));
+    expect(issues[0]?.getMessage()).to.equal(`Built-in function "xsdbool" cannot be the operand of IS INITIAL`);
+  });
+
+  it("ok, lines( ) IS INITIAL", () => {
+    const issues = runProgram(program(`lines( lt ) IS INITIAL`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, strlen( ) IS INITIAL", () => {
+    const issues = runProgram(program(`strlen( lv_s ) IS INITIAL`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, a table expression IS INITIAL", () => {
+    const issues = runProgram(program(`lt[ 1 ] IS INITIAL`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, CONV IS INITIAL", () => {
+    const issues = runProgram(program(`CONV string( lv_s ) IS INITIAL`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, a functional method call IS INITIAL", () => {
+    const issues = runProgram(program(`get_text( ) IS INITIAL`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, condense( ) compared", () => {
+    const issues = runProgram(program(`condense( lv_s ) = \`\``));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, condense( ) IS INITIAL in open-abap", () => {
+    const issues = runProgram(program(`condense( lv_s ) IS INITIAL`), [], Release["open-abap"]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, a method named like a built-in function hides it", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS condense IMPORTING val TYPE string RETURNING VALUE(r) TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD condense.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv_s TYPE string.
+    IF condense( lv_s ) IS INITIAL.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});

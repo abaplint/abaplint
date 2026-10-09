@@ -307,7 +307,7 @@ export class Lexer {
       } else if (this.m === ModeTemplate
           && this.buffer.length() > 1
           && (current === CH_PIPE || current === CH_LBRACE)
-          && (stream.prevChar() !== CH_BACKSLASH || (stream.prevPrevChar() === CH_BACKSLASH && stream.prevChar() === CH_BACKSLASH))) {
+          && stream.countPrevious(CH_BACKSLASH) % 2 === 0) {
 // end of template
         if (current === CH_LBRACE || AFTER_LITERAL.has(ahead)) {
           this.add();
