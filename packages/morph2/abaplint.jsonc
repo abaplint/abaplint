@@ -1,6 +1,6 @@
 {
   "global": {
-    "files": "/output/**/*.*"
+    "files": "/output/classes/*.*"
   },
   "dependencies": [
     {
