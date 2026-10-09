@@ -124,7 +124,7 @@ export class Source {
         case "CONV":
         {
           const foundType = this.determineType(node, input, targetType);
-          const bodyType = ConvBody.runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input);
+          const bodyType = ConvBody.runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input, foundType);
           const inferred = node.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
           if (new TypeUtils(input.scope).isConvable(foundType, bodyType) === false) {
             const message = `CONV: Types not compatible, ${foundType?.constructor.name}, ${bodyType?.constructor.name}`;
@@ -140,7 +140,13 @@ export class Source {
             this.traverseRemainingChildren(children, input);
             return bodyType;
           }
-          this.addIfInferred(node, input, foundType);
+          const bodySource = node.findDirectExpression(Expressions.ConvBody)?.findDirectExpression(Expressions.Source);
+          const nestedType = bodySource?.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
+          // CONV # passes its target type into a nested inferred constructor, so
+          // showing both inferred types would produce duplicate inlay hints.
+          if (!(inferred === "#" && nestedType === "#")) {
+            this.addIfInferred(node, input, foundType);
+          }
           this.traverseRemainingChildren(children, input);
           return foundType;
         }
