@@ -32,6 +32,7 @@ export class XMLConsistency implements IRule {
 * Naming for CLAS and INTF objects
 * QUAN fields in TABL objects have reference table and field values
 * Transparent TABL objects have delivery class and size category set
+* TABL fields with a built-in type carry the INTTYPE abapGit serializes for it, for the confirmed pairs
 * Lock parameter names in ENQU objects are max 16 characters
 * Texts and translations do not exceed maximum allowed length.`,
       tags: [RuleTag.Naming, RuleTag.Syntax],
@@ -285,11 +286,28 @@ export class XMLConsistency implements IRule {
     return issues;
   }
 
+  // INTTYPE that abapGit serializes for a built-in DATATYPE, confirmed by exported tables;
+  // a different value activates, but shows as a diff on every pull
+  private static readonly intTypes: {[datatype: string]: string} = {
+    "CHAR": "C", "CLNT": "C", "CUKY": "C", "LANG": "C",
+    "DATS": "D", "TIMS": "T",
+    "INT4": "X", "RAW": "X",
+    "DEC": "P", "CURR": "P",
+    "STRG": "g", "SSTR": "g", "RSTR": "y",
+  };
+
   private runTable(obj: Objects.Table, file: IFile): Issue[] {
     const issues: Issue[] = [];
     for (const field of obj.getFields() ?? []) {
       if (field.DATATYPE === "QUAN" && (!field.REFTABLE?.trim() || !field.REFFIELD?.trim())) {
         const message = `QUAN field ${field.FIELDNAME} must have REFTABLE and REFFIELD set`;
+        issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity));
+      }
+
+      const expected = field.DATATYPE ? XMLConsistency.intTypes[field.DATATYPE] : undefined;
+      if (expected !== undefined && field.INTTYPE !== undefined && field.INTTYPE !== expected) {
+        const message = `Field ${field.FIELDNAME}: INTTYPE "${field.INTTYPE}" does not match DATATYPE ${field.DATATYPE}, ` +
+          `abapGit serializes "${expected}"`;
         issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity));
       }
     }
