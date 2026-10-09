@@ -16,7 +16,7 @@ export class Assign implements StatementSyntax {
     const sources: ExpressionNode[] = assignSource?.findDirectExpressionsMulti([Expressions.Source, Expressions.SimpleSource3]) || [];
     const theSource = sources[sources.length - 1];
 
-    let sourceType: AbstractType | undefined = undefined;
+    let sourceType: AbstractType | undefined;
     const firstAssign = assignSource?.getChildren()[0];
     const secondAssign = assignSource?.getChildren()[1];
     const thirdAssign = assignSource?.getChildren()[2];

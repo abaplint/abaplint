@@ -57,7 +57,7 @@ export class AlignPseudoComments extends ABAPRule {
 
       const col = firstCommentToken.getStart().getCol();
       if (previousEnd.getCol() < expectedColumn && col !== expectedColumn) {
-        let fix: IEdit | undefined = undefined;
+        let fix: IEdit | undefined;
         if (col < expectedColumn) {
           fix = EditHelper.insertAt(file, firstCommentToken.getStart(), " ".repeat(expectedColumn - col));
         } else {

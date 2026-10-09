@@ -406,10 +406,10 @@ describe("exclude list", () => {
     const file = new MemoryFile("foo.abcd.abap", "BREAK-POINT.");
 
     let registry = new Registry(config).addFile(file);
-    let issues = registry.findIssues();
+    registry.findIssues();
 
     registry = new Registry(config).addFile(file);
-    issues = registry.findIssues();
+    const issues = registry.findIssues();
     expect(issues.length).to.equal(0);
   });
 
@@ -420,10 +420,10 @@ describe("exclude list", () => {
     const file = new MemoryFile("foo.prog.abap", "BREAK-POINT.\nsdfdsfs");
 
     let registry = new Registry(config).addFile(file);
-    let issues = registry.findIssues();
+    registry.findIssues();
 
     registry = new Registry(config).addFile(file);
-    issues = registry.findIssues();
+    const issues = registry.findIssues();
     expect(issues.length).to.equal(0);
   });
 

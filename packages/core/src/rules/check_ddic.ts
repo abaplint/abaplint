@@ -41,7 +41,7 @@ export class CheckDDIC implements IRule {
   }
 
   public run(obj: IObject): Issue[] {
-    let found: AbstractType | undefined = undefined;
+    let found: AbstractType | undefined;
     if (obj instanceof Objects.DataElement
         || obj instanceof Objects.Domain
         || obj instanceof Objects.Table

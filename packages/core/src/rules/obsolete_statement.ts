@@ -486,12 +486,9 @@ ENDIF.`,
     } else if (statement instanceof Statements.ClassDefinitionLoad ||
             statement instanceof Statements.InterfaceLoad) {
 
-      let token = undefined;
-      if (statement instanceof Statements.ClassDefinitionLoad) {
-        token = statementNode.getChildren()[3].getFirstToken();
-      } else {
-        token = statementNode.getChildren()[2].getFirstToken();
-      }
+      const token = statement instanceof Statements.ClassDefinitionLoad
+        ? statementNode.getChildren()[3].getFirstToken()
+        : statementNode.getChildren()[2].getFirstToken();
 
       let startPosition = token.getStart();
       startPosition = new Position(startPosition.getRow(), startPosition.getCol() - 1);

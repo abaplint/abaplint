@@ -60,7 +60,6 @@ ENDCLASS.`,
   }
 
   public runParsed(file: ABAPFile, obj: ABAPObject): Issue[] {
-    let issues: Issue[] = [];
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";
     }
@@ -83,8 +82,7 @@ ENDCLASS.`,
       }
     }
 
-    issues = this.checkAttributes(attributes);
-    return issues;
+    return this.checkAttributes(attributes);
   }
 
   private checkAttributes(attr: InfoAttribute[] | undefined): Issue[] {
