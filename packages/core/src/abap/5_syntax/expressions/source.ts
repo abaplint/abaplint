@@ -26,6 +26,7 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {TypeUtils} from "../_type_utils";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
+import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 /*
 * Type interference, valid scenarios:
@@ -195,6 +196,15 @@ export class Source {
         case "CORRESPONDING":
         {
           const foundType = this.determineType(node, input, targetType);
+          if (foundType?.isGeneric() === true
+              && node.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens() === "#"
+              && !releaseAtLeast(input.scope.getRelease(), Release.v756)
+              && input.scope.getLanguageVersion() !== LanguageVersion.Cloud
+              && !input.scope.getOpenABAP()) {
+            const message = "CORRESPONDING #, the type of the target is generic";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return VoidType.get(CheckSyntaxKey);
+          }
           CorrespondingBody.runSyntax(node.findDirectExpression(Expressions.CorrespondingBody), input, foundType);
           this.addIfInferred(node, input, foundType);
           return foundType;
