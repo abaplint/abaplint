@@ -424,7 +424,7 @@ describe("rule, xml_consistency, TABL delivery class and size category", () => {
 });
 
 describe("rule, xml_consistency, reserved transparent table field names", () => {
-  for (const name of ["ZONE", "Handler", "section", "PARAMETER"]) {
+  for (const name of ["ZONE", "Handler", "section", "PARAMETER", "DAY", "hour"]) {
     it(`reports reserved field ${name}`, async () => {
       const xml = transparentTabl("    <CONTFLAG>A</CONTFLAG>", "    <TABKAT>0</TABKAT>")
         .replace("<FIELDNAME>FIELD</FIELDNAME>", `<FIELDNAME>${name}</FIELDNAME>`);
@@ -447,7 +447,7 @@ describe("rule, xml_consistency, reserved transparent table field names", () => 
     expect(issues[0].getMessage()).to.equal('Table field name "ZONE" is reserved');
   });
 
-  for (const name of ["TEXT", "LENGTH", "ZONE_ID", "HANDLER_ID", "SECTION_ID", "PARAMETER_ID"]) {
+  for (const name of ["TEXT", "LENGTH", "ZONE_ID", "HANDLER_ID", "SECTION_ID", "PARAMETER_ID", "UTC_DAY", "UTC_HOUR"]) {
     it(`allows ordinary field ${name}`, async () => {
       const xml = transparentTabl("    <CONTFLAG>A</CONTFLAG>", "    <TABKAT>0</TABKAT>")
         .replace("<FIELDNAME>FIELD</FIELDNAME>", `<FIELDNAME>${name}</FIELDNAME>`);
