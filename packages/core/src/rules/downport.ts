@@ -1392,7 +1392,7 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
       return undefined;
     }
 
-    let type = "";
+    let type: string;
     const source = node.findFirstExpression(Expressions.Source);
     if (source === undefined) {
       return undefined;
@@ -1484,8 +1484,8 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
       return undefined;
     }
 
-    let id: string | undefined = undefined;
-    let number: string | undefined = undefined;
+    let id: string | undefined;
+    let number: string | undefined;
 
     let startToken = node.findDirectTokenByText("ID");
     if (startToken) {
@@ -1667,7 +1667,7 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
       return undefined;
     }
 
-    let code = "";
+    let code: string;
     if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       code = `ASSIGN ${sourceRef.concatTokens()} TO FIELD-SYMBOL(<${uniqueName}>).
@@ -1872,7 +1872,7 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
       return undefined;
     }
 
-    let condition = "";
+    let condition: string;
     if (tableExpression.getChildren().length === 3) {
       const index = tableExpression.findDirectExpression(Expressions.Source);
       if (index === undefined) {
@@ -2085,7 +2085,7 @@ ${indentation}${uniqueName}`;
     }
 
     const op = secondChild.getFirstToken();
-    let operator = "";
+    let operator: string;
     switch (op.getStr()) {
       case "+":
         operator = " + ";
@@ -2133,7 +2133,7 @@ ${indentation}${uniqueName}`;
         continue;
       }
 
-      let functionName = "";
+      let functionName: string;
       switch (formatting) {
         case "ALPHA = IN":
           functionName = "CONVERSION_EXIT_ALPHA_INPUT";
@@ -2463,15 +2463,13 @@ ${indentation}    output = ${uniqueName}.\n`;
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       let body = "";
-      let name = "";
-
       const switchBody = i.findDirectExpression(Expressions.SwitchBody);
       if (switchBody === undefined) {
         continue;
       }
 
       for (const l of switchBody?.findDirectExpression(Expressions.Let)?.findDirectExpressions(Expressions.InlineFieldDefinition) || []) {
-        name = l.getFirstToken().getStr();
+        const name = l.getFirstToken().getStr();
         body += indentation + `DATA(${name}) = ${switchBody.findFirstExpression(Expressions.Source)?.concatTokens()}.\n`;
       }
 
@@ -2530,8 +2528,6 @@ ${indentation}    output = ${uniqueName}.\n`;
       const uniqueName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       let body = "";
-      let name = "";
-
       const reduceBody = i.findDirectExpression(Expressions.ReduceBody);
       if (reduceBody === undefined) {
         continue;
@@ -2544,7 +2540,7 @@ ${indentation}    output = ${uniqueName}.\n`;
 
       let firstName = "";
       for (const init of reduceBody.findDirectExpressions(Expressions.InlineFieldDefinition)) {
-        name = init.getFirstToken().getStr();
+        const name = init.getFirstToken().getStr();
         if (firstName === "") {
           firstName = name;
         }
@@ -2788,7 +2784,7 @@ ${indentation}    output = ${uniqueName}.\n`;
           }
         }
 
-        let condition = "";
+        let condition: string;
         if (tableExpression?.getChildren().length === 3) {
           condition = "INDEX " + tableExpression?.findDirectExpression(Expressions.Source)?.concatTokens();
         } else {
@@ -2956,7 +2952,7 @@ ${indentation}    output = ${uniqueName}.\n`;
       }
       const name = nameToken.getStr();
 
-      let type = "";
+      let type: string;
       if (high.concatTokens().toUpperCase().startsWith("APPEND INITIAL LINE TO ")) {
         type = "LIKE LINE OF " + high.findFirstExpression(Expressions.Target)?.concatTokens();
       } else {

@@ -56,7 +56,7 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
   // c) specified and found
   // d) specified and not found => use default
   // e) supplied but a directory => use default
-  let f: string = "";
+  let f: string;
   if (filename === undefined) {
     f = process.cwd() + path.sep + "abaplint.json";
     if (fs.existsSync(f) === false) {
@@ -229,7 +229,7 @@ export async function run(arg: Arguments) {
     process.stderr.write("abaplint " + Registry.abaplintVersion() + "\n");
 
     let loaded: IFile[] = [];
-    let deps: IFile[] = [];
+    let deps: IFile[];
     const {config, base} = loadConfig(arg.configFilename);
     outputSyntaxConfig(config);
     try {

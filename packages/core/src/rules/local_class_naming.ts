@@ -61,7 +61,7 @@ ENDCLASS.`,
       }
 
       const className = classDef.name;
-      let expected = "";
+      let expected: string;
 
       if (classDef.isForTesting) {
         expected = this.conf.test;

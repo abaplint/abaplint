@@ -111,7 +111,7 @@ export class MethodParameters {
 
   private checkImporting(node: INode, input: SyntaxInput, method: IMethodDefinition | VoidType) {
     for (const item of this.parameterListT(node, input)) {
-      let parameterType: AbstractType | undefined = undefined;
+      let parameterType: AbstractType | undefined;
       if (method instanceof VoidType) {
         parameterType = method;
       } else {
@@ -147,7 +147,7 @@ export class MethodParameters {
         return;
       }
 
-      let parameterType: AbstractType | undefined = undefined;
+      let parameterType: AbstractType | undefined;
       if (method instanceof VoidType) {
         parameterType = method;
       } else {

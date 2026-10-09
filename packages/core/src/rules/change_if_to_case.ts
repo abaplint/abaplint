@@ -115,7 +115,7 @@ ENDCASE.`,
       return false;
     }
 
-    let chain = "";
+    let chain: string;
     if (tuples[0].left === tuples[1].left) {
       chain = tuples[0].left;
     } else if (tuples[0].left === tuples[1].right) {

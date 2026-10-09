@@ -41,7 +41,7 @@ export class FieldChain {
       }
     }
 
-    let context: AbstractType | undefined = undefined;
+    let context: AbstractType | undefined;
     const children = node.getChildren();
     context = this.findTop(children[0], input, refType);
 
