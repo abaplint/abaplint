@@ -14,7 +14,7 @@ import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {ISpaghettiScopeNode, ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPFile} from "../abap/abap_file";
-import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
+import {ExpressionNode, StatementNode, StructureNode, TokenNode} from "../abap/nodes";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AnyType, DataReference, ObjectReferenceType, StructureType, TableType, VoidType} from "../abap/types/basic";
@@ -3468,18 +3468,32 @@ ${indentation}    output = ${uniqueName}.\n`;
 
         const sy = func === "LINE_EXISTS" ? "sy-subrc" : "sy-tabix";
 
-        const code = `DATA ${uniqueName} LIKE sy-subrc.\n` +
-          indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
-          indentation + uniqueName + ` = ${sy}.\n` +
-          indentation ;
         let insertAt: Position | undefined = node.getFirstToken().getStart();
         if (node.get() instanceof ElseIf) {
-          // assumption: no side effects in IF conditions
+          // assumption: no side effects in IF conditions, except the READ itself, see below
           insertAt = this.findStartOfIf(node, highFile);
           if (insertAt === undefined) {
             continue;
           }
         }
+
+        // the READ sets sy-subrc and sy-tabix, which the built-in function does not,
+        // keep the values for the code that reads them after the inserted READ
+        const keep: {field: string, name: string}[] = [];
+        const reads = this.readSyFields(insertAt, highFile);
+        for (const field of ["sy-subrc", "sy-tabix"]) {
+          if (reads.has(field)) {
+            keep.push({field, name: this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax)});
+          }
+        }
+
+        const code = `DATA ${uniqueName} LIKE sy-subrc.\n` +
+          keep.map(k => indentation + `DATA ${k.name} LIKE ${k.field}.\n`).join("") +
+          keep.map(k => indentation + `${k.name} = ${k.field}.\n`).join("") +
+          indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
+          indentation + uniqueName + ` = ${sy}.\n` +
+          keep.map(k => indentation + `${k.field} = ${k.name}.\n`).join("") +
+          indentation ;
         const fix1 = EditHelper.insertAt(lowFile, insertAt, code);
         const start = expression.getFirstToken().getStart();
         const end = expression.getLastToken().getEnd();
@@ -3491,6 +3505,50 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     return undefined;
+  }
+
+  /** sy-subrc and sy-tabix, when read from the position on, in the procedure around it or the file outside of one;
+   *  inside a loop from the start of the outermost loop, as the next pass reads what this one left */
+  private readSyFields(position: Position, highFile: ABAPFile): Set<string> {
+    const structure = highFile.getStructure();
+    const contains = (s: StructureNode) => !position.isBefore(s.getFirstToken().getStart())
+      && !position.isAfter(s.getLastToken().getStart());
+
+    let scope: StructureNode | undefined = undefined;
+    for (const s of [Structures.Method, Structures.Form, Structures.FunctionModule]) {
+      for (const p of structure?.findAllStructuresRecursive(s) || []) {
+        if (contains(p)) {
+          scope = p;
+        }
+      }
+    }
+    scope = scope || structure;
+
+    let from = position;
+    for (const s of [Structures.Loop, Structures.Do, Structures.While, Structures.Select]) {
+      for (const l of scope?.findAllStructuresRecursive(s) || []) {
+        if (contains(l) && l.getFirstToken().getStart().isBefore(from)) {
+          from = l.getFirstToken().getStart();
+        }
+      }
+    }
+
+    const ret = new Set<string>();
+    for (const s of scope?.findAllStatementNodes() || []) {
+      if (s.getLastToken().getStart().isBefore(from)) {
+        continue;
+      }
+      const tokens = s.getTokens();
+      for (let i = 0; i < tokens.length - 2; i++) {
+        if (tokens[i].getStr().toUpperCase() === "SY" && tokens[i + 1].getStr() === "-") {
+          const field = "sy-" + tokens[i + 2].getStr().toLowerCase();
+          if (field === "sy-subrc" || field === "sy-tabix") {
+            ret.add(field);
+          }
+        }
+      }
+    }
+    return ret;
   }
 
   private findStartOfIf(node: StatementNode, highFile: ABAPFile): Position | undefined {
