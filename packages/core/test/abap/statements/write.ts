@@ -86,6 +86,7 @@ const tests = [
   `WRITE / <pnumber>.`,
   `WRITE / (10) moo.`,
   `WRITE / (10) <pnumber>.`,
+  `WRITE |{ float EXPONENT = 0 DECIMALS = foo-bar NUMBER = RAW }|.`,
 ];
 
 statementType(tests, "WRITE", Statements.Write);
