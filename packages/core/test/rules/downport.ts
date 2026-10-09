@@ -5106,6 +5106,171 @@ ENDIF.`;
     testFix(abap, expected);
   });
 
+  it("line_exists() in ELSEIF, the IF reads sy-subrc", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA prev TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA result TYPE string.
+READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+IF sy-subrc <> 0.
+  result = 'unknown'.
+ELSEIF line_exists( prev[ table_line = 'moo' ] ).
+  result = 'continued'.
+ENDIF.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA prev TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA result TYPE string.
+READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+DATA temp1 LIKE sy-subrc.
+DATA temp2 LIKE sy-subrc.
+temp2 = sy-subrc.
+READ TABLE prev WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+temp1 = sy-subrc.
+sy-subrc = temp2.
+IF sy-subrc <> 0.
+  result = 'unknown'.
+ELSEIF temp1 = 0.
+  result = 'continued'.
+ENDIF.`;
+    testFix(abap, expected);
+  });
+
+  it("line_exists() in a LOOP whose body reads sy-tabix", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA other TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA row TYPE string.
+LOOP AT tab INTO row.
+  IF line_exists( other[ table_line = row ] ).
+    DELETE tab INDEX sy-tabix.
+  ENDIF.
+ENDLOOP.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA other TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA row TYPE string.
+LOOP AT tab INTO row.
+  DATA temp1 LIKE sy-subrc.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE other WITH KEY table_line = row TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  sy-tabix = temp2.
+  IF temp1 = 0.
+    DELETE tab INDEX sy-tabix.
+  ENDIF.
+ENDLOOP.`;
+    testFix(abap, expected);
+  });
+
+  it("line_index(), the procedure reads sy-subrc and sy-tabix", async () => {
+    const abap = `
+FORM run.
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA idx TYPE i.
+  idx = line_index( tab[ table_line = 'moo' ] ).
+  WRITE / sy-subrc.
+  WRITE / sy-tabix.
+ENDFORM.`;
+    const expected = `
+FORM run.
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA idx TYPE i.
+  DATA temp1 LIKE sy-subrc.
+  DATA temp2 LIKE sy-subrc.
+  DATA temp3 LIKE sy-tabix.
+  temp2 = sy-subrc.
+  temp3 = sy-tabix.
+  READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+  temp1 = sy-tabix.
+  sy-subrc = temp2.
+  sy-tabix = temp3.
+  idx = temp1.
+  WRITE / sy-subrc.
+  WRITE / sy-tabix.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("line_exists(), sy-subrc read in another procedure only", async () => {
+    const abap = `
+FORM other.
+  WRITE / sy-subrc.
+ENDFORM.
+
+FORM run.
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  IF line_exists( tab[ table_line = 'moo' ] ).
+  ENDIF.
+ENDFORM.`;
+    const expected = `
+FORM other.
+  WRITE / sy-subrc.
+ENDFORM.
+
+FORM run.
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  IF temp1 = 0.
+  ENDIF.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("line_exists(), sy-subrc read before the statement only", async () => {
+    const abap = `
+FORM run.
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  READ TABLE tab WITH KEY table_line = 'foo' TRANSPORTING NO FIELDS.
+  WRITE / sy-subrc.
+  IF line_exists( tab[ table_line = 'moo' ] ).
+  ENDIF.
+ENDFORM.`;
+    const expected = `
+FORM run.
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  READ TABLE tab WITH KEY table_line = 'foo' TRANSPORTING NO FIELDS.
+  WRITE / sy-subrc.
+  DATA temp1 LIKE sy-subrc.
+  READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+  temp1 = sy-subrc.
+  IF temp1 = 0.
+  ENDIF.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("line_exists() in a DO, sy-subrc read at the start of the next pass", async () => {
+    const abap = `
+FORM run.
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DO 2 TIMES.
+    WRITE / sy-subrc.
+    IF line_exists( tab[ table_line = 'moo' ] ).
+    ENDIF.
+  ENDDO.
+ENDFORM.`;
+    const expected = `
+FORM run.
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DO 2 TIMES.
+    WRITE / sy-subrc.
+    DATA temp1 LIKE sy-subrc.
+    DATA temp2 LIKE sy-subrc.
+    temp2 = sy-subrc.
+    READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+    temp1 = sy-subrc.
+    sy-subrc = temp2.
+    IF temp1 = 0.
+    ENDIF.
+  ENDDO.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
   it("REDUCE with inferred INIT value", async () => {
     const abap = `
 TYPES: BEGIN OF ty_row,
