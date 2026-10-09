@@ -465,6 +465,53 @@ describe("rule, xml_consistency, reserved transparent table field names", () => 
   });
 });
 
+describe("rule, xml_consistency, TABL INTTYPE", () => {
+  function field(datatype: string, inttype: string): string {
+    return `<DD03P>
+     <FIELDNAME>FIELD</FIELDNAME>
+     <INTTYPE>${inttype}</INTTYPE>
+     <INTLEN>000004</INTLEN>
+     <DATATYPE>${datatype}</DATATYPE>
+     <LENG>000010</LENG>
+    </DD03P>`;
+  }
+
+  it("reports INT4 with INTTYPE I", async () => {
+    const issues = await runTabl(field("INT4", "I"));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal(`Field FIELD: INTTYPE "I" does not match DATATYPE INT4, abapGit serializes "X"`);
+  });
+
+  it("reports in transparent tables too", async () => {
+    const xml = transparentTabl("    <CONTFLAG>A</CONTFLAG>", "    <TABKAT>0</TABKAT>")
+      .replace(/<DD03P>[\s\S]*?<\/DD03P>/, field("INT4", "I"));
+    expect((await runTablXml(xml)).length).to.equal(1);
+  });
+
+  for (const [datatype, inttype] of [["INT4", "X"], ["CHAR", "C"], ["DEC", "P"], ["STRG", "g"], ["DATS", "D"], ["TIMS", "T"], ["RAW", "X"]]) {
+    it(`allows ${datatype} with INTTYPE ${inttype}`, async () => {
+      expect((await runTabl(field(datatype, inttype))).length).to.equal(0);
+    });
+  }
+
+  it("reports STRG with INTTYPE C", async () => {
+    expect((await runTabl(field("STRG", "C"))).length).to.equal(1);
+  });
+
+  it("does not check a DATATYPE without a confirmed pair", async () => {
+    expect((await runTabl(field("NUMC", "C"))).length).to.equal(0);
+    expect((await runTabl(field("INT2", "I"))).length).to.equal(0);
+  });
+
+  it("does not check a field without INTTYPE", async () => {
+    expect((await runTabl(`<DD03P>
+     <FIELDNAME>FIELD</FIELDNAME>
+     <DATATYPE>INT4</DATATYPE>
+     <LENG>000010</LENG>
+    </DD03P>`)).length).to.equal(0);
+  });
+});
+
 async function runDtel(xml: string, conf?: XMLConsistencyConf): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zdtel.dtel.xml", xml));
   return run(reg, conf);
