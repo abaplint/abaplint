@@ -18,6 +18,7 @@
   "rules": {
     "begin_end_names": true,
     "cds_parser_error": true,
+    "indentation": true,
     "check_ddic": true,
     "check_include": true,
     "check_syntax": true,
