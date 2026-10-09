@@ -1,12 +1,6 @@
 {
-  "core": {
-    "name": "@abaplint/core",
-    "version": "2.120.71",
-    "integrity": "sha512-GwJwmzjl/4bwuuBObqr6Ma7JqWOKxhsA2kvQFM//exmq0ZJMQuey3N66vuE+iu9Kk3yM2lXP4FWKPCYIjwxhdg=="
-  },
   "abapiti": {
     "repository": "https://github.com/oisee/abapiti.git",
-    "commit": "f1fc816fa7332ee17755c026791fc5f5dedcd553"
-  },
-  "goVersion": "1.26.0"
+    "branch": "main"
+  }
 }

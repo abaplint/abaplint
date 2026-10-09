@@ -10,21 +10,21 @@ import {
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
-import {createRequire} from "node:module";
 import {fileURLToPath} from "node:url";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const lock = JSON.parse(readFileSync(path.join(packageRoot, "toolchain.json"), "utf8"));
 const cacheRoot = path.join(packageRoot, ".cache");
 const abapitiRoot = path.join(cacheRoot, "abapiti");
-const packageCache = path.join(cacheRoot, "npm");
-const extractRoot = path.join(cacheRoot, "core-package");
 const generatedRoot = path.join(cacheRoot, "generated-output");
 const finalOutput = path.join(packageRoot, "output");
+const coreRoot = path.resolve(packageRoot, "../core");
+const coreSourceRoot = path.join(coreRoot, "src");
+const corePackage = JSON.parse(readFileSync(path.join(coreRoot, "package.json"), "utf8"));
 const npmCli = process.env.npm_execpath;
 
 if (!npmCli) {
-  throw new Error("Run this script with `npm run transpile` so it can use the pinned npm toolchain.");
+  throw new Error("Run this script with `npm run transpile` so it can install ABAPiti's locked dependencies.");
 }
 
 function run(command, args, options = {}) {
@@ -48,10 +48,6 @@ function runNpm(args, cwd) {
   return run(process.execPath, [npmCli, ...args], {cwd});
 }
 
-function sha512Integrity(filePath) {
-  return `sha512-${createHash("sha512").update(readFileSync(filePath)).digest("base64")}`;
-}
-
 function walkFiles(dir) {
   const found = [];
   for (const entry of readdirSync(dir, {withFileTypes: true})) {
@@ -73,17 +69,19 @@ function ensureAbapitiCheckout() {
     run("git", ["remote", "add", "origin", lock.abapiti.repository], {cwd: abapitiRoot});
   }
 
+  run("git", ["fetch", "--depth=1", "origin", lock.abapiti.branch], {cwd: abapitiRoot});
+  const fetchedHead = run("git", ["rev-parse", "FETCH_HEAD"], {cwd: abapitiRoot}).stdout.trim();
   const headResult = run("git", ["rev-parse", "HEAD"], {cwd: abapitiRoot, allowFailure: true});
   const head = headResult.status === 0 ? headResult.stdout.trim() : "";
-  if (head !== lock.abapiti.commit) {
-    run("git", ["fetch", "--depth=1", "origin", lock.abapiti.commit], {cwd: abapitiRoot});
+  if (head !== fetchedHead) {
     run("git", ["checkout", "--detach", "FETCH_HEAD"], {cwd: abapitiRoot});
   }
 
-  const pinnedHead = run("git", ["rev-parse", "HEAD"], {cwd: abapitiRoot}).stdout.trim();
-  if (pinnedHead !== lock.abapiti.commit) {
-    throw new Error(`ABAPiti checkout mismatch: expected ${lock.abapiti.commit}, got ${pinnedHead}`);
+  const checkedOutHead = run("git", ["rev-parse", "HEAD"], {cwd: abapitiRoot}).stdout.trim();
+  if (checkedOutHead !== fetchedHead) {
+    throw new Error(`ABAPiti checkout mismatch: expected origin/${lock.abapiti.branch} at ${fetchedHead}, got ${checkedOutHead}`);
   }
+  return checkedOutHead;
 }
 
 function ensureAbapitiDependencies() {
@@ -98,65 +96,52 @@ function ensureAbapitiDependencies() {
   }
 }
 
-function buildAbapiti() {
-  const goVersion = run("go", ["version"]).stdout.trim();
-  if (!goVersion.includes(`go${lock.goVersion}`)) {
-    throw new Error(`Go ${lock.goVersion} is required by the pinned ABAPiti module; found: ${goVersion}`);
+function buildAbapiti(abapitiCommit) {
+  const goVersionOutput = run("go", ["version"]).stdout.trim();
+  const versionMatch = goVersionOutput.match(/\bgo(\d+)\.(\d+)(?:\.(\d+))?\b/);
+  const actualVersion = versionMatch?.slice(1).map((part) => Number(part));
+  const goMod = readFileSync(path.join(abapitiRoot, "go.mod"), "utf8");
+  const requiredVersionMatch = goMod.match(/^go\s+(\d+\.\d+(?:\.\d+)?)/m);
+  if (!requiredVersionMatch) {
+    throw new Error(`Could not read the Go version requirement from ${path.join(abapitiRoot, "go.mod")}`);
   }
+  const minimumGoVersion = requiredVersionMatch[1];
+  const requiredVersion = minimumGoVersion.split(".").map((part) => Number(part));
+  const versionComparison = actualVersion
+    ? [0, 1, 2].reduce((comparison, index) => comparison || (actualVersion[index] ?? 0) - (requiredVersion[index] ?? 0), 0)
+    : -1;
+  if (versionComparison < 0) {
+    throw new Error(`Go ${minimumGoVersion} or newer is required by ABAPiti; found: ${goVersionOutput}`);
+  }
+  const goVersion = versionMatch[0].slice(2);
   const binary = path.join(cacheRoot, process.platform === "win32" ? "abapiti.exe" : "abapiti");
   run("go", [
     "build",
     "-trimpath",
     "-ldflags",
-    `-X main.version=${lock.abapiti.commit}`,
+    `-X main.version=${abapitiCommit}`,
     "-o",
     binary,
     "./cmd/abapiti",
   ], {cwd: abapitiRoot});
-  return binary;
+  return {binary, goVersion, minimumGoVersion};
 }
 
-function acquireCorePackage() {
-  mkdirSync(packageCache, {recursive: true});
-  const archive = path.join(packageCache, `core-${lock.core.version}.tgz`);
-  if (!existsSync(archive)) {
-    const pack = runNpm([
-      "pack",
-      `${lock.core.name}@${lock.core.version}`,
-      "--pack-destination",
-      packageCache,
-      "--json",
-    ], packageRoot);
-    const result = JSON.parse(pack.stdout.trim())[0];
-    const downloaded = path.join(packageCache, result.filename);
-    if (downloaded !== archive) {
-      renameSync(downloaded, archive);
-    }
+function getCoreSourceRoot() {
+  if (!existsSync(coreSourceRoot)) {
+    throw new Error(`Core TypeScript source directory not found: ${coreSourceRoot}`);
   }
-
-  const actualIntegrity = sha512Integrity(archive);
-  if (actualIntegrity !== lock.core.integrity) {
-    throw new Error(`npm tarball integrity mismatch: expected ${lock.core.integrity}, got ${actualIntegrity}`);
-  }
-
-  rmSync(extractRoot, {recursive: true, force: true});
-  mkdirSync(extractRoot, {recursive: true});
-  run("tar", ["-xzf", archive, "-C", extractRoot]);
-  const sourceRoot = path.join(extractRoot, "package", "build", "src");
-  if (!existsSync(sourceRoot)) {
-    throw new Error(`Published package is missing build/src: ${sourceRoot}`);
-  }
-  return sourceRoot;
+  return coreSourceRoot;
 }
 
 function normalizeRelativePath(filePath) {
   return filePath.split(path.sep).join("/");
 }
 
-function generateOutput(abapitiBinary, sourceRoot) {
+function generateOutput(abapitiBinary, sourceRoot, abapitiCommit, goVersion, minimumGoVersion) {
   rmSync(generatedRoot, {recursive: true, force: true});
   mkdirSync(generatedRoot, {recursive: true});
-  const sources = walkFiles(sourceRoot).filter((file) => file.endsWith(".js") && !file.endsWith(".d.ts")).sort();
+  const sources = walkFiles(sourceRoot).filter((file) => file.endsWith(".ts") && !file.endsWith(".d.ts")).sort();
   const generated = [];
   const failures = [];
   let overlongNames = 0;
@@ -190,7 +175,7 @@ function generateOutput(abapitiBinary, sourceRoot) {
       const className = contents.match(/^CLASS\s+(\S+)\s+DEFINITION/im)?.[1] ?? path.basename(generatedFile, ".clas.abap");
       const relativeOutput = path.join(
         path.dirname(sourceRelative),
-        path.basename(sourceRelative, ".js"),
+        path.basename(sourceRelative, ".ts"),
         path.basename(generatedFile),
       );
       const destination = path.join(generatedRoot, relativeOutput);
@@ -216,7 +201,7 @@ function generateOutput(abapitiBinary, sourceRoot) {
     }
 
     if ((index + 1) % 100 === 0 || index + 1 === sources.length) {
-      console.log(`Transpiled ${index + 1}/${sources.length} published JavaScript modules`);
+      console.log(`Transpiled ${index + 1}/${sources.length} core TypeScript source files`);
     }
   }
 
@@ -231,11 +216,16 @@ function generateOutput(abapitiBinary, sourceRoot) {
 
   const manifest = {
     generatedBy: "packages/morph2/scripts/transpile.mjs",
-    core: {...lock.core},
-    abapiti: {...lock.abapiti},
-    goVersion: lock.goVersion,
+    core: {
+      name: corePackage.name,
+      version: corePackage.version,
+      source: "packages/core/src",
+    },
+    abapiti: {...lock.abapiti, commit: abapitiCommit},
+    goVersion,
+    minimumGoVersion,
     summary: {
-      javascriptModules: sources.length,
+      typescriptModules: sources.length,
       generatedClasses: generated.length,
       duplicateClassNames: duplicateClassNames.length,
       classesOverAbapNameLimit: overlongNames,
@@ -260,11 +250,11 @@ function publishOutput() {
   renameSync(generatedRoot, finalOutput);
 }
 
-ensureAbapitiCheckout();
+const abapitiCommit = ensureAbapitiCheckout();
 ensureAbapitiDependencies();
-const abapitiBinary = buildAbapiti();
-const packageSourceRoot = acquireCorePackage();
-const manifest = generateOutput(abapitiBinary, packageSourceRoot);
+const {binary: abapitiBinary, goVersion, minimumGoVersion} = buildAbapiti(abapitiCommit);
+const packageSourceRoot = getCoreSourceRoot();
+const manifest = generateOutput(abapitiBinary, packageSourceRoot, abapitiCommit, goVersion, minimumGoVersion);
 publishOutput();
 
 console.log(`Generated ${manifest.summary.generatedClasses} ABAP class files under ${path.relative(packageRoot, finalOutput)}.`);
