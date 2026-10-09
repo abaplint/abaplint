@@ -107,6 +107,23 @@ val1 = CORRESPONDING #( val2 ).`);
     expect(found.length).to.equal(2);
   });
 
+  it("CONV and CORRESPONDING", () => {
+    const file = new MemoryFile(filename, `
+TYPES: BEGIN OF ty_data,
+         field TYPE i,
+       END OF ty_data.
+
+DATA source TYPE ty_data.
+DATA target TYPE ty_data.
+
+target = CONV #( CORRESPONDING #( source ) ).`);
+    const reg = new Registry().addFiles([file]).parse();
+    const found = new InlayHints(reg).list({uri: filename});
+    expect(found.length).to.equal(2);
+    expect(found[0].label).to.equal("TYPE ty_data");
+    expect(found[1].label).to.equal("TYPE ty_data");
+  });
+
   it("Subfield inferred", () => {
     const file = new MemoryFile(filename, `
 TYPES: BEGIN OF ty_sub,
