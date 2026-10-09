@@ -151,6 +151,50 @@ ENDFORM.`;
     testFix("foo = NEW #( foo = bar ).", "CREATE OBJECT foo EXPORTING foo = bar.");
   });
 
+  it("NEW #( ) into a typed data reference, CREATE DATA", async () => {
+    const abap = `DATA mr TYPE REF TO string.
+mr = NEW #( ).`;
+    const expected = `DATA mr TYPE REF TO string.
+CREATE DATA mr.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW #( value ) into a typed data reference, CREATE DATA and the value", async () => {
+    const abap = `DATA mr TYPE REF TO string.
+mr = NEW #( \`x\` ).`;
+    const expected = `DATA mr TYPE REF TO string.
+CREATE DATA mr.
+mr->* = \`x\`.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW type( value ) into a generic data reference, through a field symbol", async () => {
+    const abap = `DATA md TYPE REF TO data.
+md = NEW string( \`y\` ).`;
+    const expected = `DATA md TYPE REF TO data.
+FIELD-SYMBOLS <temp1> TYPE any.
+CREATE DATA md TYPE string.
+ASSIGN md->* TO <temp1>.
+<temp1> = \`y\`.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW type( ) into a generic data reference", async () => {
+    const abap = `DATA md TYPE REF TO data.
+md = NEW i( ).`;
+    const expected = `DATA md TYPE REF TO data.
+CREATE DATA md TYPE i.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW into an object reference stays CREATE OBJECT", async () => {
+    const abap = `DATA mo TYPE REF TO object.
+mo = NEW #( ).`;
+    const expected = `DATA mo TYPE REF TO object.
+CREATE OBJECT mo.`;
+    testFix(abap, expected);
+  });
+
   it("Not top level source NEW", async () => {
     const abap = `CLASS lcl_bar DEFINITION.
   PUBLIC SECTION.
