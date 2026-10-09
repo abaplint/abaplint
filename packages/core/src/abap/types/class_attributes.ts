@@ -312,7 +312,7 @@ export class Attributes implements IAttributes {
   }
 
   private parseAttribute(node: StatementNode, visibility: Visibility, input: SyntaxInput): ClassAttribute {
-    let found: TypedIdentifier | undefined = undefined;
+    let found: TypedIdentifier | undefined;
     const s = node.get();
 
     if (s instanceof Statements.Data) {

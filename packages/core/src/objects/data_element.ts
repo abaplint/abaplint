@@ -121,7 +121,7 @@ export class DataElement extends AbstractObject {
 
   public parseType(reg: IRegistry): AbstractType {
     const references: IObjectAndToken[] = [];
-    let lookup: ILookupResult | undefined = undefined;
+    let lookup: ILookupResult | undefined;
 
     this.parse();
 

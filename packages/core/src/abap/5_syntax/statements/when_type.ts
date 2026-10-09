@@ -15,7 +15,7 @@ export class WhenType implements StatementSyntax {
       return undefined;
     }
 
-    let type: AbstractType | undefined = undefined;
+    let type: AbstractType | undefined;
     const className = nameToken.getStr().toUpperCase();
     const found = input.scope.existsObject(className);
     if (found?.id) {

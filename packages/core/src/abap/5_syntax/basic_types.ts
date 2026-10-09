@@ -131,7 +131,7 @@ export class BasicTypes {
       return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName1");
     }
 
-    let type: AbstractType | undefined = undefined;
+    let type: AbstractType | undefined;
     if (children[1] && (children[1].getFirstToken().getStr() === "=>" || children[1].getFirstToken().getStr() === "->")) {
       type = FieldChain.runSyntax(chain, this.input, ReferenceType.TypeReference);
     } else {
@@ -415,7 +415,7 @@ export class BasicTypes {
       secondary: secondaryKeys,
     };
 
-    let found: AbstractType | undefined = undefined;
+    let found: AbstractType | undefined;
     if (text.startsWith("TYPE TABLE OF REF TO ")
         || text.startsWith("TYPE STANDARD TABLE OF REF TO ")
         || text.startsWith("TYPE SORTED TABLE OF REF TO ")
@@ -549,7 +549,7 @@ export class BasicTypes {
 
       const type = this.resolveLikeName(e, false);
 
-      let row: AbstractType | undefined = undefined;
+      let row: AbstractType | undefined;
       if (type === undefined) {
         return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
       } else if (type instanceof Types.TableType) {
@@ -740,7 +740,7 @@ export class BasicTypes {
       rest = split[1];
     }
     const subs = rest.split("-");
-    let foundType: AbstractType | undefined = undefined;
+    let foundType: AbstractType | undefined;
 
     if (className && chainText.includes("=>")) {
       const split = chainText.split("=>");

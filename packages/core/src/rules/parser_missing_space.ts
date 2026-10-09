@@ -38,7 +38,7 @@ This rule makes sure the spaces are consistently required across the language.`,
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    let start = new Position(0, 0);
+    let start: Position;
     for (const statement of file.getStatements()) {
       const missing = this.missingSpace(statement);
       if (missing) {

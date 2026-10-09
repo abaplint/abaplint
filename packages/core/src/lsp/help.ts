@@ -65,7 +65,7 @@ export class Help {
   private static dumpABAP(file: ABAPFile, reg: IRegistry, textDocument: LServer.TextDocumentIdentifier,
                           position: LServer.Position): string {
 
-    let content = "";
+    let content: string;
 
     content = `
     <a href="#_tokens" rel="no-refresh">Tokens</a> |
@@ -109,7 +109,7 @@ export class Help {
                                    textDocument: LServer.TextDocumentIdentifier,
                                    position: LServer.Position,
                                    file: ABAPFile): string {
-    let ret = "";
+    let ret: string;
     const found = LSPUtils.findCursor(reg, {textDocument, position});
 
     if (found !== undefined) {
