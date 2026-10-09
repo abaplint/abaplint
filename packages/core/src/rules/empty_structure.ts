@@ -5,7 +5,8 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {StructureNode} from "../abap/nodes";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-import {Unknown} from "../abap/2_statements/statements/_statement";
+import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
+import {StatementNode} from "../abap/nodes/statement_node";
 
 export class EmptyStructureConf extends BasicRuleConfig {
   /** Checks for empty LOOP blocks */
@@ -28,6 +29,8 @@ export class EmptyStructureConf extends BasicRuleConfig {
   public try: boolean = true;
   /** Checks for empty WHEN blocks */
   public when: boolean = true;
+  /** Checks for empty CATCH blocks, unless the CATCH has pragma ##NO_HANDLER or pseudo comment "#EC NO_HANDLER */
+  public catch: boolean = false;
   // todo, other category containing ELSE
 }
 
@@ -162,6 +165,22 @@ result = xsdbool( sy-subrc = 0 ).`,
       }
     }
 
+    if (this.getConfig().catch === true) {
+      for (const c of stru.findAllStructuresRecursive(Structures.Catch)) {
+        // a comment in the block does not count, the extended check (SLIN) reports it too
+        if (c.findDirectStructure(Structures.Body) !== undefined) {
+          continue;
+        }
+        const catchStatement = c.getFirstStatement();
+        if (catchStatement === undefined || this.isNoHandler(catchStatement, statements)) {
+          continue;
+        }
+        const token = c.getFirstToken();
+        const issue = Issue.atToken(file, token, this.getDescription(c.get().constructor.name), this.getMetadata().key, this.conf.severity);
+        issues.push(issue);
+      }
+    }
+
     if (this.getConfig().when === true) {
       const tries = stru.findAllStructuresRecursive(Structures.When);
 
@@ -176,6 +195,16 @@ result = xsdbool( sy-subrc = 0 ).`,
     }
 
     return issues;
+  }
+
+  private isNoHandler(catchStatement: StatementNode, statements: readonly StatementNode[]): boolean {
+    if (catchStatement.getPragmas().some(p => p.getStr().toUpperCase() === "##NO_HANDLER")) {
+      return true;
+    }
+    const next = statements[statements.indexOf(catchStatement) + 1];
+    return next?.get() instanceof Comment
+      && next.getStart().getRow() === catchStatement.getEnd().getRow()
+      && next.concatTokens().toUpperCase().replace(/\s/g, "").includes("\"#ECNO_HANDLER");
   }
 
 }
