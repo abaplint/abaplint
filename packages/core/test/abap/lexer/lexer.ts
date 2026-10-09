@@ -147,4 +147,23 @@ describe("lexer", () => {
     expect(tokens[1]).to.not.be.instanceof(AssociationName);
   });
 
+  it("string template, escaped backslash before an escaped pipe", () => {
+    const tokens = getTokens("|\\\\\\||.");
+    expect(tokens.length).to.equal(2);
+    expect(tokens[0]).to.be.instanceof(StringTemplate);
+    expect(tokens[0].getStr()).to.equal("|\\\\\\||");
+  });
+
+  it("string template, escaped backslash before an escaped brace", () => {
+    const tokens = getTokens("|\\\\\\{|.");
+    expect(tokens.length).to.equal(2);
+    expect(tokens[0]).to.be.instanceof(StringTemplate);
+  });
+
+  it("string template, two escaped backslashes before the closing pipe", () => {
+    const tokens = getTokens("|\\\\\\\\|.");
+    expect(tokens.length).to.equal(2);
+    expect(tokens[0].getStr()).to.equal("|\\\\\\\\|");
+  });
+
 });
