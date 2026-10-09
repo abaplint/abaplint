@@ -139,7 +139,13 @@ export class Source {
             this.traverseRemainingChildren(children, input);
             return bodyType;
           }
-          this.addIfInferred(node, input, foundType);
+          const bodySource = node.findDirectExpression(Expressions.ConvBody)?.findDirectExpression(Expressions.Source);
+          const nestedType = bodySource?.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
+          // CONV # passes its target type into a nested inferred constructor, so
+          // showing both inferred types would produce duplicate inlay hints.
+          if (!(inferred === "#" && nestedType === "#")) {
+            this.addIfInferred(node, input, foundType);
+          }
           this.traverseRemainingChildren(children, input);
           return foundType;
         }
