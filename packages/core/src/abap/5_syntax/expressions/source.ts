@@ -123,7 +123,7 @@ export class Source {
         case "CONV":
         {
           const foundType = this.determineType(node, input, targetType);
-          const bodyType = ConvBody.runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input);
+          const bodyType = ConvBody.runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input, foundType);
           const inferred = node.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
           if (new TypeUtils(input.scope).isConvable(foundType, bodyType) === false) {
             const message = `CONV: Types not compatible, ${foundType?.constructor.name}, ${bodyType?.constructor.name}`;
