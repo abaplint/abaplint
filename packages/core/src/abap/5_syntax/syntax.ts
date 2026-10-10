@@ -312,6 +312,8 @@ if (Object.keys(map).length === 0) {
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
+  // files the traversal walked into through INCLUDEs, outermost first
+  private readonly includeStack: string[] = [];
   private issues: Issue[];
   private deferred: (() => void)[];
 
@@ -447,11 +449,19 @@ export class SyntaxLogic {
       // walk into INCLUDEs
       if (isStatement && child.get() instanceof Statements.Include) {
         const file = this.helpers.proc.findInclude(child as StatementNode, this.object);
-        if (file !== undefined && file.getStructure() !== undefined) {
+        // an INCLUDE that leads back to a file already being walked is not followed again
+        const cyclic = file !== undefined && (file.getFilename() === this.currentFile.getFilename()
+          || this.includeStack.includes(file.getFilename()));
+        if (file !== undefined && file.getStructure() !== undefined && cyclic === false) {
           const old = this.currentFile;
+          this.includeStack.push(old.getFilename());
           this.currentFile = file;
-          this.traverse(file.getStructure()!);
-          this.currentFile = old;
+          try {
+            this.traverse(file.getStructure()!);
+          } finally {
+            this.currentFile = old;
+            this.includeStack.pop();
+          }
         }
       }
 
