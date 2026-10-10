@@ -56,6 +56,23 @@
       ],
       "type": "object"
     },
+    "AbapdocParameterNamesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AddTestAttributesConf": {
       "additionalProperties": false,
       "properties": {
@@ -1888,6 +1905,17 @@
                 }
               ],
               "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
+            },
+            "abapdoc_parameter_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocParameterNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
             },
             "add_test_attributes": {
               "anyOf": [
@@ -4110,6 +4138,17 @@
                 }
               ],
               "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
+            },
+            "abapdoc_parameter_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocParameterNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
             },
             "add_test_attributes": {
               "anyOf": [
