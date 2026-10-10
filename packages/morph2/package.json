@@ -10,6 +10,6 @@
     "transpile": "node scripts/transpile-abaplint-release.mjs && npx abaplint --fix"
   },
   "dependencies": {
-    "@abaplint/cli": "^2.120.71"
+    "@abaplint/cli": "^2.120.73"
   }
 }
