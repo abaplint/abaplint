@@ -22,6 +22,7 @@ export * from "./cds_naming";
 export * from "./cds_parser_error";
 export * from "./chain_mainly_declarations";
 export * from "./change_if_to_case";
+export * from "./changing_sorted_line";
 export * from "./check_abstract";
 export * from "./check_comments";
 export * from "./check_ddic";
