@@ -3473,6 +3473,17 @@
               ],
               "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefix_is_current_class"
             },
+            "range_row_values": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RangeRowValuesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks the SIGN and OPTION of range rows built with VALUE\nTags: Syntax\nhttps://rules.abaplint.org/range_row_values"
+            },
             "reduce_procedural_code": {
               "anyOf": [
                 {
@@ -5694,6 +5705,17 @@
                 }
               ],
               "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefix_is_current_class"
+            },
+            "range_row_values": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RangeRowValuesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks the SIGN and OPTION of range rows built with VALUE\nTags: Syntax\nhttps://rules.abaplint.org/range_row_values"
             },
             "reduce_procedural_code": {
               "anyOf": [
@@ -8626,6 +8648,23 @@
       "type": "object"
     },
     "RFCErrorHandlingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "RangeRowValuesConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
