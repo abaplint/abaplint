@@ -162,6 +162,7 @@ import {ShortCaseConf} from "../src/rules/short_case";
 import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
 import {SlowParameterPassingConf} from "../src/rules/slow_parameter_passing";
 import {SMIMConsistencyConf} from "../src/rules/smim_consistency";
+import {SortEmptyKeyConf} from "../src/rules/sort_empty_key";
 import {SpaceBeforeColonConf} from "../src/rules/space_before_colon";
 import {SpaceBeforeDotConf} from "../src/rules/space_before_dot";
 import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables";
@@ -377,6 +378,7 @@ export interface IConfig {
     "sicf_consistency"?: SICFConsistencyConf | boolean,
     "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "smim_consistency"?: SMIMConsistencyConf | boolean,
+    "sort_empty_key"?: SortEmptyKeyConf | boolean,
     "space_before_colon"?: SpaceBeforeColonConf | boolean,
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
@@ -581,6 +583,7 @@ export interface IConfig {
     "sicf_consistency"?: SICFConsistencyConf | boolean,
     "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "smim_consistency"?: SMIMConsistencyConf | boolean,
+    "sort_empty_key"?: SortEmptyKeyConf | boolean,
     "space_before_colon"?: SpaceBeforeColonConf | boolean,
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
