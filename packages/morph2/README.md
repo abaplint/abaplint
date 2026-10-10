@@ -1,6 +1,6 @@
 # morph2: abaplint to ABAP
 
-This folder generates ABAP for abaplint using the latest stable [ABAPiti release](https://github.com/oisee/abapiti/releases/latest).
+This folder generates ABAP for abaplint using the latest stable [ABAPiti release](https://github.com/oisee/abapiti/releases/latest) with readable names.
 
 ## Run
 
@@ -12,7 +12,7 @@ From this folder, run:
 npm run transpile
 ```
 
-`npm run transpile` checks GitHub for the latest stable release, downloads the matching platform binary, and runs `abapiti abaplint -o ...`. It verifies the asset SHA-256 digest when GitHub provides one, and caches the binary under `.cache/abapiti-release/<tag>/`. Generated classes and packages go under `output/`; the manifest records the release tag and binary digest.
+`npm run transpile` checks GitHub for the latest stable release, downloads the matching platform binary, and runs `abapiti abaplint -o ...` with `ABAPITI_NAMES=readable`. It verifies the asset SHA-256 digest when GitHub provides one, and caches the binary under `.cache/abapiti-release/<tag>/`. Generated classes and packages go under `output/`; the manifest records the release tag, binary digest, and naming mode.
 
 The release bundle is self-contained; the generated output does not use the local `packages/core/src` tree. Each run checks the latest release tag before reusing its cached binary, so a newly published release is picked up automatically.
 

@@ -13,6 +13,7 @@ import path from "node:path";
 import {fileURLToPath} from "node:url";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const abapitiNames = "readable";
 const latestReleaseApi = "https://api.github.com/repos/oisee/abapiti/releases/latest";
 const assetNameByPlatform = {
   "darwin:arm64": "abapiti-darwin-arm64",
@@ -48,6 +49,7 @@ function sha256(data) {
 function run(command, args) {
   const result = spawnSync(command, args, {
     cwd: packageRoot,
+    env: {...process.env, ABAPITI_NAMES: abapitiNames},
     encoding: "utf8",
     maxBuffer: 32 * 1024 * 1024,
   });
@@ -192,6 +194,7 @@ writeFileSync(path.join(generatedRoot, outputManifestName), `${JSON.stringify({
   abapitiBinarySha256: binary.sha256,
   abapitiReleaseAssetSha256: expectedSha256 ?? null,
   abapitiReleaseUrl: release.html_url,
+  abapitiNames,
   source: "abaplint bundle included in the ABAPiti release",
 }, null, 2)}\n`);
 publishOutput();
