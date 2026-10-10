@@ -1210,6 +1210,23 @@
       },
       "type": "object"
     },
+    "DeleteIndexInLoopConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "DescriptionEmptyConf": {
       "additionalProperties": false,
       "properties": {
@@ -2372,6 +2389,17 @@
                 }
               ],
               "description": "Checks that definitions are placed at the beginning of METHODs, FORMs and FUNCTIONs.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/definitions_top"
+            },
+            "delete_index_in_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DeleteIndexInLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports DELETE itab INDEX sy-tabix inside a LOOP AT the same table\nTags: SingleFile\nhttps://rules.abaplint.org/delete_index_in_loop"
             },
             "description_empty": {
               "anyOf": [
@@ -4594,6 +4622,17 @@
                 }
               ],
               "description": "Checks that definitions are placed at the beginning of METHODs, FORMs and FUNCTIONs.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/definitions_top"
+            },
+            "delete_index_in_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DeleteIndexInLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports DELETE itab INDEX sy-tabix inside a LOOP AT the same table\nTags: SingleFile\nhttps://rules.abaplint.org/delete_index_in_loop"
             },
             "description_empty": {
               "anyOf": [
