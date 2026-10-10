@@ -143,6 +143,7 @@ export * from "./prefer_xsdbool";
 export * from "./preferred_compare_operator";
 export * from "./preferred_parameter_ignored";
 export * from "./prefix_is_current_class";
+export * from "./range_row_values";
 export * from "./reduce_procedural_code";
 export * from "./reduce_string_templates";
 export * from "./redundant_conversion";
