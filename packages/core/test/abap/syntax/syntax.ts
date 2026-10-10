@@ -16603,6 +16603,38 @@ REFRESH tab[].`;
     expect(issues[0]?.getMessage()).to.equal("VALUE, sy-uzeit is not a constant");
   });
 
+  it("DATA VALUE accepts a literal", () => {
+    const abap = `DATA lv_value TYPE i VALUE 1.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("DATA VALUE accepts a declared constant", () => {
+    const abap = `CONSTANTS lc_value TYPE i VALUE 1.\nDATA lv_value TYPE i VALUE lc_value.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("DATA VALUE rejects a variable", () => {
+    const abap = `DATA lv_start TYPE i VALUE 1.\nDATA lv_value TYPE i VALUE lv_start.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal("VALUE, lv_start is not a constant");
+  });
+
+  it("DATA VALUE reports an unresolved name", () => {
+    const abap = `DATA lv_value TYPE i VALUE lv_start.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal(`"lv_start" not found, findTop`);
+  });
+
+  it("DATA VALUE rejects other system fields", () => {
+    const abap = `DATA lv_index TYPE i VALUE sy-index.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("VALUE, sy-index is not a constant");
+  });
+
   it("RADIOBUTTON GROUP name too long", () => {
     const abap = `
 PARAMETERS p_red   RADIOBUTTON GROUP color DEFAULT 'X'.
