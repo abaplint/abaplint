@@ -66,6 +66,7 @@ export * from "./fully_type_constants";
 export * from "./fully_type_itabs";
 export * from "./function_module_recommendations";
 export * from "./functional_writing";
+export * from "./generic_regex";
 export * from "./global_class";
 export * from "./identical_conditions";
 export * from "./identical_contents";

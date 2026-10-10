@@ -1786,6 +1786,34 @@
       ],
       "type": "object"
     },
+    "GenericRegexConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "regexes": {
+          "description": "List of forbidden regular expressions, case insensitive, checked against each line of every file. Patterns use JavaScript regex syntax without enclosing slashes or flags.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "regexes"
+      ],
+      "type": "object"
+    },
     "GlobalClassConf": {
       "additionalProperties": false,
       "properties": {
@@ -2586,6 +2614,17 @@
                 }
               ],
               "description": "Detects usage of call method when functional style calls can be used.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/functional_writing"
+            },
+            "generic_regex": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/GenericRegexConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Report an issue for each match of a configured regular expression.\nTags: SingleFile\nhttps://rules.abaplint.org/generic_regex"
             },
             "global_class": {
               "anyOf": [
@@ -4797,6 +4836,17 @@
                 }
               ],
               "description": "Detects usage of call method when functional style calls can be used.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/functional_writing"
+            },
+            "generic_regex": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/GenericRegexConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Report an issue for each match of a configured regular expression.\nTags: SingleFile\nhttps://rules.abaplint.org/generic_regex"
             },
             "global_class": {
               "anyOf": [

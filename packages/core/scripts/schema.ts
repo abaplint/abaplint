@@ -68,6 +68,7 @@ import {FullyTypeConsantsConf} from "../src/rules/fully_type_constants";
 import {FullyTypeITabsConf} from "../src/rules/fully_type_itabs";
 import {FunctionModuleRecommendationsConf} from "../src/rules/function_module_recommendations";
 import {FunctionalWritingConf} from "../src/rules/functional_writing";
+import {GenericRegexConf} from "../src/rules/generic_regex";
 import {GlobalClassConf} from "../src/rules/global_class";
 import {IdenticalConditionsConf} from "../src/rules/identical_conditions";
 import {IdenticalContentsConf} from "../src/rules/identical_contents";
@@ -282,6 +283,7 @@ export interface IConfig {
     "fully_type_itabs"?: FullyTypeITabsConf | boolean,
     "function_module_recommendations"?: FunctionModuleRecommendationsConf | boolean,
     "functional_writing"?: FunctionalWritingConf | boolean,
+    "generic_regex"?: GenericRegexConf | boolean,
     "global_class"?: GlobalClassConf | boolean,
     "identical_conditions"?: IdenticalConditionsConf | boolean,
     "identical_contents"?: IdenticalContentsConf | boolean,
@@ -485,6 +487,7 @@ export interface IConfig {
     "fully_type_itabs"?: FullyTypeITabsConf | boolean,
     "function_module_recommendations"?: FunctionModuleRecommendationsConf | boolean,
     "functional_writing"?: FunctionalWritingConf | boolean,
+    "generic_regex"?: GenericRegexConf | boolean,
     "global_class"?: GlobalClassConf | boolean,
     "identical_conditions"?: IdenticalConditionsConf | boolean,
     "identical_contents"?: IdenticalContentsConf | boolean,
