@@ -7,7 +7,7 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {VoidType} from "../../types/basic";
 
 export class ConvBody {
-  public static runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType | undefined {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, targetType?: AbstractType): AbstractType | undefined {
     let scoped = false;
     const l = node.findDirectExpression(Expressions.Let);
     if (l) {
@@ -20,7 +20,7 @@ export class ConvBody {
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return VoidType.get(CheckSyntaxKey);
     }
-    const sourceType = Source.runSyntax(s, input);
+    const sourceType = Source.runSyntax(s, input, targetType);
 
     if (scoped === true) {
       input.scope.pop(node.getLastToken().getEnd());

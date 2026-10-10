@@ -2,12 +2,13 @@ import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
 import {Source} from "../expressions/source";
 import {FSTarget} from "../expressions/fstarget";
-import {AnyType, CharacterType, VoidType} from "../../types/basic";
+import {AnyType, CharacterType, DataReference, GenericObjectReferenceType, ObjectReferenceType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Dynamic} from "../expressions/dynamic";
 import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -31,6 +32,19 @@ export class Assign implements StatementSyntax {
       sourceType = VoidType.get("Dynamic");
     } else {
       sourceType = Source.runSyntax(theSource, input, undefined, false, isComponent === false);
+      if (secondAssign?.concatTokens() === "->"
+          && thirdAssign?.get() instanceof Expressions.Dynamic
+          && sourceType?.isGeneric() === true
+          && !(sourceType instanceof DataReference)
+          && !(sourceType instanceof ObjectReferenceType)
+          && !(sourceType instanceof GenericObjectReferenceType)
+          && !releaseAtLeast(input.scope.getRelease(), Release.v756)
+          && input.scope.getLanguageVersion() !== LanguageVersion.Cloud
+          && !input.scope.getOpenABAP()) {
+        const message = `"${theSource.concatTokens()}" is not a reference variable`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      }
     }
 
     if (assignSource?.getChildren().length === 5
