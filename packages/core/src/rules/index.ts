@@ -166,6 +166,7 @@ export * from "./sql_value_conversion";
 export * from "./start_at_tab";
 export * from "./static_call_via_instance";
 export * from "./strict_sql";
+export * from "./subrc_after_assign";
 export * from "./superclass_final";
 export * from "./superfluous_value";
 export * from "./sy_modification";
