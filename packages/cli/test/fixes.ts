@@ -24,7 +24,7 @@ describe("Apply fixes", () => {
   });
 
   it("test 2, subsequent fix,", async () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "method( var1 = value1 var2 = value2 ).");
+    const file = new MemoryFile("zfoobar.prog.abap", "method( var1 = value1 var2 = value2 ).\n");
     const reg = new Registry().addFile(file).parse();
 
     const jsonFiles: any = {};
@@ -34,11 +34,11 @@ describe("Apply fixes", () => {
     await applyFixes(reg, input);
 
     const result = input.readFileSync("zfoobar.prog.abap").toString();
-    expect(result).to.equal(`method( var1 = value1\n        var2 = value2 ).`);
+    expect(result).to.equal(`method( var1 = value1\n        var2 = value2 ).\n`);
   });
 
   it("test 3, overlapping fixes", async () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "DATA: foo, bar.");
+    const file = new MemoryFile("zfoobar.prog.abap", "DATA: foo, bar.\n");
     const reg = new Registry().addFile(file).parse();
 
     const jsonFiles: any = {};
@@ -48,7 +48,7 @@ describe("Apply fixes", () => {
     await applyFixes(reg, input);
 
     const result = input.readFileSync("zfoobar.prog.abap").toString();
-    expect(result).to.equal(``);
+    expect(result).to.equal(`\n`);
   });
 
   it.skip("test 4, more overlapping fixes", async () => {
@@ -162,7 +162,8 @@ CLASS zcl_bar IMPLEMENTATION.
   ENDMETHOD.
   METHOD run.
   ENDMETHOD.
-ENDCLASS.`);
+ENDCLASS.
+`);
     const reg = new Registry().addFile(clas);
 
     const config = reg.getConfig().get();
@@ -187,7 +188,8 @@ ENDCLASS.
 CLASS zcl_bar IMPLEMENTATION.
 
 
-ENDCLASS.`;
+ENDCLASS.
+`;
 
     expect(expected).to.equal(result);
   });
