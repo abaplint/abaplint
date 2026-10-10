@@ -1,6 +1,7 @@
 import {expect} from "chai";
 import {Issue, MemoryFile, Registry} from "../../src";
 import {WrongAbapdocPosition} from "../../src/rules";
+import {testRuleFix} from "./_utils";
 
 async function findIssues(abap: string, filename = "zcl_foobar.clas.abap"): Promise<readonly Issue[]> {
   const reg = new Registry().addFile(new MemoryFile(filename, abap));
@@ -272,4 +273,254 @@ ENDCLASS.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("blank line between block and declaration", async () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    "! what it answers
+
+    METHODS run.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("by a blank line");
+    expect(issues[0].getStart().getRow()).to.equal(4);
+    expect(issues[0].getDefaultFix()).to.not.equal(undefined);
+  });
+
+  it("blank line inside block", async () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    "! first part
+    "! more first part
+
+    "! second part
+    METHODS run.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("by a blank line");
+    expect(issues[0].getStart().getRow()).to.equal(4);
+  });
+
+  it("normal comment between block and declaration", async () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    "! Called after the navigation.
+    "! more text
+    " note for whoever edits the framework
+    METHODS check_on_navigated.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD check_on_navigated.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("by a comment");
+    expect(issues[0].getStart().getRow()).to.equal(4);
+    expect(issues[0].getDefaultFix()).to.equal(undefined);
+  });
+
+  it("star comment between block and declaration", async () => {
+    const abap = `
+INTERFACE zif_foobar PUBLIC.
+  "! documentation
+* note
+  METHODS foo.
+ENDINTERFACE.`;
+    const issues = await findIssues(abap, "zif_foobar.intf.abap");
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("by a comment");
+  });
+
+  it("blank line between block and CLASS DEFINITION", async () => {
+    const abap = `
+"! documentation
+
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("by a blank line");
+  });
+
+  it("blank line inside block in front of INTERFACE", async () => {
+    const abap = `
+"! first part
+
+"! second part
+INTERFACE zif_foobar PUBLIC.
+  METHODS foo.
+ENDINTERFACE.`;
+    const issues = await findIssues(abap, "zif_foobar.intf.abap");
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getStart().getRow()).to.equal(2);
+  });
+
+  it("blank line after block in front of ENDCLASS, keeps message", async () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    DATA mv_foo TYPE i.
+    "! documentation
+
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("does not document anything");
+  });
+
+  it("normal comment above block, ok", async () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    " normal comment
+
+    "! line one
+    "! line two
+    METHODS run.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("comments between the parameters of the declaration, ok", async () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    "! documentation
+    "! more documentation
+    METHODS foo
+      IMPORTING
+        iv_one TYPE i
+
+        " normal comment
+        iv_two TYPE i.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("trailing comment after a declaration, then blank line, ok", async () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    DATA mv_foo TYPE i. "! trailing
+
+    DATA mv_bar TYPE i.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("pragma line between block and declaration, ok", async () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    "! documentation
+    ##NEEDED
+    DATA mv_foo TYPE i.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("blank line in front of FORM, ok", async () => {
+    const abap = `
+"! documentation
+
+FORM foo.
+ENDFORM.`;
+    const issues = await findIssues(abap, "zfoo.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("blank line inside method implementation, ok", async () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD foo.
+    "! not really abapdoc
+
+    WRITE: / 'hello'.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
+
+testRuleFix([{
+  input: `
+CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    "! documentation
+
+
+    METHODS run.
+ENDCLASS.`,
+  output: `
+CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    "! documentation
+    METHODS run.
+ENDCLASS.`,
+}, {
+  input: `
+CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    "! first part
+
+    "! second part
+    METHODS run.
+ENDCLASS.`,
+  output: `
+CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    "! first part
+    "! second part
+    METHODS run.
+ENDCLASS.`,
+}, {
+  input: `
+"! documentation
+
+CLASS lcl_foo DEFINITION.
+ENDCLASS.`,
+  output: `
+"! documentation
+CLASS lcl_foo DEFINITION.
+ENDCLASS.`,
+}], WrongAbapdocPosition);
