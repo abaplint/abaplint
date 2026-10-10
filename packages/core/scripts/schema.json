@@ -2769,6 +2769,17 @@
               ],
               "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
             },
+            "inline_packed_computation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlinePackedComputationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds inline declarations whose value is an arithmetic expression with calculation type p\nhttps://rules.abaplint.org/inline_packed_computation"
+            },
             "intf_referencing_clas": {
               "anyOf": [
                 {
@@ -4991,6 +5002,17 @@
               ],
               "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
             },
+            "inline_packed_computation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlinePackedComputationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds inline declarations whose value is an arithmetic expression with calculation type p\nhttps://rules.abaplint.org/inline_packed_computation"
+            },
             "intf_referencing_clas": {
               "anyOf": [
                 {
@@ -6729,6 +6751,23 @@
       "type": "object"
     },
     "InlineDataOldVersionsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "InlinePackedComputationConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
