@@ -6,7 +6,7 @@ import {Visibility} from "../4_file_information/visibility";
 import {Identifier} from "../4_file_information/_identifier";
 import {IMethodDefinition} from "./_method_definition";
 import {ReferenceType} from "../5_syntax/_reference";
-import {SyntaxInput} from "../5_syntax/_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 
 export class MethodDefinition extends Identifier implements IMethodDefinition {
   private readonly visibility: Visibility;
@@ -69,6 +69,7 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
     }
 
     this.raising = [];
+    this.checkRaisingParameter(node, input);
     for (const r of node.findDirectExpression(Expressions.MethodDefRaising)?.findAllExpressions(Expressions.ClassName) || []) {
       const token = r.getFirstToken();
       const name = token.getStr();
@@ -92,6 +93,27 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
 
     this.visibility = visibility;
     this.parameters = new MethodParameters(node, input, this.abstract);
+  }
+
+  // A system reads a parameter named RAISING as the RAISING addition, measured on 758:
+  // "IMPORTING a TYPE i raising TYPE i" fails with 'Type "TYPE" is unknown'
+  private checkRaisingParameter(node: StatementNode, input: SyntaxInput): void {
+    const raising = node.findDirectExpression(Expressions.MethodDefRaising);
+    const first = raising?.getChildren()[1];
+    if (raising === undefined
+        || first === undefined
+        || !(first.get() instanceof Expressions.ClassName)
+        || ["TYPE", "LIKE"].includes(first.getFirstToken().getStr().toUpperCase()) === false) {
+      return;
+    }
+    if (node.findDirectExpression(Expressions.MethodDefImporting) === undefined
+        && node.findDirectExpression(Expressions.MethodDefExporting) === undefined
+        && node.findDirectExpression(Expressions.MethodDefChanging) === undefined) {
+      return;
+    }
+    const token = raising.getFirstToken();
+    const message = "Parameter \"" + token.getStr() + "\" is read as the RAISING addition, rename it or escape it as !" + token.getStr();
+    input.issues.push(syntaxIssue(input, token, message));
   }
 
   public getVisibility(): Visibility {

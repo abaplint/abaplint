@@ -14,7 +14,7 @@ import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {ISpaghettiScopeNode, ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPFile} from "../abap/abap_file";
-import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
+import {ExpressionNode, StatementNode, StructureNode, TokenNode} from "../abap/nodes";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AnyType, DataReference, ObjectReferenceType, StructureType, TableType, VoidType} from "../abap/types/basic";
@@ -581,7 +581,7 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
-    found = this.outlineGetReferenceSimple(high, lowFile);
+    found = this.outlineGetReferenceSimple(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -1352,7 +1352,17 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
     return Issue.atToken(lowFile, node.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
-  private outlineGetReferenceSimple(node: StatementNode, lowFile: ABAPFile): Issue | undefined {
+  /** the type of a reference to the source: LIKE REF TO it, or REF TO data when its type is generic,
+   *  as LIKE REF TO a generically typed field symbol or parameter does not activate */
+  private refTypeOf(sourceName: string, node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): string {
+    const spag = highSyntax.spaghetti.lookupPosition(node.getFirstToken().getStart(), lowFile.getFilename());
+    if (spag?.findVariable(sourceName)?.getType().isGeneric() === true) {
+      return "TYPE REF TO data";
+    }
+    return "LIKE REF TO " + sourceName;
+  }
+
+  private outlineGetReferenceSimple(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(node.get() instanceof Statements.GetReference)) {
       return undefined;
     }
@@ -1371,7 +1381,8 @@ ${indentation}CATCH ${className} INTO ${targetName}.`;
     const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
     const firstToken = target.getFirstToken();
     const lastToken = target.getLastToken();
-    const fix1 = EditHelper.insertAt(lowFile, node.getStart(), `DATA ${targetName} LIKE REF TO ${source.concatTokens()}.\n${indentation}`);
+    const refType = this.refTypeOf(source.concatTokens(), node, lowFile, highSyntax);
+    const fix1 = EditHelper.insertAt(lowFile, node.getStart(), `DATA ${targetName} ${refType}.\n${indentation}`);
     const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), lastToken.getEnd(), targetName);
     const fix = EditHelper.merge(fix2, fix1);
 
@@ -3361,7 +3372,7 @@ ${indentation}    output = ${uniqueName}.\n`;
     return undefined;
   }
 
-  private getReference(node: StatementNode, lowFile: ABAPFile, _highSyntax: ISyntaxResult): Issue | undefined {
+  private getReference(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(node.get() instanceof Statements.GetReference)) {
       return undefined;
     }
@@ -3376,7 +3387,7 @@ ${indentation}    output = ${uniqueName}.\n`;
       return undefined;
     }
 
-    const code = `DATA ${targetName} LIKE REF TO ${sourceName}.\n`;
+    const code = `DATA ${targetName} ${this.refTypeOf(sourceName, node, lowFile, highSyntax)}.\n`;
     const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
     const fix2 = EditHelper.replaceRange(lowFile, inline.getFirstToken().getStart(), inline.getLastToken().getEnd(), targetName);
     const fix = EditHelper.merge(fix2, fix1);
@@ -3468,18 +3479,32 @@ ${indentation}    output = ${uniqueName}.\n`;
 
         const sy = func === "LINE_EXISTS" ? "sy-subrc" : "sy-tabix";
 
-        const code = `DATA ${uniqueName} LIKE sy-subrc.\n` +
-          indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
-          indentation + uniqueName + ` = ${sy}.\n` +
-          indentation ;
         let insertAt: Position | undefined = node.getFirstToken().getStart();
         if (node.get() instanceof ElseIf) {
-          // assumption: no side effects in IF conditions
+          // assumption: no side effects in IF conditions, except the READ itself, see below
           insertAt = this.findStartOfIf(node, highFile);
           if (insertAt === undefined) {
             continue;
           }
         }
+
+        // the READ sets sy-subrc and sy-tabix, which the built-in function does not,
+        // keep the values for the code that reads them after the inserted READ
+        const keep: {field: string, name: string}[] = [];
+        const reads = this.readSyFields(insertAt, highFile);
+        for (const field of ["sy-subrc", "sy-tabix"]) {
+          if (reads.has(field)) {
+            keep.push({field, name: this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax)});
+          }
+        }
+
+        const code = `DATA ${uniqueName} LIKE sy-subrc.\n` +
+          keep.map(k => indentation + `DATA ${k.name} LIKE ${k.field}.\n`).join("") +
+          keep.map(k => indentation + `${k.name} = ${k.field}.\n`).join("") +
+          indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
+          indentation + uniqueName + ` = ${sy}.\n` +
+          keep.map(k => indentation + `${k.field} = ${k.name}.\n`).join("") +
+          indentation ;
         const fix1 = EditHelper.insertAt(lowFile, insertAt, code);
         const start = expression.getFirstToken().getStart();
         const end = expression.getLastToken().getEnd();
@@ -3491,6 +3516,50 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     return undefined;
+  }
+
+  /** sy-subrc and sy-tabix, when read from the position on, in the procedure around it or the file outside of one;
+   *  inside a loop from the start of the outermost loop, as the next pass reads what this one left */
+  private readSyFields(position: Position, highFile: ABAPFile): Set<string> {
+    const structure = highFile.getStructure();
+    const contains = (s: StructureNode) => !position.isBefore(s.getFirstToken().getStart())
+      && !position.isAfter(s.getLastToken().getStart());
+
+    let scope: StructureNode | undefined = undefined;
+    for (const s of [Structures.Method, Structures.Form, Structures.FunctionModule]) {
+      for (const p of structure?.findAllStructuresRecursive(s) || []) {
+        if (contains(p)) {
+          scope = p;
+        }
+      }
+    }
+    scope = scope || structure;
+
+    let from = position;
+    for (const s of [Structures.Loop, Structures.Do, Structures.While, Structures.Select]) {
+      for (const l of scope?.findAllStructuresRecursive(s) || []) {
+        if (contains(l) && l.getFirstToken().getStart().isBefore(from)) {
+          from = l.getFirstToken().getStart();
+        }
+      }
+    }
+
+    const ret = new Set<string>();
+    for (const s of scope?.findAllStatementNodes() || []) {
+      if (s.getLastToken().getStart().isBefore(from)) {
+        continue;
+      }
+      const tokens = s.getTokens();
+      for (let i = 0; i < tokens.length - 2; i++) {
+        if (tokens[i].getStr().toUpperCase() === "SY" && tokens[i + 1].getStr() === "-") {
+          const field = "sy-" + tokens[i + 2].getStr().toLowerCase();
+          if (field === "sy-subrc" || field === "sy-tabix") {
+            ret.add(field);
+          }
+        }
+      }
+    }
+    return ret;
   }
 
   private findStartOfIf(node: StatementNode, highFile: ABAPFile): Position | undefined {
