@@ -3726,6 +3726,17 @@
               ],
               "description": "Strict SQL\nTags: Upport, Quickfix\nhttps://rules.abaplint.org/strict_sql"
             },
+            "subrc_after_assign": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SubrcAfterAssignConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a sy-subrc check directly after an ASSIGN, use IS [NOT] ASSIGNED instead\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/subrc_after_assign"
+            },
             "superclass_final": {
               "anyOf": [
                 {
@@ -5947,6 +5958,17 @@
                 }
               ],
               "description": "Strict SQL\nTags: Upport, Quickfix\nhttps://rules.abaplint.org/strict_sql"
+            },
+            "subrc_after_assign": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SubrcAfterAssignConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a sy-subrc check directly after an ASSIGN, use IS [NOT] ASSIGNED instead\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/subrc_after_assign"
             },
             "superclass_final": {
               "anyOf": [
@@ -9237,6 +9259,23 @@
       "type": "object"
     },
     "StrictSQLConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "SubrcAfterAssignConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
