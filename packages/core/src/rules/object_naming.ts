@@ -74,6 +74,7 @@ export class ObjectNamingConf extends NamingRuleConfig {
 
 export class ObjectNaming implements IRule {
   private conf = new ObjectNamingConf();
+  private regex = this.compile();
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -100,6 +101,21 @@ export class ObjectNaming implements IRule {
 
   public setConfig(conf: ObjectNamingConf) {
     this.conf = conf;
+    this.regex = this.compile();
+  }
+
+  private compile() {
+    const config = this.getConfig();
+    const patterns = new Map<string, RegExp>();
+    for (const [key, value] of Object.entries(config)) {
+      if (typeof value === "string" && key !== "patternKind" && key !== "severity") {
+        patterns.set(key, new RegExp(value, "i"));
+      }
+    }
+    return {
+      patterns,
+      ignorePatterns: NameValidator.compileIgnorePatterns(config),
+    };
   }
 
   public initialize(_reg: IRegistry) {
@@ -118,14 +134,13 @@ export class ObjectNaming implements IRule {
 
     // @ts-ignore
     const pattern = config[abapType];
+    const regex = this.regex.patterns.get(abapType);
 
-    if (pattern === undefined) {
+    if (pattern === undefined || regex === undefined) {
       return [];
     }
 
-    const regex = new RegExp(pattern, "i");
-
-    if (NameValidator.violatesRule(obj.getName(), regex, this.conf)) {
+    if (NameValidator.violatesRule(obj.getName(), regex, this.conf, this.regex.ignorePatterns)) {
       message = this.getDescription(pattern, obj.getName());
     }
 

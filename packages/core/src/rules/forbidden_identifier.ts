@@ -17,6 +17,7 @@ export class ForbiddenIdentifierConf extends BasicRuleConfig {
 export class ForbiddenIdentifier extends ABAPRule {
 
   private conf = new ForbiddenIdentifierConf();
+  private checks: RegExp[] = [];
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -38,10 +39,11 @@ https://github.com/abaplint/transpiler/blob/bda94b8b56e2b7f2f87be2168f12361aa530
     if (this.conf.check === undefined) {
       this.conf.check = [];
     }
+    this.checks = this.conf.check.map(c => new RegExp(c, "i"));
   }
 
   public runParsed(file: ABAPFile): Issue[] {
-    if (this.conf.check.length === 0) {
+    if (this.checks.length === 0) {
       return [];
     }
 
@@ -72,8 +74,7 @@ https://github.com/abaplint/transpiler/blob/bda94b8b56e2b7f2f87be2168f12361aa530
   private check(token: AbstractToken, file: ABAPFile): Issue[] {
     const str = token.getStr();
     const ret: Issue[] = [];
-    for (const c of this.conf.check) {
-      const reg = new RegExp(c, "i");
+    for (const reg of this.checks) {
       if (reg.exec(str)) {
         const message = "Identifer \"" + str + "\" not allowed";
         ret.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));

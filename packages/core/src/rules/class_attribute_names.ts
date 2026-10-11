@@ -27,6 +27,7 @@ export class ClassAttributeNamesConf extends NamingRuleConfig {
 export class ClassAttributeNames extends ABAPRule {
 
   private conf = new ClassAttributeNamesConf();
+  private regex = this.compile();
 
   public getMetadata() {
     return {
@@ -57,6 +58,16 @@ ENDCLASS.`,
 
   public setConfig(conf: ClassAttributeNamesConf) {
     this.conf = conf;
+    this.regex = this.compile();
+  }
+
+  private compile() {
+    return {
+      statics: new RegExp(this.conf.statics, "i"),
+      instance: new RegExp(this.conf.instance, "i"),
+      constants: new RegExp(this.conf.constants, "i"),
+      ignorePatterns: NameValidator.compileIgnorePatterns(this.conf),
+    };
   }
 
   public runParsed(file: ABAPFile, obj: ABAPObject): Issue[] {
@@ -94,13 +105,13 @@ ENDCLASS.`,
     for (const a of attr) {
       switch (a.level) {
         case AttributeLevel.Instance:
-          ret = ret.concat(this.checkName(a.identifier, this.conf.instance));
+          ret = ret.concat(this.checkName(a.identifier, this.conf.instance, this.regex.instance));
           break;
         case AttributeLevel.Static:
-          ret = ret.concat(this.checkName(a.identifier, this.conf.statics));
+          ret = ret.concat(this.checkName(a.identifier, this.conf.statics, this.regex.statics));
           break;
         case AttributeLevel.Constant:
-          ret = ret.concat(this.checkName(a.identifier, this.conf.constants));
+          ret = ret.concat(this.checkName(a.identifier, this.conf.constants, this.regex.constants));
           break;
         default:
           break;
@@ -109,11 +120,10 @@ ENDCLASS.`,
     return ret;
   }
 
-  private checkName(attr: Identifier, expected: string): Issue[] {
+  private checkName(attr: Identifier, expected: string, regex: RegExp): Issue[] {
     const ret: Issue[] = [];
-    const regex = new RegExp(expected, "i");
     const name = attr.getName();
-    if (NameValidator.violatesRule(name, regex, this.conf)) {
+    if (NameValidator.violatesRule(name, regex, this.conf, this.regex.ignorePatterns)) {
       const issue = Issue.atIdentifier(attr, this.getDescription(name, expected), this.getMetadata().key, this.conf.severity);
       ret.push(issue);
     }

@@ -21,6 +21,7 @@ export class SelectionScreenNamingConf extends NamingRuleConfig {
 export class SelectionScreenNaming extends ABAPRule {
 
   private conf = new SelectionScreenNamingConf();
+  private regex = this.compile();
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -43,6 +44,16 @@ export class SelectionScreenNaming extends ABAPRule {
 
   public setConfig(conf: SelectionScreenNamingConf) {
     this.conf = conf;
+    this.regex = this.compile();
+  }
+
+  private compile() {
+    return {
+      parameter: new RegExp(this.conf.parameter, "i"),
+      selectOption: new RegExp(this.conf.selectOption, "i"),
+      screenElement: new RegExp(this.conf.screenElement, "i"),
+      ignorePatterns: NameValidator.compileIgnorePatterns(this.conf),
+    };
   }
 
   public runParsed(file: ABAPFile) {
@@ -68,8 +79,8 @@ export class SelectionScreenNaming extends ABAPRule {
           || (stat.get() instanceof SelectOption && !selectOptionDisabled)
           || (stat.get() instanceof SelectionScreen && !screenElementDisabled)) {
         const fieldNode = this.getFieldForStatementNode(stat);
-        const regex = new RegExp(this.getPatternForStatement(stat.get()), "i");
-        if (fieldNode && NameValidator.violatesRule(fieldNode.getFirstToken().getStr(), regex, this.conf)) {
+        const regex = this.getRegexForStatement(stat.get());
+        if (fieldNode && NameValidator.violatesRule(fieldNode.getFirstToken().getStr(), regex, this.conf, this.regex.ignorePatterns)) {
           issues.push(Issue.atToken(
             file,
             fieldNode.getFirstToken(),
@@ -92,6 +103,15 @@ export class SelectionScreenNaming extends ABAPRule {
       pattern = this.conf.screenElement;
     }
     return pattern;
+  }
+
+  private getRegexForStatement(statement: IStatement): RegExp {
+    if (statement instanceof Parameter) {
+      return this.regex.parameter;
+    } else if (statement instanceof SelectOption) {
+      return this.regex.selectOption;
+    }
+    return this.regex.screenElement;
   }
 
   private getFieldForStatementNode(statNode: StatementNode): ExpressionNode | undefined {
