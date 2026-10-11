@@ -24,6 +24,7 @@ export class MethodParameterNamesConf extends NamingRuleConfig {
 export class MethodParameterNames implements IRule {
 
   private conf = new MethodParameterNamesConf();
+  private regex = this.compile();
   private reg: IRegistry;
 
   public getMetadata() {
@@ -53,6 +54,17 @@ export class MethodParameterNames implements IRule {
 
   public setConfig(conf: MethodParameterNamesConf) {
     this.conf = conf;
+    this.regex = this.compile();
+  }
+
+  private compile() {
+    return {
+      importing: new RegExp(this.conf.importing, "i"),
+      returning: new RegExp(this.conf.returning, "i"),
+      changing: new RegExp(this.conf.changing, "i"),
+      exporting: new RegExp(this.conf.exporting, "i"),
+      ignorePatterns: NameValidator.compileIgnorePatterns(this.conf),
+    };
   }
 
   public initialize(reg: IRegistry) {
@@ -100,16 +112,16 @@ export class MethodParameterNames implements IRule {
     for (const p of method.parameters) {
       switch (p.direction) {
         case MethodParameterDirection.Importing:
-          ret = ret.concat(this.checkParameter(p, this.conf.importing));
+          ret = ret.concat(this.checkParameter(p, this.conf.importing, this.regex.importing));
           break;
         case MethodParameterDirection.Exporting:
-          ret = ret.concat(this.checkParameter(p, this.conf.exporting));
+          ret = ret.concat(this.checkParameter(p, this.conf.exporting, this.regex.exporting));
           break;
         case MethodParameterDirection.Changing:
-          ret = ret.concat(this.checkParameter(p, this.conf.changing));
+          ret = ret.concat(this.checkParameter(p, this.conf.changing, this.regex.changing));
           break;
         case MethodParameterDirection.Returning:
-          ret = ret.concat(this.checkParameter(p, this.conf.returning));
+          ret = ret.concat(this.checkParameter(p, this.conf.returning, this.regex.returning));
           break;
         default:
           break;
@@ -119,11 +131,10 @@ export class MethodParameterNames implements IRule {
     return ret;
   }
 
-  private checkParameter(param: InfoMethodParameter, expected: string): Issue[] {
+  private checkParameter(param: InfoMethodParameter, expected: string, regex: RegExp): Issue[] {
     const ret: Issue[] = [];
-    const regex = new RegExp(expected, "i");
     const name = param.name;
-    if (NameValidator.violatesRule(name, regex, this.conf)) {
+    if (NameValidator.violatesRule(name, regex, this.conf, this.regex.ignorePatterns)) {
       const message = this.getDescription(expected, name);
       const issue = Issue.atIdentifier(param.identifier, message, this.getMetadata().key, this.conf.severity);
       ret.push(issue);

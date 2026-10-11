@@ -56,6 +56,57 @@
       ],
       "type": "object"
     },
+    "AbapdocHtmlTagConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "AbapdocLeadingAtConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "AbapdocParameterNamesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AddTestAttributesConf": {
       "additionalProperties": false,
       "properties": {
@@ -595,6 +646,23 @@
           },
           "type": "array",
           "uniqueItems": true
+        }
+      },
+      "type": "object"
+    },
+    "ChangingSortedLineConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
         }
       },
       "type": "object"
@@ -1906,6 +1974,39 @@
               ],
               "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
             },
+            "abapdoc_html_tag": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocHtmlTagConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports tag-like tokens in ABAP Doc which are not ABAP Doc HTML tags.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_html_tag"
+            },
+            "abapdoc_leading_at": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocLeadingAtConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc lines starting with \"@\" which is not followed by a command.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_leading_at"
+            },
+            "abapdoc_parameter_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocParameterNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
+            },
             "add_test_attributes": {
               "anyOf": [
                 {
@@ -2147,6 +2248,17 @@
                 }
               ],
               "description": "Finds IF constructs that can be changed to CASE\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/change_if_to_case"
+            },
+            "changing_sorted_line": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ChangingSortedLineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "A field symbol on a whole line of a sorted or hashed table, passed to a CHANGING parameter of a method\nTags: SingleFile\nhttps://rules.abaplint.org/changing_sorted_line"
             },
             "check_abstract": {
               "anyOf": [
@@ -3677,6 +3789,17 @@
               ],
               "description": "SMIM consistency check\nhttps://rules.abaplint.org/smim_consistency"
             },
+            "sort_empty_key": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortEmptyKeyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -3753,6 +3876,17 @@
                 }
               ],
               "description": "Strict SQL\nTags: Upport, Quickfix\nhttps://rules.abaplint.org/strict_sql"
+            },
+            "subrc_after_assign": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SubrcAfterAssignConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a sy-subrc check directly after an ASSIGN, use IS [NOT] ASSIGNED instead\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/subrc_after_assign"
             },
             "superclass_final": {
               "anyOf": [
@@ -4139,6 +4273,39 @@
               ],
               "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
             },
+            "abapdoc_html_tag": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocHtmlTagConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports tag-like tokens in ABAP Doc which are not ABAP Doc HTML tags.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_html_tag"
+            },
+            "abapdoc_leading_at": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocLeadingAtConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc lines starting with \"@\" which is not followed by a command.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_leading_at"
+            },
+            "abapdoc_parameter_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocParameterNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
+            },
             "add_test_attributes": {
               "anyOf": [
                 {
@@ -4380,6 +4547,17 @@
                 }
               ],
               "description": "Finds IF constructs that can be changed to CASE\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/change_if_to_case"
+            },
+            "changing_sorted_line": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ChangingSortedLineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "A field symbol on a whole line of a sorted or hashed table, passed to a CHANGING parameter of a method\nTags: SingleFile\nhttps://rules.abaplint.org/changing_sorted_line"
             },
             "check_abstract": {
               "anyOf": [
@@ -5910,6 +6088,17 @@
               ],
               "description": "SMIM consistency check\nhttps://rules.abaplint.org/smim_consistency"
             },
+            "sort_empty_key": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortEmptyKeyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -5986,6 +6175,17 @@
                 }
               ],
               "description": "Strict SQL\nTags: Upport, Quickfix\nhttps://rules.abaplint.org/strict_sql"
+            },
+            "subrc_after_assign": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SubrcAfterAssignConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a sy-subrc check directly after an ASSIGN, use IS [NOT] ASSIGNED instead\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/subrc_after_assign"
             },
             "superclass_final": {
               "anyOf": [
@@ -9193,6 +9393,23 @@
       },
       "type": "object"
     },
+    "SortEmptyKeyConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "SpaceBeforeColonConf": {
       "additionalProperties": false,
       "properties": {
@@ -9276,6 +9493,23 @@
       "type": "object"
     },
     "StrictSQLConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "SubrcAfterAssignConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
