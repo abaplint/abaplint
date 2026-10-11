@@ -18,6 +18,7 @@ export class IntfReferencingClasConf extends BasicRuleConfig {
 
 export class IntfReferencingClas implements IRule {
   private conf = new IntfReferencingClasConf();
+  private allow: RegExp[] = [];
   private reg: IRegistry;
 
   public getMetadata(): IRuleMetadata {
@@ -41,6 +42,7 @@ export class IntfReferencingClas implements IRule {
 
   public setConfig(conf: IntfReferencingClasConf) {
     this.conf = conf;
+    this.allow = (this.conf.allow || []).map(reg => new RegExp(reg, "i"));
   }
 
   public initialize(reg: IRegistry): IRule {
@@ -71,7 +73,7 @@ export class IntfReferencingClas implements IRule {
         const found = this.reg.getObject("CLAS", r.extra.ooName) as Class || undefined;
         if (found && ddic.isException(found.getClassDefinition(), found)) {
           continue;
-        } else if (this.getConfig().allow.some(reg => new RegExp(reg, "i").test(r.extra!.ooName!))) {
+        } else if (this.allow.some(reg => reg.test(r.extra!.ooName!))) {
           continue;
         }
         ret.push(Issue.atIdentifier(r.position, message + r.extra.ooName, this.getMetadata().key, this.conf.severity));
