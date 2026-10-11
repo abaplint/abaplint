@@ -2,6 +2,8 @@
 import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings, IAbaplintAppSettings} from "../src/_config";
 import {SevenBitAsciiConf} from "../src/rules/7bit_ascii";
 import {AbapdocConf} from "../src/rules/abapdoc";
+import {AbapdocHtmlTagConf} from "../src/rules/abapdoc_html_tag";
+import {AbapdocLeadingAtConf} from "../src/rules/abapdoc_leading_at";
 import {AddTestAttributesConf} from "../src/rules/add_test_attributes";
 import {AFFAndXMLConf} from "../src/rules/aff_and_xml";
 import {AlignParametersConf} from "../src/rules/align_parameters";
@@ -217,6 +219,8 @@ export interface IConfig {
   rules: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
+    "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
+    "abapdoc_leading_at"?: AbapdocLeadingAtConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
@@ -421,6 +425,8 @@ export interface IConfig {
   targetRules?: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
+    "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
+    "abapdoc_leading_at"?: AbapdocLeadingAtConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
