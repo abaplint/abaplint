@@ -650,6 +650,23 @@
       },
       "type": "object"
     },
+    "ChangingSortedLineConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CheckAbstractConf": {
       "additionalProperties": false,
       "properties": {
@@ -2214,6 +2231,17 @@
                 }
               ],
               "description": "Finds IF constructs that can be changed to CASE\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/change_if_to_case"
+            },
+            "changing_sorted_line": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ChangingSortedLineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "A field symbol on a whole line of a sorted or hashed table, passed to a CHANGING parameter of a method\nTags: SingleFile\nhttps://rules.abaplint.org/changing_sorted_line"
             },
             "check_abstract": {
               "anyOf": [
@@ -4469,6 +4497,17 @@
                 }
               ],
               "description": "Finds IF constructs that can be changed to CASE\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/change_if_to_case"
+            },
+            "changing_sorted_line": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ChangingSortedLineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "A field symbol on a whole line of a sorted or hashed table, passed to a CHANGING parameter of a method\nTags: SingleFile\nhttps://rules.abaplint.org/changing_sorted_line"
             },
             "check_abstract": {
               "anyOf": [
