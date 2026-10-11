@@ -73,6 +73,23 @@
       },
       "type": "object"
     },
+    "AbapdocLeadingAtConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AbapdocParameterNamesConf": {
       "additionalProperties": false,
       "properties": {
@@ -1933,6 +1950,17 @@
                 }
               ],
               "description": "Reports tag-like tokens in ABAP Doc which are not ABAP Doc HTML tags.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_html_tag"
+            },
+            "abapdoc_leading_at": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocLeadingAtConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc lines starting with \"@\" which is not followed by a command.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_leading_at"
             },
             "abapdoc_parameter_names": {
               "anyOf": [
@@ -4177,6 +4205,17 @@
                 }
               ],
               "description": "Reports tag-like tokens in ABAP Doc which are not ABAP Doc HTML tags.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_html_tag"
+            },
+            "abapdoc_leading_at": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocLeadingAtConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc lines starting with \"@\" which is not followed by a command.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_leading_at"
             },
             "abapdoc_parameter_names": {
               "anyOf": [
