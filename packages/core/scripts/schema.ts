@@ -140,6 +140,7 @@ import {PreferAbapBoolConf} from "../src/rules/prefer_abap_bool";
 import {PreferAbapBoolValuesConf} from "../src/rules/prefer_abap_bool_values";
 import {PreferCorrespondingConf} from "../src/rules/prefer_corresponding";
 import {PreferInlineConf} from "../src/rules/prefer_inline";
+import {PreferInlineCastConf} from "../src/rules/prefer_inline_cast";
 import {PreferInsertIntoTableConf} from "../src/rules/prefer_insert_into_table";
 import {PreferIsNotConf} from "../src/rules/prefer_is_not";
 import {PreferPragmasConf} from "../src/rules/prefer_pragmas";
@@ -359,6 +360,7 @@ export interface IConfig {
     "prefer_abap_bool_values"?: PreferAbapBoolValuesConf | boolean,
     "prefer_corresponding"?: PreferCorrespondingConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,
+    "prefer_inline_cast"?: PreferInlineCastConf | boolean,
     "prefer_insert_into_table"?: PreferInsertIntoTableConf | boolean,
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_pragmas"?: PreferPragmasConf | boolean,
@@ -567,6 +569,7 @@ export interface IConfig {
     "prefer_abap_bool_values"?: PreferAbapBoolValuesConf | boolean,
     "prefer_corresponding"?: PreferCorrespondingConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,
+    "prefer_inline_cast"?: PreferInlineCastConf | boolean,
     "prefer_insert_into_table"?: PreferInsertIntoTableConf | boolean,
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_pragmas"?: PreferPragmasConf | boolean,

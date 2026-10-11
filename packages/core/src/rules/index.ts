@@ -135,6 +135,7 @@ export * from "./parser_missing_space";
 export * from "./pragma_style";
 export * from "./prefer_corresponding";
 export * from "./prefer_inline";
+export * from "./prefer_inline_cast";
 export * from "./prefer_insert_into_table";
 export * from "./prefer_is_not";
 export * from "./prefer_pragmas";
