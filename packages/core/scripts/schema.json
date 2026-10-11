@@ -3761,6 +3761,17 @@
               ],
               "description": "SMIM consistency check\nhttps://rules.abaplint.org/smim_consistency"
             },
+            "sort_empty_key": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortEmptyKeyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -6026,6 +6037,17 @@
                 }
               ],
               "description": "SMIM consistency check\nhttps://rules.abaplint.org/smim_consistency"
+            },
+            "sort_empty_key": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortEmptyKeyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
             },
             "space_before_colon": {
               "anyOf": [
@@ -9294,6 +9316,23 @@
       "type": "object"
     },
     "SlowParameterPassingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "SortEmptyKeyConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
