@@ -2,6 +2,7 @@
 import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings, IAbaplintAppSettings} from "../src/_config";
 import {SevenBitAsciiConf} from "../src/rules/7bit_ascii";
 import {AbapdocConf} from "../src/rules/abapdoc";
+import {AbapdocHtmlTagConf} from "../src/rules/abapdoc_html_tag";
 import {AbapdocParameterNamesConf} from "../src/rules/abapdoc_parameter_names";
 import {AddTestAttributesConf} from "../src/rules/add_test_attributes";
 import {AFFAndXMLConf} from "../src/rules/aff_and_xml";
@@ -218,6 +219,7 @@ export interface IConfig {
   rules: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
+    "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
     "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
@@ -423,6 +425,7 @@ export interface IConfig {
   targetRules?: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
+    "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
     "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,

@@ -56,6 +56,23 @@
       ],
       "type": "object"
     },
+    "AbapdocHtmlTagConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AbapdocParameterNamesConf": {
       "additionalProperties": false,
       "properties": {
@@ -1905,6 +1922,17 @@
                 }
               ],
               "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
+            },
+            "abapdoc_html_tag": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocHtmlTagConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports tag-like tokens in ABAP Doc which are not ABAP Doc HTML tags.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_html_tag"
             },
             "abapdoc_parameter_names": {
               "anyOf": [
@@ -4138,6 +4166,17 @@
                 }
               ],
               "description": "Various checks regarding abapdoc.\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/abapdoc"
+            },
+            "abapdoc_html_tag": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocHtmlTagConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports tag-like tokens in ABAP Doc which are not ABAP Doc HTML tags.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_html_tag"
             },
             "abapdoc_parameter_names": {
               "anyOf": [
