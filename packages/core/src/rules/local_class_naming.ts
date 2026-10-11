@@ -19,6 +19,7 @@ export class LocalClassNamingConf extends NamingRuleConfig {
 export class LocalClassNaming extends ABAPRule {
 
   private conf = new LocalClassNamingConf();
+  private regex = this.compile();
 
   public getMetadata() {
     return {
@@ -45,6 +46,16 @@ ENDCLASS.`,
 
   public setConfig(conf: LocalClassNamingConf) {
     this.conf = conf;
+    this.regex = this.compile();
+  }
+
+  private compile() {
+    return {
+      local: new RegExp(this.conf.local, "i"),
+      exception: new RegExp(this.conf.exception, "i"),
+      test: new RegExp(this.conf.test, "i"),
+      ignorePatterns: NameValidator.compileIgnorePatterns(this.conf),
+    };
   }
 
   public runParsed(file: ABAPFile, obj: ABAPObject): Issue[] {
@@ -62,20 +73,23 @@ ENDCLASS.`,
 
       const className = classDef.name;
       let expected: string;
+      let regex: RegExp;
 
       if (classDef.isForTesting) {
         expected = this.conf.test;
+        regex = this.regex.test;
       } else if (ddic.isException(classDef, obj)) {
         expected = this.conf.exception;
+        regex = this.regex.exception;
       } else {
         expected = this.conf.local;
+        regex = this.regex.local;
       }
       if (expected === undefined || expected.length === 0) {
         continue;
       }
-      const regex = new RegExp(expected, "i");
 
-      if (NameValidator.violatesRule(className, regex, this.conf)) {
+      if (NameValidator.violatesRule(className, regex, this.conf, this.regex.ignorePatterns)) {
         issues.push(
           Issue.atIdentifier(
             classDef.identifier,

@@ -2,6 +2,9 @@
 import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings, IAbaplintAppSettings} from "../src/_config";
 import {SevenBitAsciiConf} from "../src/rules/7bit_ascii";
 import {AbapdocConf} from "../src/rules/abapdoc";
+import {AbapdocHtmlTagConf} from "../src/rules/abapdoc_html_tag";
+import {AbapdocLeadingAtConf} from "../src/rules/abapdoc_leading_at";
+import {AbapdocParameterNamesConf} from "../src/rules/abapdoc_parameter_names";
 import {AddTestAttributesConf} from "../src/rules/add_test_attributes";
 import {AFFAndXMLConf} from "../src/rules/aff_and_xml";
 import {AlignParametersConf} from "../src/rules/align_parameters";
@@ -24,6 +27,7 @@ import {CDSNamingConf} from "../src/rules/cds_naming";
 import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
 import {ChangeIfToCaseConf} from "../src/rules/change_if_to_case";
+import {ChangingSortedLineConf} from "../src/rules/changing_sorted_line";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckCommentsConf} from "../src/rules/check_comments";
 import {CheckDDICConf} from "../src/rules/check_ddic";
@@ -218,6 +222,9 @@ export interface IConfig {
   rules: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
+    "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
+    "abapdoc_leading_at"?: AbapdocLeadingAtConf | boolean,
+    "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
@@ -240,6 +247,7 @@ export interface IConfig {
     "cds_parser_error"?: CDSParserErrorConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
+    "changing_sorted_line"?: ChangingSortedLineConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
@@ -423,6 +431,9 @@ export interface IConfig {
   targetRules?: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
+    "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
+    "abapdoc_leading_at"?: AbapdocLeadingAtConf | boolean,
+    "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
@@ -445,6 +456,7 @@ export interface IConfig {
     "cds_parser_error"?: CDSParserErrorConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
+    "changing_sorted_line"?: ChangingSortedLineConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,

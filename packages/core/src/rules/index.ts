@@ -1,5 +1,8 @@
 export * from "./7bit_ascii";
 export * from "./abapdoc";
+export * from "./abapdoc_html_tag";
+export * from "./abapdoc_leading_at";
+export * from "./abapdoc_parameter_names";
 export * from "./add_test_attributes";
 export * from "./aff_and_xml";
 export * from "./align_parameters";
@@ -22,6 +25,7 @@ export * from "./cds_naming";
 export * from "./cds_parser_error";
 export * from "./chain_mainly_declarations";
 export * from "./change_if_to_case";
+export * from "./changing_sorted_line";
 export * from "./check_abstract";
 export * from "./check_comments";
 export * from "./check_ddic";

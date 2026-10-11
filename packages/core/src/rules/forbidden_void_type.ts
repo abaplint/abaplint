@@ -22,6 +22,7 @@ export class ForbiddenVoidTypeConf extends BasicRuleConfig {
 export class ForbiddenVoidType implements IRule {
   private reg: IRegistry;
   private conf = new ForbiddenVoidTypeConf();
+  private checks: RegExp[] = [];
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -43,6 +44,7 @@ DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFE
     if (this.conf.check === undefined) {
       this.conf.check = [];
     }
+    this.checks = this.conf.check.map(c => new RegExp(c, "i"));
   }
 
   public initialize(reg: IRegistry) {
@@ -51,7 +53,7 @@ DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFE
   }
 
   public run(obj: IObject): readonly Issue[] {
-    if (!(obj instanceof ABAPObject) || this.conf.check.length === 0) {
+    if (!(obj instanceof ABAPObject) || this.checks.length === 0) {
       return [];
     }
 
@@ -102,14 +104,7 @@ DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFE
       return false;
     }
 
-    for (const c of this.conf.check) {
-      const reg = new RegExp(c, "i");
-      const match = reg.test(name);
-      if (match === true) {
-        return true;
-      }
-    }
-    return false;
+    return this.checks.some(reg => reg.test(name));
   }
 
 }
