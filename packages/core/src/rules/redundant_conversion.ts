@@ -207,6 +207,8 @@ text = text.`,
         }
       } else if (child.get() instanceof Expressions.Constant) {
         context = this.infer(context, ConstantSyntax.runSyntax(child));
+      } else if (child.get() instanceof Expressions.StringTemplate) {
+        context = StringType.get();
       } else if (child.get() instanceof Expressions.Source) {
         context = this.infer(context, this.sourceType(child, scope));
       } else if (child.get() instanceof Expressions.ArithOperator) {
