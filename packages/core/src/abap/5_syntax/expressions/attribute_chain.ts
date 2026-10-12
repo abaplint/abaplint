@@ -3,7 +3,7 @@ import {INode} from "../../nodes/_inode";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {VoidType} from "../../types/basic/void_type";
-import {CharacterType, DataReference, HexType, ObjectReferenceType, StructureType, TableType, UnknownType} from "../../types/basic";
+import {DataReference, ObjectReferenceType, StructureType, TableType, UnknownType} from "../../types/basic";
 import {ObjectOriented} from "../_object_oriented";
 import {ReferenceType} from "../_reference";
 import {TypedIdentifier} from "../../types/_typed_identifier";
@@ -14,6 +14,7 @@ import {AttributeName as AttributeNameSyntax} from "./attribute_name";
 import {TableExpression} from "./table_expression";
 import {FieldOffset} from "./field_offset";
 import {FieldLength} from "./field_length";
+import {substringType} from "./_substring";
 
 export class AttributeChain {
   public static runSyntax(
@@ -93,22 +94,10 @@ export class AttributeChain {
         contextType = contextType.getRowType();
       } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.FieldOffset) {
         const offset = FieldOffset.runSyntax(child, input);
-        if (offset !== undefined) {
-          if (contextType instanceof CharacterType) {
-            contextType = new CharacterType(contextType.getLength() - offset);
-          } else if (contextType instanceof HexType) {
-            contextType = new HexType(contextType.getLength() - offset);
-          }
-        }
+        contextType = substringType(contextType, offset, undefined, child, input);
       } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.FieldLength) {
         const length = FieldLength.runSyntax(child, input);
-        if (length !== undefined) {
-          if (contextType instanceof CharacterType) {
-            contextType = new CharacterType(length);
-          } else if (contextType instanceof HexType) {
-            contextType = new HexType(length);
-          }
-        }
+        contextType = substringType(contextType, undefined, length, child, input);
       }
     }
 
