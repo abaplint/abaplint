@@ -3,6 +3,8 @@ import {IGlobalConfig, IDependency, ISyntaxSettings, IRenameSettings, IAbaplintA
 import {SevenBitAsciiConf} from "../src/rules/7bit_ascii";
 import {AbapdocConf} from "../src/rules/abapdoc";
 import {AbapdocHtmlTagConf} from "../src/rules/abapdoc_html_tag";
+import {AbapdocLeadingAtConf} from "../src/rules/abapdoc_leading_at";
+import {AbapdocParameterNamesConf} from "../src/rules/abapdoc_parameter_names";
 import {AddTestAttributesConf} from "../src/rules/add_test_attributes";
 import {AFFAndXMLConf} from "../src/rules/aff_and_xml";
 import {AlignParametersConf} from "../src/rules/align_parameters";
@@ -25,6 +27,7 @@ import {CDSNamingConf} from "../src/rules/cds_naming";
 import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
 import {ChangeIfToCaseConf} from "../src/rules/change_if_to_case";
+import {ChangingSortedLineConf} from "../src/rules/changing_sorted_line";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckCommentsConf} from "../src/rules/check_comments";
 import {CheckDDICConf} from "../src/rules/check_ddic";
@@ -47,6 +50,7 @@ import {CyclomaticComplexityConf} from "../src/rules/cyclomatic_complexity";
 import {DangerousStatementConf} from "../src/rules/dangerous_statement";
 import {DbOperationInLoopConf} from "../src/rules/db_operation_in_loop";
 import {DefinitionsTopConf} from "../src/rules/definitions_top";
+import {DeleteIndexInLoopConf} from "../src/rules/delete_index_in_loop";
 import {DescriptionEmptyConf} from "../src/rules/description_empty";
 import {DoubleSpaceConf} from "../src/rules/double_space";
 import {DownportConf} from "../src/rules/downport";
@@ -147,6 +151,7 @@ import {PreferXsdboolConf} from "../src/rules/prefer_xsdbool";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
 import {PreferredParameterIgnoredConf} from "../src/rules/preferred_parameter_ignored";
 import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
+import {RangeRowValuesConf} from "../src/rules/range_row_values";
 import {ReduceProceduralCodeConf} from "../src/rules/reduce_procedural_code";
 import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
 import {RedundantConversionConf} from "../src/rules/redundant_conversion";
@@ -163,6 +168,7 @@ import {ShortCaseConf} from "../src/rules/short_case";
 import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
 import {SlowParameterPassingConf} from "../src/rules/slow_parameter_passing";
 import {SMIMConsistencyConf} from "../src/rules/smim_consistency";
+import {SortEmptyKeyConf} from "../src/rules/sort_empty_key";
 import {SpaceBeforeColonConf} from "../src/rules/space_before_colon";
 import {SpaceBeforeDotConf} from "../src/rules/space_before_dot";
 import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables";
@@ -170,6 +176,7 @@ import {SQLValueConversionConf} from "../src/rules/sql_value_conversion";
 import {StartAtTabConf} from "../src/rules/start_at_tab";
 import {StaticCallViaInstanceConf} from "../src/rules/static_call_via_instance";
 import {StrictSQLConf} from "../src/rules/strict_sql";
+import {SubrcAfterAssignConf} from "../src/rules/subrc_after_assign";
 import {SuperclassFinalConf} from "../src/rules/superclass_final";
 import {SuperfluousValueConf} from "../src/rules/superfluous_value";
 import {SyModificationConf} from "../src/rules/sy_modification";
@@ -219,6 +226,8 @@ export interface IConfig {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
     "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
+    "abapdoc_leading_at"?: AbapdocLeadingAtConf | boolean,
+    "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
@@ -241,6 +250,7 @@ export interface IConfig {
     "cds_parser_error"?: CDSParserErrorConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
+    "changing_sorted_line"?: ChangingSortedLineConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
@@ -263,6 +273,7 @@ export interface IConfig {
     "dangerous_statement"?: DangerousStatementConf | boolean,
     "db_operation_in_loop"?: DbOperationInLoopConf | boolean,
     "definitions_top"?: DefinitionsTopConf | boolean,
+    "delete_index_in_loop"?: DeleteIndexInLoopConf | boolean,
     "description_empty"?: DescriptionEmptyConf | boolean,
     "double_space"?: DoubleSpaceConf | boolean,
     "downport"?: DownportConf | boolean,
@@ -363,6 +374,7 @@ export interface IConfig {
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "preferred_parameter_ignored"?: PreferredParameterIgnoredConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
+    "range_row_values"?: RangeRowValuesConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
     "redundant_conversion"?: RedundantConversionConf | boolean,
@@ -379,6 +391,7 @@ export interface IConfig {
     "sicf_consistency"?: SICFConsistencyConf | boolean,
     "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "smim_consistency"?: SMIMConsistencyConf | boolean,
+    "sort_empty_key"?: SortEmptyKeyConf | boolean,
     "space_before_colon"?: SpaceBeforeColonConf | boolean,
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
@@ -386,6 +399,7 @@ export interface IConfig {
     "start_at_tab"?: StartAtTabConf | boolean,
     "static_call_via_instance"?: StaticCallViaInstanceConf | boolean,
     "strict_sql"?: StrictSQLConf | boolean,
+    "subrc_after_assign"?: SubrcAfterAssignConf | boolean,
     "superclass_final"?: SuperclassFinalConf | boolean,
     "superfluous_value"?: SuperfluousValueConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
@@ -424,6 +438,8 @@ export interface IConfig {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
     "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
+    "abapdoc_leading_at"?: AbapdocLeadingAtConf | boolean,
+    "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
@@ -446,6 +462,7 @@ export interface IConfig {
     "cds_parser_error"?: CDSParserErrorConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
+    "changing_sorted_line"?: ChangingSortedLineConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
@@ -468,6 +485,7 @@ export interface IConfig {
     "dangerous_statement"?: DangerousStatementConf | boolean,
     "db_operation_in_loop"?: DbOperationInLoopConf | boolean,
     "definitions_top"?: DefinitionsTopConf | boolean,
+    "delete_index_in_loop"?: DeleteIndexInLoopConf | boolean,
     "description_empty"?: DescriptionEmptyConf | boolean,
     "double_space"?: DoubleSpaceConf | boolean,
     "downport"?: DownportConf | boolean,
@@ -568,6 +586,7 @@ export interface IConfig {
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "preferred_parameter_ignored"?: PreferredParameterIgnoredConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
+    "range_row_values"?: RangeRowValuesConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
     "redundant_conversion"?: RedundantConversionConf | boolean,
@@ -584,6 +603,7 @@ export interface IConfig {
     "sicf_consistency"?: SICFConsistencyConf | boolean,
     "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "smim_consistency"?: SMIMConsistencyConf | boolean,
+    "sort_empty_key"?: SortEmptyKeyConf | boolean,
     "space_before_colon"?: SpaceBeforeColonConf | boolean,
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
@@ -591,6 +611,7 @@ export interface IConfig {
     "start_at_tab"?: StartAtTabConf | boolean,
     "static_call_via_instance"?: StaticCallViaInstanceConf | boolean,
     "strict_sql"?: StrictSQLConf | boolean,
+    "subrc_after_assign"?: SubrcAfterAssignConf | boolean,
     "superclass_final"?: SuperclassFinalConf | boolean,
     "superfluous_value"?: SuperfluousValueConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
