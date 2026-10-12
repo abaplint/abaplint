@@ -1,5 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
-import {StatementNode} from "../../nodes";
+import {ExpressionNode, StatementNode} from "../../nodes";
 import {VoidType, TableType, IntegerType, DataReference, AnyType, UnknownType, StructureType, ObjectReferenceType, StringType, TableAccessType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
@@ -10,6 +10,9 @@ import {StatementSyntax} from "../_statement_syntax";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {BuiltIn} from "../_builtin";
+import {ObjectOriented} from "../_object_oriented";
+import {Release, releaseAtLeast} from "../../../version";
 
 export class ReadTable implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -39,6 +42,11 @@ export class ReadTable implements StatementSyntax {
     const components = node.findDirectExpression(Expressions.ComponentCompareSimple);
     if (components !== undefined) {
       ComponentCompareSimple.runSyntax(components, input, rowType);
+      const keyMessage = this.checkKeyOperands(components, input);
+      if (keyMessage !== undefined) {
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), keyMessage));
+        return;
+      }
     }
 
     const indexSource = node.findExpressionAfterToken("INDEX");
@@ -139,4 +147,35 @@ export class ReadTable implements StatementSyntax {
     }
 
   }
+
+  // before 7.40 a WITH [TABLE] KEY operand is not an expression position, a built-in function from 7.02 on
+  // is read as a functional method call there, "method TO_UPPER is unknown" on a system, while
+  // functional methods and the older built-in functions like lines( ) are accepted
+  private checkKeyOperands(node: ExpressionNode, input: SyntaxInput): string | undefined {
+    if (input.scope.getOpenABAP() || releaseAtLeast(input.scope.getRelease(), Release.v740sp02)) {
+      return undefined;
+    }
+    for (const operand of node.findDirectExpressionsMulti([Expressions.Source, Expressions.SimpleSource4])) {
+      const chain = operand.getChildren();
+      if (chain.length !== 1 || !(chain[0] instanceof ExpressionNode) || !(chain[0].get() instanceof Expressions.MethodCallChain)) {
+        continue;
+      }
+      const calls = chain[0].getChildren();
+      if (calls.length !== 1 || !(calls[0] instanceof ExpressionNode) || !(calls[0].get() instanceof Expressions.MethodCall)) {
+        continue;
+      }
+      const name = calls[0].findDirectExpression(Expressions.MethodName)?.concatTokens();
+      if (name === undefined || BuiltIn.methods[name.toUpperCase()]?.release === undefined) {
+        continue;
+      }
+      // a method of the same name hides the built-in function
+      const enclosing = input.scope.findClassDefinition(input.scope.getEnclosingClassName());
+      if (enclosing !== undefined && new ObjectOriented(input.scope).searchMethodName(enclosing, name).method !== undefined) {
+        continue;
+      }
+      return `Built-in function "${name}" cannot be a READ TABLE key operand before 7.40`;
+    }
+    return undefined;
+  }
+
 }
