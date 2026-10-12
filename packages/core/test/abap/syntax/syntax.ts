@@ -66,8 +66,8 @@ function runInterface(abap: string): Issue[] {
   return run(reg);
 }
 
-function runProgram(abap: string, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
-                    languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
+export function runProgram(abap: string, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
+                           languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);
   return run(reg, globalConstants, release, errorNamespace, languageVersion, ambigiousVoids);
@@ -18626,130 +18626,130 @@ ENDCLASS.`;
   });
 });
 
-describe("syntax.ts, built-in function as a READ TABLE key operand before 7.40", () => {
-  const program = (read: string): string => `
-CLASS lcl DEFINITION.
-  PUBLIC SECTION.
-    TYPES: BEGIN OF ty_row,
-             url  TYPE string,
-             name TYPE string,
-           END OF ty_row.
-    TYPES ty_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY
-      WITH NON-UNIQUE SORTED KEY by_name COMPONENTS name.
-    METHODS get_text IMPORTING iv TYPE string RETURNING VALUE(r) TYPE string.
-    METHODS run IMPORTING iv_url TYPE string.
-ENDCLASS.
+describe("syntax.ts, APPEND to a hashed table", () => {
+  const program = (code: string): string => `
+TYPES: BEGIN OF ty_s,
+         id   TYPE i,
+         text TYPE string,
+       END OF ty_s.
+TYPES ty_hashed TYPE HASHED TABLE OF ty_s WITH UNIQUE KEY id.
+DATA lt_map TYPE ty_hashed.
+DATA lt_sorted TYPE SORTED TABLE OF ty_s WITH UNIQUE KEY id.
+DATA lt_std TYPE STANDARD TABLE OF ty_s WITH DEFAULT KEY.
+DATA ls TYPE ty_s.
+${code}`;
+  const message = "Implicit or explicit index operation on hashed table is not possible";
 
-CLASS lcl IMPLEMENTATION.
-  METHOD get_text.
-    r = iv.
-  ENDMETHOD.
-  METHOD run.
-    DATA lt TYPE ty_rows.
-    DATA ls TYPE ty_row.
-    DATA lt_names TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-    DATA lo TYPE REF TO lcl.
-    DATA lv_len TYPE i.
-    ${read}
-  ENDMETHOD.
-ENDCLASS.`;
-
-  it("error, to_lower( ) in WITH KEY", () => {
-    const issues = runProgram(program(`READ TABLE lt INTO ls WITH KEY url = to_lower( iv_url ).`), [], Release.v702);
-    expect(issues[0]?.getMessage()).to.equal(`Built-in function "to_lower" cannot be a READ TABLE key operand before 7.40`);
+  it("error, APPEND wa TO hashed", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, to_upper( ) on table_line", () => {
-    const read = `READ TABLE lt_names WITH KEY table_line = to_upper( iv_url ) TRANSPORTING NO FIELDS.`;
-    const issues = runProgram(program(read), [], Release.v702);
-    expect(issues[0]?.getMessage()).to.equal(`Built-in function "to_upper" cannot be a READ TABLE key operand before 7.40`);
+  it("error, APPEND wa TO hashed, declared inline", () => {
+    const issues = runProgram(program(`DATA lt_inline TYPE HASHED TABLE OF ty_s WITH UNIQUE KEY id.
+APPEND ls TO lt_inline.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, the second key component", () => {
-    const issues = runProgram(program(`READ TABLE lt INTO ls WITH KEY url = iv_url name = condense( iv_url ).`), [], Release.v702);
-    expect(issues[0]?.getMessage()).to.equal(`Built-in function "condense" cannot be a READ TABLE key operand before 7.40`);
+  it("error, APPEND INITIAL LINE TO hashed", () => {
+    const issues = runProgram(program(`APPEND INITIAL LINE TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, named argument", () => {
-    const issues = runProgram(program(`READ TABLE lt INTO ls WITH KEY url = to_lower( val = iv_url ).`), [], Release.v702);
-    expect(issues[0]?.getMessage()).to.equal(`Built-in function "to_lower" cannot be a READ TABLE key operand before 7.40`);
+  it("error, APPEND INITIAL LINE TO hashed ASSIGNING", () => {
+    const issues = runProgram(program(`APPEND INITIAL LINE TO lt_map ASSIGNING FIELD-SYMBOL(<ls>).`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, WITH TABLE KEY ... COMPONENTS", () => {
-    const read = `READ TABLE lt INTO ls WITH TABLE KEY by_name COMPONENTS name = to_upper( iv_url ).`;
-    const issues = runProgram(program(read), [], Release.v702);
-    expect(issues[0]?.getMessage()).to.equal(`Built-in function "to_upper" cannot be a READ TABLE key operand before 7.40`);
+  it("error, APPEND wa TO hashed REFERENCE INTO", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_map REFERENCE INTO DATA(lr).`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, v700", () => {
-    const issues = runProgram(program(`READ TABLE lt INTO ls WITH KEY url = to_lower( iv_url ).`), [], Release.v700);
-    expect(issues[0]?.getMessage()).to.equal(`Built-in function "to_lower" cannot be a READ TABLE key operand before 7.40`);
+  it("error, APPEND LINES OF TO hashed", () => {
+    const issues = runProgram(program(`APPEND LINES OF lt_std TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("ok, a variable", () => {
-    const issues = runProgram(program(`READ TABLE lt INTO ls WITH KEY url = iv_url.`), [], Release.v702);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("error, APPEND VALUE TO hashed", () => {
+    const issues = runProgram(program(`APPEND VALUE #( id = 1 ) TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("ok, a functional method call", () => {
-    const issues = runProgram(program(`READ TABLE lt INTO ls WITH KEY url = get_text( iv_url ).`), [], Release.v702);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("error, APPEND TO a field symbol typed as hashed", () => {
+    const issues = runProgram(program(`FIELD-SYMBOLS <lt> TYPE ty_hashed.
+ASSIGN lt_map TO <lt>.
+APPEND ls TO <lt>.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("ok, a functional method call on an object", () => {
-    const issues = runProgram(program(`READ TABLE lt INTO ls WITH KEY url = lo->get_text( iv_url ).`), [], Release.v702);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("error, APPEND TO a dereferenced data reference to a hashed table", () => {
+    const issues = runProgram(program(`DATA lr_map TYPE REF TO ty_hashed.
+CREATE DATA lr_map.
+APPEND ls TO lr_map->*.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("ok, a built-in function as argument of a functional method call", () => {
-    const issues = runProgram(program(`READ TABLE lt INTO ls WITH KEY url = get_text( to_lower( iv_url ) ).`), [], Release.v702);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("error, APPEND TO a hashed table component", () => {
+    const issues = runProgram(program(`DATA: BEGIN OF ls_deep,
+        map TYPE ty_hashed,
+      END OF ls_deep.
+APPEND ls TO ls_deep-map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("ok, strlen( )", () => {
-    const read = `READ TABLE lt_names WITH KEY table_line = strlen( iv_url ) TRANSPORTING NO FIELDS.`;
-    const issues = runProgram(program(read), [], Release.v702);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO standard", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_std.
+APPEND INITIAL LINE TO lt_std ASSIGNING FIELD-SYMBOL(<ls>).
+APPEND LINES OF lt_map TO lt_std.`));
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, lines( ) after INDEX", () => {
-    const issues = runProgram(program(`READ TABLE lt INTO ls INDEX lines( lt ).`), [], Release.v702);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO sorted", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_sorted.
+APPEND INITIAL LINE TO lt_sorted.
+APPEND LINES OF lt_std TO lt_sorted.`));
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, v740sp02", () => {
-    const issues = runProgram(program(`READ TABLE lt INTO ls WITH KEY url = to_lower( iv_url ).`), [], Release.v740sp02);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, INSERT INTO TABLE hashed", () => {
+    const issues = runProgram(program(`INSERT ls INTO TABLE lt_map.
+INSERT LINES OF lt_std INTO TABLE lt_map.`));
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, v750", () => {
-    const issues = runProgram(program(`READ TABLE lt INTO ls WITH KEY url = to_lower( iv_url ).`), [], Release.v750);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO generic tables", () => {
+    const issues = runProgram(`
+FORM foo CHANGING ct_any TYPE ANY TABLE ct_index TYPE INDEX TABLE ct_hashed TYPE HASHED TABLE.
+  DATA ls TYPE i.
+  FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
+  FIELD-SYMBOLS <lt_index> TYPE INDEX TABLE.
+  APPEND INITIAL LINE TO ct_index ASSIGNING FIELD-SYMBOL(<lv_index>).
+  APPEND INITIAL LINE TO ct_any ASSIGNING FIELD-SYMBOL(<lv_any>).
+  APPEND INITIAL LINE TO ct_hashed ASSIGNING FIELD-SYMBOL(<lv_hashed>).
+  ASSIGN ct_any TO <lt_any>.
+  APPEND ls TO <lt_any>.
+  ASSIGN ct_index TO <lt_index>.
+  APPEND ls TO <lt_index>.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, open-abap", () => {
-    const issues = runProgram(program(`READ TABLE lt INTO ls WITH KEY url = to_lower( iv_url ).`), [], Release["open-abap"]);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO a void type", () => {
+    const issues = runProgram(`
+DATA lt_void TYPE void_hashed_tt.
+DATA ls TYPE i.
+APPEND ls TO lt_void.
+APPEND INITIAL LINE TO lt_void.`);
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, a method named like a built-in function hides it", () => {
-    const abap = `
-CLASS lcl DEFINITION.
-  PUBLIC SECTION.
-    METHODS to_lower IMPORTING val TYPE string RETURNING VALUE(r) TYPE string.
-    METHODS run IMPORTING iv_url TYPE string.
-ENDCLASS.
-
-CLASS lcl IMPLEMENTATION.
-  METHOD to_lower.
-    r = val.
-  ENDMETHOD.
-  METHOD run.
-    DATA lt TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-    READ TABLE lt WITH KEY table_line = to_lower( iv_url ) TRANSPORTING NO FIELDS.
-  ENDMETHOD.
-ENDCLASS.`;
-    const issues = runProgram(abap, [], Release.v702);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO an unknown type", () => {
+    const issues = runProgram(`
+DATA lt_unknown TYPE zunknown_hashed_tt.
+DATA ls TYPE i.
+APPEND ls TO lt_unknown.
+APPEND INITIAL LINE TO lt_unknown.`);
+    expect(issues.length).to.equal(0);
   });
 });
