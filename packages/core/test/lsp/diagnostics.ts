@@ -7,7 +7,7 @@ import {Config} from "../../src";
 describe("LSP, diagnostics", () => {
 
   it("find issues for file", () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
+    const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.\n");
     const registry = new Registry().addFile(file).parse();
     expect(new Diagnostics(registry).find({uri: file.getFilename()}).length).to.equal(3);
   });
@@ -40,7 +40,7 @@ endclass.`);
 
   it("Unknown object type, multi files", () => {
     const file1 = new MemoryFile("LICENSE", "moo");
-    const file2 = new MemoryFile("src/zprog.prog.abap", "REPORT zprog.");
+    const file2 = new MemoryFile("src/zprog.prog.abap", "REPORT zprog.\n");
     const registry = new Registry().addFile(file1).addFile(file2);
 
     expect(new Diagnostics(registry).find({uri: file2.getFilename()}).length).to.equal(0);
@@ -60,7 +60,7 @@ endclass.`);
   it("find issues for include file", () => {
     const main = new MemoryFile("zfoobar.prog.abap", `REPORT zfoobar.
 INCLUDE zinclude.`);
-    const incl = new MemoryFile("zinclude.prog.abap", "asdf.");
+    const incl = new MemoryFile("zinclude.prog.abap", "asdf.\n");
     const inclxml = new MemoryFile("zinclude.prog.xml", "<SUBC>I</SUBC>");
 
     const registry = new Registry();
