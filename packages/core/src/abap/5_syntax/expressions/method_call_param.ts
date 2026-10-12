@@ -13,7 +13,8 @@ import {checkOffsetLength} from "./_check_offset_length";
 import {checkTextSymbol} from "./_check_text_symbol";
 
 export class MethodCallParam {
-  public static runSyntax(node: ExpressionNode, input: SyntaxInput, method: IMethodDefinition | VoidType): void {
+  /** returns the type of the unnamed argument, if any */
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, method: IMethodDefinition | VoidType): AbstractType | undefined {
     if (!(node.get() instanceof Expressions.MethodCallParam)) {
       const message = "MethodCallParam, unexpected input";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -90,6 +91,7 @@ export class MethodCallParam {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
+      return sourceType;
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.ParameterListS) {
       new MethodParameters().checkExporting(child, input, method);
     } else if (child.get() instanceof Expressions.MethodParameters) {
@@ -99,5 +101,6 @@ export class MethodCallParam {
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
     }
+    return undefined;
   }
 }

@@ -2279,4 +2279,28 @@ DATA(res) = cha && cha.`;
     expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("inline DATA from frac( f ) is a float", () => {
+    const type = resolveVariable(`DATA time TYPE f.
+  DATA(phase) = frac( time ).`, "phase")?.getType();
+    expect(type).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("inline DATA from abs( f ) is a float", () => {
+    const type = resolveVariable(`DATA dist TYPE f.
+  DATA(d) = abs( dist ).`, "d")?.getType();
+    expect(type).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("inline DATA from frac( i ) stays an integer", () => {
+    const type = resolveVariable(`DATA n TYPE i.
+  DATA(r) = frac( n ).`, "r")?.getType();
+    expect(type).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("inline DATA from ceil( p ) is packed", () => {
+    const type = resolveVariable(`DATA amount TYPE p LENGTH 10 DECIMALS 2.
+  DATA(r) = ceil( amount ).`, "r")?.getType();
+    expect(type).to.be.instanceof(Basic.PackedType);
+  });
+
 });
