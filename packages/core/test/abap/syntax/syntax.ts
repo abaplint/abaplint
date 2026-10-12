@@ -66,8 +66,8 @@ function runInterface(abap: string): Issue[] {
   return run(reg);
 }
 
-function runProgram(abap: string, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
-                    languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
+export function runProgram(abap: string, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
+                           languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);
   return run(reg, globalConstants, release, errorNamespace, languageVersion, ambigiousVoids);
