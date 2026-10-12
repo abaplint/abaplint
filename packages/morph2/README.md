@@ -14,6 +14,8 @@ npm run transpile
 
 `npm run transpile` checks GitHub for the latest stable release, downloads the matching platform binary, and runs `abapiti abaplint -o ...` with `ABAPITI_NAMES=readable`. It verifies the asset SHA-256 digest when GitHub provides one, and caches the binary under `.cache/abapiti-release/<tag>/`. Generated classes and packages go under `output/`; the manifest records the release tag, binary digest, and naming mode.
 
+After `abaplint --fix`, `scripts/package-abapgit.mjs` writes an abapGit `.clas.xml` or `.intf.xml` next to each object in `output/classes` and packs everything into `output/abaplint-classes-abapgit.zip`, which can be imported with abapGit as an offline repository. Descriptions come from the `* TS:` header of each object, and classes that inherit from a `CX_` class get exception category 40.
+
 The release bundle is self-contained; the generated output does not use the local `packages/core/src` tree. Each run checks the latest release tag before reusing its cached binary, so a newly published release is picked up automatically.
 
 ## Scope and limits
