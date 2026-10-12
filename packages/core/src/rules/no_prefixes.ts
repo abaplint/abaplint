@@ -36,6 +36,7 @@ const MESSAGE = "Avoid hungarian notation";
 export class NoPrefixes extends ABAPRule {
 
   private conf = new NoPrefixesConf();
+  private regex = this.compile();
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -61,6 +62,19 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
 
   public setConfig(conf: NoPrefixesConf) {
     this.conf = conf;
+    this.regex = this.compile();
+  }
+
+  private compile() {
+    const compile = (pattern: string | undefined) => pattern !== undefined && pattern !== "" ? new RegExp(pattern, "i") : undefined;
+    return {
+      data: compile(this.conf.data),
+      statics: compile(this.conf.statics),
+      fieldSymbols: compile(this.conf.fieldSymbols),
+      constants: compile(this.conf.constants),
+      types: compile(this.conf.types),
+      methodParameters: compile(this.conf.methodParameters),
+    };
   }
 
   public runParsed(file: ABAPFile) {
@@ -79,43 +93,43 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/sub-sections/AvoidEncodi
       max = 10;
     }
 
-    if (config.data !== undefined && config.data !== "") {
-      ret.push(...this.checkData(structure, new RegExp(config.data, "i"), file));
+    if (this.regex.data !== undefined) {
+      ret.push(...this.checkData(structure, this.regex.data, file));
     }
     if (ret.length >= max) {
       return ret;
     }
 
-    if (config.statics !== undefined && config.statics !== "") {
-      ret.push(...this.checkStatics(structure, new RegExp(config.statics, "i"), file));
+    if (this.regex.statics !== undefined) {
+      ret.push(...this.checkStatics(structure, this.regex.statics, file));
     }
     if (ret.length >= max) {
       return ret;
     }
 
-    if (config.fieldSymbols !== undefined && config.fieldSymbols !== "") {
-      ret.push(...this.checkFieldSymbols(structure, new RegExp(config.fieldSymbols, "i"), file));
+    if (this.regex.fieldSymbols !== undefined) {
+      ret.push(...this.checkFieldSymbols(structure, this.regex.fieldSymbols, file));
     }
     if (ret.length >= max) {
       return ret;
     }
 
-    if (config.constants !== undefined && config.constants !== "") {
-      ret.push(...this.checkConstants(structure, new RegExp(config.constants, "i"), file));
+    if (this.regex.constants !== undefined) {
+      ret.push(...this.checkConstants(structure, this.regex.constants, file));
     }
     if (ret.length >= max) {
       return ret;
     }
 
-    if (config.types !== undefined && config.types !== "") {
-      ret.push(...this.checkTypes(structure, new RegExp(config.types, "i"), file));
+    if (this.regex.types !== undefined) {
+      ret.push(...this.checkTypes(structure, this.regex.types, file));
     }
     if (ret.length >= max) {
       return ret;
     }
 
-    if (config.methodParameters !== undefined && config.methodParameters !== "") {
-      ret.push(...this.checkMethodParameters(structure, new RegExp(config.methodParameters, "i"), file));
+    if (this.regex.methodParameters !== undefined) {
+      ret.push(...this.checkMethodParameters(structure, this.regex.methodParameters, file));
     }
 
     return ret;

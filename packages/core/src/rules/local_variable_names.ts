@@ -22,6 +22,7 @@ export class LocalVariableNamesConf extends NamingRuleConfig {
 export class LocalVariableNames extends ABAPRule {
 
   private conf = new LocalVariableNamesConf();
+  private regex = this.compile();
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -52,6 +53,16 @@ ENDFORM.`,
 
   public setConfig(conf: LocalVariableNamesConf) {
     this.conf = conf;
+    this.regex = this.compile();
+  }
+
+  private compile() {
+    return {
+      expectedData: new RegExp(this.conf.expectedData, "i"),
+      expectedConstant: new RegExp(this.conf.expectedConstant, "i"),
+      expectedFS: new RegExp(this.conf.expectedFS, "i"),
+      ignorePatterns: NameValidator.compileIgnorePatterns(this.conf),
+    };
   }
 
   public runParsed(file: ABAPFile): Issue[] {
@@ -91,7 +102,7 @@ ENDFORM.`,
       const found = dat.findFirstExpression(Expressions.DefinitionName);
       if (found) {
         const token = found.getFirstToken();
-        ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
+        ret = ret.concat(this.checkName(token, file, this.conf.expectedData, this.regex.expectedData));
       }
     }
 
@@ -100,7 +111,7 @@ ENDFORM.`,
       const found = dat.findFirstExpression(Expressions.TargetField);
       if (found) {
         const token = found.getFirstToken();
-        ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
+        ret = ret.concat(this.checkName(token, file, this.conf.expectedData, this.regex.expectedData));
       }
     }
 
@@ -112,7 +123,7 @@ ENDFORM.`,
       const found = stat?.findFirstExpression(Expressions.DefinitionName);
       if (found) {
         const token = found.getFirstToken();
-        ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
+        ret = ret.concat(this.checkName(token, file, this.conf.expectedData, this.regex.expectedData));
       }
     }
 
@@ -120,7 +131,7 @@ ENDFORM.`,
       const found = fieldsymbol.findFirstExpression(Expressions.FieldSymbol);
       if (found) {
         const token = found.getFirstToken();
-        ret = ret.concat(this.checkName(token, file, this.conf.expectedFS));
+        ret = ret.concat(this.checkName(token, file, this.conf.expectedFS, this.regex.expectedFS));
       }
     }
 
@@ -129,7 +140,7 @@ ENDFORM.`,
       const found = fieldsymbol.findFirstExpression(Expressions.TargetFieldSymbol);
       if (found) {
         const token = found.getFirstToken();
-        ret = ret.concat(this.checkName(token, file, this.conf.expectedFS));
+        ret = ret.concat(this.checkName(token, file, this.conf.expectedFS, this.regex.expectedFS));
       }
     }
 
@@ -142,18 +153,17 @@ ENDFORM.`,
       const found = constant.findFirstExpression(Expressions.DefinitionName);
       if (found) {
         const token = found.getFirstToken();
-        ret = ret.concat(this.checkName(token, file, this.conf.expectedConstant));
+        ret = ret.concat(this.checkName(token, file, this.conf.expectedConstant, this.regex.expectedConstant));
       }
     }
 
     return ret;
   }
 
-  private checkName(token: AbstractToken, file: ABAPFile, expected: string): Issue[] {
+  private checkName(token: AbstractToken, file: ABAPFile, expected: string, regex: RegExp): Issue[] {
     const ret: Issue[] = [];
-    const regex = new RegExp(expected, "i");
     const name = token.getStr();
-    if (NameValidator.violatesRule(name, regex, this.conf)) {
+    if (NameValidator.violatesRule(name, regex, this.conf, this.regex.ignorePatterns)) {
       const message = this.getDescription(expected, name);
       const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
       ret.push(issue);

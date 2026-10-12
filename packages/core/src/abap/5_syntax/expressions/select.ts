@@ -497,10 +497,8 @@ export class Select {
   }
 
   private static findFields(node: ExpressionNode, input: SyntaxInput): FieldList {
-    let expr: ExpressionNode | undefined = undefined;
+    const expr = node.findFirstExpression(Expressions.SQLFieldList);
     const ret = [];
-
-    expr = node.findFirstExpression(Expressions.SQLFieldList);
     if (expr?.getFirstChild()?.get() instanceof Expressions.Dynamic) {
       Dynamic.runSyntax(expr.getFirstChild() as ExpressionNode, input);
     }

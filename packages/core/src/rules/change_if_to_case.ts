@@ -17,6 +17,7 @@ export class ChangeIfToCaseConf extends BasicRuleConfig {
 
 export class ChangeIfToCase extends ABAPRule {
   private conf = new ChangeIfToCaseConf();
+  private skipNames: RegExp[] = [];
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -45,6 +46,7 @@ ENDCASE.`,
 
   public setConfig(conf: ChangeIfToCaseConf) {
     this.conf = conf;
+    this.skipNames = (this.conf.skipNames || []).map(skip => new RegExp(skip, "i"));
   }
 
   public runParsed(file: ABAPFile) {
@@ -115,7 +117,7 @@ ENDCASE.`,
       return false;
     }
 
-    let chain = "";
+    let chain: string;
     if (tuples[0].left === tuples[1].left) {
       chain = tuples[0].left;
     } else if (tuples[0].left === tuples[1].right) {
@@ -128,8 +130,7 @@ ENDCASE.`,
       return false;
     }
 
-    for (const skip of this.getConfig().skipNames || []) {
-      const reg = new RegExp(skip, "i");
+    for (const reg of this.skipNames) {
       if (chain.match(reg)) {
         return false;
       }

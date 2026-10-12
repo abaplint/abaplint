@@ -26,7 +26,7 @@ export class AttributeName {
 
     const helper = new ObjectOriented(input.scope);
 
-    let ret: AbstractType | undefined = undefined;
+    let ret: AbstractType | undefined;
 
     if (context instanceof ObjectReferenceType) {
       const def = input.scope.findObjectDefinition(context.getIdentifierName());

@@ -57,7 +57,7 @@ ENDIF.
     }
 
     for (const sub of structure.findAllExpressionsMulti([Expressions.CondSub, Expressions.ComponentCondSub])) {
-      let cond: readonly ExpressionNode[] = [];
+      let cond: readonly ExpressionNode[];
       if (sub.get() instanceof Expressions.CondSub) {
         cond = sub.findDirectExpressions(Expressions.Cond);
       } else {

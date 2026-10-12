@@ -3,7 +3,25 @@ import {StructureNode, StatementNode} from "../../nodes";
 import {INode} from "../../nodes/_inode";
 import {IStatement, MacroCall, MacroRecursion, NativeSQL} from "../../2_statements/statements/_statement";
 import {IStructureRunnable} from "./_structure_runnable";
-import {IMatch} from "./_match";
+import {IMatch, IMatchAt} from "./_match";
+
+function toMatch(statements: StatementNode[], m: IMatchAt): IMatch {
+  return {
+    matched: statements.slice(0, m.next),
+    unmatched: statements.slice(m.next),
+    error: m.error,
+    errorDescription: m.errorDescription,
+    errorMatched: m.errorMatched,
+  };
+}
+
+function success(next: number): IMatchAt {
+  return {next, error: false, errorDescription: "", errorMatched: 0};
+}
+
+function failure(next: number, errorDescription: string, errorMatched: number): IMatchAt {
+  return {next, error: true, errorDescription, errorMatched};
+}
 
 class Sequence implements IStructureRunnable {
   private readonly list: IStructureRunnable[];
@@ -29,37 +47,19 @@ class Sequence implements IStructureRunnable {
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {
-    let inn = statements;
-    let out: StatementNode[] = [];
+    return toMatch(statements, this.runAt(statements, 0, parent));
+  }
+
+  public runAt(statements: StatementNode[], index: number, parent: INode): IMatchAt {
+    let next = index;
     for (const i of this.list) {
-      const match = i.run(inn, parent);
+      const match = i.runAt(statements, next, parent);
       if (match.error) {
-        return {
-          matched: [],
-          unmatched: statements,
-          error: true,
-          errorDescription: match.errorDescription,
-          errorMatched: out.length,
-        };
+        return failure(index, match.errorDescription, next - index);
       }
-
-      if (match.matched.length < 100) {
-        out.push(...match.matched);
-      } else {
-        // avoid using the spread operator, it might trigger "Maximum call stack size exceeded"
-        // when the number of matched elements is very large
-        out = out.concat(match.matched);
-      }
-
-      inn = match.unmatched;
+      next = match.next;
     }
-    return {
-      matched: out,
-      unmatched: inn,
-      error: false,
-      errorDescription: "",
-      errorMatched: 0,
-    };
+    return success(next);
   }
 }
 
@@ -106,23 +106,21 @@ class Alternative implements IStructureRunnable {
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {
+    return toMatch(statements, this.runAt(statements, 0, parent));
+  }
+
+  public runAt(statements: StatementNode[], index: number, parent: INode): IMatchAt {
     this.setupMap();
     let count = 0;
     let countError = "";
 
-    if (statements.length === 0) {
-      return {
-        matched: [],
-        unmatched: statements,
-        error: true,
-        errorDescription: countError,
-        errorMatched: count,
-      };
+    if (index >= statements.length) {
+      return failure(index, countError, count);
     }
 
-    const token = statements[0].getFirstToken().getStr().toUpperCase();
+    const token = statements[index].getFirstToken().getStr().toUpperCase();
     for (const i of this.map[token] || []) {
-      const match = i.run(statements, parent);
+      const match = i.runAt(statements, index, parent);
       if (match.error === false) {
         return match;
       }
@@ -133,7 +131,7 @@ class Alternative implements IStructureRunnable {
     }
 
     for (const i of this.map[""] || []) {
-      const match = i.run(statements, parent);
+      const match = i.runAt(statements, index, parent);
       if (match.error === false) {
         return match;
       }
@@ -144,21 +142,9 @@ class Alternative implements IStructureRunnable {
     }
 
     if (count === 0) {
-      return {
-        matched: [],
-        unmatched: statements,
-        error: true,
-        errorDescription: "Unexpected code structure",
-        errorMatched: count,
-      };
+      return failure(index, "Unexpected code structure", count);
     } else {
-      return {
-        matched: [],
-        unmatched: statements,
-        error: true,
-        errorDescription: countError,
-        errorMatched: count,
-      };
+      return failure(index, countError, count);
     }
   }
 }
@@ -179,7 +165,11 @@ class Optional implements IStructureRunnable {
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {
-    const ret = this.obj.run(statements, parent);
+    return toMatch(statements, this.runAt(statements, 0, parent));
+  }
+
+  public runAt(statements: StatementNode[], index: number, parent: INode): IMatchAt {
+    const ret = this.obj.runAt(statements, index, parent);
     ret.error = false;
     return ret;
   }
@@ -205,50 +195,27 @@ class Star implements IStructureRunnable {
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {
-    let inn = statements;
-    let out: StatementNode[] = [];
+    return toMatch(statements, this.runAt(statements, 0, parent));
+  }
+
+  public runAt(statements: StatementNode[], index: number, parent: INode): IMatchAt {
+    let next = index;
     while (true) {
-      if (inn.length === 0) {
-        return {
-          matched: out,
-          unmatched: inn,
-          error: false,
-          errorDescription: "",
-          errorMatched: 0,
-        };
+      if (next >= statements.length) {
+        return success(next);
       }
 
-      const match = this.obj.run(inn, parent);
+      const match = this.obj.runAt(statements, next, parent);
 
       if (match.error === true) {
         if (match.errorMatched > 0) {
-          return {
-            matched: out,
-            unmatched: inn,
-            error: true,
-            errorDescription: match.errorDescription,
-            errorMatched: match.errorMatched,
-          };
+          return failure(next, match.errorDescription, match.errorMatched);
         } else {
-          return {
-            matched: out,
-            unmatched: inn,
-            error: false,
-            errorDescription: "",
-            errorMatched: 0,
-          };
+          return success(next);
         }
       }
 
-      if (match.matched.length < 100) {
-        out.push(...match.matched);
-      } else {
-        // avoid using the spread operator, it might trigger "Maximum call stack size exceeded"
-        // when the number of matched elements is very large
-        out = out.concat(match.matched);
-      }
-
-      inn = match.unmatched;
+      next = match.next;
     }
   }
 
@@ -287,10 +254,14 @@ class SubStructure implements IStructureRunnable {
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {
+    return toMatch(statements, this.runAt(statements, 0, parent));
+  }
+
+  public runAt(statements: StatementNode[], index: number, parent: INode): IMatchAt {
     const nparent = new StructureNode(this.s);
     this.setupMatcher();
-    const ret = this.matcher.run(statements, nparent);
-    if (ret.matched.length === 0) {
+    const ret = this.matcher.runAt(statements, index, nparent);
+    if (ret.next === index) {
       ret.error = true;
     } else {
       parent.addChild(nparent);
@@ -327,31 +298,17 @@ class SubStatement implements IStructureRunnable {
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {
-    if (statements.length === 0) {
-      return {
-        matched: [],
-        unmatched: [],
-        error: true,
-        errorDescription: "Expected " + this.className().toUpperCase(),
-        errorMatched: 0,
-      };
-    } else if (statements[0].get() instanceof this.obj) {
-      parent.addChild(statements[0]);
-      return {
-        matched: [statements[0]],
-        unmatched: statements.splice(1),
-        error: false,
-        errorDescription: "",
-        errorMatched: 0,
-      };
+    return toMatch(statements, this.runAt(statements, 0, parent));
+  }
+
+  public runAt(statements: StatementNode[], index: number, parent: INode): IMatchAt {
+    if (index >= statements.length) {
+      return failure(statements.length, "Expected " + this.className().toUpperCase(), 0);
+    } else if (statements[index].get() instanceof this.obj) {
+      parent.addChild(statements[index]);
+      return success(index + 1);
     } else {
-      return {
-        matched: [],
-        unmatched: statements,
-        error: true,
-        errorDescription: "Expected " + this.className().toUpperCase(),
-        errorMatched: 0,
-      };
+      return failure(index, "Expected " + this.className().toUpperCase(), 0);
     }
   }
 }

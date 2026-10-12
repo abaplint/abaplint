@@ -58,7 +58,7 @@ export class MethodLengthStats {
   }
 
   private static findName(stat: StatementNode): string {
-    let name: string = "";
+    let name: string;
     const nameExpr = stat.findFirstExpression(MethodName);
     if (nameExpr) {
       name = nameExpr.getFirstToken().getStr();

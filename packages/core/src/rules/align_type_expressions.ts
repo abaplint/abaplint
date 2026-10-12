@@ -114,7 +114,7 @@ ENDINTERFACE.`,
         continue;
       }
 
-      let fix: IEdit | undefined = undefined;
+      let fix: IEdit | undefined;
       if (f.after.getCol() < column) {
         fix = EditHelper.insertAt(file, f.after, " ".repeat(column - f.after.getCol()));
       } else {

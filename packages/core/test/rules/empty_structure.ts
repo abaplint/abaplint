@@ -1,4 +1,4 @@
-import {EmptyStructure} from "../../src/rules";
+import {EmptyStructure, EmptyStructureConf} from "../../src/rules";
 import {testRule} from "./_utils";
 
 const tests = [
@@ -90,3 +90,64 @@ result = xsdbool( sy-subrc = 0 ).`, cnt: 0},
 ];
 
 testRule(tests, EmptyStructure);
+
+const catchTests = [
+  // empty CATCH, as measured on a 7.58 system: SLIN "No exception handling after the CATCH statement" (UNR 0245)
+  {abap: `TRY.
+    WRITE 'a'.
+  CATCH cx_root.
+ENDTRY.`, cnt: 1}, // C1 empty CATCH
+  {abap: `TRY.
+    WRITE 'a'.
+  CATCH cx_root ##NO_HANDLER.
+ENDTRY.`, cnt: 0}, // C2 pragma
+  {abap: `TRY.
+    WRITE 'a'.
+  CATCH cx_root. "#EC NO_HANDLER
+ENDTRY.`, cnt: 0}, // C3 pseudo comment
+  {abap: `TRY.
+    WRITE 'a'.
+  CATCH cx_root.
+    " intentionally ignored
+ENDTRY.`, cnt: 1}, // C4 only a comment
+  {abap: `TRY.
+    WRITE 'a'.
+  CATCH cx_root INTO DATA(lx).
+ENDTRY.`, cnt: 1}, // C5 INTO
+  {abap: `TRY.
+    WRITE 'a'.
+  CATCH cx_sy_zerodivide cx_static_check.
+ENDTRY.`, cnt: 1}, // C6 two classes
+  {abap: `TRY.
+    WRITE 'a'.
+  CATCH BEFORE UNWIND cx_root.
+ENDTRY.`, cnt: 1}, // C7 BEFORE UNWIND
+  {abap: `TRY.
+    WRITE 'a'.
+  CATCH cx_static_check.
+  CATCH cx_root.
+    RETURN.
+ENDTRY.`, cnt: 1}, // C8 first of two
+  {abap: `TRY.
+    WRITE 'a'.
+  CATCH cx_root.
+    RETURN.
+  CLEANUP.
+ENDTRY.`, cnt: 0}, // C9 empty CLEANUP
+  {abap: `TRY.
+    WRITE 'a'.
+  CATCH cx_root.
+    RETURN.
+ENDTRY.`, cnt: 0}, // C10 not empty
+
+];
+
+const catchConfig = new EmptyStructureConf();
+catchConfig.catch = true;
+testRule(catchTests, EmptyStructure, catchConfig, "test empty_structure rule, catch");
+
+// off by default
+testRule([{abap: `TRY.
+    WRITE 'a'.
+  CATCH cx_root.
+ENDTRY.`, cnt: 0}], EmptyStructure, undefined, "test empty_structure rule, catch off by default");

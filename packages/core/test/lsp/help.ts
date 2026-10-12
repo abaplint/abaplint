@@ -10,7 +10,7 @@ describe("LSP, help", () => {
     const file = new MemoryFile("foobar.prog.abap", "DO.");
     const reg = new Registry().addFile(file).parse();
 
-    let help = "";
+    let help: string;
     for (let i = 0; i < 2; i++) {
       help = Help.find(reg, {uri: file.getFilename()}, LServer.Position.create(0, i));
       expect(help).to.contain("Statement: <a href=\"https://syntax.abaplint.org/#/statement/Do\" target=\"_blank\">Do</a>");

@@ -15,6 +15,13 @@ import {Identifier as IdentifierToken} from "../1_lexer/tokens/identifier";
 import {ScopeType} from "../5_syntax/_scope_type";
 import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 
+// the keywords that can follow a parameter in each section, a plain parameter name is read as them
+const KEYWORDS_AFTER: {[section: string]: string[]} = {
+  "IMPORTING": ["PREFERRED", "EXPORTING", "CHANGING", "RETURNING", "RAISING", "EXCEPTIONS"],
+  "EXPORTING": ["CHANGING", "RETURNING", "RAISING", "EXCEPTIONS"],
+  "CHANGING": ["RETURNING", "RAISING", "EXCEPTIONS"],
+};
+
 // todo:
 // this.exceptions = [];
 // also consider RAISING vs EXCEPTIONS
@@ -295,6 +302,7 @@ export class MethodParameters implements IMethodParameters {
   }
 
   private add(target: TypedIdentifier[], source: ExpressionNode, input: SyntaxInput, meta: IdentifierMeta[], abstractMethod: boolean): void {
+    this.checkKeywordNames(source, input);
     for (const opt of source.findAllExpressions(Expressions.MethodParamOptional)) {
       const p = opt.findDirectExpression(Expressions.MethodParam);
       if (p === undefined) {
@@ -333,6 +341,55 @@ export class MethodParameters implements IMethodParameters {
     for (const param of params) {
       const extraMeta = this.isPassByValue(param) ? [IdentifierMeta.PassByValue] : [];
       target.push(MethodParam.runSyntax(param, input, [...meta, ...extraMeta]));
+    }
+  }
+
+  // A system reads a plain parameter name as a keyword wherever that keyword can stand, measured on 758:
+  // "val TYPE clike default TYPE i" makes default the DEFAULT addition of val, and then fails
+  // with "Unable to interpret ..." on what follows. "!default" and "VALUE(default)" are names
+  private checkKeywordNames(section: ExpressionNode, input: SyntaxInput): void {
+    const following = KEYWORDS_AFTER[section.getFirstToken().getStr().toUpperCase()];
+    if (following === undefined) {
+      return;
+    }
+    // undefined: no parameter before in this section, true: the one before has OPTIONAL or DEFAULT
+    let previousHasAddition: boolean | undefined = undefined;
+    for (const child of section.getChildren()) {
+      if (!(child instanceof ExpressionNode)) {
+        continue;
+      }
+      let param: ExpressionNode | undefined = undefined;
+      let optional = false;
+      if (child.get() instanceof Expressions.MethodParamOptional) {
+        param = child.findDirectExpression(Expressions.MethodParam);
+        optional = child.findDirectTokenByText("OPTIONAL") !== undefined;
+      } else if (child.get() instanceof Expressions.MethodParam) {
+        param = child;
+      } else if (child.get() instanceof Expressions.MethodParamName) {
+        // "TYPE ANY STRUCTURE", not measured, so never reported after it
+        previousHasAddition = true;
+        continue;
+      }
+      if (param === undefined) {
+        continue;
+      }
+
+      const first = param.getFirstToken();
+      const name = first.getStr().toUpperCase();
+      if (param.getChildren()[0]?.get() instanceof Expressions.MethodParamName) {
+        let readAs: string | undefined = undefined;
+        if (following.includes(name)) {
+          readAs = "the " + (name === "PREFERRED" ? "PREFERRED PARAMETER" : name) + " addition";
+        } else if ((name === "DEFAULT" || name === "OPTIONAL") && previousHasAddition === false) {
+          readAs = "the " + name + " addition of the parameter before it";
+        }
+        if (readAs !== undefined) {
+          const message = "Parameter \"" + first.getStr() + "\" is read as " + readAs + ", rename it or escape it as !" + first.getStr();
+          input.issues.push(syntaxIssue(input, first, message));
+        }
+      }
+
+      previousHasAddition = optional || param.findFirstExpression(Expressions.Default) !== undefined;
     }
   }
 

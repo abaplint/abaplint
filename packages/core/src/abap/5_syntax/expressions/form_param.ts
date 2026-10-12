@@ -22,7 +22,7 @@ export class FormParam {
     if (node.findDirectTokenByText("STRUCTURE") && nameToken) {
       // STRUCTURES typing
       const typeName = node.findDirectExpression(SimpleFieldChain)?.getFirstToken().getStr();
-      let type: AbstractType | TypedIdentifier | undefined = undefined;
+      let type: AbstractType | TypedIdentifier | undefined;
       if (typeName) {
         type = input.scope.findType(typeName)?.getType();
         if (type === undefined) {

@@ -192,7 +192,7 @@ export class CDSLexer {
           break;
         case "@":
           // @ starts a new annotation; flush current token and start building with @
-          build = result.add(build, row, col, mode);
+          result.add(build, row, col, mode);
           build = "@";
           break;
         default:

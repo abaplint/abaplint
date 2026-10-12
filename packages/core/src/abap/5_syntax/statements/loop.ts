@@ -104,7 +104,7 @@ export class Loop implements StatementSyntax {
 
       // https://github.com/abap2xlsx/abap2xlsx/issues/1341
       const keyName = node.findExpressionAfterToken("KEY");
-      let key: ITableKey | undefined = undefined;
+      let key: ITableKey | undefined;
       const name = keyName?.get() instanceof Expressions.SimpleName ? keyName.getFirstToken().getStr().toUpperCase() : undefined;
       // it might be dynamic, in that case we cannot check anything; and
       // primary_key is the predefined name of the primary key every table has

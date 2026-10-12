@@ -46,7 +46,7 @@ export class FormLengthStats {
   }
 
   private static findName(stat: StatementNode): string {
-    let name: string = "";
+    let name: string;
     const nameExpr = stat.findFirstExpression(FormName);
     if (nameExpr) {
       name = nameExpr.getFirstToken().getStr();

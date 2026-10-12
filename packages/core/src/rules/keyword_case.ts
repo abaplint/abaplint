@@ -196,7 +196,7 @@ export class KeywordCase extends ABAPRule {
     const lastToken = tokens[tokens.length - 1].token;
     const firstTokenValue = firstToken.getStr();
 
-    let description = "";
+    let description: string;
     if (first.keyword === true) {
       description = `Keyword should be ${this.conf.style} case: "${firstTokenValue}"`;
     } else {

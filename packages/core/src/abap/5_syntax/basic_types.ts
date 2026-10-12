@@ -1,4 +1,4 @@
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
 import {StatementNode, ExpressionNode} from "../nodes";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
@@ -7,6 +7,7 @@ import {AbstractType} from "../types/basic/_abstract_type";
 import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
+import {ClassAttribute} from "../types/class_attribute";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
 import {CharacterType, ITableKey, ObjectReferenceType, StructureType, TableAccessType, TableType, VoidType} from "../types/basic";
@@ -131,7 +132,7 @@ export class BasicTypes {
       return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName1");
     }
 
-    let type: AbstractType | undefined = undefined;
+    let type: AbstractType | undefined;
     if (children[1] && (children[1].getFirstToken().getStr() === "=>" || children[1].getFirstToken().getStr() === "->")) {
       type = FieldChain.runSyntax(chain, this.input, ReferenceType.TypeReference);
     } else {
@@ -415,7 +416,7 @@ export class BasicTypes {
       secondary: secondaryKeys,
     };
 
-    let found: AbstractType | undefined = undefined;
+    let found: AbstractType | undefined;
     if (text.startsWith("TYPE TABLE OF REF TO ")
         || text.startsWith("TYPE STANDARD TABLE OF REF TO ")
         || text.startsWith("TYPE SORTED TABLE OF REF TO ")
@@ -549,7 +550,7 @@ export class BasicTypes {
 
       const type = this.resolveLikeName(e, false);
 
-      let row: AbstractType | undefined = undefined;
+      let row: AbstractType | undefined;
       if (type === undefined) {
         return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
       } else if (type instanceof Types.TableType) {
@@ -740,7 +741,7 @@ export class BasicTypes {
       rest = split[1];
     }
     const subs = rest.split("-");
-    let foundType: AbstractType | undefined = undefined;
+    let foundType: AbstractType | undefined;
 
     if (className && chainText.includes("=>")) {
       const split = chainText.split("=>");
@@ -890,14 +891,18 @@ export class BasicTypes {
     const firstName = firstToken.getStr();
     if (firstNode.get() instanceof Expressions.Field) {
       const found = this.input.scope.findVariable(firstName);
-      const val = found?.getValue();
-      if (typeof val === "string") {
-        this.input.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.input.filename);
-        return val;
-      } else if (found?.getType() instanceof StructureType) {
-        this.input.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.input.filename);
+      if (found === undefined) {
+        const message = `"${firstName}" not found, findTop`;
+        this.input.issues.push(syntaxIssue(this.input, firstToken, message));
+        return undefined;
       }
-      return undefined;
+      this.input.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.input.filename);
+      if (this.isConstant(found) === false) {
+        const message = `VALUE, ${expr.concatTokens().toLowerCase()} is not a constant`;
+        this.input.issues.push(syntaxIssue(this.input, firstToken, message));
+        return undefined;
+      }
+      return this.constantValue(expr, found.getValue());
     } else if (firstNode.get() instanceof Expressions.ClassName
         && firstName.toLowerCase() === this.input.scope.getName().toLowerCase()
         && (this.input.scope.getType() === ScopeType.Interface
@@ -905,12 +910,18 @@ export class BasicTypes {
       const children = expr.getChildren();
       const token = children[2]?.getFirstToken();
       const found = this.input.scope.findVariable(token.getStr());
-      const val = found?.getValue();
-      if (typeof val === "string") {
-        this.input.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.input.filename);
-        return val;
+      if (found === undefined) {
+        const message = `"${token.getStr()}" not found, findTop`;
+        this.input.issues.push(syntaxIssue(this.input, token, message));
+        return undefined;
       }
-      return undefined;
+      this.input.scope.addReference(firstToken, found, ReferenceType.DataReadReference, this.input.filename);
+      if (this.isConstant(found) === false) {
+        const message = `VALUE, ${expr.concatTokens().toLowerCase()} is not a constant`;
+        this.input.issues.push(syntaxIssue(this.input, token, message));
+        return undefined;
+      }
+      return this.constantValue(expr, found.getValue());
     } else if (firstNode.get() instanceof Expressions.ClassName) {
       const obj = this.input.scope.findObjectDefinition(firstName);
       if (obj === undefined) {
@@ -932,22 +943,58 @@ export class BasicTypes {
       if (c instanceof ClassConstant) {
         this.input.scope.addReference(firstToken, obj, ReferenceType.ObjectOrientedReference, this.input.filename, {ooName: obj.getName()});
         this.input.scope.addReference(token, c, ReferenceType.DataReadReference, this.input.filename);
-        const val = c.getValue();
-        if (typeof val === "string") {
-          return val;
-        } else if (typeof val === "object" && children[4]) {
-          const name = children[4].getFirstToken().getStr();
-          if (val[name] !== undefined) {
-            return val[name];
-          }
-        }
+        return this.constantValue(expr, c.getValue());
+      }
+      const helper = new ObjectOriented(this.input.scope);
+      const attribute = helper.searchAttributeName(obj, attr);
+      if (attribute) {
+        this.input.scope.addReference(firstToken, obj, ReferenceType.ObjectOrientedReference, this.input.filename, {ooName: obj.getName()});
+        this.input.scope.addReference(token, attribute, ReferenceType.DataReadReference, this.input.filename);
+        const message = `VALUE, ${expr.concatTokens().toLowerCase()} is not a constant`;
+        this.input.issues.push(syntaxIssue(this.input, token, message));
         return undefined;
       }
-      throw new Error("resolveConstantValue, constant not found " + attr);
+      const message = `Attribute or constant "${attr}" not found in "${obj.getName()}"`;
+      this.input.issues.push(syntaxIssue(this.input, token, message));
+      return undefined;
 
     } else {
       throw new Error("resolveConstantValue, unexpected structure");
     }
+  }
+
+  private isConstant(identifier: TypedIdentifier): boolean {
+    if (identifier instanceof ClassAttribute) {
+      return false;
+    }
+    const meta = identifier.getMeta();
+    if (meta.includes(IdentifierMeta.ReadOnly) === false) {
+      return false;
+    }
+    if (meta.includes(IdentifierMeta.Static)) {
+      return true;
+    }
+    // Built-in constants and built-in system fields share ReadOnly/BuiltIn metadata.
+    // Only the constants have a value; system fields such as SY-INDEX do not.
+    return meta.includes(IdentifierMeta.BuiltIn) && identifier.getValue() !== undefined;
+  }
+
+  private constantValue(expr: ExpressionNode, value: string | {[index: string]: string} | undefined): string | undefined {
+    if (typeof value === "string") {
+      return value;
+    } else if (typeof value === "object" && value !== null) {
+      let current: string | {[index: string]: string} | undefined = value;
+      for (const child of expr.getChildren().slice(1)) {
+        if (child instanceof ExpressionNode && child.get() instanceof Expressions.ComponentName) {
+          if (typeof current !== "object" || current === null) {
+            return undefined;
+          }
+          current = current[child.getFirstToken().getStr()];
+        }
+      }
+      return typeof current === "string" ? current : undefined;
+    }
+    return undefined;
   }
 
   private resolveTypeRef(chain: ExpressionNode | undefined): AbstractType | undefined {

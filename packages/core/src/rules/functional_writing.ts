@@ -112,7 +112,7 @@ cl_abap_typedescr=>describe_by_name(
     const methodSource = statNode.findDirectExpression(Expressions.MethodSource);
     let methodSourceStr = methodSource?.concatTokens();
     const methodBody = statNode.findDirectExpression(Expressions.MethodCallBody);
-    let methodBodyStr = "";
+    let methodBodyStr: string;
     if (methodBody) {
       const methodCallParam = methodBody.findDirectExpression(Expressions.MethodCallParam);
       if (methodCallParam && methodCallParam.getFirstToken().getStr() === "(") {

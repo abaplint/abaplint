@@ -61,6 +61,12 @@ describe("structure combi statement", () => {
     expect(parent.getChildren().length).to.equal(1);
   });
 
+  it("sta1 multi, input not changed", () => {
+    const statements = toNodes([new Statements.Move(), new Statements.Move()]);
+    sta1.run(statements, new DummyNode());
+    expect(statements.length).to.equal(2);
+  });
+
   it("sta1 none", () => {
     const parent = new DummyNode();
     const match = sta1.run([], parent);
@@ -290,6 +296,34 @@ describe("structure combi, complex1", () => {
     expect(parent.getChildren().length).to.equal(2);
     expect(parent.getChildren()[0].getChildren().length).to.equal(1);
     expect(parent.getChildren()[1].getChildren().length).to.equal(1);
+  });
+
+});
+describe("structure combi, backtracking", () => {
+
+  it("alt, second alternative after a failed sequence with the same start", () => {
+    const alt1 = alt(seq(sta(Statements.Move), sta(Statements.EndDo)), seq(sta(Statements.Move), sta(Statements.Do)));
+    const match = alt1.run(toNodes([new Statements.Move(), new Statements.Do()]), new DummyNode());
+    expect(match.error).to.equal(false);
+    expect(match.matched.length).to.equal(2);
+    expect(match.unmatched.length).to.equal(0);
+  });
+
+  it("seq, continues after an opt over a failed sequence", () => {
+    const seq1 = seq(opt(seq(sta(Statements.Move), sta(Statements.EndDo))), sta(Statements.Move), sta(Statements.Do));
+    const match = seq1.run(toNodes([new Statements.Move(), new Statements.Do()]), new DummyNode());
+    expect(match.error).to.equal(false);
+    expect(match.matched.length).to.equal(2);
+  });
+
+  it("star, error after one repetition keeps the statements after it", () => {
+    const star1 = star(seq(sta(Statements.Move), sta(Statements.EndDo)));
+    const statements = toNodes([new Statements.Move(), new Statements.EndDo(), new Statements.Move(), new Statements.Do()]);
+    const match = star1.run(statements, new DummyNode());
+    expect(match.error).to.equal(true);
+    expect(match.errorMatched).to.equal(1);
+    expect(match.matched.length).to.equal(2);
+    expect(match.unmatched.length).to.equal(2);
   });
 
 });

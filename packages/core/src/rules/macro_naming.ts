@@ -16,6 +16,7 @@ export class MacroNamingConf extends BasicRuleConfig {
 export class MacroNaming extends ABAPRule {
 
   private conf = new MacroNamingConf();
+  private regex = new RegExp(this.conf.pattern, "i");
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -37,11 +38,11 @@ END-OF-DEFINITION.`,
 
   public setConfig(conf: MacroNamingConf) {
     this.conf = conf;
+    this.regex = new RegExp(this.conf.pattern, "i");
   }
 
   public runParsed(file: ABAPFile, obj: ABAPObject) {
     const issues: Issue[] = [];
-    const testRegex = new RegExp(this.conf.pattern, "i");
 
     if (obj instanceof TypePool) {
       return [];
@@ -60,7 +61,7 @@ END-OF-DEFINITION.`,
 
       const token = expr.getFirstToken();
 
-      if (testRegex.exec(token.getStr())) {
+      if (this.regex.exec(token.getStr())) {
         continue;
       } else {
         const message = "Bad macro name naming, expected \"" + this.conf.pattern + "\", got \"" + token.getStr() + "\"";

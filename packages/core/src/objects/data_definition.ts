@@ -22,6 +22,8 @@ export type ParsedDataDefinition = {
 export class DataDefinition extends AbstractObject {
   private parserError: boolean | undefined = undefined;
   private parsedData: ParsedDataDefinition | undefined = undefined;
+  private typeCache: AbstractType | undefined = undefined;
+  private typeCacheData: ParsedDataDefinition | undefined = undefined;
 
   public getType(): string {
     return "DDLS";
@@ -51,7 +53,11 @@ export class DataDefinition extends AbstractObject {
 
   public parseType(reg: IRegistry): AbstractType {
     this.parse();
-    return new CDSDetermineTypes().parseType(reg, this.parsedData!, this.getName());
+    if (this.typeCache === undefined || this.typeCacheData !== this.parsedData) {
+      this.typeCacheData = this.parsedData;
+      this.typeCache = new CDSDetermineTypes().parseType(reg, this.parsedData!, this.getName());
+    }
+    return this.typeCache;
   }
 
   public getParsedData() {
@@ -65,6 +71,8 @@ export class DataDefinition extends AbstractObject {
 
   public setDirty(): void {
     this.parsedData = undefined;
+    this.typeCache = undefined;
+    this.typeCacheData = undefined;
     this.parserError = undefined;
     super.setDirty();
   }

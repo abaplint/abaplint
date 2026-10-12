@@ -26,6 +26,7 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {TypeUtils} from "../_type_utils";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
+import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 /*
 * Type interference, valid scenarios:
@@ -123,7 +124,7 @@ export class Source {
         case "CONV":
         {
           const foundType = this.determineType(node, input, targetType);
-          const bodyType = ConvBody.runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input);
+          const bodyType = ConvBody.runSyntax(node.findDirectExpression(Expressions.ConvBody)!, input, foundType);
           const inferred = node.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
           if (new TypeUtils(input.scope).isConvable(foundType, bodyType) === false) {
             const message = `CONV: Types not compatible, ${foundType?.constructor.name}, ${bodyType?.constructor.name}`;
@@ -139,7 +140,13 @@ export class Source {
             this.traverseRemainingChildren(children, input);
             return bodyType;
           }
-          this.addIfInferred(node, input, foundType);
+          const bodySource = node.findDirectExpression(Expressions.ConvBody)?.findDirectExpression(Expressions.Source);
+          const nestedType = bodySource?.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
+          // CONV # passes its target type into a nested inferred constructor, so
+          // showing both inferred types would produce duplicate inlay hints.
+          if (!(inferred === "#" && nestedType === "#")) {
+            this.addIfInferred(node, input, foundType);
+          }
           this.traverseRemainingChildren(children, input);
           return foundType;
         }
@@ -195,6 +202,15 @@ export class Source {
         case "CORRESPONDING":
         {
           const foundType = this.determineType(node, input, targetType);
+          if (foundType?.isGeneric() === true
+              && node.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens() === "#"
+              && !releaseAtLeast(input.scope.getRelease(), Release.v756)
+              && input.scope.getLanguageVersion() !== LanguageVersion.Cloud
+              && !input.scope.getOpenABAP()) {
+            const message = "CORRESPONDING #, the type of the target is generic";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return VoidType.get(CheckSyntaxKey);
+          }
           CorrespondingBody.runSyntax(node.findDirectExpression(Expressions.CorrespondingBody), input, foundType);
           this.addIfInferred(node, input, foundType);
           return foundType;

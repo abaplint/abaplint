@@ -92,6 +92,8 @@ const tests = [
       mandatory TYPE abap_bool
     EXPORTING
       value     TYPE string.`,
+  "METHODS m IMPORTING a TYPE i DEFAULT 5 optional TYPE i.",
+  "METHODS m IMPORTING a TYPE i OPTIONAL optional TYPE i OPTIONAL.",
   "class-methods bar exceptions /space/cx_error.",
   "METHODS test1 ABSTRACT FOR TESTING RAISING cx_static_check.",
   `CLASS-METHODS connection_graph

@@ -69,13 +69,8 @@ From 752 and up`,
   private getFix(file: ABAPFile, statement: StatementNode, withExporting: boolean): IEdit {
     const children = statement.getChildren();
 
-    let contentFix = undefined;
-    if (withExporting) {
-      const fixText = "( " + children[5].concatTokens() + " ).";
-      contentFix = EditHelper.replaceRange(file, children[3].getLastToken().getEnd(), statement.getEnd(), fixText);
-    } else {
-      contentFix = EditHelper.replaceRange(file, children[3].getLastToken().getEnd(), statement.getEnd(), "( ).");
-    }
+    const fixText = withExporting ? "( " + children[5].concatTokens() + " )." : "( ).";
+    const contentFix = EditHelper.replaceRange(file, children[3].getLastToken().getEnd(), statement.getEnd(), fixText);
 
     const replaceType = EditHelper.replaceToken(file, children[2].getFirstToken(), "NEW");
     return EditHelper.merge(contentFix, replaceType);

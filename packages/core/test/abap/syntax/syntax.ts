@@ -16603,6 +16603,38 @@ REFRESH tab[].`;
     expect(issues[0]?.getMessage()).to.equal("VALUE, sy-uzeit is not a constant");
   });
 
+  it("DATA VALUE accepts a literal", () => {
+    const abap = `DATA lv_value TYPE i VALUE 1.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("DATA VALUE accepts a declared constant", () => {
+    const abap = `CONSTANTS lc_value TYPE i VALUE 1.\nDATA lv_value TYPE i VALUE lc_value.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("DATA VALUE rejects a variable", () => {
+    const abap = `DATA lv_start TYPE i VALUE 1.\nDATA lv_value TYPE i VALUE lv_start.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal("VALUE, lv_start is not a constant");
+  });
+
+  it("DATA VALUE reports an unresolved name", () => {
+    const abap = `DATA lv_value TYPE i VALUE lv_start.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal(`"lv_start" not found, findTop`);
+  });
+
+  it("DATA VALUE rejects other system fields", () => {
+    const abap = `DATA lv_index TYPE i VALUE sy-index.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("VALUE, sy-index is not a constant");
+  });
+
   it("RADIOBUTTON GROUP name too long", () => {
     const abap = `
 PARAMETERS p_red   RADIOBUTTON GROUP color DEFAULT 'X'.
@@ -17845,6 +17877,110 @@ ENDCLASS.`;
   it("ok below v756, typed reference", () => {
     const issues = runProgram(method(`    CLEAR ir_typed->*.
     ir_typed->* = 5.`), [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
+
+describe("syntax.ts, dynamic component selector on a generic operand", () => {
+  const method = (body: string) => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run IMPORTING val TYPE any io TYPE REF TO object ir TYPE REF TO data.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    DATA lv_name TYPE string.
+    FIELD-SYMBOLS <comp> TYPE any.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error below v756, TYPE any parameter", () => {
+    const issues = runProgram(method(`    ASSIGN val->(lv_name) TO <comp>.`), [], Release.v752);
+    expect(issues[0]?.getMessage()).to.equal(`"val" is not a reference variable`);
+  });
+
+  it("error below v756, TYPE any field symbol", () => {
+    const issues = runProgram(method(`    FIELD-SYMBOLS <val> TYPE any.
+    ASSIGN val TO <val>.
+    ASSIGN <val>->(lv_name) TO <comp>.`), [], Release.v702);
+    expect(issues[0]?.getMessage()).to.equal(`"<val>" is not a reference variable`);
+  });
+
+  it("ok from v756 on", () => {
+    const issues = runProgram(method(`    ASSIGN val->(lv_name) TO <comp>.`), [], Release.v756);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok in Cloud", () => {
+    const issues = runProgram(method(`    ASSIGN val->(lv_name) TO <comp>.`), [], Release.Newest, undefined, LanguageVersion.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok below v756, REF TO object and REF TO data", () => {
+    const issues = runProgram(method(`    ASSIGN io->(lv_name) TO <comp>.
+    ASSIGN ir->(lv_name) TO <comp>.`), [], Release.v702);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok below v756, ASSIGN COMPONENT of a generic operand", () => {
+    const issues = runProgram(method(`    ASSIGN COMPONENT lv_name OF STRUCTURE val TO <comp>.`), [], Release.v702);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
+
+describe("syntax.ts, CORRESPONDING # with a generic target", () => {
+  const message = "CORRESPONDING #, the type of the target is generic";
+  const method = (body: string) => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_s,
+             a TYPE i,
+             b TYPE string,
+           END OF ty_s.
+    METHODS run IMPORTING is_row TYPE ty_s CHANGING cs_any TYPE any.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    DATA ls_row TYPE ty_s.
+    FIELD-SYMBOLS <row_out> TYPE any.
+    FIELD-SYMBOLS <row_in> TYPE any.
+    ASSIGN cs_any TO <row_out>.
+    ASSIGN cs_any TO <row_in>.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error below v756, generic field symbol as the target", () => {
+    const issues = runProgram(method(`    <row_out> = CORRESPONDING #( is_row ).`), [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
+
+  it("error below v756, generic target and generic source", () => {
+    const issues = runProgram(method(`    <row_out> = CORRESPONDING #( <row_in> ).`), [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
+
+  it("ok from v756 on", () => {
+    const issues = runProgram(method(`    <row_out> = CORRESPONDING #( is_row ).`), [], Release.v756);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok in Cloud", () => {
+    const issues = runProgram(method(`    <row_out> = CORRESPONDING #( is_row ).`), [], Release.Newest, undefined, LanguageVersion.Cloud);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok below v756, typed target", () => {
+    const issues = runProgram(method(`    ls_row = CORRESPONDING #( is_row ).`), [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok below v756, MOVE-CORRESPONDING into the generic target", () => {
+    const issues = runProgram(method(`    CLEAR <row_out>.
+    MOVE-CORRESPONDING is_row TO <row_out>.`), [], Release.v750);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
