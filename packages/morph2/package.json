@@ -7,7 +7,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "transpile": "node scripts/transpile-abaplint-release.mjs && abaplint --fix"
+    "transpile": "node scripts/transpile-abaplint-release.mjs && abaplint --fix",
+    "test": "npm run transpile && abaplint"
   },
   "dependencies": {
     "@abaplint/cli": "^2.120.75"
