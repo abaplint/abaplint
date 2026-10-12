@@ -66,8 +66,8 @@ function runInterface(abap: string): Issue[] {
   return run(reg);
 }
 
-function runProgram(abap: string, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
-                    languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
+export function runProgram(abap: string, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
+                           languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);
   return run(reg, globalConstants, release, errorNamespace, languageVersion, ambigiousVoids);
@@ -18626,144 +18626,130 @@ ENDCLASS.`;
   });
 });
 
-describe("syntax.ts, statements that leave a CLEANUP block", () => {
-  const program = (cleanup: string): string => `
-CLASS lcl DEFINITION.
-  PUBLIC SECTION.
-    METHODS run.
-ENDCLASS.
+describe("syntax.ts, APPEND to a hashed table", () => {
+  const program = (code: string): string => `
+TYPES: BEGIN OF ty_s,
+         id   TYPE i,
+         text TYPE string,
+       END OF ty_s.
+TYPES ty_hashed TYPE HASHED TABLE OF ty_s WITH UNIQUE KEY id.
+DATA lt_map TYPE ty_hashed.
+DATA lt_sorted TYPE SORTED TABLE OF ty_s WITH UNIQUE KEY id.
+DATA lt_std TYPE STANDARD TABLE OF ty_s WITH DEFAULT KEY.
+DATA ls TYPE ty_s.
+${code}`;
+  const message = "Implicit or explicit index operation on hashed table is not possible";
 
-CLASS lcl IMPLEMENTATION.
-  METHOD run.
-    DATA lt TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
-    DATA lv TYPE i.
-    DO 2 TIMES.
-      TRY.
-          lv = 1.
-        CLEANUP.
-${cleanup}
-      ENDTRY.
-    ENDDO.
-  ENDMETHOD.
-ENDCLASS.`;
-
-  it("error, RETURN", () => {
-    const issues = runProgram(program(`RETURN.`));
-    expect(issues[0]?.getMessage()).to.equal(`RETURN cannot leave a CLEANUP block`);
+  it("error, APPEND wa TO hashed", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, RETURN inside a loop in the CLEANUP block", () => {
-    const issues = runProgram(program(`LOOP AT lt INTO lv.
-  RETURN.
-ENDLOOP.`));
-    expect(issues[0]?.getMessage()).to.equal(`RETURN cannot leave a CLEANUP block`);
+  it("error, APPEND wa TO hashed, declared inline", () => {
+    const issues = runProgram(program(`DATA lt_inline TYPE HASHED TABLE OF ty_s WITH UNIQUE KEY id.
+APPEND ls TO lt_inline.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, EXIT of the loop outside the TRY", () => {
-    const issues = runProgram(program(`EXIT.`));
-    expect(issues[0]?.getMessage()).to.equal(`EXIT cannot leave a CLEANUP block`);
+  it("error, APPEND INITIAL LINE TO hashed", () => {
+    const issues = runProgram(program(`APPEND INITIAL LINE TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, CONTINUE of the loop outside the TRY, inside IF", () => {
-    const issues = runProgram(program(`IF lv = 1.
-  CONTINUE.
-ENDIF.`));
-    expect(issues[0]?.getMessage()).to.equal(`CONTINUE cannot leave a CLEANUP block`);
+  it("error, APPEND INITIAL LINE TO hashed ASSIGNING", () => {
+    const issues = runProgram(program(`APPEND INITIAL LINE TO lt_map ASSIGNING FIELD-SYMBOL(<ls>).`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, CHECK of the loop outside the TRY", () => {
-    const issues = runProgram(program(`CHECK lv = 1.`));
-    expect(issues[0]?.getMessage()).to.equal(`CHECK cannot leave a CLEANUP block`);
+  it("error, APPEND wa TO hashed REFERENCE INTO", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_map REFERENCE INTO DATA(lr).`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, EXIT in a CATCH block of a TRY inside the CLEANUP block", () => {
-    const issues = runProgram(program(`TRY.
-    lv = 2.
-  CATCH cx_root.
-    EXIT.
-ENDTRY.`));
-    expect(issues[0]?.getMessage()).to.equal(`EXIT cannot leave a CLEANUP block`);
+  it("error, APPEND LINES OF TO hashed", () => {
+    const issues = runProgram(program(`APPEND LINES OF lt_std TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, EXIT without any loop, leaves the FORM", () => {
+  it("error, APPEND VALUE TO hashed", () => {
+    const issues = runProgram(program(`APPEND VALUE #( id = 1 ) TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
+
+  it("error, APPEND TO a field symbol typed as hashed", () => {
+    const issues = runProgram(program(`FIELD-SYMBOLS <lt> TYPE ty_hashed.
+ASSIGN lt_map TO <lt>.
+APPEND ls TO <lt>.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
+
+  it("error, APPEND TO a dereferenced data reference to a hashed table", () => {
+    const issues = runProgram(program(`DATA lr_map TYPE REF TO ty_hashed.
+CREATE DATA lr_map.
+APPEND ls TO lr_map->*.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
+
+  it("error, APPEND TO a hashed table component", () => {
+    const issues = runProgram(program(`DATA: BEGIN OF ls_deep,
+        map TYPE ty_hashed,
+      END OF ls_deep.
+APPEND ls TO ls_deep-map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
+  });
+
+  it("ok, APPEND TO standard", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_std.
+APPEND INITIAL LINE TO lt_std ASSIGNING FIELD-SYMBOL(<ls>).
+APPEND LINES OF lt_map TO lt_std.`));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("ok, APPEND TO sorted", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_sorted.
+APPEND INITIAL LINE TO lt_sorted.
+APPEND LINES OF lt_std TO lt_sorted.`));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("ok, INSERT INTO TABLE hashed", () => {
+    const issues = runProgram(program(`INSERT ls INTO TABLE lt_map.
+INSERT LINES OF lt_std INTO TABLE lt_map.`));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("ok, APPEND TO generic tables", () => {
     const issues = runProgram(`
-FORM run.
-  DATA lv TYPE i.
-  TRY.
-      lv = 1.
-    CLEANUP.
-      EXIT.
-  ENDTRY.
+FORM foo CHANGING ct_any TYPE ANY TABLE ct_index TYPE INDEX TABLE ct_hashed TYPE HASHED TABLE.
+  DATA ls TYPE i.
+  FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
+  FIELD-SYMBOLS <lt_index> TYPE INDEX TABLE.
+  APPEND INITIAL LINE TO ct_index ASSIGNING FIELD-SYMBOL(<lv_index>).
+  APPEND INITIAL LINE TO ct_any ASSIGNING FIELD-SYMBOL(<lv_any>).
+  APPEND INITIAL LINE TO ct_hashed ASSIGNING FIELD-SYMBOL(<lv_hashed>).
+  ASSIGN ct_any TO <lt_any>.
+  APPEND ls TO <lt_any>.
+  ASSIGN ct_index TO <lt_index>.
+  APPEND ls TO <lt_index>.
 ENDFORM.`);
-    expect(issues[0]?.getMessage()).to.equal(`EXIT cannot leave a CLEANUP block`);
+    expect(issues.length).to.equal(0);
   });
 
-  it("error, inner CLEANUP block reported once", () => {
-    const issues = runProgram(program(`TRY.
-    lv = 2.
-  CLEANUP.
-    RETURN.
-ENDTRY.`));
-    expect(issues.length).to.equal(1);
-    expect(issues[0]?.getMessage()).to.equal(`RETURN cannot leave a CLEANUP block`);
-  });
-
-  it("ok, EXIT, CONTINUE and CHECK of loops inside the CLEANUP block", () => {
-    const issues = runProgram(program(`DO 2 TIMES.
-  EXIT.
-ENDDO.
-WHILE lv < 5.
-  lv = lv + 1.
-  CONTINUE.
-ENDWHILE.
-LOOP AT lt INTO lv.
-  CHECK lv = 1.
-  IF lv = 2.
-    EXIT.
-  ENDIF.
-ENDLOOP.
-SELECT carrid FROM scarr INTO @DATA(lv_carrid).
-  EXIT.
-ENDSELECT.`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("ok, EXIT of a loop inside a TRY in the CLEANUP block", () => {
-    const issues = runProgram(program(`TRY.
-    DO 2 TIMES.
-      EXIT.
-    ENDDO.
-  CATCH cx_root.
-    lv = 3.
-ENDTRY.`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("ok, RETURN and EXIT in the TRY and CATCH blocks", () => {
+  it("ok, APPEND TO a void type", () => {
     const issues = runProgram(`
-FORM run.
-  DATA lv TYPE i.
-  DO 2 TIMES.
-    TRY.
-        lv = 1.
-        EXIT.
-      CATCH cx_root.
-        CONTINUE.
-      CLEANUP.
-        lv = 2.
-    ENDTRY.
-  ENDDO.
-  TRY.
-      RETURN.
-    CATCH cx_root.
-      RETURN.
-  ENDTRY.
-ENDFORM.`);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+DATA lt_void TYPE void_hashed_tt.
+DATA ls TYPE i.
+APPEND ls TO lt_void.
+APPEND INITIAL LINE TO lt_void.`);
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, EXIT FROM STEP-LOOP is left alone", () => {
-    const issues = runProgram(program(`EXIT FROM STEP-LOOP.`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO an unknown type", () => {
+    const issues = runProgram(`
+DATA lt_unknown TYPE zunknown_hashed_tt.
+DATA ls TYPE i.
+APPEND ls TO lt_unknown.
+APPEND INITIAL LINE TO lt_unknown.`);
+    expect(issues.length).to.equal(0);
   });
 });
