@@ -151,6 +151,7 @@ import {PreferXsdboolConf} from "../src/rules/prefer_xsdbool";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
 import {PreferredParameterIgnoredConf} from "../src/rules/preferred_parameter_ignored";
 import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
+import {RangeRowValuesConf} from "../src/rules/range_row_values";
 import {ReduceProceduralCodeConf} from "../src/rules/reduce_procedural_code";
 import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
 import {RedundantConversionConf} from "../src/rules/redundant_conversion";
@@ -373,6 +374,7 @@ export interface IConfig {
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "preferred_parameter_ignored"?: PreferredParameterIgnoredConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
+    "range_row_values"?: RangeRowValuesConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
     "redundant_conversion"?: RedundantConversionConf | boolean,
@@ -584,6 +586,7 @@ export interface IConfig {
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "preferred_parameter_ignored"?: PreferredParameterIgnoredConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
+    "range_row_values"?: RangeRowValuesConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
     "redundant_conversion"?: RedundantConversionConf | boolean,
