@@ -1662,6 +1662,23 @@
       },
       "type": "object"
     },
+    "FinalNewlineConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "ForbiddenIdentifierConf": {
       "additionalProperties": false,
       "properties": {
@@ -2656,6 +2673,17 @@
               ],
               "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
             },
+            "final_newline": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FinalNewlineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that ABAP and XML files end with exactly one newline\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/final_newline"
+            },
             "fm_global_parameters_obsolete": {
               "anyOf": [
                 {
@@ -2908,6 +2936,17 @@
                 }
               ],
               "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
+            },
+            "inline_packed_computation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlinePackedComputationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds inline declarations whose value is an arithmetic expression with calculation type p\nhttps://rules.abaplint.org/inline_packed_computation"
             },
             "intf_referencing_clas": {
               "anyOf": [
@@ -3502,6 +3541,17 @@
                 }
               ],
               "description": "Prefer inline to up-front declarations.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
+            },
+            "prefer_inline_cast": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferInlineCastConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Inline a CAST helper read only once in the next statement\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_inline_cast"
             },
             "prefer_insert_into_table": {
               "anyOf": [
@@ -4966,6 +5016,17 @@
               ],
               "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
             },
+            "final_newline": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FinalNewlineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that ABAP and XML files end with exactly one newline\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/final_newline"
+            },
             "fm_global_parameters_obsolete": {
               "anyOf": [
                 {
@@ -5218,6 +5279,17 @@
                 }
               ],
               "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
+            },
+            "inline_packed_computation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlinePackedComputationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds inline declarations whose value is an arithmetic expression with calculation type p\nhttps://rules.abaplint.org/inline_packed_computation"
             },
             "intf_referencing_clas": {
               "anyOf": [
@@ -5812,6 +5884,17 @@
                 }
               ],
               "description": "Prefer inline to up-front declarations.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
+            },
+            "prefer_inline_cast": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferInlineCastConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Inline a CAST helper read only once in the next statement\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_inline_cast"
             },
             "prefer_insert_into_table": {
               "anyOf": [
@@ -6990,6 +7073,23 @@
       "type": "object"
     },
     "InlineDataOldVersionsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "InlinePackedComputationConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -8644,6 +8744,23 @@
       "type": "object"
     },
     "PreferCorrespondingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "PreferInlineCastConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
