@@ -165,6 +165,7 @@ import {FieldGroup} from "./statements/field_group";
 import {IStatement} from "../2_statements/statements/_statement";
 import {IStructure} from "../3_structures/structures/_structure";
 import {SELECTION_EVENTS} from "../../stuff";
+import {LoopTableChange} from "./_loop_table_change";
 
 // -----------------------------------
 
@@ -320,6 +321,7 @@ export class SyntaxLogic {
   private readonly reg: IRegistry;
 
   private scope: CurrentScope;
+  private loopTables: LoopTableChange;
 
   private helpers: {
     oooc: ObjectOriented,
@@ -348,6 +350,7 @@ export class SyntaxLogic {
 
     this.issues = [];
     this.deferred = [];
+    this.loopTables = new LoopTableChange();
     this.reg.getDDICReferences().clear(this.object);
     this.reg.getMSAGReferences().clear(this.object);
 
@@ -427,6 +430,10 @@ export class SyntaxLogic {
   }
 
   private traverse(node: StructureNode | StatementNode): void {
+    const loop = node instanceof StructureNode
+      && node.get() instanceof Structures.Loop
+      && this.loopTables.push(node, this.scope);
+
     for (const child of node.getChildren()) {
       const isStructure = child instanceof StructureNode;
       const isStatement = child instanceof StatementNode;
@@ -459,6 +466,10 @@ export class SyntaxLogic {
       if (isStructure || isStatement) {
         this.traverse(child as StatementNode | StructureNode);
       }
+    }
+
+    if (loop === true) {
+      this.loopTables.pop();
     }
   }
 
@@ -544,6 +555,8 @@ export class SyntaxLogic {
       this.scope.addIdentifier(new DataStatement().runSyntax(node, input));
       return;
     }
+
+    this.loopTables.check(node, input);
 
     const name = s.constructor.name;
     if (map[name]) {
