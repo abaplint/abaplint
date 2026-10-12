@@ -13,6 +13,7 @@ import {TableExpression} from "./table_expression";
 import {Dereference} from "../../2_statements/expressions";
 import {FieldLength} from "./field_length";
 import {Cast} from "./cast";
+import {isFieldSymbolItself, substringType} from "./_substring";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
@@ -119,6 +120,8 @@ export class Target {
       }
     }
 
+    // the substring is checked, but the type of the whole field is returned
+    let substring = context;
     const offset = node.findDirectExpression(Expressions.FieldOffset);
     if (offset) {
       if (context instanceof XStringType || context instanceof StringType) {
@@ -126,7 +129,10 @@ export class Target {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return VoidType.get(CheckSyntaxKey);
       }
-      FieldOffset.runSyntax(offset, input);
+      const value = FieldOffset.runSyntax(offset, input);
+      if (!isFieldSymbolItself(children, children.indexOf(offset))) {
+        substring = substringType(substring, value, undefined, offset, input);
+      }
     }
 
     const length = node.findDirectExpression(Expressions.FieldLength);
@@ -136,7 +142,13 @@ export class Target {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return VoidType.get(CheckSyntaxKey);
       }
-      FieldLength.runSyntax(length, input);
+      const value = FieldLength.runSyntax(length, input);
+      if (!isFieldSymbolItself(children, children.indexOf(length))) {
+        substring = substringType(substring, undefined, value, length, input);
+      }
+    }
+    if (substring instanceof VoidType && !(context instanceof VoidType)) {
+      return substring;
     }
 
     return context;
