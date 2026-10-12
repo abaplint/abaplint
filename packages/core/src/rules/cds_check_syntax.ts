@@ -344,9 +344,9 @@ Missing objects are only reported when their names match the configured errorNam
 
     for (const annotation of tree.findAllExpressionsRecursive(CDSAnnotation)) {
       const normalized = annotation.concatTokens().replace(/\s/g, "").toUpperCase().replace(/^@</, "@");
-      if (this.hasSearchAnnotation(normalized, "defaultSearchElement")) {
+      if (this.hasSearchAnnotation(normalized, /[.{,]DEFAULTSEARCHELEMENT:TRUE/)) {
         return;
-      } else if (searchable === undefined && this.hasSearchAnnotation(normalized, "searchable")) {
+      } else if (searchable === undefined && this.hasSearchAnnotation(normalized, /[.{,]SEARCHABLE:TRUE/)) {
         searchable = annotation;
       }
     }
@@ -359,11 +359,11 @@ Missing objects are only reported when their names match the configured errorNam
     }
   }
 
-  private hasSearchAnnotation(normalized: string, name: string): boolean {
+  private hasSearchAnnotation(normalized: string, annotation: RegExp): boolean {
     if (normalized.startsWith("@SEARCH") === false) {
       return false;
     }
-    return new RegExp("[.{,]" + name.toUpperCase() + ":TRUE").test(normalized);
+    return annotation.test(normalized);
   }
 
   private checkReservedNames(tree: ExpressionNode, issues: Issue[], file: IFile) {

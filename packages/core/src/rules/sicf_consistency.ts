@@ -65,8 +65,7 @@ export class SICFConsistency implements IRule {
           continue;
         }
 
-        const pattern = new RegExp(this.reg.getConfig().getSyntaxSetttings().errorNamespace, "i");
-        if (pattern.test(h) === true) {
+        if (this.reg.inErrorNamespace(h) === true) {
           const message = "Handler class " + h + " not found";
           const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getMetadata().key, this.conf.severity);
           issues.push(issue);

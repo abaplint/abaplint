@@ -9,6 +9,11 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {XMLValidator} from "fast-xml-parser";
 import {Severity} from "../severity";
 
+const ABAPGIT_ATTRIBUTES: [string, RegExp][] = [
+  ["version", /<abapGit\b[^>]*\bversion="([^"]+)"/],
+  ["serializer_version", /<abapGit\b[^>]*\bserializer_version="([^"]+)"/],
+];
+
 export class XMLConsistencyConf extends BasicRuleConfig {
   /** Problem severity for text and translation length checks */
   public textAndTranslationLengthSeverity?: Severity = Severity.Error;
@@ -65,8 +70,8 @@ export class XMLConsistency implements IRule {
       if (res !== true) {
         issues.push(Issue.atRow(file, 1, "XML parser error: " + res.err.msg, this.getMetadata().key, this.conf.severity));
       } else {
-        for (const attribute of ["version", "serializer_version"]) {
-          const value = xml.match(new RegExp(`<abapGit\\b[^>]*\\b${attribute}="([^"]+)"`))?.[1];
+        for (const [attribute, regex] of ABAPGIT_ATTRIBUTES) {
+          const value = xml.match(regex)?.[1];
           if (value !== undefined && value.match(/^v\d\.\d\.\d$/) === null) {
             issues.push(Issue.atRow(file, 1, `Unexpected abapGit ${attribute} "${value}"`, this.getMetadata().key, this.conf.severity));
           }
