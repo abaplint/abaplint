@@ -11,6 +11,6 @@
     "test": "npm run transpile && abaplint"
   },
   "dependencies": {
-    "@abaplint/cli": "^2.120.75"
+    "@abaplint/cli": "^2.120.76"
   }
 }
