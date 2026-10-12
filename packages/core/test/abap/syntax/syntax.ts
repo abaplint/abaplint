@@ -66,8 +66,8 @@ function runInterface(abap: string): Issue[] {
   return run(reg);
 }
 
-function runProgram(abap: string, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
-                    languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
+export function runProgram(abap: string, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
+                           languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);
   return run(reg, globalConstants, release, errorNamespace, languageVersion, ambigiousVoids);
@@ -18626,118 +18626,130 @@ ENDCLASS.`;
   });
 });
 
-describe("syntax.ts, predicate function as the operand of a comparison", () => {
-  const program = (cond: string): string => `
-CLASS lcl DEFINITION.
-  PUBLIC SECTION.
-    METHODS get_flag RETURNING VALUE(r) TYPE abap_bool.
-    METHODS run.
-ENDCLASS.
+describe("syntax.ts, APPEND to a hashed table", () => {
+  const program = (code: string): string => `
+TYPES: BEGIN OF ty_s,
+         id   TYPE i,
+         text TYPE string,
+       END OF ty_s.
+TYPES ty_hashed TYPE HASHED TABLE OF ty_s WITH UNIQUE KEY id.
+DATA lt_map TYPE ty_hashed.
+DATA lt_sorted TYPE SORTED TABLE OF ty_s WITH UNIQUE KEY id.
+DATA lt_std TYPE STANDARD TABLE OF ty_s WITH DEFAULT KEY.
+DATA ls TYPE ty_s.
+${code}`;
+  const message = "Implicit or explicit index operation on hashed table is not possible";
 
-CLASS lcl IMPLEMENTATION.
-  METHOD get_flag.
-  ENDMETHOD.
-  METHOD run.
-    DATA lv TYPE string.
-    DATA lt TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-    IF ${cond}.
-    ENDIF.
-  ENDMETHOD.
-ENDCLASS.`;
-
-  it("error, contains( ) = abap_true", () => {
-    const issues = runProgram(program(`contains( val = lv start = \` \` ) = abap_true`));
-    expect(issues[0]?.getMessage()).to.equal(`Predicate function "contains" cannot be the operand of a comparison`);
+  it("error, APPEND wa TO hashed", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, abap_true = contains( ), right operand", () => {
-    const issues = runProgram(program(`abap_true = contains( val = lv sub = \`a\` )`));
-    expect(issues[0]?.getMessage()).to.equal(`Predicate function "contains" cannot be the operand of a comparison`);
+  it("error, APPEND wa TO hashed, declared inline", () => {
+    const issues = runProgram(program(`DATA lt_inline TYPE HASHED TABLE OF ty_s WITH UNIQUE KEY id.
+APPEND ls TO lt_inline.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, second comparison after OR", () => {
-    const issues = runProgram(program(`lv IS INITIAL OR contains( val = lv end = \` \` ) = abap_true`));
-    expect(issues[0]?.getMessage()).to.equal(`Predicate function "contains" cannot be the operand of a comparison`);
+  it("error, APPEND INITIAL LINE TO hashed", () => {
+    const issues = runProgram(program(`APPEND INITIAL LINE TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, CONTAINS( ) upper case", () => {
-    const issues = runProgram(program(`CONTAINS( val = lv sub = \`a\` ) EQ abap_true`));
-    expect(issues[0]?.getMessage()).to.equal(`Predicate function "CONTAINS" cannot be the operand of a comparison`);
+  it("error, APPEND INITIAL LINE TO hashed ASSIGNING", () => {
+    const issues = runProgram(program(`APPEND INITIAL LINE TO lt_map ASSIGNING FIELD-SYMBOL(<ls>).`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, contains_any_of( ) <> abap_false", () => {
-    const issues = runProgram(program(`contains_any_of( val = lv sub = \`ab\` ) <> abap_false`));
-    expect(issues[0]?.getMessage()).to.equal(`Predicate function "contains_any_of" cannot be the operand of a comparison`);
+  it("error, APPEND wa TO hashed REFERENCE INTO", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_map REFERENCE INTO DATA(lr).`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, contains_any_not_of( ) = abap_true", () => {
-    const issues = runProgram(program(`contains_any_not_of( val = lv sub = \`ab\` ) = abap_true`));
-    expect(issues[0]?.getMessage()).to.equal(`Predicate function "contains_any_not_of" cannot be the operand of a comparison`);
+  it("error, APPEND LINES OF TO hashed", () => {
+    const issues = runProgram(program(`APPEND LINES OF lt_std TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, matches( ) = abap_true", () => {
-    const issues = runProgram(program(`matches( val = lv regex = \`a+\` ) = abap_true`));
-    expect(issues[0]?.getMessage()).to.equal(`Predicate function "matches" cannot be the operand of a comparison`);
+  it("error, APPEND VALUE TO hashed", () => {
+    const issues = runProgram(program(`APPEND VALUE #( id = 1 ) TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, line_exists( ) = abap_true", () => {
-    const issues = runProgram(program(`line_exists( lt[ table_line = \`a\` ] ) = abap_true`));
-    expect(issues[0]?.getMessage()).to.equal(`Predicate function "line_exists" cannot be the operand of a comparison`);
+  it("error, APPEND TO a field symbol typed as hashed", () => {
+    const issues = runProgram(program(`FIELD-SYMBOLS <lt> TYPE ty_hashed.
+ASSIGN lt_map TO <lt>.
+APPEND ls TO <lt>.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("ok, contains( ) standing alone", () => {
-    const issues = runProgram(program(`contains( val = lv start = \` \` )`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("error, APPEND TO a dereferenced data reference to a hashed table", () => {
+    const issues = runProgram(program(`DATA lr_map TYPE REF TO ty_hashed.
+CREATE DATA lr_map.
+APPEND ls TO lr_map->*.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("ok, NOT line_exists( ) standing alone", () => {
-    const issues = runProgram(program(`NOT line_exists( lt[ table_line = \`a\` ] )`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("error, APPEND TO a hashed table component", () => {
+    const issues = runProgram(program(`DATA: BEGIN OF ls_deep,
+        map TYPE ty_hashed,
+      END OF ls_deep.
+APPEND ls TO ls_deep-map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("ok, boolc( contains( ) ) = abap_true", () => {
-    const issues = runProgram(program(`boolc( contains( val = lv start = \` \` ) ) = abap_true`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO standard", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_std.
+APPEND INITIAL LINE TO lt_std ASSIGNING FIELD-SYMBOL(<ls>).
+APPEND LINES OF lt_map TO lt_std.`));
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, xsdbool( matches( ) ) = abap_true", () => {
-    const issues = runProgram(program(`xsdbool( matches( val = lv regex = \`a+\` ) ) = abap_true`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO sorted", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_sorted.
+APPEND INITIAL LINE TO lt_sorted.
+APPEND LINES OF lt_std TO lt_sorted.`));
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, a built-in function that is not a predicate compared", () => {
-    const issues = runProgram(program(`to_upper( lv ) = \`A\``));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, INSERT INTO TABLE hashed", () => {
+    const issues = runProgram(program(`INSERT ls INTO TABLE lt_map.
+INSERT LINES OF lt_std INTO TABLE lt_map.`));
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, a functional method call compared", () => {
-    const issues = runProgram(program(`get_flag( ) = abap_true`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO generic tables", () => {
+    const issues = runProgram(`
+FORM foo CHANGING ct_any TYPE ANY TABLE ct_index TYPE INDEX TABLE ct_hashed TYPE HASHED TABLE.
+  DATA ls TYPE i.
+  FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
+  FIELD-SYMBOLS <lt_index> TYPE INDEX TABLE.
+  APPEND INITIAL LINE TO ct_index ASSIGNING FIELD-SYMBOL(<lv_index>).
+  APPEND INITIAL LINE TO ct_any ASSIGNING FIELD-SYMBOL(<lv_any>).
+  APPEND INITIAL LINE TO ct_hashed ASSIGNING FIELD-SYMBOL(<lv_hashed>).
+  ASSIGN ct_any TO <lt_any>.
+  APPEND ls TO <lt_any>.
+  ASSIGN ct_index TO <lt_index>.
+  APPEND ls TO <lt_index>.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, contains( ) = abap_true in open-abap", () => {
-    const issues = runProgram(program(`contains( val = lv start = \` \` ) = abap_true`), [], Release["open-abap"]);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO a void type", () => {
+    const issues = runProgram(`
+DATA lt_void TYPE void_hashed_tt.
+DATA ls TYPE i.
+APPEND ls TO lt_void.
+APPEND INITIAL LINE TO lt_void.`);
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, a method named like a predicate function hides it", () => {
-    const abap = `
-CLASS lcl DEFINITION.
-  PUBLIC SECTION.
-    METHODS contains IMPORTING val TYPE string start TYPE string RETURNING VALUE(r) TYPE abap_bool.
-    METHODS run.
-ENDCLASS.
-
-CLASS lcl IMPLEMENTATION.
-  METHOD contains.
-  ENDMETHOD.
-  METHOD run.
-    DATA lv TYPE string.
-    IF contains( val = lv start = \` \` ) = abap_true.
-    ENDIF.
-  ENDMETHOD.
-ENDCLASS.`;
-    const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO an unknown type", () => {
+    const issues = runProgram(`
+DATA lt_unknown TYPE zunknown_hashed_tt.
+DATA ls TYPE i.
+APPEND ls TO lt_unknown.
+APPEND INITIAL LINE TO lt_unknown.`);
+    expect(issues.length).to.equal(0);
   });
 });
