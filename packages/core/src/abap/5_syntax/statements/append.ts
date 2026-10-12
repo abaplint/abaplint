@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
-import {DataReference, TableType, UnknownType, VoidType} from "../../types/basic";
+import {DataReference, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {FSTarget} from "../expressions/fstarget";
 import {StatementSyntax} from "../_statement_syntax";
@@ -19,6 +19,13 @@ export class Append implements StatementSyntax {
     const target = node.findDirectExpression(Expressions.Target);
     if (target) {
       targetType = Target.runSyntax(target, input);
+    }
+
+    // a hashed table has no index, APPEND adds at the end
+    if (targetType instanceof TableType && targetType.getAccessType() === TableAccessType.hashed) {
+      const message = "Implicit or explicit index operation on hashed table is not possible";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     const fsTarget = node.findExpressionAfterToken("ASSIGNING");
