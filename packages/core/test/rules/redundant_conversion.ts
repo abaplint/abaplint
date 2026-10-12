@@ -165,6 +165,7 @@ CLASS lcl IMPLEMENTATION.
     DATA(r) = CONV string( to_upper( \`a\` ) ).
   ENDMETHOD.
 ENDCLASS.`, cnt: 0},
+  {abap: `DATA(t2) = CONV string( |hello world| ).`, cnt: 1},
 ];
 
 testRule(tests, RedundantConversion);
@@ -205,6 +206,7 @@ DATA(r) = to_upper( iv ).`},
   {input: `DATA iv TYPE string.
 DATA(r) = condense( CONV string( iv ) ).`, output: `DATA iv TYPE string.
 DATA(r) = condense( iv ).`},
+  {input: `DATA(t2) = CONV string( |hello world| ).`, output: `DATA(t2) = |hello world|.`},
 ];
 
 testRuleFix(fixes, RedundantConversion);
