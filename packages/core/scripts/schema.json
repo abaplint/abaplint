@@ -4238,7 +4238,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "ABAP Doc must be placed directly in front of the declaration it documents.\nTags: SingleFile\nhttps://rules.abaplint.org/wrong_abapdoc_position"
+              "description": "ABAP Doc must be placed directly in front of the declaration it documents.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/wrong_abapdoc_position"
             },
             "xml_bom": {
               "anyOf": [
@@ -6559,7 +6559,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "ABAP Doc must be placed directly in front of the declaration it documents.\nTags: SingleFile\nhttps://rules.abaplint.org/wrong_abapdoc_position"
+              "description": "ABAP Doc must be placed directly in front of the declaration it documents.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/wrong_abapdoc_position"
             },
             "xml_bom": {
               "anyOf": [
