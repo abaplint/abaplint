@@ -1074,6 +1074,16 @@ export class BuiltIn {
     return BuiltIn.unnamedArgument.has(name.toUpperCase());
   }
 
+  // numeric functions returning a value of the type of the argument
+  private static readonly argumentTypedReturn = new Set(["ABS", "CEIL", "FLOOR", "FRAC", "SIGN", "TRUNC"]);
+
+  public static returnsArgumentType(name: string | undefined): boolean {
+    if (name === undefined) {
+      return false;
+    }
+    return BuiltIn.argumentTypedReturn.has(name.toUpperCase());
+  }
+
   public static isPredicate(name: string | undefined): boolean | undefined {
     if (name === undefined) {
       return undefined;

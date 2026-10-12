@@ -1,13 +1,13 @@
 import {ExpressionNode, TokenNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {VoidType, ObjectReferenceType} from "../../types/basic";
+import {VoidType, ObjectReferenceType, IntegerType, Integer8Type, PackedType, FloatType, FloatingPointType, DecFloatType, DecFloat16Type, DecFloat34Type} from "../../types/basic";
 import {FieldChain} from "./field_chain";
 import {INode} from "../../nodes/_inode";
 import {ObjectOriented} from "../_object_oriented";
 import {NewObject} from "./new_object";
 import {Cast} from "./cast";
-import {BuiltIn} from "../_builtin";
+import {BuiltIn, BuiltInMethod} from "../_builtin";
 import {MethodCallParam} from "./method_call_param";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ComponentName} from "./component_name";
@@ -114,7 +114,12 @@ export class MethodCallChain {
 
         const param = current.findDirectExpression(Expressions.MethodCallParam);
         if (param && method) {
-          MethodCallParam.runSyntax(param, input, method);
+          const argumentType = MethodCallParam.runSyntax(param, input, method);
+          if (method instanceof BuiltInMethod
+              && BuiltIn.returnsArgumentType(methodName)
+              && this.isNumeric(argumentType)) {
+            context = argumentType;
+          }
         } else if (param && context instanceof VoidType) {
           MethodCallParam.runSyntax(param, input, context);
         }
@@ -131,6 +136,17 @@ export class MethodCallChain {
   }
 
 //////////////////////////////////////
+
+  private static isNumeric(type: AbstractType | undefined): boolean {
+    return type instanceof IntegerType
+      || type instanceof Integer8Type
+      || type instanceof PackedType
+      || type instanceof FloatType
+      || type instanceof FloatingPointType
+      || type instanceof DecFloatType
+      || type instanceof DecFloat16Type
+      || type instanceof DecFloat34Type;
+  }
 
   private static findTop(first: INode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
