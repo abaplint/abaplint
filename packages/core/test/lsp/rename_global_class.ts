@@ -86,7 +86,8 @@ ENDCLASS.`);
 CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
 ENDCLASS.
 CLASS zcl_foobar IMPLEMENTATION.
-ENDCLASS.`);
+ENDCLASS.
+`);
 
     const xml = new MemoryFile(
       "zcl_foobar.clas.xml",
@@ -105,7 +106,8 @@ ENDCLASS.`);
    </VSEOCLASS>
   </asx:values>
  </asx:abap>
-</abapGit>`);
+</abapGit>
+`);
 
     const reg = new Registry().addFile(abap).addFile(xml);
     await reg.parseAsync();
@@ -138,7 +140,8 @@ ENDCLASS.`);
 CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
 ENDCLASS.
 CLASS zcl_foobar IMPLEMENTATION.
-ENDCLASS.`);
+ENDCLASS.
+`);
 
     const xml = new MemoryFile(
       "zcl_foobar.clas.xml",
@@ -157,7 +160,8 @@ ENDCLASS.`);
    </VSEOCLASS>
   </asx:values>
  </asx:abap>
-</abapGit>`);
+</abapGit>
+`);
 
     const reg = new Registry();
     reg.addFile(abap);

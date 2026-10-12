@@ -6,6 +6,10 @@ import {Version, LanguageVersion, ABAPRelease, Release, releaseAtLeast, versionT
 import {IStatementRunnable} from "./statement_runnable";
 import {Result} from "./result";
 
+// shared result for "nothing matched", frozen so accidental mutation throws instead of leaking between calls.
+// Returned arrays are never mutated by callers, which allows returning shared/input arrays as is
+const EMPTY: Result[] = Object.freeze([]) as unknown as Result[];
+
 
 class Regex implements IStatementRunnable {
 
@@ -24,7 +28,7 @@ class Regex implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    const result: Result[] = [];
+    let result: Result[] | undefined = undefined;
 
     for (const input of r) {
       if (input.remainingLength() === 0) {
@@ -32,11 +36,16 @@ class Regex implements IStatementRunnable {
       }
       const token = input.peek();
       if (this.regexp.test(token.getStr()) === true) {
-        result.push(input.shift(new TokenNodeRegex(token)));
+        const shifted = input.shift(new TokenNodeRegex(token));
+        if (result === undefined) {
+          result = [shifted];
+        } else {
+          result.push(shifted);
+        }
       }
     }
 
-    return result;
+    return result ?? EMPTY;
   }
 
   public railroad() {
@@ -69,16 +78,20 @@ class Word implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    const result: Result[] = [];
+    let result: Result[] | undefined = undefined;
 
     for (const input of r) {
       if (input.remainingLength() !== 0
           && input.peek().getUpperStr() === this.s) {
-//        console.log("match, " + this.s + result.length);
-        result.push(input.shift(new TokenNode(input.peek())));
+        const shifted = input.shift(new TokenNode(input.peek()));
+        if (result === undefined) {
+          result = [shifted];
+        } else {
+          result.push(shifted);
+        }
       }
     }
-    return result;
+    return result ?? EMPTY;
   }
 
   public railroad() {
@@ -113,15 +126,20 @@ class Token implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    const result: Result[] = [];
+    let result: Result[] | undefined = undefined;
 
     for (const input of r) {
       if (input.remainingLength() !== 0
           && input.peek().constructor === this.tokenType) {
-        result.push(input.shift(new TokenNode(input.peek())));
+        const shifted = input.shift(new TokenNode(input.peek()));
+        if (result === undefined) {
+          result = [shifted];
+        } else {
+          result.push(shifted);
+        }
       }
     }
-    return result;
+    return result ?? EMPTY;
   }
 
   public railroad() {
@@ -173,10 +191,10 @@ class Vers implements IStatementRunnable {
   public run(r: Result[]): Result[] {
     if (Combi.isOpenABAP() === true) {
       if (this.also === AlsoIn.OpenABAP) { return this.runnable.run(r); }
-      return releaseAtLeast(Release.v702, this.release) ? this.runnable.run(r) : [];
+      return releaseAtLeast(Release.v702, this.release) ? this.runnable.run(r) : EMPTY;
     }
 
-    return releaseAtLeast(Combi.getRelease(), this.release) ? this.runnable.run(r) : [];
+    return releaseAtLeast(Combi.getRelease(), this.release) ? this.runnable.run(r) : EMPTY;
   }
 
   public getUsing(): string[] {
@@ -235,7 +253,7 @@ class LangVers implements IStatementRunnable {
     if (langVersionOrdinal(Combi.getLanguageVersion()) <= langVersionOrdinal(this.langVersion)) {
       return this.runnable.run(r);
     } else {
-      return [];
+      return EMPTY;
     }
   }
 
@@ -278,7 +296,7 @@ class LangVersNot implements IStatementRunnable {
     if (langVersionOrdinal(Combi.getLanguageVersion()) > langVersionOrdinal(this.langVersion)) {
       return this.runnable.run(r);
     } else {
-      return [];
+      return EMPTY;
     }
   }
 
@@ -316,6 +334,20 @@ class OptionalPriority implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
+    if (r.length === 1) {
+      // single input, pass and return the input array without wrapping
+      const res = this.optional.run(r);
+      if (res.length > 1) {
+        return res;
+      } else if (res.length === 0) {
+        return r;
+      } else if (res[0].remainingLength() < r[0].remainingLength()) {
+        return res;
+      } else {
+        return r;
+      }
+    }
+
     const result: Result[] = [];
 
     for (const input of r) {
@@ -364,6 +396,12 @@ class Optional implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
+    if (r.length === 1) {
+      // single input, pass and return the input array without wrapping
+      const res = this.optional.run(r);
+      return res.length === 0 ? r : r.concat(res);
+    }
+
     const result: Result[] = [];
 
     for (const input of r) {
@@ -413,16 +451,17 @@ class Star implements IStatementRunnable {
 
     try {
       let res = r;
-      let input: Result[] = [];
       for (;;) {
-        input = res;
-        res = this.sta.run(input);
+        res = this.sta.run(res);
 
         if (res.length === 0) {
           break;
         }
 
-        if (res.length > 1000) {
+        if (result === r) {
+          // copy on first match, the input array must not be mutated
+          result = r.concat(res);
+        } else if (res.length > 1000) {
           // avoid stack overflow
           result = result.concat(res);
         } else if (res.length === 1) {
@@ -606,6 +645,18 @@ class Sequence implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
+    if (r.length === 1) {
+      // single input, pass it down without wrapping and return the last result as is
+      let temp = r;
+      for (const sequence of this.list) {
+        temp = sequence.run(temp);
+        if (temp.length === 0) {
+          return EMPTY;
+        }
+      }
+      return temp;
+    }
+
     let result: Result[] = [];
 
     for (const input of r) {
@@ -700,14 +751,35 @@ export abstract class Expression implements IStatementRunnable {
   private runnable: IStatementRunnable | undefined = undefined;
 
   public run(r: Result[]): Result[] {
-    const results: Result[] = [];
-
     if (this.runnable === undefined) {
       this.runnable = this.getRunnable();
     }
 
+    if (r.length === 1) {
+      // single input, pass it down without wrapping
+      const input = r[0];
+      const temp = this.runnable.run(r);
+      if (temp.length === 0) {
+        return EMPTY;
+      }
+      const results = new Array<Result>(temp.length);
+      for (let i = 0; i < temp.length; i++) {
+        const t = temp[i];
+        const consumed = input.remainingLength() - t.remainingLength();
+        results[i] = consumed > 0 ? t.wrapConsumed(consumed, new ExpressionNode(this)) : t;
+      }
+      return results;
+    }
+
+    let results: Result[] | undefined = undefined;
+
     for (const input of r) {
       const temp = this.runnable.run([input]);
+      if (temp.length === 0) {
+        continue;
+      } else if (results === undefined) {
+        results = [];
+      }
 
       for (const t of temp) {
         const consumed = input.remainingLength() - t.remainingLength();
@@ -720,8 +792,7 @@ export abstract class Expression implements IStatementRunnable {
       }
 
     }
-//    console.dir(results);
-    return results;
+    return results ?? EMPTY;
   }
 
   public abstract getRunnable(): IStatementRunnable;
@@ -775,13 +846,17 @@ class Permutation implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    const result: Result[] = [];
+    let result: Result[] | undefined = undefined;
+    let copy: IStatementRunnable[] | undefined = undefined;
 
-    const copy = this.list.slice();
     for (let index = 0; index < this.list.length; index++) {
       const temp = this.list[index].run(r);
       if (temp.length !== 0) {
 // match
+        if (result === undefined || copy === undefined) {
+          result = [];
+          copy = this.list.slice();
+        }
         result.push(...temp);
 
         const left = copy;
@@ -793,7 +868,7 @@ class Permutation implements IStatementRunnable {
         }
       }
     }
-    return result;
+    return result ?? EMPTY;
   }
 
   public railroad() {
@@ -897,18 +972,28 @@ class Alternative implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    const result: Result[] = [];
+    // only allocate a new array when more than one alternative matches
+    let single: Result[] | undefined = undefined;
+    let result: Result[] | undefined = undefined;
 
     for (const sequ of this.list) {
       const temp = sequ.run(r);
-      if (temp.length === 1) {
-        result.push(temp[0]);
+      if (temp.length === 0) {
+        continue;
+      } else if (result !== undefined) {
+        if (temp.length === 1) {
+          result.push(temp[0]);
+        } else {
+          result.push(...temp);
+        }
+      } else if (single !== undefined) {
+        result = single.concat(temp);
       } else {
-        result.push(...temp);
+        single = temp;
       }
     }
 
-    return result;
+    return result ?? single ?? EMPTY;
   }
 
   public railroad() {
@@ -968,23 +1053,14 @@ class AlternativePriority implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    const result: Result[] = [];
-
     for (const sequ of this.list) {
-//      console.log(seq.toStr());
       const temp = sequ.run(r);
-
       if (temp.length > 0) {
-        if (temp.length === 1) {
-          result.push(temp[0]);
-        } else {
-          result.push(...temp);
-        }
-        break;
+        return temp;
       }
     }
 
-    return result;
+    return EMPTY;
   }
 
   public railroad() {
@@ -1216,16 +1292,21 @@ class StopBefore2 implements IStatementRunnable {
   public getUsing(): string[] { return []; }
 
   public run(r: Result[]): Result[] {
-    const result: Result[] = [];
-    for (const input of r) {
+    // only copy when something is filtered out
+    let result: Result[] | undefined = undefined;
+    for (let i = 0; i < r.length; i++) {
+      const input = r[i];
       const next = input.peek();
-      if (next === undefined) { continue; }
-      if (next.getUpperStr() === this.t1 && input.peekAt(1)?.getUpperStr() === this.t2) {
+      if (next === undefined
+          || (next.getUpperStr() === this.t1 && input.peekAt(1)?.getUpperStr() === this.t2)) {
+        if (result === undefined) {
+          result = r.slice(0, i);
+        }
         continue;
       }
-      result.push(input);
+      result?.push(input);
     }
-    return result;
+    return result ?? r;
   }
 
   public railroad() { return "Railroad.Terminal('stopBefore(" + this.t1 + " " + this.t2 + ")')"; }
@@ -1243,13 +1324,20 @@ class StopBefore1 implements IStatementRunnable {
   public listKeywords(): string[] { return []; }
   public getUsing(): string[] { return []; }
   public run(r: Result[]): Result[] {
-    const result: Result[] = [];
-    for (const input of r) {
+    // only copy when something is filtered out
+    let result: Result[] | undefined = undefined;
+    for (let i = 0; i < r.length; i++) {
+      const input = r[i];
       const next = input.peek()?.getUpperStr();
-      if (next !== undefined && this.words.includes(next)) { continue; }
-      result.push(input);
+      if (next !== undefined && this.words.includes(next)) {
+        if (result === undefined) {
+          result = r.slice(0, i);
+        }
+        continue;
+      }
+      result?.push(input);
     }
-    return result;
+    return result ?? r;
   }
   public railroad() { return "Railroad.Terminal('stopBefore(" + this.words.join("|") + ")')"; }
   public toStr() { return "stopBefore(" + this.words.join(",") + ")"; }

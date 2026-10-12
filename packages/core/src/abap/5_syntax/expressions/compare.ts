@@ -33,6 +33,12 @@ export class Compare {
       return;
     }
 
+    const predicateMessage = this.checkPredicateOperand(sources, input);
+    if (predicateMessage !== undefined) {
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), predicateMessage));
+      return;
+    }
+
     const typeUtils = new TypeUtils(input.scope);
     const compareOperator = node.findDirectExpression(Expressions.CompareOperator)?.concatTokens().toUpperCase();
 
@@ -73,6 +79,32 @@ export class Compare {
     if (chain?.length === 4 && chain[0] instanceof TokenNode && (first === "XSDBOOL" || first === "BOOLC")) {
       return `Built-in function "${chain[0].getFirstToken().getStr()}" cannot be the operand of IS INITIAL`;
     }
+    const name = this.builtinCallName(node.findDirectExpression(Expressions.Source), input);
+    const returning = BuiltIn.searchBuiltin(name)?.getParameters().getReturning()?.getType();
+    if (returning instanceof StringType || returning instanceof CharacterType) {
+      return `Built-in function "${name}" cannot be the operand of IS INITIAL`;
+    }
+    return undefined;
+  }
+
+  // a predicate function, contains( ) or line_exists( ), is a relational expression and not a value,
+  // it can stand alone as a condition or inside boolc( ) or xsdbool( ), but cannot be an operand of a comparison
+  private static checkPredicateOperand(sources: readonly ExpressionNode[], input: SyntaxInput): string | undefined {
+    if (input.scope.getOpenABAP()) {
+      return undefined;
+    }
+    for (const source of sources) {
+      const name = this.builtinCallName(source, input);
+      if (BuiltIn.isPredicate(name) === true) {
+        return `Predicate function "${name}" cannot be the operand of a comparison`;
+      }
+    }
+    return undefined;
+  }
+
+  // the name of the built-in function when the source is exactly one call of it, not hidden by a method of the same name
+  private static builtinCallName(source: ExpressionNode | undefined, input: SyntaxInput): string | undefined {
+    const chain = source?.getChildren();
     if (chain?.length !== 1 || !(chain[0] instanceof ExpressionNode) || !(chain[0].get() instanceof Expressions.MethodCallChain)) {
       return undefined;
     }
@@ -81,8 +113,7 @@ export class Compare {
       return undefined;
     }
     const name = calls[0].findDirectExpression(Expressions.MethodName)?.concatTokens();
-    const builtin = BuiltIn.searchBuiltin(name);
-    if (name === undefined || builtin === undefined) {
+    if (name === undefined || BuiltIn.searchBuiltin(name) === undefined) {
       return undefined;
     }
     // a method of the same name hides the built-in function
@@ -90,11 +121,7 @@ export class Compare {
     if (enclosing !== undefined && new ObjectOriented(input.scope).searchMethodName(enclosing, name).method !== undefined) {
       return undefined;
     }
-    const returning = builtin.getParameters().getReturning()?.getType();
-    if (returning instanceof StringType || returning instanceof CharacterType) {
-      return `Built-in function "${name}" cannot be the operand of IS INITIAL`;
-    }
-    return undefined;
+    return name;
   }
 
 }

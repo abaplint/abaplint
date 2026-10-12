@@ -17,6 +17,7 @@ export class ModifyOnlyOwnDBTablesConf extends BasicRuleConfig {
 
 export class ModifyOnlyOwnDBTables implements IRule {
   private conf = new ModifyOnlyOwnDBTablesConf();
+  private ownTables = new RegExp(this.conf.ownTables, "i");
   protected reg: IRegistry;
 
   public getMetadata(): IRuleMetadata {
@@ -37,6 +38,7 @@ export class ModifyOnlyOwnDBTables implements IRule {
 
   public setConfig(conf: ModifyOnlyOwnDBTablesConf) {
     this.conf = conf;
+    this.ownTables = new RegExp(this.conf.ownTables, "i");
   }
 
   public initialize(reg: IRegistry) {
@@ -58,8 +60,6 @@ export class ModifyOnlyOwnDBTables implements IRule {
         return [];
       }
 
-      const regExp = new RegExp(this.getConfig().ownTables, "i");
-
       for (const s of file.getStatements()) {
         const g = s.get();
         if (g instanceof Statements.DeleteDatabase
@@ -79,7 +79,7 @@ export class ModifyOnlyOwnDBTables implements IRule {
           }
 
           const concat = databaseTable.concatTokens().toUpperCase();
-          if (regExp.test(concat) === false) {
+          if (this.ownTables.test(concat) === false) {
             // must contain a ReferenceType.TableVoidReference or a ReferenceType.TableReference if its a dependency
             if (spaghetti === undefined) {
               spaghetti = new SyntaxLogic(this.reg, obj).run().spaghetti;

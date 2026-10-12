@@ -650,6 +650,23 @@
       },
       "type": "object"
     },
+    "ChangingSortedLineConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CheckAbstractConf": {
       "additionalProperties": false,
       "properties": {
@@ -1261,6 +1278,23 @@
       },
       "type": "object"
     },
+    "DeleteIndexInLoopConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "DescriptionEmptyConf": {
       "additionalProperties": false,
       "properties": {
@@ -1612,6 +1646,23 @@
       "type": "object"
     },
     "FMGlobalParametersObsoleteConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "FinalNewlineConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -2215,6 +2266,17 @@
               ],
               "description": "Finds IF constructs that can be changed to CASE\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/change_if_to_case"
             },
+            "changing_sorted_line": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ChangingSortedLineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "A field symbol on a whole line of a sorted or hashed table, passed to a CHANGING parameter of a method\nTags: SingleFile\nhttps://rules.abaplint.org/changing_sorted_line"
+            },
             "check_abstract": {
               "anyOf": [
                 {
@@ -2457,6 +2519,17 @@
               ],
               "description": "Checks that definitions are placed at the beginning of METHODs, FORMs and FUNCTIONs.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/definitions_top"
             },
+            "delete_index_in_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DeleteIndexInLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports DELETE itab INDEX sy-tabix inside a LOOP AT the same table\nTags: SingleFile\nhttps://rules.abaplint.org/delete_index_in_loop"
+            },
             "description_empty": {
               "anyOf": [
                 {
@@ -2599,6 +2672,17 @@
                 }
               ],
               "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
+            },
+            "final_newline": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FinalNewlineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that ABAP and XML files end with exactly one newline\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/final_newline"
             },
             "fm_global_parameters_obsolete": {
               "anyOf": [
@@ -2852,6 +2936,17 @@
                 }
               ],
               "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
+            },
+            "inline_packed_computation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlinePackedComputationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds inline declarations whose value is an arithmetic expression with calculation type p\nhttps://rules.abaplint.org/inline_packed_computation"
             },
             "intf_referencing_clas": {
               "anyOf": [
@@ -3447,6 +3542,17 @@
               ],
               "description": "Prefer inline to up-front declarations.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
             },
+            "prefer_inline_cast": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferInlineCastConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Inline a CAST helper read only once in the next statement\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_inline_cast"
+            },
             "prefer_insert_into_table": {
               "anyOf": [
                 {
@@ -3556,6 +3662,17 @@
                 }
               ],
               "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefix_is_current_class"
+            },
+            "range_row_values": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RangeRowValuesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks the SIGN and OPTION of range rows built with VALUE\nTags: Syntax\nhttps://rules.abaplint.org/range_row_values"
             },
             "reduce_procedural_code": {
               "anyOf": [
@@ -3733,6 +3850,17 @@
               ],
               "description": "SMIM consistency check\nhttps://rules.abaplint.org/smim_consistency"
             },
+            "sort_empty_key": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortEmptyKeyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -3809,6 +3937,17 @@
                 }
               ],
               "description": "Strict SQL\nTags: Upport, Quickfix\nhttps://rules.abaplint.org/strict_sql"
+            },
+            "subrc_after_assign": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SubrcAfterAssignConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a sy-subrc check directly after an ASSIGN, use IS [NOT] ASSIGNED instead\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/subrc_after_assign"
             },
             "superclass_final": {
               "anyOf": [
@@ -4138,7 +4277,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "ABAP Doc must be placed directly in front of the declaration it documents.\nTags: SingleFile\nhttps://rules.abaplint.org/wrong_abapdoc_position"
+              "description": "ABAP Doc must be placed directly in front of the declaration it documents.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/wrong_abapdoc_position"
             },
             "xml_bom": {
               "anyOf": [
@@ -4470,6 +4609,17 @@
               ],
               "description": "Finds IF constructs that can be changed to CASE\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/change_if_to_case"
             },
+            "changing_sorted_line": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ChangingSortedLineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "A field symbol on a whole line of a sorted or hashed table, passed to a CHANGING parameter of a method\nTags: SingleFile\nhttps://rules.abaplint.org/changing_sorted_line"
+            },
             "check_abstract": {
               "anyOf": [
                 {
@@ -4712,6 +4862,17 @@
               ],
               "description": "Checks that definitions are placed at the beginning of METHODs, FORMs and FUNCTIONs.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/definitions_top"
             },
+            "delete_index_in_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DeleteIndexInLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports DELETE itab INDEX sy-tabix inside a LOOP AT the same table\nTags: SingleFile\nhttps://rules.abaplint.org/delete_index_in_loop"
+            },
             "description_empty": {
               "anyOf": [
                 {
@@ -4854,6 +5015,17 @@
                 }
               ],
               "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
+            },
+            "final_newline": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FinalNewlineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that ABAP and XML files end with exactly one newline\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/final_newline"
             },
             "fm_global_parameters_obsolete": {
               "anyOf": [
@@ -5107,6 +5279,17 @@
                 }
               ],
               "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
+            },
+            "inline_packed_computation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlinePackedComputationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds inline declarations whose value is an arithmetic expression with calculation type p\nhttps://rules.abaplint.org/inline_packed_computation"
             },
             "intf_referencing_clas": {
               "anyOf": [
@@ -5702,6 +5885,17 @@
               ],
               "description": "Prefer inline to up-front declarations.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
             },
+            "prefer_inline_cast": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferInlineCastConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Inline a CAST helper read only once in the next statement\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_inline_cast"
+            },
             "prefer_insert_into_table": {
               "anyOf": [
                 {
@@ -5811,6 +6005,17 @@
                 }
               ],
               "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefix_is_current_class"
+            },
+            "range_row_values": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RangeRowValuesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks the SIGN and OPTION of range rows built with VALUE\nTags: Syntax\nhttps://rules.abaplint.org/range_row_values"
             },
             "reduce_procedural_code": {
               "anyOf": [
@@ -5988,6 +6193,17 @@
               ],
               "description": "SMIM consistency check\nhttps://rules.abaplint.org/smim_consistency"
             },
+            "sort_empty_key": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortEmptyKeyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -6064,6 +6280,17 @@
                 }
               ],
               "description": "Strict SQL\nTags: Upport, Quickfix\nhttps://rules.abaplint.org/strict_sql"
+            },
+            "subrc_after_assign": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SubrcAfterAssignConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a sy-subrc check directly after an ASSIGN, use IS [NOT] ASSIGNED instead\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/subrc_after_assign"
             },
             "superclass_final": {
               "anyOf": [
@@ -6393,7 +6620,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "ABAP Doc must be placed directly in front of the declaration it documents.\nTags: SingleFile\nhttps://rules.abaplint.org/wrong_abapdoc_position"
+              "description": "ABAP Doc must be placed directly in front of the declaration it documents.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/wrong_abapdoc_position"
             },
             "xml_bom": {
               "anyOf": [
@@ -6846,6 +7073,23 @@
       "type": "object"
     },
     "InlineDataOldVersionsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "InlinePackedComputationConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -8516,6 +8760,23 @@
       },
       "type": "object"
     },
+    "PreferInlineCastConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "PreferInlineConf": {
       "additionalProperties": false,
       "properties": {
@@ -8743,6 +9004,23 @@
       "type": "object"
     },
     "RFCErrorHandlingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "RangeRowValuesConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -9271,6 +9549,23 @@
       },
       "type": "object"
     },
+    "SortEmptyKeyConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "SpaceBeforeColonConf": {
       "additionalProperties": false,
       "properties": {
@@ -9354,6 +9649,23 @@
       "type": "object"
     },
     "StrictSQLConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "SubrcAfterAssignConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
