@@ -66,8 +66,8 @@ function runInterface(abap: string): Issue[] {
   return run(reg);
 }
 
-function runProgram(abap: string, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
-                    languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
+export function runProgram(abap: string, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
+                           languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg: IRegistry = new Registry().addFile(file);
   return run(reg, globalConstants, release, errorNamespace, languageVersion, ambigiousVoids);
@@ -18626,158 +18626,130 @@ ENDCLASS.`;
   });
 });
 
-describe("syntax.ts, static offset and length outside the field", () => {
+describe("syntax.ts, APPEND to a hashed table", () => {
   const program = (code: string): string => `
-TYPES ty_c5 TYPE c LENGTH 5.
-TYPES: BEGIN OF ty_struc,
-         comp TYPE ty_c5,
-       END OF ty_struc.
-DATA lv_c5 TYPE ty_c5.
-DATA lv_c16 TYPE c LENGTH 16.
-DATA lv_x4 TYPE x LENGTH 4.
-DATA lv_n3 TYPE n LENGTH 3.
-DATA lv_d TYPE d.
-DATA lv_s TYPE string.
-DATA ls_struc TYPE ty_struc.
-DATA lr_c5 TYPE REF TO ty_c5.
-DATA lv_off TYPE i.
-DATA lv_result TYPE string.
-FIELD-SYMBOLS <lv_c> TYPE c.
-FIELD-SYMBOLS <lv_x> TYPE x.
-FIELD-SYMBOLS <lv_any> TYPE any.
-FIELD-SYMBOLS <ls_struc> TYPE ty_struc.
-CONSTANTS lc_off TYPE i VALUE 6.
+TYPES: BEGIN OF ty_s,
+         id   TYPE i,
+         text TYPE string,
+       END OF ty_s.
+TYPES ty_hashed TYPE HASHED TABLE OF ty_s WITH UNIQUE KEY id.
+DATA lt_map TYPE ty_hashed.
+DATA lt_sorted TYPE SORTED TABLE OF ty_s WITH UNIQUE KEY id.
+DATA lt_std TYPE STANDARD TABLE OF ty_s WITH DEFAULT KEY.
+DATA ls TYPE ty_s.
 ${code}`;
+  const message = "Implicit or explicit index operation on hashed table is not possible";
 
-  it("error, target, offset and length beyond the field", () => {
-    const issues = runProgram(program(`lv_c5+3(4) = 'ABCD'.`));
-    expect(issues[0]?.getMessage()).to.equal("Length 4 exceeds the remaining length 2 of the field");
+  it("error, APPEND wa TO hashed", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, target, offset beyond the field", () => {
-    const issues = runProgram(program(`lv_c5+6 = 'A'.`));
-    expect(issues[0]?.getMessage()).to.equal("Offset 6 is outside the field of length 5");
+  it("error, APPEND wa TO hashed, declared inline", () => {
+    const issues = runProgram(program(`DATA lt_inline TYPE HASHED TABLE OF ty_s WITH UNIQUE KEY id.
+APPEND ls TO lt_inline.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, target, offset equal to the length", () => {
-    const issues = runProgram(program(`lv_c5+5 = 'A'.`));
-    expect(issues[0]?.getMessage()).to.equal("Offset 5 is outside the field of length 5");
+  it("error, APPEND INITIAL LINE TO hashed", () => {
+    const issues = runProgram(program(`APPEND INITIAL LINE TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, target, length beyond the field", () => {
-    const issues = runProgram(program(`lv_c5(6) = 'ABCDEF'.`));
-    expect(issues[0]?.getMessage()).to.equal("Length 6 exceeds the remaining length 5 of the field");
+  it("error, APPEND INITIAL LINE TO hashed ASSIGNING", () => {
+    const issues = runProgram(program(`APPEND INITIAL LINE TO lt_map ASSIGNING FIELD-SYMBOL(<ls>).`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, target, structure component", () => {
-    const issues = runProgram(program(`ls_struc-comp+3(4) = 'ABCD'.`));
-    expect(issues[0]?.getMessage()).to.equal("Length 4 exceeds the remaining length 2 of the field");
+  it("error, APPEND wa TO hashed REFERENCE INTO", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_map REFERENCE INTO DATA(lr).`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, target, component of a field symbol", () => {
-    const issues = runProgram(program(`<ls_struc>-comp+6 = 'A'.`));
-    expect(issues[0]?.getMessage()).to.equal("Offset 6 is outside the field of length 5");
+  it("error, APPEND LINES OF TO hashed", () => {
+    const issues = runProgram(program(`APPEND LINES OF lt_std TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, target, dereference", () => {
-    const issues = runProgram(program(`lr_c5->*+6 = 'A'.`));
-    expect(issues[0]?.getMessage()).to.equal("Offset 6 is outside the field of length 5");
+  it("error, APPEND VALUE TO hashed", () => {
+    const issues = runProgram(program(`APPEND VALUE #( id = 1 ) TO lt_map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, target, byte field", () => {
-    const issues = runProgram(program(`lv_x4+2(3) = 'FFFFFF'.`));
-    expect(issues[0]?.getMessage()).to.equal("Length 3 exceeds the remaining length 2 of the field");
+  it("error, APPEND TO a field symbol typed as hashed", () => {
+    const issues = runProgram(program(`FIELD-SYMBOLS <lt> TYPE ty_hashed.
+ASSIGN lt_map TO <lt>.
+APPEND ls TO <lt>.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, target of CONCATENATE", () => {
-    const issues = runProgram(program(`CONCATENATE 'A' 'B' INTO lv_c5+4(2).`));
-    expect(issues[0]?.getMessage()).to.equal("Length 2 exceeds the remaining length 1 of the field");
+  it("error, APPEND TO a dereferenced data reference to a hashed table", () => {
+    const issues = runProgram(program(`DATA lr_map TYPE REF TO ty_hashed.
+CREATE DATA lr_map.
+APPEND ls TO lr_map->*.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, target of WRITE TO", () => {
-    const issues = runProgram(program(`WRITE 'A' TO lv_c5+5.`));
-    expect(issues[0]?.getMessage()).to.equal("Offset 5 is outside the field of length 5");
+  it("error, APPEND TO a hashed table component", () => {
+    const issues = runProgram(program(`DATA: BEGIN OF ls_deep,
+        map TYPE ty_hashed,
+      END OF ls_deep.
+APPEND ls TO ls_deep-map.`));
+    expect(issues[0]?.getMessage()).to.equal(message);
   });
 
-  it("error, source, offset and length beyond the field", () => {
-    const issues = runProgram(program(`lv_result = lv_c5+3(4).`));
-    expect(issues[0]?.getMessage()).to.equal("Length 4 exceeds the remaining length 2 of the field");
+  it("ok, APPEND TO standard", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_std.
+APPEND INITIAL LINE TO lt_std ASSIGNING FIELD-SYMBOL(<ls>).
+APPEND LINES OF lt_map TO lt_std.`));
+    expect(issues.length).to.equal(0);
   });
 
-  it("error, source, offset equal to the length", () => {
-    const issues = runProgram(program(`lv_result = lv_c5+5.`));
-    expect(issues[0]?.getMessage()).to.equal("Offset 5 is outside the field of length 5");
+  it("ok, APPEND TO sorted", () => {
+    const issues = runProgram(program(`APPEND ls TO lt_sorted.
+APPEND INITIAL LINE TO lt_sorted.
+APPEND LINES OF lt_std TO lt_sorted.`));
+    expect(issues.length).to.equal(0);
   });
 
-  it("error, source, ASSIGN with offset equal to the length and (*)", () => {
-    const issues = runProgram(program(`ASSIGN lv_c5+5(*) TO <lv_any>.`));
-    expect(issues[0]?.getMessage()).to.equal("Offset 5 is outside the field of length 5");
+  it("ok, INSERT INTO TABLE hashed", () => {
+    const issues = runProgram(program(`INSERT ls INTO TABLE lt_map.
+INSERT LINES OF lt_std INTO TABLE lt_map.`));
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, target inside the field", () => {
-    const issues = runProgram(program(`lv_c5+2(3) = 'ABC'.
-lv_c5+4 = 'A'.
-lv_c5(5) = 'ABCDE'.
-lv_x4+2(2) = 'FFFF'.
-lv_c16+11 = '+0000'.
-CLEAR lv_c5+3(2).`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO generic tables", () => {
+    const issues = runProgram(`
+FORM foo CHANGING ct_any TYPE ANY TABLE ct_index TYPE INDEX TABLE ct_hashed TYPE HASHED TABLE.
+  DATA ls TYPE i.
+  FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
+  FIELD-SYMBOLS <lt_index> TYPE INDEX TABLE.
+  APPEND INITIAL LINE TO ct_index ASSIGNING FIELD-SYMBOL(<lv_index>).
+  APPEND INITIAL LINE TO ct_any ASSIGNING FIELD-SYMBOL(<lv_any>).
+  APPEND INITIAL LINE TO ct_hashed ASSIGNING FIELD-SYMBOL(<lv_hashed>).
+  ASSIGN ct_any TO <lt_any>.
+  APPEND ls TO <lt_any>.
+  ASSIGN ct_index TO <lt_index>.
+  APPEND ls TO <lt_index>.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, source inside the field, (*) and length 0", () => {
-    const issues = runProgram(program(`ASSIGN lv_c5+4(*) TO <lv_any>.
-lv_result = lv_c5+2(3).
-lv_result = lv_c5(0).`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+  it("ok, APPEND TO a void type", () => {
+    const issues = runProgram(`
+DATA lt_void TYPE void_hashed_tt.
+DATA ls TYPE i.
+APPEND ls TO lt_void.
+APPEND INITIAL LINE TO lt_void.`);
+    expect(issues.length).to.equal(0);
   });
 
-  it("ok, dynamic offset", () => {
-    const issues = runProgram(program(`lv_c5+lv_off(4) = 'ABCD'.`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("ok, offset given by a constant", () => {
-    const issues = runProgram(program(`lv_c5+lc_off = 'A'.`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("ok, numeric text, date", () => {
-    const issues = runProgram(program(`lv_n3+3 = '1'.
-lv_d+8 = '1'.
-lv_result = lv_d+8.`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("ok, generic field symbols", () => {
-    const issues = runProgram(program(`<lv_c>+3(4) = 'ABCD'.
-<lv_x>+3(2) = 'FFFF'.
-lv_result = <lv_c>+3.`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("ok, generic parameters", () => {
-    const abap = `
-FORM foo CHANGING cv TYPE c.
-  cv+5 = 'A'.
-ENDFORM.
-
-CLASS lcl DEFINITION.
-  PUBLIC SECTION.
-    METHODS run CHANGING cv TYPE c cx TYPE x.
-ENDCLASS.
-
-CLASS lcl IMPLEMENTATION.
-  METHOD run.
-    cv+5 = 'A'.
-    cx+5(1) = 'FF'.
-  ENDMETHOD.
-ENDCLASS.`;
-    const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("string target keeps its own message", () => {
-    const issues = runProgram(program(`lv_s+6 = 'A'.`));
-    expect(issues[0]?.getMessage()).to.equal("xstring/string offset/length in writer position not possible");
+  it("ok, APPEND TO an unknown type", () => {
+    const issues = runProgram(`
+DATA lt_unknown TYPE zunknown_hashed_tt.
+DATA ls TYPE i.
+APPEND ls TO lt_unknown.
+APPEND INITIAL LINE TO lt_unknown.`);
+    expect(issues.length).to.equal(0);
   });
 });
