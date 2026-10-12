@@ -3,7 +3,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import * as Expressions from "../../2_statements/expressions";
 import {Dash, DashW, InstanceArrow} from "../../1_lexer/tokens";
-import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, UnknownType, GenericObjectReferenceType, CharacterType, HexType} from "../../types/basic";
+import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, UnknownType, GenericObjectReferenceType} from "../../types/basic";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {ReferenceType} from "../_reference";
@@ -14,6 +14,7 @@ import {Dereference as DereferenceExpression} from "../../2_statements/expressio
 import {Dereference} from "./dereference";
 import {SourceFieldSymbol} from "./source_field_symbol";
 import {SourceField} from "./source_field";
+import {isFieldSymbolItself, substringType} from "./_substring";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
@@ -125,21 +126,13 @@ export class FieldChain {
         context = AttributeName.runSyntax(context, current, input, refType);
       } else if (current.get() instanceof Expressions.FieldOffset && current instanceof ExpressionNode) {
         const offset = FieldOffset.runSyntax(current, input);
-        if (offset) {
-          if (context instanceof CharacterType) {
-            context = new CharacterType(context.getLength() - offset);
-          } else if (context instanceof HexType) {
-            context = new HexType(context.getLength() - offset);
-          }
+        if (!isFieldSymbolItself(children, i)) {
+          context = substringType(context, offset, undefined, current, input);
         }
       } else if (current.get() instanceof Expressions.FieldLength && current instanceof ExpressionNode) {
         const length = FieldLength.runSyntax(current, input);
-        if (length) {
-          if (context instanceof CharacterType) {
-            context = new CharacterType(length);
-          } else if (context instanceof HexType) {
-            context = new HexType(length);
-          }
+        if (!isFieldSymbolItself(children, i)) {
+          context = substringType(context, undefined, length, current, input);
         }
       }
 
