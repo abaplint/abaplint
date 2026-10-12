@@ -58,7 +58,7 @@ https://docs.abapopenchecks.org/checks/16/`,
     }
 
     const rows = file.getRawRows();
-    const reg = new RegExp("^\\)?\\. *(\\\".*)?$");
+    const reg = /^\)?\. *(".*)?$/;
 
     for (let i = 0; i < rows.length; i++) {
       if (reg.exec(rows[i].trim())) {

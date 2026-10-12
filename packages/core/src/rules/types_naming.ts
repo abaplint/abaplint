@@ -17,6 +17,7 @@ export class TypesNamingConf extends BasicRuleConfig {
 export class TypesNaming extends ABAPRule {
 
   private conf = new TypesNamingConf();
+  private regex = new RegExp(this.conf.pattern, "i");
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -36,11 +37,11 @@ export class TypesNaming extends ABAPRule {
 
   public setConfig(conf: TypesNamingConf) {
     this.conf = conf;
+    this.regex = new RegExp(this.conf.pattern, "i");
   }
 
   public runParsed(file: ABAPFile, obj: ABAPObject) {
     const issues: Issue[] = [];
-    const testRegex = new RegExp(this.conf.pattern, "i");
     let nesting = 0;
 
     if (obj instanceof TypePool) {
@@ -72,7 +73,7 @@ export class TypesNaming extends ABAPRule {
 
       const token = expr.getFirstToken();
 
-      if (testRegex.exec(token.getStr())) {
+      if (this.regex.exec(token.getStr())) {
         continue;
       } else {
         const message = "Bad TYPES naming, expected \"" + this.conf.pattern + "\", got \"" + token.getStr() + "\"";
