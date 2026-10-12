@@ -18,6 +18,7 @@
   "rules": {
     "indentation": true,
     "unnecessary_return": true,
+    "redundant_conversion": true,
 
     "begin_end_names": true,
     "cds_parser_error": true,
