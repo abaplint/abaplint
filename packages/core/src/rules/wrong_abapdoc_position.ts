@@ -6,6 +6,8 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {Comment} from "../abap/2_statements/statements/_statement";
 import {StatementNode} from "../abap/nodes";
+import {EditHelper, IEdit} from "../edit_helper";
+import {Position} from "../position";
 
 export class WrongAbapdocPositionConf extends BasicRuleConfig {
 }
@@ -25,10 +27,13 @@ elsewhere is silently ignored, leaving the declaration undocumented.
 The following positions are reported,
 * in front of a chained keyword, ie. before "CONSTANTS:" instead of after the colon,
 * in the middle of a statement, ie. between the parameters of a METHODS definition,
-* directly in front of ENDCLASS, ENDINTERFACE or a SECTION statement.
+* directly in front of ENDCLASS, ENDINTERFACE or a SECTION statement,
+* separated from its declaration by a blank line or a normal comment, the system reads both as the end of the block.
 
-Only checks ABAP Doc inside class definitions and interfaces.`,
-      tags: [RuleTag.SingleFile],
+Only checks ABAP Doc inside class definitions and interfaces, and directly in front of them.
+
+The quick fix for a blank line deletes the blank lines.`,
+      tags: [RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `CLASS zcl_foo DEFINITION PUBLIC.
   PUBLIC SECTION.
     "! Navigation modes
@@ -71,7 +76,7 @@ ENDCLASS.`,
       } else if (type instanceof Statements.EndClass || type instanceof Statements.EndInterface) {
         definition = false;
         continue;
-      } else if (definition === false || this.isAbapdoc(statement) === false) {
+      } else if (this.isAbapdoc(statement) === false) {
         continue;
       } else if (this.isAbapdoc(statements[i - 1]) === true
           && statements[i - 1].getStart().getRow() + 1 === statement.getStart().getRow()) {
@@ -79,20 +84,55 @@ ENDCLASS.`,
       }
 
       let next: StatementNode | undefined = undefined;
-      for (let j = i + 1; j < statements.length; j++) {
-        if (statements[j].get() instanceof Comment) {
-          continue;
+      let j = i + 1;
+      for (; j < statements.length; j++) {
+        if (!(statements[j].get() instanceof Comment)) {
+          next = statements[j];
+          break;
         }
-        next = statements[j];
-        break;
       }
       if (next === undefined) {
         continue;
+      } else if (definition === false
+          && !(next.get() instanceof Statements.ClassDefinition)
+          && !(next.get() instanceof Statements.Interface)) {
+        continue;
       }
 
-      const message = this.check(statement, next);
+      // comments inside "next" are listed in front of it, only look at the rows above it
+      const nextRow = this.startRow(next);
+      const trailing = statements[i - 1]?.getEnd().getRow() === statement.getStart().getRow();
+      let last = statement;
+      let separator: string | undefined = undefined;
+      let fix: IEdit | undefined = undefined;
+      for (const s of trailing ? [] : statements.slice(i + 1, j)) {
+        if (s.getStart().getRow() >= nextRow) {
+          break;
+        } else if (s.getStart().getRow() > last.getEnd().getRow() + 1) {
+          separator = "a blank line";
+          if (this.isAbapdoc(s) === true) {
+            fix = EditHelper.deleteRange(file, new Position(last.getEnd().getRow() + 1, 1), new Position(s.getStart().getRow(), 1));
+          }
+          break;
+        } else if (this.isAbapdoc(s) === false) {
+          separator = "a comment";
+          break;
+        }
+        last = s;
+      }
+      if (separator === undefined && trailing === false && nextRow > last.getEnd().getRow() + 1) {
+        separator = "a blank line";
+        fix = EditHelper.deleteRange(file, new Position(last.getEnd().getRow() + 1, 1), new Position(nextRow, 1));
+      }
+
+      let message = this.check(statement, next);
       if (message !== undefined) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
+        fix = undefined;
+      } else if (separator !== undefined) {
+        message = "ABAP Doc is separated from its declaration by " + separator;
+      }
+      if (message !== undefined) {
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity, fix));
       }
     }
 
@@ -102,6 +142,10 @@ ENDCLASS.`,
   private isAbapdoc(statement: StatementNode | undefined): boolean {
     return statement?.get() instanceof Comment
       && statement.getFirstToken().getStr().startsWith(`"!`);
+  }
+
+  private startRow(statement: StatementNode): number {
+    return Math.min(statement.getStart().getRow(), ...statement.getPragmas().map(p => p.getRow()));
   }
 
   private check(abapdoc: StatementNode, next: StatementNode): string | undefined {
