@@ -3542,6 +3542,17 @@
               ],
               "description": "Prefer inline to up-front declarations.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
             },
+            "prefer_inline_cast": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferInlineCastConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Inline a CAST helper read only once in the next statement\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_inline_cast"
+            },
             "prefer_insert_into_table": {
               "anyOf": [
                 {
@@ -5873,6 +5884,17 @@
                 }
               ],
               "description": "Prefer inline to up-front declarations.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
+            },
+            "prefer_inline_cast": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferInlineCastConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Inline a CAST helper read only once in the next statement\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/prefer_inline_cast"
             },
             "prefer_insert_into_table": {
               "anyOf": [
@@ -8722,6 +8744,23 @@
       "type": "object"
     },
     "PreferCorrespondingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "PreferInlineCastConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
