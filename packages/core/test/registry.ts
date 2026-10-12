@@ -146,18 +146,19 @@ describe("Registry", () => {
 DATA hello TYPE i.
 
 START-OF-SELECTION.
-  WRITE hello.`);
+  WRITE hello.
+`);
     const registry = new Registry().addFile(file);
     expect(registry.findIssues().length).to.equal(0);
 
-    const updated = new MemoryFile("zfoobar.prog.abap", "REPORT zfoobar.\nmoo boo");
+    const updated = new MemoryFile("zfoobar.prog.abap", "REPORT zfoobar.\nmoo boo\n");
     registry.updateFile(updated);
     const issues = registry.findIssues();
     expect(issues.length).to.equal(1);
   });
 
   it("Double parse should give the same issues, structure", async () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "IF foo = bar.");
+    const file = new MemoryFile("zfoobar.prog.abap", "IF foo = bar.\n");
     const registry = new Registry().addFile(file);
     expect(registry.findIssues().length).to.equal(1);
     expect(registry.findIssues().length).to.equal(1);
@@ -180,7 +181,7 @@ ENDINTERFACE.`;
   });
 
   it("Double parse should give the same issues, rule", async () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
+    const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.\n");
     const registry = new Registry().addFile(file);
     const expected = 3;
     expect(registry.findIssues().length).to.equal(expected);
@@ -243,7 +244,7 @@ describe("Registry, object types", () => {
   });
 
   it("Unknown object type, multi files", async () => {
-    const file2 = new MemoryFile("src/zprog.prog.abap", "REPORT zprog.");
+    const file2 = new MemoryFile("src/zprog.prog.abap", "REPORT zprog.\n");
     const file1 = new MemoryFile("LICENSE", "moo");
     const registry = new Registry().addFile(file1).addFile(file2);
     const issues = registry.findIssues();
@@ -391,7 +392,7 @@ describe("exclude list", () => {
   }
 
   it("will return parser errors about unknown objects types", () => {
-    const file = new MemoryFile("foo.abcd.abap", "BREAK-POINT.");
+    const file = new MemoryFile("foo.abcd.abap", "BREAK-POINT.\n");
     const registry = new Registry().addFile(file);
     const issues = registry.findIssues();
     expect(issues.length).to.equal(1);
