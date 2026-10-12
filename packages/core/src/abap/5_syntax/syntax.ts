@@ -17,6 +17,7 @@ import {TypeMesh} from "./structures/type_mesh";
 import {Types} from "./structures/types";
 import {Statics} from "./structures/statics";
 import {Constants} from "./structures/constants";
+import {Cleanup} from "./structures/cleanup";
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
@@ -521,6 +522,8 @@ export class SyntaxLogic {
     } else if (stru instanceof Structures.TestInjection) {
       // todo: skipped for now
       return true;
+    } else if (stru instanceof Structures.Cleanup) {
+      Cleanup.runSyntax(node, input);
     }
     return false;
   }
