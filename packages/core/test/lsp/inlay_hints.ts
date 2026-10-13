@@ -119,9 +119,41 @@ DATA target TYPE ty_data.
 target = CONV #( CORRESPONDING #( source ) ).`);
     const reg = new Registry().addFiles([file]).parse();
     const found = new InlayHints(reg).list({uri: filename});
-    expect(found.length).to.equal(2);
+    expect(found.length).to.equal(3);
     expect(found[0].label).to.equal("TYPE ty_data");
     expect(found[1].label).to.equal("TYPE ty_data");
+    expect(found[2].label).to.equal("TYPE ty_data");
+  });
+
+  it("CONV and CORRESPONDING, method parameter", () => {
+    const file = new MemoryFile(filename, `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_target,
+             field TYPE i,
+           END OF ty_target.
+    CLASS-METHODS foo IMPORTING is_data TYPE ty_target.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
+TYPES: BEGIN OF ty_source,
+         field TYPE i,
+         other TYPE string,
+       END OF ty_source.
+
+DATA ls_data TYPE ty_source.
+
+START-OF-SELECTION.
+  lcl=>foo(
+      is_data         = CONV #( CORRESPONDING #( ls_data ) ) ).`);
+    const reg = new Registry().addFiles([file]).parse();
+    const found = new InlayHints(reg).list({uri: filename});
+    expect(found.length).to.equal(2);
+    expect(found[0].label).to.equal("TYPE lcl=>ty_target");
+    expect(found[1].label).to.equal("TYPE lcl=>ty_target");
   });
 
   it("Subfield inferred", () => {
