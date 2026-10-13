@@ -166,6 +166,7 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`, cnt: 0},
   {abap: `DATA(t2) = CONV string( |hello world| ).`, cnt: 1},
+  {abap: `DATA(t5) = CONV i( strlen( |sdf| ) ).`, cnt: 1},
 ];
 
 testRule(tests, RedundantConversion);
