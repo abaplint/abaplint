@@ -19,6 +19,8 @@
     "indentation": true,
     "unnecessary_return": true,
     "redundant_conversion": true,
+    "xml_bom": true,
+    "final_newline": true,
 
     "begin_end_names": true,
     "cds_parser_error": true,

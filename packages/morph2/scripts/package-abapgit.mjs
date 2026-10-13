@@ -25,40 +25,11 @@ ${values}
 `;
 }
 
-// "* TS: src/_config.ts:87:1 IConfig" becomes "IConfig, src/_config.ts", which fits the 60 character DESCRIPT
-function description(source, fallback) {
-  const match = /^\* TS: (\S+?):\d+:\d+ (.+)$/m.exec(source.split("\n", 1)[0]);
-  const text = match ? `${match[2].trim()}, ${match[1]}` : fallback;
-  return text.length > 60 ? text.substring(0, 57) + "..." : text;
-}
-
-function superclassOf(source) {
-  return /^CLASS \S+ DEFINITION\b[^.]*\bINHERITING FROM (\S+?)[\s.]/im.exec(source)?.[1].toLowerCase();
-}
-
 if (!existsSync(classesFolder)) {
   throw new Error(`${classesFolder} does not exist, run the transpilation first`);
 }
 const release = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf-8")).abapitiRelease : undefined;
 const fallbackDescription = `abaplint translated by abapiti ${release ?? ""}`.trim();
-
-const objects = new Map();
-for (const filename of readdirSync(classesFolder).sort()) {
-  const match = /^([^.]+)\.(clas|intf)\.abap$/.exec(filename);
-  if (match) {
-    objects.set(match[1], {type: match[2], source: readFileSync(path.join(classesFolder, filename), "utf-8")});
-  }
-}
-
-// exception classes need CATEGORY 40, follow the inheritance through the generated classes
-function isException(name, seen = new Set()) {
-  const superclass = objects.get(name)?.type === "clas" ? superclassOf(objects.get(name).source) : undefined;
-  if (superclass === undefined || seen.has(superclass)) {
-    return false;
-  }
-  seen.add(superclass);
-  return /^cx_/.test(superclass) || isException(superclass, seen);
-}
 
 const files = [];
 files.push({name: ".abapgit.xml", data: `<?xml version="1.0" encoding="utf-8"?>
@@ -76,35 +47,20 @@ files.push({name: "src/package.devc.xml", data: abapGitXml("LCL_OBJECT_DEVC", ` 
     <CTEXT>${escapeXml(fallbackDescription)}</CTEXT>
    </DEVC>`)});
 
-let exceptions = 0;
-for (const [name, {type, source}] of objects) {
-  const descript = escapeXml(description(source, fallbackDescription));
-  let xml;
-  if (type === "clas") {
-    const exception = isException(name);
-    exceptions += exception ? 1 : 0;
-    xml = abapGitXml("LCL_OBJECT_CLAS", `   <VSEOCLASS>
-    <CLSNAME>${name.toUpperCase()}</CLSNAME>
-    <LANGU>E</LANGU>
-    <DESCRIPT>${descript}</DESCRIPT>${exception ? "\n    <CATEGORY>40</CATEGORY>" : ""}
-    <STATE>1</STATE>
-    <CLSCCINCL>X</CLSCCINCL>
-    <FIXPT>X</FIXPT>
-    <UNICODE>X</UNICODE>
-   </VSEOCLASS>`);
-  } else {
-    xml = abapGitXml("LCL_OBJECT_INTF", `   <VSEOINTERF>
-    <CLSNAME>${name.toUpperCase()}</CLSNAME>
-    <LANGU>E</LANGU>
-    <DESCRIPT>${descript}</DESCRIPT>
-    <EXPOSURE>2</EXPOSURE>
-    <STATE>1</STATE>
-    <UNICODE>X</UNICODE>
-   </VSEOINTERF>`);
+// the object XML is written by abapgit-xml.mjs before abaplint --fix, so pack the files as they are now
+let objects = 0;
+for (const filename of readdirSync(classesFolder).sort()) {
+  const match = /^([^.]+)\.(clas|intf)\.abap$/.exec(filename);
+  if (!match) {
+    continue;
   }
-  writeFileSync(path.join(classesFolder, `${name}.${type}.xml`), xml);
-  files.push({name: `src/${name}.${type}.abap`, data: source});
-  files.push({name: `src/${name}.${type}.xml`, data: xml});
+  const xmlFilename = `${match[1]}.${match[2]}.xml`;
+  if (!existsSync(path.join(classesFolder, xmlFilename))) {
+    throw new Error(`${xmlFilename} is missing, run scripts/abapgit-xml.mjs first`);
+  }
+  objects++;
+  files.push({name: `src/${filename}`, data: readFileSync(path.join(classesFolder, filename), "utf-8")});
+  files.push({name: `src/${xmlFilename}`, data: readFileSync(path.join(classesFolder, xmlFilename), "utf-8")});
 }
 
 // minimal zip writer, deflate only, fixed timestamp so identical input gives an identical zip
@@ -159,4 +115,4 @@ end.writeUInt32LE(centralSize, 12);
 end.writeUInt32LE(offset, 16);
 writeFileSync(zipPath, Buffer.concat([...localParts, ...centralParts, end]));
 
-console.log(`Wrote XML for ${objects.size} objects (${exceptions} exception classes) and ${path.relative(packageRoot, zipPath)}.`);
+console.log(`Packed ${objects} objects into ${path.relative(packageRoot, zipPath)}.`);

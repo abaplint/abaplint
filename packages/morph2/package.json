@@ -7,7 +7,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "transpile": "node scripts/transpile-abaplint-release.mjs && abaplint --fix && node scripts/package-abapgit.mjs",
+    "transpile": "node scripts/transpile-abaplint-release.mjs && node scripts/abapgit-xml.mjs && abaplint --fix && node scripts/package-abapgit.mjs",
     "test": "npm run transpile && abaplint"
   },
   "dependencies": {
