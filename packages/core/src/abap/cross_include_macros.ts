@@ -2,6 +2,8 @@ import {IRegistry} from "../_iregistry";
 import {ABAPObject} from "../objects/_abap_object";
 import {Program} from "../objects/program";
 import {Unknown} from "./2_statements/statements/_statement";
+import {Include} from "./2_statements/statements";
+import * as Expressions from "./2_statements/expressions";
 import {ExpandMacros} from "./2_statements/expand_macros";
 import {IncludeGraph} from "../utils/include_graph";
 
@@ -18,6 +20,8 @@ export class CrossIncludeMacros {
   }
 
   public run(): void {
+    this.reparseCyclicPrograms();
+
     const candidates = this.findCandidates();
     if (candidates.length === 0) {
       return;
@@ -50,6 +54,46 @@ export class CrossIncludeMacros {
   }
 
 //////////////////////////////
+
+  // A program or include in an INCLUDE cycle can be parsed while the include defining its macros is still
+  // being parsed, depending on the order the files were added. Everything is parsed now, so parse it again.
+  private reparseCyclicPrograms(): void {
+    const config = this.reg.getConfig();
+    for (const obj of this.reg.getObjects()) {
+      if (obj instanceof Program && this.hasUnknown(obj) && this.isInIncludeCycle(obj)) {
+        obj.setDirty();
+        obj.parse(config.getRelease(), config.getSyntaxSetttings().globalMacros, this.reg, config.getLanguageVersion());
+      }
+    }
+  }
+
+  private hasUnknown(prog: Program): boolean {
+    return prog.getABAPFiles().some(f => f.getStatements().some(s => s.get() instanceof Unknown));
+  }
+
+  // the include graph does not link INCLUDEs of main programs, so follow the INCLUDEs from the program
+  private isInIncludeCycle(prog: Program): boolean {
+    const seen = new Set<Program>();
+    const stack = [prog];
+    while (stack.length > 0) {
+      for (const file of stack.pop()!.getABAPFiles()) {
+        for (const statement of file.getStatements()) {
+          if (!(statement.get() instanceof Include)) {
+            continue;
+          }
+          const name = statement.findDirectExpression(Expressions.IncludeName)?.concatTokens();
+          const included = this.reg.getObject("PROG", name);
+          if (included === prog) {
+            return true;
+          } else if (included instanceof Program && seen.has(included) === false) {
+            seen.add(included);
+            stack.push(included);
+          }
+        }
+      }
+    }
+    return false;
+  }
 
   private findCandidates(): Program[] {
     const ret: Program[] = [];

@@ -89,7 +89,7 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
-  it("a program and an include that include each other do not recurse", async () => {
+  describe("a program and an include that include each other do not recurse", () => {
     const zmain = `REPORT zcyc_main.
 INCLUDE zcyc_top.
 set_value lv_value.`;
@@ -100,14 +100,52 @@ DEFINE set_value.
   &1 = 1.
 END-OF-DEFINITION.`;
 
-    const reg = new Registry().addFiles([
-      new MemoryFile("zcyc_main.prog.abap", zmain),
+    const main = () => new MemoryFile("zcyc_main.prog.abap", zmain);
+    const top = () => [
       new MemoryFile("zcyc_top.prog.abap", ztop),
       new MemoryFile("zcyc_top.prog.xml", "<SUBC>I</SUBC>"),
-    ]);
+    ];
 
-    const issues = reg.parse().findIssues().filter(i => i.getKey() === "parser_error");
-    expect(issues.length).to.equal(0);
+    it("program added first", async () => {
+      const issues = new Registry().addFiles([main(), ...top()]).parse().findIssues();
+      expect(issues.filter(i => i.getKey() === "parser_error").length).to.equal(0);
+      expect(issues.filter(i => i.getKey() === "unused_macros").length).to.equal(0);
+    });
+
+    it("include added first", async () => {
+      const issues = new Registry().addFiles([...top(), main()]).parse().findIssues();
+      expect(issues.filter(i => i.getKey() === "parser_error").length).to.equal(0);
+      expect(issues.filter(i => i.getKey() === "unused_macros").length).to.equal(0);
+    });
+  });
+
+  describe("includes that include each other do not recurse", () => {
+    const prog = () => new MemoryFile("zp.prog.abap", "REPORT zp.\nINCLUDE zi1.");
+    const zi1 = () => [
+      new MemoryFile("zi1.prog.abap", "INCLUDE zi2.\nDATA x TYPE i.\nuse_m x."),
+      new MemoryFile("zi1.prog.xml", "<SUBC>I</SUBC>"),
+    ];
+    const zi2 = () => [
+      new MemoryFile("zi2.prog.abap", "INCLUDE zi1.\nDEFINE use_m.\n  &1 = 1.\nEND-OF-DEFINITION."),
+      new MemoryFile("zi2.prog.xml", "<SUBC>I</SUBC>"),
+    ];
+
+    it("first include added first", async () => {
+      const issues = new Registry().addFiles([...zi1(), ...zi2(), prog()]).parse().findIssues();
+      expect(issues.filter(i => i.getKey() === "parser_error").length).to.equal(0);
+      expect(issues.filter(i => i.getKey() === "unused_macros").length).to.equal(0);
+    });
+
+    it("second include added first", async () => {
+      const issues = new Registry().addFiles([...zi2(), ...zi1(), prog()]).parse().findIssues();
+      expect(issues.filter(i => i.getKey() === "parser_error").length).to.equal(0);
+      expect(issues.filter(i => i.getKey() === "unused_macros").length).to.equal(0);
+    });
+
+    it("without the program", async () => {
+      const issues = new Registry().addFiles([...zi2(), ...zi1()]).parse().findIssues();
+      expect(issues.filter(i => i.getKey() === "parser_error").length).to.equal(0);
+    });
   });
 
   it("an include that includes itself, used from a program, does not recurse", async () => {

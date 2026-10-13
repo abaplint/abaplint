@@ -167,4 +167,35 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  describe("cyclic includes", () => {
+    const files: {[name: string]: {filename: string, contents: string}[]} = {
+      prog: [{filename: "zprog.prog.abap", contents: `REPORT zprog.\nINCLUDE zi1.`}],
+      zi1: [
+        {filename: "zi1.prog.abap", contents: `INCLUDE zi2.\nDATA a TYPE i.`},
+        {filename: "zi1.prog.xml", contents: `<SUBC>I</SUBC>`}],
+      zi2: [
+        {filename: "zi2.prog.abap", contents: `INCLUDE zi1.\nDATA b TYPE i.`},
+        {filename: "zi2.prog.xml", contents: `<SUBC>I</SUBC>`}],
+    };
+
+    for (const order of [["prog", "zi1", "zi2"], ["zi2", "zi1", "prog"]]) {
+      it("two includes include each other, " + order.join(","), async () => {
+        const issues = await runMulti(order.map(o => files[o]).flat());
+        const messages = issues.map(i => i.getFilename() + ": " + i.getMessage()).sort();
+        expect(messages).to.deep.equal([
+          "zi1.prog.abap: Cyclic INCLUDE, ZI2",
+          "zi2.prog.abap: Cyclic INCLUDE, ZI1",
+        ]);
+      });
+    }
+
+    it("include includes itself", async () => {
+      const issues = await runMulti([
+        {filename: "zprog.prog.abap", contents: `REPORT zprog.\nINCLUDE zself.`},
+        {filename: "zself.prog.abap", contents: `INCLUDE zself.\nDATA a TYPE i.`},
+        {filename: "zself.prog.xml", contents: `<SUBC>I</SUBC>`}]);
+      expect(issues.map(i => i.getMessage())).to.deep.equal(["Cyclic INCLUDE, ZSELF"]);
+    });
+  });
+
 });

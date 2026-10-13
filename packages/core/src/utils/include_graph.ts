@@ -4,6 +4,7 @@ import {Class, FunctionGroup, Program, TypePool} from "../objects";
 import {CheckInclude} from "../rules/check_include";
 import {Position} from "../position";
 import {Issue} from "../issue";
+import {StatementNode} from "../abap/nodes/statement_node";
 import {IFile} from "../files/_ifile";
 import {IIncludeGraph} from "./_include_graph";
 import {IRegistry} from "../_iregistry";
@@ -61,6 +62,23 @@ class Graph {
       this.edges[from.filename] = [];
     }
     this.edges[from.filename].push(toFilename);
+  }
+
+  // true if "to" is reachable from "from" via the edges, "from" itself counts
+  public isReachable(from: string, to: string): boolean {
+    const seen = new Set<string>();
+    const stack = [from];
+    while (stack.length > 0) {
+      const current = stack.pop()!;
+      if (current === to) {
+        return true;
+      }
+      if (seen.has(current) === false) {
+        seen.add(current);
+        stack.push(...this.edges[current] || []);
+      }
+    }
+    return false;
   }
 
   public findTop(filename: string, path: Set<string> = new Set()): IVertex[] {
@@ -142,6 +160,7 @@ export class IncludeGraph implements IIncludeGraph {
 
   private build() {
     this.addVertices();
+    const included: {file: IFile, statement: StatementNode, vertex: IVertex, name: string}[] = [];
 
     for (const o of getABAPObjects(this.reg)) {
       for (const f of o.getABAPFiles()) {
@@ -172,9 +191,18 @@ export class IncludeGraph implements IIncludeGraph {
               this.issues.push(issue);
             } else {
               this.graph.addEdge(found, f.getFilename());
+              included.push({file: f, statement: s, vertex: found, name});
             }
           }
         }
+      }
+    }
+
+    // cycles are not followed, but ABAP rejects them, so report them
+    for (const i of included) {
+      if (this.graph.isReachable(i.file.getFilename(), i.vertex.filename)) {
+        const issue = Issue.atStatement(i.file, i.statement, "Cyclic INCLUDE, " + i.name, new CheckInclude().getMetadata().key, this.severity);
+        this.issues.push(issue);
       }
     }
   }
