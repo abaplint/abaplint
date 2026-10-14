@@ -126,7 +126,11 @@ ENDIF.
           && lastChildren[1].getChildren().length === 1
           && lastChildren[1].getFirstToken().getStr().startsWith("-") === false
           && lastChildren[2].getFirstToken().getStr() === ")") {
-        const issue = Issue.atToken(file, lastChildren[0].getFirstToken(), "Too many parentheses", this.getMetadata().key, this.conf.severity);
+        const fixText = lastChildren[1].concatTokens();
+        const start = lastChildren[0].getFirstToken().getStart();
+        const end = lastChildren[2].getLastToken().getEnd();
+        const fix = EditHelper.replaceRange(file, start, end, fixText);
+        const issue = Issue.atToken(file, lastChildren[0].getFirstToken(), "Too many parentheses", this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
     }
