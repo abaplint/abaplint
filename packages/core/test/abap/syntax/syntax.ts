@@ -14683,6 +14683,24 @@ WRITE / data_to_write.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("utclong_add, all parameters", () => {
+    const abap = `
+DATA ts TYPE utclong.
+DATA minutes TYPE int8.
+DATA seconds TYPE decfloat34.
+ts = utclong_add( val = ts days = 1 hours = 2 minutes = minutes seconds = seconds ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("utclong_add, hour is not a parameter", () => {
+    const abap = `
+DATA ts TYPE utclong.
+ts = utclong_add( val = ts hour = 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.not.equal(undefined);
+  });
+
   it("utclong_current, incompatible with timestampl", () => {
     const dtel = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
