@@ -6,6 +6,9 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ExpressionNode} from "../abap/nodes/expression_node";
+import {StatementNode} from "../abap/nodes/statement_node";
+import {EditHelper, IEdit} from "../edit_helper";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 
 export class MaxOneMethodParameterPerLineConf extends BasicRuleConfig {
 }
@@ -18,7 +21,7 @@ export class MaxOneMethodParameterPerLine extends ABAPRule {
       key: "max_one_method_parameter_per_line",
       title: "Max one method parameter definition per line",
       shortDescription: `Keep max one method parameter description per line`,
-      tags: [RuleTag.SingleFile, RuleTag.Whitespace],
+      tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Quickfix],
       badExample: `
 METHODS apps_scope_token
   IMPORTING
@@ -51,7 +54,9 @@ METHODS apps_scope_token
         }
 
         if (prev.getFirstToken().getStart().getRow() === p.getFirstToken().getStart().getRow()) {
-          const issue = Issue.atToken(file, prev.getFirstToken(), this.getMetadata().title, this.getMetadata().key, this.conf.severity);
+          const fix = this.buildFix(file, statement, p);
+          const issue = Issue.atToken(file, prev.getFirstToken(), this.getMetadata().title,
+                                      this.getMetadata().key, this.conf.severity, fix);
           issues.push(issue);
         }
 
@@ -60,6 +65,35 @@ METHODS apps_scope_token
     }
 
     return issues;
+  }
+
+  private static readonly SECTIONS = ["IMPORTING", "EXPORTING", "CHANGING", "RETURNING"];
+
+  /** moves the parameter, or its preceding section keyword, to a new line */
+  private buildFix(file: ABAPFile, statement: StatementNode, param: ExpressionNode): IEdit | undefined {
+    const tokens = statement.getTokens();
+    const index = tokens.indexOf(param.getFirstToken());
+    if (index < 1) {
+      return undefined;
+    }
+
+    let target: AbstractToken = tokens[index];
+    let indent = statement.findFirstExpression(Expressions.MethodParam)!.getFirstToken().getStart().getCol();
+    const before = tokens[index - 1];
+    if (MaxOneMethodParameterPerLine.SECTIONS.includes(before.getStr().toUpperCase())) {
+      if (index < 2) {
+        return undefined;
+      }
+      target = before;
+      indent = tokens.find(t => MaxOneMethodParameterPerLine.SECTIONS.includes(t.getStr().toUpperCase()))!.getStart().getCol();
+    }
+
+    const previous = tokens[tokens.indexOf(target) - 1];
+    if (previous.getEnd().getRow() !== target.getStart().getRow()) {
+      return undefined;
+    }
+
+    return EditHelper.replaceRange(file, previous.getEnd(), target.getStart(), "\n" + " ".repeat(indent - 1));
   }
 
 }
