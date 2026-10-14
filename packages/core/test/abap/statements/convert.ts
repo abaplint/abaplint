@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Version} from "../../../src/version";
 
 const tests = [
   "CONVERT TIME STAMP lv_stamp TIME ZONE tz INTO DATE dat TIME tim DAYLIGHT SAVING TIME dst.",
@@ -21,3 +22,10 @@ const tests = [
 ];
 
 statementType(tests, "CONVERT", Statements.Convert);
+
+const versionsOk = [
+  {abap: "CONVERT DATE dat TIME tim TIME ZONE tz INTO UTCLONG ts.", rel: Version.OpenABAP},
+  {abap: "CONVERT UTCLONG ts TIME ZONE tz INTO DATE ls_result-date TIME ls_result-time DAYLIGHT SAVING TIME ls_result-dst.", rel: Version.OpenABAP},
+];
+
+statementVersionOk(versionsOk, "CONVERT", Statements.Convert);
