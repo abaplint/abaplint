@@ -5,6 +5,8 @@ import {SequentialBlank} from "./sequential_blank";
 import * as Statements from "../abap/2_statements/statements";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {EditHelper, IEdit} from "../edit_helper";
+import {Position} from "../position";
 
 export enum NewlineLogic {
   Exact = "exact",
@@ -30,7 +32,7 @@ export class NewlineBetweenMethods extends ABAPRule {
       key: "newline_between_methods",
       title: "New line between methods",
       shortDescription: `Checks for newlines between method implementations.`,
-      tags: [RuleTag.Whitespace, RuleTag.SingleFile],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.SingleFile],
     };
   }
 
@@ -62,22 +64,41 @@ export class NewlineBetweenMethods extends ABAPRule {
         continue;
       }
       let counter = 0;
-      while (SequentialBlank.isBlankOrWhitespace(rows[nextRow]) && (counter <= this.conf.count + 1)) {
+      while (SequentialBlank.isBlankOrWhitespace(rows[nextRow])) {
         counter++;
         nextRow++;
       }
       if ((counter !== this.conf.count && this.conf.logic === NewlineLogic.Exact)
         || (counter >= this.conf.count && this.conf.logic === NewlineLogic.Less)
         || counter === 0) {
+        const fix = this.buildFix(file, rows, statement.getStart().getRow(), counter);
         issues.push(Issue.atStatement(
           file,
           statement,
           this.getMessage(),
           this.getMetadata().key,
-          this.conf.severity));
+          this.conf.severity,
+          fix));
       }
     }
     return issues;
+  }
+
+  private buildFix(file: ABAPFile, rows: string[], row: number, blanks: number): IEdit | undefined {
+    let target = this.conf.count;
+    if (this.conf.logic === NewlineLogic.Less) {
+      target = blanks === 0 ? 1 : this.conf.count - 1;
+    }
+
+    if (blanks < target) {
+      const end = new Position(row, rows[row - 1].length + 1);
+      return EditHelper.insertAt(file, end, "\n".repeat(target - blanks));
+    } else if (blanks > target) {
+      const start = new Position(row + target, rows[row + target - 1].length + 1);
+      const end = new Position(row + blanks, rows[row + blanks - 1].length + 1);
+      return EditHelper.deleteRange(file, start, end);
+    }
+    return undefined;
   }
 
   private isConfigurationValid(): boolean {
