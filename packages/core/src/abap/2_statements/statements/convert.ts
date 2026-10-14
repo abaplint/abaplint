@@ -23,7 +23,7 @@ export class Convert implements IStatement {
     const tim = seq("TIME", Source);
 
     const stamp = seq("INTO TIME STAMP", Target);
-    const intoutc = ver(Release.v754, seq("INTO UTCLONG", Target));
+    const intoutc = ver(Release.v754, seq("INTO UTCLONG", Target), {also: AlsoIn.OpenABAP});
     const invert = seq("INTO INVERTED-DATE", Target);
 
     const date = seq(per(dat, tim),
@@ -31,7 +31,7 @@ export class Convert implements IStatement {
 
     const inv = seq("INVERTED-DATE", Source, "INTO DATE", Target);
 
-    const utclong = ver(Release.v754, seq("UTCLONG", Source, per(zone, into, daylightSource)), {also: AlsoIn.OpenABAP});
+    const utclong = ver(Release.v754, seq("UTCLONG", Source, per(zone, into, daylightTarget)), {also: AlsoIn.OpenABAP});
 
     return seq("CONVERT", alt(time, date, inv, utclong));
   }
