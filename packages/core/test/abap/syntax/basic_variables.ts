@@ -2303,4 +2303,52 @@ DATA(res) = cha && cha.`;
     expect(type).to.be.instanceof(Basic.PackedType);
   });
 
+  it("inline DATA from a substring of a date is numeric text", () => {
+    const type = resolveVariable(`DATA date TYPE d.
+  DATA(year) = date(4).`, "year")?.getType();
+    expect(type).to.be.instanceof(Basic.NumericType);
+    expect((type as Basic.NumericType).getLength()).to.equal(4);
+  });
+
+  it("inline DATA from a substring of a time is numeric text", () => {
+    const type = resolveVariable(`DATA time TYPE t.
+  DATA(minute) = time+2(2).`, "minute")?.getType();
+    expect(type).to.be.instanceof(Basic.NumericType);
+    expect((type as Basic.NumericType).getLength()).to.equal(2);
+  });
+
+  it("inline DATA from a substring of numeric text, offset only", () => {
+    const type = resolveVariable(`DATA num TYPE n LENGTH 10.
+  DATA(tail) = num+6.`, "tail")?.getType();
+    expect(type).to.be.instanceof(Basic.NumericType);
+    expect((type as Basic.NumericType).getLength()).to.equal(4);
+  });
+
+  it("inline DATA from a date without offset and length stays a date", () => {
+    const type = resolveVariable(`DATA date TYPE d.
+  DATA(copy) = date.`, "copy")?.getType();
+    expect(type).to.be.instanceof(Basic.DateType);
+  });
+
+  it("inline DATA from utclong_diff( ) is decfloat34", () => {
+    const type = resolveVariable(`DATA high TYPE utclong.
+  DATA low TYPE utclong.
+  DATA(diff) = utclong_diff( high = high low = low ).`, "diff")?.getType();
+    expect(type).to.be.instanceof(Basic.DecFloat34Type);
+  });
+
+  it("inline DATA, CONVERT INTO UTCLONG", () => {
+    const type = resolveVariable(`DATA date TYPE d.
+  DATA time TYPE t.
+  CONVERT DATE date TIME time TIME ZONE 'UTC' INTO UTCLONG DATA(ts).`, "ts")?.getType();
+    expect(type).to.be.instanceof(Basic.UTCLongType);
+  });
+
+  it("inline DATA, CONVERT UTCLONG with DAYLIGHT SAVING TIME", () => {
+    const type = resolveVariable(`DATA ts TYPE utclong.
+  CONVERT UTCLONG ts TIME ZONE 'CET' INTO DATE DATA(date) TIME DATA(time) DAYLIGHT SAVING TIME DATA(dst).`, "dst")?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+    expect((type as Basic.CharacterType).getLength()).to.equal(1);
+  });
+
 });
