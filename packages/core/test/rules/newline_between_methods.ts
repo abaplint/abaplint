@@ -1,5 +1,5 @@
 import {NewlineBetweenMethods, NewlineBetweenMethodsConf, NewlineLogic} from "../../src/rules/newline_between_methods";
-import {testRuleWithVariableConfig} from "./_utils";
+import {testRuleFixSingle, testRuleWithVariableConfig} from "./_utils";
 
 const configNewlineLess = new NewlineBetweenMethodsConf();
 configNewlineLess.count = 2;
@@ -197,3 +197,54 @@ const newlineTests = [
 ];
 
 testRuleWithVariableConfig(newlineTests, NewlineBetweenMethods);
+
+describe("Rule: newline_between_methods, quick fixes", () => {
+  const prefix = `CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS abc.
+ENDCLASS.
+CLASS lcl_foo IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.`;
+  const suffix = `
+  METHOD abc.
+  ENDMETHOD.
+ENDCLASS.`;
+
+  function run(config: NewlineBetweenMethodsConf, blanksBefore: number, blanksAfter: number) {
+    const rule = new NewlineBetweenMethods();
+    rule.setConfig(config);
+    testRuleFixSingle(
+      prefix + "\n".repeat(blanksBefore) + suffix,
+      prefix + "\n".repeat(blanksAfter) + suffix,
+      rule);
+  }
+
+  it("less, no newlines, insert one", () => {
+    run(configNewlineLess, 0, 1);
+  });
+
+  it("less, too many newlines, remove", () => {
+    run(configNewlineLess, 4, 1);
+  });
+
+  it("exact, no newlines, insert", () => {
+    run(configNewlineExact, 0, 2);
+  });
+
+  it("exact, too few newlines, insert", () => {
+    run(configNewlineExact, 1, 2);
+  });
+
+  it("exact, too many newlines, remove", () => {
+    run(configNewlineExact, 5, 2);
+  });
+
+  it("less with count 3, too many newlines, remove", () => {
+    const conf = new NewlineBetweenMethodsConf();
+    conf.count = 3;
+    conf.logic = NewlineLogic.Less;
+    run(conf, 3, 2);
+  });
+});

@@ -158,6 +158,7 @@ import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
 import {RangeRowValuesConf} from "../src/rules/range_row_values";
 import {ReduceProceduralCodeConf} from "../src/rules/reduce_procedural_code";
 import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
+import {RedundantCastConf} from "../src/rules/redundant_cast";
 import {RedundantConversionConf} from "../src/rules/redundant_conversion";
 import {ReleaseIdocConf} from "../src/rules/release_idoc";
 import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
@@ -385,6 +386,7 @@ export interface IConfig {
     "range_row_values"?: RangeRowValuesConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
+    "redundant_cast"?: RedundantCastConf | boolean,
     "redundant_conversion"?: RedundantConversionConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,
@@ -601,6 +603,7 @@ export interface IConfig {
     "range_row_values"?: RangeRowValuesConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
+    "redundant_cast"?: RedundantCastConf | boolean,
     "redundant_conversion"?: RedundantConversionConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,

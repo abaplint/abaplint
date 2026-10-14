@@ -3254,7 +3254,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for newlines between method implementations.\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
+              "description": "Checks for newlines between method implementations.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
             },
             "no_aliases": {
               "anyOf": [
@@ -3706,6 +3706,17 @@
                 }
               ],
               "description": "Checks for string templates\nTags: SingleFile\nhttps://rules.abaplint.org/reduce_string_templates"
+            },
+            "redundant_cast": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RedundantCastConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Find redundant CAST expressions\nTags: Quickfix\nhttps://rules.abaplint.org/redundant_cast"
             },
             "redundant_conversion": {
               "anyOf": [
@@ -5608,7 +5619,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for newlines between method implementations.\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
+              "description": "Checks for newlines between method implementations.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
             },
             "no_aliases": {
               "anyOf": [
@@ -6060,6 +6071,17 @@
                 }
               ],
               "description": "Checks for string templates\nTags: SingleFile\nhttps://rules.abaplint.org/reduce_string_templates"
+            },
+            "redundant_cast": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RedundantCastConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Find redundant CAST expressions\nTags: Quickfix\nhttps://rules.abaplint.org/redundant_cast"
             },
             "redundant_conversion": {
               "anyOf": [
@@ -9120,6 +9142,23 @@
       "type": "object"
     },
     "ReduceStringTemplatesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "RedundantCastConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
