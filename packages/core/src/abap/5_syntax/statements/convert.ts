@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {InlineData} from "../expressions/inline_data";
-import {TimeType, DateType, PackedType, CharacterType} from "../../types/basic";
+import {TimeType, DateType, PackedType, CharacterType, UTCLongType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
@@ -50,6 +50,16 @@ export class Convert implements StatementSyntax {
         InlineData.runSyntax(inline, input, new PackedType(8, 0));
       } else {
         Target.runSyntax(stampTarget, input);
+      }
+    }
+
+    const utclongTarget = node.findExpressionAfterToken("UTCLONG");
+    if (utclongTarget?.get() instanceof Expressions.Target) {
+      const inline = utclongTarget?.findDirectExpression(Expressions.InlineData);
+      if (inline) {
+        InlineData.runSyntax(inline, input, new UTCLongType());
+      } else {
+        Target.runSyntax(utclongTarget, input);
       }
     }
 
