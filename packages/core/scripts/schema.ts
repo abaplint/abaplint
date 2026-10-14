@@ -91,6 +91,7 @@ import {InlineDataOldVersionsConf} from "../src/rules/inline_data_old_versions";
 import {InlinePackedComputationConf} from "../src/rules/inline_packed_computation";
 import {IntfReferencingClasConf} from "../src/rules/intf_referencing_clas";
 import {InvalidTableIndexConf} from "../src/rules/invalid_table_index";
+import {IsAssignedInLoopConf} from "../src/rules/is_assigned_in_loop";
 import {KeepSingleParameterCallsOnOneLineConf} from "../src/rules/keep_single_parameter_on_one_line";
 import {KeywordCaseConf} from "../src/rules/keyword_case";
 import {LineBreakMultipleParametersConf} from "../src/rules/line_break_multiple_parameters";
@@ -317,6 +318,7 @@ export interface IConfig {
     "inline_packed_computation"?: InlinePackedComputationConf | boolean,
     "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "invalid_table_index"?: InvalidTableIndexConf | boolean,
+    "is_assigned_in_loop"?: IsAssignedInLoopConf | boolean,
     "keep_single_parameter_on_one_line"?: KeepSingleParameterCallsOnOneLineConf | boolean,
     "keyword_case"?: KeywordCaseConf | boolean,
     "line_break_multiple_parameters"?: LineBreakMultipleParametersConf | boolean,
@@ -532,6 +534,7 @@ export interface IConfig {
     "inline_packed_computation"?: InlinePackedComputationConf | boolean,
     "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "invalid_table_index"?: InvalidTableIndexConf | boolean,
+    "is_assigned_in_loop"?: IsAssignedInLoopConf | boolean,
     "keep_single_parameter_on_one_line"?: KeepSingleParameterCallsOnOneLineConf | boolean,
     "keyword_case"?: KeywordCaseConf | boolean,
     "line_break_multiple_parameters"?: LineBreakMultipleParametersConf | boolean,
