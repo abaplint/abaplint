@@ -15,6 +15,7 @@ export abstract class ABAPObject extends AbstractObject {
   protected texts: {[id: string]: ITextElements} | undefined;
   private textsTranslations: ITranslationTextElements[] | undefined;
   private rawXMLCache: any | undefined;
+  private parsing = false;
   public syntaxResult: ISyntaxResult | undefined; // do not use this outside of SyntaxLogic class, todo: refactor
 
   public [Symbol.for("debug.description")](){
@@ -36,12 +37,19 @@ export abstract class ABAPObject extends AbstractObject {
 
   public parse(release: ABAPRelease, globalMacros?: readonly string[], reg?: IRegistry,
                languageVersion: LanguageVersion = LanguageVersion.Normal): IParseResult {
-    if (this.isDirty() === false) {
+    // an INCLUDE that leads back to this object while it is being parsed is not followed again
+    if (this.isDirty() === false || this.parsing === true) {
       return {updated: false, runtime: 0};
     }
 
     const abapFiles = this.getFiles().filter(f => f.getFilename().endsWith(".abap"));
-    const result = new ABAPParser({release, globalMacros, reg, languageVersion}).parse(abapFiles);
+    let result;
+    this.parsing = true;
+    try {
+      result = new ABAPParser({release, globalMacros, reg, languageVersion}).parse(abapFiles);
+    } finally {
+      this.parsing = false;
+    }
 
     this.parsed = result.output;
     this.old = result.issues;
