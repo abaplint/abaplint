@@ -1,5 +1,5 @@
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType, UTCLongType, CLikeType, TableKeyType, HexType, PackedType, XSequenceType, SimpleType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType, UTCLongType, CLikeType, Integer8Type, DecFloat34Type, TableKeyType, HexType, PackedType, XSequenceType, SimpleType} from "../types/basic";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -993,9 +993,9 @@ export class BuiltIn {
       },
       optional: {
         "days": IntegerType.get(),
-        "hour": IntegerType.get(),
-        "minutes": IntegerType.get(),
-        "seconds": new FloatType(),
+        "hours": IntegerType.get(),
+        "minutes": new Integer8Type(),
+        "seconds": new DecFloat34Type(),
       },
       return: new UTCLongType(),
       release: Release.v754,
@@ -1013,7 +1013,7 @@ export class BuiltIn {
         "high": new UTCLongType(),
         "low": new UTCLongType(),
       },
-      return: new FloatType(),
+      return: new DecFloat34Type(),
       release: Release.v754,
     },
 

@@ -91,6 +91,7 @@ import {InlineDataOldVersionsConf} from "../src/rules/inline_data_old_versions";
 import {InlinePackedComputationConf} from "../src/rules/inline_packed_computation";
 import {IntfReferencingClasConf} from "../src/rules/intf_referencing_clas";
 import {InvalidTableIndexConf} from "../src/rules/invalid_table_index";
+import {IsAssignedInLoopConf} from "../src/rules/is_assigned_in_loop";
 import {KeepSingleParameterCallsOnOneLineConf} from "../src/rules/keep_single_parameter_on_one_line";
 import {KeywordCaseConf} from "../src/rules/keyword_case";
 import {LineBreakMultipleParametersConf} from "../src/rules/line_break_multiple_parameters";
@@ -157,6 +158,7 @@ import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
 import {RangeRowValuesConf} from "../src/rules/range_row_values";
 import {ReduceProceduralCodeConf} from "../src/rules/reduce_procedural_code";
 import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
+import {RedundantCastConf} from "../src/rules/redundant_cast";
 import {RedundantConversionConf} from "../src/rules/redundant_conversion";
 import {ReleaseIdocConf} from "../src/rules/release_idoc";
 import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
@@ -317,6 +319,7 @@ export interface IConfig {
     "inline_packed_computation"?: InlinePackedComputationConf | boolean,
     "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "invalid_table_index"?: InvalidTableIndexConf | boolean,
+    "is_assigned_in_loop"?: IsAssignedInLoopConf | boolean,
     "keep_single_parameter_on_one_line"?: KeepSingleParameterCallsOnOneLineConf | boolean,
     "keyword_case"?: KeywordCaseConf | boolean,
     "line_break_multiple_parameters"?: LineBreakMultipleParametersConf | boolean,
@@ -383,6 +386,7 @@ export interface IConfig {
     "range_row_values"?: RangeRowValuesConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
+    "redundant_cast"?: RedundantCastConf | boolean,
     "redundant_conversion"?: RedundantConversionConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,
@@ -532,6 +536,7 @@ export interface IConfig {
     "inline_packed_computation"?: InlinePackedComputationConf | boolean,
     "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "invalid_table_index"?: InvalidTableIndexConf | boolean,
+    "is_assigned_in_loop"?: IsAssignedInLoopConf | boolean,
     "keep_single_parameter_on_one_line"?: KeepSingleParameterCallsOnOneLineConf | boolean,
     "keyword_case"?: KeywordCaseConf | boolean,
     "line_break_multiple_parameters"?: LineBreakMultipleParametersConf | boolean,
@@ -598,6 +603,7 @@ export interface IConfig {
     "range_row_values"?: RangeRowValuesConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
+    "redundant_cast"?: RedundantCastConf | boolean,
     "redundant_conversion"?: RedundantConversionConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,

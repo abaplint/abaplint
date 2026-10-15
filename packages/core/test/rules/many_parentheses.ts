@@ -25,7 +25,7 @@ const tests = [
   {abap: `IF NOT ( foo = bar AND moo = loo ). ENDIF.`, cnt: 0, fix: false},
   {abap: `IF foo = boo AND ( bar = lar AND moo = loo ). ENDIF.`, cnt: 1, fix: false},
   {abap: `IF foo IS NOT INITIAL AND NOT ( moo = bar AND field IS INITIAL ). ENDIF.`, cnt: 0, fix: false},
-  {abap: `ls_draw = ( lt_draw[ doknr = <fs_dir>-doknr ] ).`, cnt: 1, fix: false},
+  {abap: `ls_draw = ( lt_draw[ doknr = <fs_dir>-doknr ] ).`, cnt: 1, fix: true},
   {abap: `DATA l_vsart TYPE tvro-vsart.
 SELECT SINGLE vsart INTO (l_vsart) FROM tvro.`, cnt: 1, fix: false},
   {abap: `DATA l_vsart TYPE tvro-vsart.
@@ -49,9 +49,11 @@ ENDLOOP.`, cnt: 0, fix: false},
   NEXT result = result + 1 ).`, cnt: 0, fix: false},
   {abap: `IF iv_show_progress = abap_true AND ( sy-tabix MOD 100 ) = 0.
 ENDIF.`, cnt: 1, fix: false},
-  {abap: `c = a + ( b ).`, cnt: 1, fix: false},
+  {abap: `c = a + ( b ).`, cnt: 1, fix: true},
   {abap: `lv_b = 2 * ( lv_maxint + 1 ).`, cnt: 0, fix: false},
   {abap: `semaitem-col_cur = semaitem-col_cur * ( -1 ).`, cnt: 0, fix: false},
+  {abap: `DATA t552 TYPE i.
+t552 = 10 + ( t552 ).`, cnt: 1, fix: true},
 ];
 
 testRule(tests, ManyParentheses);
@@ -63,6 +65,10 @@ const fixes = [
     output: `IF ldate > ldate OR ( ldate = ldate AND ltime > ltime ). ENDIF.`},
   {input: `IF <field> IS INITIAL OR ( 1 = 2 ). ENDIF.`,
     output: `IF <field> IS INITIAL OR 1 = 2. ENDIF.`},
+  {input: `DATA t552 TYPE i.
+t552 = 10 + ( t552 ).`,
+  output: `DATA t552 TYPE i.
+t552 = 10 + t552.`},
 ];
 
 testRuleFix(fixes, ManyParentheses);

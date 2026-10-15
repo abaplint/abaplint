@@ -2970,6 +2970,17 @@
               ],
               "description": "Issues error for constant table index zero, as ABAP starts from 1\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/invalid_table_index"
             },
+            "is_assigned_in_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IsAssignedInLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports IS [NOT] ASSIGNED after a READ TABLE ... ASSIGNING or ASSIGN inside a loop, without UNASSIGN before it\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/is_assigned_in_loop"
+            },
             "keep_single_parameter_on_one_line": {
               "anyOf": [
                 {
@@ -3243,7 +3254,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for newlines between method implementations.\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
+              "description": "Checks for newlines between method implementations.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
             },
             "no_aliases": {
               "anyOf": [
@@ -3695,6 +3706,17 @@
                 }
               ],
               "description": "Checks for string templates\nTags: SingleFile\nhttps://rules.abaplint.org/reduce_string_templates"
+            },
+            "redundant_cast": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RedundantCastConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Find redundant CAST expressions\nTags: Quickfix\nhttps://rules.abaplint.org/redundant_cast"
             },
             "redundant_conversion": {
               "anyOf": [
@@ -5313,6 +5335,17 @@
               ],
               "description": "Issues error for constant table index zero, as ABAP starts from 1\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/invalid_table_index"
             },
+            "is_assigned_in_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IsAssignedInLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports IS [NOT] ASSIGNED after a READ TABLE ... ASSIGNING or ASSIGN inside a loop, without UNASSIGN before it\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/is_assigned_in_loop"
+            },
             "keep_single_parameter_on_one_line": {
               "anyOf": [
                 {
@@ -5586,7 +5619,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for newlines between method implementations.\nTags: Whitespace, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
+              "description": "Checks for newlines between method implementations.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/newline_between_methods"
             },
             "no_aliases": {
               "anyOf": [
@@ -6038,6 +6071,17 @@
                 }
               ],
               "description": "Checks for string templates\nTags: SingleFile\nhttps://rules.abaplint.org/reduce_string_templates"
+            },
+            "redundant_cast": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RedundantCastConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Find redundant CAST expressions\nTags: Quickfix\nhttps://rules.abaplint.org/redundant_cast"
             },
             "redundant_conversion": {
               "anyOf": [
@@ -7135,6 +7179,23 @@
       "type": "object"
     },
     "InvalidTableIndexConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "IsAssignedInLoopConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -9097,6 +9158,23 @@
       },
       "type": "object"
     },
+    "RedundantCastConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "RedundantConversionConf": {
       "additionalProperties": false,
       "properties": {
@@ -10178,6 +10256,10 @@
     "UseMessageClassConf": {
       "additionalProperties": false,
       "properties": {
+        "allowExceptions": {
+          "description": "Allow MESSAGE with an object reference, eg. an exception, like MESSAGE lx_error TYPE 'E'",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -10190,6 +10272,9 @@
           "description": "Problem severity"
         }
       },
+      "required": [
+        "allowExceptions"
+      ],
       "type": "object"
     },
     "UseNewConf": {
