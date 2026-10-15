@@ -212,9 +212,9 @@ text = text.`,
       } else if (child.get() instanceof Expressions.Source) {
         context = this.infer(context, this.sourceType(child, scope));
       } else if (child.get() instanceof Expressions.ArithOperator) {
-        if (child.concatTokens() === "**") {
-          context = new FloatType();
-        }
+        // the CONV sets the calculation type of arithmetic expressions, only redundant
+        // if the assignment target has the same type, see arithmeticUsesSameTargetType
+        return undefined;
       } else {
         return undefined;
       }
