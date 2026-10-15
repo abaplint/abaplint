@@ -492,7 +492,9 @@ export class TypeUtils {
       }
       return false;
     } else if (source instanceof Integer8Type) {
-      if (target instanceof IntegerType || target instanceof StringType) {
+      if (target instanceof IntegerType
+          || target instanceof StringType
+          || target instanceof FloatType) {
         return false;
       }
     } else if (source instanceof IntegerType) {
