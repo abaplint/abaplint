@@ -162,4 +162,35 @@ ENDFORM.`;
     expect(reads.length).to.equal(1);
   });
 
+  it("attribute between two method calls is read", () => {
+    const abap = `
+INTERFACE lif_sheet.
+  METHODS name RETURNING VALUE(rv_name) TYPE string.
+ENDINTERFACE.
+
+INTERFACE lif_workbook.
+  DATA sheet TYPE REF TO lif_sheet READ-ONLY.
+ENDINTERFACE.
+
+CLASS lcl_impl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_workbook.
+    METHODS workbook RETURNING VALUE(ro_workbook) TYPE REF TO lif_workbook.
+ENDCLASS.
+
+CLASS lcl_impl IMPLEMENTATION.
+  METHOD workbook.
+    ro_workbook = me.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_impl TYPE REF TO lcl_impl.
+  lo_impl = NEW #( ).
+  WRITE lo_impl->workbook( )->sheet->name( ).`;
+    const spaghetti = runProgram(abap);
+    const reads = spaghetti.listReadPositions(filename).map(r => r.getName().toLowerCase());
+    expect(reads).to.include("sheet");
+  });
+
 });
