@@ -18786,4 +18786,11 @@ APPEND ls TO lt_unknown.
 APPEND INITIAL LINE TO lt_unknown.`);
     expect(issues.length).to.equal(0);
   });
+
+  it("ok, abs() with int8", () => {
+    const issues = runProgram(`
+DATA lv TYPE int8.
+WRITE abs( lv ).`);
+    expect(issues.length).to.equal(0);
+  });
 });

@@ -1,5 +1,5 @@
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType, UTCLongType, CLikeType, Integer8Type, DecFloat34Type, TableKeyType, HexType, PackedType, XSequenceType, SimpleType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType, UTCLongType, CLikeType, Integer8Type, DecFloat34Type, TableKeyType, HexType, PackedType, XSequenceType, SimpleType, NumericGenericType} from "../types/basic";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -143,7 +143,7 @@ export class BuiltIn {
     "ABS": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: IntegerType.get(),
     },
@@ -151,7 +151,7 @@ export class BuiltIn {
     "ACOS": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -159,7 +159,7 @@ export class BuiltIn {
     "ASIN": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -167,7 +167,7 @@ export class BuiltIn {
     "ATAN": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -205,7 +205,7 @@ export class BuiltIn {
     "CEIL": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: IntegerType.get(),
     },
@@ -352,7 +352,7 @@ export class BuiltIn {
     "COS": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -360,7 +360,7 @@ export class BuiltIn {
     "COSH": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -447,7 +447,7 @@ export class BuiltIn {
     "EXP": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -521,7 +521,7 @@ export class BuiltIn {
     "FLOOR": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: IntegerType.get(),
     },
@@ -529,7 +529,7 @@ export class BuiltIn {
     "FRAC": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: IntegerType.get(),
     },
@@ -563,8 +563,8 @@ export class BuiltIn {
     "IPOW": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "base": new FloatType(),
-        "exp": new FloatType(),
+        "base": new NumericGenericType(),
+        "exp": new NumericGenericType(),
       },
       return: IntegerType.get(),
       release: Release.v740sp02,
@@ -600,7 +600,7 @@ export class BuiltIn {
     "LOG": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -608,7 +608,7 @@ export class BuiltIn {
     "LOG10": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -722,7 +722,7 @@ export class BuiltIn {
     "RESCALE": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       optional: {
         "dec": IntegerType.get(),
@@ -745,7 +745,7 @@ export class BuiltIn {
     "ROUND": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       optional: {
         "dec": IntegerType.get(),
@@ -802,7 +802,7 @@ export class BuiltIn {
     "SIGN": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: IntegerType.get(),
     },
@@ -810,7 +810,7 @@ export class BuiltIn {
     "SIN": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -818,7 +818,7 @@ export class BuiltIn {
     "SINH": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -826,7 +826,7 @@ export class BuiltIn {
     "SQRT": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -923,7 +923,7 @@ export class BuiltIn {
     "TAN": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -931,7 +931,7 @@ export class BuiltIn {
     "TANH": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: new FloatType(),
     },
@@ -981,7 +981,7 @@ export class BuiltIn {
     "TRUNC": {
       counter: BuiltIn.counter++,
       mandatory: {
-        "val": new FloatType(),
+        "val": new NumericGenericType(),
       },
       return: IntegerType.get(),
     },
