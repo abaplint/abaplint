@@ -126,7 +126,7 @@ export class MethodCallChain {
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.ComponentName) {
         context = ComponentName.runSyntax(context, current, input);
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.AttributeName) {
-        context = AttributeName.runSyntax(context, current, input);
+        context = AttributeName.runSyntax(context, current, input, ReferenceType.DataReadReference);
       }
 
       previous = current;
