@@ -29,7 +29,7 @@ Objects with syntax errors, macros or unknown statements are skipped, as are pro
 INCLUDE, test seams, enhancements or native SQL.
 
 The quick fix deletes the CLEAR. No release requirement.`,
-      tags: [RuleTag.Styleguide, RuleTag.Quickfix, RuleTag.SingleFile],
+      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
       badExample: `DATA lv_count TYPE i.
 CLEAR lv_count.`,
       goodExample: `DATA lv_count TYPE i.`,

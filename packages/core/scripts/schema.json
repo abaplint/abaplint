@@ -2174,7 +2174,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds DATA(a) = b. where neither a nor b changes afterwards, so b can be read instead of a\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/alias_never_reassigned"
+              "description": "Finds DATA(a) = b. where neither a nor b changes afterwards, so b can be read instead of a\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/alias_never_reassigned"
             },
             "align_parameters": {
               "anyOf": [
@@ -2284,7 +2284,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds a flag that is initialized to false and set to true in a single IF, use xsdbool\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/boolean_flag_via_if"
+              "description": "Finds a flag that is initialized to false and set to true in a single IF, use xsdbool\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/boolean_flag_via_if"
             },
             "bound_check_after_create": {
               "anyOf": [
@@ -2548,7 +2548,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/clear_after_declaration"
+              "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/clear_after_declaration"
             },
             "clear_exporting_parameters": {
               "anyOf": [
@@ -2614,7 +2614,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/constant_condition"
+              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/constant_condition"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -4055,7 +4055,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds DATA(a) = <expression>. directly followed by x = a., assign the expression to x\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/single_use_expression_temp"
+              "description": "Finds DATA(a) = <expression>. directly followed by x = a., assign the expression to x\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/single_use_expression_temp"
             },
             "slow_parameter_passing": {
               "anyOf": [
@@ -4253,7 +4253,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds a down cast in TRY with an empty CATCH cx_sy_move_cast_error, use IS INSTANCE OF\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/try_cast_empty_catch"
+              "description": "Finds a down cast in TRY with an empty CATCH cx_sy_move_cast_error, use IS INSTANCE OF\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/try_cast_empty_catch"
             },
             "try_without_catch": {
               "anyOf": [
@@ -4330,7 +4330,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds DATA(a) = b. where a is read exactly once, and b can be read instead\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/unnecessary_copy"
+              "description": "Finds DATA(a) = b. where a is read exactly once, and b can be read instead\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/unnecessary_copy"
             },
             "unnecessary_loop_guard": {
               "anyOf": [
@@ -4649,7 +4649,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds DATA(a) = b. where neither a nor b changes afterwards, so b can be read instead of a\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/alias_never_reassigned"
+              "description": "Finds DATA(a) = b. where neither a nor b changes afterwards, so b can be read instead of a\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/alias_never_reassigned"
             },
             "align_parameters": {
               "anyOf": [
@@ -4759,7 +4759,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds a flag that is initialized to false and set to true in a single IF, use xsdbool\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/boolean_flag_via_if"
+              "description": "Finds a flag that is initialized to false and set to true in a single IF, use xsdbool\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/boolean_flag_via_if"
             },
             "bound_check_after_create": {
               "anyOf": [
@@ -5023,7 +5023,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/clear_after_declaration"
+              "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/clear_after_declaration"
             },
             "clear_exporting_parameters": {
               "anyOf": [
@@ -5089,7 +5089,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/constant_condition"
+              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/constant_condition"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -6530,7 +6530,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds DATA(a) = <expression>. directly followed by x = a., assign the expression to x\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/single_use_expression_temp"
+              "description": "Finds DATA(a) = <expression>. directly followed by x = a., assign the expression to x\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/single_use_expression_temp"
             },
             "slow_parameter_passing": {
               "anyOf": [
@@ -6728,7 +6728,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds a down cast in TRY with an empty CATCH cx_sy_move_cast_error, use IS INSTANCE OF\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/try_cast_empty_catch"
+              "description": "Finds a down cast in TRY with an empty CATCH cx_sy_move_cast_error, use IS INSTANCE OF\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/try_cast_empty_catch"
             },
             "try_without_catch": {
               "anyOf": [
@@ -6805,7 +6805,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds DATA(a) = b. where a is read exactly once, and b can be read instead\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/unnecessary_copy"
+              "description": "Finds DATA(a) = b. where a is read exactly once, and b can be read instead\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/unnecessary_copy"
             },
             "unnecessary_loop_guard": {
               "anyOf": [
