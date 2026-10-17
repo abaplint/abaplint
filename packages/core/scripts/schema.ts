@@ -16,6 +16,7 @@ import {AmbiguousStatementConf} from "../src/rules/ambiguous_statement";
 import {AvoidUseConf} from "../src/rules/avoid_use";
 import {BeginEndNamesConf} from "../src/rules/begin_end_names";
 import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
+import {BoundCheckAfterCreateConf} from "../src/rules/bound_check_after_create";
 import {CallTransactionAuthorityCheckConf} from "../src/rules/call_transaction_authority_check";
 import {CatchAndRaiseConf} from "../src/rules/catch_and_raise";
 import {CDSAssociationNameConf} from "../src/rules/cds_association_name";
@@ -249,6 +250,7 @@ export interface IConfig {
     "avoid_use"?: AvoidUseConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
+    "bound_check_after_create"?: BoundCheckAfterCreateConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
@@ -471,6 +473,7 @@ export interface IConfig {
     "avoid_use"?: AvoidUseConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
+    "bound_check_after_create"?: BoundCheckAfterCreateConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,

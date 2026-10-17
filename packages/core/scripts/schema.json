@@ -341,6 +341,23 @@
       },
       "type": "object"
     },
+    "BoundCheckAfterCreateConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CDSAssociationNameConf": {
       "additionalProperties": false,
       "properties": {
@@ -2212,6 +2229,17 @@
                 }
               ],
               "description": "Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE\nTags: SingleFile\nhttps://rules.abaplint.org/begin_single_include"
+            },
+            "bound_check_after_create": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BoundCheckAfterCreateConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds IF r IS BOUND / IS NOT BOUND directly after r was created\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/bound_check_after_create"
             },
             "call_transaction_authority_check": {
               "anyOf": [
@@ -4632,6 +4660,17 @@
                 }
               ],
               "description": "Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE\nTags: SingleFile\nhttps://rules.abaplint.org/begin_single_include"
+            },
+            "bound_check_after_create": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BoundCheckAfterCreateConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds IF r IS BOUND / IS NOT BOUND directly after r was created\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/bound_check_after_create"
             },
             "call_transaction_authority_check": {
               "anyOf": [
