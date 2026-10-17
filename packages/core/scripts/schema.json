@@ -4131,6 +4131,17 @@
               ],
               "description": "Find unnecessary chaining, all statements are checked\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_chaining"
             },
+            "unnecessary_copy": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnnecessaryCopyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds DATA(a) = b. where a is read exactly once, and b can be read instead\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/unnecessary_copy"
+            },
             "unnecessary_loop_guard": {
               "anyOf": [
                 {
@@ -6506,6 +6517,17 @@
                 }
               ],
               "description": "Find unnecessary chaining, all statements are checked\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_chaining"
+            },
+            "unnecessary_copy": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnnecessaryCopyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds DATA(a) = b. where a is read exactly once, and b can be read instead\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/unnecessary_copy"
             },
             "unnecessary_loop_guard": {
               "anyOf": [
@@ -10028,6 +10050,23 @@
       "required": [
         "ignoreExceptions"
       ],
+      "type": "object"
+    },
+    "UnnecessaryCopyConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "UnnecessaryLoopGuardConf": {
