@@ -936,6 +936,48 @@ export function dataSource(procedure: Procedure, source: ExpressionNode): IDataS
   return {text: nodeText(procedure.file, source), kind, base: local, type};
 }
 
+/** type of a plain target: variable, field symbol, attribute or component chain, not an inline declaration,
+ * without offsets, table expressions or ->* */
+export function targetType(procedure: Procedure, target: ExpressionNode): AbstractType | undefined {
+  const children = target.getChildren();
+  let identifier: Identifier | undefined;
+  let next: number;
+  const first = children[0];
+  if (first instanceof ExpressionNode
+      && (first.get() instanceof Expressions.TargetField || first.get() instanceof Expressions.TargetFieldSymbol)) {
+    identifier = procedure.identifierAt(first.getFirstToken());
+    next = 1;
+  } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ClassName
+      && children[1]?.getFirstToken().getStr() === "=>" && children[2] instanceof ExpressionNode
+      && children[2].get() instanceof Expressions.AttributeName) {
+    identifier = procedure.identifierAt(children[2].getFirstToken());
+    next = 3;
+  } else {
+    return undefined;
+  }
+  let type: AbstractType | undefined = identifier instanceof TypedIdentifier ? identifier.getType() : undefined;
+  for (let i = next; i < children.length; i += 2) {
+    const separator = children[i];
+    const name = children[i + 1];
+    if (!(separator instanceof TokenNode) || !(name instanceof ExpressionNode) || type === undefined) {
+      return undefined;
+    }
+    if (separator.getFirstToken().getStr() === "->" && name.get() instanceof Expressions.AttributeName) {
+      const attribute = procedure.identifierAt(name.getFirstToken());
+      type = attribute instanceof TypedIdentifier ? attribute.getType() : undefined;
+    } else if (separator.getFirstToken().getStr() === "-" && name.get() instanceof Expressions.ComponentName
+        && type instanceof StructureType) {
+      type = type.getComponentByName(name.getFirstToken().getStr());
+    } else {
+      return undefined;
+    }
+  }
+  if (type === undefined || (type instanceof TableType && type.isWithHeader())) {
+    return undefined;
+  }
+  return type;
+}
+
 /**
  * The data source has the same value at the end of statement "to" as at the end of statement "from".
  * When "read" is given, it is the token in statement "to" that reads the value; writes of statement "to"
