@@ -45,6 +45,8 @@ export * from "./constant_classes";
 export * from "./constant_condition";
 export * from "./constructor_visibility_public";
 export * from "./contains_tab";
+export * from "./copy_chain";
+export * from "./copy_of_initial_variable";
 export * from "./cyclic_oo";
 export * from "./cyclomatic_complexity";
 export * from "./dangerous_statement";
