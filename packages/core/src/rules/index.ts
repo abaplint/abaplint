@@ -175,6 +175,7 @@ export * from "./selection_screen_texts_missing";
 export * from "./sequential_blank";
 export * from "./short_case";
 export * from "./sicf_consistency";
+export * from "./single_use_expression_temp";
 export * from "./slow_parameter_passing";
 export * from "./smim_consistency";
 export * from "./sort_empty_key";

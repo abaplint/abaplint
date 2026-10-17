@@ -178,6 +178,7 @@ import {SelectionScreenTextsMissingConf} from "../src/rules/selection_screen_tex
 import {SequentialBlankConf} from "../src/rules/sequential_blank";
 import {ShortCaseConf} from "../src/rules/short_case";
 import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
+import {SingleUseExpressionTempConf} from "../src/rules/single_use_expression_temp";
 import {SlowParameterPassingConf} from "../src/rules/slow_parameter_passing";
 import {SMIMConsistencyConf} from "../src/rules/smim_consistency";
 import {SortEmptyKeyConf} from "../src/rules/sort_empty_key";
@@ -414,6 +415,7 @@ export interface IConfig {
     "sequential_blank"?: SequentialBlankConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
     "sicf_consistency"?: SICFConsistencyConf | boolean,
+    "single_use_expression_temp"?: SingleUseExpressionTempConf | boolean,
     "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "smim_consistency"?: SMIMConsistencyConf | boolean,
     "sort_empty_key"?: SortEmptyKeyConf | boolean,
@@ -639,6 +641,7 @@ export interface IConfig {
     "sequential_blank"?: SequentialBlankConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
     "sicf_consistency"?: SICFConsistencyConf | boolean,
+    "single_use_expression_temp"?: SingleUseExpressionTempConf | boolean,
     "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "smim_consistency"?: SMIMConsistencyConf | boolean,
     "sort_empty_key"?: SortEmptyKeyConf | boolean,
