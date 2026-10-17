@@ -41,7 +41,7 @@ The quick fix deletes the declaration and replaces the read of a with b. No rele
 inline declarations need 7.40 SP02 already.
 
 See also alias_never_reassigned for copies that are read several times.`,
-      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
+      tags: [RuleTag.Quickfix],
       badExample: `DATA(lv_name) = iv_name.
 rv_text = |Hello { lv_name }|.`,
       goodExample: `rv_text = |Hello { iv_name }|.`,

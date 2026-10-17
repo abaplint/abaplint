@@ -40,7 +40,7 @@ data that is used outside of it.
 
 Objects with syntax errors, macros or unknown statements are skipped, as are procedures with dynamic code,
 INCLUDE, test seams, enhancements or native SQL. No release requirement.`,
-      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
+      tags: [RuleTag.Quickfix],
       badExample: `DATA(lv_active) = abap_true.
 IF lv_active = abap_true.
   run( ).

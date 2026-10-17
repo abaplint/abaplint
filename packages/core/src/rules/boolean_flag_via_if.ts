@@ -41,7 +41,7 @@ The quick fix deletes an inline declaration and replaces the IF with DATA(f) = x
 or keeps DATA f TYPE abap_bool. and replaces the IF with f = xsdbool( cond ).
 
 use_bool_expression covers IF with an ELSE branch, without looking at the declaration and the other uses.`,
-      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
+      tags: [RuleTag.Quickfix],
       badExample: `DATA(lv_found) = abap_false.
 IF line_exists( lt_rows[ id = lv_id ] ).
   lv_found = abap_true.

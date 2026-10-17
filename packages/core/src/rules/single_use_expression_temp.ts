@@ -46,7 +46,7 @@ Objects with syntax errors, macros or unknown statements are skipped, as are pro
 INCLUDE, test seams, enhancements or native SQL.
 
 The quick fix deletes the declaration and writes x = <expression>. No release requirement.`,
-      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
+      tags: [RuleTag.Quickfix],
       badExample: `DATA(lo_conf) = NEW zcl_conf( ).
 mo_conf = lo_conf.`,
       goodExample: `mo_conf = NEW zcl_conf( ).`,

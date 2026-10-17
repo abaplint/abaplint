@@ -34,7 +34,7 @@ INCLUDE, test seams, enhancements or native SQL.
 
 The quick fix deletes the declaration and the CLEARs, and replaces x = v. with CLEAR x.
 No release requirement.`,
-      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
+      tags: [RuleTag.Quickfix],
       badExample: `DATA lo_empty TYPE REF TO zcl_node.
 ro_result = lo_empty.`,
       goodExample: `CLEAR ro_result.`,

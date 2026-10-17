@@ -37,7 +37,7 @@ INCLUDE, test seams, enhancements or native SQL.
 The quick fix deletes the declaration and replaces every read of a with b. No release requirement.
 
 See also unnecessary_copy for copies that are read once, also of attributes and parameters.`,
-      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
+      tags: [RuleTag.Quickfix],
       badExample: `DATA(lo_file) = lo_input.
 lo_file->read( ).
 rv_name = lo_file->get_name( ).`,

@@ -37,7 +37,7 @@ so the quick fix replaces the TRY with IF b IS INSTANCE OF <type of a> OR b IS I
 Requires IS INSTANCE OF, ie. 7.50 or above, ABAP Cloud or open-abap.
 Objects with syntax errors, macros or unknown statements are skipped, as are procedures with dynamic code,
 INCLUDE, test seams, enhancements or native SQL.`,
-      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
+      tags: [RuleTag.Quickfix],
       badExample: `TRY.
     lo_node ?= io_object.
   CATCH cx_sy_move_cast_error.

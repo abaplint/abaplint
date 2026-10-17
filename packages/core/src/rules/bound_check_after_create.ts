@@ -46,7 +46,7 @@ The quick fix keeps the IS BOUND branch and removes the rest, or removes the IS 
 nothing is reported if a removed branch declares data that is used outside of it.
 Objects with syntax errors, macros or unknown statements are skipped, as are procedures with dynamic code,
 INCLUDE, test seams, enhancements or native SQL. No release requirement.`,
-      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
+      tags: [RuleTag.Quickfix],
       badExample: `CREATE OBJECT lo_log.
 IF lo_log IS BOUND.
   lo_log->add( 'started' ).

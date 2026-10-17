@@ -38,7 +38,7 @@ INCLUDE, test seams, enhancements or native SQL.
 
 The quick fix deletes the declaration, the CLEARs and v = src., and changes the read to y = src.
 No release requirement.`,
-      tags: [RuleTag.Quickfix, RuleTag.SingleFile],
+      tags: [RuleTag.Quickfix],
       badExample: `DATA lo_copy TYPE REF TO zcl_node.
 lo_copy = lo_node.
 ro_result = lo_copy.`,
