@@ -195,6 +195,7 @@ import {TypesNamingConf} from "../src/rules/types_naming";
 import {UncaughtExceptionConf} from "../src/rules/uncaught_exception";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
 import {UnnecessaryChainingConf} from "../src/rules/unnecessary_chaining";
+import {UnnecessaryCopyConf} from "../src/rules/unnecessary_copy";
 import {UnnecessaryLoopGuardConf} from "../src/rules/unnecessary_loop_guard";
 import {UnnecessaryPragmaConf} from "../src/rules/unnecessary_pragma";
 import {UnnecessaryReturnConf} from "../src/rules/unnecessary_return";
@@ -424,6 +425,7 @@ export interface IConfig {
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
+    "unnecessary_copy"?: UnnecessaryCopyConf | boolean,
     "unnecessary_loop_guard"?: UnnecessaryLoopGuardConf | boolean,
     "unnecessary_pragma"?: UnnecessaryPragmaConf | boolean,
     "unnecessary_return"?: UnnecessaryReturnConf | boolean,
@@ -642,6 +644,7 @@ export interface IConfig {
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
+    "unnecessary_copy"?: UnnecessaryCopyConf | boolean,
     "unnecessary_loop_guard"?: UnnecessaryLoopGuardConf | boolean,
     "unnecessary_pragma"?: UnnecessaryPragmaConf | boolean,
     "unnecessary_return"?: UnnecessaryReturnConf | boolean,

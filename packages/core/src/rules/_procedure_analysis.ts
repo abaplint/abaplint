@@ -199,7 +199,11 @@ const CALL_FREE: (new () => IStatement)[] = [Statements.Move, Statements.Data, S
   Statements.Append, Statements.InsertInternal, Statements.ModifyInternal, Statements.DeleteInternal,
   Statements.ReadTable, Statements.Sort, Statements.Concatenate, Statements.Condense, Statements.Split,
   Statements.Translate, Statements.Replace, Statements.Find, Statements.Shift, Statements.Collect,
-  Statements.Describe, Statements.FieldSymbol, Statements.Constant, Statements.Type, Statements.Unassign];
+  Statements.Describe, Statements.FieldSymbol, Statements.Constant, Statements.Type, Statements.Unassign,
+  Statements.If, Statements.ElseIf, Statements.Else, Statements.EndIf, Statements.Case, Statements.When,
+  Statements.WhenOthers, Statements.EndCase, Statements.Do, Statements.EndDo, Statements.While, Statements.EndWhile,
+  Statements.Loop, Statements.EndLoop, Statements.Check, Statements.Exit, Statements.Continue, Statements.Return,
+  Statements.Try, Statements.Catch, Statements.Cleanup, Statements.EndTry];
 
 /** A METHOD, FORM or FUNCTION implementation */
 export class Procedure {
@@ -743,6 +747,141 @@ export function identicalTypes(first: AbstractType, second: AbstractType): boole
     return first.toABAP().toUpperCase() === second.toABAP().toUpperCase();
   }
   return first.toABAP() === second.toABAP();
+}
+
+////////////////////////////////////////
+// data sources
+
+export enum SourceKind {
+  /** constants and me, never change */
+  Immutable = "immutable",
+  /** a local variable, or a component of it, changes only by references to the variable */
+  Local = "local",
+  /** attributes, parameters, globals, anything reached via a reference: may change by other code */
+  Volatile = "volatile",
+}
+
+export interface IDataSource {
+  readonly text: string;
+  readonly kind: SourceKind;
+  /** the local variable the chain starts with */
+  readonly base: Variable | undefined;
+  readonly type: AbstractType;
+}
+
+/** a plain data object: field, constant, attribute or component chain without calls, offsets, table
+ * expressions, field symbols or dereferencing with ->* */
+export function dataSource(procedure: Procedure, source: ExpressionNode): IDataSource | undefined {
+  if (source.getChildren().length !== 1) {
+    return undefined;
+  }
+  const chain = source.findDirectExpression(Expressions.FieldChain);
+  if (chain === undefined) {
+    return undefined;
+  }
+  const children = chain.getChildren();
+  let first: Identifier | undefined;
+  let next: number;
+  if (children[0] instanceof ExpressionNode && children[0].get() instanceof Expressions.SourceField) {
+    first = procedure.identifierAt(children[0].getFirstToken());
+    next = 1;
+  } else if (children[0] instanceof ExpressionNode && children[0].get() instanceof Expressions.ClassName
+      && children[1]?.getFirstToken().getStr() === "=>" && children[2] instanceof ExpressionNode
+      && children[2].get() instanceof Expressions.AttributeName) {
+    first = procedure.identifierAt(children[2].getFirstToken());
+    next = 3;
+  } else {
+    return undefined;
+  }
+  if (!(first instanceof TypedIdentifier)) {
+    return undefined;
+  }
+
+  let type: AbstractType | undefined = first.getType();
+  let deref = false;
+  for (let i = next; i < children.length; i += 2) {
+    const separator = children[i];
+    const name = children[i + 1];
+    if (!(separator instanceof TokenNode) || !(name instanceof ExpressionNode) || type === undefined) {
+      return undefined;
+    }
+    if (type instanceof TableType && type.isWithHeader()) {
+      return undefined;
+    } else if (separator.getFirstToken().getStr() === "->" && name.get() instanceof Expressions.AttributeName) {
+      const attribute = procedure.identifierAt(name.getFirstToken());
+      type = attribute instanceof TypedIdentifier ? attribute.getType() : undefined;
+      deref = true;
+    } else if (separator.getFirstToken().getStr() === "-" && name.get() instanceof Expressions.ComponentName
+        && type instanceof StructureType) {
+      type = type.getComponentByName(name.getFirstToken().getStr());
+    } else {
+      return undefined;
+    }
+  }
+  if (type === undefined || type.isGeneric() || (type instanceof TableType && type.isWithHeader())) {
+    return undefined;
+  }
+
+  const local = next === 1 ? procedure.local(first) : undefined;
+  let kind = SourceKind.Volatile;
+  if (deref === false && isImmutable(first)) {
+    kind = SourceKind.Immutable;
+  } else if (deref === false && local !== undefined) {
+    kind = SourceKind.Local;
+  }
+  return {text: nodeText(procedure.file, source), kind, base: local, type};
+}
+
+/**
+ * The data source has the same value at the end of statement "to" as at the end of statement "from".
+ * When "read" is given, it is the token in statement "to" that reads the value; writes of statement "to"
+ * after its sources are evaluated, ie. the target of a MOVE or the call after evaluating its receiver, do not count.
+ */
+export function unchangedBetween(procedure: Procedure, source: IDataSource, from: StatementNode, to: StatementNode,
+                                 read?: AbstractToken): boolean {
+  if (source.kind === SourceKind.Immutable) {
+    return true;
+  }
+  const start = procedure.index(from);
+  const end = procedure.index(to);
+  if (start < 0 || end < start) {
+    return false;
+  }
+  if (source.base !== undefined && (source.base.escapes()
+      || source.base.writes().some(w => w.index > start && w.index <= end))) {
+    return false;
+  }
+  if (source.kind === SourceKind.Local) {
+    return source.base !== undefined;
+  }
+  for (let index = start + 1; index <= end; index++) {
+    const statement = procedure.statements[index];
+    if (index === end && read !== undefined) {
+      if (isReceiver(statement, read)
+          || (statement.get() instanceof Statements.Move && procedure.isCallFree(statement))) {
+        continue;
+      }
+    }
+    if (!procedure.isCallFree(statement) || !procedure.writesOnlyPrivate(statement)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/** the token is the receiver of the method call chain of the statement: a->m( ). or x = a->m( ).
+ * The receiver is evaluated before the arguments and the call */
+function isReceiver(statement: StatementNode, token: AbstractToken): boolean {
+  let chain: ExpressionNode | undefined;
+  if (statement.get() instanceof Statements.Call) {
+    chain = statement.findDirectExpression(Expressions.MethodCallChain);
+  } else if (plainMove(statement)?.source.getChildren().length === 1) {
+    chain = plainMove(statement)!.source.findDirectExpression(Expressions.MethodCallChain);
+  }
+  const receiver = chain?.getChildren()[0];
+  return receiver instanceof ExpressionNode && receiver.get() instanceof Expressions.FieldChain
+    && receiver.countTokens() === 1 && receiver.getFirstToken().getStart().equals(token.getStart())
+    && chain?.getChildren()[1]?.getFirstToken().getStr() === "->";
 }
 
 ////////////////////////////////////////

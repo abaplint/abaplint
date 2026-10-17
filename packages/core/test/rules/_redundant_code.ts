@@ -10,6 +10,7 @@ import {IRule} from "../../src/rules/_irule";
 export const definitions = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
     INTERFACES lif.
+    CONSTANTS co TYPE i VALUE 1.
     DATA attr TYPE i.
     DATA text TYPE string.
     DATA ref TYPE REF TO lcl.
