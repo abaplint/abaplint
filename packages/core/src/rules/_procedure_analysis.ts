@@ -1,7 +1,7 @@
 import * as Expressions from "../abap/2_statements/expressions";
 import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
-import {MacroCall, MacroContent, MacroRecursion, NativeSQL, Unknown} from "../abap/2_statements/statements/_statement";
+import {Comment, MacroCall, MacroContent, MacroRecursion, NativeSQL, Unknown} from "../abap/2_statements/statements/_statement";
 import {IStatement} from "../abap/2_statements/statements/_statement";
 import {IStructure} from "../abap/3_structures/structures/_structure";
 import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
@@ -220,6 +220,7 @@ export class Procedure {
   private readonly declarations = new Map<string, StatementNode>();
   private readonly variables = new Map<string, Variable | undefined>();
   private own: [Identifier, IReference[]][] | undefined = undefined;
+  private comments: Position[] | undefined = undefined;
 
   public constructor(analysis: ObjectAnalysis, file: ABAPFile, structure: StructureNode) {
     this.analysis = analysis;
@@ -329,6 +330,17 @@ export class Procedure {
       }
     }
     return between;
+  }
+
+  /** a comment line or end of line comment between the two positions */
+  public hasComment(start: Position, end: Position): boolean {
+    if (this.comments === undefined) {
+      this.comments = this.file.getStatements()
+        .filter(s => s.get() instanceof Comment
+          && !s.getStart().isBefore(this.getStart()) && s.getStart().isBefore(this.getEnd()))
+        .map(s => s.getStart());
+    }
+    return this.comments.some(c => !c.isBefore(start) && c.isBefore(end));
   }
 
   /** the IF structure of an IF or ELSEIF statement */
