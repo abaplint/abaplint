@@ -47,6 +47,7 @@ import {ConstantClassesConf} from "../src/rules/constant_classes";
 import {ConstantConditionConf} from "../src/rules/constant_condition";
 import {ConstructorVisibilityPublicConf} from "../src/rules/constructor_visibility_public";
 import {ContainsTabConf} from "../src/rules/contains_tab";
+import {CopyChainConf} from "../src/rules/copy_chain";
 import {CyclicOOConf} from "../src/rules/cyclic_oo";
 import {CyclomaticComplexityConf} from "../src/rules/cyclomatic_complexity";
 import {DangerousStatementConf} from "../src/rules/dangerous_statement";
@@ -278,6 +279,7 @@ export interface IConfig {
     "constant_condition"?: ConstantConditionConf | boolean,
     "constructor_visibility_public"?: ConstructorVisibilityPublicConf | boolean,
     "contains_tab"?: ContainsTabConf | boolean,
+    "copy_chain"?: CopyChainConf | boolean,
     "cyclic_oo"?: CyclicOOConf | boolean,
     "cyclomatic_complexity"?: CyclomaticComplexityConf | boolean,
     "dangerous_statement"?: DangerousStatementConf | boolean,
@@ -498,6 +500,7 @@ export interface IConfig {
     "constant_condition"?: ConstantConditionConf | boolean,
     "constructor_visibility_public"?: ConstructorVisibilityPublicConf | boolean,
     "contains_tab"?: ContainsTabConf | boolean,
+    "copy_chain"?: CopyChainConf | boolean,
     "cyclic_oo"?: CyclicOOConf | boolean,
     "cyclomatic_complexity"?: CyclomaticComplexityConf | boolean,
     "dangerous_statement"?: DangerousStatementConf | boolean,

@@ -1132,6 +1132,23 @@
       ],
       "type": "object"
     },
+    "CopyChainConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CyclicOOConf": {
       "additionalProperties": false,
       "properties": {
@@ -2519,6 +2536,17 @@
                 }
               ],
               "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace, Quickfix, Styleguide, SingleFile\nhttps://rules.abaplint.org/contains_tab"
+            },
+            "copy_chain": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CopyChainConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a local variable that only passes a value on from one variable to another\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/copy_chain"
             },
             "cyclic_oo": {
               "anyOf": [
@@ -4917,6 +4945,17 @@
                 }
               ],
               "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace, Quickfix, Styleguide, SingleFile\nhttps://rules.abaplint.org/contains_tab"
+            },
+            "copy_chain": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CopyChainConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a local variable that only passes a value on from one variable to another\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/copy_chain"
             },
             "cyclic_oo": {
               "anyOf": [
