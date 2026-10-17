@@ -44,10 +44,15 @@ const tests: IRedundantTest[] = [
   {abap: inMethod("DATA(a) = get( ).\nput( p = a )."), cnt: 0},
   // plain data objects are left for unnecessary_copy
   {abap: inMethod("DATA(a) = attr.\nresult = a."), cnt: 0},
-  // the target is used by the expression
-  {abap: inMethod("DATA(a) = |{ text }!|.\ntext = a."), cnt: 0},
+  // the expression reads the target: fine when the result is built in a temporary
+  {abap: inMethod("DATA(a) = |{ text }!|.\ntext = a."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(a) = get( p = attr ).\nattr = a."), cnt: 1, fix: true},
+  {abap: inMethod("ASSIGN attr TO FIELD-SYMBOL(<fs>).\nDATA(a) = get( ).\n<fs> = a."), cnt: 1, fix: true},
+  // constructor expressions that can build the result in the target
   {abap: inMethod("TYPES ty_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.\nDATA(a) = VALUE ty_tab( ( 1 ) ).\ntab = a."), cnt: 0},
-  {abap: inMethod("ASSIGN attr TO FIELD-SYMBOL(<fs>).\nDATA(a) = get( ).\n<fs> = a."), cnt: 0},
+  {abap: inMethod("TYPES ty_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.\nDATA t TYPE ty_tab.\nDATA(a) = VALUE ty_tab( ( LINES OF t ) ( 1 ) ).\nt = a.\ntab = t."), cnt: 0},
+  {abap: inMethod("TYPES ty_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.\nDATA t TYPE ty_tab.\nGET REFERENCE OF t INTO DATA(r).\nDATA(a) = VALUE ty_tab( ( 1 ) ).\nt = a.\ntab = t."), cnt: 0},
+  {abap: inMethod("TYPES ty_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.\nASSIGN tab TO FIELD-SYMBOL(<t>).\nDATA(a) = VALUE ty_tab( ( 1 ) ).\n<t> = a."), cnt: 0},
   // dynamic code, macros, syntax errors
   {abap: inMethod("DATA(a) = get( ).\nresult = a.\nASSIGN ('ATTR') TO FIELD-SYMBOL(<fs>)."), cnt: 0},
   {abap: "DEFINE _copy.\n  result = &1.\nEND-OF-DEFINITION.\n" + inMethod("DATA(a) = get( ).\n_copy a."), cnt: 0},

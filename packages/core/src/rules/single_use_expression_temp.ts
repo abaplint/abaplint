@@ -37,8 +37,9 @@ export class SingleUseExpressionTemp implements IRule {
   minus, no numeric functions like abs( ) or trunc( ) whose type follows the argument, no CONV or EXACT,
   no # type inference at the top. String templates, && concatenations, literals, method calls, NEW, CAST,
   constructor expressions with explicit type and table expressions are fine
-* x is not referenced in the expression; VALUE, CORRESPONDING, COND, SWITCH, REDUCE and FILTER are only
-  inlined into a new or a local variable, as they can build the result directly in the target
+* VALUE, CORRESPONDING, COND, SWITCH, REDUCE and FILTER can build their result directly in the target,
+  they are only inlined into a new variable, or a local variable that they do not read and whose address
+  is never taken
 * plain data objects are left for unnecessary_copy
 
 Objects with syntax errors, macros or unknown statements are skipped, as are procedures with dynamic code,
@@ -151,25 +152,24 @@ mo_conf = lo_conf.`,
       && children[1] instanceof ExpressionNode && children[1].get() instanceof Expressions.TypeNameOrInfer;
   }
 
-  /** the target is not read while the expression builds its result */
+  /** constructor expressions that build their result directly in the target are only inlined into a new
+   * variable, or into a local variable which the expression does not read and which nothing else can reach */
   private noAliasing(procedure: Procedure, source: ExpressionNode, target: ExpressionNode): boolean {
-    if (target.findDirectExpression(Expressions.InlineData) !== undefined) {
+    if (!IN_PLACE.has(source.getFirstToken().getStr().toUpperCase())
+        || target.findDirectExpression(Expressions.InlineData) !== undefined) {
       return true;
     }
     const field = target.getChildren()[0];
-    const base = field instanceof ExpressionNode && field.get() instanceof Expressions.TargetField
-      ? procedure.identifierAt(field.getFirstToken()) : undefined;
-    if (base === undefined) {
+    const local = target.getChildren().length === 1 && field instanceof ExpressionNode
+      && field.get() instanceof Expressions.TargetField
+      ? procedure.local(procedure.identifierAt(field.getFirstToken())) : undefined;
+    if (local === undefined || local.escapes()) {
       return false;
     }
-    for (const token of source.getTokens()) {
-      const identifier = procedure.identifierAt(token);
-      if (identifier !== undefined && ObjectAnalysis.key(identifier) === ObjectAnalysis.key(base)) {
-        return false;
-      }
-    }
-    const local = procedure.local(base);
-    return !IN_PLACE.has(source.getFirstToken().getStr().toUpperCase())
-      || (target.getChildren().length === 1 && local !== undefined && !local.escapes());
+    const key = ObjectAnalysis.key(local.identifier);
+    return source.getTokens().every(t => {
+      const identifier = procedure.identifierAt(t);
+      return identifier === undefined || ObjectAnalysis.key(identifier) !== key;
+    });
   }
 }

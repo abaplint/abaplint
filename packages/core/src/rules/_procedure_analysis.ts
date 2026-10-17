@@ -1,8 +1,8 @@
 import * as Expressions from "../abap/2_statements/expressions";
 import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
-import {Comment, MacroCall, MacroContent, MacroRecursion, NativeSQL, Unknown} from "../abap/2_statements/statements/_statement";
-import {IStatement} from "../abap/2_statements/statements/_statement";
+import {Comment, IStatement, MacroCall, MacroContent, MacroRecursion, NativeSQL,
+  Unknown} from "../abap/2_statements/statements/_statement";
 import {IStructure} from "../abap/3_structures/structures/_structure";
 import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {Dash, Identifier as IdentifierToken} from "../abap/1_lexer/tokens";
