@@ -13,7 +13,7 @@ import {ExpressionNode, StatementNode, StructureNode, TokenNode} from "../abap/n
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
-import {DataReference, ObjectReferenceType, StructureType, TableType, UnknownType, VoidType} from "../abap/types/basic";
+import {CharacterType, DataReference, ObjectReferenceType, StructureType, TableType, UnknownType, VoidType} from "../abap/types/basic";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
 import {IObject} from "../objects/_iobject";
@@ -215,6 +215,7 @@ export class Procedure {
   /** false if the procedure contains dynamic parts, includes, test seams, enhancements or native SQL */
   public readonly supported: boolean;
   private readonly info = new Map<StatementNode, IStatementInfo>();
+  private readonly parents = new Map<StructureNode | StatementNode, StructureNode>();
   private readonly names = new Map<string, Set<string>>();
   private readonly declarations = new Map<string, StatementNode>();
   private readonly variables = new Map<string, Variable | undefined>();
@@ -328,6 +329,15 @@ export class Procedure {
       }
     }
     return between;
+  }
+
+  /** the IF structure of an IF or ELSEIF statement */
+  public ifStructure(statement: StatementNode): StructureNode | undefined {
+    let parent = this.parents.get(statement);
+    if (statement.get() instanceof Statements.ElseIf && parent !== undefined) {
+      parent = this.parents.get(parent);
+    }
+    return parent?.get() instanceof Structures.If ? parent : undefined;
   }
 
   /** the variable for an identifier referenced in this procedure,
@@ -579,6 +589,7 @@ export class Procedure {
       loop = node;
     }
     for (const child of node.getChildren()) {
+      this.parents.set(child as StructureNode | StatementNode, node);
       if (child instanceof StructureNode) {
         this.walk(child, blockPath, loop, child.get() instanceof Structures.Normal);
       } else if (child instanceof StatementNode) {
@@ -747,6 +758,99 @@ export function identicalTypes(first: AbstractType, second: AbstractType): boole
     return first.toABAP().toUpperCase() === second.toABAP().toUpperCase();
   }
   return first.toABAP() === second.toABAP();
+}
+
+////////////////////////////////////////
+// conditions
+
+export enum PredicateKind {
+  Equal = "equal",
+  Initial = "initial",
+  Bound = "bound",
+}
+
+export interface IPredicate {
+  kind: PredicateKind;
+  /** the operand of IS INITIAL / IS BOUND, the left operand of = */
+  left: ExpressionNode;
+  /** the right operand of = */
+  right?: ExpressionNode;
+  /** NOT, IS NOT, <> or NE */
+  negated: boolean;
+}
+
+/** the condition of IF or ELSEIF is one comparison: a = b, a EQ b, a <> b, a NE b,
+ * a IS [NOT] INITIAL, a IS [NOT] BOUND, optionally prefixed with NOT */
+export function simplePredicate(statement: StatementNode): IPredicate | undefined {
+  if (!(statement.get() instanceof Statements.If || statement.get() instanceof Statements.ElseIf)
+      || statement.getColon() !== undefined) {
+    return undefined;
+  }
+  const cond = statement.findDirectExpression(Expressions.Cond);
+  if (cond === undefined || cond.getChildren().length !== 1) {
+    return undefined;
+  }
+  const compare = cond.findDirectExpression(Expressions.Compare);
+  if (compare === undefined) {
+    return undefined;
+  }
+  const children = compare.getChildren();
+  let negated = false;
+  let i = 0;
+  if (children[0] instanceof TokenNode && children[0].getFirstToken().getStr().toUpperCase() === "NOT") {
+    negated = true;
+    i = 1;
+  }
+  const left = children[i];
+  if (!(left instanceof ExpressionNode) || !(left.get() instanceof Expressions.Source)) {
+    return undefined;
+  }
+  const rest = children.slice(i + 1);
+  const words = rest.map(c => c instanceof TokenNode ? c.getFirstToken().getStr().toUpperCase() : "");
+  if (rest.length === 2 && rest[0].get() instanceof Expressions.CompareOperator
+      && rest[1] instanceof ExpressionNode && rest[1].get() instanceof Expressions.Source) {
+    const operator = rest[0].getFirstToken().getStr().toUpperCase();
+    if (rest[0].countTokens() !== 1 || !["=", "EQ", "<>", "NE"].includes(operator)) {
+      return undefined;
+    }
+    return {kind: PredicateKind.Equal, left, right: rest[1], negated: negated !== (operator === "<>" || operator === "NE")};
+  } else if (words.join(" ") === "IS INITIAL" || words.join(" ") === "IS NOT INITIAL") {
+    return {kind: PredicateKind.Initial, left, negated: negated !== (words.length === 3)};
+  } else if (words.join(" ") === "IS BOUND" || words.join(" ") === "IS NOT BOUND") {
+    return {kind: PredicateKind.Bound, left, negated: negated !== (words.length === 3)};
+  }
+  return undefined;
+}
+
+/** value of a character literal 'abc', or of a character constant like abap_true, undefined otherwise */
+export function characterConstant(procedure: Procedure, source: ExpressionNode): string | undefined {
+  if (source.getChildren().length !== 1) {
+    return undefined;
+  }
+  const literal = source.findDirectExpression(Expressions.Constant)?.findDirectExpression(Expressions.ConstantString);
+  if (literal !== undefined) {
+    return literal.countTokens() === 1 ? textLiteral(literal.getFirstToken().getStr()) : undefined;
+  }
+  const field = singleField(source);
+  const identifier = field === undefined ? undefined : procedure.identifierAt(field);
+  if (identifier instanceof TypedIdentifier && isImmutable(identifier)
+      && identifier.getType() instanceof CharacterType) {
+    const value = identifier.getValue();
+    return typeof value === "string" ? textLiteral(value) : undefined;
+  }
+  return undefined;
+}
+
+function textLiteral(text: string): string | undefined {
+  if (text.length < 2 || !text.startsWith("'") || !text.endsWith("'")) {
+    return undefined;
+  }
+  return text.substring(1, text.length - 1).replace(/''/g, "'");
+}
+
+/** character values compare after padding the shorter one with blanks */
+export function sameCharacters(first: string, second: string): boolean {
+  return first.replace(/ +$/, "") === second.replace(/ +$/, "");
 }
 
 ////////////////////////////////////////

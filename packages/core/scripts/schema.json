@@ -1074,6 +1074,23 @@
       ],
       "type": "object"
     },
+    "ConstantConditionConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "ConstructorVisibilityPublicConf": {
       "additionalProperties": false,
       "properties": {
@@ -2469,6 +2486,17 @@
                 }
               ],
               "description": "Checks that constants classes are in sync with domain fixed values\nhttps://rules.abaplint.org/constant_classes"
+            },
+            "constant_condition": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ConstantConditionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/constant_condition"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -4856,6 +4884,17 @@
                 }
               ],
               "description": "Checks that constants classes are in sync with domain fixed values\nhttps://rules.abaplint.org/constant_classes"
+            },
+            "constant_condition": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ConstantConditionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/constant_condition"
             },
             "constructor_visibility_public": {
               "anyOf": [

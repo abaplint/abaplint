@@ -44,6 +44,7 @@ import {CloudTypesConf} from "../src/rules/cloud_types";
 import {ColonMissingSpaceConf} from "../src/rules/colon_missing_space";
 import {CommentedCodeConf} from "../src/rules/commented_code";
 import {ConstantClassesConf} from "../src/rules/constant_classes";
+import {ConstantConditionConf} from "../src/rules/constant_condition";
 import {ConstructorVisibilityPublicConf} from "../src/rules/constructor_visibility_public";
 import {ContainsTabConf} from "../src/rules/contains_tab";
 import {CyclicOOConf} from "../src/rules/cyclic_oo";
@@ -274,6 +275,7 @@ export interface IConfig {
     "colon_missing_space"?: ColonMissingSpaceConf | boolean,
     "commented_code"?: CommentedCodeConf | boolean,
     "constant_classes"?: ConstantClassesConf | boolean,
+    "constant_condition"?: ConstantConditionConf | boolean,
     "constructor_visibility_public"?: ConstructorVisibilityPublicConf | boolean,
     "contains_tab"?: ContainsTabConf | boolean,
     "cyclic_oo"?: CyclicOOConf | boolean,
@@ -493,6 +495,7 @@ export interface IConfig {
     "colon_missing_space"?: ColonMissingSpaceConf | boolean,
     "commented_code"?: CommentedCodeConf | boolean,
     "constant_classes"?: ConstantClassesConf | boolean,
+    "constant_condition"?: ConstantConditionConf | boolean,
     "constructor_visibility_public"?: ConstructorVisibilityPublicConf | boolean,
     "contains_tab"?: ContainsTabConf | boolean,
     "cyclic_oo"?: CyclicOOConf | boolean,

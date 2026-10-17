@@ -42,6 +42,7 @@ export * from "./cloud_types";
 export * from "./colon_missing_space";
 export * from "./commented_code";
 export * from "./constant_classes";
+export * from "./constant_condition";
 export * from "./constructor_visibility_public";
 export * from "./contains_tab";
 export * from "./cyclic_oo";
