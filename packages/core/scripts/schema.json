@@ -341,6 +341,23 @@
       },
       "type": "object"
     },
+    "BooleanFlagViaIfConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "BoundCheckAfterCreateConf": {
       "additionalProperties": false,
       "properties": {
@@ -2229,6 +2246,17 @@
                 }
               ],
               "description": "Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE\nTags: SingleFile\nhttps://rules.abaplint.org/begin_single_include"
+            },
+            "boolean_flag_via_if": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BooleanFlagViaIfConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a flag that is initialized to false and set to true in a single IF, use xsdbool\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/boolean_flag_via_if"
             },
             "bound_check_after_create": {
               "anyOf": [
@@ -4660,6 +4688,17 @@
                 }
               ],
               "description": "Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE\nTags: SingleFile\nhttps://rules.abaplint.org/begin_single_include"
+            },
+            "boolean_flag_via_if": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BooleanFlagViaIfConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a flag that is initialized to false and set to true in a single IF, use xsdbool\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/boolean_flag_via_if"
             },
             "bound_check_after_create": {
               "anyOf": [

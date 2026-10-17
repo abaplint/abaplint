@@ -16,6 +16,7 @@ import {AmbiguousStatementConf} from "../src/rules/ambiguous_statement";
 import {AvoidUseConf} from "../src/rules/avoid_use";
 import {BeginEndNamesConf} from "../src/rules/begin_end_names";
 import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
+import {BooleanFlagViaIfConf} from "../src/rules/boolean_flag_via_if";
 import {BoundCheckAfterCreateConf} from "../src/rules/bound_check_after_create";
 import {CallTransactionAuthorityCheckConf} from "../src/rules/call_transaction_authority_check";
 import {CatchAndRaiseConf} from "../src/rules/catch_and_raise";
@@ -250,6 +251,7 @@ export interface IConfig {
     "avoid_use"?: AvoidUseConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
+    "boolean_flag_via_if"?: BooleanFlagViaIfConf | boolean,
     "bound_check_after_create"?: BoundCheckAfterCreateConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
@@ -473,6 +475,7 @@ export interface IConfig {
     "avoid_use"?: AvoidUseConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
+    "boolean_flag_via_if"?: BooleanFlagViaIfConf | boolean,
     "bound_check_after_create"?: BoundCheckAfterCreateConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
