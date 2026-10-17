@@ -4046,6 +4046,17 @@
               ],
               "description": "Checks the validity of ICF services\nhttps://rules.abaplint.org/sicf_consistency"
             },
+            "single_use_expression_temp": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SingleUseExpressionTempConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds DATA(a) = <expression>. directly followed by x = a., assign the expression to x\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/single_use_expression_temp"
+            },
             "slow_parameter_passing": {
               "anyOf": [
                 {
@@ -6498,6 +6509,17 @@
                 }
               ],
               "description": "Checks the validity of ICF services\nhttps://rules.abaplint.org/sicf_consistency"
+            },
+            "single_use_expression_temp": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SingleUseExpressionTempConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds DATA(a) = <expression>. directly followed by x = a., assign the expression to x\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/single_use_expression_temp"
             },
             "slow_parameter_passing": {
               "anyOf": [
@@ -9903,6 +9925,23 @@
         "length",
         "allow"
       ],
+      "type": "object"
+    },
+    "SingleUseExpressionTempConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "SlowParameterPassingConf": {
