@@ -946,6 +946,23 @@
       },
       "type": "object"
     },
+    "ClearAfterDeclarationConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "ClearExportingParametersConf": {
       "additionalProperties": false,
       "properties": {
@@ -2387,6 +2404,17 @@
               ],
               "description": "Find overlapping classic exceptions\nTags: SingleFile\nhttps://rules.abaplint.org/classic_exceptions_overlap"
             },
+            "clear_after_declaration": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearAfterDeclarationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/clear_after_declaration"
+            },
             "clear_exporting_parameters": {
               "anyOf": [
                 {
@@ -3122,7 +3150,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Keep max one method parameter description per line\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/max_one_method_parameter_per_line"
+              "description": "Keep max one method parameter description per line\nTags: SingleFile, Whitespace, Quickfix\nhttps://rules.abaplint.org/max_one_method_parameter_per_line"
             },
             "max_one_statement": {
               "anyOf": [
@@ -3595,7 +3623,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "prefer pragmas over pseudo comments \nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/prefer_pragmas"
+              "description": "prefer pragmas over pseudo comments\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/prefer_pragmas"
             },
             "prefer_raise_exception_new": {
               "anyOf": [
@@ -4752,6 +4780,17 @@
               ],
               "description": "Find overlapping classic exceptions\nTags: SingleFile\nhttps://rules.abaplint.org/classic_exceptions_overlap"
             },
+            "clear_after_declaration": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearAfterDeclarationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/clear_after_declaration"
+            },
             "clear_exporting_parameters": {
               "anyOf": [
                 {
@@ -5487,7 +5526,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Keep max one method parameter description per line\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/max_one_method_parameter_per_line"
+              "description": "Keep max one method parameter description per line\nTags: SingleFile, Whitespace, Quickfix\nhttps://rules.abaplint.org/max_one_method_parameter_per_line"
             },
             "max_one_statement": {
               "anyOf": [
@@ -5960,7 +5999,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "prefer pragmas over pseudo comments \nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/prefer_pragmas"
+              "description": "prefer pragmas over pseudo comments\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/prefer_pragmas"
             },
             "prefer_raise_exception_new": {
               "anyOf": [
