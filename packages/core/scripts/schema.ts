@@ -7,6 +7,7 @@ import {AbapdocLeadingAtConf} from "../src/rules/abapdoc_leading_at";
 import {AbapdocParameterNamesConf} from "../src/rules/abapdoc_parameter_names";
 import {AddTestAttributesConf} from "../src/rules/add_test_attributes";
 import {AFFAndXMLConf} from "../src/rules/aff_and_xml";
+import {AliasNeverReassignedConf} from "../src/rules/alias_never_reassigned";
 import {AlignParametersConf} from "../src/rules/align_parameters";
 import {AlignPseudoCommentsConf} from "../src/rules/align_pseudo_comments";
 import {AlignTypeExpressionsConf} from "../src/rules/align_type_expressions";
@@ -242,6 +243,7 @@ export interface IConfig {
     "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
+    "alias_never_reassigned"?: AliasNeverReassignedConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
     "align_pseudo_comments"?: AlignPseudoCommentsConf | boolean,
     "align_type_expressions"?: AlignTypeExpressionsConf | boolean,
@@ -466,6 +468,7 @@ export interface IConfig {
     "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
+    "alias_never_reassigned"?: AliasNeverReassignedConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
     "align_pseudo_comments"?: AlignPseudoCommentsConf | boolean,
     "align_type_expressions"?: AlignTypeExpressionsConf | boolean,
