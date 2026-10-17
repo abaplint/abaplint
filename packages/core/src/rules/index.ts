@@ -5,6 +5,7 @@ export * from "./abapdoc_leading_at";
 export * from "./abapdoc_parameter_names";
 export * from "./add_test_attributes";
 export * from "./aff_and_xml";
+export * from "./alias_never_reassigned";
 export * from "./align_parameters";
 export * from "./align_pseudo_comments";
 export * from "./align_type_expressions";

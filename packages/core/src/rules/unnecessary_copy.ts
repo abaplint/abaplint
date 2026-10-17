@@ -1,14 +1,12 @@
 import * as Expressions from "../abap/2_statements/expressions";
-import * as Statements from "../abap/2_statements/statements";
 import {EditHelper} from "../edit_helper";
 import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
-import {ObjectAnalysis, OccurrenceKind, SourceKind, dataSource, deleteStatement, mergeEdits, plainMove,
-  unchangedBetween} from "./_procedure_analysis";
-import {StatementNode} from "../abap/nodes";
+import {ObjectAnalysis, OccurrenceKind, SourceKind, dataSource, deleteStatement, isCondition, mergeEdits,
+  plainMove, unchangedBetween} from "./_procedure_analysis";
 
 export class UnnecessaryCopyConf extends BasicRuleConfig {
 }
@@ -89,7 +87,7 @@ rv_text = |Hello { lv_name }|.`,
         }
         const source = dataSource(procedure, move.source);
         if (source === undefined || source.base === variable
-            || (source.kind === SourceKind.Immutable && this.isCondition(read.statement))
+            || (source.kind === SourceKind.Immutable && isCondition(read.statement))
             || !unchangedBetween(procedure, source, declaration, read.statement, read.token)) {
           continue;
         }
@@ -101,12 +99,5 @@ rv_text = |Hello { lv_name }|.`,
       }
     }
     return issues;
-  }
-
-  /** a constant compared in a condition is left for constant_condition, instead of comparing two constants */
-  private isCondition(statement: StatementNode): boolean {
-    const type = statement.get();
-    return type instanceof Statements.If || type instanceof Statements.ElseIf || type instanceof Statements.While
-      || type instanceof Statements.Check || type instanceof Statements.Case || type instanceof Statements.When;
   }
 }

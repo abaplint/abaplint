@@ -865,6 +865,14 @@ export function sameCharacters(first: string, second: string): boolean {
   return first.replace(/ +$/, "") === second.replace(/ +$/, "");
 }
 
+/** IF, ELSEIF, WHILE, CHECK, CASE or WHEN: a constant compared there is left for constant_condition,
+ * instead of replacing a variable by a constant and comparing two constants */
+export function isCondition(statement: StatementNode): boolean {
+  const type = statement.get();
+  return type instanceof Statements.If || type instanceof Statements.ElseIf || type instanceof Statements.While
+    || type instanceof Statements.Check || type instanceof Statements.Case || type instanceof Statements.When;
+}
+
 ////////////////////////////////////////
 // data sources
 

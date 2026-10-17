@@ -124,6 +124,23 @@
       },
       "type": "object"
     },
+    "AliasNeverReassignedConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AlignParametersConf": {
       "additionalProperties": false,
       "properties": {
@@ -2147,6 +2164,17 @@
                 }
               ],
               "description": "Checks for objects that have both AFF (.json) and XML (.xml) files\nTags: Syntax\nhttps://rules.abaplint.org/aff_and_xml"
+            },
+            "alias_never_reassigned": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AliasNeverReassignedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds DATA(a) = b. where neither a nor b changes afterwards, so b can be read instead of a\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/alias_never_reassigned"
             },
             "align_parameters": {
               "anyOf": [
@@ -4589,6 +4617,17 @@
                 }
               ],
               "description": "Checks for objects that have both AFF (.json) and XML (.xml) files\nTags: Syntax\nhttps://rules.abaplint.org/aff_and_xml"
+            },
+            "alias_never_reassigned": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AliasNeverReassignedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds DATA(a) = b. where neither a nor b changes afterwards, so b can be read instead of a\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/alias_never_reassigned"
             },
             "align_parameters": {
               "anyOf": [
