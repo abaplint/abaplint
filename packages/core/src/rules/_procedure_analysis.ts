@@ -7,7 +7,7 @@ import {IStructure} from "../abap/3_structures/structures/_structure";
 import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {Dash, Identifier as IdentifierToken} from "../abap/1_lexer/tokens";
 import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
-import {ISpaghettiScope, ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {ISpaghettiScope, ISpaghettiScopeNode, ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ExpressionNode, StatementNode, StructureNode, TokenNode} from "../abap/nodes";
 import {Identifier} from "../abap/4_file_information/_identifier";
@@ -103,12 +103,24 @@ export class ObjectAnalysis {
   public readonly procedures: Procedure[] = [];
   private readonly byResolved = new Map<string, IReference[]>();
   private readonly byPosition = new Map<string, IReference[]>();
+  private static last: {obj: ABAPObject, syntax: ISyntaxResult, analysis: ObjectAnalysis | undefined} | undefined;
 
   /** returns undefined if the object is not supported, or has syntax errors */
   public static run(reg: IRegistry, obj: IObject): ObjectAnalysis | undefined {
     if (!(obj instanceof ABAPObject)) {
       return undefined;
     }
+    const syntax = new SyntaxLogic(reg, obj).run();
+    // the rules run one after the other on the same object, the syntax result changes when the object changes
+    if (ObjectAnalysis.last?.obj === obj && ObjectAnalysis.last.syntax === syntax) {
+      return ObjectAnalysis.last.analysis;
+    }
+    const analysis = ObjectAnalysis.build(obj, syntax);
+    ObjectAnalysis.last = {obj, syntax, analysis};
+    return analysis;
+  }
+
+  private static build(obj: ABAPObject, syntax: ISyntaxResult): ObjectAnalysis | undefined {
     // Neither macro expansion nor unknown statements have reliable references.
     for (const file of obj.getABAPFiles()) {
       for (const statement of file.getStatements()) {
@@ -119,7 +131,6 @@ export class ObjectAnalysis {
         }
       }
     }
-    const syntax = new SyntaxLogic(reg, obj).run();
     if (syntax.issues.length > 0) {
       return undefined;
     }
@@ -216,8 +227,11 @@ export class Procedure {
   public readonly supported: boolean;
   private readonly info = new Map<StatementNode, IStatementInfo>();
   private readonly parents = new Map<StructureNode | StatementNode, StructureNode>();
-  private readonly names = new Map<string, Set<string>>();
+  /** identifier tokens by lower case name, positions as row * 100000 + column, the procedure is in one file */
+  private readonly names = new Map<string, number[]>();
   private readonly declarations = new Map<string, StatementNode>();
+  private readonly declarationTokens: AbstractToken[] = [];
+  private readonly tokens = new Map<StatementNode, readonly AbstractToken[]>();
   private readonly variables = new Map<string, Variable | undefined>();
   private own: [Identifier, IReference[]][] | undefined = undefined;
   private comments: Position[] | undefined = undefined;
@@ -233,7 +247,7 @@ export class Procedure {
     }
 
     for (const statement of this.statements) {
-      const tokens = statement.getTokens();
+      const tokens = this.tokensOf(statement);
       for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
         const previous = tokens[i - 1];
@@ -243,9 +257,12 @@ export class Procedure {
           continue;
         }
         const name = token.getStr().toLowerCase();
-        const set = this.names.get(name) || new Set<string>();
-        set.add(this.tokenKey(token));
-        this.names.set(name, set);
+        const list = this.names.get(name);
+        if (list === undefined) {
+          this.names.set(name, [position(token)]);
+        } else {
+          list.push(position(token));
+        }
       }
 
       const type = statement.get();
@@ -254,13 +271,16 @@ export class Procedure {
           ?.findDirectExpression(Expressions.DefinitionName)?.getFirstToken();
         if (name !== undefined) {
           this.declarations.set(this.tokenKey(name), statement);
+          this.declarationTokens.push(name);
         }
       }
-      if (!(type instanceof Statements.Form)) {
+      if (!(type instanceof Statements.Form) && tokens.some((t, i) => t.getStr().toUpperCase() === "DATA"
+          && tokens[i + 1]?.getStr() === "(")) {
         for (const inline of statement.findAllExpressionsRecursive(Expressions.InlineData)) {
           const name = inline.findDirectExpression(Expressions.TargetField)?.getFirstToken();
           if (name !== undefined) {
             this.declarations.set(this.tokenKey(name), statement);
+            this.declarationTokens.push(name);
           }
         }
       }
@@ -366,13 +386,13 @@ export class Procedure {
     const declaration = this.contains(identifier) ? this.declarations.get(key) : undefined;
     const inline = declaration !== undefined && !(declaration.get() instanceof Statements.Data);
     const occurrences: IOccurrence[] = [];
-    const known = new Set<string>([key]);
+    const known = new Set<number>([position(identifier.getToken())]);
     for (const reference of this.analysis.referencesTo(identifier)) {
       if (!this.contains(reference.position)) {
         continue;
       }
       const token = reference.position.getToken();
-      known.add(this.tokenKey(token));
+      known.add(position(token));
       if (inline && reference.position.getStart().equals(identifier.getStart())
           && reference.referenceType === ReferenceType.DataWriteReference) {
         continue;
@@ -400,8 +420,8 @@ export class Procedure {
     }
 
     let complete = true;
-    for (const position of this.names.get(identifier.getName().toLowerCase()) || []) {
-      if (!known.has(position)) {
+    for (const named of this.names.get(identifier.getName().toLowerCase()) || []) {
+      if (!known.has(named)) {
         complete = false;
       }
     }
@@ -423,15 +443,23 @@ export class Procedure {
   /** all local variables declared in the procedure */
   public locals(): Variable[] {
     const ret: Variable[] = [];
-    for (const statement of this.statements) {
-      for (const token of this.declaredIn(statement)) {
-        const variable = this.local(this.identifierAt(token) ?? this.declaredIdentifier(token));
-        if (variable !== undefined) {
-          ret.push(variable);
-        }
+    for (const token of this.declarationTokens) {
+      const variable = this.local(this.identifierAt(token) ?? this.declaredIdentifier(token));
+      if (variable !== undefined) {
+        ret.push(variable);
       }
     }
     return ret;
+  }
+
+  /** tokens of the statement, getTokens() builds a new list on every call */
+  public tokensOf(statement: StatementNode): readonly AbstractToken[] {
+    let tokens = this.tokens.get(statement);
+    if (tokens === undefined) {
+      tokens = statement.getTokens();
+      this.tokens.set(statement, tokens);
+    }
+    return tokens;
   }
 
   /** the resolved identifier of the data reference at the token, if any */
@@ -510,7 +538,7 @@ export class Procedure {
   /** every data write in the statement goes to a local variable, a pass-by-value parameter or the
    * RETURNING parameter, ie. memory that no other data object, field symbol or reference can share */
   public writesOnlyPrivate(statement: StatementNode): boolean {
-    const tokens = statement.getTokens();
+    const tokens = this.tokensOf(statement);
     for (let i = 0; i < tokens.length; i++) {
       for (const reference of this.analysis.referencesAt(this.file.getFilename(), tokens[i])) {
         if (reference.referenceType !== ReferenceType.DataWriteReference) {
@@ -536,24 +564,13 @@ export class Procedure {
       && statement.findFirstExpression(Expressions.Dereference) === undefined;
   }
 
-  /** declaration name tokens in the statement */
-  private declaredIn(statement: StatementNode): AbstractToken[] {
-    const ret: AbstractToken[] = [];
-    for (const token of statement.getTokens()) {
-      if (this.declarations.get(this.tokenKey(token)) === statement) {
-        ret.push(token);
-      }
-    }
-    return ret;
-  }
-
   private classify(reference: IReference, statement: StatementNode): OccurrenceKind {
     if (reference.referenceType !== ReferenceType.DataReadReference
         && reference.referenceType !== ReferenceType.DataWriteReference) {
       return OccurrenceKind.Escape;
     }
     const token = reference.position.getToken();
-    const tokens = statement.getTokens();
+    const tokens = this.tokensOf(statement);
     const index = tokens.findIndex(t => t.getStart().equals(token.getStart()));
     if (index < 0) {
       return OccurrenceKind.Escape;
@@ -618,6 +635,10 @@ export class Procedure {
   }
 }
 
+function position(token: AbstractToken): number {
+  return token.getRow() * 100000 + token.getCol();
+}
+
 function rank(kind: OccurrenceKind): number {
   return kind === OccurrenceKind.Escape ? 2 : kind === OccurrenceKind.Write ? 1 : 0;
 }
@@ -657,8 +678,7 @@ export function expressionPath(statement: StatementNode, token: AbstractToken): 
     for (const child of children) {
       if (child instanceof ExpressionNode
           && !token.getStart().isBefore(child.getFirstToken().getStart())
-          && !child.getLastToken().getStart().isBefore(token.getStart())
-          && child.getTokens().some(t => t.getStart().equals(token.getStart()))) {
+          && !child.getLastToken().getStart().isBefore(token.getStart())) {
         next = child;
         break;
       }
@@ -1053,6 +1073,18 @@ function isReceiver(statement: StatementNode, token: AbstractToken): boolean {
 ////////////////////////////////////////
 // edits
 
+const rowCache = new WeakMap<ABAPFile, readonly string[]>();
+
+/** getRawRows() splits the source on every call; a file is never changed, edits create a new one */
+function rowsOf(file: ABAPFile): readonly string[] {
+  let rows = rowCache.get(file);
+  if (rows === undefined) {
+    rows = file.getRawRows();
+    rowCache.set(file, rows);
+  }
+  return rows;
+}
+
 /** edits of one fix, sorted so that applying them one after the other keeps the positions valid */
 export function mergeEdits(file: ABAPFile, edits: IEdit[]): IEdit {
   const list: ITextEdit[] = [];
@@ -1073,7 +1105,7 @@ export function deleteRegion(file: ABAPFile, first: StatementNode, last: Stateme
   if (first === last && first.getColon() !== undefined) {
     return EditHelper.deleteStatement(file, first);
   }
-  const rows = file.getRawRows();
+  const rows = rowsOf(file);
   const start = first.getStart();
   const end = last.getEnd();
   const before = rows[start.getRow() - 1].substring(0, start.getCol() - 1);
@@ -1090,7 +1122,7 @@ export function deleteStatement(file: ABAPFile, statement: StatementNode): IEdit
 
 /** the source code between two positions, as written */
 export function rawText(file: ABAPFile, start: Position, end: Position): string {
-  const rows = file.getRawRows();
+  const rows = rowsOf(file);
   if (start.getRow() === end.getRow()) {
     return rows[start.getRow() - 1].substring(start.getCol() - 1, end.getCol() - 1);
   }
