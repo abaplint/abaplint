@@ -14,6 +14,7 @@ export * from "./ambiguous_statement";
 export * from "./avoid_use";
 export * from "./begin_end_names";
 export * from "./begin_single_include";
+export * from "./bound_check_after_create";
 export * from "./call_transaction_authority_check";
 export * from "./catch_and_raise";
 export * from "./cds_association_name";
