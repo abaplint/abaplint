@@ -4244,6 +4244,17 @@
               ],
               "description": "TABLES are always global, so declare them globally\nTags: SingleFile\nhttps://rules.abaplint.org/tables_declared_locally"
             },
+            "try_cast_empty_catch": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TryCastEmptyCatchConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a down cast in TRY with an empty CATCH cx_sy_move_cast_error, use IS INSTANCE OF\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/try_cast_empty_catch"
+            },
             "try_without_catch": {
               "anyOf": [
                 {
@@ -6707,6 +6718,17 @@
                 }
               ],
               "description": "TABLES are always global, so declare them globally\nTags: SingleFile\nhttps://rules.abaplint.org/tables_declared_locally"
+            },
+            "try_cast_empty_catch": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TryCastEmptyCatchConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a down cast in TRY with an empty CATCH cx_sy_move_cast_error, use IS INSTANCE OF\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/try_cast_empty_catch"
             },
             "try_without_catch": {
               "anyOf": [
@@ -10180,6 +10202,23 @@
       "type": "object"
     },
     "TablesDeclaredLocallyConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "TryCastEmptyCatchConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
