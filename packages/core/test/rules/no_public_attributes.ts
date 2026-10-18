@@ -41,6 +41,19 @@ testRule(tests, NoPublicAttributes);
 const testsReadOnlyAllowed = [
   {abap: `CLASS lcl_abc DEFINITION.
             PUBLIC SECTION.
+                DATA text TYPE string VALUE ' READ-ONLY'.
+          ENDCLASS.`, cnt: 1},
+  {abap: `CLASS lcl_abc DEFINITION.
+            PUBLIC SECTION.
+                DATA: BEGIN OF mutable,
+                        field TYPE i,
+                      END OF mutable.
+                CLASS-DATA: BEGIN OF readonly READ-ONLY,
+                              field TYPE i,
+                            END OF readonly.
+          ENDCLASS.`, cnt: 1},
+  {abap: `CLASS lcl_abc DEFINITION.
+            PUBLIC SECTION.
                 DATA counter TYPE i.
           ENDCLASS.`, cnt: 1},
   {abap: `CLASS lcl_abc DEFINITION.
