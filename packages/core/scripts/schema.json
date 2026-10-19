@@ -585,6 +585,23 @@
       },
       "type": "object"
     },
+    "CastViaGenericReferenceConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CatchAndRaiseConf": {
       "additionalProperties": false,
       "properties": {
@@ -2307,6 +2324,17 @@
                 }
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
+            },
+            "cast_via_generic_reference": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CastViaGenericReferenceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a down cast from a local reference variable that only holds a copy of another reference\nTags: Quickfix\nhttps://rules.abaplint.org/cast_via_generic_reference"
             },
             "catch_and_raise": {
               "anyOf": [
@@ -4782,6 +4810,17 @@
                 }
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
+            },
+            "cast_via_generic_reference": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CastViaGenericReferenceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a down cast from a local reference variable that only holds a copy of another reference\nTags: Quickfix\nhttps://rules.abaplint.org/cast_via_generic_reference"
             },
             "catch_and_raise": {
               "anyOf": [

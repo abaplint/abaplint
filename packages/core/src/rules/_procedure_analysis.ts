@@ -16,6 +16,11 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {CharacterType, DataReference, IntegerType, ObjectReferenceType, StringType, StructureType, TableType, UnknownType,
   VoidType} from "../abap/types/basic";
 import {IMethodDefinition} from "../abap/types/_method_definition";
+import {IInterfaceDefinition} from "../abap/types/_interface_definition";
+import {ClassDefinition} from "../abap/types/class_definition";
+import {InterfaceDefinition} from "../abap/types/interface_definition";
+import {Class} from "../objects/class";
+import {Interface} from "../objects/interface";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
 import {IObject} from "../objects/_iobject";
@@ -1281,6 +1286,70 @@ export function expressionType(procedure: Procedure, source: ExpressionNode): Ab
     return identifier instanceof TypedIdentifier ? identifier.getType() : undefined;
   }
   return undefined;
+}
+
+////////////////////////////////////////
+// classes and interfaces
+
+/** classes and interfaces by name: local ones in the scope of the procedure, global ones in the registry */
+export class Hierarchy {
+  private readonly reg: IRegistry;
+  private readonly procedure: Procedure;
+
+  public constructor(reg: IRegistry, procedure: Procedure) {
+    this.reg = reg;
+    this.procedure = procedure;
+  }
+
+  public find(name: string): IInterfaceDefinition | undefined {
+    const scope = this.procedure.analysis.spaghetti.lookupPosition(this.procedure.getStart(), this.procedure.file.getFilename());
+    const local = scope?.findClassDefinition(name) ?? scope?.findInterfaceDefinition(name);
+    if (local !== undefined) {
+      return local;
+    }
+    const clas = this.reg.getObject("CLAS", name);
+    if (clas instanceof Class) {
+      return clas.getDefinition();
+    }
+    const intf = this.reg.getObject("INTF", name);
+    return intf instanceof Interface ? intf.getDefinition() : undefined;
+  }
+
+  /** the class or interface definition of an object reference type, undefined if it is not known */
+  public definition(type: AbstractType): ClassDefinition | InterfaceDefinition | undefined {
+    if (!(type instanceof ObjectReferenceType)) {
+      return undefined;
+    }
+    const identifier = type.getIdentifier();
+    const found = identifier instanceof ClassDefinition || identifier instanceof InterfaceDefinition
+      ? identifier : this.find(identifier.getName());
+    return found instanceof ClassDefinition || found instanceof InterfaceDefinition ? found : undefined;
+  }
+
+  /** sub is sup, or inherits from it or implements it; false if a definition on the way is not known */
+  public isSubtype(sub: string, sup: string): boolean {
+    const target = sup.toUpperCase();
+    const visited = new Set<string>();
+    const stack = [sub.toUpperCase()];
+    while (stack.length > 0) {
+      const name = stack.pop()!;
+      if (name === target) {
+        return true;
+      } else if (visited.has(name)) {
+        continue;
+      }
+      visited.add(name);
+      const definition = this.find(name);
+      const superClass = definition?.getSuperClass();
+      if (superClass !== undefined) {
+        stack.push(superClass.toUpperCase());
+      }
+      for (const implementing of definition?.getImplementing() || []) {
+        stack.push(implementing.name.toUpperCase());
+      }
+    }
+    return false;
+  }
 }
 
 ////////////////////////////////////////

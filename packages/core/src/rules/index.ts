@@ -18,6 +18,7 @@ export * from "./begin_single_include";
 export * from "./boolean_flag_via_if";
 export * from "./bound_check_after_create";
 export * from "./call_transaction_authority_check";
+export * from "./cast_via_generic_reference";
 export * from "./catch_and_raise";
 export * from "./cds_association_name";
 export * from "./cds_check_syntax";

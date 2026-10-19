@@ -1,8 +1,9 @@
 import {expect} from "chai";
 import {MemoryFile, Registry} from "../../src";
 import {IRule} from "../../src/rules/_irule";
-import {AliasNeverReassigned, BooleanFlagViaIf, BoundCheckAfterCreate, ClearAfterDeclaration, ConstantCondition,
-  CopyChain, CopyOfInitialVariable, SingleUseExpressionTemp, TryCastEmptyCatch, UnnecessaryCopy} from "../../src/rules";
+import {AliasNeverReassigned, BooleanFlagViaIf, BoundCheckAfterCreate, CastViaGenericReference, ClearAfterDeclaration,
+  ConstantCondition, CopyChain, CopyOfInitialVariable, SingleUseExpressionTemp, TryCastEmptyCatch,
+  UnnecessaryCopy} from "../../src/rules";
 import {fixAll, inMethod} from "./_redundant_code";
 
 // The rules applied one after the other, like abaplint --fix, reach a state without any issue
@@ -10,7 +11,7 @@ import {fixAll, inMethod} from "./_redundant_code";
 function all(): IRule[] {
   // the order of abaplint --fix, ie. the order of the rule keys
   return [new AliasNeverReassigned(), new BooleanFlagViaIf(), new BoundCheckAfterCreate(),
-    new ClearAfterDeclaration(), new ConstantCondition(), new CopyChain(), new CopyOfInitialVariable(),
+    new CastViaGenericReference(), new ClearAfterDeclaration(), new ConstantCondition(), new CopyChain(), new CopyOfInitialVariable(),
     new SingleUseExpressionTemp(), new TryCastEmptyCatch(), new UnnecessaryCopy()];
 }
 
@@ -90,6 +91,21 @@ describe("redundant code rules, cascades", () => {
         t1 ?= iref->ref.
     ENDIF.
     ref = t1.`, all());
+  });
+
+  it("cast via a generic reference, then TRY with empty CATCH", () => {
+    cascade(`    DATA t46 TYPE REF TO lsub.
+    DATA t49 TYPE REF TO object.
+    t49 = iref.
+    TRY.
+        t46 ?= t49.
+      CATCH cx_sy_move_cast_error.
+    ENDTRY.
+    ref = t46.`, `    DATA t46 TYPE REF TO lsub.
+    IF iref IS INSTANCE OF lsub OR iref IS INITIAL.
+        t46 ?= iref.
+    ENDIF.
+    ref = t46.`, all());
   });
 
   it("bound checks after create, one after the other", () => {

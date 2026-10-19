@@ -20,6 +20,7 @@ import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
 import {BooleanFlagViaIfConf} from "../src/rules/boolean_flag_via_if";
 import {BoundCheckAfterCreateConf} from "../src/rules/bound_check_after_create";
 import {CallTransactionAuthorityCheckConf} from "../src/rules/call_transaction_authority_check";
+import {CastViaGenericReferenceConf} from "../src/rules/cast_via_generic_reference";
 import {CatchAndRaiseConf} from "../src/rules/catch_and_raise";
 import {CDSAssociationNameConf} from "../src/rules/cds_association_name";
 import {CDSCheckSyntaxConf} from "../src/rules/cds_check_syntax";
@@ -258,6 +259,7 @@ export interface IConfig {
     "boolean_flag_via_if"?: BooleanFlagViaIfConf | boolean,
     "bound_check_after_create"?: BoundCheckAfterCreateConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
+    "cast_via_generic_reference"?: CastViaGenericReferenceConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
     "cds_check_syntax"?: CDSCheckSyntaxConf | boolean,
@@ -485,6 +487,7 @@ export interface IConfig {
     "boolean_flag_via_if"?: BooleanFlagViaIfConf | boolean,
     "bound_check_after_create"?: BoundCheckAfterCreateConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
+    "cast_via_generic_reference"?: CastViaGenericReferenceConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
     "cds_check_syntax"?: CDSCheckSyntaxConf | boolean,
