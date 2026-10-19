@@ -1,3 +1,4 @@
+import {MAX_POSITION_VALUE} from "../position";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {ISpaghettiScope, ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 
@@ -18,8 +19,8 @@ export class DumpScope {
     let ret: string = sident + "<u>" + identifier.stype + ", <tt>" + identifier.sname + "</tt>";
 
     ret += ", (" + coverage.start.getRow() + ", " + coverage.start.getCol() + ")";
-    if (coverage.end.getRow() === Number.MAX_SAFE_INTEGER
-        && coverage.end.getCol() === Number.MAX_SAFE_INTEGER) {
+    if (coverage.end.getRow() === MAX_POSITION_VALUE
+        && coverage.end.getCol() === MAX_POSITION_VALUE) {
       ret += ", (max, max)";
     } else {
       ret += ", (" + coverage.end.getRow() + ", " + coverage.end.getCol() + ")";

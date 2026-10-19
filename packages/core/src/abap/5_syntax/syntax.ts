@@ -10,7 +10,7 @@ import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
 import {FunctionGroup, Program, TypePool} from "../../objects";
-import {Position} from "../../position";
+import {MAX_POSITION_VALUE, Position} from "../../position";
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
 import {TypeMesh} from "./structures/type_mesh";
@@ -358,7 +358,7 @@ export class SyntaxLogic {
 
     if (this.object instanceof Program && this.object.isInclude()) {
 // todo, show some kind of error?
-      return {issues: [], spaghetti: this.scope.pop(new Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER))};
+      return {issues: [], spaghetti: this.scope.pop(new Position(MAX_POSITION_VALUE, MAX_POSITION_VALUE))};
     }
 
     this.traverseObject();
@@ -370,7 +370,7 @@ export class SyntaxLogic {
     this.deferred = [];
 
     for (;;) {
-      const spaghetti = this.scope.pop(new Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)); // pop built-in scopes
+      const spaghetti = this.scope.pop(new Position(MAX_POSITION_VALUE, MAX_POSITION_VALUE)); // pop built-in scopes
       if (spaghetti.getTop().getIdentifier().stype === ScopeType.BuiltIn) {
         const result: ISyntaxResult = {issues: this.issues, spaghetti};
         this.object.syntaxResult = result;
