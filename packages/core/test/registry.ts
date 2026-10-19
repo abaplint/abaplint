@@ -6,7 +6,8 @@ import {Version} from "../src/version";
 import {Config} from "../src/config";
 import {MemoryFile} from "../src/files/memory_file";
 import {Class, DataElement} from "../src/objects";
-import {Duration, RiskLevel} from "../src/abap/4_file_information/_abap_file_information";
+import {AttributeLevel, Duration, RiskLevel} from "../src/abap/4_file_information/_abap_file_information";
+import {Visibility} from "../src/abap/4_file_information/visibility";
 
 describe("Registry", () => {
 
@@ -598,6 +599,91 @@ ENDCLASS.`));
     const file = (registry.getFirstObject() as Class).getABAPFiles()[0];
     const def = file.getInfo().getClassDefinitionByName("zbp_e_booking");
     expect(def?.behaviorDefinitionName).to.equal(undefined);
+  });
+
+  for (const [statement, level] of [["DATA", AttributeLevel.Instance], ["CLASS-DATA", AttributeLevel.Static]]) {
+    it("get info on " + statement + " READ-ONLY modifiers, not literals", () => {
+      const registry = new Registry().addFile(new MemoryFile("zcl_ro.clas.abap", `
+CLASS zcl_ro DEFINITION PUBLIC FINAL.
+  PUBLIC SECTION.
+    ${statement} text TYPE string VALUE ' READ-ONLY'.
+    ${statement} string TYPE string VALUE \` READ-ONLY\`.
+    ${statement} component TYPE i VALUE read-only.
+    ${statement} actual TYPE i READ-ONLY.
+    ${statement} keyed TYPE SORTED TABLE OF i WITH UNIQUE KEY table_line READ-ONLY.
+    ${statement} empty TYPE STANDARD TABLE OF i WITH EMPTY KEY READ-ONLY.
+ENDCLASS.
+CLASS zcl_ro IMPLEMENTATION.
+ENDCLASS.`)).parse();
+
+      const attributes = getABAPObjects(registry)[0].getABAPFiles()[0]
+        .getInfo().getClassDefinitionByName("zcl_ro")!.attributes;
+      expect(attributes.map(a => ({name: a.name, readOnly: a.readOnly}))).to.deep.equal([
+        {name: "text", readOnly: false},
+        {name: "string", readOnly: false},
+        {name: "component", readOnly: false},
+        {name: "actual", readOnly: true},
+        {name: "keyed", readOnly: true},
+        {name: "empty", readOnly: true},
+      ]);
+      expect(attributes.every(a => a.level === level)).to.equal(true);
+    });
+  }
+
+  it("get info on structured attributes without listing their components", () => {
+    const registry = new Registry().addFile(new MemoryFile("zcl_ro.clas.abap", `
+CLASS zcl_ro DEFINITION PUBLIC FINAL.
+  PUBLIC SECTION.
+    DATA: BEGIN OF instance READ-ONLY,
+            BEGIN OF nested,
+              field TYPE i,
+            END OF nested,
+          END OF instance.
+    CLASS-DATA: BEGIN OF shared READ-ONLY,
+                  field TYPE i,
+                END OF shared.
+  PROTECTED SECTION.
+    DATA: BEGIN OF mutable,
+            text TYPE string VALUE ' READ-ONLY',
+          END OF mutable.
+  PRIVATE SECTION.
+    CLASS-DATA: BEGIN OF hidden,
+                  field TYPE i,
+                END OF hidden.
+ENDCLASS.
+CLASS zcl_ro IMPLEMENTATION.
+ENDCLASS.`)).parse();
+
+    const attributes = getABAPObjects(registry)[0].getABAPFiles()[0]
+      .getInfo().getClassDefinitionByName("zcl_ro")!.attributes;
+    expect(attributes.map(a => ({name: a.name, level: a.level, readOnly: a.readOnly, visibility: a.visibility})))
+      .to.have.deep.members([
+        {name: "instance", level: AttributeLevel.Instance, readOnly: true, visibility: Visibility.Public},
+        {name: "shared", level: AttributeLevel.Static, readOnly: true, visibility: Visibility.Public},
+        {name: "mutable", level: AttributeLevel.Instance, readOnly: false, visibility: Visibility.Protected},
+        {name: "hidden", level: AttributeLevel.Static, readOnly: false, visibility: Visibility.Private},
+      ]);
+    const identifier = attributes.find(a => a.name === "instance")!.identifier;
+    expect(identifier.getName()).to.equal("instance");
+    expect(identifier.getFilename()).to.equal("zcl_ro.clas.abap");
+    expect(identifier.getStart().getRow()).to.equal(4);
+    expect(identifier.getStart().getCol()).to.equal(20);
+  });
+
+  it("get info on structured interface attributes", () => {
+    const registry = new Registry().addFile(new MemoryFile("zif_ro.intf.abap", `
+INTERFACE zif_ro PUBLIC.
+  DATA: BEGIN OF value,
+          field TYPE i,
+        END OF value.
+ENDINTERFACE.`)).parse();
+
+    const attributes = getABAPObjects(registry)[0].getABAPFiles()[0]
+      .getInfo().getInterfaceDefinitionByName("zif_ro")!.attributes;
+    expect(attributes.map(a => ({name: a.name, level: a.level, readOnly: a.readOnly, visibility: a.visibility})))
+      .to.deep.equal([
+        {name: "value", level: AttributeLevel.Instance, readOnly: false, visibility: Visibility.Public},
+      ]);
   });
 
 });
