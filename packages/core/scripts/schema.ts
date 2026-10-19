@@ -43,6 +43,7 @@ import {CheckTransformationExistsConf} from "../src/rules/check_transformation_e
 import {ClassAttributeNamesConf} from "../src/rules/class_attribute_names";
 import {ClassicExceptionsOverlapConf} from "../src/rules/classic_exceptions_overlap";
 import {ClearAfterDeclarationConf} from "../src/rules/clear_after_declaration";
+import {ClearBeforeOverwriteConf} from "../src/rules/clear_before_overwrite";
 import {ClearExportingParametersConf} from "../src/rules/clear_exporting_parameters";
 import {CloudTypesConf} from "../src/rules/cloud_types";
 import {ColonMissingSpaceConf} from "../src/rules/colon_missing_space";
@@ -282,6 +283,7 @@ export interface IConfig {
     "class_attribute_names"?: ClassAttributeNamesConf | boolean,
     "classic_exceptions_overlap"?: ClassicExceptionsOverlapConf | boolean,
     "clear_after_declaration"?: ClearAfterDeclarationConf | boolean,
+    "clear_before_overwrite"?: ClearBeforeOverwriteConf | boolean,
     "clear_exporting_parameters"?: ClearExportingParametersConf | boolean,
     "cloud_types"?: CloudTypesConf | boolean,
     "colon_missing_space"?: ColonMissingSpaceConf | boolean,
@@ -510,6 +512,7 @@ export interface IConfig {
     "class_attribute_names"?: ClassAttributeNamesConf | boolean,
     "classic_exceptions_overlap"?: ClassicExceptionsOverlapConf | boolean,
     "clear_after_declaration"?: ClearAfterDeclarationConf | boolean,
+    "clear_before_overwrite"?: ClearBeforeOverwriteConf | boolean,
     "clear_exporting_parameters"?: ClearExportingParametersConf | boolean,
     "cloud_types"?: CloudTypesConf | boolean,
     "colon_missing_space"?: ColonMissingSpaceConf | boolean,

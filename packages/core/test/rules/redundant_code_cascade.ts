@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {MemoryFile, Registry} from "../../src";
 import {IRule} from "../../src/rules/_irule";
 import {AliasNeverReassigned, BooleanFlagViaIf, BoundCheckAfterCreate, CastViaGenericReference, ClearAfterDeclaration,
-  ConstantCondition, CopyChain, CopyOfInitialVariable, SingleUseExpressionTemp, TryCastEmptyCatch,
+  ClearBeforeOverwrite, ConstantCondition, CopyChain, CopyOfInitialVariable, SingleUseExpressionTemp, TryCastEmptyCatch,
   UnnecessaryCopy} from "../../src/rules";
 import {fixAll, inMethod} from "./_redundant_code";
 
@@ -11,8 +11,9 @@ import {fixAll, inMethod} from "./_redundant_code";
 function all(): IRule[] {
   // the order of abaplint --fix, ie. the order of the rule keys
   return [new AliasNeverReassigned(), new BooleanFlagViaIf(), new BoundCheckAfterCreate(),
-    new CastViaGenericReference(), new ClearAfterDeclaration(), new ConstantCondition(), new CopyChain(), new CopyOfInitialVariable(),
-    new SingleUseExpressionTemp(), new TryCastEmptyCatch(), new UnnecessaryCopy()];
+    new CastViaGenericReference(), new ClearAfterDeclaration(), new ClearBeforeOverwrite(), new ConstantCondition(),
+    new CopyChain(), new CopyOfInitialVariable(), new SingleUseExpressionTemp(), new TryCastEmptyCatch(),
+    new UnnecessaryCopy()];
 }
 
 function cascade(input: string, expected: string, rules: IRule[]) {
@@ -106,6 +107,21 @@ describe("redundant code rules, cascades", () => {
         t46 ?= iref.
     ENDIF.
     ref = t46.`, all());
+  });
+
+  it("CLEAR before overwrite in a loop, then copy chain", () => {
+    cascade(`    DATA t137 TYPE string.
+    DATA t125 TYPE string.
+    t125 = text.
+    DO 2 TIMES.
+      CLEAR t137.
+      t137 = t125.
+      text = t137.
+    ENDDO.`, `    DATA t125 TYPE string.
+    t125 = text.
+    DO 2 TIMES.
+      text = t125.
+    ENDDO.`, all());
   });
 
   it("bound checks after create, one after the other", () => {

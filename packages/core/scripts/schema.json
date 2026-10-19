@@ -1031,6 +1031,23 @@
       },
       "type": "object"
     },
+    "ClearBeforeOverwriteConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "ClearExportingParametersConf": {
       "additionalProperties": false,
       "properties": {
@@ -2577,6 +2594,17 @@
                 }
               ],
               "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Quickfix\nhttps://rules.abaplint.org/clear_after_declaration"
+            },
+            "clear_before_overwrite": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearBeforeOverwriteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds CLEAR of a local variable whose next use overwrites it completely\nTags: Quickfix\nhttps://rules.abaplint.org/clear_before_overwrite"
             },
             "clear_exporting_parameters": {
               "anyOf": [
@@ -5063,6 +5091,17 @@
                 }
               ],
               "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Quickfix\nhttps://rules.abaplint.org/clear_after_declaration"
+            },
+            "clear_before_overwrite": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearBeforeOverwriteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds CLEAR of a local variable whose next use overwrites it completely\nTags: Quickfix\nhttps://rules.abaplint.org/clear_before_overwrite"
             },
             "clear_exporting_parameters": {
               "anyOf": [

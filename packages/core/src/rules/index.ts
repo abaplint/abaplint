@@ -39,6 +39,7 @@ export * from "./check_syntax";
 export * from "./check_text_elements";
 export * from "./check_transformation_exists";
 export * from "./clear_after_declaration";
+export * from "./clear_before_overwrite";
 export * from "./clear_exporting_parameters";
 export * from "./class_attribute_names";
 export * from "./classic_exceptions_overlap";

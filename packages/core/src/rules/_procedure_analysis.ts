@@ -389,6 +389,19 @@ export class Procedure {
     return this.comments.some(c => !c.isBefore(start) && c.isBefore(end));
   }
 
+  /** a structure of one of the types contains the statement */
+  public enclosedBy(statement: StatementNode, types: (new () => IStructure)[]): boolean {
+    let parent = this.parents.get(statement);
+    while (parent !== undefined && parent !== this.structure) {
+      const type = parent.get();
+      if (types.some(t => type instanceof t)) {
+        return true;
+      }
+      parent = this.parents.get(parent);
+    }
+    return false;
+  }
+
   /** the IF structure of an IF or ELSEIF statement */
   public ifStructure(statement: StatementNode): StructureNode | undefined {
     let parent = this.parents.get(statement);
