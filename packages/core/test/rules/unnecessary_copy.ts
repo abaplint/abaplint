@@ -23,6 +23,18 @@ const tests: IRedundantTest[] = [
   {abap: inMethod("DATA(a) = ref.\nresult = get( ) + a->get( )."), cnt: 0},
   {abap: inMethod("DATA x TYPE i.\nx = 1.\nDATA(a) = x.\nput( p = a )."), cnt: 1, fix: true},
   {abap: inMethod("DATA(a) = attr.\nput( p = a )."), cnt: 0},
+  // passed to a method: b is private, or the parameter is passed by value and no other method is called before
+  {abap: inMethod("DATA(a) = val.\nput( p = a )."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(a) = result.\nput( p = a )."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(a) = imp.\nput( p = a )."), cnt: 0},
+  {abap: inMethod("DATA(a) = val.\nGET REFERENCE OF val INTO DATA(r).\nput( p = a )."), cnt: 0},
+  {abap: inMethod("DATA(a) = attr.\nstr( v = a )."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(a) = attr.\ntext = str( v = a )."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(a) = attr.\nCALL METHOD str EXPORTING v = a."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(a) = attr.\nstr( s = |{ strlen( text ) }| v = a )."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(a) = attr.\nstr( s = str( ) v = a )."), cnt: 0},
+  {abap: inMethod("DATA(a) = attr.\nstr( s = str( v = a ) )."), cnt: 0},
+  {abap: inMethod("DATA(a) = attr.\nNEW lcl( )->str( v = a )."), cnt: 0},
   // nested block, loop, string template, component
   {abap: inMethod("DATA(a) = attr.\nIF imp = 1.\n  result = a.\nENDIF."), cnt: 1, fix: true},
   {abap: inMethod("DO 2 TIMES.\n  DATA(a) = attr.\n  result = a.\nENDDO."), cnt: 1, fix: true},

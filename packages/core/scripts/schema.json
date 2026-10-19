@@ -585,6 +585,23 @@
       },
       "type": "object"
     },
+    "CastViaGenericReferenceConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "CatchAndRaiseConf": {
       "additionalProperties": false,
       "properties": {
@@ -998,6 +1015,23 @@
       "type": "object"
     },
     "ClearAfterDeclarationConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "ClearBeforeOverwriteConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -2308,6 +2342,17 @@
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
             },
+            "cast_via_generic_reference": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CastViaGenericReferenceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a down cast from a local reference variable that only holds a copy of another reference\nTags: Quickfix\nhttps://rules.abaplint.org/cast_via_generic_reference"
+            },
             "catch_and_raise": {
               "anyOf": [
                 {
@@ -2549,6 +2594,17 @@
                 }
               ],
               "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Quickfix\nhttps://rules.abaplint.org/clear_after_declaration"
+            },
+            "clear_before_overwrite": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearBeforeOverwriteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds CLEAR of a local variable whose next use overwrites it completely\nTags: Quickfix\nhttps://rules.abaplint.org/clear_before_overwrite"
             },
             "clear_exporting_parameters": {
               "anyOf": [
@@ -4055,7 +4111,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds DATA(a) = <expression>. directly followed by x = a., assign the expression to x\nTags: Quickfix\nhttps://rules.abaplint.org/single_use_expression_temp"
+              "description": "Finds a local variable that only passes the value of an expression on to its single use\nTags: Quickfix\nhttps://rules.abaplint.org/single_use_expression_temp"
             },
             "slow_parameter_passing": {
               "anyOf": [
@@ -4783,6 +4839,17 @@
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
             },
+            "cast_via_generic_reference": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CastViaGenericReferenceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a down cast from a local reference variable that only holds a copy of another reference\nTags: Quickfix\nhttps://rules.abaplint.org/cast_via_generic_reference"
+            },
             "catch_and_raise": {
               "anyOf": [
                 {
@@ -5024,6 +5091,17 @@
                 }
               ],
               "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Quickfix\nhttps://rules.abaplint.org/clear_after_declaration"
+            },
+            "clear_before_overwrite": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearBeforeOverwriteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds CLEAR of a local variable whose next use overwrites it completely\nTags: Quickfix\nhttps://rules.abaplint.org/clear_before_overwrite"
             },
             "clear_exporting_parameters": {
               "anyOf": [
@@ -6530,7 +6608,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds DATA(a) = <expression>. directly followed by x = a., assign the expression to x\nTags: Quickfix\nhttps://rules.abaplint.org/single_use_expression_temp"
+              "description": "Finds a local variable that only passes the value of an expression on to its single use\nTags: Quickfix\nhttps://rules.abaplint.org/single_use_expression_temp"
             },
             "slow_parameter_passing": {
               "anyOf": [

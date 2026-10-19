@@ -20,6 +20,7 @@ import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
 import {BooleanFlagViaIfConf} from "../src/rules/boolean_flag_via_if";
 import {BoundCheckAfterCreateConf} from "../src/rules/bound_check_after_create";
 import {CallTransactionAuthorityCheckConf} from "../src/rules/call_transaction_authority_check";
+import {CastViaGenericReferenceConf} from "../src/rules/cast_via_generic_reference";
 import {CatchAndRaiseConf} from "../src/rules/catch_and_raise";
 import {CDSAssociationNameConf} from "../src/rules/cds_association_name";
 import {CDSCheckSyntaxConf} from "../src/rules/cds_check_syntax";
@@ -42,6 +43,7 @@ import {CheckTransformationExistsConf} from "../src/rules/check_transformation_e
 import {ClassAttributeNamesConf} from "../src/rules/class_attribute_names";
 import {ClassicExceptionsOverlapConf} from "../src/rules/classic_exceptions_overlap";
 import {ClearAfterDeclarationConf} from "../src/rules/clear_after_declaration";
+import {ClearBeforeOverwriteConf} from "../src/rules/clear_before_overwrite";
 import {ClearExportingParametersConf} from "../src/rules/clear_exporting_parameters";
 import {CloudTypesConf} from "../src/rules/cloud_types";
 import {ColonMissingSpaceConf} from "../src/rules/colon_missing_space";
@@ -258,6 +260,7 @@ export interface IConfig {
     "boolean_flag_via_if"?: BooleanFlagViaIfConf | boolean,
     "bound_check_after_create"?: BoundCheckAfterCreateConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
+    "cast_via_generic_reference"?: CastViaGenericReferenceConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
     "cds_check_syntax"?: CDSCheckSyntaxConf | boolean,
@@ -280,6 +283,7 @@ export interface IConfig {
     "class_attribute_names"?: ClassAttributeNamesConf | boolean,
     "classic_exceptions_overlap"?: ClassicExceptionsOverlapConf | boolean,
     "clear_after_declaration"?: ClearAfterDeclarationConf | boolean,
+    "clear_before_overwrite"?: ClearBeforeOverwriteConf | boolean,
     "clear_exporting_parameters"?: ClearExportingParametersConf | boolean,
     "cloud_types"?: CloudTypesConf | boolean,
     "colon_missing_space"?: ColonMissingSpaceConf | boolean,
@@ -485,6 +489,7 @@ export interface IConfig {
     "boolean_flag_via_if"?: BooleanFlagViaIfConf | boolean,
     "bound_check_after_create"?: BoundCheckAfterCreateConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
+    "cast_via_generic_reference"?: CastViaGenericReferenceConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
     "cds_check_syntax"?: CDSCheckSyntaxConf | boolean,
@@ -507,6 +512,7 @@ export interface IConfig {
     "class_attribute_names"?: ClassAttributeNamesConf | boolean,
     "classic_exceptions_overlap"?: ClassicExceptionsOverlapConf | boolean,
     "clear_after_declaration"?: ClearAfterDeclarationConf | boolean,
+    "clear_before_overwrite"?: ClearBeforeOverwriteConf | boolean,
     "clear_exporting_parameters"?: ClearExportingParametersConf | boolean,
     "cloud_types"?: CloudTypesConf | boolean,
     "colon_missing_space"?: ColonMissingSpaceConf | boolean,

@@ -32,6 +32,15 @@ const tests: IRedundantTest[] = [
 
   // VALUE addition
   {abap: inMethod("DATA x TYPE i VALUE 2.\nCLEAR x."), cnt: 0},
+  // DATA(x) = VALUE t( ). is executed per iteration
+  {abap: inMethod("DATA(x) = VALUE i( ).\nCLEAR x.\nattr = x."), cnt: 1, fix: true},
+  {abap: inMethod("DO 2 TIMES.\n  DATA(x) = VALUE i( ).\n  CLEAR x.\n  x = x + 1.\nENDDO."), cnt: 1, fix: true},
+  {abap: inMethod("DO 2 TIMES.\n  DATA(x) = VALUE i( ).\n  IF val = 1.\n    CLEAR x.\n  ENDIF.\n  x = x + 1.\nENDDO."), cnt: 1, fix: true},
+  {abap: inMethod("IF val = 1.\n  DATA(x) = VALUE i( ).\nENDIF.\nCLEAR x.\nattr = x."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(x) = VALUE i( ).\nDO 2 TIMES.\n  CLEAR x.\n  x = x + 1.\nENDDO."), cnt: 0},
+  {abap: inMethod("DO 2 TIMES.\n  IF val = 1.\n    DATA(x) = VALUE i( ).\n  ENDIF.\n  CLEAR x.\n  x = x + 1.\nENDDO."), cnt: 0},
+  {abap: inMethod("DO 2 TIMES.\n  DATA(x) = VALUE i( ).\n  x = x + 1.\n  CLEAR x.\nENDDO."), cnt: 0},
+  {abap: inMethod("TYPES ty_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.\nDATA(x) = VALUE ty_tab( ( 1 ) ).\nCLEAR x."), cnt: 0},
   // written or read before the CLEAR
   {abap: inMethod("DATA x TYPE i.\nx = 1.\nCLEAR x."), cnt: 0},
   {abap: inMethod("DATA x TYPE i.\nattr = x.\nCLEAR x."), cnt: 0},
@@ -70,6 +79,10 @@ testRuleFix([
   {input: inMethod("    DATA x TYPE i.\n    CLEAR x. \" comment\n    attr = x."), output: inMethod("    DATA x TYPE i.\n     \" comment\n    attr = x.")},
   {input: inMethod("    DATA x TYPE i.\n    CLEAR: x, attr."), output: inMethod("    DATA x TYPE i.\n    CLEAR: attr.")},
   {input: "FORM example.\n  DATA x TYPE i.\n  CLEAR x.\nENDFORM.", output: "FORM example.\n  DATA x TYPE i.\nENDFORM."},
+  {
+    input: inMethod("    DO 2 TIMES.\n      DATA(x) = VALUE i( ).\n      CLEAR x.\n      attr = x.\n    ENDDO."),
+    output: inMethod("    DO 2 TIMES.\n      DATA(x) = VALUE i( ).\n      attr = x.\n    ENDDO."),
+  },
 ], ClearAfterDeclaration);
 
 testVersions(inMethod("DATA x TYPE i.\nCLEAR x."), ClearAfterDeclaration, [

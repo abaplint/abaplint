@@ -5,8 +5,8 @@ import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
-import {ObjectAnalysis, deleteStatement, identicalTypes, isReferenceType, mergeEdits, nodeText, plainClear,
-  plainData, plainMove, singleField, targetType} from "./_procedure_analysis";
+import {ObjectAnalysis, deleteStatement, identicalTypes, initialDeclaration, isReferenceType, mergeEdits, nodeText,
+  plainClear, plainMove, singleField, targetType} from "./_procedure_analysis";
 
 export class CopyOfInitialVariableConf extends BasicRuleConfig {
 }
@@ -22,7 +22,9 @@ export class CopyOfInitialVariable implements IRule {
       shortDescription: `Finds assignments from a local variable that is always initial`,
       extendedInformation: `Reports DATA v TYPE ... [CLEAR v.] x = v. when all of the following hold:
 
-* v is a local variable of a METHOD, FORM or FUNCTION, declared with DATA without VALUE
+* v is a local variable of a METHOD, FORM or FUNCTION, declared with DATA without VALUE, or with
+  DATA(v) = VALUE t( ). with an explicit type and nothing in the parentheses. Both make v initial, the latter
+  every time it is executed, so v is initial wherever it is read, also in loops
 * v is never changed, except by CLEAR v., and its address is never taken
 * v has exactly one read, the complete source of x = v., where x is not an inline declaration
 * x and v are both reference types, or have identical types. Initial values convert differently between
@@ -69,7 +71,7 @@ ro_result = lo_empty.`,
         const declaration = variable.declaration!;
         const reads = variable.reads();
         const writes = variable.writes();
-        if (variable.inline || !plainData(declaration) || declaration.getColon() !== undefined
+        if (initialDeclaration(variable) === undefined || declaration.getColon() !== undefined
             || variable.escapes() || reads.length !== 1
             || writes.some(w => plainClear(w.statement)?.getStart().equals(w.token.getStart()) !== true
               || w.statement.getColon() !== undefined)) {
