@@ -145,24 +145,28 @@ export class ObjectOriented {
   }
 
   public findInterfaces(cd: IClassDefinition | IInterfaceDefinition): readonly {name: string, partial: boolean}[] {
-    const ret = [...cd.getImplementing()];
-
-    for (const r of ret) {
-      const nested = this.scope.findInterfaceDefinition(r.name)?.getImplementing();
-      if (nested) {
-        ret.push(...nested);
+    const ret: {name: string, partial: boolean}[] = [];
+    const interfaces = new Set<string>();
+    const definitions = new Set<IInterfaceDefinition>();
+    let current: IInterfaceDefinition | undefined = cd;
+    while (current !== undefined && definitions.has(current) === false) {
+      definitions.add(current);
+      const pending = [...current.getImplementing()];
+      for (const implemented of pending) {
+        const upper = implemented.name.toUpperCase();
+        if (interfaces.has(upper)) {
+          continue;
+        }
+        interfaces.add(upper);
+        ret.push(implemented);
+        const nested = this.scope.findInterfaceDefinition(upper)?.getImplementing();
+        if (nested) {
+          pending.push(...nested);
+        }
       }
+      const sup = current.getSuperClass();
+      current = sup === undefined ? undefined : this.scope.findClassDefinition(sup);
     }
-
-    const sup = cd.getSuperClass();
-    if (sup) {
-      try {
-        ret.push(...this.findInterfaces(this.findSuperDefinition(sup)));
-      } catch {
-// ignore errors, they will show up as variable not found anyhow
-      }
-    }
-
     return ret;
   }
 
@@ -273,10 +277,28 @@ export class ObjectOriented {
           || attributes.getConstants().includes(found as ClassConstant)) {
         return current;
       }
+      for (const name of this.listInterfacesRecursive(current)) {
+        const idef = this.scope.findInterfaceDefinition(name);
+        if (idef?.getAttributes().getAll().includes(found as ClassAttribute)) {
+          return current;
+        }
+      }
       const sup: string | undefined = current.getSuperClass();
       current = sup === undefined ? undefined : this.findSuperDefinition(sup);
     }
     return undefined;
+  }
+
+  public canWriteAttribute(def: IClassDefinition | IInterfaceDefinition, found: ClassAttribute): boolean {
+    if (found.isReadOnly() === false) {
+      return true;
+    }
+    const enclosing = this.scope.getEnclosingClassName();
+    if (!(def instanceof ClassDefinition) || enclosing === undefined) {
+      return false;
+    }
+    const owner = this.findAttributeOwner(def, found);
+    return this.memberNotVisible(Visibility.Protected, def, owner, enclosing) === undefined;
   }
 
   public hasFriendship(cd: IClassDefinition, friendName: string): boolean {
@@ -293,7 +315,7 @@ export class ObjectOriented {
       return false;
     }
 
-    if (this.findInterfaces(friendDefinition).some(i => friends.includes(i.name.toUpperCase()))) {
+    if (friends.length > 0 && this.findInterfaces(friendDefinition).some(i => friends.includes(i.name.toUpperCase()))) {
       return true;
     }
 
@@ -588,19 +610,23 @@ export class ObjectOriented {
   }
 
   /** returns list of interfaces implemented, recursive */
-  public listInterfacesRecursive(definition: IInterfaceDefinition): string[] {
+  public listInterfacesRecursive(definition: IInterfaceDefinition, visited = new Set<string>()): string[] {
     const list: string[] = [];
     for (const i of definition.getImplementing()) {
       const upper = i.name.toUpperCase();
+      if (visited.has(upper)) {
+        continue;
+      }
+      visited.add(upper);
       list.push(upper);
 
       const def = this.scope.findInterfaceDefinition(upper);
       if (def) {
-        list.push(...this.listInterfacesRecursive(def));
+        list.push(...this.listInterfacesRecursive(def, visited));
       }
     }
 
-    return [...new Set(list)];
+    return list;
   }
 
   public fromInterfaces(definition: IInterfaceDefinition, skip?: string[]): string[] {
