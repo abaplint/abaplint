@@ -23,14 +23,17 @@ export class UnnecessaryCopy implements IRule {
       extendedInformation: `Reports DATA(a) = b. when all of the following hold:
 
 * a is a local variable of a METHOD, FORM or FUNCTION, and has exactly one more reference: a read,
-  which does not take its address, bind a field symbol to it, or pass it to USING, CHANGING or EXPORTING
+  which does not take its address, bind a field symbol to it, or pass it to USING or CHANGING
 * b is a plain data object: variable, constant, attribute, or a chain of components and attributes,
   without calls, offsets, table expressions, field symbols or ->*
 * the declaration is executed before the read on every path: the read is in the block of the declaration
   or a nested block, and both are in the same loop
-* b keeps its value from the declaration until the read: for a local b, no write to it and its address is
-  never taken; for other b, in addition no method, function or form call and no write except to local
-  variables, by value parameters and RETURNING in between
+* b keeps its value from the declaration until the read: for a local b, or a pass-by-value or RETURNING
+  parameter b of a method or form, no write to it and its address is never taken; for other b, in addition no
+  method, function or form call and no write except to local variables, by value parameters and RETURNING in
+  between, and in the statement of the read no call before the read. A method called in that statement could
+  change b while it reads the parameter that b is passed to by reference, so the read may only be the receiver
+  of the call, or the actual parameter of a pass-by-value parameter of the only method called in the statement
 
 a has the type of b, so reading b instead does not change any conversion.
 A constant b read in IF, ELSEIF, WHILE, CHECK, CASE or WHEN is not reported, see constant_condition.

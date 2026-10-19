@@ -12,6 +12,9 @@ const tests: IRedundantTest[] = [
   {abap: chain("v = src.\nIF imp = 1.\n  ref = v.\nENDIF."), cnt: 1, fix: true},
   {abap: chain("DO 2 TIMES.\n  v = src.\n  ref = v.\nENDDO."), cnt: 1, fix: true},
   {abap: chain("v = src.\nref->ref = v."), cnt: 1, fix: true},
+  // pass-by-value parameter as src, by reference parameters can change
+  {abap: inMethod("DATA v TYPE i.\nv = val.\nattr = v."), cnt: 1, fix: true},
+  {abap: inMethod("DATA v TYPE i.\nv = imp.\nattr = v."), cnt: 0},
   // up casts stay valid
   {abap: inMethod("DATA src TYPE REF TO lsub.\nDATA v TYPE REF TO lcl.\nv = src.\nDATA o TYPE REF TO object.\no = v.\nref ?= o."), cnt: 1, fix: true},
   {abap: inMethod("DATA src TYPE REF TO i.\nDATA v TYPE REF TO data.\nv = src.\nDATA d TYPE REF TO data.\nd = v.\nCLEAR d."), cnt: 1, fix: true},

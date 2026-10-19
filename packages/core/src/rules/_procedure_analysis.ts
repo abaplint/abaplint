@@ -13,7 +13,9 @@ import {ExpressionNode, StatementNode, StructureNode, TokenNode} from "../abap/n
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
-import {CharacterType, DataReference, ObjectReferenceType, StructureType, TableType, UnknownType, VoidType} from "../abap/types/basic";
+import {CharacterType, DataReference, IntegerType, ObjectReferenceType, StringType, StructureType, TableType, UnknownType,
+  VoidType} from "../abap/types/basic";
+import {IMethodDefinition} from "../abap/types/_method_definition";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
 import {IObject} from "../objects/_iobject";
@@ -354,6 +356,23 @@ export class Procedure {
     return between;
   }
 
+  /** the next statement executed after a direct statement of a block, skipping declarations, which have no effect
+   * where they are written; undefined if there is none in the block */
+  public nextExecuted(statement: StatementNode): StatementNode | undefined {
+    const block = this.block(statement);
+    for (let index = this.index(statement) + 1; index < this.statements.length; index++) {
+      const next = this.statements[index];
+      const type = next.get();
+      if (this.block(next) !== block) {
+        return undefined;
+      } else if (!(this.isSimple(next) && (type instanceof Statements.Data || type instanceof Statements.Type
+          || type instanceof Statements.Constant || type instanceof Statements.FieldSymbol || type instanceof Comment))) {
+        return next;
+      }
+    }
+    return undefined;
+  }
+
   /** a comment line or end of line comment between the two positions */
   public hasComment(start: Position, end: Position): boolean {
     if (this.comments === undefined) {
@@ -440,6 +459,24 @@ export class Procedure {
       return undefined;
     }
     return variable;
+  }
+
+  /** memory that only this procedure can reach: a local variable, or a pass-by-value or RETURNING parameter of
+   * a method or form, with all references understood and its address never taken */
+  public private(identifier: Identifier | undefined): Variable | undefined {
+    const variable = this.variable(identifier);
+    if (variable === undefined || variable.complete === false || variable.escapes()
+        || variable.identifier.getMeta().includes(IdentifierMeta.Static)) {
+      return undefined;
+    }
+    const meta = variable.identifier.getMeta();
+    if (variable.isLocal()) {
+      return variable;
+    }
+    // function module parameters can be global parameters of the function group
+    const parameter = !(this.structure.get() instanceof Structures.FunctionModule)
+      && (meta.includes(IdentifierMeta.PassByValue) || meta.includes(IdentifierMeta.MethodReturning));
+    return parameter ? variable : undefined;
   }
 
   /** all local variables declared in the procedure */
@@ -535,6 +572,18 @@ export class Procedure {
       }
     }
     return statement.findFirstExpression(Expressions.NewObject) === undefined;
+  }
+
+  /** the method or builtin function called at the method name token */
+  public methodAt(token: AbstractToken): IMethodDefinition | undefined {
+    for (const reference of this.analysis.referencesAt(this.file.getFilename(), token)) {
+      if ((reference.referenceType === ReferenceType.MethodReference
+          || reference.referenceType === ReferenceType.BuiltinMethodReference)
+          && reference.resolved !== undefined && "getParameters" in reference.resolved) {
+        return reference.resolved as unknown as IMethodDefinition;
+      }
+    }
+    return undefined;
   }
 
   /** every data write in the statement goes to a local variable, a pass-by-value parameter or the
@@ -901,7 +950,7 @@ export function isCondition(statement: StatementNode): boolean {
 export enum SourceKind {
   /** constants and me, never change */
   Immutable = "immutable",
-  /** a local variable, or a component of it, changes only by references to the variable */
+  /** a local variable or a pass-by-value parameter, or a component of it, changes only by references to the variable */
   Local = "local",
   /** attributes, parameters, globals, anything reached via a reference: may change by other code */
   Volatile = "volatile",
@@ -970,7 +1019,7 @@ export function dataSource(procedure: Procedure, source: ExpressionNode): IDataS
     return undefined;
   }
 
-  const local = next === 1 ? procedure.local(first) : undefined;
+  const local = next === 1 ? procedure.local(first) ?? procedure.private(first) : undefined;
   let kind = SourceKind.Volatile;
   if (deref === false && isImmutable(first)) {
     kind = SourceKind.Immutable;
@@ -1048,7 +1097,8 @@ export function unchangedBetween(procedure: Procedure, source: IDataSource, from
     const statement = procedure.statements[index];
     if (index === end && read !== undefined) {
       if (isReceiver(statement, read)
-          || (statement.get() instanceof Statements.Move && procedure.isCallFree(statement))) {
+          || (statement.get() instanceof Statements.Move && procedure.isCallFree(statement))
+          || passedByValue(procedure, statement, read)) {
         continue;
       }
     }
@@ -1072,6 +1122,165 @@ function isReceiver(statement: StatementNode, token: AbstractToken): boolean {
   return receiver instanceof ExpressionNode && receiver.get() instanceof Expressions.FieldChain
     && receiver.countTokens() === 1 && receiver.getFirstToken().getStart().equals(token.getStart())
     && chain?.getChildren()[1]?.getFirstToken().getStr() === "->";
+}
+
+export interface IFormalParameter {
+  /** the method call, NEW or CREATE OBJECT the token is passed to */
+  call: ExpressionNode | StatementNode;
+  /** the called method, undefined for NEW and CREATE OBJECT */
+  method: IMethodDefinition | undefined;
+  /** the formal parameter, undefined if it is not known */
+  parameter: TypedIdentifier | undefined;
+}
+
+/** the token is the complete actual parameter for an importing parameter: m( v ), m( p = v ),
+ * CALL METHOD m EXPORTING p = v, NEW c( p = v ) or CREATE OBJECT o EXPORTING p = v */
+export function formalParameter(procedure: Procedure, statement: StatementNode, token: AbstractToken): IFormalParameter | undefined {
+  const path = expressionPath(statement, token);
+  const index = path.findIndex(e => e.get() instanceof Expressions.Source && e.countTokens() === 1);
+  const source = path[index];
+  if (source === undefined || source.findDirectExpression(Expressions.FieldChain) === undefined
+      || !source.getFirstToken().getStart().equals(token.getStart())) {
+    return undefined;
+  }
+  const parent = index > 0 ? path[index - 1] : undefined;
+  let name: string | undefined;
+  let call: ExpressionNode | StatementNode | undefined;
+  if (parent?.get() instanceof Expressions.MethodCallParam) {
+    call = path[index - 2];
+  } else if (parent?.get() instanceof Expressions.NewObject) {
+    call = parent;
+  } else if (parent?.get() instanceof Expressions.ParameterS && path[index - 2]?.get() instanceof Expressions.ParameterListS) {
+    name = parent.findDirectExpression(Expressions.ParameterName)?.getFirstToken().getStr();
+    const list = path[index - 3];
+    const above = path[index - 4];
+    if (list === undefined && statement.get() instanceof Statements.CreateObject) {
+      call = statement;
+    } else if (list?.get() instanceof Expressions.MethodCallParam) {
+      call = above;
+    } else if (list?.get() instanceof Expressions.NewObject) {
+      call = list;
+    } else if (list?.get() instanceof Expressions.MethodParameters && above?.get() instanceof Expressions.MethodCallParam) {
+      call = path[index - 5];
+    } else if (list?.get() instanceof Expressions.MethodParameters && above?.get() instanceof Expressions.MethodCallBody
+        && index === 4 && statement.get() instanceof Statements.Call) {
+      call = statement;
+    }
+  }
+  if (call === undefined) {
+    return undefined;
+  }
+
+  let method: IMethodDefinition | undefined;
+  if (call instanceof ExpressionNode && call.get() instanceof Expressions.MethodCall) {
+    const methodName = call.findDirectExpression(Expressions.MethodName)?.getFirstToken();
+    method = methodName === undefined ? undefined : procedure.methodAt(methodName);
+  } else if (call instanceof StatementNode && call.get() instanceof Statements.Call) {
+    const methodSource = call.findDirectExpression(Expressions.MethodSource);
+    method = methodSource === undefined ? undefined : procedure.methodAt(methodSource.getLastToken());
+  } else if (!(call.get() instanceof Expressions.NewObject) && !(call.get() instanceof Statements.CreateObject)) {
+    return undefined;
+  }
+  const parameters = method?.getParameters();
+  const formal = name ?? parameters?.getDefaultImporting();
+  const parameter = formal === undefined ? undefined
+    : parameters?.getImporting().find(p => p.getName().toUpperCase() === formal.toUpperCase());
+  return {call, method, parameter};
+}
+
+/** the token is the complete actual parameter for a pass-by-value importing parameter of the only call in the
+ * statement, so the method gets a copy of the value when it is called, and nothing else runs before */
+export function passedByValue(procedure: Procedure, statement: StatementNode, token: AbstractToken): boolean {
+  if (!(statement.get() instanceof Statements.Call) && plainMove(statement) === undefined) {
+    return false;
+  }
+  const formal = formalParameter(procedure, statement, token);
+  if (formal?.method === undefined || formal.parameter?.getMeta().includes(IdentifierMeta.PassByValue) !== true
+      || statement.findFirstExpression(Expressions.NewObject) !== undefined) {
+    return false;
+  }
+  for (const call of statement.findAllExpressionsRecursive(Expressions.MethodCall)) {
+    const name = call.findDirectExpression(Expressions.MethodName)?.getFirstToken();
+    const builtin = name === undefined ? false : procedure.analysis.referencesAt(procedure.file.getFilename(), name)
+      .some(r => r.referenceType === ReferenceType.BuiltinMethodReference);
+    if (call !== formal.call && builtin === false) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/** builtin functions whose result type follows the type of the argument */
+export const NUMERIC_FUNCTIONS = new Set(["abs", "sign", "ceil", "floor", "trunc", "frac", "ipow", "nmax", "nmin",
+  "round", "rescale"]);
+
+/** type of a literal: 'abc' is c LENGTH 3, `abc` is string, 12 is i */
+export function literalType(constant: ExpressionNode): AbstractType | undefined {
+  if (constant.countTokens() !== 1) {
+    return undefined;
+  }
+  const text = constant.getFirstToken().getStr();
+  if (constant.findDirectExpression(Expressions.Integer) !== undefined) {
+    const value = Number(text);
+    return Number.isInteger(value) && Math.abs(value) <= 2147483647 ? IntegerType.get() : undefined;
+  } else if (text.startsWith("'") && text.endsWith("'") && text.length >= 2) {
+    return new CharacterType(Math.max(1, text.length - 2 - (text.match(/''/g)?.length ?? 0)));
+  } else if (text.startsWith("`") && text.endsWith("`")) {
+    return StringType.get();
+  }
+  return undefined;
+}
+
+/** Static type of an expression whose type does not depend on where it is used: literals, string templates,
+ * concatenations, xsdbool( ), boolc( ), data objects, method calls and attributes after method calls.
+ * Undefined if not known, e.g. for constructor expressions, arithmetic or builtin functions typed by their argument */
+export function expressionType(procedure: Procedure, source: ExpressionNode): AbstractType | undefined {
+  const children = source.getChildren();
+  const first = children[0];
+  const keyword = first instanceof TokenNode ? first.getFirstToken().getStr().toUpperCase() : "";
+  if (children.length === 4 && keyword === "XSDBOOL" && source.findDirectExpression(Expressions.Cond) !== undefined) {
+    return new CharacterType(1);
+  } else if (children.length === 4 && keyword === "BOOLC" && source.findDirectExpression(Expressions.Cond) !== undefined) {
+    return StringType.get();
+  } else if (children.length === 3 && children[1] instanceof TokenNode && children[1].getFirstToken().getStr() === "&&") {
+    return StringType.get();
+  } else if (!(first instanceof ExpressionNode)) {
+    return undefined;
+  }
+
+  if (children.length === 1 && first.get() instanceof Expressions.Constant) {
+    return literalType(first);
+  } else if (children.length === 1 && first.get() instanceof Expressions.StringTemplate) {
+    return StringType.get();
+  } else if (children.length === 1 && first.get() instanceof Expressions.FieldChain) {
+    return dataSource(procedure, source)?.type;
+  } else if (!(first.get() instanceof Expressions.MethodCallChain)) {
+    return undefined;
+  }
+
+  // the last call of the chain, optionally followed by ->attribute
+  let type: AbstractType | undefined;
+  const last = first.getChildren()[first.getChildren().length - 1];
+  if (last instanceof ExpressionNode && last.get() instanceof Expressions.MethodCall) {
+    const name = last.findDirectExpression(Expressions.MethodName)?.getFirstToken();
+    const method = name === undefined ? undefined : procedure.methodAt(name);
+    if (name === undefined || method === undefined || NUMERIC_FUNCTIONS.has(name.getStr().toLowerCase())) {
+      return undefined;
+    }
+    type = method.getParameters().getReturning()?.getType();
+  } else {
+    return undefined;
+  }
+  if (children.length === 1) {
+    return type;
+  }
+  const attribute = children[2];
+  if (children.length === 3 && children[1].get() instanceof Expressions.Arrow && attribute instanceof ExpressionNode
+      && attribute.get() instanceof Expressions.AttributeChain && attribute.getChildren().length === 1) {
+    const identifier = procedure.identifierAt(attribute.getFirstToken());
+    return identifier instanceof TypedIdentifier ? identifier.getType() : undefined;
+  }
+  return undefined;
 }
 
 ////////////////////////////////////////

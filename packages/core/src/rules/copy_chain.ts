@@ -26,7 +26,8 @@ export class CopyChain implements IRule {
 * v is a local variable of a METHOD, FORM or FUNCTION, declared with DATA without VALUE
 * v has exactly one write besides CLEAR: v = src., and all CLEARs are before it
 * v has exactly one read, the complete source of y = v.
-* src is a local variable, its address is never taken, and it is not written from v = src. until y = v.
+* src is a local variable, or a pass-by-value or RETURNING parameter of a method or form, its address is never
+  taken, and it is not written from v = src. until y = v.
 * v = src. is executed before y = v. on every path: y = v. is in the same block or a nested block,
   and both are in the same loop
 * v and src are both reference types, or have identical types; for other types the copy into v can convert,

@@ -124,10 +124,35 @@ describe("redundant code rules, cascades", () => {
     DATA t19 TYPE REF TO lcl.
     CREATE OBJECT t19.
     t18 = t19.
-    DATA(t21) = 1.
     t18->put( ).
-    APPEND t21 TO t18->tab.
+    APPEND 1 TO t18->tab.
     t18->put( ).
     ref = t18.`, all());
+  });
+
+  it("declared temporaries, generated code", () => {
+    cascade(`    DATA t2 TYPE string.
+    DATA t1 TYPE REF TO lcl.
+    t2 = |abapdoc|.
+    t1 = NEW lcl( s = t2 ).
+    DATA t9 TYPE REF TO lcl.
+    t9 = t1->ref.
+    DATA t8 TYPE i.
+    t8 = t9->get( ).
+    DATA t5 TYPE abap_bool.
+    DATA t6 TYPE abap_bool.
+    t6 = xsdbool( t8 IS INITIAL ).
+    t5 = t6.
+    IF t5 = abap_true.
+      attr = t8.
+    ENDIF.
+    put( o = t1 ).`, `    DATA t1 TYPE REF TO lcl.
+    t1 = NEW lcl( s = |abapdoc| ).
+    DATA t8 TYPE i.
+    t8 = t1->ref->get( ).
+    IF xsdbool( t8 IS INITIAL ) = abap_true.
+      attr = t8.
+    ENDIF.
+    put( o = t1 ).`, all());
   });
 });
