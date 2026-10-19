@@ -38,7 +38,7 @@ No automatic fix is offered because replacing a write with a copy changes progra
       return [];
     }
     const syntax = new SyntaxLogic(this.reg, obj).run();
-    return new ReadOnlyFlow(obj, syntax.spaghetti).run().map(f => {
+    return new ReadOnlyFlow(obj, syntax.spaghetti, this.reg).run().map(f => {
       const message = `Write ${f.possible ? "may modify" : "modifies"} read-only storage through an alias (${f.origins.join(", ")})`;
       return Issue.atToken(f.file, f.token, message, this.getMetadata().key, f.possible ? Severity.Warning : this.conf.severity);
     });

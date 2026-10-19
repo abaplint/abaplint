@@ -72,6 +72,47 @@ ENDCLASS.`;
 }
 
 describe("Rule: read_only_write, copied attribute paths", () => {
+  for (const protectedStorage of [true, false]) {
+    it(`resolves a literal component containing a ${protectedStorage ? "protected" : "writable"} reference`, () => {
+      const issues = run(`FIELD-SYMBOLS <component> TYPE REF TO lcl_owner=>ty_items.
+        ASSIGN COMPONENT 'pointer' OF STRUCTURE lcl_box=>saved TO <component>.
+        SORT <component>->*.`, protectedStorage);
+      expect(issues.map(i => i.getSeverity())).to.deep.equal(protectedStorage ? [Severity.Error] : []);
+    });
+  }
+
+  it("resolves a literal component ordinal", () => {
+    const issues = run(`FIELD-SYMBOLS <component> TYPE REF TO lcl_owner=>ty_items.
+      ASSIGN COMPONENT 1 OF STRUCTURE lcl_box=>saved TO <component>.
+      SORT <component>->*.`, true);
+    expect(issues.map(i => i.getSeverity())).to.deep.equal([Severity.Error]);
+  });
+
+  it("resolves a nested literal component", () => {
+    const issues = run(`DATA nested TYPE lcl_box=>ty_nested.
+      nested-holder = lcl_box=>saved.
+      FIELD-SYMBOLS <component> TYPE REF TO lcl_owner=>ty_items.
+      ASSIGN COMPONENT 'holder-pointer' OF STRUCTURE nested TO <component>.
+      SORT <component>->*.`, true);
+    expect(issues.map(i => i.getSeverity())).to.deep.equal([Severity.Error]);
+  });
+
+  it("keeps possible protection for an unknown component selector", () => {
+    const issues = run(`DATA component TYPE string.
+      FIELD-SYMBOLS <component> TYPE REF TO lcl_owner=>ty_items.
+      ASSIGN COMPONENT component OF STRUCTURE lcl_box=>saved TO <component>.
+      SORT <component>->*.`, true);
+    expect(issues.map(i => i.getSeverity())).to.deep.equal([Severity.Warning]);
+  });
+
+  it("replaces a prior binding when a literal component is known to exist", () => {
+    expect(run(`DATA local TYPE lcl_box=>ty_holder.
+      local-pointer = REF #( mutable ).
+      ASSIGN lcl_box=>saved-pointer TO FIELD-SYMBOL(<component>).
+      ASSIGN COMPONENT 'pointer' OF STRUCTURE local TO <component>.
+      SORT <component>->*.`, true)).to.deep.equal([]);
+  });
+
   const cases = [
     {name: "an instance table attribute", body: "DATA(copy) = box->holders. SORT copy[ 1 ]-pointer->*."},
     {name: "a static structure attribute", body: "DATA(copy) = lcl_box=>saved. SORT copy-pointer->*."},

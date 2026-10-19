@@ -54,6 +54,27 @@ function analyze(abap: string) {
 }
 
 describe("READ-ONLY flow summary scheduling", () => {
+  it("retains possible protection after widening more than 32 heap cells", () => {
+    const holders = Array.from({length: 33}, (_, i) => `holder${i}`);
+    const result = analyze(`CLASS lcl_owner DEFINITION.
+      PUBLIC SECTION.
+        TYPES ty_items TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+        DATA items TYPE ty_items READ-ONLY.
+    ENDCLASS.
+    CLASS lcl_owner IMPLEMENTATION. ENDCLASS.
+    DATA owner TYPE REF TO lcl_owner.
+    TYPES: BEGIN OF ty_holder, pointer TYPE REF TO lcl_owner=>ty_items, END OF ty_holder.
+    DATA selected TYPE REF TO ty_holder.
+    ${holders.map(name => `DATA ${name} TYPE ty_holder.`).join("\n")}
+    CREATE OBJECT owner.
+    ${holders.map(name => `${name}-pointer = REF #( owner->items ).`).join("\n")}
+    ${holders.map((name, i) => `${i === holders.length - 1 ? "ELSE." : `${i === 0 ? "IF" : "ELSEIF"} sy-index = ${i}.`}
+      GET REFERENCE OF ${name} INTO selected.`).join("\n")}
+    ENDIF.
+    SORT selected->pointer->*.`);
+    expect(result.findings).to.deep.equal([{token: "selected", origins: ["items"], possible: true}]);
+  });
+
   for (const length of [16, 64]) {
     it(`propagates a ${length}-method chain in either declaration order with linear analysis work`, () => {
       const forward = analyze(chain(length, false));

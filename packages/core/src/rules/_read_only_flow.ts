@@ -6,7 +6,8 @@ import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {Visibility} from "../abap/4_file_information/visibility";
 import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
-import {ISpaghettiScope} from "../abap/5_syntax/_spaghetti_scope";
+import {ISpaghettiScope, ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {ExpressionNode, StatementNode, StructureNode} from "../abap/nodes";
 import {INode} from "../abap/nodes/_inode";
 import {TypedIdentifier, IdentifierMeta} from "../abap/types/_typed_identifier";
@@ -18,14 +19,22 @@ import {ABAPObject} from "../objects/_abap_object";
 import {FunctionGroup} from "../objects/function_group";
 import {ClassAttribute} from "../abap/types/class_attribute";
 import {SELECTION_EVENTS} from "../stuff";
+import {IRegistry} from "../_iregistry";
+import {Procedural} from "../abap/5_syntax/_procedural";
+import {Constant as ConstantSyntax} from "../abap/5_syntax/expressions/constant";
 
 type Location = {key: string, origins: readonly string[]};
 type Binding = {targets: readonly Location[], unknown: boolean};
 type State = {aliases: Map<string, Binding>, values: Map<string, Binding>, written: Set<string>, stopped: boolean};
 type Write = {binding: Binding, token: AbstractToken, file: ABAPFile};
 type Procedure = {node: StructureNode, file: ABAPFile, key: string, parameters: TypedIdentifier[], returning?: TypedIdentifier,
-  valueOutputs?: Set<string>, locals?: string[], self?: string, me?: string};
-type Summary = {writes: Write[], values: Map<string, Binding>, updates: Map<string, Binding>, returning: Binding};
+  valueOutputs?: Set<string>, locals?: string[], persistent?: TypedIdentifier[], self?: string, me?: string, scope?: ISpaghettiScopeNode,
+  implicit?: Set<StatementNode>};
+type Effects = {aliases: Map<string, Binding>, values: Map<string, Binding>, updates: Map<string, Binding>};
+type ExceptionalEffects = Effects & {types: readonly string[]};
+type Summary = Effects & {writes: Write[], returning: Binding, returns: boolean, exceptional?: ExceptionalEffects};
+type ReportEvent = {header?: StatementNode, body: StructureNode};
+type EventResult = {state: State, lists: State[], end: State[]};
 export type ReadOnlyFinding = {file: ABAPFile, token: AbstractToken, origins: string[], possible: boolean};
 
 const unknown = (): Binding => ({targets: [], unknown: true});
@@ -82,32 +91,100 @@ function fingerprint(state: State): string {
 /** Binding permissions belong to access paths, not types or permanently to a field symbol. */
 export class ReadOnlyFlow {
   private readonly refs = new Map<string, IReference[]>();
+  private readonly referenceScopes = new WeakMap<IReference, ISpaghettiScopeNode>();
+  private activeScope: ISpaghettiScopeNode | undefined;
   private readonly procedures: Procedure[] = [];
   private readonly summaries = new Map<string, Summary>();
   private readonly callers = new Map<string, Set<Procedure>>();
+  private callGraphChanged = false;
   private readonly calls = new Map<string, Binding>();
+  private readonly sharedAliases = new Map<string, TypedIdentifier>();
+  private readonly reports = new Map<string, {procedure: Procedure, events: ReportEvent[]}>();
+  private readonly sourceFiles = new WeakMap<INode, ABAPFile>();
   private writes: Write[] = [];
   private exits: State[] = [];
   private loops: {breaks: State[], continues: State[]}[] = [];
   private exceptions: State[][] = [];
+  private exceptionalExits: State[] = [];
+  private readonly raisedTypes = new WeakMap<State, readonly string[]>();
+  private listExits: State[] | undefined;
+  private endExits: State[] | undefined;
+  private pageCallback = false;
 
-  public constructor(private readonly obj: ABAPObject, private readonly scope: ISpaghettiScope) {
+  public constructor(private readonly obj: ABAPObject, private readonly scope: ISpaghettiScope, private readonly reg?: IRegistry) {
     const stack = [scope.getTop()];
     while (stack.length > 0) {
       const node = stack.pop()!;
+      if ([ScopeType.Global, ScopeType.Program, ScopeType.FunctionGroup].includes(node.getIdentifier().stype)) {
+        for (const variable of Object.values(node.getData().vars)) {
+          if (variable.getName().startsWith("<")) {
+            this.sharedAliases.set(idKey(variable), variable);
+          }
+        }
+      }
+      const owner = this.referenceOwner(node)!;
       for (const ref of node.getData().references) {
         const key = positionKey(ref.position);
         this.refs.set(key, [...this.refs.get(key) ?? [], ref]);
+        this.referenceScopes.set(ref, owner);
       }
       stack.push(...node.getChildren());
     }
     for (const file of obj.getABAPFiles()) {
-      const root = file.getStructure();
+      let root = file.getStructure();
       if (root) {
+        if (reg && file.getStatements().some(s => s.get() instanceof S.Include)) {
+          root = this.expandIncludes(root, file, new Set([file.getFilename()]));
+        }
         this.collect(root, file);
-        this.procedures.push({node: root, file, key: file.getFilename(), parameters: []});
+        const first = root.getFirstStatement();
+        const procedure = {node: root, file, key: file.getFilename(), parameters: [],
+          scope: first ? this.scope.lookupPosition(first.getEnd(), this.fileFor(first, file).getFilename()) : undefined};
+        this.procedures.push(procedure);
+        this.reports.set(file.getFilename(), {procedure, events: this.reportEvents(root)});
       }
     }
+  }
+
+  private expandIncludes(node: StructureNode, file: ABAPFile, path: Set<string>): StructureNode {
+    const children: (StatementNode | StructureNode)[] = [];
+    let changed = false;
+    for (const child of node.getChildren()) {
+      if (child instanceof StructureNode) {
+        const expanded = this.expandIncludes(child, file, path);
+        children.push(expanded);
+        changed ||= expanded !== child;
+      } else {
+        this.sourceFiles.set(child, file);
+        const include = child.get() instanceof S.Include ? Procedural.findInclude(this.reg!, child, this.obj) : undefined;
+        const root = include?.getStructure();
+        if (include && root && !path.has(include.getFilename())) {
+          children.push(...this.expandIncludes(root, include, new Set([...path, include.getFilename()])).getChildren());
+          changed = true;
+        } else {
+          children.push(child);
+        }
+      }
+    }
+    if (!changed) {
+      return node;
+    }
+    const result = new StructureNode(node.get());
+    result.setChildren(children);
+    return result;
+  }
+
+  private fileFor(node: INode, fallback: ABAPFile): ABAPFile {
+    const statement = node instanceof StructureNode ? node.getFirstStatement() : node;
+    return statement ? this.sourceFiles.get(statement) ?? fallback : fallback;
+  }
+
+  private referenceOwner(scope: ISpaghettiScopeNode | undefined): ISpaghettiScopeNode | undefined {
+    while (scope?.getParent() && ![ScopeType.Method, ScopeType.Form, ScopeType.FunctionModule,
+      ScopeType.Program, ScopeType.FunctionGroup, ScopeType.Global].includes(scope.getIdentifier().stype)) {
+      scope = scope.getParent();
+    }
+    return scope;
   }
 
   public run(): ReadOnlyFinding[] {
@@ -117,10 +194,40 @@ export class ReadOnlyFlow {
     // Revisit callers when their callee changes, including recursive calls.
     const queue = [...this.procedures];
     const queued = new Set(queue.map(p => p.key));
-    for (const p of queue) {
+    let recursive = new Set<string>();
+    for (const [index, p] of queue.entries()) {
       queued.delete(p.key);
       const summary = this.analyze(p);
-      if (this.summaryKey(summary) === this.summaryKey(this.summaries.get(p.key))) {
+      if (index + 1 >= this.procedures.length && this.callGraphChanged) {
+        recursive = this.recursiveProcedures();
+        this.callGraphChanged = false;
+      }
+      const previous = this.summaries.get(p.key);
+      if (recursive.has(p.key) && previous) {
+        // Every recursive binding domain must grow instead of alternating entry bindings.
+        for (const name of ["aliases", "values", "updates"] as const) {
+          for (const [key, binding] of previous[name]) {
+            summary[name].set(key, union(binding, summary[name].get(key) ?? empty()));
+          }
+        }
+        if (previous.exceptional) {
+          summary.exceptional ??= {aliases: new Map(), values: new Map(), updates: new Map(), types: []};
+          summary.exceptional.types = [...new Set([...previous.exceptional.types, ...summary.exceptional.types])].sort();
+          for (const name of ["aliases", "values", "updates"] as const) {
+            for (const [key, binding] of previous.exceptional[name]) {
+              summary.exceptional[name].set(key, union(binding, summary.exceptional[name].get(key) ?? empty()));
+            }
+          }
+        }
+        const writes = new Map(summary.writes.map(w => [tokenKey(w.file, w.token), w]));
+        for (const write of previous.writes) {
+          const key = tokenKey(write.file, write.token);
+          writes.set(key, {...write, binding: union(write.binding, writes.get(key)?.binding ?? empty())});
+        }
+        summary.writes = [...writes.values()].sort((a, b) => tokenKey(a.file, a.token).localeCompare(tokenKey(b.file, b.token)));
+        summary.returning = union(previous.returning, summary.returning);
+      }
+      if (this.summaryKey(summary) === this.summaryKey(previous)) {
         continue;
       }
       this.summaries.set(p.key, summary);
@@ -151,18 +258,69 @@ export class ReadOnlyFlow {
 
   private summaryKey(s: Summary | undefined): string {
     return s === undefined ? "" : JSON.stringify([s.writes.map(w => [tokenKey(w.file, w.token), w.binding]),
-      [...s.values].sort(), [...s.updates].sort(), s.returning]);
+      [...s.aliases].sort(), [...s.values].sort(), [...s.updates].sort(), s.returning, s.returns,
+      s.exceptional && [[...s.exceptional.aliases].sort(), [...s.exceptional.values].sort(), [...s.exceptional.updates].sort(),
+        s.exceptional.types]]);
+  }
+
+  private recursiveProcedures(): Set<string> {
+    const visited = new Set<string>();
+    const order: string[] = [];
+    for (const p of this.procedures) {
+      const stack = [{key: p.key, finish: false}];
+      while (stack.length > 0) {
+        const current = stack.pop()!;
+        if (current.finish) {
+          order.push(current.key);
+        } else if (!visited.has(current.key)) {
+          visited.add(current.key);
+          stack.push({...current, finish: true});
+          for (const caller of this.callers.get(current.key) ?? []) {
+            stack.push({key: caller.key, finish: false});
+          }
+        }
+      }
+    }
+    const callees = new Map<string, string[]>();
+    for (const [callee, callers] of this.callers) {
+      for (const caller of callers) {
+        const targets = callees.get(caller.key) ?? [];
+        targets.push(callee);
+        callees.set(caller.key, targets);
+      }
+    }
+    const assigned = new Set<string>();
+    const recursive = new Set<string>();
+    for (const key of order.reverse()) {
+      const component: string[] = [];
+      const stack = [key];
+      while (stack.length > 0) {
+        const current = stack.pop()!;
+        if (!assigned.has(current)) {
+          assigned.add(current);
+          component.push(current);
+          stack.push(...callees.get(current) ?? []);
+        }
+      }
+      if (component.length > 1 || callees.get(key)?.includes(key)) {
+        component.forEach(k => recursive.add(k));
+      }
+    }
+    return recursive;
   }
 
   private collect(node: StructureNode, file: ABAPFile): void {
-    if (node.get() instanceof B.Method || node.get() instanceof B.Form || node.get() instanceof B.FunctionModule) {
+    if (node.get() instanceof B.Method || node.get() instanceof B.Form
+        || node.get() instanceof B.FunctionModule || node.get() instanceof B.Module) {
       const first = node.getFirstStatement()!;
-      const ref = first.getTokens().flatMap(t => this.references(file, t)).find(r =>
+      const sourceFile = this.fileFor(first, file);
+      const ref = first.getTokens().flatMap(t => this.references(sourceFile, t)).find(r =>
         r.referenceType === ReferenceType.MethodImplementationReference || r.referenceType === ReferenceType.FormReference);
       const formName = first.findDirectExpression(E.FormName)?.concatTokens();
-      const s = this.scope.lookupPosition(first.getEnd(), file.getFilename());
+      const s = this.scope.lookupPosition(first.getEnd(), sourceFile.getFilename());
       const def = ref?.resolved ?? (formName ? s?.findFormDefinition(formName) : undefined);
-      let variables = Object.values(s?.getData().vars ?? {});
+      const localVariables = node.get() instanceof B.Module ? [] : Object.values(s?.getData().vars ?? {});
+      let variables = localVariables;
       if (node.get() instanceof B.FunctionModule && this.obj instanceof FunctionGroup) {
         const name = first.findDirectExpression(E.Field)?.concatTokens();
         const definition = name ? this.obj.getModule(name) : undefined;
@@ -175,12 +333,18 @@ export class ReadOnlyFlow {
           IdentifierMeta.FunctionModuleExporting, IdentifierMeta.FunctionModuleChanging, IdentifierMeta.FunctionModuleTables].includes(m)));
       const me = s?.findVariable("ME");
       const meType = me?.getType();
-      this.procedures.push({node, file, key: def ? idKey(def) : tokenKey(file, first.getFirstToken()), parameters,
+      const persistent = node.findAllStatements(S.Static).concat(node.findAllStatements(S.StaticBegin)).flatMap(declaration => {
+        const name = declaration.findFirstExpression(E.DefinitionName)?.concatTokens();
+        const scope = this.scope.lookupPosition(declaration.getEnd(), this.fileFor(declaration, file).getFilename());
+        const variable = name ? (this.referenceOwner(scope) === this.referenceOwner(s) ? scope : s)?.findVariable(name) : undefined;
+        return variable ? [variable] : [];
+      });
+      this.procedures.push({node, file, key: def ? idKey(def) : tokenKey(sourceFile, first.getFirstToken()), parameters, scope: s,
         self: meType instanceof ObjectReferenceType ? "$self:" + meType.getIdentifierName().toUpperCase() : undefined,
         me: me ? idKey(me) : undefined,
         returning: parameters.find(p => p.getMeta().includes(IdentifierMeta.MethodReturning)),
-        locals: variables.filter(v => !parameters.includes(v) && v.getFilename() === file.getFilename()
-          && v.getStart().isBetween(node.getFirstToken().getStart(), node.getLastToken().getEnd())).map(idKey),
+        persistent,
+        locals: localVariables.filter(v => !parameters.includes(v) && !persistent.includes(v) && v !== me).map(idKey),
         valueOutputs: new Set(parameters.filter(p => p.getMeta().includes(IdentifierMeta.MethodChanging)
           || p.getMeta().includes(IdentifierMeta.MethodExporting)
           || p.getMeta().includes(IdentifierMeta.FunctionModuleChanging) || p.getMeta().includes(IdentifierMeta.FunctionModuleExporting)
@@ -196,7 +360,8 @@ export class ReadOnlyFlow {
   }
 
   private references(file: ABAPFile, token: AbstractToken): readonly IReference[] {
-    return this.refs.get(tokenKey(file, token)) ?? [];
+    const references = this.refs.get(tokenKey(file, token)) ?? [];
+    return this.activeScope ? references.filter(r => this.referenceScopes.get(r) === this.activeScope) : references;
   }
 
   private identifier(node: INode, file: ABAPFile): TypedIdentifier | undefined {
@@ -210,17 +375,35 @@ export class ReadOnlyFlow {
     return undefined;
   }
 
+  private storageKey(variable: TypedIdentifier, p: Procedure): string {
+    const key = idKey(variable);
+    return p.persistent?.some(v => idKey(v) === key) ? "static:" + p.key + ":" + key : key;
+  }
+
   private analyze(p: Procedure): Summary {
+    this.activeScope = this.referenceOwner(p.scope);
+    p.implicit ??= this.implicitStatements(p.node, p);
     this.writes = [];
     this.exits = [];
     this.loops = [];
     this.exceptions = [];
+    this.exceptionalExits = [];
     const state: State = {aliases: new Map(), values: new Map(), written: new Set(), stopped: false};
+    if (p.node.get() instanceof B.Method || p.node.get() instanceof B.Form
+        || p.node.get() instanceof B.FunctionModule || p.node.get() instanceof B.Module) {
+      for (const [key, variable] of this.sharedAliases) {
+        state.aliases.set(key, cell("#" + key, ["@#" + key]));
+        this.seedComponents(cell("#" + key), state, variable.getType(), true);
+      }
+    }
     if (p.self && p.me) {
       state.values.set(p.me, cell(p.self));
     }
     for (const param of p.parameters) {
       this.seedComponents(cell(idKey(param)), state, param.getType(), !initialOutput(param));
+    }
+    for (const variable of p.persistent ?? []) {
+      this.seedComponents(cell(this.storageKey(variable, p)), state, variable.getType(), true);
     }
     const initialize = (node: StructureNode) => {
       for (const child of node.getChildren()) {
@@ -231,8 +414,9 @@ export class ReadOnlyFlow {
           initialize(child);
         } else if (child instanceof StatementNode && (type instanceof S.Data || type instanceof S.DataBegin)) {
           const name = child.findFirstExpression(E.DefinitionName);
-          const scope = this.scope.lookupPosition(child.getEnd(), p.file.getFilename());
-          const id = name ? scope?.findVariable(name.concatTokens()) : undefined;
+          const scope = this.scope.lookupPosition(child.getEnd(), this.fileFor(child, p.file).getFilename());
+          const context = this.referenceOwner(scope) === this.activeScope ? scope : p.scope;
+          const id = name ? context?.findVariable(name.concatTokens()) : undefined;
           if (id) {
             this.seedComponents(cell(idKey(id)), state, id.getType());
           }
@@ -240,46 +424,255 @@ export class ReadOnlyFlow {
       }
     };
     initialize(p.node);
-    const result = this.flow(p.node, state, p, true);
+    const result = p.key === p.file.getFilename() ? this.report(p, state) : this.flow(p.node, state, p, true);
     const states = [...this.exits, ...result.stopped ? [] : [result]];
     const outputs = states.length > 0 ? join(states.map(s => ({...s, stopped: false}))) : state;
+    const effects = (output: State): Effects => ({
+      aliases: new Map([...output.aliases].filter(([key]) => this.sharedAliases.has(key))), values: output.values,
+      updates: new Map([...output.values].filter(([key]) => output.written.has(key))),
+    });
     const writes = new Map<string, Write>();
     for (const w of this.writes) {
       const key = tokenKey(w.file, w.token);
       writes.set(key, {...w, binding: union(writes.get(key)?.binding ?? empty(), w.binding)});
     }
-    return {writes: [...writes.values()], values: outputs.values,
-      updates: new Map([...outputs.values].filter(([key]) => outputs.written.has(key))),
-      returning: p.returning ? outputs.values.get(idKey(p.returning)) ?? unknown() : unknown()};
+    return {writes: [...writes.values()], ...effects(outputs),
+      exceptional: this.exceptionalExits.length > 0
+        ? {...effects(join(this.exceptionalExits.map(s => ({...s, stopped: false})))),
+          types: [...new Set(this.exceptionalExits.flatMap(s => this.raisedTypes.get(s) ?? ["*"]))].sort()} : undefined,
+      returning: p.returning ? outputs.values.get(idKey(p.returning)) ?? unknown() : unknown(), returns: states.length > 0};
+  }
+
+  private reportEvents(root: StructureNode): ReportEvent[] {
+    const implicit: ReportEvent = {body: new StructureNode(new B.Body())};
+    const events = [implicit];
+    let current: ReportEvent | undefined = implicit;
+    let processing = false;
+    for (const child of root.getChildren()) {
+      if (child instanceof StatementNode && SELECTION_EVENTS.some(s => child.get() instanceof s)) {
+        current = {header: child, body: new StructureNode(new B.Body())};
+        events.push(current);
+        processing = true;
+      } else if (child.get() instanceof B.Form || child.get() instanceof B.Module || child.get() instanceof B.FunctionModule) {
+        current = undefined;
+        processing = true;
+      } else if (child.get() instanceof B.ClassDefinition || child.get() instanceof B.Interface
+          || child.get() instanceof B.ClassImplementation) {
+        if (processing && child.get() instanceof B.ClassImplementation) {
+          current = undefined;
+        }
+      } else {
+        current?.body.addChild(child);
+      }
+    }
+    const start = events.find(e => e.header?.get() instanceof S.StartOfSelection);
+    if (start) {
+      start.body.setChildren([...implicit.body.getChildren(), ...start.body.getChildren()]);
+      events.splice(0, 1);
+    }
+    return events;
+  }
+
+  private event(event: ReportEvent, state: State, p: Procedure, possible = false): EventResult {
+    const saved = {exits: this.exits, loops: this.loops, exceptions: this.exceptions,
+      lists: this.listExits, end: this.endExits, scope: this.activeScope};
+    this.activeScope = this.referenceOwner(p.scope);
+    p.implicit ??= this.implicitStatements(p.node, p);
+    this.exits = [];
+    this.loops = [];
+    this.exceptions = [];
+    const reporting = !event.header || event.header.get() instanceof S.StartOfSelection
+      || event.header.get() instanceof S.Get || event.header.get() instanceof S.EndOfSelection;
+    this.listExits = reporting ? [] : undefined;
+    this.endExits = reporting || event.header?.get() instanceof S.AtSelectionScreen ? [] : undefined;
+    const firstWrite = this.writes.length;
+    const result = this.flow(event.body, clone(state), p);
+    const outcomes = [...this.exits.map(s => ({...s, stopped: false})), ...result.stopped ? [] : [result]];
+    const last = event.header?.get() instanceof S.EndOfSelection;
+    const output = {state: outcomes.length > 0 ? join(outcomes) : {...result, stopped: true},
+      lists: [...this.listExits ?? [], ...last ? this.endExits ?? [] : []], end: last ? [] : this.endExits ?? []};
+    this.exits = saved.exits;
+    this.loops = saved.loops;
+    this.exceptions = saved.exceptions;
+    this.listExits = saved.lists;
+    this.endExits = saved.end;
+    this.activeScope = saved.scope;
+    if (possible) {
+      for (const write of this.writes.slice(firstWrite)) {
+        write.binding = union(write.binding, unknown());
+      }
+    }
+    return output;
+  }
+
+  private eventClosure(events: ReportEvent[], state: State, p: Procedure, possible = false): EventResult {
+    let entry = clone(state);
+    const lists: State[] = [];
+    const end: State[] = [];
+    for (;;) {
+      const outcomes = [entry];
+      if (!entry.stopped) {
+        for (const event of events) {
+          const result = this.event(event, entry, p, possible);
+          outcomes.push(result.state);
+          lists.push(...result.lists);
+          end.push(...result.end);
+        }
+      }
+      const next = join(outcomes);
+      if (fingerprint(next) === fingerprint(entry)) {
+        return {state: next, lists, end};
+      }
+      entry = next;
+    }
+  }
+
+  private report(p: Procedure, state: State): State {
+    const events = this.reports.get(p.file.getFilename())!.events;
+    const lists: State[] = [];
+    const end: State[] = [];
+    const phase = (selected: ReportEvent[], repeat = false) => {
+      if (state.stopped || selected.length === 0) {
+        return;
+      }
+      for (const event of repeat ? [undefined] : selected) {
+        const result = event ? this.event(event, state, p) : this.eventClosure(selected, state, p);
+        state = result.state;
+        lists.push(...result.lists);
+        end.push(...result.end);
+      }
+    };
+    phase(events.filter(e => e.header?.get() instanceof S.LoadOfProgram));
+    phase(events.filter(e => e.header?.get() instanceof S.Initialization));
+    phase(events.filter(e => e.header?.get() instanceof S.AtSelectionScreen), true);
+    phase(events.filter(e => !e.header || e.header.get() instanceof S.StartOfSelection));
+    phase(events.filter(e => e.header?.get() instanceof S.Get), true);
+    state = join([state, ...end.map(s => ({...s, stopped: false}))]);
+    phase(events.filter(e => e.header?.get() instanceof S.EndOfSelection));
+    state = join([state, ...lists.map(s => ({...s, stopped: false}))]);
+    const interactive = events.filter(e => e.header?.get() instanceof S.AtLineSelection
+      || e.header?.get() instanceof S.AtUserCommand || e.header?.get() instanceof S.AtPF);
+    return this.eventClosure(interactive, state, p, true).state;
+  }
+
+  private raise(state: State, types: readonly string[]): void {
+    const snapshot = clone(state);
+    this.raisedTypes.set(snapshot, types);
+    (this.exceptions[this.exceptions.length - 1] ?? this.exceptionalExits).push(snapshot);
+  }
+
+  private catches(name: string, names: readonly string[]): boolean | undefined {
+    if (names.includes("CX_ROOT") || names.includes(name)) {
+      return true;
+    }
+    let definition = this.activeScope?.findClassDefinition(name);
+    const visited = new Set<string>();
+    while (definition && !visited.has(definition.getName())) {
+      visited.add(definition.getName());
+      const parent = definition.getSuperClass()?.toUpperCase();
+      if (!parent) {
+        return false;
+      }
+      if (names.includes(parent)) {
+        return true;
+      }
+      definition = this.activeScope?.findClassDefinition(parent);
+    }
+    // shortcut: unavailable exception hierarchies may match or escape, requiring their class definitions for precision.
+    return undefined;
+  }
+
+  private implicitStatements(node: StructureNode, p: Procedure): Set<StatementNode> {
+    const declarations = [S.Data, S.DataBegin, S.DataEnd, S.Static, S.StaticBegin, S.StaticEnd,
+      S.Constant, S.ConstantBegin, S.ConstantEnd, S.FieldSymbol, S.Type, S.TypeBegin, S.TypeEnd,
+      S.TypeEnum, S.TypeEnumBegin, S.TypeEnumEnd, S.TypeMesh, S.TypeMeshBegin, S.TypeMeshEnd, S.IncludeType,
+      S.MethodImplementation, S.Form, S.FunctionModule, S.Module];
+    return new Set(node.findAllStatementNodes().filter(s => {
+      const targets = s.findDirectExpressions(E.Target);
+      const plain = (t: ExpressionNode) => t.getChildren().length === 1
+        && (t.findDirectExpression(E.TargetField) || t.findDirectExpression(E.InlineData));
+      if (s.get() instanceof Comment || s.get() instanceof Empty || declarations.some(declaration => s.get() instanceof declaration)
+          || !s.getChildren().some(c => c instanceof ExpressionNode)
+          || s.get() instanceof S.Raise || s.get() instanceof S.Return || s.get() instanceof S.Exit
+          || s.get() instanceof S.Continue || s.get() instanceof S.Stop
+          || s.get() instanceof S.Catch && targets.every(plain)
+          || s.get() instanceof S.Leave && s.findDirectExpression(E.Source) === undefined) {
+        return false;
+      }
+      const source = s.findDirectExpression(E.Source);
+      const constant = source?.findDirectExpression(E.Constant);
+      if (!(s.get() instanceof S.Move) || !source || targets.length === 0
+          || s.getChildren().some(c => !(c instanceof ExpressionNode)
+            && !["MOVE", "TO", "=", "."].includes(c.getFirstToken().getStr().toUpperCase()))) {
+        return true;
+      }
+      const file = this.fileFor(s, p.file);
+      const context = file === p.file ? p : {...p, file};
+      const address = source.getFirstToken().getStr().toUpperCase() === "REF";
+      const chain = (address ? source.findDirectExpression(E.Source) : source)?.findDirectExpression(E.FieldChain);
+      const sourceType = chain ? this.valueType(chain, context) : undefined;
+      if (chain?.getChildren().length === 1 && chain.findDirectExpression(E.SourceField)
+          && targets.every(t => plain(t) && (address ? this.valueType(t, context) instanceof DataReference
+            : (sourceType instanceof DataReference || sourceType instanceof ObjectReferenceType)
+              && this.valueType(t, context)?.constructor === sourceType.constructor))) {
+        return false;
+      }
+      if (!constant || source.getChildren().length !== 1) {
+        return true;
+      }
+      const number = Number(constant.concatTokens().replace(/\s/g, ""));
+      if (constant.findDirectExpression(E.Integer) && (number < -2147483648 || number > 2147483647)) {
+        return true;
+      }
+      return targets.some(t => !plain(t) || this.valueType(t, context)?.constructor !== ConstantSyntax.runSyntax(constant).constructor);
+    }));
   }
 
   private flow(node: StructureNode, state: State, p: Procedure, root = false): State {
+    if (state.stopped) {
+      return state;
+    }
     const type = node.get();
-    if (!root && (type instanceof B.Method || type instanceof B.Form || type instanceof B.FunctionModule
+    if (!root && (type instanceof B.Method || type instanceof B.Form || type instanceof B.FunctionModule || type instanceof B.Module
         || type instanceof B.ClassDefinition || type instanceof B.ClassImplementation || type instanceof B.Interface)) {
       return state;
     }
     if (type instanceof B.Try) {
       const body = node.findDirectStructure(B.Body);
-      const declarations = [S.Data, S.DataBegin, S.DataEnd, S.Static, S.StaticBegin, S.StaticEnd,
-        S.Constant, S.ConstantBegin, S.ConstantEnd, S.FieldSymbol, S.Type, S.TypeBegin, S.TypeEnd,
-        S.TypeEnum, S.TypeEnumBegin, S.TypeEnumEnd, S.TypeMesh, S.TypeMeshBegin, S.TypeMeshEnd, S.IncludeType];
-      if (!body?.findAllStatementNodes().some(s => !(s.get() instanceof Comment) && !(s.get() instanceof Empty)
-          && !declarations.some(declaration => s.get() instanceof declaration))) {
-        return body ? this.flow(body, state, p) : state;
+      if (!body) {
+        return state;
       }
       const snapshots: State[] = [clone(state)];
       const branches = node.getChildren().filter((c): c is StructureNode => c instanceof StructureNode && c !== body);
       this.exceptions.push(snapshots);
       const normal = this.flow(body, clone(state), p);
       this.exceptions.pop();
-      const exceptional = join(snapshots.map(s => ({...s, stopped: false})));
+      const exceptional = join(snapshots.filter(s => !s.stopped));
+      let unhandled = snapshots.filter(s => this.raisedTypes.has(s));
+      if (unhandled.length === 0) {
+        return normal;
+      }
       const outcomes = [normal];
       for (const branch of branches) {
-        const result = this.flow(branch, clone(exceptional), p);
-        if (!(branch.get() instanceof B.Cleanup)) {
-          outcomes.push(result);
+        if (branch.get() instanceof B.Cleanup) {
+          for (const raised of unhandled) {
+            const result = this.flow(branch, {...clone(raised), stopped: false}, p);
+            if (!result.stopped) {
+              this.raise(result, this.raisedTypes.get(raised)!);
+            }
+          }
+          unhandled = [];
+          continue;
         }
+        const names = branch.getFirstStatement()?.findDirectExpressions(E.ClassName).map(n => n.concatTokens().toUpperCase()) ?? [];
+        const matches = (raised: State) => this.raisedTypes.get(raised)!.map(name => this.catches(name, names));
+        if (unhandled.some(raised => matches(raised).some(match => match !== false))) {
+          outcomes.push(this.flow(branch, clone(exceptional), p));
+        }
+        unhandled = unhandled.filter(raised => !matches(raised).every(match => match === true));
+      }
+      for (const raised of unhandled) {
+        this.raise(raised, this.raisedTypes.get(raised)!);
       }
       return join(outcomes);
     }
@@ -288,10 +681,57 @@ export class ReadOnlyFlow {
       if (header) {
         this.statement(header, state, p);
       }
+      if (state.stopped) {
+        return state;
+      }
+      const headerFile = header ? this.fileFor(header, p.file) : p.file;
+      const selected = type instanceof B.CaseType && header
+        ? this.value(header.findDirectExpression(E.Source), state, headerFile === p.file ? p : {...p, file: headerFile}) : undefined;
       const branches = node.getChildren().filter((c): c is StructureNode => c instanceof StructureNode);
-      const outcomes = branches.map(b => this.flow(b, clone(state), p));
+      const outcomes: State[] = [];
+      if (type instanceof B.If && !node.findDirectStructure(B.Body)) {
+        outcomes.push(clone(state));
+      }
+      for (const branch of branches) {
+        if (type instanceof B.If && branch.get() instanceof B.ElseIf) {
+          if (!state.stopped) {
+            this.statement(branch.getFirstStatement()!, state, p);
+          }
+          const body = branch.findDirectStructure(B.Body);
+          outcomes.push(body ? this.flow(body, clone(state), p) : clone(state));
+        } else if (type instanceof B.Case && branch.get() instanceof B.When) {
+          const matches: State[] = [];
+          const header = branch.getFirstStatement()!;
+          const file = this.fileFor(header, p.file);
+          this.calls.clear();
+          for (const operand of header.findDirectExpressionsMulti([E.Source, E.Or])) {
+            if (state.stopped) {
+              break;
+            }
+            this.effects(operand, state, file === p.file ? p : {...p, file});
+            matches.push(clone(state));
+          }
+          const entry = matches.length > 0 ? join(matches) : clone(state);
+          const body = branch.findDirectStructure(B.Body);
+          outcomes.push(body ? this.flow(body, entry, p) : entry);
+        } else if (type instanceof B.CaseType && branch.get() instanceof B.WhenType) {
+          const entry = clone(state);
+          const target = branch.getFirstStatement()?.findDirectExpression(E.Target);
+          if (target && selected) {
+            const targetFile = this.fileFor(branch.getFirstStatement()!, p.file);
+            const targetContext = targetFile === p.file ? p : {...p, file: targetFile};
+            this.write(target, entry, targetContext);
+            this.store(this.location(target, entry, targetContext), selected, entry);
+          }
+          const body = branch.findDirectStructure(B.Body);
+          outcomes.push(body ? this.flow(body, entry, p) : entry);
+        } else {
+          outcomes.push(this.flow(branch, clone(state), p));
+        }
+      }
       const exhaustive = branches.some(b => b.get() instanceof B.Else
-        || (b.get() instanceof B.When && b.getFirstStatement()?.getTokens().some(t => t.getStr().toUpperCase() === "OTHERS")));
+        || ((b.get() instanceof B.When || b.get() instanceof B.WhenType)
+          && b.getFirstStatement()?.getTokens().some(t => t.getStr().toUpperCase() === "OTHERS")));
       if (!exhaustive) {
         outcomes.push(state);
       }
@@ -299,15 +739,24 @@ export class ReadOnlyFlow {
     }
     if (type instanceof B.Loop || type instanceof B.Do || type instanceof B.While || type instanceof B.Select
         || type instanceof B.LoopAtScreen || type instanceof B.LoopExtract || type instanceof B.Provide || type instanceof B.With) {
+      const header = node.getFirstStatement();
+      if (header) {
+        this.statement(header, state, p);
+      }
+      if (state.stopped) {
+        return state;
+      }
       let entry = clone(state);
+      let rows: Binding | undefined;
       const loop = {breaks: [] as State[], continues: [] as State[]};
       this.loops.push(loop);
       for (;;) {
         let body = clone(entry);
         for (const child of node.getChildren()) {
-          if (child instanceof StatementNode && child.get() instanceof S.Loop) {
-            this.statement(child, body, p);
-            this.bindRow(child, body, p, false);
+          if (child === header) {
+            if (child.get() instanceof S.Loop) {
+              rows = this.bindRow(child, body, p, false, rows);
+            }
           } else if (child instanceof StatementNode && !(child.get() instanceof S.EndLoop)
               && !(child.get() instanceof S.EndDo) && !(child.get() instanceof S.EndWhile)) {
             this.statement(child, body, p);
@@ -315,7 +764,11 @@ export class ReadOnlyFlow {
             body = this.flow(child, body, p);
           }
         }
-        const next = join([state, body, ...loop.continues.map(s => ({...s, stopped: false}))]);
+        const repeated = join([body, ...loop.continues.map(s => ({...s, stopped: false}))]);
+        if (type instanceof B.While && header) {
+          this.statement(header, repeated, p);
+        }
+        const next = join([state, repeated]);
         if (fingerprint(next) === fingerprint(entry)) {
           this.loops.pop();
           return join([next, ...loop.breaks.map(s => ({...s, stopped: false}))]);
@@ -325,14 +778,7 @@ export class ReadOnlyFlow {
     }
     for (const c of node.getChildren()) {
       if (state.stopped) {
-        if (p.key !== p.file.getFilename()) {
-          break;
-        }
-        const event = c instanceof StructureNode ? c.getFirstStatement() : c;
-        if (!(event instanceof StatementNode) || !SELECTION_EVENTS.some(s => event.get() instanceof s)) {
-          continue;
-        }
-        state.stopped = false;
+        break;
       }
       if (c instanceof StructureNode) {
         state = this.flow(c, state, p);
@@ -346,7 +792,8 @@ export class ReadOnlyFlow {
 
   private read(binding: Binding, state: State, type?: AbstractType): Binding {
     return union(...binding.targets.map(t => {
-      const value = state.values.get(t.key);
+      // shortcut: widened cells read all tracked contents; retain precise sets if these warnings become noisy.
+      const value = t.key === "*" ? union(unknown(), ...state.values.values()) : state.values.get(t.key);
       if (type instanceof ObjectReferenceType && (!value || (!value.unknown && value.targets.length === 0))) {
         return cell(this.bounded(t.key.startsWith("object:") ? t.key : "object:" + t.key));
       }
@@ -373,7 +820,7 @@ export class ReadOnlyFlow {
     return parts.length > 8 ? parts.slice(0, 8).join("/") + "/..." : key;
   }
 
-  private location(node: INode | undefined, state: State, p: Procedure, writing = false): Binding {
+  private location(node: INode | undefined, state: State, p: Procedure, writing = false, receiver = false): Binding {
     if (!(node instanceof ExpressionNode)) {
       return unknown();
     }
@@ -393,19 +840,19 @@ export class ReadOnlyFlow {
     const direct = node.getChildren().filter((c): c is ExpressionNode => c instanceof ExpressionNode);
     if (node.get() instanceof E.Source && this.hasProjection(node)) {
       const base = node.getFirstChild() as ExpressionNode;
-      return this.follow(node.getChildren().slice(1), this.location(base, state, p), this.valueType(base, p), state, p, writing);
+      return this.follow(node.getChildren().slice(1), this.location(base, state, p), this.valueType(base, p), state, p, writing, receiver);
     }
     const chain = node.get() instanceof E.Target || node.get() instanceof E.SimpleTarget || node.get() instanceof E.FieldChain
       || node.get() instanceof E.SimpleFieldChain ? node : undefined;
     if (!chain && direct.length > 0 && !(node.get() instanceof E.SourceField)
         && !(node.get() instanceof E.TargetField) && !(node.get() instanceof E.SourceFieldSymbol)
         && !(node.get() instanceof E.TargetFieldSymbol)) {
-      return this.location(direct[0], state, p, writing);
+      return this.location(direct[0], state, p, writing, receiver);
     }
     const children = chain ? chain.getChildren() : [node];
     const first = children[0];
     if (chain && first instanceof ExpressionNode && first.get() instanceof E.Cast) {
-      return this.follow(children.slice(1), this.location(first, state, p), this.valueType(first, p), state, p, writing);
+      return this.follow(children.slice(1), this.location(first, state, p), this.valueType(first, p), state, p, writing, receiver);
     }
     const id = this.identifier(children[0], p.file);
     const className = children[0].get() instanceof E.ClassName;
@@ -415,12 +862,12 @@ export class ReadOnlyFlow {
     const isFS = id?.getName().startsWith("<");
     const byRef = id && p.parameters.includes(id) && !id.getMeta().includes(IdentifierMeta.PassByValue)
       && !id.getMeta().includes(IdentifierMeta.MethodReturning);
-    const key = id ? idKey(id) : "class:" + children[0].concatTokens().toUpperCase();
+    const key = id ? this.storageKey(id, p) : "class:" + children[0].concatTokens().toUpperCase();
     let result = isFS ? state.aliases.get(key) ?? empty() : cell(key, byRef ? ["@" + key] : []);
     if (id instanceof ClassAttribute && !id.getMeta().includes(IdentifierMeta.Static) && p.self) {
       result = cell(p.self + "/" + key);
     }
-    return this.follow(children.slice(1), result, id?.getType(), state, p, writing);
+    return this.follow(children.slice(1), result, id?.getType(), state, p, writing, receiver);
   }
 
   private hasProjection(node: ExpressionNode): boolean {
@@ -435,7 +882,7 @@ export class ReadOnlyFlow {
   }
 
   private follow(nodes: readonly INode[], result: Binding, type: AbstractType | undefined,
-                 state: State, p: Procedure, writing: boolean): Binding {
+                 state: State, p: Procedure, writing: boolean, receiver: boolean): Binding {
     const children = this.pathChildren(nodes);
     let table: Binding | undefined;
     for (const child of children) {
@@ -475,7 +922,7 @@ export class ReadOnlyFlow {
         }
       }
     }
-    return table ?? result;
+    return table ?? (receiver ? empty() : result);
   }
 
   private value(node: ExpressionNode | undefined, state: State, p: Procedure, expected?: AbstractType): Binding {
@@ -753,8 +1200,10 @@ export class ReadOnlyFlow {
   }
 
   private copyComponents(target: Binding, source: Binding, state: State, type: AbstractType | undefined,
-                         values: ReadonlyMap<string, Binding> = state.values, substitute = (b: Binding) => b): void {
-    const components = this.componentTypes(type).filter(c => c.path !== "");
+                         values: ReadonlyMap<string, Binding> = state.values, substitute = (b: Binding) => b,
+                         fields?: readonly string[]): void {
+    const components = this.componentTypes(type).filter(c => c.path !== ""
+      && (fields === undefined || fields.some(f => c.path === f || c.path.startsWith(f + "/"))));
     const copies = components.map(c => ({target: this.append(target, c.path), value: substitute(union(
       ...source.targets.map(t => {
         const key = this.bounded(t.key + c.path);
@@ -797,15 +1246,22 @@ export class ReadOnlyFlow {
     }
   }
 
-  private write(node: ExpressionNode, state: State, p: Procedure): void {
-    const binding = this.location(node, state, p, true);
+  private write(node: ExpressionNode, state: State, p: Procedure, receiver = false): void {
+    const binding = this.location(node, state, p, true, receiver);
     if (binding.targets.some(t => t.origins.length > 0)) {
       this.writes.push({binding, token: node.getFirstToken(), file: p.file});
     }
   }
 
   private effects(node: INode, state: State, p: Procedure): void {
+    if (state.stopped) {
+      return;
+    }
     const type = node.get();
+    if (node instanceof ExpressionNode && type instanceof E.MethodCallChain) {
+      this.call(node, state, p);
+      return;
+    }
     if (node instanceof ExpressionNode) {
       this.letValues(node, state, p);
     }
@@ -834,6 +1290,9 @@ export class ReadOnlyFlow {
     }
     let first = true;
     for (const child of node.getChildren()) {
+      if (state.stopped) {
+        break;
+      }
       if (!(child instanceof ExpressionNode)) {
         continue;
       }
@@ -846,15 +1305,45 @@ export class ReadOnlyFlow {
       }
       first = false;
     }
-    if (node instanceof ExpressionNode && type instanceof E.MethodCallChain) {
-      this.call(node, state, p);
-    }
-    if (type instanceof E.Throw) {
+    if (type instanceof E.Throw && node instanceof ExpressionNode) {
+      const name = node.findDirectExpression(E.ClassName)?.concatTokens().toUpperCase();
+      this.raise(state, [name ?? "*"]);
       state.stopped = true;
     }
   }
 
   private statement(node: StatementNode, state: State, p: Procedure): void {
+    if (state.stopped) {
+      return;
+    }
+    const type = node.get();
+    const implicit = !(type instanceof S.Move || type instanceof S.Compute) && p.implicit?.has(node) ? clone(state) : undefined;
+    const output = (type instanceof S.Write && !node.findDirectExpression(E.Target))
+      || type instanceof S.Uline || type instanceof S.NewPage || type instanceof S.NewLine
+      || type instanceof S.Skip || type instanceof S.Reserve;
+    const report = this.reports.get(p.file.getFilename());
+    const pages = output && !this.pageCallback ? report?.events.filter(e =>
+      e.header?.get() instanceof S.TopOfPage || e.header?.get() instanceof S.EndOfPage) ?? [] : [];
+    const dispatch = () => {
+      if (pages.length === 0 || state.stopped) {
+        return;
+      }
+      this.pageCallback = true;
+      // shortcut: page boundaries and output-expression evaluation are joined; model exact dispatch for more precision.
+      Object.assign(state, this.eventClosure(pages, state, report!.procedure, true).state);
+      this.pageCallback = false;
+    };
+    dispatch();
+    const file = this.fileFor(node, p.file);
+    this.statementBody(node, state, file === p.file ? p : {...p, file});
+    if (implicit && !state.stopped) {
+      // shortcut: a statement may fail before or after partial effects; finer expression evaluation would narrow this join.
+      this.raise(join([implicit, state]), ["*"]);
+    }
+    dispatch();
+  }
+
+  private statementBody(node: StatementNode, state: State, p: Procedure): void {
     this.calls.clear();
     this.effects(node, state, p);
     if (state.stopped) {
@@ -865,14 +1354,29 @@ export class ReadOnlyFlow {
       const loop = this.loops[this.loops.length - 1];
       if (loop) {
         (type instanceof S.Exit ? loop.breaks : loop.continues).push(clone(state));
+      } else if (type instanceof S.Exit && this.listExits) {
+        this.listExits.push(clone(state));
       } else {
         this.exits.push(clone(state));
       }
       state.stopped = true;
       return;
     }
+    if (type instanceof S.Stop && this.endExits) {
+      this.endExits.push(clone(state));
+      state.stopped = true;
+      return;
+    }
     if (type instanceof S.Return || type instanceof S.Raise) {
-      this.exits.push(clone(state));
+      if (type instanceof S.Return || !node.findDirectTokenByText("EXCEPTION") && !node.findDirectTokenByText("SHORTDUMP")) {
+        this.exits.push(clone(state));
+      } else if (node.findDirectTokenByText("EXCEPTION")) {
+        this.raise(state, [node.findDirectExpression(E.ClassName)?.concatTokens().toUpperCase() ?? "*"]);
+      }
+      state.stopped = true;
+      return;
+    }
+    if (type instanceof S.Leave && (node.findDirectTokenByText("PROGRAM") || node.findDirectTokenByText("TRANSACTION"))) {
       state.stopped = true;
       return;
     }
@@ -891,10 +1395,32 @@ export class ReadOnlyFlow {
         const part = node.findDirectExpression(E.Target)
           ?? source?.findDirectExpressionsMulti([E.Source, E.SimpleSource3]).slice(-1)[0];
         let binding = dynamic ? unknown() : this.location(part, state, p);
+        let componentMayFail = component;
         if (component) {
-          binding = this.append(binding, "/*");
+          const selector = source?.findDirectExpressionsMulti([E.Source, E.SimpleSource3])[0]?.concatTokens().toUpperCase();
+          const sourceType = part ? this.valueType(part, p) : undefined;
+          const structure = sourceType instanceof TableType && sourceType.isWithHeader() ? sourceType.getRowType() : sourceType;
+          const name = selector?.match(/^(['`])([\w-]+)\1$/)?.[2];
+          const ordinal = selector !== undefined && /^\d+$/.test(selector);
+          const selected = ordinal && structure instanceof StructureType ? structure.getComponents()[Number(selector) - 1] : undefined;
+          const path = name?.split("-") ?? (selected ? [selected.name.toUpperCase()] : []);
+          let selectedType = structure;
+          for (const field of path) {
+            selectedType = selectedType instanceof StructureType ? selectedType.getComponentByName(field) : undefined;
+          }
+          if (selector === "0" || path.length > 0 && selectedType !== undefined) {
+            binding = this.append(binding, path.map(field => "/" + field).join(""));
+            componentMayFail = false;
+          } else if ((name || ordinal) && structure instanceof StructureType) {
+            binding = empty();
+          } else {
+            binding = union(this.append(binding, "/*"), unknown(), ...this.componentTypes(structure).flatMap(c => {
+              const location = this.append(binding, c.path);
+              return [location, this.read(location, state, c.type)];
+            }));
+          }
         }
-        if (dynamic || table || component || node.findDirectExpression(E.Target)) {
+        if (dynamic || table || componentMayFail || node.findDirectExpression(E.Target)) {
           const unassign = node.getTokens().some(t => t.getStr().toUpperCase() === "UNASSIGN");
           binding = union(binding, unassign ? empty() : state.aliases.get(idKey(id)) ?? empty());
         }
@@ -971,6 +1497,12 @@ export class ReadOnlyFlow {
       const source = node.findDirectExpression(E.Source);
       const targets = node.findDirectExpressions(E.Target);
       const value = this.value(source, state, p, targets[0] ? this.valueType(targets[0], p) : undefined);
+      if (state.stopped) {
+        return;
+      }
+      if (p.implicit?.has(node)) {
+        this.raise(state, ["*"]);
+      }
       for (const target of targets) {
         this.write(target, state, p);
         const location = this.location(target, state, p);
@@ -1014,8 +1546,33 @@ export class ReadOnlyFlow {
       }
       return;
     }
+    if (type instanceof S.ModifyInternal) {
+      const target = node.findDirectExpression(E.Target);
+      if (target) {
+        this.write(target, state, p);
+        const tableType = this.valueType(target, p);
+        const rowType = tableType instanceof TableType ? tableType.getRowType() : undefined;
+        const binding = this.append(this.location(target, state, p), "/[]");
+        const source = node.findExpressionAfterToken("FROM");
+        if (source && rowType) {
+          const value = this.value(source, state, p, rowType);
+          const fields = this.transportingFields(node);
+          this.copyComponents(binding, value, state, rowType, state.values, b => b, fields);
+          if (fields === undefined) {
+            this.store(binding, isAggregate(rowType) ? binding : value, state);
+          }
+        }
+        const fs = node.findDirectExpression(E.FSTarget);
+        const id = fs ? this.identifier(fs, p.file) : undefined;
+        if (id) {
+          state.aliases.set(idKey(id), union(binding, state.aliases.get(idKey(id)) ?? empty()));
+        }
+      }
+      return;
+    }
     const targets = node.findAllExpressionsRecursive(E.Target).concat(node.findAllExpressionsRecursive(E.SimpleTarget),
                                                                       node.findAllExpressionsRecursive(E.FieldChain));
+    const receivers = node.findAllExpressionsRecursive(E.MethodCallChain).map(c => c.getFirstChild());
     const reportedCall = (type instanceof S.Call || type instanceof S.CallFunction)
       && this.writes.some(w => w.file === p.file && w.token === node.getFirstToken());
     for (const target of targets) {
@@ -1034,24 +1591,37 @@ export class ReadOnlyFlow {
         r.referenceType === ReferenceType.DataWriteReference || r.extra?.writeOperand)) {
         continue;
       }
-      this.write(target, state, p);
-      if (type instanceof S.Clear || type instanceof S.Free || type instanceof S.CreateData) {
+      this.write(target, state, p, receivers.includes(target));
+      if (type instanceof S.Refresh) {
+        const targetType = this.valueType(target, p);
+        if (targetType instanceof TableType) {
+          this.copyComponents(this.location(target, state, p), empty(), state, targetType);
+        }
+      } else if (type instanceof S.Clear || type instanceof S.Free || type instanceof S.CreateData) {
         const value = type instanceof S.Clear || type instanceof S.Free ? empty() : cell("new:" + allocationKey(p.file, target.getFirstToken()));
         this.store(this.location(target, state, p), value, state);
         if (type instanceof S.Clear || type instanceof S.Free) {
-          const targetType = this.valueType(target, p);
+          let targetType = this.valueType(target, p);
+          if (type instanceof S.Clear && targetType instanceof TableType && targetType.isWithHeader()
+              && !target.findDirectExpression(E.TableBody)) {
+            targetType = targetType.getRowType();
+          }
           if (targetType) {
-            this.seedComponents(this.location(target, state, p), state, targetType);
+            this.copyComponents(this.location(target, state, p), empty(), state, targetType);
           }
         }
       }
     }
   }
 
-  private bindRow(node: StatementNode, state: State, p: Procedure, conditional: boolean): void {
+  private bindRow(node: StatementNode, state: State, p: Procedure, conditional: boolean, previous?: Binding): Binding {
+    const file = this.fileFor(node, p.file);
+    if (file !== p.file) {
+      p = {...p, file};
+    }
     const source = node.findDirectExpression(E.LoopSource)
       ?? node.findDirectExpressionsMulti([E.Source, E.SimpleSource2])[0];
-    const binding = this.append(this.location(source, state, p), "/[]");
+    const binding = previous ?? this.append(this.location(source, state, p), "/[]");
     const target = node.findDirectExpression(E.LoopTarget) ?? node.findDirectExpression(E.ReadTableTarget);
     const fs = target?.findFirstExpression(E.FSTarget);
     if (fs) {
@@ -1073,13 +1643,36 @@ export class ReadOnlyFlow {
         const type = this.valueType(t, p);
         const location = this.location(t, state, p);
         if (type) {
-          this.copyComponents(location, binding, state, type);
+          if (t.findDirectExpression(E.InlineData)) {
+            for (const component of this.componentTypes(type)) {
+              for (const previous of this.append(location, component.path).targets) {
+                if (!state.values.has(previous.key)) {
+                  state.values.set(previous.key, empty());
+                }
+              }
+            }
+          }
+          this.copyComponents(location, conditional ? union(binding, location) : binding,
+                              state, type, state.values, b => b, this.transportingFields(node));
         }
         const value = this.read(binding, state, type);
-        const previous = t.findDirectExpression(E.InlineData) ? empty() : this.read(location, state, type);
+        const previous = this.read(location, state, type);
         this.store(location, conditional ? union(value, previous) : value, state);
       }
     }
+    return binding;
+  }
+
+  private transportingFields(node: StatementNode): string[] | undefined {
+    if (!node.findDirectTokenByText("TRANSPORTING") || node.findDirectTokenByText("ALL")) {
+      return undefined;
+    }
+    const fields = node.findDirectExpression(E.TransportingFields);
+    if (fields?.findFirstExpression(E.Dynamic) || node.findDirectExpression(E.Dynamic)) {
+      return undefined;
+    }
+    return (fields?.findDirectExpressions(E.FieldSub) ?? node.findDirectExpressions(E.ComponentChainSimple))
+      .map(f => "/" + f.concatTokens().toUpperCase().replace(/-/g, "/"));
   }
 
   private bindInsertedRow(node: StatementNode, state: State, p: Procedure): void {
@@ -1088,11 +1681,12 @@ export class ReadOnlyFlow {
     const table = node.findDirectExpressions(E.Target).find(t => t !== refOutput)
       ?? node.findDirectExpressionsMulti([E.Source, E.SimpleSource4])[0];
     const binding = this.append(this.location(table, state, p), "/[]");
+    const tableType = table ? this.valueType(table, p) : undefined;
     const source = node.findDirectTokenByText("INITIAL") ? undefined
       : node.findDirectExpressionsMulti([E.Source, E.SimpleSource4]).find(s => s !== table
         && s !== node.findExpressionAfterToken("INDEX") && s !== node.findExpressionAfterToken("FROM")
-        && s !== node.findExpressionAfterToken("TO"));
-    const tableType = table ? this.valueType(table, p) : undefined;
+        && s !== node.findExpressionAfterToken("TO"))
+        ?? (tableType instanceof TableType && tableType.isWithHeader() ? table : undefined);
     const rowType = tableType instanceof TableType ? tableType.getRowType() : undefined;
     const always = node.get() instanceof S.Append || (tableType instanceof TableType
       && tableType.getAccessType() === TableAccessType.standard
@@ -1124,12 +1718,22 @@ export class ReadOnlyFlow {
     if (cached) {
       return cached;
     }
+    if (state.stopped) {
+      return empty();
+    }
     let result = unknown();
     const first = node.getFirstChild();
-    let receiver = first instanceof ExpressionNode && first.get() instanceof E.FieldChain ? this.value(first, state, p) : undefined;
+    let receiver: Binding | undefined;
+    if (first instanceof ExpressionNode && (first.get() instanceof E.FieldChain || first.get() instanceof E.Cast)) {
+      this.effects(first, state, p);
+      receiver = this.value(first, state, p);
+    }
     const allocation = node.findDirectExpression(E.NewObject);
+    if (allocation) {
+      this.effects(allocation, state, p);
+    }
     const type = allocation && this.valueType(allocation, p);
-    if (allocation && (type instanceof ObjectReferenceType || type instanceof DataReference)) {
+    if (!state.stopped && allocation && (type instanceof ObjectReferenceType || type instanceof DataReference)) {
       result = cell("new:" + allocationKey(p.file, allocation.getFirstToken()));
       if (type instanceof ObjectReferenceType) {
         this.construct(allocation, result, type.getIdentifierName(), state, p);
@@ -1149,6 +1753,13 @@ export class ReadOnlyFlow {
       receiver = result;
     }
     for (const method of node.findDirectExpressions(E.MethodCall)) {
+      if (state.stopped) {
+        break;
+      }
+      this.effects(method, state, p);
+      if (state.stopped) {
+        break;
+      }
       const token = method.findDirectExpression(E.MethodName)?.getFirstToken() ?? method.getFirstToken();
       const ref = this.references(p.file, token).find(r => r.referenceType === ReferenceType.MethodReference);
       result = this.invoke(method, node, ref?.resolved as IMethodDefinition | undefined, state, p, receiver);
@@ -1159,7 +1770,7 @@ export class ReadOnlyFlow {
   }
 
   private construct(node: ExpressionNode | StatementNode, receiver: Binding, name: string, state: State, p: Procedure): void {
-    const scope = this.scope.lookupPosition(node.getFirstToken().getStart(), p.file.getFilename());
+    const scope = this.activeScope ?? this.scope.lookupPosition(node.getFirstToken().getStart(), p.file.getFilename());
     let owner = scope?.findClassDefinition(name);
     let constructor = owner?.getMethodDefinitions().getByName("CONSTRUCTOR");
     const visited = new Set<string>();
@@ -1180,6 +1791,9 @@ export class ReadOnlyFlow {
 
   private invoke(invocation: ExpressionNode | StatementNode, site: ExpressionNode | StatementNode,
                  def: IMethodDefinition | undefined, state: State, p: Procedure, receiver?: Binding): Binding {
+    if (state.stopped) {
+      return empty();
+    }
     const callee = def ? this.procedures.find(c => c.key === idKey(def)) : undefined;
     const substitutions = new Map<string, Binding>();
     if (callee?.self) {
@@ -1209,8 +1823,7 @@ export class ReadOnlyFlow {
     if (unnamed && param) {
       this.argument(param, unnamed, substitutions, state, p);
     }
-    const owner = callee?.self ? this.scope.lookupPosition(callee.node.getFirstToken().getStart(), callee.file.getFilename())
-      ?.findClassDefinition(callee.self.slice(6)) : undefined;
+    const owner = callee?.self ? callee.scope?.findClassDefinition(callee.self.slice(6)) : undefined;
     const uncertain = def?.isStatic() === false && def.getName().toUpperCase() !== "CONSTRUCTOR"
       && def.getVisibility() !== Visibility.Private && !owner?.isFinal();
     const previous = uncertain ? clone(state) : undefined;
@@ -1264,8 +1877,15 @@ export class ReadOnlyFlow {
                     callee: Procedure | undefined, substitutions: Map<string, Binding>): Binding {
     if (callee) {
       const callers = this.callers.get(callee.key) ?? new Set<Procedure>();
-      callers.add(p);
+      const caller = this.procedures.find(c => c.key === p.key)!;
+      if (!callers.has(caller)) {
+        callers.add(caller);
+        this.callGraphChanged = true;
+      }
       this.callers.set(callee.key, callers);
+      for (const key of this.sharedAliases.keys()) {
+        substitutions.set("#" + key, state.aliases.get(key) ?? empty());
+      }
     }
     const summary = callee ? this.summaries.get(callee.key) : undefined;
     const substitute = (binding: Binding): Binding => {
@@ -1286,33 +1906,39 @@ export class ReadOnlyFlow {
       return result;
     };
     if (summary) {
+      const effects = summary.exceptional ? [summary, summary.exceptional] : [summary];
       const escapes = new Set<string>();
-      const published = [summary.returning, ...summary.updates.values()];
+      const published = [summary.returning, ...effects.flatMap(e => [...e.updates.values(), ...e.aliases.values()])];
       const allocations = new Set(callee!.locals);
-      for (const key of [...summary.values.keys(), ...published.flatMap(b => b.targets.map(t => t.key))]) {
+      const values = new Map(effects.flatMap(e => [...e.values]));
+      for (const key of [...values.keys(), ...published.flatMap(b => b.targets.map(t => t.key))]) {
         const root = key.split("/")[0];
         if (/^(escape|copy|new|value|row|return|result):/.test(root)) {
           allocations.add(root);
         }
       }
+      const persistent = callee!.persistent?.map(v => this.storageKey(v, callee!)) ?? [];
       for (const local of allocations) {
         if (published.some(b => b.targets.some(t => t.key === local || t.key.startsWith(local + "/")))) {
           escapes.add(local);
           substitutions.set(local, cell(this.bounded("escape:" + allocationKey(p.file, node.getFirstToken()) + "/" + local)));
         }
       }
-      for (const [key] of summary.values) {
+      for (const [key] of values) {
         const local = callee!.locals?.some(localKey => key === localKey || key.startsWith(localKey + "/"));
         if (!local && !substitutions.has("$" + key)) {
-          substitutions.set("$" + key, this.read(substitute(cell(key)), state));
+          const target = substitute(cell(key));
+          const initial = persistent.some(root => key === root || key.startsWith(root + "/"))
+            && !target.targets.some(t => state.values.has(t.key));
+          substitutions.set("$" + key, initial ? empty() : this.read(target, state));
         }
       }
       // shortcut: overlapping argument cells join entry and output values; ordered effects would improve precision.
-      const reads = [...substitutions.keys()].filter(key => key.startsWith("$") && summary.values.has(key.slice(1)));
+      const reads = [...substitutions.keys()].filter(key => key.startsWith("$") && values.has(key.slice(1)));
       let changed: boolean;
       do {
         changed = false;
-        for (const [key, value] of summary.updates) {
+        for (const [key, value] of effects.flatMap(e => [...e.updates])) {
           const target = substitute(cell(key));
           for (const read of reads) {
             if (read.slice(1) === key || !substitute(cell(read.slice(1))).targets.some(t =>
@@ -1330,19 +1956,30 @@ export class ReadOnlyFlow {
       for (const w of summary.writes) {
         this.writes.push({binding: substitute(w.binding), token: node.getFirstToken(), file: p.file});
       }
-      const updated = new Set<string>();
-      for (const [key, value] of summary.updates) {
-        const parameter = callee!.parameters.find(param => key === idKey(param) || key.startsWith(idKey(param) + "/"));
-        const local = callee!.locals?.some(localKey => !escapes.has(localKey) && (key === localKey || key.startsWith(localKey + "/")));
-        if ((parameter && !substitutions.has(idKey(parameter))) || local) {
-          continue;
+      const apply = (effects: Effects, outputState: State) => {
+        const updated = new Set<string>();
+        for (const [key, value] of effects.updates) {
+          const parameter = callee!.parameters.find(param => key === idKey(param) || key.startsWith(idKey(param) + "/"));
+          const local = callee!.locals?.some(localKey => !escapes.has(localKey) && (key === localKey || key.startsWith(localKey + "/")));
+          if ((parameter && !substitutions.has(idKey(parameter))) || local) {
+            continue;
+          }
+          const target = substitute(cell(key));
+          const output = substitute(value);
+          this.store(target, output.unknown || target.targets.some(t => updated.has(t.key))
+            ? union(output, this.read(target, outputState)) : output, outputState);
+          target.targets.forEach(t => updated.add(t.key));
         }
-        const target = substitute(cell(key));
-        const output = substitute(value);
-        this.store(target, output.unknown || target.targets.some(t => updated.has(t.key))
-          ? union(output, this.read(target, state)) : output, state);
-        target.targets.forEach(t => updated.add(t.key));
+        for (const [key, binding] of effects.aliases) {
+          outputState.aliases.set(key, substitute(binding));
+        }
+      };
+      if (summary.exceptional) {
+        const exceptional = clone(state);
+        apply(summary.exceptional, exceptional);
+        this.raise(exceptional, summary.exceptional.types);
       }
+      apply(summary, state);
       for (const parameter of callee!.parameters) {
         const target = substitutions.get("!" + idKey(parameter));
         if (target && callee!.valueOutputs?.has(idKey(parameter))) {
@@ -1371,11 +2008,14 @@ export class ReadOnlyFlow {
         }
       }
     }
+    if (summary && !summary.returns) {
+      state.stopped = true;
+    }
     if (summary && callee?.returning && isAggregate(callee.returning.getType())) {
       const target = cell("return:" + allocationKey(p.file, node.getFirstToken()));
       this.copyComponents(target, cell(idKey(callee.returning)), state, callee.returning.getType(), summary.values, substitute);
       return target;
     }
-    return summary ? substitute(summary.returning) : unknown();
+    return summary ? substitute(summary.returning) : callee ? empty() : unknown();
   }
 }

@@ -63,6 +63,10 @@ export class Procedural {
   }
 
   public findInclude(node: StatementNode, obj: ABAPObject): ABAPFile | undefined {
+    return Procedural.findInclude(this.reg, node, obj);
+  }
+
+  public static findInclude(reg: IRegistry, node: StatementNode, obj: ABAPObject): ABAPFile | undefined {
 // cyclic includes are cut by the callers, includes not found are reported by rule "check_include"
 // todo: how to make sure code is not duplicated here and in rule "check_include" / include graph?
     const expr = node.findFirstExpression(Expressions.IncludeName);
@@ -79,13 +83,13 @@ export class Procedural {
       }
     }
 
-    const prog = this.reg.getObject("PROG", name) as ABAPObject | undefined;
+    const prog = reg.getObject("PROG", name) as ABAPObject | undefined;
     if (prog !== undefined) {
       return prog.getABAPFiles()[0];
     }
 
     // todo, this is slow, try determining the FUGR name from the include name
-    for (const fugr of this.reg.getObjectsByType("FUGR")) {
+    for (const fugr of reg.getObjectsByType("FUGR")) {
       if (fugr instanceof FunctionGroup) {
         const found = fugr.getInclude(name);
         if (found) {

@@ -88,6 +88,30 @@ function run(abap: string) {
   return new ReadOnlyWrite().initialize(reg).run(obj);
 }
 
+describe("Rule: read_only_write, object receivers", () => {
+  it("allows invoking a read-only object reference reached through a mutable table", () => {
+    expect(run(`CLASS lcl_value DEFINITION FINAL.
+  PUBLIC SECTION.
+    DATA number TYPE i.
+    METHODS touch.
+ENDCLASS.
+CLASS lcl_value IMPLEMENTATION.
+  METHOD touch. number = 1. ENDMETHOD.
+ENDCLASS.
+CLASS lcl_owner DEFINITION FINAL.
+  PUBLIC SECTION.
+    DATA object TYPE REF TO lcl_value READ-ONLY.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl_owner IMPLEMENTATION.
+  METHOD constructor. object = NEW lcl_value( ). ENDMETHOD.
+ENDCLASS.
+DATA owners TYPE STANDARD TABLE OF REF TO lcl_owner WITH DEFAULT KEY.
+APPEND NEW lcl_owner( ) TO owners.
+owners[ 1 ]->object->touch( ).`)).to.deep.equal([]);
+  });
+});
+
 describe("Rule: read_only_write", () => {
   const tests = [
     {
@@ -882,6 +906,76 @@ ENDCLASS.
 });
 
 describe("Rule: read_only_write, additional control flow", () => {
+  for (const initialBody of ["", "number = 1."]) {
+    for (const initialProtected of [false, true]) {
+      const replacementProtected = !initialProtected;
+      it(`retains an ${initialBody ? "nonempty" : "empty"} IF path after ELSEIF (initial=${initialProtected}, replacement=${replacementProtected})`, () => {
+        const abap = program(`DATA(guard) = REF #( owner->items ).
+            DATA(pointer) = REF #( ${initialProtected ? "owner->items" : "mutable_items"} ).
+            IF condition = 1.
+              ${initialBody}
+            ELSEIF redirect( EXPORTING replacement = REF #( ${replacementProtected ? "owner->items" : "mutable_items"} )
+                             CHANGING pointer = pointer ) = 1.
+            ELSE.
+            ENDIF.
+            SORT pointer->*.`)
+          .replace("CLASS-METHODS identity", `CLASS-METHODS redirect
+              IMPORTING replacement TYPE REF TO lcl_owner=>ty_items
+              CHANGING pointer TYPE REF TO lcl_owner=>ty_items RETURNING VALUE(result) TYPE i.
+            CLASS-METHODS identity`)
+          .replace("  METHOD identity.", `  METHOD redirect.
+              pointer = replacement.
+              result = 0.
+            ENDMETHOD.
+            METHOD identity.`);
+        const issues = run(abap);
+        expect(issues).to.have.length(1);
+        expect(issues[0].getSeverity()).to.equal(Severity.Warning);
+      });
+    }
+  }
+
+  for (const laterBranch of ["ELSE.", "ELSEIF condition = 2."]) {
+    for (const initialProtected of [false, true]) {
+      const replacementProtected = !initialProtected;
+      it(`carries ${replacementProtected ? "protected" : "writable"} ELSEIF effects into ${laterBranch} from ${initialProtected ? "protected" : "writable"} storage`, () => {
+        const initial = initialProtected ? "owner->items" : "mutable_items";
+        const replacement = replacementProtected ? "owner->items" : "mutable_items";
+        const abap = program(`DATA(guard) = REF #( owner->items ).
+            DATA(pointer) = REF #( ${initial} ).
+            IF condition = 1.
+            ELSEIF redirect( EXPORTING replacement = REF #( ${replacement} ) CHANGING pointer = pointer ) = 1.
+            ${laterBranch}
+              SORT pointer->*.
+            ENDIF.`)
+          .replace("CLASS-METHODS identity", `CLASS-METHODS redirect
+              IMPORTING replacement TYPE REF TO lcl_owner=>ty_items
+              CHANGING pointer TYPE REF TO lcl_owner=>ty_items RETURNING VALUE(result) TYPE i.
+            CLASS-METHODS identity`)
+          .replace("  METHOD identity.", `  METHOD redirect.
+              pointer = replacement.
+              result = 0.
+            ENDMETHOD.
+            METHOD identity.`);
+        const issues = run(abap);
+        expect(issues).to.have.length(replacementProtected ? 1 : 0);
+        if (replacementProtected) {
+          expect(issues[0].getSeverity()).to.equal(Severity.Error);
+        }
+      });
+    }
+  }
+
+  it("does not carry an ELSEIF body assignment into ELSE", () => {
+    expect(run(program(`DATA(pointer) = REF #( owner->items ).
+      IF condition = 1.
+      ELSEIF condition = 2.
+        pointer = REF #( mutable_items ).
+      ELSE.
+        SORT pointer->*.
+      ENDIF.`))).to.have.length(1);
+  });
+
   for (const transfer of ["RETURN", "EXIT"]) {
     it(`starts the next event after ${transfer} terminates an earlier event`, () => {
       expect(run(program() + `
@@ -931,6 +1025,114 @@ describe("Rule: read_only_write, table expression aliases", () => {
     DATA mutable TYPE i.
     DATA number`);
       expect(run(abap)).to.have.length(test.count);
+    });
+  }
+});
+
+describe("Rule: read_only_write, persistent procedure storage", () => {
+  it("retains STATICS references between calls and applies later writable rebindings", () => {
+    const abap = program(`remember( REF #( owner->items ) ).
+      DATA(first) = remember( REF #( mutable_items ) ).
+      SORT first->*.
+      DATA(second) = remember( REF #( mutable_items ) ).
+      SORT second->*.`)
+      .replace("CLASS-METHODS identity", `CLASS-METHODS remember IMPORTING supplied TYPE REF TO lcl_owner=>ty_items
+          RETURNING VALUE(result) TYPE REF TO lcl_owner=>ty_items.
+        CLASS-METHODS identity`)
+      .replace("  METHOD identity.", `  METHOD remember.
+          STATICS saved TYPE REF TO lcl_owner=>ty_items VALUE IS INITIAL.
+          result = saved.
+          saved = supplied.
+        ENDMETHOD.
+        METHOD identity.`);
+    const issues = run(abap);
+    expect(issues).to.have.length(1);
+    expect(issues[0].getSeverity()).to.equal(Severity.Error);
+    expect(issues[0].getStart().getRow()).to.equal(abap.split("\n").findIndex(line => line.includes("SORT first->*")) + 1);
+  });
+
+  it("retains components of structured STATICS between FORM calls", () => {
+    const abap = program() + `
+START-OF-SELECTION.
+  DATA owner TYPE REF TO lcl_owner.
+  DATA(pointer) = REF #( owner->items ).
+  PERFORM remember USING pointer.
+  PERFORM remember USING pointer.
+FORM remember USING supplied TYPE REF TO lcl_owner=>ty_items.
+  STATICS: BEGIN OF saved,
+             pointer TYPE REF TO lcl_owner=>ty_items,
+           END OF saved.
+  DATA(previous) = saved-pointer.
+  saved-pointer = supplied.
+  SORT previous->*.
+ENDFORM.`;
+    const issues = run(abap);
+    expect(issues).to.have.length(1);
+    expect(issues[0].getSeverity()).to.equal(Severity.Error);
+    expect(issues[0].getStart().getRow()).to.equal(abap.split("\n").findIndex(line => line.includes("PERFORM remember")) + 2);
+  });
+
+  it("keeps cached allocations and their reference cells shared between calls", () => {
+    const abap = program(`DATA(first) = cached( ).
+      first->pointer->* = REF #( owner->items ).
+      DATA(second) = cached( ).
+      SORT second->pointer->*->*.`)
+      .replace("CLASS-METHODS identity", `TYPES ty_pointer TYPE REF TO lcl_owner=>ty_items.
+        TYPES: BEGIN OF ty_holder, pointer TYPE REF TO ty_pointer, END OF ty_holder.
+        CLASS-METHODS cached RETURNING VALUE(result) TYPE REF TO ty_holder.
+        CLASS-METHODS identity`)
+      .replace("  METHOD identity.", `  METHOD cached.
+          STATICS saved TYPE REF TO ty_holder.
+          IF saved IS INITIAL.
+            CREATE DATA saved.
+            CREATE DATA saved->pointer.
+          ENDIF.
+          result = saved.
+        ENDMETHOD.
+        METHOD identity.`);
+    const issues = run(abap);
+    expect(issues).to.have.length(1);
+    expect(issues[0].getSeverity()).to.equal(Severity.Warning);
+    expect(issues[0].getStart().getRow()).to.equal(abap.split("\n").findIndex(line => line.includes("SORT second->pointer")) + 1);
+  });
+
+  it("keeps fresh allocations distinct when a STATICS variable is replaced on every call", () => {
+    const abap = program(`DATA(first) = fresh( ).
+      DATA(second) = fresh( ).
+      first->* = REF #( owner->items ).
+      SORT second->*->*.`)
+      .replace("CLASS-METHODS identity", `TYPES ty_pointer TYPE REF TO lcl_owner=>ty_items.
+        CLASS-METHODS fresh RETURNING VALUE(result) TYPE REF TO ty_pointer.
+        CLASS-METHODS identity`)
+      .replace("  METHOD identity.", `  METHOD fresh.
+          STATICS saved TYPE REF TO ty_pointer.
+          CREATE DATA saved.
+          result = saved.
+        ENDMETHOD.
+        METHOD identity.`);
+    expect(run(abap)).to.deep.equal([]);
+  });
+
+  for (const protectedFirst of [false, true]) {
+    it(`retains possible ${protectedFirst ? "protected" : "writable"} old storage when a cached allocation may be reset`, () => {
+      const abap = program(`DATA(first) = cached( ).
+        first->* = REF #( ${protectedFirst ? "owner->items" : "mutable_items"} ).
+        DATA(second) = cached( ).
+        second->* = REF #( ${protectedFirst ? "mutable_items" : "owner->items"} ).
+        SORT first->*->*.`)
+        .replace("CLASS-METHODS identity", `TYPES ty_pointer TYPE REF TO lcl_owner=>ty_items.
+          CLASS-METHODS cached RETURNING VALUE(result) TYPE REF TO ty_pointer.
+          CLASS-METHODS identity`)
+        .replace("  METHOD identity.", `  METHOD cached.
+            STATICS saved TYPE REF TO ty_pointer.
+            IF sy-ucomm = 'RESET'. CLEAR saved. ENDIF.
+            IF saved IS INITIAL. CREATE DATA saved. ENDIF.
+            result = saved.
+          ENDMETHOD.
+          METHOD identity.`);
+      const issues = run(abap);
+      expect(issues).to.have.length(1);
+      expect(issues[0].getSeverity()).to.equal(Severity.Warning);
     });
   }
 });

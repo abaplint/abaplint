@@ -34,6 +34,7 @@ TYPES: BEGIN OF ty_nested,
 TYPES ty_holders TYPE STANDARD TABLE OF ty_holder WITH DEFAULT KEY.
 CLASS lcl_user DEFINITION.
   PUBLIC SECTION.
+    DATA pointer TYPE ty_pointer.
     METHODS run IMPORTING condition TYPE i.
     CLASS-METHODS sort_value IMPORTING VALUE(holder) TYPE ty_holder.
     CLASS-METHODS sort_reference IMPORTING holder TYPE ty_holder.
@@ -93,6 +94,72 @@ ENDFORM.`;
   expect(new SyntaxLogic(reg, obj).run().issues.map(i => i.getMessage()), "syntax issues").to.deep.equal([]);
   return new ReadOnlyWrite().initialize(reg).run(obj);
 }
+
+describe("Rule: read_only_write, CASE condition effects", () => {
+  for (const {target, name} of [{target: "DATA(selected)", name: "selected"}, {target: "casted", name: "casted"}]) {
+    it(`preserves object identity through CASE TYPE INTO ${target}`, () => {
+      const issues = run(`CREATE OBJECT owner.
+      DATA(actual) = NEW lcl_user( ).
+      actual->pointer = REF #( owner->items ).
+      DATA object TYPE REF TO object.
+      DATA casted TYPE REF TO lcl_user.
+      object = actual.
+      CASE TYPE OF object.
+        WHEN TYPE lcl_user INTO ${target}.
+          SORT ${name}->pointer->*.
+      ENDCASE.`);
+      expect(issues).to.have.length(1);
+      expect(issues[0].getSeverity()).to.equal(Severity.Error);
+    });
+  }
+
+  for (const tail of ["WHEN OTHERS. SORT pointer->*.", "WHEN 2. SORT pointer->*."]) {
+    it(`carries an empty WHEN operand's rebinding into ${tail}`, () => {
+      const issues = run(`CREATE OBJECT owner.
+      DATA(pointer) = REF #( mutable ).
+      CASE condition.
+        WHEN redirect( EXPORTING writable = REF #( owner->items ) CHANGING pointer = pointer ).
+        ${tail}
+      ENDCASE.`);
+      expect(issues).to.have.length(1);
+      expect(issues[0].getSeverity()).to.equal(Severity.Error);
+    });
+  }
+
+  it("retains WHEN operand effects on the final no-match path", () => {
+    const issues = run(`CREATE OBJECT owner.
+    DATA(pointer) = REF #( mutable ).
+    CASE condition.
+      WHEN redirect( EXPORTING writable = REF #( owner->items ) CHANGING pointer = pointer ).
+    ENDCASE.
+    SORT pointer->*.`);
+    expect(issues).to.have.length(1);
+    expect(issues[0].getSeverity()).to.equal(Severity.Error);
+  });
+
+  it("isolates matching branch assignments from later WHEN operands", () => {
+    expect(run(`CREATE OBJECT owner.
+    DATA(pointer) = REF #( mutable ).
+    CASE condition.
+      WHEN 1.
+        pointer = REF #( owner->items ).
+      WHEN OTHERS.
+        SORT pointer->*.
+    ENDCASE.`)).to.deep.equal([]);
+  });
+
+  it("joins short-circuited OR operands for the body but evaluates them all before OTHERS", () => {
+    const issues = run(`CREATE OBJECT owner.
+    DATA(pointer) = REF #( mutable ).
+    CASE condition.
+      WHEN 1 OR redirect( EXPORTING writable = REF #( owner->items ) CHANGING pointer = pointer ).
+        SORT pointer->*.
+      WHEN OTHERS.
+        SORT pointer->*.
+    ENDCASE.`);
+    expect(issues.map(i => i.getSeverity())).to.deep.equal([Severity.Warning, Severity.Error]);
+  });
+});
 
 describe("Rule: read_only_write, copied values", () => {
   const protectedValues = [
