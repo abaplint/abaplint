@@ -62,6 +62,7 @@ If the statement contains a JOIN it is not checked`,
     const suffix = rows[end.getRow() - 1].slice(end.getCol() - 1).trimStart();
     // Keep chained '*' continuations out of the full-line comment column.
     const newline = suffix !== "" && suffix.startsWith('"') === false ? "\n " : "";
+
     return {
       description: `Add "#EC CI_NOORDER`,
       edit: EditHelper.insertAt(file, end, ` "#EC CI_NOORDER${newline}`),
