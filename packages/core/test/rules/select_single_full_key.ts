@@ -4,6 +4,10 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Issue} from "../../src/issue";
 import {SelectSingleFullKey} from "../../src/rules";
 import {IFile} from "../../src";
+import {applyEditSingle} from "../../src/edit_helper";
+import {ABAPObject} from "../../src/objects/_abap_object";
+import {Unknown} from "../../src/abap/2_statements/statements/_statement";
+import * as Statements from "../../src/abap/2_statements/statements";
 
 const ztab = `
 <?xml version="1.0" encoding="utf-8"?>
@@ -179,6 +183,88 @@ async function findIssues(files: IFile[]): Promise<readonly Issue[]> {
 }
 
 describe("Rule: select_single_full_key", () => {
+
+  const select = "SELECT SINGLE * FROM ztab INTO @DATA(result)";
+  const quickfixes = [
+    {
+      name: "after the period",
+      input: `${select}.`,
+      output: `${select}. "#EC CI_NOORDER`,
+    },
+    {
+      name: "after a pragma",
+      input: `${select} ##SUBRC_OK.`,
+      output: `${select} ##SUBRC_OK. "#EC CI_NOORDER`,
+    },
+    {
+      name: "after a pragma on the following line",
+      input: `${select}\n  ##SUBRC_OK.`,
+      output: `${select}\n  ##SUBRC_OK. "#EC CI_NOORDER`,
+    },
+    {
+      name: "preserving a trailing comment",
+      input: `${select}. "existing explanation`,
+      output: `${select}. "#EC CI_NOORDER "existing explanation`,
+    },
+    {
+      name: "preserving the next statement on the same line",
+      input: `${select}. WRITE result.`,
+      output: `${select}. "#EC CI_NOORDER\n  WRITE result.`,
+    },
+    {
+      name: "preserving the next line",
+      input: `${select}.\nWRITE result.`,
+      output: `${select}. "#EC CI_NOORDER\nWRITE result.`,
+    },
+  ];
+
+  for (const test of quickfixes) {
+    it(`quickfix ${test.name}`, async () => {
+      const reg = new Registry().addFiles([
+        new MemoryFile("zfoo.prog.abap", test.input),
+        new MemoryFile("ztab.tabl.xml", ztab),
+      ]);
+      await reg.parseAsync();
+      const rule = new SelectSingleFullKey().initialize(reg);
+      const issues = rule.run(reg.getFirstObject()!);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getDefaultFix()).to.equal(undefined);
+      const fixes = issues[0].getAlternativeFixes();
+      expect(fixes?.length).to.equal(1);
+      applyEditSingle(reg, fixes![0].edit);
+      expect(reg.getFileByName("zfoo.prog.abap")!.getRaw()).to.equal(test.output);
+
+      await reg.parseAsync();
+      const file = (reg.getFirstObject()! as ABAPObject).getABAPFiles()[0];
+      const statements = file.getStatements();
+      expect(statements.filter(s => s.get() instanceof Unknown).length).to.equal(0);
+      expect(statements.filter(s => s.get() instanceof Statements.Select).length).to.equal(1);
+      expect(statements.filter(s => s.get() instanceof Statements.Write).length).to.equal(test.input.includes("WRITE") ? 1 : 0);
+      expect(rule.run(reg.getFirstObject()!).length).to.equal(0);
+    });
+  }
+
+  it("quickfix preserves the rest of a chained SELECT", async () => {
+    const input = "SELECT SINGLE: * FROM ztab INTO @DATA(first),* FROM ztab INTO @DATA(second).";
+    const reg = new Registry().addFiles([
+      new MemoryFile("zfoo.prog.abap", input),
+      new MemoryFile("ztab.tabl.xml", ztab),
+    ]);
+    await reg.parseAsync();
+    const rule = new SelectSingleFullKey().initialize(reg);
+    const issues = rule.run(reg.getFirstObject()!);
+    expect(issues.length).to.equal(2);
+    expect(issues[0].getDefaultFix()).to.equal(undefined);
+    applyEditSingle(reg, issues[0].getAlternativeFixes()![0].edit);
+    expect(reg.getFileByName("zfoo.prog.abap")!.getRaw()).to.equal(
+      "SELECT SINGLE: * FROM ztab INTO @DATA(first), \"#EC CI_NOORDER\n * FROM ztab INTO @DATA(second).");
+
+    await reg.parseAsync();
+    const file = (reg.getFirstObject()! as ABAPObject).getABAPFiles()[0];
+    expect(file.getStatements().filter(s => s.get() instanceof Unknown).length).to.equal(0);
+    expect(file.getStatements().filter(s => s.get() instanceof Statements.Select).length).to.equal(2);
+    expect(rule.run(reg.getFirstObject()!).length).to.equal(1);
+  });
 
   it("test 1", async () => {
     const abap = "parser error";

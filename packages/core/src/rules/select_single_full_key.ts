@@ -57,10 +57,15 @@ If the statement contains a JOIN it is not checked`,
     this.conf = conf;
   }
 
-  private buildFix(file: ABAPFile, statement: StatementNode) {
+  private buildFix(file: ABAPFile, statement: StatementNode, rows: readonly string[]) {
+    const end = statement.getLastToken().getEnd();
+    const suffix = rows[end.getRow() - 1].slice(end.getCol() - 1).trimStart();
+    // Keep chained '*' continuations out of the full-line comment column.
+    const newline = suffix !== "" && suffix.startsWith('"') === false ? "\n " : "";
+
     return {
       description: `Add "#EC CI_NOORDER`,
-      edit: EditHelper.insertAt(file, statement.getLastToken().getStart(), ` "#EC CI_NOORDER`),
+      edit: EditHelper.insertAt(file, end, ` "#EC CI_NOORDER${newline}`),
     };
   }
 
@@ -79,6 +84,7 @@ If the statement contains a JOIN it is not checked`,
 
     for (const file of obj.getABAPFiles()) {
       const statements = file.getStatements();
+      const rows = file.getRawRows();
       for (let i = 0; i < statements.length; i++) {
         const s = statements[i];
         if (!(s.get() instanceof Statements.Select)) {
@@ -127,7 +133,7 @@ If the statement contains a JOIN it is not checked`,
         }
 
         if (set.size > 0) {
-          const fix = this.buildFix(file, s);
+          const fix = this.buildFix(file, s, rows);
           issues.push(Issue.atStatement(file, s, message, this.getMetadata().key, this.getConfig().severity, undefined, [fix]));
         }
       }
