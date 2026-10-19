@@ -1,4 +1,6 @@
-import {statementType} from "../_utils";
+import {getStatements, statementType} from "../_utils";
+import {expect} from "chai";
+import {Source, Target} from "../../../src/abap/2_statements/expressions";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
@@ -15,3 +17,9 @@ const tests = [
 ];
 
 statementType(tests, "ADD", Statements.Add);
+
+it("ADD reads the range and writes GIVING", () => {
+  const node = getStatements("ADD first THEN second UNTIL last GIVING result.")[0];
+  expect(node.findDirectExpressions(Source).map(s => s.concatTokens())).to.deep.equal(["first", "second", "last"]);
+  expect(node.findDirectExpressions(Target).map(t => t.concatTokens())).to.deep.equal(["result"]);
+});

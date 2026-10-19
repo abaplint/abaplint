@@ -22,6 +22,7 @@ import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 import {ReferenceType} from "../5_syntax/_reference";
 import {Alias} from "./alias";
 import {IInterfaceDefinition} from "./_interface_definition";
+import {ABAPFileInformationParser} from "../4_file_information/abap_file_information_parser";
 
 export class Attributes implements IAttributes {
   private readonly static: ClassAttribute[];
@@ -172,14 +173,16 @@ export class Attributes implements IAttributes {
         if (ctyp instanceof Structures.Data) {
           const found = DataStructure.runSyntax(c, input);
           if (found !== undefined) {
-            const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
+            const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue(),
+                                            ABAPFileInformationParser.isReadOnly(c.findDirectStatement(Statements.DataBegin)!));
             this.instance.push(attr);
             input.scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.ClassData) {
           const found = new ClassDataStructure().runSyntax(c, input);
           if (found !== undefined) {
-            const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
+            const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue(),
+                                            ABAPFileInformationParser.isReadOnly(c.findDirectStatement(Statements.ClassDataBegin)!));
             this.static.push(attr);
             input.scope.addIdentifier(attr);
           }
@@ -329,7 +332,7 @@ export class Attributes implements IAttributes {
 
     input.scope.addIdentifier(found);
 
-    return new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
+    return new ClassAttribute(found, visibility, found.getMeta(), found.getValue(), ABAPFileInformationParser.isReadOnly(node));
   }
 
 }

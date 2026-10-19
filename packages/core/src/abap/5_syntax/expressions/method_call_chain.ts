@@ -19,7 +19,8 @@ export class MethodCallChain {
   public static runSyntax(
     node: ExpressionNode,
     input: SyntaxInput,
-    targetType?: AbstractType): AbstractType | undefined {
+    targetType?: AbstractType,
+    standaloneCall = false): AbstractType | undefined {
 
     const helper = new ObjectOriented(input.scope);
     const children = node.getChildren();
@@ -40,7 +41,7 @@ export class MethodCallChain {
     }
 
     let currentIndex = 1;
-    let context: AbstractType | undefined = this.findTop(first, input, targetType);
+    let context: AbstractType | undefined = this.findTop(first, input, targetType, standaloneCall);
     if (first.get() instanceof Expressions.MethodCall) {
       currentIndex--;
     }
@@ -157,7 +158,8 @@ export class MethodCallChain {
       || type instanceof DecFloat34Type;
   }
 
-  private static findTop(first: INode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType | undefined {
+  private static findTop(first: INode, input: SyntaxInput, targetType: AbstractType | undefined,
+                         standaloneCall: boolean): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
       const token = first.getFirstToken();
       const className = token.getStr();
@@ -176,7 +178,7 @@ export class MethodCallChain {
       input.scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, input.filename);
       return new ObjectReferenceType(classDefinition);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-      return FieldChain.runSyntax(first, input, ReferenceType.DataReadReference);
+      return FieldChain.runSyntax(first, input, ReferenceType.DataReadReference, false, standaloneCall);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.NewObject) {
       return NewObject.runSyntax(first, input, targetType);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Cast) {

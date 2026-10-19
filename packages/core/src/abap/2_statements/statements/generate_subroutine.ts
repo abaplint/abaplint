@@ -7,7 +7,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class GenerateSubroutine implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const name = seq("NAME", Source);
+    const name = seq("NAME", Target);
     const message = seq("MESSAGE", Target);
     const messageid = seq("MESSAGE-ID", Target);
     const line = seq("LINE", Target);

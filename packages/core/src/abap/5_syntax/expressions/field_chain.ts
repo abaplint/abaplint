@@ -17,6 +17,7 @@ import {SourceField} from "./source_field";
 import {isFieldSymbolItself, substringType} from "./_substring";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue, dataObjectBeforeStaticArrow} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
+import {targetReference} from "./_target_reference";
 
 export class FieldChain {
 
@@ -24,7 +25,8 @@ export class FieldChain {
     node: ExpressionNode,
     input: SyntaxInput,
     refType?: ReferenceType | ReferenceType[] | undefined,
-    allowGenericDeference = false): AbstractType | undefined {
+    allowGenericDeference = false,
+    standaloneCall = false): AbstractType | undefined {
 
     if (node.getFirstChild()?.get() instanceof Expressions.SourceField
         && node.findDirectExpression(Expressions.ComponentName)) {
@@ -131,7 +133,17 @@ export class FieldChain {
           context = context.getRowType();
         }
       } else if (current.get() instanceof Expressions.AttributeName) {
-        context = AttributeName.runSyntax(context, current, input, refType);
+        // LOOP ASSIGNING records potential writes, but binding the alias does not modify the attribute.
+        const writing = refType === ReferenceType.DataWriteReference
+          || (Array.isArray(refType) && refType.includes(ReferenceType.DataWriteReference)
+            && refType.includes(ReferenceType.DataReadReference) === false);
+        // ABAP requires a writable table for a standalone call through a table expression.
+        // The receiver itself is still read, which is what lint rules need to see.
+        const tableCall = standaloneCall
+          && children.some((child, index) => index > i && child.get() instanceof Expressions.TableExpression);
+        const target = writing || tableCall ? targetReference(children, i + 1) : undefined;
+        const type = writing ? target : refType;
+        context = AttributeName.runSyntax(context, current, input, type, true, target === ReferenceType.DataWriteReference);
       } else if (current.get() instanceof Expressions.FieldOffset && current instanceof ExpressionNode) {
         const offset = FieldOffset.runSyntax(current, input);
         if (!isFieldSymbolItself(children, i)) {

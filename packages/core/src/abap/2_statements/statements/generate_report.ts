@@ -17,9 +17,9 @@ export class GenerateReport implements IStatement {
     const headers = str("WITH PRECOMPILED HEADERS");
     const test = str("WITH TEST CODE");
     const messageid = seq("MESSAGE-ID", Target);
-    const trace = seq("TRACE-FILE", Target);
+    const trace = seq("TRACE-FILE", Source);
     const shortdumpid = seq("SHORTDUMP-ID", Target);
-    const directory = seq("DIRECTORY ENTRY", Target);
+    const directory = seq("DIRECTORY ENTRY", Source);
 
     const options = per(without, message, include, trace, line, word, offset, headers, test, messageid, shortdumpid, directory);
 

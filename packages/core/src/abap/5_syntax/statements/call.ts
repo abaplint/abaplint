@@ -12,7 +12,7 @@ export class Call implements StatementSyntax {
 
     if (children.length === 2) {
       const first = children[0] as ExpressionNode;
-      MethodCallChain.runSyntax(first, input);
+      MethodCallChain.runSyntax(first, input, undefined, true);
       return;
     }
 

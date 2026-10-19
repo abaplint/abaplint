@@ -43,7 +43,7 @@ export class Constants {
 
     const type = new TypedIdentifier(name, input.filename,
                                      new Basic.StructureType(components),
-                                     [IdentifierMeta.ReadOnly, IdentifierMeta.Static]);
+                                     [IdentifierMeta.ReadOnly, IdentifierMeta.Static], values);
     return {type, values};
   }
 }

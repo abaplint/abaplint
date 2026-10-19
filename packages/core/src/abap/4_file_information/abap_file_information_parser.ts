@@ -301,7 +301,7 @@ export class ABAPFileInformationParser {
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
         level: AttributeLevel.Instance,
-        readOnly: this.isReadOnly(d),
+        readOnly: ABAPFileInformationParser.isReadOnly(d),
         visibility,
       });
     }
@@ -316,7 +316,7 @@ export class ABAPFileInformationParser {
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
         level: AttributeLevel.Static,
-        readOnly: this.isReadOnly(d),
+        readOnly: ABAPFileInformationParser.isReadOnly(d),
         visibility,
       });
     }
@@ -334,7 +334,7 @@ export class ABAPFileInformationParser {
     return ret;
   }
 
-  private isReadOnly(statement: StatementNode): boolean {
+  public static isReadOnly(statement: StatementNode): boolean {
     const definition = statement.findDirectExpression(Expressions.DataDefinition);
     const nodes = definition ? [definition, ...definition.findAllExpressions(Expressions.TypeTableKey)] : [statement];
     // In these grammar nodes, a direct READ token only occurs in the READ-ONLY modifier.

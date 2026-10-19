@@ -4,7 +4,6 @@ import {InlineFS} from "../expressions/inline_fs";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
-import {AbstractType} from "../../types/basic/_abstract_type";
 import {AnyType, CharacterType, DataReference, DataType, DecFloat16Type, DecFloat34Type, FloatType, Integer8Type, IntegerType, PackedType,
   StringType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
@@ -15,11 +14,11 @@ import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 export class InsertInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
-    let targetType: AbstractType | undefined;
-    const t = node.findDirectExpression(Expressions.Target);
-    if (t) {
-      targetType = Target.runSyntax(t, input);
-    }
+    const targets = node.findDirectExpressions(Expressions.Target);
+    const reference = node.findDirectTokenByText("REFERENCE") ? targets[targets.length - 1] : undefined;
+    const t = targets.find(target => target !== reference);
+    const tableType = t ? Target.runSyntax(t, input) : undefined;
+    let targetType = tableType;
     // a generically typed dref->* is checked at runtime, except where an index table is expected
     const genericByKey = targetType instanceof DataType
       && t?.getLastChild()?.get() instanceof Expressions.Dereference
@@ -58,13 +57,15 @@ export class InsertInternal implements StatementSyntax {
       return;
     }
 
+    const rowType = targetType instanceof TableType ? targetType.getRowType()
+      : targetType ?? (sourceType instanceof TableType ? sourceType.getRowType() : sourceType);
     const afterAssigning = node.findExpressionAfterToken("ASSIGNING");
     if (afterAssigning?.get() instanceof Expressions.FSTarget) {
       const inlinefs = afterAssigning?.findDirectExpression(Expressions.InlineFS);
       if (inlinefs) {
-        InlineFS.runSyntax(inlinefs, input, sourceType);
+        InlineFS.runSyntax(inlinefs, input, rowType);
       } else {
-        FSTarget.runSyntax(afterAssigning, input, sourceType);
+        FSTarget.runSyntax(afterAssigning, input, rowType);
       }
     }
 
@@ -106,19 +107,19 @@ export class InsertInternal implements StatementSyntax {
       }
     }
 
-    const afterInto = node.findExpressionAfterToken("INTO");
-    if (afterInto?.get() instanceof Expressions.Target && sourceType) {
-      const inline = afterInto.findDirectExpression(Expressions.InlineData);
-      if (inline) {
-        InlineData.runSyntax(afterInto, input, new DataReference(sourceType));
+    if (reference && rowType) {
+      if (reference.findDirectExpression(Expressions.InlineData)) {
+        InlineData.runSyntax(reference, input, new DataReference(rowType));
       } else {
-        const type = Target.runSyntax(afterInto, input);
-        if (type instanceof TableType && type.getAccessType() === TableAccessType.hashed) {
-          const message = "Implicit or explicit index operation on hashed table is not possible";
-          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-          return;
-        }
+        Target.runSyntax(reference, input);
       }
+    }
+    const destinationType = tableType ?? sourceType;
+    if (node.findDirectTokenByText("TABLE") === undefined
+        && destinationType instanceof TableType && destinationType.getAccessType() === TableAccessType.hashed) {
+      const message = "Implicit or explicit index operation on hashed table is not possible";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
