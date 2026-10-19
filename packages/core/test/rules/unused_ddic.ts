@@ -882,4 +882,68 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("TTYP used as function module TABLES parameter", async () => {
+    const ttyp = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZFUGR_TTYP</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWKIND></ROWKIND>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000030</LENG>
+    <ACCESSMODE>S</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <DDTEXT>table type</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const fugrxml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>test</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>SAPLZFUGR_TEST</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>ZFUGR_TEST_LIST</FUNCNAME>
+     <SHORT_TEXT>test</SHORT_TEXT>
+     <TABLES>
+      <RSTBL>
+       <PARAMETER>LIST</PARAMETER>
+       <TYP>ZFUGR_TTYP</TYP>
+      </RSTBL>
+     </TABLES>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const saplabap = `* empty`;
+
+    const functionabap = `FUNCTION zfugr_test_list.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  TABLES
+*"      LIST TYPE  ZFUGR_TTYP
+*"----------------------------------------------------------------------
+  CLEAR list[].
+ENDFUNCTION.`;
+
+    const files = [
+      new MemoryFile(`zfugr_ttyp.ttyp.xml`, ttyp),
+      new MemoryFile(`zfugr_test.fugr.xml`, fugrxml),
+      new MemoryFile(`zfugr_test.fugr.saplzfugr_test.abap`, saplabap),
+      new MemoryFile(`zfugr_test.fugr.zfugr_test_list.abap`, functionabap),
+    ];
+    const issues = await run(files);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
