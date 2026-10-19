@@ -164,7 +164,7 @@ export class FieldChain {
 
     if (node instanceof ExpressionNode
         && node.get() instanceof Expressions.SourceFieldSymbol) {
-      return SourceFieldSymbol.runSyntax(node, input);
+      return SourceFieldSymbol.runSyntax(node, input, type);
     } else if (node instanceof ExpressionNode
         && node.get() instanceof Expressions.SourceField) {
       return SourceField.runSyntax(node, input, type);
@@ -179,7 +179,8 @@ export class FieldChain {
       }
       const found = input.scope.existsObject(classNam);
       if (found?.id) {
-        input.scope.addReference(classTok, found.id, ReferenceType.ObjectOrientedReference, input.filename);
+        input.scope.addReference(classTok, found.id, ReferenceType.ObjectOrientedReference, input.filename,
+                                 {writeOperand: type === ReferenceType.DataWriteReference});
         return new ObjectReferenceType(found.id);
       } else if (input.scope.getDDIC().inErrorNamespace(classNam) === false) {
         input.scope.addReference(classTok, undefined,

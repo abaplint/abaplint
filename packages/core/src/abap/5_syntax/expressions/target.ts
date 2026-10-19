@@ -182,7 +182,8 @@ export class Target {
     } else if (node.get() instanceof Expressions.ClassName) {
       const found = input.scope.findObjectDefinition(name);
       if (found) {
-        input.scope.addReference(token, found, ReferenceType.ObjectOrientedReference, input.filename);
+        input.scope.addReference(token, found, ReferenceType.ObjectOrientedReference, input.filename,
+                                 {writeOperand: referenceType === ReferenceType.DataWriteReference});
         return new ObjectReferenceType(found);
       } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, {ooName: name, ooType: "CLAS"});
@@ -197,6 +198,8 @@ export class Target {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return VoidType.get(CheckSyntaxKey);
       }
+      input.scope.addReference(token, undefined, referenceType, input.filename,
+                               {writeOperand: referenceType === ReferenceType.DataWriteReference});
       return ret;
     }
 

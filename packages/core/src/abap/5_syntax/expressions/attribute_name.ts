@@ -64,7 +64,7 @@ export class AttributeName {
         return VoidType.get(CheckSyntaxKey);
       }
       if (type) {
-        input.scope.addReference(token, found, type, input.filename);
+        input.scope.addReference(token, found, type, input.filename, readOnly ? {readOnly: true} : undefined);
       }
       if (found && name.includes("~")) {
         const idef = input.scope.findInterfaceDefinition(name.split("~")[0]);
