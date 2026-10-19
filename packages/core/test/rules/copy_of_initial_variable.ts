@@ -27,6 +27,13 @@ const tests: IRedundantTest[] = [
   {abap: inMethod("DATA v TYPE c LENGTH 2.\nDATA x TYPE c LENGTH 3.\nx = v.\nresult = strlen( x )."), cnt: 0},
   {abap: inMethod("DATA v TYPE i.\ntext = v."), cnt: 0},
   {abap: inMethod("FIELD-SYMBOLS <a> TYPE any.\nASSIGN attr TO <a>.\nDATA v TYPE i.\n<a> = v."), cnt: 0},
+  // DATA(v) = VALUE t( ). is initial, also in loops
+  {abap: inMethod("DATA(v) = VALUE i( ).\nattr = v."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(v) = VALUE i( ).\nDO 2 TIMES.\n  CLEAR v.\n  attr = v.\nENDDO."), cnt: 1, fix: true},
+  {abap: inMethod("DO 2 TIMES.\n  DATA(v) = VALUE i( ).\nENDDO.\nattr = v."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(v) = VALUE i( ).\nv = 1.\nattr = v."), cnt: 0},
+  {abap: inMethod("DATA(v) = VALUE string( ).\nDATA x TYPE c LENGTH 3.\nx = v.\nresult = strlen( x )."), cnt: 0},
+  {abap: inMethod("DATA(v) = VALUE i( ).\nDATA(x) = v.\nattr = x."), cnt: 0},
   // VALUE, writes, address taken
   {abap: inMethod("DATA v TYPE i VALUE 1.\nattr = v."), cnt: 0},
   {abap: inMethod("DATA v TYPE i.\nv = 1.\nattr = v."), cnt: 0},
@@ -63,6 +70,15 @@ testRuleFix([
     input: inMethod(`    DATA v TYPE i.
     ref->attr = v.`),
     output: inMethod(`    CLEAR ref->attr.`),
+  },
+  {
+    input: inMethod(`    DO 2 TIMES.
+      DATA(v) = VALUE i( ).
+      attr = v.
+    ENDDO.`),
+    output: inMethod(`    DO 2 TIMES.
+      CLEAR attr.
+    ENDDO.`),
   },
 ], CopyOfInitialVariable);
 

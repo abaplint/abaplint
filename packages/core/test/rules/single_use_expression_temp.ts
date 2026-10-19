@@ -125,6 +125,13 @@ const tests: IRedundantTest[] = [
   {abap: inMethod("DATA t1 TYPE i.\nt1 = 5.\nput( ).\nIF val = 1.\n  put( p = t1 ).\nENDIF."), cnt: 1, fix: true},
   {abap: inMethod("DATA t1 TYPE i.\nt1 = co.\nput( ).\nput( p = t1 )."), cnt: 1, fix: true},
   {abap: inMethod("DATA t1 TYPE string.\nt1 = str( ).\nCLEAR text.\ntext = t1."), cnt: 0},
+  // DATA(v) = VALUE t( ). v = <expression>.
+  {abap: inMethod("DATA(t29) = VALUE abap_bool( ).\nDATA t32 TYPE REF TO lcl.\nt29 = xsdbool( val IS INITIAL ).\nIF t29 = abap_true.\n  put( o = t32 ).\nENDIF."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(t1) = VALUE i( ).\nCLEAR t1.\nt1 = get( ).\nput( p = t1 )."), cnt: 1, fix: true},
+  {abap: inMethod("DO 2 TIMES.\n  DATA(t1) = VALUE f( ).\n  t1 = t1 + 1.\n  DATA(t2) = VALUE f( ).\n  t2 = t1 + 1.\n  t1 = t2.\nENDDO."), cnt: 1, fix: true},
+  {abap: inMethod("TYPES ty_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.\nDATA(t1) = VALUE ty_tab( ).\nt1 = VALUE ty_tab( ( 1 ) ).\nDATA(t) = t1.\ntab = t."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(t1) = VALUE f( ).\nt1 = strlen( text ).\nDATA f2 TYPE f.\nf2 = t1.\nCLEAR f2."), cnt: 0},
+  {abap: inMethod("DATA(t1) = VALUE string( ).\nt1 = str( ).\nt1 = str( ).\nstr( s = t1 )."), cnt: 0},
   // into y = v. also up casts and expressions typed by the target
   {abap: inMethod("DATA o TYPE REF TO object.\nDATA t1 TYPE REF TO lif.\nt1 = me->ref.\no = t1.\nput( o = CAST lcl( o ) )."), cnt: 1, fix: true},
   {abap: inMethod("DATA t1 TYPE REF TO lcl.\nt1 = NEW #( ).\nref = t1."), cnt: 1, fix: true},

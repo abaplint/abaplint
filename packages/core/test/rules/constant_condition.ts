@@ -109,6 +109,12 @@ ENDIF.`), cnt: 1, fix: true},
   {abap: inMethod("DATA(c) = abap_false.\nIF c = abap_true.\n  DATA x TYPE i.\nENDIF.\nresult = x."), cnt: 0},
   {abap: inMethod("DATA(c) = abap_false.\nIF c = abap_true.\n  FIELD-SYMBOLS <f> TYPE i.\nENDIF.\nASSIGN attr TO <f>."), cnt: 0},
   {abap: inMethod("DATA(c) = abap_false.\nIF c = abap_true.\n  TYPES ty TYPE i.\nENDIF.\nDATA y TYPE ty."), cnt: 0},
+  // never changed DATA(v) = VALUE t( ).
+  {abap: inMethod("DATA(v) = VALUE abap_bool( ).\nIF v IS INITIAL.\n  result = 1.\nENDIF."), cnt: 1, fix: true},
+  {abap: inMethod("DO 2 TIMES.\n  DATA(v) = VALUE i( ).\n  IF v IS NOT INITIAL.\n    result = 1.\n  ENDIF.\nENDDO."), cnt: 1, fix: true},
+  {abap: inMethod("TYPES ty_ref TYPE REF TO lcl.\nDATA(r) = VALUE ty_ref( ).\nIF r IS BOUND.\n  result = 1.\nENDIF."), cnt: 1, fix: true},
+  {abap: inMethod("DATA(v) = VALUE abap_bool( ).\nv = abap_true.\nIF v IS INITIAL.\nENDIF."), cnt: 0},
+  {abap: inMethod("TYPES ty_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.\nDATA(v) = VALUE ty_tab( ( 1 ) ).\nIF v IS INITIAL.\nENDIF."), cnt: 0},
   // never changed variable: VALUE, writes, address, CHANGING, attributes and parameters
   {abap: inMethod("DATA v TYPE i VALUE 1.\nIF v IS INITIAL.\nENDIF."), cnt: 0},
   {abap: inMethod("DATA v TYPE i.\nv = 1.\nIF v IS INITIAL.\nENDIF."), cnt: 0},

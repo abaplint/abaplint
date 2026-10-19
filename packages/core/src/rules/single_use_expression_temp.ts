@@ -12,10 +12,10 @@ import {IRegistry} from "../_iregistry";
 import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
-import {IOccurrence, NUMERIC_FUNCTIONS, ObjectAnalysis, OccurrenceKind, Procedure, SourceKind, Variable,
-  characterConstant, dataSource, deleteStatement, expressionPath, expressionType, formalParameter, identicalTypes,
-  isCondition, isImmutable, isReferenceType, literalType, mergeEdits, nodeText, plainClear, plainData, plainMove,
-  singleField, singleTarget, targetType, unchangedBetween} from "./_procedure_analysis";
+import {IOccurrence, InitialDeclaration, NUMERIC_FUNCTIONS, ObjectAnalysis, OccurrenceKind, Procedure, SourceKind,
+  Variable, characterConstant, dataSource, deleteStatement, expressionPath, expressionType, formalParameter,
+  identicalTypes, initialDeclaration, isCondition, isImmutable, isReferenceType, literalType, mergeEdits, nodeText,
+  plainClear, plainMove, singleField, singleTarget, targetType, unchangedBetween} from "./_procedure_analysis";
 
 export class SingleUseExpressionTempConf extends BasicRuleConfig {
 }
@@ -64,6 +64,8 @@ interface ITemp {
   source: ExpressionNode;
   /** the statements that the quick fix deletes */
   remove: StatementNode[];
+  /** the variable has the declared type, DATA v TYPE t. or DATA(v) = VALUE t( )., not the type of the expression */
+  typed: boolean;
 }
 
 export class SingleUseExpressionTemp implements IRule {
@@ -79,8 +81,9 @@ export class SingleUseExpressionTemp implements IRule {
 when all of the following hold:
 
 * v is a local variable of a METHOD, FORM or FUNCTION, its address is never taken. DATA(v) has no other
-  reference than its single read; DATA v TYPE t. without VALUE and not chained has exactly one write besides
-  CLEARs, v = <expression>., all CLEARs are before it, and exactly one read after it
+  reference than its single read; DATA v TYPE t. without VALUE and not chained, or DATA(v) = VALUE t( ). with
+  nothing in the parentheses, has exactly one write besides CLEARs, v = <expression>., all CLEARs are before it,
+  and exactly one read after it
 * the read is one of
   * the complete source of y = v.
   * the receiver of a method call or attribute access: v->m( ), v->attr
@@ -98,7 +101,7 @@ when all of the following hold:
   minus, no numeric functions like abs( ) or trunc( ) whose type follows the argument, no CONV or EXACT except
   the constant CONV t( literal ), no # type inference at the top. String templates, && concatenations, literals, method calls, NEW, CAST,
   constructor expressions with explicit type and table expressions are fine
-* for DATA v TYPE t., the static type of the expression is identical to t. Into y = v. also a reference whose
+* for DATA v TYPE t. and DATA(v) = VALUE t( )., the static type of the expression is identical to t. Into y = v. also a reference whose
   static type is a subtype of t, unless y is an inline declaration, and an expression whose type depends on the
   target, like arithmetic, if y has a type identical to t
 * VALUE, CORRESPONDING, COND, SWITCH, REDUCE and FILTER can build their result directly in the target,
@@ -160,7 +163,7 @@ lo_meta = NEW zcl_meta( iv_key = |abapdoc| ).`,
         continue;
       }
       for (const variable of procedure.locals()) {
-        const temp = variable.inline ? this.inlineTemp(procedure, variable) : this.declaredTemp(variable);
+        const temp = (variable.inline ? this.inlineTemp(procedure, variable) : undefined) ?? this.declaredTemp(variable);
         const read = variable.reads()[0];
         if (temp === undefined || read === undefined) {
           continue;
@@ -195,13 +198,13 @@ lo_meta = NEW zcl_meta( iv_key = |abapdoc| ).`,
         || !this.targetIndependent(procedure, move.source)) {
       return undefined;
     }
-    return {variable, write: declaration, source: move.source, remove: [declaration]};
+    return {variable, write: declaration, source: move.source, remove: [declaration], typed: false};
   }
 
-  /** DATA v TYPE t. [CLEAR v.] v = <expression>. with a single read after it */
+  /** DATA v TYPE t. or DATA(v) = VALUE t( )., [CLEAR v.] v = <expression>. with a single read after it */
   private declaredTemp(variable: Variable): ITemp | undefined {
     const declaration = variable.declaration!;
-    if (!plainData(declaration) || declaration.getColon() !== undefined || variable.escapes()) {
+    if (initialDeclaration(variable) === undefined || declaration.getColon() !== undefined || variable.escapes()) {
       return undefined;
     }
     const clears: IOccurrence[] = [];
@@ -227,7 +230,7 @@ lo_meta = NEW zcl_meta( iv_key = |abapdoc| ).`,
       return undefined;
     }
     return {variable, write: write.statement, source: move.source,
-      remove: [declaration, ...clears.map(c => c.statement), write.statement]};
+      remove: [declaration, ...clears.map(c => c.statement), write.statement], typed: true};
   }
 
   private placement(procedure: Procedure, statement: StatementNode, token: AbstractToken): Placement | undefined {
@@ -291,7 +294,7 @@ lo_meta = NEW zcl_meta( iv_key = |abapdoc| ).`,
     const kind = this.kind(procedure, temp.source);
     if (kind === ExpressionKind.Constant) {
       if (!procedure.dominates(temp.write, statement)
-          || (temp.variable.inline && isCondition(statement) && characterConstant(procedure, temp.source) !== undefined)) {
+          || (!temp.typed && isCondition(statement) && characterConstant(procedure, temp.source) !== undefined)) {
         return false;
       }
     } else if (statement !== procedure.nextExecuted(temp.write)
@@ -534,7 +537,7 @@ lo_meta = NEW zcl_meta( iv_key = |abapdoc| ).`,
     const use = placement === Placement.Move ? plainMove(statement)! : undefined;
     if (use !== undefined && !this.noAliasing(procedure, temp.source, use.target)) {
       return false;
-    } else if (temp.variable.inline) {
+    } else if (!temp.typed) {
       // the variable has the type of the expression
       return true;
     }
@@ -568,16 +571,29 @@ lo_meta = NEW zcl_meta( iv_key = |abapdoc| ).`,
       return identicalTypes(expression, type);
     }
     // constructor expressions with an explicit type, compared by the name of the type
-    const declared = temp.variable.declaration!.findDirectExpression(Expressions.DataDefinition)
-      ?.findDirectExpression(Expressions.Type);
-    const declaredName = declared?.findDirectExpression(Expressions.TypeName)?.concatTokens().toUpperCase();
-    const words = declared?.getTokens().map(t => t.getStr().toUpperCase()).join(" ");
+    const declared = this.declaredType(temp.variable);
     const constructed = this.constructedType(temp.source);
-    if (declaredName === undefined || constructed === undefined || constructed.name !== declaredName
-        || constructed.name === "#") {
-      return false;
+    return declared !== undefined && constructed !== undefined && constructed.name !== "#"
+      && constructed.name === declared.name && constructed.reference === declared.reference;
+  }
+
+  /** the type name of DATA v TYPE t., DATA v TYPE REF TO t. or DATA(v) = VALUE t( ). */
+  private declaredType(variable: Variable): {name: string, reference: boolean} | undefined {
+    const declaration = variable.declaration!;
+    if (initialDeclaration(variable) === InitialDeclaration.Value) {
+      return this.constructedType(plainMove(declaration)!.source);
     }
-    return words === (constructed.reference ? "TYPE REF TO " : "TYPE ") + declaredName;
+    const type = declaration.findDirectExpression(Expressions.DataDefinition)?.findDirectExpression(Expressions.Type);
+    const name = type?.findDirectExpression(Expressions.TypeName)?.concatTokens().toUpperCase();
+    const words = type?.getTokens().map(t => t.getStr().toUpperCase()).join(" ");
+    if (name === undefined) {
+      return undefined;
+    } else if (words === "TYPE " + name) {
+      return {name, reference: false};
+    } else if (words === "TYPE REF TO " + name) {
+      return {name, reference: true};
+    }
+    return undefined;
   }
 
   /** VALUE t( ... ), CONV t( ... ) etc., NEW c( ... ) and CAST c( ... ) with an explicit type */

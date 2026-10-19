@@ -8,7 +8,8 @@ import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IOccurrence, ObjectAnalysis, Procedure, SourceKind, Variable, dataSource, deleteStatement, identicalTypes,
-  isReferenceType, mergeEdits, nodeText, plainClear, plainCreateObject, plainData, plainMove, singleField, singleTarget,
+  initialDeclaration, isReferenceType, mergeEdits, nodeText, plainClear, plainCreateObject, plainMove, singleField,
+  singleTarget,
   unchangedBetween} from "./_procedure_analysis";
 
 export class CopyChainConf extends BasicRuleConfig {
@@ -27,7 +28,8 @@ export class CopyChain implements IRule {
 
 1. DATA v TYPE ... [CLEAR v.] v = src. ... y = v. when all of the following hold:
 
-* v is a local variable of a METHOD, FORM or FUNCTION, declared with DATA without VALUE
+* v is a local variable of a METHOD, FORM or FUNCTION, declared with DATA without VALUE, or with
+  DATA(v) = VALUE t( ). with an explicit type and nothing in the parentheses
 * v has exactly one write besides CLEAR: v = src., and all CLEARs are before it
 * v has exactly one read, the complete source of y = v.
 * src is a local variable, or a pass-by-value or RETURNING parameter of a method or form, its address is never
@@ -94,7 +96,7 @@ CREATE OBJECT ro_other.`,
       }
       for (const variable of procedure.locals()) {
         const declaration = variable.declaration!;
-        if (variable.inline || !plainData(declaration) || declaration.getColon() !== undefined
+        if (initialDeclaration(variable) === undefined || declaration.getColon() !== undefined
             || variable.escapes()) {
           continue;
         }

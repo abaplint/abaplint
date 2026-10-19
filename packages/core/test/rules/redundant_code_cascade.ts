@@ -124,6 +124,42 @@ describe("redundant code rules, cascades", () => {
     ENDDO.`, all());
   });
 
+  it("DATA(v) = VALUE t( ). as initial value, generated code", () => {
+    cascade(`    DATA(t29) = VALUE abap_bool( ).
+    DATA t32 TYPE REF TO lcl.
+    t29 = xsdbool( val IS INITIAL ).
+    IF t29 = abap_true.
+      RETURN.
+    ENDIF.
+    DATA(t228) = VALUE f( ).
+    DATA(t229) = CONV f( 0 ).
+    t228 = t229.
+    DO 2 TIMES.
+      DATA(t291) = VALUE f( ).
+      DATA(t293) = CONV f( 1 ).
+      t291 = t228 + t293.
+      t228 = t291.
+    ENDDO.
+    DATA(t300) = VALUE abap_bool( ).
+    CLEAR t300.
+    IF t300 IS INITIAL.
+      attr = t228.
+    ENDIF.
+    put( o = t32 ).`, `    DATA t32 TYPE REF TO lcl.
+    IF xsdbool( val IS INITIAL ) = abap_true.
+      RETURN.
+    ENDIF.
+    DATA(t228) = VALUE f( ).
+    t228 = CONV f( 0 ).
+    DO 2 TIMES.
+      DATA(t293) = CONV f( 1 ).
+      t228 = t228 + t293.
+    ENDDO.
+    DATA(t300) = VALUE abap_bool( ).
+      attr = t228.
+    put( o = t32 ).`, all());
+  });
+
   it("bound checks after create, one after the other", () => {
     const rounds = cascade(`    DATA t1 TYPE REF TO lcl.
     CREATE OBJECT t1.

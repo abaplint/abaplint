@@ -1,6 +1,6 @@
 import * as Expressions from "../abap/2_statements/expressions";
 import * as Statements from "../abap/2_statements/statements";
-import {ExpressionNode, StatementNode} from "../abap/nodes";
+import {StatementNode} from "../abap/nodes";
 import {CharacterType} from "../abap/types/basic";
 import {EditHelper, IEdit} from "../edit_helper";
 import {Issue} from "../issue";
@@ -9,7 +9,7 @@ import {IRegistry} from "../_iregistry";
 import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
-import {ObjectAnalysis, OccurrenceKind, Procedure, characterConstant, deleteStatement, ifBranches,
+import {ObjectAnalysis, OccurrenceKind, Procedure, characterConstant, deleteStatement, ifBranches, initialValue,
   mergeEdits, nodeText, plainData, plainMove, sameCharacters, singleTarget} from "./_procedure_analysis";
 
 export class BooleanFlagViaIfConf extends BasicRuleConfig {
@@ -137,14 +137,6 @@ ENDIF.`,
       return false;
     }
     const constant = characterConstant(procedure, move.source);
-    return (constant !== undefined && sameCharacters(constant, "")) || this.initialValue(move.source);
-  }
-
-  /** VALUE type( ) */
-  private initialValue(source: ExpressionNode): boolean {
-    const tokens = source.getTokens();
-    return tokens.length === 4 && tokens[0].getStr().toUpperCase() === "VALUE"
-      && source.findDirectExpression(Expressions.TypeNameOrInfer) !== undefined
-      && tokens[1].getStr() !== "#" && tokens[2].getStr() === "(" && tokens[3].getStr() === ")";
+    return (constant !== undefined && sameCharacters(constant, "")) || initialValue(move.source);
   }
 }

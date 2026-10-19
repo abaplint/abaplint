@@ -857,6 +857,50 @@ export function plainData(statement: StatementNode): boolean {
     && statement.findDirectExpression(Expressions.DataDefinition)?.findDirectExpression(Expressions.Value) === undefined;
 }
 
+/** VALUE type( ) with an explicit type and an empty body, ie. the initial value of the type */
+export function initialValue(source: ExpressionNode): boolean {
+  const tokens = source.getTokens();
+  return tokens.length === 4 && tokens[0].getStr().toUpperCase() === "VALUE"
+    && source.findDirectExpression(Expressions.TypeNameOrInfer) !== undefined
+    && tokens[1].getStr() !== "#" && tokens[2].getStr() === "(" && tokens[3].getStr() === ")";
+}
+
+export enum InitialDeclaration {
+  /** DATA v TYPE ... without VALUE: v is initial when the procedure starts, the statement is not executed */
+  Data = "data",
+  /** DATA(v) = VALUE t( ).: sets v to the initial value of t every time it is executed, also in each loop iteration */
+  Value = "value",
+}
+
+/** how the declaration of a local variable makes it initial, undefined if it does not */
+export function initialDeclaration(variable: Variable): InitialDeclaration | undefined {
+  const declaration = variable.declaration;
+  if (declaration === undefined) {
+    return undefined;
+  } else if (variable.inline === false) {
+    return plainData(declaration) ? InitialDeclaration.Data : undefined;
+  }
+  const move = plainMove(declaration);
+  return move !== undefined && move.operator === "=" && move.target.getChildren().length === 1
+    && move.target.findDirectExpression(Expressions.InlineData) !== undefined && initialValue(move.source)
+    ? InitialDeclaration.Value : undefined;
+}
+
+/** the variable is initial at the statement, which is its first reference after the declaration */
+export function initialAtFirstReference(procedure: Procedure, variable: Variable, statement: StatementNode): boolean {
+  const declaration = variable.declaration!;
+  const kind = initialDeclaration(variable);
+  // neither the declaration nor the statement in a loop: nothing can change the variable before the statement
+  const noLoop = procedure.loop(declaration) === undefined && procedure.loop(statement) === undefined;
+  if (kind === InitialDeclaration.Data) {
+    return noLoop;
+  } else if (kind === InitialDeclaration.Value) {
+    // executed before the statement in the same iteration
+    return noLoop || (procedure.dominates(declaration, statement) && procedure.sameLoop(declaration, statement));
+  }
+  return false;
+}
+
 /** constants of the class or program, builtin constants like abap_true, and me: never change */
 export function isImmutable(identifier: Identifier | undefined): boolean {
   if (!(identifier instanceof TypedIdentifier)) {
