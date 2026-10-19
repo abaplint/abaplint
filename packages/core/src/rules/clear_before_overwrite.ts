@@ -1,7 +1,6 @@
 import * as Expressions from "../abap/2_statements/expressions";
-import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
-import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
+import {StatementNode} from "../abap/nodes";
 import {TableType} from "../abap/types/basic";
 import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 import {Issue} from "../issue";
@@ -10,7 +9,8 @@ import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IOccurrence, ObjectAnalysis, Procedure, Variable, deleteStatement, expressionPath, formalParameter,
-  identicalTypes, isReferenceType, literalType, plainClear, plainMove, singleField, singleTarget} from "./_procedure_analysis";
+  identicalTypes, isReferenceType, literalType, plainClear, plainCreateObject, plainMove, singleField,
+  singleTarget} from "./_procedure_analysis";
 
 export class ClearBeforeOverwriteConf extends BasicRuleConfig {
 }
@@ -130,25 +130,9 @@ lv_name = iv_name.`,
     const move = plainMove(statement);
     if (move !== undefined) {
       return move.operator === "=" && singleTarget(move.target)?.getStart().equals(occurrence.token.getStart()) === true;
-    } else if (!(statement.get() instanceof Statements.CreateObject) || statement.getColon() !== undefined) {
-      return false;
     }
-    // CREATE OBJECT target [TYPE class] [EXPORTING parameters]
-    const children = statement.getChildren();
-    const target = children[2];
-    if (!(target instanceof ExpressionNode) || singleTarget(target)?.getStart().equals(occurrence.token.getStart()) !== true) {
-      return false;
-    }
-    // the last child is the period
-    for (let i = 3; i < children.length - 1; i += 2) {
-      const word = children[i] instanceof TokenNode ? children[i].getFirstToken().getStr().toUpperCase() : "";
-      const value = children[i + 1];
-      if (!((word === "TYPE" && value?.get() instanceof Expressions.ClassName)
-          || (word === "EXPORTING" && value?.get() instanceof Expressions.ParameterListS))) {
-        return false;
-      }
-    }
-    return true;
+    const create = plainCreateObject(statement);
+    return create !== undefined && singleTarget(create.target)?.getStart().equals(occurrence.token.getStart()) === true;
   }
 
   /** v = w. or v = literal. without conversion */

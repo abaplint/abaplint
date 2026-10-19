@@ -790,6 +790,37 @@ export function plainMove(statement: StatementNode): IPlainMove | undefined {
   return {target, source, operator};
 }
 
+export interface ICreateObject {
+  target: ExpressionNode;
+  /** the class after TYPE, if given */
+  type: ExpressionNode | undefined;
+}
+
+/** CREATE OBJECT target [TYPE class] [EXPORTING parameters]. without chaining, pragmas, EXCEPTIONS or dynamic parts */
+export function plainCreateObject(statement: StatementNode): ICreateObject | undefined {
+  if (!(statement.get() instanceof Statements.CreateObject) || statement.getColon() !== undefined
+      || statement.getPragmas().length > 0) {
+    return undefined;
+  }
+  const children = statement.getChildren();
+  const target = children[2];
+  if (!(target instanceof ExpressionNode) || !(target.get() instanceof Expressions.Target)) {
+    return undefined;
+  }
+  let type: ExpressionNode | undefined;
+  // the last child is the period
+  for (let i = 3; i < children.length - 1; i += 2) {
+    const word = children[i] instanceof TokenNode ? children[i].getFirstToken().getStr().toUpperCase() : "";
+    const value = children[i + 1];
+    if (word === "TYPE" && value instanceof ExpressionNode && value.get() instanceof Expressions.ClassName) {
+      type = value;
+    } else if (!(word === "EXPORTING" && value?.get() instanceof Expressions.ParameterListS)) {
+      return undefined;
+    }
+  }
+  return {target, type};
+}
+
 /** the source is a single field, ie. one token */
 export function singleField(source: ExpressionNode): AbstractToken | undefined {
   if (source.getChildren().length !== 1 || source.countTokens() !== 1) {

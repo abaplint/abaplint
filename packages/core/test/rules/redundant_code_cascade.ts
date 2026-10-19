@@ -153,9 +153,7 @@ describe("redundant code rules, cascades", () => {
     DATA(t24) = t18.
     t17 = t24.
     ref = t17.`, `    DATA t18 TYPE REF TO lcl.
-    DATA t19 TYPE REF TO lcl.
-    CREATE OBJECT t19.
-    t18 = t19.
+    CREATE OBJECT t18.
     t18->put( ).
     APPEND 1 TO t18->tab.
     t18->put( ).
