@@ -11,7 +11,6 @@ import {ObjectOriented} from "../_object_oriented";
 
 export class Message implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
-
     const exceptionName = node.findDirectExpression(Expressions.ExceptionName);
     const classicMessage = exceptionName ? new ObjectOriented(input.scope).checkClassicException() : undefined;
     if (exceptionName && classicMessage) {
