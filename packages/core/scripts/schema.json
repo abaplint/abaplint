@@ -324,6 +324,40 @@
       ],
       "type": "object"
     },
+    "BDEFCheckSyntaxConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "BDEFParserErrorConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "BeginEndNamesConf": {
       "additionalProperties": false,
       "properties": {
@@ -2286,6 +2320,28 @@
                 }
               ],
               "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/avoid_use"
+            },
+            "bdef_check_syntax": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFCheckSyntaxConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks behavior definition references to entities and implementation classes\nTags: Syntax\nhttps://rules.abaplint.org/bdef_check_syntax"
+            },
+            "bdef_parser_error": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFParserErrorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BDEF parsing\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/bdef_parser_error"
             },
             "begin_end_names": {
               "anyOf": [
@@ -4783,6 +4839,28 @@
                 }
               ],
               "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/avoid_use"
+            },
+            "bdef_check_syntax": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFCheckSyntaxConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks behavior definition references to entities and implementation classes\nTags: Syntax\nhttps://rules.abaplint.org/bdef_check_syntax"
+            },
+            "bdef_parser_error": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFParserErrorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BDEF parsing\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/bdef_parser_error"
             },
             "begin_end_names": {
               "anyOf": [
