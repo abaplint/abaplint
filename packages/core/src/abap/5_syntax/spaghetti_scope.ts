@@ -4,29 +4,98 @@ import {Identifier} from "../4_file_information/_identifier";
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
-import {IScopeData, IScopeIdentifier, IScopeVariable, ISpaghettiScopeNode, ISpaghettiScope} from "./_spaghetti_scope";
-import {ReferenceType} from "./_reference";
+import {DeferredInformation, IScopeData, IScopeIdentifier, IScopeVariable, ISpaghettiScopeNode, ISpaghettiScope} from "./_spaghetti_scope";
+import {IReference, ReferenceType} from "./_reference";
 import {AssertError} from "./assert_error";
+
+// most scopes only use a few of the containers, empty ones are shared and replaced on first write
+const EMPTY_OBJECT: unknown = Object.freeze({});
+const EMPTY_ARRAY: unknown = Object.freeze([]);
 
 abstract class ScopeData {
   private readonly data: IScopeData;
 
   public constructor() {
     this.data = {
-      vars: {},
-      cdefs: {},
-      idefs: {},
-      forms: [], // todo, refactor to object
-      types: {},
-      extraLikeTypes: {},
-      deferred: {},
-      references: [],
-      sqlConversion: [],
+      vars: EMPTY_OBJECT as IScopeData["vars"],
+      cdefs: EMPTY_OBJECT as IScopeData["cdefs"],
+      idefs: EMPTY_OBJECT as IScopeData["idefs"],
+      forms: EMPTY_ARRAY as IScopeData["forms"], // todo, refactor to object
+      types: EMPTY_OBJECT as IScopeData["types"],
+      extraLikeTypes: EMPTY_OBJECT as IScopeData["extraLikeTypes"],
+      deferred: EMPTY_OBJECT as IScopeData["deferred"],
+      references: EMPTY_ARRAY as IScopeData["references"],
+      sqlConversion: EMPTY_ARRAY as IScopeData["sqlConversion"],
     };
   }
 
   public getData(): IScopeData {
     return this.data;
+  }
+
+  // the shared empty containers are frozen, the methods below replace them on first write
+
+  public setVariable(name: string, identifier: TypedIdentifier): void {
+    if (this.data.vars === EMPTY_OBJECT) {
+      this.data.vars = {};
+    }
+    this.data.vars[name] = identifier;
+  }
+
+  public setType(name: string, type: TypedIdentifier): void {
+    if (this.data.types === EMPTY_OBJECT) {
+      this.data.types = {};
+    }
+    this.data.types[name] = type;
+  }
+
+  public setExtraLikeType(name: string, type: TypedIdentifier): void {
+    if (this.data.extraLikeTypes === EMPTY_OBJECT) {
+      this.data.extraLikeTypes = {};
+    }
+    this.data.extraLikeTypes[name] = type;
+  }
+
+  public setDeferred(name: string, deferred: DeferredInformation): void {
+    if (this.data.deferred === EMPTY_OBJECT) {
+      this.data.deferred = {};
+    }
+    this.data.deferred[name] = deferred;
+  }
+
+  public setClassDefinition(name: string, cdef: IClassDefinition): void {
+    if (this.data.cdefs === EMPTY_OBJECT) {
+      this.data.cdefs = {};
+    }
+    this.data.cdefs[name] = cdef;
+  }
+
+  public setInterfaceDefinition(name: string, idef: IInterfaceDefinition): void {
+    if (this.data.idefs === EMPTY_OBJECT) {
+      this.data.idefs = {};
+    }
+    this.data.idefs[name] = idef;
+  }
+
+  public addFormDefinitions(forms: readonly IFormDefinition[]): void {
+    if (this.data.forms === EMPTY_ARRAY) {
+      this.data.forms = [];
+    }
+    this.data.forms.push(...forms);
+  }
+
+  public addReference(reference: IReference): void {
+    if (this.data.references === EMPTY_ARRAY) {
+      this.data.references = [];
+    }
+    this.data.references.push(reference);
+  }
+
+  public addSQLConversion(conversion: IScopeData["sqlConversion"][number]): void {
+    if (this.data.sqlConversion === EMPTY_ARRAY) {
+      this.data.sqlConversion = [];
+    }
+    this.data.sqlConversion.push(conversion);
   }
 }
 
