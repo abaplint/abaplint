@@ -6,10 +6,18 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
 import {MessageSource} from "../expressions/message_source";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {ObjectOriented} from "../_object_oriented";
 
 export class Message implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
+    const exceptionName = node.findDirectExpression(Expressions.ExceptionName);
+    const classicMessage = exceptionName ? new ObjectOriented(input.scope).checkClassicException() : undefined;
+    if (exceptionName && classicMessage) {
+      input.issues.push(syntaxIssue(input, exceptionName.getFirstToken(), classicMessage));
+      return;
+    }
+
     const found = node.findExpressionAfterToken("INTO");
     const inline = found?.findDirectExpression(Expressions.InlineData);
 
