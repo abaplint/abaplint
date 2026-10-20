@@ -1,14 +1,20 @@
 import {Position} from "../../../position";
+import {VirtualPosition} from "../../../virtual_position";
 
-export abstract class AbstractToken {
-  private readonly start: Position;
+// the token is its own start position, saves a separate Position object per token
+export abstract class AbstractToken extends Position {
   private readonly str: string;
   private readonly strUpper: string;
+  // only assigned for tokens from macro expansion, so other tokens don't pay for the field
+  private readonly virtual?: VirtualPosition;
 
   public constructor(start: Position, str: string) {
-    this.start = start;
+    super(start.getRow(), start.getCol());
     this.str = str;
     this.strUpper = str.toUpperCase();
+    if (start instanceof VirtualPosition) {
+      this.virtual = start;
+    }
   }
 
   // special function, for debugging purposes, see https://github.com/abaplint/abaplint/pull/3137
@@ -24,19 +30,11 @@ export abstract class AbstractToken {
     return this.strUpper;
   }
 
-  public getRow(): number {
-    return this.start.getRow();
-  }
-
-  public getCol(): number {
-    return this.start.getCol();
-  }
-
   public getStart(): Position {
-    return this.start;
+    return this.virtual ?? this;
   }
 
   public getEnd(): Position {
-    return new Position(this.start.getRow(), this.start.getCol() + this.str.length);
+    return new Position(this.getRow(), this.getCol() + this.str.length);
   }
 }
