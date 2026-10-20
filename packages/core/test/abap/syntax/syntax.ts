@@ -18881,4 +18881,32 @@ ENDCLASS.`;
     ]);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
+
+  it("error, classic RAISE in method with class based exceptions", () => {
+    const issues = runProgram(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar RAISING cx_static_check.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    RAISE classic.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("error, MESSAGE RAISING classic in method with class based exceptions", () => {
+    const issues = runProgram(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar RAISING cx_static_check.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    MESSAGE e000(abc) RAISING classic.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equal(1);
+  });
 });
