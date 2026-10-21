@@ -107,6 +107,23 @@
       },
       "type": "object"
     },
+    "AbapdocShorttextLengthConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AddTestAttributesConf": {
       "additionalProperties": false,
       "properties": {
@@ -2211,6 +2228,17 @@
               ],
               "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
             },
+            "abapdoc_shorttext_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocShorttextLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc shorttexts longer than 60 characters.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_shorttext_length"
+            },
             "add_test_attributes": {
               "anyOf": [
                 {
@@ -3925,7 +3953,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of passing hardcoded texts to the exception\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
+              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -4741,6 +4769,17 @@
               ],
               "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
             },
+            "abapdoc_shorttext_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocShorttextLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc shorttexts longer than 60 characters.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_shorttext_length"
+            },
             "add_test_attributes": {
               "anyOf": [
                 {
@@ -6455,7 +6494,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of passing hardcoded texts to the exception\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
+              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
