@@ -15,6 +15,8 @@ import {AllowedObjectNamingConf} from "../src/rules/allowed_object_naming";
 import {AllowedObjectTypesConf} from "../src/rules/allowed_object_types";
 import {AmbiguousStatementConf} from "../src/rules/ambiguous_statement";
 import {AvoidUseConf} from "../src/rules/avoid_use";
+import {BDEFCheckSyntaxConf} from "../src/rules/bdef_check_syntax";
+import {BDEFParserErrorConf} from "../src/rules/bdef_parser_error";
 import {BeginEndNamesConf} from "../src/rules/begin_end_names";
 import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
 import {BooleanFlagViaIfConf} from "../src/rules/boolean_flag_via_if";
@@ -255,6 +257,8 @@ export interface IConfig {
     "allowed_object_types"?: AllowedObjectTypesConf | boolean,
     "ambiguous_statement"?: AmbiguousStatementConf | boolean,
     "avoid_use"?: AvoidUseConf | boolean,
+    "bdef_check_syntax"?: BDEFCheckSyntaxConf | boolean,
+    "bdef_parser_error"?: BDEFParserErrorConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
     "boolean_flag_via_if"?: BooleanFlagViaIfConf | boolean,
@@ -484,6 +488,8 @@ export interface IConfig {
     "allowed_object_types"?: AllowedObjectTypesConf | boolean,
     "ambiguous_statement"?: AmbiguousStatementConf | boolean,
     "avoid_use"?: AvoidUseConf | boolean,
+    "bdef_check_syntax"?: BDEFCheckSyntaxConf | boolean,
+    "bdef_parser_error"?: BDEFParserErrorConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
     "boolean_flag_via_if"?: BooleanFlagViaIfConf | boolean,
