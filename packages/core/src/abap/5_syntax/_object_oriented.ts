@@ -232,6 +232,16 @@ export class ObjectOriented {
     return `The special method "${name}" cannot be called directly`;
   }
 
+  // classic exceptions cannot be raised in a method declaring class based exceptions, returns the message otherwise
+  public checkClassicException(): string | undefined {
+    const methodName = this.scope.getEnclosingMethodName();
+    const classDef = this.scope.findClassDefinition(this.scope.getEnclosingClassName());
+    if (methodName && classDef && this.searchMethodName(classDef, methodName).method?.getRaising().length) {
+      return "Classic exceptions cannot be raised in methods with class based exceptions";
+    }
+    return undefined;
+  }
+
   // SUPER-> can only call the previous implementation of the method it is used in, returns the message otherwise
   // both names are resolved in the super class, so an alias and the method it stands for are the same
   public checkSuperCall(

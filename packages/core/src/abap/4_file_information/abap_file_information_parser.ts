@@ -285,23 +285,35 @@ export class ABAPFileInformationParser {
     }
 
     const ret: InfoAttribute[] = [];
-    for (const d of contents.findDirectStatements(Statements.Data)) {
+    const data = contents.findDirectStatements(Statements.Data);
+    for (const structure of contents.findDirectStructures(Structures.Data)) {
+      const begin = structure.findDirectStatement(Statements.DataBegin)!;
+      if (begin.findDirectExpression(Expressions.DefinitionName)) {
+        data.push(begin);
+      }
+    }
+    for (const d of data) {
       const name = d.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
         level: AttributeLevel.Instance,
-        readOnly: d.concatTokens().toUpperCase().includes(" READ-ONLY"),
+        readOnly: this.isReadOnly(d),
         visibility,
       });
     }
-    for (const d of contents.findDirectStatements(Statements.ClassData)) {
-      const name = d.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
+    const classData = contents.findDirectStatements(Statements.ClassData);
+    for (const structure of contents.findDirectStructures(Structures.ClassData)) {
+      classData.push(structure.findDirectStatement(Statements.ClassDataBegin)!);
+    }
+    for (const d of classData) {
+      const name = (d.findFirstExpression(Expressions.DefinitionName)
+        ?? d.findDirectExpression(Expressions.NamespaceSimpleName))!.getFirstToken();
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
         level: AttributeLevel.Static,
-        readOnly: d.concatTokens().toUpperCase().includes(" READ-ONLY"),
+        readOnly: this.isReadOnly(d),
         visibility,
       });
     }
@@ -317,6 +329,13 @@ export class ABAPFileInformationParser {
     }
 
     return ret;
+  }
+
+  private isReadOnly(statement: StatementNode): boolean {
+    const definition = statement.findDirectExpression(Expressions.DataDefinition);
+    const nodes = definition ? [definition, ...definition.findAllExpressions(Expressions.TypeTableKey)] : [statement];
+    // In these grammar nodes, a direct READ token only occurs in the READ-ONLY modifier.
+    return nodes.some(node => node.findDirectTokenByText("READ") !== undefined);
   }
 
   private parseMethodDefinition(node: StructureNode | undefined, visibility: Visibility): InfoMethodDefinition[] {

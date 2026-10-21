@@ -18793,4 +18793,120 @@ DATA lv TYPE int8.
 WRITE abs( lv ).`);
     expect(issues.length).to.equal(0);
   });
+
+  const emlDDLS = `define root view entity zi_eml_travel as select from ztravel {
+  key travel_id
+}`;
+  const emlBDEF = `managed implementation in class zbp_i_eml_travel unique;
+define behavior for zi_eml_travel alias ztravel
+lock master
+{
+  create;
+  update;
+}`;
+  const emlPool = `CLASS zbp_i_eml_travel DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zi_eml_travel.
+ENDCLASS.
+CLASS zbp_i_eml_travel IMPLEMENTATION.
+ENDCLASS.`;
+
+  it("READ ENTITIES OF, behavior definition not found", () => {
+    const issues = runProgram(`
+READ ENTITIES OF zr4_missing
+  ENTITY Item
+  ALL FIELDS WITH VALUE #( ( id = 1 ) )
+  RESULT DATA(items).`);
+    expect(issues[0]?.getMessage()).to.equal(`Behavior definition "zr4_missing" not found`);
+  });
+
+  it("READ ENTITIES OF, behavior definition outside error namespace", () => {
+    const issues = runProgram(`
+READ ENTITIES OF i_void_entity
+  ENTITY Item
+  ALL FIELDS WITH VALUE #( ( id = 1 ) )
+  RESULT DATA(items).`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("READ ENTITIES OF, behavior definition found", () => {
+    const issues = runMulti([
+      {filename: "zi_eml_travel.ddls.asddls", contents: emlDDLS},
+      {filename: "zi_eml_travel.bdef.asbdef", contents: emlBDEF},
+      {filename: "zfoobar.prog.abap", contents: `
+READ ENTITIES OF zi_eml_travel
+  ENTITY travel
+  ALL FIELDS WITH VALUE #( ( travel_id = 1 ) )
+  RESULT DATA(items).`},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("MODIFY ENTITIES OF, behavior definition not found", () => {
+    const issues = runProgram(`
+DATA lt_create TYPE voided.
+MODIFY ENTITIES OF zi_missing_bdef
+  ENTITY travel
+  CREATE FROM lt_create
+  FAILED DATA(failed).`);
+    expect(issues[0]?.getMessage()).to.equal(`Behavior definition "zi_missing_bdef" not found`);
+  });
+
+  it("MODIFY ENTITY, entity not found", () => {
+    const issues = runProgram(`
+DATA lt_create TYPE voided.
+MODIFY ENTITY zi_missing_entity
+  CREATE FROM lt_create
+  FAILED DATA(failed).`);
+    expect(issues[0]?.getMessage()).to.equal(`Entity "zi_missing_entity" not found`);
+  });
+
+  it("READ ENTITY IN LOCAL MODE, alias in behavior pool", () => {
+    const localsImp = `
+CLASS lhc_travel DEFINITION.
+  PRIVATE SECTION.
+    METHODS read_it.
+ENDCLASS.
+CLASS lhc_travel IMPLEMENTATION.
+  METHOD read_it.
+    DATA keys TYPE voided.
+    READ ENTITY IN LOCAL MODE ztravel
+      ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(items).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zi_eml_travel.ddls.asddls", contents: emlDDLS},
+      {filename: "zi_eml_travel.bdef.asbdef", contents: emlBDEF},
+      {filename: "zbp_i_eml_travel.clas.abap", contents: emlPool},
+      {filename: "zbp_i_eml_travel.clas.locals_imp.abap", contents: localsImp},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, classic RAISE in method with class based exceptions", () => {
+    const issues = runProgram(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar RAISING cx_static_check.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    RAISE classic.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("error, MESSAGE RAISING classic in method with class based exceptions", () => {
+    const issues = runProgram(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar RAISING cx_static_check.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    MESSAGE e000(abc) RAISING classic.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equal(1);
+  });
 });

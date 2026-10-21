@@ -19,6 +19,13 @@ export class Raise implements StatementSyntax {
     const helper = new ObjectOriented(input.scope);
     let method: IMethodDefinition | VoidType | undefined;
 
+    const exceptionName = node.findDirectExpression(Expressions.ExceptionName);
+    const classicMessage = exceptionName ? helper.checkClassicException() : undefined;
+    if (exceptionName && classicMessage) {
+      input.issues.push(syntaxIssue(input, exceptionName.getFirstToken(), classicMessage));
+      return;
+    }
+
     const classTok = node.findDirectExpression(Expressions.ClassName)?.getFirstToken();
     const className = classTok?.getStr();
     if (classTok && className) {

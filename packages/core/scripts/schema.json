@@ -107,6 +107,23 @@
       },
       "type": "object"
     },
+    "AbapdocShorttextLengthConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AddTestAttributesConf": {
       "additionalProperties": false,
       "properties": {
@@ -322,6 +339,40 @@
         "exportToMemory",
         "exportToDatabase"
       ],
+      "type": "object"
+    },
+    "BDEFCheckSyntaxConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "BDEFParserErrorConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "BeginEndNamesConf": {
@@ -569,6 +620,23 @@
       "type": "object"
     },
     "CallTransactionAuthorityCheckConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "CastViaGenericReferenceConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -998,6 +1066,23 @@
       "type": "object"
     },
     "ClearAfterDeclarationConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "ClearBeforeOverwriteConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -2143,6 +2228,17 @@
               ],
               "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
             },
+            "abapdoc_shorttext_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocShorttextLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc shorttexts longer than 60 characters.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_shorttext_length"
+            },
             "add_test_attributes": {
               "anyOf": [
                 {
@@ -2253,6 +2349,28 @@
               ],
               "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/avoid_use"
             },
+            "bdef_check_syntax": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFCheckSyntaxConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks behavior definition references to entities and implementation classes\nTags: Syntax\nhttps://rules.abaplint.org/bdef_check_syntax"
+            },
+            "bdef_parser_error": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFParserErrorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BDEF parsing\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/bdef_parser_error"
+            },
             "begin_end_names": {
               "anyOf": [
                 {
@@ -2307,6 +2425,17 @@
                 }
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
+            },
+            "cast_via_generic_reference": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CastViaGenericReferenceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a down cast from a local reference variable that only holds a copy of another reference\nTags: Quickfix\nhttps://rules.abaplint.org/cast_via_generic_reference"
             },
             "catch_and_raise": {
               "anyOf": [
@@ -2549,6 +2678,17 @@
                 }
               ],
               "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Quickfix\nhttps://rules.abaplint.org/clear_after_declaration"
+            },
+            "clear_before_overwrite": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearBeforeOverwriteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds CLEAR of a local variable whose next use overwrites it completely\nTags: Quickfix\nhttps://rules.abaplint.org/clear_before_overwrite"
             },
             "clear_exporting_parameters": {
               "anyOf": [
@@ -3804,6 +3944,17 @@
               ],
               "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile, Quickfix, Upport\nhttps://rules.abaplint.org/prefer_raise_exception_new"
             },
+            "prefer_raise_message": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferRaiseMessageConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
+            },
             "prefer_returning_to_exporting": {
               "anyOf": [
                 {
@@ -4055,7 +4206,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds DATA(a) = <expression>. directly followed by x = a., assign the expression to x\nTags: Quickfix\nhttps://rules.abaplint.org/single_use_expression_temp"
+              "description": "Finds a local variable that only passes the value of an expression on to its single use\nTags: Quickfix\nhttps://rules.abaplint.org/single_use_expression_temp"
             },
             "slow_parameter_passing": {
               "anyOf": [
@@ -4618,6 +4769,17 @@
               ],
               "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
             },
+            "abapdoc_shorttext_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocShorttextLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc shorttexts longer than 60 characters.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_shorttext_length"
+            },
             "add_test_attributes": {
               "anyOf": [
                 {
@@ -4728,6 +4890,28 @@
               ],
               "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/avoid_use"
             },
+            "bdef_check_syntax": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFCheckSyntaxConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks behavior definition references to entities and implementation classes\nTags: Syntax\nhttps://rules.abaplint.org/bdef_check_syntax"
+            },
+            "bdef_parser_error": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFParserErrorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BDEF parsing\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/bdef_parser_error"
+            },
             "begin_end_names": {
               "anyOf": [
                 {
@@ -4782,6 +4966,17 @@
                 }
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
+            },
+            "cast_via_generic_reference": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CastViaGenericReferenceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a down cast from a local reference variable that only holds a copy of another reference\nTags: Quickfix\nhttps://rules.abaplint.org/cast_via_generic_reference"
             },
             "catch_and_raise": {
               "anyOf": [
@@ -5024,6 +5219,17 @@
                 }
               ],
               "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Quickfix\nhttps://rules.abaplint.org/clear_after_declaration"
+            },
+            "clear_before_overwrite": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearBeforeOverwriteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds CLEAR of a local variable whose next use overwrites it completely\nTags: Quickfix\nhttps://rules.abaplint.org/clear_before_overwrite"
             },
             "clear_exporting_parameters": {
               "anyOf": [
@@ -6279,6 +6485,17 @@
               ],
               "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile, Quickfix, Upport\nhttps://rules.abaplint.org/prefer_raise_exception_new"
             },
+            "prefer_raise_message": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferRaiseMessageConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
+            },
             "prefer_returning_to_exporting": {
               "anyOf": [
                 {
@@ -6530,7 +6747,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds DATA(a) = <expression>. directly followed by x = a., assign the expression to x\nTags: Quickfix\nhttps://rules.abaplint.org/single_use_expression_temp"
+              "description": "Finds a local variable that only passes the value of an expression on to its single use\nTags: Quickfix\nhttps://rules.abaplint.org/single_use_expression_temp"
             },
             "slow_parameter_passing": {
               "anyOf": [
@@ -9282,6 +9499,33 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "PreferRaiseMessageConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreExceptionClasses": {
+          "description": "List of exception class names to ignore, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "ignoreExceptionClasses"
+      ],
       "type": "object"
     },
     "PreferReturningToExportingConf": {

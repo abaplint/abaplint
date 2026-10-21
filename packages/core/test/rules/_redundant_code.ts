@@ -23,6 +23,8 @@ export const definitions = `CLASS lcl DEFINITION.
     METHODS chref CHANGING c TYPE REF TO lcl.
     METHODS ex EXPORTING e TYPE i.
     METHODS put IMPORTING p TYPE i OPTIONAL o TYPE REF TO lcl OPTIONAL.
+    METHODS constructor IMPORTING s TYPE string OPTIONAL.
+    METHODS str IMPORTING s TYPE string OPTIONAL VALUE(v) TYPE i OPTIONAL RETURNING VALUE(r) TYPE string.
 ENDCLASS.
 INTERFACE lif.
   DATA flag TYPE abap_bool.
@@ -47,6 +49,10 @@ CLASS lcl IMPLEMENTATION.
   METHOD ex.
   ENDMETHOD.
   METHOD put.
+  ENDMETHOD.
+  METHOD constructor.
+  ENDMETHOD.
+  METHOD str.
   ENDMETHOD.
   METHOD run.
 `;
@@ -128,19 +134,20 @@ export function fixAll(abap: string, rules: IRule[], version?: Version): {code: 
 export function testSyntaxAfterFix(tests: IRedundantTest[], rule: new () => IRule) {
   const key = new rule().getMetadata().key;
   describe(key + " syntax", () => {
-    it("fixtures have no syntax errors", () => {
-      for (const test of tests) {
-        if (test.syntaxError === true) {
-          continue;
-        }
-        const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
-        expect(syntaxIssues(reg), test.abap).to.deep.equal([]);
+    describe("fixtures have no syntax errors", () => {
+      for (const test of tests.filter(t => t.syntaxError !== true)) {
+        it(test.abap, () => {
+          const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
+          expect(syntaxIssues(reg), test.abap).to.deep.equal([]);
+        });
       }
     });
 
-    it("fixed fixtures still pass syntax", () => {
+    describe("fixed fixtures still pass syntax", () => {
       for (const test of tests.filter(t => t.fix === true)) {
-        fixAll(test.abap, [new rule()]);
+        it(test.abap, () => {
+          fixAll(test.abap, [new rule()]);
+        });
       }
     });
   });

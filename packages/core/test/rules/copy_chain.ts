@@ -12,6 +12,12 @@ const tests: IRedundantTest[] = [
   {abap: chain("v = src.\nIF imp = 1.\n  ref = v.\nENDIF."), cnt: 1, fix: true},
   {abap: chain("DO 2 TIMES.\n  v = src.\n  ref = v.\nENDDO."), cnt: 1, fix: true},
   {abap: chain("v = src.\nref->ref = v."), cnt: 1, fix: true},
+  // DATA(v) = VALUE t( ). as declaration
+  {abap: inMethod("DATA src TYPE i.\nsrc = attr.\nDATA(v) = VALUE i( ).\nv = src.\nattr = v."), cnt: 1, fix: true},
+  {abap: inMethod("DATA src TYPE i.\nsrc = attr.\nDATA(v) = VALUE f( ).\nv = src.\nattr = v."), cnt: 0},
+  // pass-by-value parameter as src, by reference parameters can change
+  {abap: inMethod("DATA v TYPE i.\nv = val.\nattr = v."), cnt: 1, fix: true},
+  {abap: inMethod("DATA v TYPE i.\nv = imp.\nattr = v."), cnt: 0},
   // up casts stay valid
   {abap: inMethod("DATA src TYPE REF TO lsub.\nDATA v TYPE REF TO lcl.\nv = src.\nDATA o TYPE REF TO object.\no = v.\nref ?= o."), cnt: 1, fix: true},
   {abap: inMethod("DATA src TYPE REF TO i.\nDATA v TYPE REF TO data.\nv = src.\nDATA d TYPE REF TO data.\nd = v.\nCLEAR d."), cnt: 1, fix: true},
@@ -26,7 +32,7 @@ const tests: IRedundantTest[] = [
     t18 = t19.
     DATA(t24) = t18.
     t17 = t24.
-    ref = t17.`), cnt: 2, fix: true},
+    ref = t17.`), cnt: 3, fix: true},
 
   // types that can convert
   {abap: inMethod("DATA src TYPE string.\nsrc = text.\nDATA v TYPE c LENGTH 10.\nv = src.\ntext = v."), cnt: 0},
@@ -59,6 +65,25 @@ const tests: IRedundantTest[] = [
   {abap: chain("v = src->obj( ).\nref = v."), cnt: 0},
   {abap: inMethod("DATA src TYPE i.\nsrc = attr.\nDATA v TYPE i VALUE 5.\nv = src.\nattr = v."), cnt: 0},
   {abap: inMethod("DATA: src TYPE REF TO lcl,\n      v TYPE REF TO lcl.\nv = src.\nref = v."), cnt: 0},
+  // CREATE OBJECT a. b = a.
+  {abap: inMethod("DATA b TYPE REF TO lcl.\nDATA a TYPE REF TO lcl.\nCREATE OBJECT a.\nb = a.\nput( o = b )."), cnt: 1, fix: true},
+  {abap: inMethod("DATA b TYPE REF TO lif.\nDATA a TYPE REF TO lsub.\nCREATE OBJECT a EXPORTING s = text.\nb = a.\nput( o = CAST lcl( b ) )."), cnt: 1, fix: true},
+  {abap: inMethod("DATA b TYPE REF TO object.\nDATA a TYPE REF TO lcl.\nCREATE OBJECT a.\nb = a.\nref ?= b."), cnt: 1, fix: true},
+  {abap: inMethod("DATA b TYPE REF TO lcl.\nDATA a TYPE REF TO lcl.\nCREATE OBJECT a TYPE lsub.\nb = a.\nput( o = b )."), cnt: 1, fix: true},
+  {abap: inMethod("DATA b TYPE REF TO lcl.\nDATA a TYPE REF TO lcl.\nCREATE OBJECT a.\nDATA c TYPE i.\nb = a.\nput( o = b ).\nCLEAR c."), cnt: 1, fix: true},
+  {abap: inMethod("DATA b TYPE REF TO lcl.\nIF val = 1.\n  DATA a TYPE REF TO lcl.\n  CREATE OBJECT a.\n  b = a.\nENDIF.\nput( o = b )."), cnt: 1, fix: true},
+  {abap: inMethod("DATA a TYPE REF TO lcl.\nCREATE OBJECT a.\nref = a."), cnt: 0},
+  {abap: inMethod("DATA b TYPE REF TO lcl.\nGET REFERENCE OF b INTO DATA(r).\nDATA a TYPE REF TO lcl.\nCREATE OBJECT a.\nb = a.\nput( o = b )."), cnt: 0},
+  {abap: inMethod("DATA b TYPE REF TO lcl.\nb = NEW #( ).\nDATA a TYPE REF TO lcl.\nCREATE OBJECT a EXPORTING s = b->text.\nb = a.\nput( o = b )."), cnt: 0},
+  {abap: inMethod("DATA a TYPE REF TO lcl.\nCREATE OBJECT a.\nDATA b TYPE REF TO lcl.\nb = a.\nput( o = b )."), cnt: 0},
+  {abap: inMethod("DATA a TYPE REF TO lcl.\nCREATE OBJECT a.\nDATA(b) = a.\nput( o = b )."), cnt: 0},
+  {abap: inMethod("DATA b TYPE REF TO lcl.\nDATA a TYPE REF TO lcl.\nCREATE OBJECT a.\nput( ).\nb = a.\nput( o = b )."), cnt: 0},
+  {abap: inMethod("DATA b TYPE REF TO lcl.\nDATA a TYPE REF TO lcl.\nCREATE OBJECT a.\nb = a.\nref = a.\nput( o = b )."), cnt: 0},
+  {abap: inMethod("DATA b TYPE REF TO lcl.\nDATA a TYPE REF TO lcl.\nCLEAR a.\nCREATE OBJECT a.\nb = a.\nput( o = b )."), cnt: 0},
+  {abap: inMethod("DATA b TYPE REF TO lcl.\nDATA a TYPE REF TO lcl.\nCREATE OBJECT a EXCEPTIONS OTHERS = 1.\nb = a.\nput( o = b )."), cnt: 0},
+  {abap: inMethod("DATA b TYPE REF TO lsub.\nDATA a TYPE REF TO lcl.\nCREATE OBJECT a.\nb ?= a.\nput( o = b )."), cnt: 0},
+  {abap: inMethod("DATA b TYPE REF TO lcl.\nDATA a TYPE REF TO lcl.\nCREATE OBJECT: a.\nb = a.\nput( o = b )."), cnt: 0},
+  {abap: inMethod("DATA b TYPE REF TO lcl.\nDATA: a TYPE REF TO lcl,\n      c TYPE i.\nCREATE OBJECT a.\nb = a.\nput( o = b ).\nCLEAR c."), cnt: 0},
   // dynamic code, macros, syntax errors
   {abap: chain("v = src.\nref = v.\nASSIGN ('ATTR') TO FIELD-SYMBOL(<fs>)."), cnt: 0},
   {abap: "DEFINE _copy.\n  ref = &1.\nEND-OF-DEFINITION.\n" + chain("v = src.\n_copy v."), cnt: 0},
@@ -89,6 +114,26 @@ testRuleFix([
     IF imp = 1.
       ref = src.
     ENDIF.`),
+  },
+  {
+    input: inMethod(`    DATA t9 TYPE REF TO lif.
+    DATA t10 TYPE REF TO lsub.
+    CREATE OBJECT t10 EXPORTING s = text.
+    t9 = t10.
+    put( o = CAST lcl( t9 ) ).`),
+    output: inMethod(`    DATA t9 TYPE REF TO lif.
+    CREATE OBJECT t9 TYPE lsub EXPORTING s = text.
+    put( o = CAST lcl( t9 ) ).`),
+  },
+  {
+    input: inMethod(`    DATA t9 TYPE REF TO lcl.
+    DATA t10 TYPE REF TO lcl.
+    CREATE OBJECT t10.
+    t9 = t10.
+    put( o = t9 ).`),
+    output: inMethod(`    DATA t9 TYPE REF TO lcl.
+    CREATE OBJECT t9.
+    put( o = t9 ).`),
   },
 ], CopyChain);
 

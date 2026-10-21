@@ -7,7 +7,7 @@ import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IFoldCandidate, IOccurrence, ObjectAnalysis, OccurrenceKind, PredicateKind, Procedure, Variable,
-  characterConstant, deleteStatement, foldIf, foldIssues, mergeEdits, plainClear, plainData, plainMove,
+  characterConstant, deleteStatement, foldIf, foldIssues, initialDeclaration, mergeEdits, plainClear, plainMove,
   sameCharacters, simplePredicate} from "./_procedure_analysis";
 
 export class ConstantConditionConf extends BasicRuleConfig {
@@ -30,8 +30,9 @@ c = <constant>, c <> <constant>, EQ, NE, c IS INITIAL, c IS NOT INITIAL, optiona
 The declaration must be executed before the condition on every path: the IF is in the block of the
 declaration or a nested block. The quick fix deletes the declaration.
 
-2. DATA v TYPE ... without VALUE, where v is never changed, except by CLEAR v., and its address is never taken,
-in a condition v IS [NOT] INITIAL or v IS [NOT] BOUND. The declaration is kept.
+2. DATA v TYPE ... without VALUE, or DATA(v) = VALUE t( ). with an explicit type and nothing in the parentheses,
+where v is never changed, except by CLEAR v., and its address is never taken, in a condition v IS [NOT] INITIAL
+or v IS [NOT] BOUND. The declaration is kept.
 
 The quick fix removes the IF branch that is never taken, or keeps the branch that is always taken and
 removes the rest, also in ELSEIF chains: a first IF branch that is never taken turns the next ELSEIF into IF,
@@ -77,10 +78,10 @@ ENDIF.`,
       }
       const candidates: IFoldCandidate[] = [];
       for (const variable of procedure.locals()) {
-        if (variable.inline) {
-          this.constantVariable(procedure, variable, candidates);
-        } else {
+        if (initialDeclaration(variable) !== undefined) {
           this.initialVariable(procedure, variable, candidates);
+        } else if (variable.inline) {
+          this.constantVariable(procedure, variable, candidates);
         }
       }
       issues.push(...foldIssues(procedure.file, candidates, this.getMetadata().key, this.conf.severity));
@@ -119,9 +120,9 @@ ENDIF.`,
     });
   }
 
-  /** DATA v TYPE ... never changed: IF v IS INITIAL / IS BOUND */
+  /** DATA v TYPE ... or DATA(v) = VALUE t( ). never changed: IF v IS INITIAL / IS BOUND */
   private initialVariable(procedure: Procedure, variable: Variable, candidates: IFoldCandidate[]) {
-    if (!plainData(variable.declaration!) || variable.escapes()
+    if (variable.escapes()
         || variable.writes().some(w => plainClear(w.statement)?.getStart().equals(w.token.getStart()) !== true)) {
       return;
     }

@@ -6,9 +6,12 @@ import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
 import {VoidType} from "../../types/basic";
 import {SyntaxInput} from "../_syntax_input";
+import {EML} from "../_eml";
 
 export class ModifyEntities implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
+
+    EML.checkEntities(node, input);
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       Source.runSyntax(s, input);

@@ -105,7 +105,7 @@ export class CurrentScope {
     } else if (this.isOO() && this.current.getData().vars[upper] !== undefined) {
       throw new Error(`"${name}" already defined`);
     }
-    this.current.getData().types[upper] = type;
+    this.current.setType(upper, type);
   }
 
   public addExtraLikeType(type: TypedIdentifier | undefined) {
@@ -126,7 +126,7 @@ export class CurrentScope {
     if (this.current.getData().extraLikeTypes[upper] !== undefined) {
       throw new Error(`Type name "${name}" already defined`);
     }
-    this.current.getData().extraLikeTypes[upper] = type;
+    this.current.setExtraLikeType(upper, type);
   }
 
   public addClassDefinition(c: IClassDefinition) {
@@ -137,14 +137,14 @@ export class CurrentScope {
     if (this.current.getData().cdefs[name] !== undefined) {
       throw new Error(`Class "${name}" already defined`);
     }
-    this.current.getData().cdefs[name] = c;
+    this.current.setClassDefinition(name, c);
   }
 
   public addFormDefinitions(f: readonly IFormDefinition[]) {
     if (this.current === undefined) {
       return;
     }
-    this.current.getData().forms.push(...f);
+    this.current.addFormDefinitions(f);
   }
 
   /** The FORM definitions are built up front, at that point the program level types are not known.
@@ -171,7 +171,7 @@ export class CurrentScope {
     if (this.current.getData().cdefs[name] !== undefined) {
       throw new Error(`Interface "${name}" already defined`);
     }
-    this.current.getData().idefs[name] = i;
+    this.current.setInterfaceDefinition(name, i);
   }
 
   public addNamedIdentifier(name: string, identifier: TypedIdentifier) {
@@ -185,7 +185,7 @@ export class CurrentScope {
     } else if (this.isOO() && this.current.getData().types[upper] !== undefined) {
       throw new Error(`"${name}" already defined`);
     }
-    this.current.getData().vars[upper] = identifier;
+    this.current.setVariable(upper, identifier);
   }
 
   public addNamedIdentifierToParent(name: string, identifier: TypedIdentifier) {
@@ -204,7 +204,7 @@ export class CurrentScope {
     } else if (this.isOO() && parent.getData().types[upper] !== undefined) {
       throw new Error(`"${name}" already defined`);
     }
-    parent.getData().vars[upper] = identifier;
+    parent.setVariable(upper, identifier);
   }
 
   public addIdentifier(identifier: TypedIdentifier | undefined) {
@@ -218,7 +218,7 @@ export class CurrentScope {
     if (token === undefined) {
       return;
     }
-    this.current!.getData().deferred[token.getStr().toUpperCase()] = {token, ooType: type};
+    this.current!.setDeferred(token.getStr().toUpperCase(), {token, ooType: type});
   }
 
   public addListPrefix(identifiers: readonly TypedIdentifier[], prefix: string) {
@@ -247,15 +247,15 @@ export class CurrentScope {
     const position = new Identifier(usage, filename);
     if (Array.isArray(type)) {
       for (const t of type) {
-        this.current?.getData().references.push({position, resolved: referencing, referenceType: t, extra});
+        this.current?.addReference({position, resolved: referencing, referenceType: t, extra});
       }
     } else {
-      this.current?.getData().references.push({position, resolved: referencing, referenceType: type, extra});
+      this.current?.addReference({position, resolved: referencing, referenceType: type, extra});
     }
   }
 
   public addSQLConversion(fieldName: string, message: string, token: AbstractToken) {
-    this.current?.getData().sqlConversion.push({fieldName, message, token});
+    this.current?.addSQLConversion({fieldName, message, token});
   }
 
 ///////////////////////////
@@ -294,6 +294,10 @@ export class CurrentScope {
       return undefined;
     }
     const name = (this.parentObj as Class).getClassDefinition()?.behaviorDefinitionName;
+    return this.findBehaviorDefinitionByName(name);
+  }
+
+  public findBehaviorDefinitionByName(name: string | undefined): BehaviorDefinition | undefined {
     if (name === undefined) {
       return undefined;
     }
