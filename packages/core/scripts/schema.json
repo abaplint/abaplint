@@ -3916,6 +3916,17 @@
               ],
               "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile, Quickfix, Upport\nhttps://rules.abaplint.org/prefer_raise_exception_new"
             },
+            "prefer_raise_message": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferRaiseMessageConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of passing hardcoded texts to the exception\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
+            },
             "prefer_returning_to_exporting": {
               "anyOf": [
                 {
@@ -6434,6 +6445,17 @@
                 }
               ],
               "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile, Quickfix, Upport\nhttps://rules.abaplint.org/prefer_raise_exception_new"
+            },
+            "prefer_raise_message": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferRaiseMessageConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of passing hardcoded texts to the exception\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -9438,6 +9460,33 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "PreferRaiseMessageConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreExceptionClasses": {
+          "description": "List of exception class names to ignore, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "ignoreExceptionClasses"
+      ],
       "type": "object"
     },
     "PreferReturningToExportingConf": {

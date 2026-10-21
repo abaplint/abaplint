@@ -160,6 +160,7 @@ import {PreferInsertIntoTableConf} from "../src/rules/prefer_insert_into_table";
 import {PreferIsNotConf} from "../src/rules/prefer_is_not";
 import {PreferPragmasConf} from "../src/rules/prefer_pragmas";
 import {PreferRaiseExceptionNewConf} from "../src/rules/prefer_raise_exception_new";
+import {PreferRaiseMessageConf} from "../src/rules/prefer_raise_message";
 import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_exporting";
 import {PreferStringTemplateConf} from "../src/rules/prefer_string_template";
 import {PreferXsdboolConf} from "../src/rules/prefer_xsdbool";
@@ -402,6 +403,7 @@ export interface IConfig {
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_pragmas"?: PreferPragmasConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,
+    "prefer_raise_message"?: PreferRaiseMessageConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "prefer_string_template"?: PreferStringTemplateConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
@@ -633,6 +635,7 @@ export interface IConfig {
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_pragmas"?: PreferPragmasConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,
+    "prefer_raise_message"?: PreferRaiseMessageConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "prefer_string_template"?: PreferStringTemplateConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
