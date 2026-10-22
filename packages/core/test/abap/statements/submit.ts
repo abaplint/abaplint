@@ -91,6 +91,29 @@ AND RETURN.`,
             SAP COVER PAGE        'X'
             RECEIVER              'SDF'
             AND RETURN.`,
+
+  `SUBMIT (w_report)  WITH SELECTION-TABLE i_rsparams
+                     TO SAP-SPOOL
+                         DESTINATION              p_pdest
+                         COPIES                   '1'
+                         LIST NAME                v_nome_lista
+                         COVER TEXT               v_nome_job
+                         LIST AUTHORITY           space
+                         IMMEDIATELY              space
+                         KEEP IN SPOOL            space
+                         NEW LIST IDENTIFICATION  'X'
+                         DATASET EXPIRATION       p_pexpi
+                         LINE-COUNT               '65'
+                         LINE-SIZE                '132'
+                         LAYOUT                   'X_65_132'
+                         SAP COVER PAGE           'D'
+                         COVER PAGE               space
+                         RECEIVER                 sy-uname
+                         DEPARTMENT               space
+                         ARCHIVE MODE             '1'
+                         WITHOUT SPOOL DYNPRO
+                  USER sy-uname VIA JOB v_nome_job NUMBER v_numero_job
+                  AND RETURN.`,
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

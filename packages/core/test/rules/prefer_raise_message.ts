@@ -64,7 +64,28 @@ describe("Rule: prefer_raise_message", () => {
   });
 
   it("parameter name containing text", async () => {
+    const issues = await findIssues("RAISE EXCEPTION TYPE zcx_error EXPORTING texts = lt_texts.");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("textid, TYPE", async () => {
     const issues = await findIssues("RAISE EXCEPTION TYPE zcx_error EXPORTING textid = zcx_error=>foo.");
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("TEXTID");
+  });
+
+  it("textid, NEW, upper case", async () => {
+    const issues = await findIssues("RAISE EXCEPTION NEW zcx_error( TEXTID = zcx_error=>foo ).");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("textid, with MESSAGE", async () => {
+    const issues = await findIssues("RAISE EXCEPTION TYPE zcx_error MESSAGE e001(zclass) EXPORTING textid = zcx_error=>foo.");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("textid, ignored via configuration", async () => {
+    const issues = await findIssues("RAISE EXCEPTION TYPE zcx_error EXPORTING textid = zcx_error=>foo.", ["zcx_error"]);
     expect(issues.length).to.equal(0);
   });
 

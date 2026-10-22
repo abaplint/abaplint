@@ -34,6 +34,10 @@ export class Submit implements IStatement {
     const datasetExpiration = seq("DATASET EXPIRATION", Source);
     const coverText = seq("COVER TEXT", Source);
     const listName = seq("LIST NAME", Source);
+    const listDataset = seq("LIST DATASET", Source);
+    const listAuthority = seq("LIST AUTHORITY", Source);
+    const coverPage = seq("COVER PAGE", Source);
+    const department = seq("DEPARTMENT", Source);
 
     const keep = seq("KEEP IN SPOOL", Source);
     const imm = seq("IMMEDIATELY", Source);
@@ -60,6 +64,10 @@ export class Submit implements IStatement {
                      dest,
                      coverText,
                      listName,
+                     listDataset,
+                     listAuthority,
+                     coverPage,
+                     department,
                      language,
                      free,
                      newList,
