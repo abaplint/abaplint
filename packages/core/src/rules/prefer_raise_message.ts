@@ -20,8 +20,8 @@ export class PreferRaiseMessage extends ABAPRule {
     return {
       key: "prefer_raise_message",
       title: "Prefer RAISE EXCEPTION with MESSAGE",
-      shortDescription: `Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT`,
-      extendedInformation: `Reports RAISE EXCEPTION statements where parameter TEXT is supplied.
+      shortDescription: `Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT or TEXTID`,
+      extendedInformation: `Reports RAISE EXCEPTION statements where parameter TEXT or TEXTID is supplied.
 
 Use a message class instead, so the text is translatable and can be found via where-used.
 
@@ -73,10 +73,11 @@ Exception classes can be excluded via configuration "ignoreExceptionClasses".`,
         continue;
       }
 
-      const text = parameters?.findDirectExpressions(Expressions.ParameterS).find(
-        p => p.findDirectExpression(Expressions.ParameterName)?.concatTokens().toUpperCase() === "TEXT");
-      if (text) {
-        const message = "Prefer RAISE EXCEPTION with MESSAGE, " + className + " raised with parameter TEXT";
+      const name = parameters?.findDirectExpressions(Expressions.ParameterS)
+        .map(p => p.findDirectExpression(Expressions.ParameterName)?.concatTokens().toUpperCase())
+        .find(n => n === "TEXT" || n === "TEXTID");
+      if (name) {
+        const message = "Prefer RAISE EXCEPTION with MESSAGE, " + className + " raised with parameter " + name;
         issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       }
     }
