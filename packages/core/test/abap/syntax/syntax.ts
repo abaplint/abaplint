@@ -16669,6 +16669,18 @@ REFRESH tab[].`;
     expect(issues[0]?.getMessage()).to.equal("VALUE, sy-index is not a constant");
   });
 
+  it("CONSTANTS VALUE sy-repid", () => {
+    const abap = `CONSTANTS c_repid LIKE sy-repid VALUE sy-repid.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("DATA VALUE syst-repid", () => {
+    const abap = `DATA lv_repid LIKE syst-repid VALUE syst-repid.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("RADIOBUTTON GROUP name too long", () => {
     const abap = `
 PARAMETERS p_red   RADIOBUTTON GROUP color DEFAULT 'X'.

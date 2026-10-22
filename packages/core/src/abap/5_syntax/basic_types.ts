@@ -1074,6 +1074,9 @@ export class BasicTypes {
         const message = "VALUE, " + concat.toLowerCase() + " is not a constant";
         this.input.issues.push(syntaxIssue(this.input, chain.getFirstToken(), message));
         return undefined;
+      } else if (concat === "SY-REPID" || concat === "SYST-REPID") {
+        // predefined constant in every program, not a SYST component
+        return undefined;
       }
       return this.resolveConstantValue(chain);
     }
