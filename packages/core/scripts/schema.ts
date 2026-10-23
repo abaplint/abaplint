@@ -169,6 +169,7 @@ import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_opera
 import {PreferredParameterIgnoredConf} from "../src/rules/preferred_parameter_ignored";
 import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
 import {RangeRowValuesConf} from "../src/rules/range_row_values";
+import {ReadOnlyWriteConf} from "../src/rules/read_only_write";
 import {ReduceProceduralCodeConf} from "../src/rules/reduce_procedural_code";
 import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
 import {RedundantCastConf} from "../src/rules/redundant_cast";
@@ -413,6 +414,7 @@ export interface IConfig {
     "preferred_parameter_ignored"?: PreferredParameterIgnoredConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
     "range_row_values"?: RangeRowValuesConf | boolean,
+    "read_only_write"?: ReadOnlyWriteConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
     "redundant_cast"?: RedundantCastConf | boolean,
@@ -646,6 +648,7 @@ export interface IConfig {
     "preferred_parameter_ignored"?: PreferredParameterIgnoredConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
     "range_row_values"?: RangeRowValuesConf | boolean,
+    "read_only_write"?: ReadOnlyWriteConf | boolean,
     "reduce_procedural_code"?: ReduceProceduralCodeConf | boolean,
     "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
     "redundant_cast"?: RedundantCastConf | boolean,
