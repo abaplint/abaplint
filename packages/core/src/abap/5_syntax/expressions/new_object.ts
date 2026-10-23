@@ -58,6 +58,8 @@ export class NewObject {
         }
       }
     } else if (typeName === "#" && targetType) {
+      const tid = new TypedIdentifier(typeToken, input.filename, targetType);
+      input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename);
       ret = targetType;
     } else if (typeName === "#") {
       throw new AssertError("NewObject, todo, infer type");

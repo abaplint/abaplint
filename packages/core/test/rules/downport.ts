@@ -187,6 +187,27 @@ CREATE DATA md TYPE i.`;
     testFix(abap, expected);
   });
 
+  it("NEW #( value ) into a data reference component, CREATE DATA and the value", async () => {
+    const abap = `TYPES: BEGIN OF ty, ref TYPE REF TO i, END OF ty.
+DATA result TYPE ty.
+result-ref = NEW #( 4 ).`;
+    const expected = `TYPES: BEGIN OF ty, ref TYPE REF TO i, END OF ty.
+DATA result TYPE ty.
+CREATE DATA result-ref.
+result-ref->* = 4.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW #( ) into a data reference component, CREATE DATA", async () => {
+    const abap = `TYPES: BEGIN OF ty, ref TYPE REF TO string, END OF ty.
+DATA result TYPE ty.
+result-ref = NEW #( ).`;
+    const expected = `TYPES: BEGIN OF ty, ref TYPE REF TO string, END OF ty.
+DATA result TYPE ty.
+CREATE DATA result-ref.`;
+    testFix(abap, expected);
+  });
+
   it("NEW into an object reference stays CREATE OBJECT", async () => {
     const abap = `DATA mo TYPE REF TO object.
 mo = NEW #( ).`;
