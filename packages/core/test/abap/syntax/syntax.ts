@@ -10,6 +10,8 @@ import {MemoryFile} from "../../../src/files/memory_file";
 import {applyEditSingle} from "../../../src/edit_helper";
 import {IReference, ReferenceType} from "../../../src/abap/5_syntax/_reference";
 import {tabl_t100xml} from "../../rules/sql_value_conversion";
+import {TypedIdentifier} from "../../../src/abap/types/_typed_identifier";
+import {DataReference} from "../../../src/abap/types/basic";
 
 function run(reg: IRegistry, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
              languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
@@ -1912,6 +1914,38 @@ rv = REDUCE i( INIT s = 0 FOR x IN it NEXT s = s + x ) / lines( it ).`;
     const lines = references.filter(r => r.referenceType === ReferenceType.BuiltinMethodReference
       && r.position.getName().toUpperCase() === "LINES");
     expect(lines.length).to.equals(1);
+  });
+
+  it("NEW #( ) into a data reference, inferred type reference", () => {
+    const abap = `
+TYPES: BEGIN OF ty_ann, a TYPE i, END OF ty_ann.
+TYPES: BEGIN OF ty, annotations TYPE REF TO ty_ann, END OF ty.
+DATA result TYPE ty.
+DATA r2 TYPE REF TO ty_ann.
+DATA r3 TYPE REF TO i.
+result-annotations = NEW #( a = 3 ).
+r2 = NEW #( a = 3 ).
+r3 = NEW #( 4 ).`;
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
+    const result = new SyntaxLogic(reg, getABAPObjects(reg)[0]).run();
+
+    expect(result.issues.length).to.equals(0);
+
+    const references: IReference[] = [];
+    const visit = (node: ReturnType<typeof result.spaghetti.getTop>): void => {
+      references.push(...node.getData().references);
+      for (const child of node.getChildren()) {
+        visit(child);
+      }
+    };
+    visit(result.spaghetti.getTop());
+    const inferred = references.filter(r => r.referenceType === ReferenceType.InferredType
+      && r.position.getName() === "#");
+    expect(inferred.length).to.equals(3);
+    for (const r of inferred) {
+      expect(r.resolved).to.be.instanceof(TypedIdentifier);
+      expect((r.resolved as TypedIdentifier).getType()).to.be.instanceof(DataReference);
+    }
   });
 
   it("built-in to_upper", () => {

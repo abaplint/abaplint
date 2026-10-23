@@ -17,6 +17,7 @@ import {ABAPFile} from "../abap/abap_file";
 import {ExpressionNode, StatementNode, StructureNode, TokenNode} from "../abap/nodes";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {AnyType, DataReference, ObjectReferenceType, StructureType, TableType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {EditHelper, IEdit} from "../edit_helper";
@@ -3638,12 +3639,9 @@ ${indentation}    output = ${uniqueName}.\n`;
   }
 
   /** NEW into a data reference creates data, CREATE OBJECT cannot: "target = NEW #|type( [value] )"
-   *  with a variable typed REF TO a data type becomes CREATE DATA plus the assignment of the value */
+   *  with a target typed REF TO a data type becomes CREATE DATA plus the assignment of the value */
   private newDataReference(high: StatementNode, target: ExpressionNode, found: ExpressionNode,
                            lowFile: ABAPFile, highSyntax: ISyntaxResult): string | undefined {
-    if (target.getChildren().length !== 1 || !(target.getFirstChild()?.get() instanceof Expressions.TargetField)) {
-      return undefined;
-    }
     const children = found.getChildren();
     const value = found.findDirectExpression(Expressions.Source);
     // NEW, the type, "(", optionally one value, ")"
@@ -3652,13 +3650,23 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     const name = target.concatTokens();
+    const typeExpr = found.findDirectExpression(Expressions.TypeNameOrInfer);
+    const typeName = typeExpr?.concatTokens();
     const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
-    const type = spag?.findVariable(name)?.getType();
+    let type: AbstractType | undefined = undefined;
+    if (typeName === "#") {
+      // the type of the target, as inferred by the syntax check
+      const typeToken = typeExpr!.getFirstToken();
+      const resolved = spag?.getData().references.find(r => r.referenceType === ReferenceType.InferredType
+        && r.position.getStart().equals(typeToken.getStart()))?.resolved;
+      type = resolved instanceof TypedIdentifier ? resolved.getType() : undefined;
+    } else if (target.getChildren().length === 1 && target.getFirstChild()?.get() instanceof Expressions.TargetField) {
+      type = spag?.findVariable(name)?.getType();
+    }
     if (!(type instanceof DataReference)) {
       return undefined;
     }
 
-    const typeName = found.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     let abap = `CREATE DATA ${name}` + (typeName === "#" ? "" : ` TYPE ${typeName}`) + ".";
     if (value === undefined) {
@@ -3704,7 +3712,7 @@ ${indentation}    output = ${uniqueName}.\n`;
               cdef = cglobal?.getDefinition();
             }
           } else {
-            throw new Error("newParameters, downport, unexpected");
+            return undefined; // not an object, CREATE OBJECT does not apply
           }
         }
 
