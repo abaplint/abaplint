@@ -81,6 +81,15 @@ export class InsertInternal implements StatementSyntax {
     }
 
     const afterInto = node.findExpressionAfterToken("INTO");
+    const reference = node.findDirectTokenByText("REFERENCE")
+      ? node.findDirectExpressions(Expressions.Target).find(target => target !== t) : undefined;
+    if (reference && reference !== afterInto && sourceType) {
+      if (reference.findDirectExpression(Expressions.InlineData)) {
+        InlineData.runSyntax(reference, input, new DataReference(sourceType));
+      } else {
+        Target.runSyntax(reference, input);
+      }
+    }
     if (afterInto?.get() instanceof Expressions.Target && sourceType) {
       const inline = afterInto.findDirectExpression(Expressions.InlineData);
       if (inline) {
