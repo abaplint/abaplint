@@ -6813,6 +6813,224 @@ ENDFORM.`;
     testFixAll(abap, expected);
   });
 
+  it("chained call with CHANGING, outline the object", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    lcl=>get( )->chg( CHANGING cv = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    DATA temp1 TYPE REF TO lcl.
+    temp1 = lcl=>get( ).
+    temp1->chg( CHANGING cv = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    testFix(abap, expected);
+  });
+
+  it("chained call with IMPORTING on a method of the own class", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    get( )->imp( IMPORTING ev = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    DATA temp1 TYPE REF TO lcl.
+    temp1 = get( ).
+    temp1->imp( IMPORTING ev = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    testFix(abap, expected);
+  });
+
+  it("chained call with CHANGING, object typed via an interface", async () => {
+    const abap = `INTERFACE lif.
+  METHODS chg CHANGING cv TYPE string.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ri) TYPE REF TO lif.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  DATA lv TYPE string.
+  lcl=>get( )->chg( CHANGING cv = lv ).
+ENDFORM.`;
+
+    const expected = `INTERFACE lif.
+  METHODS chg CHANGING cv TYPE string.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ri) TYPE REF TO lif.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  DATA lv TYPE string.
+  DATA temp1 TYPE REF TO lif.
+  temp1 = lcl=>get( ).
+  temp1->chg( CHANGING cv = lv ).
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("chained call without parameter keywords stays", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    lcl=>get( )->run( ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("unchained call with CHANGING stays", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    DATA lo TYPE REF TO lcl.
+    lo->chg( CHANGING cv = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("chained call with CHANGING on open-abap stays", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    lcl=>get( )->chg( CHANGING cv = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("INSERT, outline 702 built-in operand", async () => {
     const abap = `FORM bar.
   DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
