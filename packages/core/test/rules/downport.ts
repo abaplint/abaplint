@@ -7031,6 +7031,76 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("INSERT, outline 702 built-in operand", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  INSERT substring( val = lv_val off = 1 len = 2 ) INTO TABLE result.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  DATA temp1 TYPE string.
+  temp1 = substring( val = lv_val off = 1 len = 2 ).
+  INSERT temp1 INTO TABLE result.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("INSERT, multi-line 702 built-in operand", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  INSERT to_upper(
+    lv_val ) INTO TABLE result.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  DATA temp1 TYPE string.
+  temp1 = to_upper( lv_val ).
+  INSERT temp1 INTO TABLE result.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("INSERT, built-in older than 702 stays", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  INSERT lines( result ) INTO TABLE result.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("INSERT, built-in as part of a longer operand is the existing outline", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  INSERT lv_val && to_upper( lv_val ) INTO TABLE result.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Outline INSERT source expression");
+  });
+
+  it("INSERT, 702 built-in on open-abap stays", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  INSERT to_upper( lv_val ) INTO TABLE result.
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("table expression key, built-in older than 702 stays in the operand", async () => {
     const abap = `FORM bar.
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

@@ -16037,6 +16037,43 @@ SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("TYPE int8, below 7.50", () => {
+    const abap = `
+DATA lv_big TYPE int8.`;
+    const issues = runProgram(abap, [], Release.v702);
+    expect(issues[0]?.getMessage()).to.contain("requires 7.50");
+  });
+
+  it("TYPES int8 component, below 7.50", () => {
+    const abap = `
+TYPES: BEGIN OF ty_s,
+         big TYPE int8,
+       END OF ty_s.`;
+    const issues = runProgram(abap, [], Release.v740sp08);
+    expect(issues[0]?.getMessage()).to.contain("requires 7.50");
+  });
+
+  it("TYPE int8, 7.50", () => {
+    const abap = `
+DATA lv_big TYPE int8.`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("TYPE int8, open-abap", () => {
+    const abap = `
+DATA lv_big TYPE int8.`;
+    const issues = runProgram(abap, [], Release["open-abap"]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("TYPE int8, no version set", () => {
+    const abap = `
+DATA lv_big TYPE int8.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, no version set", () => {
     const abap = `
 SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
