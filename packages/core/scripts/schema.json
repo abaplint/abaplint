@@ -3953,7 +3953,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
+              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT or TEXTID\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -6494,7 +6494,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
+              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT or TEXTID\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
