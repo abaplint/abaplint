@@ -11,6 +11,7 @@ import {InlineData} from "../expressions/inline_data";
 import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
+
 export class InsertInternal implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
