@@ -16,8 +16,9 @@ import {ClassDefinition, InterfaceDefinition} from "../types";
 import {Field, FieldSub, TypeTableKey} from "../2_statements/expressions";
 import {BuiltIn} from "./_builtin";
 import {Position} from "../../position";
-import {SyntaxInput, syntaxIssue} from "./_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "./_syntax_input";
 import {IObjectAndToken} from "../../_iddic_references";
+import {Release, releaseAtLeast} from "../../version";
 
 export class BasicTypes {
   private readonly input: SyntaxInput;
@@ -260,7 +261,13 @@ export class BasicTypes {
 
     const chainText = typeName.concatTokens().toUpperCase();
     const f = this.input.scope.getDDIC().lookupBuiltinType(chainText, length, decimals, qualifiedName);
-    if (f !== undefined) {
+    if (f instanceof Types.Integer8Type
+        && !releaseAtLeast(this.input.scope.getRelease(), Release.v750)
+        && !this.input.scope.getOpenABAP()) {
+      const message = "Type INT8 requires 7.50";
+      this.input.issues.push(syntaxIssue(this.input, typeName.getFirstToken(), message));
+      return VoidType.get(CheckSyntaxKey);
+    } else if (f !== undefined) {
       return f;
     }
 
