@@ -339,6 +339,18 @@ Make sure to test the downported code, it might not always be completely correct
         }
       }
 
+      // INSERT with a 702 built-in function as the operand parses in the low version, but 702
+      // reads the function as a method call, "Method SUBSTRING does not exist"
+      if (ret.length === 0) {
+        for (let i = 0; i < lowStatements.length; i++) {
+          const issue = this.outlineInsertBuiltin(lowStatements[i], highStatements[i], lowFile, highSyntax);
+          if (issue) {
+            ret.push(issue);
+            break;
+          }
+        }
+      }
+
       // INTO after WHERE parses as a valid SELECT in the low version, but is only allowed in
       // strict SQL syntax, so move it also when the statement is no longer Unknown
       if (ret.length === 0) {
@@ -1297,6 +1309,45 @@ ${indentation}`);
     }
 
     return undefined;
+  }
+
+  /** INSERT substring( ... ) INTO TABLE tab, the operand is outlined into a variable */
+  private outlineInsertBuiltin(low: StatementNode, high: StatementNode, lowFile: ABAPFile,
+                               highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.InsertInternal)) {
+      return undefined;
+    } else if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    } else if (low.getFirstToken().getStart() instanceof VirtualPosition) {
+      return undefined;
+    }
+
+    // the whole operand is the call, a longer expression is outlined by replaceInsertExpression
+    const source = high.getChildren()[1];
+    if (!(source instanceof ExpressionNode)
+        || !(source.get() instanceof Expressions.SimpleSource4 || source.get() instanceof Expressions.Source)
+        || source.getChildren().length !== 1
+        || !(source.getFirstChild()?.get() instanceof Expressions.MethodCallChain)) {
+      return undefined;
+    }
+
+    const type = this.builtinReturnType(source, lowFile, highSyntax);
+    if (type === undefined) {
+      return undefined;
+    }
+
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const code = `DATA ${uniqueName} TYPE ${type}.\n` +
+      indentation + `${uniqueName} = ${source.concatTokens()}.\n` +
+      indentation;
+
+    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, source.getFirstToken(), "Outline built-in function in INSERT",
+                         this.getMetadata().key, this.conf.severity, fix);
   }
 
   /** the ABAP type returned by the built-in function this Source starts with, or undefined
