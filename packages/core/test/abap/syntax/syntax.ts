@@ -18921,4 +18921,16 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`);
     expect(issues.length).to.equal(1);
   });
+
+  it("INSERT LINES OF into table with header line", () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         field TYPE c LENGTH 10,
+       END OF ty_row.
+DATA lt_header TYPE STANDARD TABLE OF ty_row WITH HEADER LINE.
+DATA lt_plain TYPE STANDARD TABLE OF ty_row.
+INSERT LINES OF lt_plain INTO TABLE lt_header.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
 });
