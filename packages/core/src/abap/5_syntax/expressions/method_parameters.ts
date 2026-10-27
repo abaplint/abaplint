@@ -14,6 +14,7 @@ import {FieldChain} from "./field_chain";
 import {ReferenceType} from "../_reference";
 import {checkOffsetLength} from "./_check_offset_length";
 import {checkTextSymbol} from "./_check_text_symbol";
+import {BuiltInMethod} from "../_builtin";
 
 interface IListItemT {
   name: string;
@@ -183,6 +184,10 @@ export class MethodParameters {
       this.requiredParameters = new Set(method.getParameters().getRequiredParameters().map(i => i.getName().toUpperCase()));
     }
 
+    const typeUtils = new TypeUtils(input.scope);
+    const assignable = method instanceof BuiltInMethod
+      ? typeUtils.isAssignableBuiltin.bind(typeUtils)
+      : typeUtils.isAssignableStrict.bind(typeUtils);
     for (const item of items) {
       const parameter = allImporting.find(p => p.getName().toUpperCase() === item.name);
       if (parameter === undefined) {
@@ -191,7 +196,7 @@ export class MethodParameters {
         continue;
       } else if (checkTextSymbol(item.source, parameter.getType(), input)) {
         return;
-      } else if (new TypeUtils(input.scope).isAssignableStrict(item.sourceType, parameter.getType(), item.source) === false) {
+      } else if (assignable(item.sourceType, parameter.getType(), item.source) === false) {
         const message = "Method parameter type not compatible, " + item.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
