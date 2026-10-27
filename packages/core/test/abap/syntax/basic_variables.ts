@@ -1837,6 +1837,13 @@ DATA(sdf) = ref->*-int.`;
     expect(type).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("FORM, USING TYPE TABLE, generic standard table", () => {
+    const abap = `FORM foobar USING tab TYPE TABLE.
+    ENDFORM.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
   it("FORM, CHANGING STRUCTURE", () => {
     const abap = `FORM foobar CHANGING tab TYPE ANY TABLE.
     ENDFORM.`;
