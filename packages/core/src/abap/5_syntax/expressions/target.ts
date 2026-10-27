@@ -44,6 +44,7 @@ export class Target {
     }
 
     let currentIndex = 1;
+    let afterTableExpression = false;
     while (currentIndex <= children.length) {
       const current = children[currentIndex];
       if (current === undefined) {
@@ -66,6 +67,9 @@ export class Target {
           return VoidType.get(CheckSyntaxKey);
         }
       } else if (current.get() instanceof InstanceArrow) {
+        if (afterTableExpression && TableExpression.checkArrowAfter(input, current.getFirstToken())) {
+          return VoidType.get(CheckSyntaxKey);
+        }
         if (!(context instanceof ObjectReferenceType)
             && !(context instanceof DataReference)
             && !(context instanceof VoidType)) {
@@ -111,6 +115,7 @@ export class Target {
           return VoidType.get(CheckSyntaxKey);
         }
         TableExpression.runSyntax(current, input, context);
+        afterTableExpression = true;
         if (!(context instanceof VoidType) && !(context instanceof UnknownType)) {
           context = context.getRowType();
         }
