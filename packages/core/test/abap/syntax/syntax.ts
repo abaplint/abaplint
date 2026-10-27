@@ -19004,4 +19004,24 @@ INSERT LINES OF lt_plain INTO TABLE lt_header.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
+
+  it("error, to_upper with a structure", () => {
+    const abap = `
+DATA: BEGIN OF bar,
+        foo TYPE c LENGTH 10,
+      END OF bar.
+WRITE to_upper( bar ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.not.equal(undefined);
+  });
+
+  it("error, to_upper with a structure, named parameter", () => {
+    const abap = `
+DATA: BEGIN OF bar,
+        foo TYPE c LENGTH 10,
+      END OF bar.
+WRITE to_upper( val = bar ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.not.equal(undefined);
+  });
 });

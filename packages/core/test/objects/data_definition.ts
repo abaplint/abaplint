@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {DataDefinition} from "../../src/objects";
-import {CharacterType, PackedType, StructureType, UnknownType, VoidType} from "../../src/abap/types/basic";
+import {CharacterType, IntegerType, PackedType, StructureType, UnknownType, VoidType} from "../../src/abap/types/basic";
 
 describe("Object: DDLS - Data Definition", () => {
 
@@ -622,5 +622,225 @@ define root view entity ZPOC_I_PoItem
     expect((parsed.getComponentByName("MaterialName") as VoidType).getVoided()).to.equal("I_PRODUCTTEXT");
 
     expect(ddls.listKeys()).to.deep.equal(["PurchasingDocument", "PurchasingDocumentItem"]);
+  });
+
+  const personDtel = new MemoryFile("zperson_id.dtel.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZPERSON_ID</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DDTEXT>person id</DDTEXT>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>INT4</DATATYPE>
+    <LENG>000010</LENG>
+    <OUTPUTLEN>000011</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+  const personTabl = new MemoryFile("ztest_person.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTEST_PERSON</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>person</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>ID</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ROLLNAME>ZPERSON_ID</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <NOTNULL>X</NOTNULL>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>NAME</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000080</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000040</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+  const addressTabl = new MemoryFile("ztest_address.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTEST_ADDRESS</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>address</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>PERSON_ID</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ROLLNAME>ZPERSON_ID</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <NOTNULL>X</NOTNULL>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>CITY</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000060</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000030</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+  it("unprefixed, with as, type is determined from the source", async () => {
+    const source = `
+define view entity zi_test_person as select from ztest_person
+{
+    key id as PersonId,
+    name as Name
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", source),
+      personDtel,
+      personTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON") as DataDefinition;
+    const parsed = ddls.parseType(reg) as StructureType;
+    expect(parsed.getComponents().length).to.equal(2);
+
+    const id = parsed.getComponentByName("PersonId");
+    expect(id).to.be.instanceof(IntegerType);
+    expect(id?.getQualifiedName()).to.equal("ZPERSON_ID");
+
+    const name = parsed.getComponentByName("Name");
+    expect(name).to.be.instanceof(CharacterType);
+    expect((name as CharacterType).getLength()).to.equal(40);
+
+    expect(ddls.listKeys()).to.deep.equal(["PersonId"]);
+  });
+
+  it("unprefixed, without as, type is determined from the source", async () => {
+    const source = `
+define view entity zi_test_person as select from ztest_person
+{
+    key id,
+    name
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", source),
+      personDtel,
+      personTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON") as DataDefinition;
+    const parsed = ddls.parseType(reg) as StructureType;
+    expect(parsed.getComponents().length).to.equal(2);
+    expect(parsed.getComponentByName("id")).to.be.instanceof(IntegerType);
+    expect(parsed.getComponentByName("name")).to.be.instanceof(CharacterType);
+  });
+
+  it("unprefixed, join, type is determined from the source containing the field", async () => {
+    const source = `
+define view entity zi_test_person as select from ztest_person
+  inner join ztest_address on ztest_address.person_id = ztest_person.id
+{
+    key id   as PersonId,
+        name as Name,
+        city as City
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", source),
+      personDtel,
+      personTabl,
+      addressTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON") as DataDefinition;
+    expect(ddls.listSources()?.length).to.equal(2);
+    const parsed = ddls.parseType(reg) as StructureType;
+
+    expect(parsed.getComponentByName("PersonId")).to.be.instanceof(IntegerType);
+
+    const name = parsed.getComponentByName("Name");
+    expect(name).to.be.instanceof(CharacterType);
+    expect((name as CharacterType).getLength()).to.equal(40);
+
+    const city = parsed.getComponentByName("City");
+    expect(city).to.be.instanceof(CharacterType);
+    expect((city as CharacterType).getLength()).to.equal(30);
+  });
+
+  it("unprefixed, field not found in any source, falls back to void", async () => {
+    const source = `
+define view entity zi_test_person as select from ztest_person
+{
+    key id as PersonId,
+    doesnotexist as DoesNotExist
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", source),
+      personDtel,
+      personTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON") as DataDefinition;
+    const parsed = ddls.parseType(reg) as StructureType;
+
+    expect(parsed.getComponentByName("PersonId")).to.be.instanceof(IntegerType);
+    const notFound = parsed.getComponentByName("DoesNotExist");
+    expect(notFound).to.be.instanceof(VoidType);
+    expect((notFound as VoidType).getVoided()).to.equal("DDLS:fieldname:ZI_TEST_PERSON");
+  });
+
+  it("unprefixed, expressions are not looked up in the sources", async () => {
+    const source = `
+define view entity zi_test_person as select from ztest_person
+{
+    key id as PersonId,
+    'X' as Flag,
+    cast( name as abap.char( 10 ) ) as name
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", source),
+      personDtel,
+      personTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON") as DataDefinition;
+    expect(ddls.hasParserError()).to.equal(undefined);
+
+    const fields = ddls.getParsedData()!.fields;
+    expect(fields.map(f => f.name)).to.deep.equal(["PersonId", "Flag", "name"]);
+    expect(fields[0].nameInSource).to.equal("id");
+    expect(fields[1].nameInSource).to.equal(undefined);
+    expect(fields[2].nameInSource).to.equal(undefined);
+
+    const parsed = ddls.parseType(reg) as StructureType;
+    expect(parsed.getComponentByName("PersonId")).to.be.instanceof(IntegerType);
+    for (const name of ["Flag", "name"]) {
+      const type = parsed.getComponentByName(name);
+      expect(type).to.be.instanceof(VoidType);
+      expect((type as VoidType).getVoided()).to.equal("DDLS:fieldname:ZI_TEST_PERSON");
+    }
   });
 });

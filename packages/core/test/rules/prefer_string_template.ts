@@ -84,4 +84,16 @@ testRuleFix([
     input: "DATA(message) = `Received HTTP ` && status_code && ` with message ` && text.",
     output: "DATA(message) = |Received HTTP { status_code } with message { text }|.",
   },
+  {
+    input: "DATA(json) = `{\"a\":` && lv && `}`.",
+    output: "DATA(json) = |\\{\"a\":{ lv }\\}|.",
+  },
+  {
+    input: "DATA(text) = `a|b\\c` && lv.",
+    output: "DATA(text) = |a\\|b\\\\c{ lv }|.",
+  },
+  {
+    input: "DATA(text) = 'it''s ' && lv && ` a ``quote```.",
+    output: "DATA(text) = |it's { lv } a `quote`|.",
+  },
 ], PreferStringTemplate);
