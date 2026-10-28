@@ -9,16 +9,16 @@ import {ABAPObject} from "../objects/_abap_object";
 
 export class ForbiddenKernelWriteConf extends BasicRuleConfig {
   /** Objects allowed to use WRITE '@KERNEL', array of string regex matched against the object name.
-   * The default allows every object, ie. the rule reports nothing until the list is narrowed
+   * Empty, the default, allows every object
    * @uniqueItems true
   */
-  public allow: string[] = [".*"];
+  public allow: string[] = [];
 }
 
 export class ForbiddenKernelWrite extends ABAPRule {
 
   private conf = new ForbiddenKernelWriteConf();
-  private allow: RegExp[] = [/.*/i];
+  private allow: RegExp[] = [];
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -29,7 +29,7 @@ export class ForbiddenKernelWrite extends ABAPRule {
 which runs with the privileges of the host. Open-abap uses this for its kernel classes, code compiled by a host it did not write should not.
 
 allow is a list of regex, case insensitive, matched against the object name, eg. ["^CL_", "^KERNEL_"].
-An empty list forbids WRITE '@KERNEL' everywhere.`,
+An empty list, the default, allows every object. To forbid WRITE '@KERNEL' everywhere use a regex matching no name, eg. ["^$"].`,
       tags: [RuleTag.SingleFile, RuleTag.Security],
       badExample: `WRITE '@KERNEL process.exit(1);'.`,
     };
@@ -42,13 +42,13 @@ An empty list forbids WRITE '@KERNEL' everywhere.`,
   public setConfig(conf: ForbiddenKernelWriteConf): void {
     this.conf = conf;
     if (this.conf.allow === undefined) {
-      this.conf.allow = [".*"];
+      this.conf.allow = [];
     }
     this.allow = this.conf.allow.map(a => new RegExp(a, "i"));
   }
 
   public runParsed(file: ABAPFile, obj: ABAPObject): Issue[] {
-    if (this.allow.some(a => a.test(obj.getName()))) {
+    if (this.allow.length === 0 || this.allow.some(a => a.test(obj.getName()))) {
       return [];
     }
 

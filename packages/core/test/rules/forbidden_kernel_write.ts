@@ -8,6 +8,10 @@ const tests1 = [
 
 testRule(tests1, ForbiddenKernelWrite);
 
+const empty = new ForbiddenKernelWriteConf();
+empty.allow = [];
+testRule(tests1, ForbiddenKernelWrite, empty, "forbidden_kernel_write, empty allows everything");
+
 const tests2 = [
   {abap: "parser error", cnt: 0},
   {abap: "WRITE 'hello'.", cnt: 0},
@@ -19,7 +23,7 @@ const tests2 = [
 ];
 
 const none = new ForbiddenKernelWriteConf();
-none.allow = [];
+none.allow = ["^$"];
 testRule(tests2, ForbiddenKernelWrite, none, "forbidden_kernel_write, allow none");
 
 const tests3 = [
