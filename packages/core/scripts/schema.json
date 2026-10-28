@@ -107,6 +107,23 @@
       },
       "type": "object"
     },
+    "AbapdocShortLinkConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AbapdocShorttextLengthConf": {
       "additionalProperties": false,
       "properties": {
@@ -2255,6 +2272,17 @@
                 }
               ],
               "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
+            },
+            "abapdoc_short_link": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocShortLinkConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc links to components of the current global class or interface which repeat the object name.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/abapdoc_short_link"
             },
             "abapdoc_shorttext_length": {
               "anyOf": [
@@ -4807,6 +4835,17 @@
                 }
               ],
               "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
+            },
+            "abapdoc_short_link": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocShortLinkConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc links to components of the current global class or interface which repeat the object name.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/abapdoc_short_link"
             },
             "abapdoc_shorttext_length": {
               "anyOf": [
