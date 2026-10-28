@@ -1911,6 +1911,34 @@
       ],
       "type": "object"
     },
+    "ForbiddenKernelWriteConf": {
+      "additionalProperties": false,
+      "properties": {
+        "allow": {
+          "description": "Objects allowed to use WRITE '@KERNEL', array of string regex matched against the object name. Empty, the default, allows every object",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "allow"
+      ],
+      "type": "object"
+    },
     "ForbiddenPseudoAndPragmaConf": {
       "additionalProperties": false,
       "properties": {
@@ -3041,6 +3069,17 @@
                 }
               ],
               "description": "Forbid use of specified identifiers, list of regex.\nTags: SingleFile\nhttps://rules.abaplint.org/forbidden_identifier"
+            },
+            "forbidden_kernel_write": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenKernelWriteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Forbid WRITE '@KERNEL' outside the listed objects\nTags: SingleFile, Security\nhttps://rules.abaplint.org/forbidden_kernel_write"
             },
             "forbidden_pseudo_and_pragma": {
               "anyOf": [
@@ -5582,6 +5621,17 @@
                 }
               ],
               "description": "Forbid use of specified identifiers, list of regex.\nTags: SingleFile\nhttps://rules.abaplint.org/forbidden_identifier"
+            },
+            "forbidden_kernel_write": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenKernelWriteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Forbid WRITE '@KERNEL' outside the listed objects\nTags: SingleFile, Security\nhttps://rules.abaplint.org/forbidden_kernel_write"
             },
             "forbidden_pseudo_and_pragma": {
               "anyOf": [
