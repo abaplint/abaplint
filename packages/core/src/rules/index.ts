@@ -77,6 +77,7 @@ export * from "./exporting";
 export * from "./final_newline";
 export * from "./fm_global_parameters_obsolete";
 export * from "./forbidden_identifier";
+export * from "./forbidden_kernel_write";
 export * from "./forbidden_pseudo_and_pragma";
 export * from "./forbidden_void_type";
 export * from "./form_tables_obsolete";
