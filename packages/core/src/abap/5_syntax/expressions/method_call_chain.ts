@@ -12,6 +12,7 @@ import {MethodCallParam} from "./method_call_param";
 import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
+import {TableExpression} from "./table_expression";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class MethodCallChain {
@@ -27,6 +28,14 @@ export class MethodCallChain {
     if (first === undefined) {
       const message = "MethodCallChain, first child expected";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return VoidType.get(CheckSyntaxKey);
+    }
+
+    // the field chain is followed by "->", eg. "itab[ 1 ]-ref->meth( )"
+    if (first instanceof ExpressionNode
+        && first.get() instanceof Expressions.FieldChain
+        && first.findDirectExpression(Expressions.TableExpression) !== undefined
+        && TableExpression.checkArrowAfter(input, children[1].getFirstToken())) {
       return VoidType.get(CheckSyntaxKey);
     }
 

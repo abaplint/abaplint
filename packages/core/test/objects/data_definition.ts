@@ -1,4 +1,5 @@
 import {expect} from "chai";
+import {DDIC} from "../../src/ddic";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {DataDefinition} from "../../src/objects";
@@ -48,6 +49,96 @@ define view ZAG_UNIT_TEST
       expect(type.getComponents().length).to.equal(3);
     }
     expect(ddls.getDescription()).to.equal("Hello World,.:");
+  });
+
+  describe("SQL view name annotations", () => {
+    const cases = [
+      {name: "line comment before annotation", annotations: "// @AbapCatalog.sqlViewName: 'ZBAD'\n@AbapCatalog.sqlViewName: 'ZGOOD'", expected: "ZGOOD"},
+      {name: "block comment before annotation", annotations: "/* @AbapCatalog.sqlViewName: 'ZBAD' */\n@AbapCatalog.sqlViewName: 'ZGOOD'", expected: "ZGOOD"},
+      {name: "line comment only", annotations: "// @AbapCatalog.sqlViewName: 'ZBAD'", expected: undefined},
+      {name: "block comment only", annotations: "/* @AbapCatalog.sqlViewName: 'ZBAD' */", expected: undefined},
+      {name: "dash comment before annotation", annotations: "-- @AbapCatalog.sqlViewName: 'ZBAD'\n@AbapCatalog.sqlViewName: 'ZGOOD'", expected: "ZGOOD"},
+      {name: "annotation-like label", annotations: "@EndUserText.label: '@AbapCatalog.sqlViewName: ''ZBAD'''", expected: undefined},
+      {name: "first annotation wins", annotations: "@AbapCatalog.sqlViewName: 'ZFIRST'\n@AbapCatalog.sqlViewName: 'ZSECOND'", expected: "ZFIRST"},
+      {name: "no annotation", annotations: "", expected: undefined},
+      {name: "no space after colon", annotations: "@AbapCatalog.sqlViewName:'ZGOOD'", expected: "ZGOOD"},
+      {name: "whitespace around colon", annotations: "@AbapCatalog.sqlViewName \t:\n  'ZGOOD'", expected: "ZGOOD"},
+      {name: "comment inside annotation", annotations: "@AbapCatalog.sqlViewName: /* name */ 'ZGOOD'", expected: "ZGOOD"},
+      {name: "namespaced lowercase value", annotations: "@AbapCatalog.sqlViewName: '/foo/bar'", expected: "/FOO/BAR"},
+      {name: "unrelated annotation", annotations: "@Other.sqlViewName: 'ZBAD'", expected: undefined},
+      {name: "longer annotation name", annotations: "@AbapCatalog.sqlViewName.extra: 'ZBAD'", expected: undefined},
+    ];
+
+    for (const test of cases) {
+      it(test.name, async () => {
+        const source = `${test.annotations}
+define view ZTEST as select from tadir { key pgmid }`;
+        const reg = new Registry().addFile(new MemoryFile("ztest.ddls.asddls", source));
+        await reg.parseAsync();
+        const ddls = reg.getFirstObject()! as DataDefinition;
+        expect(ddls.hasParserError()).to.not.equal(true);
+        expect(ddls.getSQLViewName()).to.equal(test.expected);
+      });
+    }
+
+    it("keeps SQL view lookup when the view body cannot be parsed", async () => {
+      const source = `// @AbapCatalog.sqlViewName: 'ZBAD'
+@AbapCatalog.sqlViewName: 'ZGOOD'
+define view ZTEST as select from`;
+      const reg = new Registry().addFile(new MemoryFile("ztest.ddls.asddls", source));
+      await reg.parseAsync();
+      const ddls = reg.getFirstObject()! as DataDefinition;
+      expect(ddls.hasParserError()).to.equal(true);
+      expect(ddls.getSQLViewName()).to.equal("ZGOOD");
+      const lookup = new DDIC(reg).lookupDDLS("ZGOOD");
+      expect(lookup?.object).to.equal(ddls);
+      expect(lookup?.type).to.be.instanceof(VoidType);
+      expect(new DDIC(reg).lookup("ZGOOD").type).to.be.instanceof(VoidType);
+      expect(new DDIC(reg).lookupDDLS("ZBAD")).to.equal(undefined);
+    });
+
+    for (const source of [
+      "// @AbapCatalog.sqlViewName: 'ZBAD'\ndefine view ZTEST as select from",
+      "define view ZTEST as select from tadir { @AbapCatalog.sqlViewName: 'ZBAD'",
+    ]) {
+      it("ignores comments and field annotations in an unparsed body: " + source, async () => {
+        const reg = new Registry().addFile(new MemoryFile("ztest.ddls.asddls", source));
+        await reg.parseAsync();
+        const ddls = reg.getFirstObject()! as DataDefinition;
+        expect(ddls.hasParserError()).to.equal(true);
+        expect(ddls.getSQLViewName()).to.equal(undefined);
+      });
+    }
+
+    it("ignores field-level annotations", async () => {
+      const source = `define view ZTEST as select from tadir {
+  @AbapCatalog.sqlViewName: 'ZBAD'
+  key pgmid
+}`;
+      const reg = new Registry().addFile(new MemoryFile("ztest.ddls.asddls", source));
+      await reg.parseAsync();
+      const ddls = reg.getFirstObject()! as DataDefinition;
+      expect(ddls.hasParserError()).to.not.equal(true);
+      expect(ddls.getSQLViewName()).to.equal(undefined);
+    });
+
+    it("refreshes the name when the annotation is changed or commented out", async () => {
+      const filename = "ztest.ddls.asddls";
+      const view = "\ndefine view ZTEST as select from tadir { key pgmid }";
+      const reg = new Registry().addFile(new MemoryFile(filename, "@AbapCatalog.sqlViewName: 'ZOLD'" + view));
+      await reg.parseAsync();
+      const ddls = reg.getFirstObject()! as DataDefinition;
+      expect(ddls.getSQLViewName()).to.equal("ZOLD");
+
+      reg.updateFile(new MemoryFile(filename, "@AbapCatalog.sqlViewName: 'ZNEW'" + view));
+      await reg.parseAsync();
+      expect(ddls.getSQLViewName()).to.equal("ZNEW");
+
+      reg.updateFile(new MemoryFile(filename, "// @AbapCatalog.sqlViewName: 'ZNEW'" + view));
+      await reg.parseAsync();
+      expect(ddls.hasParserError()).to.not.equal(true);
+      expect(ddls.getSQLViewName()).to.equal(undefined);
+    });
   });
 
   it("Get fields", async () => {

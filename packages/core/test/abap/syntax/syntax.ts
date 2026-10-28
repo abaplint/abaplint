@@ -19025,3 +19025,73 @@ WRITE to_upper( val = bar ).`;
     expect(issues[0]?.getMessage()).to.not.equal(undefined);
   });
 });
+
+describe("syntax.ts, object component selector after table expression", () => {
+  const message = "after table expression not possible below v750";
+
+  const decl = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA attr TYPE i.
+    DATA mt TYPE STANDARD TABLE OF REF TO lcl WITH DEFAULT KEY.
+    METHODS stringify RETURNING VALUE(rv) TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD stringify.
+  ENDMETHOD.
+ENDCLASS.
+TYPES: BEGIN OF ty,
+         o_json TYPE REF TO lcl,
+         comp   TYPE i,
+       END OF ty.
+DATA lt_js TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA lt_ref TYPE STANDARD TABLE OF REF TO lcl WITH DEFAULT KEY.
+DATA lo TYPE REF TO lcl.
+DATA ls TYPE ty.
+DATA lv_string TYPE string.
+DATA lv_int TYPE i.`;
+
+  const errors = [
+    "lv_string = lt_js[ 1 ]-o_json->stringify( ).",
+    "lv_string = lt_ref[ 1 ]->stringify( ).",
+    "lv_string = lo->mt[ 1 ]->stringify( ).",
+    "lt_js[ 1 ]-o_json->stringify( ).",
+    "lv_int = lt_js[ 1 ]-o_json->attr.",
+    "lv_int = lt_ref[ 1 ]->attr.",
+    "lt_js[ 1 ]-o_json->attr = 2.",
+    "lt_ref[ 1 ]->attr = 2.",
+  ];
+
+  const fine = [
+    "lv_int = lt_js[ 1 ]-comp.",
+    "lv_string = ls-o_json->stringify( ).",
+    "lv_int = lo->attr.",
+    "lo->mt[ 1 ] = lo.",
+    "DATA(lo_json) = lt_js[ 1 ]-o_json.",
+    "lv_string = CAST lcl( lt_ref[ 1 ] )->stringify( ).",
+  ];
+
+  for (const abap of errors) {
+    it("error on 740sp08: " + abap, () => {
+      const issues = runProgram(decl + "\n" + abap, [], Release.v740sp08);
+      expect(issues[0]?.getMessage()).to.include(message);
+    });
+
+    it("ok on 750: " + abap, () => {
+      const issues = runProgram(decl + "\n" + abap, [], Release.v750);
+      expect(issues[0]?.getMessage()).to.equal(undefined);
+    });
+
+    it("ok on Cloud: " + abap, () => {
+      const issues = runProgram(decl + "\n" + abap, [], undefined, undefined, LanguageVersion.Cloud);
+      expect(issues[0]?.getMessage()).to.equal(undefined);
+    });
+  }
+
+  for (const abap of fine) {
+    it("ok on 740sp08: " + abap, () => {
+      const issues = runProgram(decl + "\n" + abap, [], Release.v740sp08);
+      expect(issues[0]?.getMessage()).to.equal(undefined);
+    });
+  }
+});
