@@ -5,6 +5,7 @@ import {AbapdocConf} from "../src/rules/abapdoc";
 import {AbapdocHtmlTagConf} from "../src/rules/abapdoc_html_tag";
 import {AbapdocLeadingAtConf} from "../src/rules/abapdoc_leading_at";
 import {AbapdocParameterNamesConf} from "../src/rules/abapdoc_parameter_names";
+import {AbapdocShortLinkConf} from "../src/rules/abapdoc_short_link";
 import {AbapdocShorttextLengthConf} from "../src/rules/abapdoc_shorttext_length";
 import {AddTestAttributesConf} from "../src/rules/add_test_attributes";
 import {AFFAndXMLConf} from "../src/rules/aff_and_xml";
@@ -250,6 +251,7 @@ export interface IConfig {
     "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
     "abapdoc_leading_at"?: AbapdocLeadingAtConf | boolean,
     "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
+    "abapdoc_short_link"?: AbapdocShortLinkConf | boolean,
     "abapdoc_shorttext_length"?: AbapdocShorttextLengthConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
@@ -484,6 +486,7 @@ export interface IConfig {
     "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
     "abapdoc_leading_at"?: AbapdocLeadingAtConf | boolean,
     "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
+    "abapdoc_short_link"?: AbapdocShortLinkConf | boolean,
     "abapdoc_shorttext_length"?: AbapdocShorttextLengthConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
