@@ -5,8 +5,10 @@ import {AbapdocConf} from "../src/rules/abapdoc";
 import {AbapdocHtmlTagConf} from "../src/rules/abapdoc_html_tag";
 import {AbapdocLeadingAtConf} from "../src/rules/abapdoc_leading_at";
 import {AbapdocParameterNamesConf} from "../src/rules/abapdoc_parameter_names";
+import {AbapdocShorttextLengthConf} from "../src/rules/abapdoc_shorttext_length";
 import {AddTestAttributesConf} from "../src/rules/add_test_attributes";
 import {AFFAndXMLConf} from "../src/rules/aff_and_xml";
+import {AliasNeverReassignedConf} from "../src/rules/alias_never_reassigned";
 import {AlignParametersConf} from "../src/rules/align_parameters";
 import {AlignPseudoCommentsConf} from "../src/rules/align_pseudo_comments";
 import {AlignTypeExpressionsConf} from "../src/rules/align_type_expressions";
@@ -14,9 +16,14 @@ import {AllowedObjectNamingConf} from "../src/rules/allowed_object_naming";
 import {AllowedObjectTypesConf} from "../src/rules/allowed_object_types";
 import {AmbiguousStatementConf} from "../src/rules/ambiguous_statement";
 import {AvoidUseConf} from "../src/rules/avoid_use";
+import {BDEFCheckSyntaxConf} from "../src/rules/bdef_check_syntax";
+import {BDEFParserErrorConf} from "../src/rules/bdef_parser_error";
 import {BeginEndNamesConf} from "../src/rules/begin_end_names";
 import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
+import {BooleanFlagViaIfConf} from "../src/rules/boolean_flag_via_if";
+import {BoundCheckAfterCreateConf} from "../src/rules/bound_check_after_create";
 import {CallTransactionAuthorityCheckConf} from "../src/rules/call_transaction_authority_check";
+import {CastViaGenericReferenceConf} from "../src/rules/cast_via_generic_reference";
 import {CatchAndRaiseConf} from "../src/rules/catch_and_raise";
 import {CDSAssociationNameConf} from "../src/rules/cds_association_name";
 import {CDSCheckSyntaxConf} from "../src/rules/cds_check_syntax";
@@ -38,13 +45,18 @@ import {CheckTextElementsConf} from "../src/rules/check_text_elements";
 import {CheckTransformationExistsConf} from "../src/rules/check_transformation_exists";
 import {ClassAttributeNamesConf} from "../src/rules/class_attribute_names";
 import {ClassicExceptionsOverlapConf} from "../src/rules/classic_exceptions_overlap";
+import {ClearAfterDeclarationConf} from "../src/rules/clear_after_declaration";
+import {ClearBeforeOverwriteConf} from "../src/rules/clear_before_overwrite";
 import {ClearExportingParametersConf} from "../src/rules/clear_exporting_parameters";
 import {CloudTypesConf} from "../src/rules/cloud_types";
 import {ColonMissingSpaceConf} from "../src/rules/colon_missing_space";
 import {CommentedCodeConf} from "../src/rules/commented_code";
 import {ConstantClassesConf} from "../src/rules/constant_classes";
+import {ConstantConditionConf} from "../src/rules/constant_condition";
 import {ConstructorVisibilityPublicConf} from "../src/rules/constructor_visibility_public";
 import {ContainsTabConf} from "../src/rules/contains_tab";
+import {CopyChainConf} from "../src/rules/copy_chain";
+import {CopyOfInitialVariableConf} from "../src/rules/copy_of_initial_variable";
 import {CyclicOOConf} from "../src/rules/cyclic_oo";
 import {CyclomaticComplexityConf} from "../src/rules/cyclomatic_complexity";
 import {DangerousStatementConf} from "../src/rules/dangerous_statement";
@@ -149,6 +161,7 @@ import {PreferInsertIntoTableConf} from "../src/rules/prefer_insert_into_table";
 import {PreferIsNotConf} from "../src/rules/prefer_is_not";
 import {PreferPragmasConf} from "../src/rules/prefer_pragmas";
 import {PreferRaiseExceptionNewConf} from "../src/rules/prefer_raise_exception_new";
+import {PreferRaiseMessageConf} from "../src/rules/prefer_raise_message";
 import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_exporting";
 import {PreferStringTemplateConf} from "../src/rules/prefer_string_template";
 import {PreferXsdboolConf} from "../src/rules/prefer_xsdbool";
@@ -171,6 +184,7 @@ import {SelectionScreenTextsMissingConf} from "../src/rules/selection_screen_tex
 import {SequentialBlankConf} from "../src/rules/sequential_blank";
 import {ShortCaseConf} from "../src/rules/short_case";
 import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
+import {SingleUseExpressionTempConf} from "../src/rules/single_use_expression_temp";
 import {SlowParameterPassingConf} from "../src/rules/slow_parameter_passing";
 import {SMIMConsistencyConf} from "../src/rules/smim_consistency";
 import {SortEmptyKeyConf} from "../src/rules/sort_empty_key";
@@ -188,12 +202,14 @@ import {SyModificationConf} from "../src/rules/sy_modification";
 import {SyReadRestrictionConf} from "../src/rules/sy_read_restriction";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
 import {TablesDeclaredLocallyConf} from "../src/rules/tables_declared_locally";
+import {TryCastEmptyCatchConf} from "../src/rules/try_cast_empty_catch";
 import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
 import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/types_naming";
 import {UncaughtExceptionConf} from "../src/rules/uncaught_exception";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
 import {UnnecessaryChainingConf} from "../src/rules/unnecessary_chaining";
+import {UnnecessaryCopyConf} from "../src/rules/unnecessary_copy";
 import {UnnecessaryLoopGuardConf} from "../src/rules/unnecessary_loop_guard";
 import {UnnecessaryPragmaConf} from "../src/rules/unnecessary_pragma";
 import {UnnecessaryReturnConf} from "../src/rules/unnecessary_return";
@@ -233,8 +249,10 @@ export interface IConfig {
     "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
     "abapdoc_leading_at"?: AbapdocLeadingAtConf | boolean,
     "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
+    "abapdoc_shorttext_length"?: AbapdocShorttextLengthConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
+    "alias_never_reassigned"?: AliasNeverReassignedConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
     "align_pseudo_comments"?: AlignPseudoCommentsConf | boolean,
     "align_type_expressions"?: AlignTypeExpressionsConf | boolean,
@@ -242,9 +260,14 @@ export interface IConfig {
     "allowed_object_types"?: AllowedObjectTypesConf | boolean,
     "ambiguous_statement"?: AmbiguousStatementConf | boolean,
     "avoid_use"?: AvoidUseConf | boolean,
+    "bdef_check_syntax"?: BDEFCheckSyntaxConf | boolean,
+    "bdef_parser_error"?: BDEFParserErrorConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
+    "boolean_flag_via_if"?: BooleanFlagViaIfConf | boolean,
+    "bound_check_after_create"?: BoundCheckAfterCreateConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
+    "cast_via_generic_reference"?: CastViaGenericReferenceConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
     "cds_check_syntax"?: CDSCheckSyntaxConf | boolean,
@@ -266,13 +289,18 @@ export interface IConfig {
     "check_transformation_exists"?: CheckTransformationExistsConf | boolean,
     "class_attribute_names"?: ClassAttributeNamesConf | boolean,
     "classic_exceptions_overlap"?: ClassicExceptionsOverlapConf | boolean,
+    "clear_after_declaration"?: ClearAfterDeclarationConf | boolean,
+    "clear_before_overwrite"?: ClearBeforeOverwriteConf | boolean,
     "clear_exporting_parameters"?: ClearExportingParametersConf | boolean,
     "cloud_types"?: CloudTypesConf | boolean,
     "colon_missing_space"?: ColonMissingSpaceConf | boolean,
     "commented_code"?: CommentedCodeConf | boolean,
     "constant_classes"?: ConstantClassesConf | boolean,
+    "constant_condition"?: ConstantConditionConf | boolean,
     "constructor_visibility_public"?: ConstructorVisibilityPublicConf | boolean,
     "contains_tab"?: ContainsTabConf | boolean,
+    "copy_chain"?: CopyChainConf | boolean,
+    "copy_of_initial_variable"?: CopyOfInitialVariableConf | boolean,
     "cyclic_oo"?: CyclicOOConf | boolean,
     "cyclomatic_complexity"?: CyclomaticComplexityConf | boolean,
     "dangerous_statement"?: DangerousStatementConf | boolean,
@@ -377,6 +405,7 @@ export interface IConfig {
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_pragmas"?: PreferPragmasConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,
+    "prefer_raise_message"?: PreferRaiseMessageConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "prefer_string_template"?: PreferStringTemplateConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
@@ -399,6 +428,7 @@ export interface IConfig {
     "sequential_blank"?: SequentialBlankConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
     "sicf_consistency"?: SICFConsistencyConf | boolean,
+    "single_use_expression_temp"?: SingleUseExpressionTempConf | boolean,
     "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "smim_consistency"?: SMIMConsistencyConf | boolean,
     "sort_empty_key"?: SortEmptyKeyConf | boolean,
@@ -416,12 +446,14 @@ export interface IConfig {
     "sy_read_restriction"?: SyReadRestrictionConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
     "tables_declared_locally"?: TablesDeclaredLocallyConf | boolean,
+    "try_cast_empty_catch"?: TryCastEmptyCatchConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
+    "unnecessary_copy"?: UnnecessaryCopyConf | boolean,
     "unnecessary_loop_guard"?: UnnecessaryLoopGuardConf | boolean,
     "unnecessary_pragma"?: UnnecessaryPragmaConf | boolean,
     "unnecessary_return"?: UnnecessaryReturnConf | boolean,
@@ -450,8 +482,10 @@ export interface IConfig {
     "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
     "abapdoc_leading_at"?: AbapdocLeadingAtConf | boolean,
     "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
+    "abapdoc_shorttext_length"?: AbapdocShorttextLengthConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
+    "alias_never_reassigned"?: AliasNeverReassignedConf | boolean,
     "align_parameters"?: AlignParametersConf | boolean,
     "align_pseudo_comments"?: AlignPseudoCommentsConf | boolean,
     "align_type_expressions"?: AlignTypeExpressionsConf | boolean,
@@ -459,9 +493,14 @@ export interface IConfig {
     "allowed_object_types"?: AllowedObjectTypesConf | boolean,
     "ambiguous_statement"?: AmbiguousStatementConf | boolean,
     "avoid_use"?: AvoidUseConf | boolean,
+    "bdef_check_syntax"?: BDEFCheckSyntaxConf | boolean,
+    "bdef_parser_error"?: BDEFParserErrorConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
+    "boolean_flag_via_if"?: BooleanFlagViaIfConf | boolean,
+    "bound_check_after_create"?: BoundCheckAfterCreateConf | boolean,
     "call_transaction_authority_check"?: CallTransactionAuthorityCheckConf | boolean,
+    "cast_via_generic_reference"?: CastViaGenericReferenceConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
     "cds_check_syntax"?: CDSCheckSyntaxConf | boolean,
@@ -483,13 +522,18 @@ export interface IConfig {
     "check_transformation_exists"?: CheckTransformationExistsConf | boolean,
     "class_attribute_names"?: ClassAttributeNamesConf | boolean,
     "classic_exceptions_overlap"?: ClassicExceptionsOverlapConf | boolean,
+    "clear_after_declaration"?: ClearAfterDeclarationConf | boolean,
+    "clear_before_overwrite"?: ClearBeforeOverwriteConf | boolean,
     "clear_exporting_parameters"?: ClearExportingParametersConf | boolean,
     "cloud_types"?: CloudTypesConf | boolean,
     "colon_missing_space"?: ColonMissingSpaceConf | boolean,
     "commented_code"?: CommentedCodeConf | boolean,
     "constant_classes"?: ConstantClassesConf | boolean,
+    "constant_condition"?: ConstantConditionConf | boolean,
     "constructor_visibility_public"?: ConstructorVisibilityPublicConf | boolean,
     "contains_tab"?: ContainsTabConf | boolean,
+    "copy_chain"?: CopyChainConf | boolean,
+    "copy_of_initial_variable"?: CopyOfInitialVariableConf | boolean,
     "cyclic_oo"?: CyclicOOConf | boolean,
     "cyclomatic_complexity"?: CyclomaticComplexityConf | boolean,
     "dangerous_statement"?: DangerousStatementConf | boolean,
@@ -594,6 +638,7 @@ export interface IConfig {
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_pragmas"?: PreferPragmasConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,
+    "prefer_raise_message"?: PreferRaiseMessageConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "prefer_string_template"?: PreferStringTemplateConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
@@ -616,6 +661,7 @@ export interface IConfig {
     "sequential_blank"?: SequentialBlankConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
     "sicf_consistency"?: SICFConsistencyConf | boolean,
+    "single_use_expression_temp"?: SingleUseExpressionTempConf | boolean,
     "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "smim_consistency"?: SMIMConsistencyConf | boolean,
     "sort_empty_key"?: SortEmptyKeyConf | boolean,
@@ -633,12 +679,14 @@ export interface IConfig {
     "sy_read_restriction"?: SyReadRestrictionConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
     "tables_declared_locally"?: TablesDeclaredLocallyConf | boolean,
+    "try_cast_empty_catch"?: TryCastEmptyCatchConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
+    "unnecessary_copy"?: UnnecessaryCopyConf | boolean,
     "unnecessary_loop_guard"?: UnnecessaryLoopGuardConf | boolean,
     "unnecessary_pragma"?: UnnecessaryPragmaConf | boolean,
     "unnecessary_return"?: UnnecessaryReturnConf | boolean,

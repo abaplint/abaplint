@@ -16037,6 +16037,43 @@ SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("TYPE int8, below 7.50", () => {
+    const abap = `
+DATA lv_big TYPE int8.`;
+    const issues = runProgram(abap, [], Release.v702);
+    expect(issues[0]?.getMessage()).to.contain("requires 7.50");
+  });
+
+  it("TYPES int8 component, below 7.50", () => {
+    const abap = `
+TYPES: BEGIN OF ty_s,
+         big TYPE int8,
+       END OF ty_s.`;
+    const issues = runProgram(abap, [], Release.v740sp08);
+    expect(issues[0]?.getMessage()).to.contain("requires 7.50");
+  });
+
+  it("TYPE int8, 7.50", () => {
+    const abap = `
+DATA lv_big TYPE int8.`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("TYPE int8, open-abap", () => {
+    const abap = `
+DATA lv_big TYPE int8.`;
+    const issues = runProgram(abap, [], Release["open-abap"]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("TYPE int8, no version set", () => {
+    const abap = `
+DATA lv_big TYPE int8.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, no version set", () => {
     const abap = `
 SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
@@ -16667,6 +16704,18 @@ REFRESH tab[].`;
     const abap = `DATA lv_index TYPE i VALUE sy-index.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal("VALUE, sy-index is not a constant");
+  });
+
+  it("CONSTANTS VALUE sy-repid", () => {
+    const abap = `CONSTANTS c_repid LIKE sy-repid VALUE sy-repid.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("DATA VALUE syst-repid", () => {
+    const abap = `DATA lv_repid LIKE syst-repid VALUE syst-repid.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
   });
 
   it("RADIOBUTTON GROUP name too long", () => {
@@ -18793,4 +18842,222 @@ DATA lv TYPE int8.
 WRITE abs( lv ).`);
     expect(issues.length).to.equal(0);
   });
+
+  const emlDDLS = `define root view entity zi_eml_travel as select from ztravel {
+  key travel_id
+}`;
+  const emlBDEF = `managed implementation in class zbp_i_eml_travel unique;
+define behavior for zi_eml_travel alias ztravel
+lock master
+{
+  create;
+  update;
+}`;
+  const emlPool = `CLASS zbp_i_eml_travel DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zi_eml_travel.
+ENDCLASS.
+CLASS zbp_i_eml_travel IMPLEMENTATION.
+ENDCLASS.`;
+
+  it("READ ENTITIES OF, behavior definition not found", () => {
+    const issues = runProgram(`
+READ ENTITIES OF zr4_missing
+  ENTITY Item
+  ALL FIELDS WITH VALUE #( ( id = 1 ) )
+  RESULT DATA(items).`);
+    expect(issues[0]?.getMessage()).to.equal(`Behavior definition "zr4_missing" not found`);
+  });
+
+  it("READ ENTITIES OF, behavior definition outside error namespace", () => {
+    const issues = runProgram(`
+READ ENTITIES OF i_void_entity
+  ENTITY Item
+  ALL FIELDS WITH VALUE #( ( id = 1 ) )
+  RESULT DATA(items).`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("READ ENTITIES OF, behavior definition found", () => {
+    const issues = runMulti([
+      {filename: "zi_eml_travel.ddls.asddls", contents: emlDDLS},
+      {filename: "zi_eml_travel.bdef.asbdef", contents: emlBDEF},
+      {filename: "zfoobar.prog.abap", contents: `
+READ ENTITIES OF zi_eml_travel
+  ENTITY travel
+  ALL FIELDS WITH VALUE #( ( travel_id = 1 ) )
+  RESULT DATA(items).`},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("MODIFY ENTITIES OF, behavior definition not found", () => {
+    const issues = runProgram(`
+DATA lt_create TYPE voided.
+MODIFY ENTITIES OF zi_missing_bdef
+  ENTITY travel
+  CREATE FROM lt_create
+  FAILED DATA(failed).`);
+    expect(issues[0]?.getMessage()).to.equal(`Behavior definition "zi_missing_bdef" not found`);
+  });
+
+  it("MODIFY ENTITY, entity not found", () => {
+    const issues = runProgram(`
+DATA lt_create TYPE voided.
+MODIFY ENTITY zi_missing_entity
+  CREATE FROM lt_create
+  FAILED DATA(failed).`);
+    expect(issues[0]?.getMessage()).to.equal(`Entity "zi_missing_entity" not found`);
+  });
+
+  it("READ ENTITY IN LOCAL MODE, alias in behavior pool", () => {
+    const localsImp = `
+CLASS lhc_travel DEFINITION.
+  PRIVATE SECTION.
+    METHODS read_it.
+ENDCLASS.
+CLASS lhc_travel IMPLEMENTATION.
+  METHOD read_it.
+    DATA keys TYPE voided.
+    READ ENTITY IN LOCAL MODE ztravel
+      ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(items).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zi_eml_travel.ddls.asddls", contents: emlDDLS},
+      {filename: "zi_eml_travel.bdef.asbdef", contents: emlBDEF},
+      {filename: "zbp_i_eml_travel.clas.abap", contents: emlPool},
+      {filename: "zbp_i_eml_travel.clas.locals_imp.abap", contents: localsImp},
+    ]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, classic RAISE in method with class based exceptions", () => {
+    const issues = runProgram(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar RAISING cx_static_check.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    RAISE classic.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("error, MESSAGE RAISING classic in method with class based exceptions", () => {
+    const issues = runProgram(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar RAISING cx_static_check.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    MESSAGE e000(abc) RAISING classic.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("INSERT LINES OF into table with header line", () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         field TYPE c LENGTH 10,
+       END OF ty_row.
+DATA lt_header TYPE STANDARD TABLE OF ty_row WITH HEADER LINE.
+DATA lt_plain TYPE STANDARD TABLE OF ty_row.
+INSERT LINES OF lt_plain INTO TABLE lt_header.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, to_upper with a structure", () => {
+    const abap = `
+DATA: BEGIN OF bar,
+        foo TYPE c LENGTH 10,
+      END OF bar.
+WRITE to_upper( bar ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.not.equal(undefined);
+  });
+
+  it("error, to_upper with a structure, named parameter", () => {
+    const abap = `
+DATA: BEGIN OF bar,
+        foo TYPE c LENGTH 10,
+      END OF bar.
+WRITE to_upper( val = bar ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.not.equal(undefined);
+  });
+});
+
+describe("syntax.ts, object component selector after table expression", () => {
+  const message = "after table expression not possible below v750";
+
+  const decl = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA attr TYPE i.
+    DATA mt TYPE STANDARD TABLE OF REF TO lcl WITH DEFAULT KEY.
+    METHODS stringify RETURNING VALUE(rv) TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD stringify.
+  ENDMETHOD.
+ENDCLASS.
+TYPES: BEGIN OF ty,
+         o_json TYPE REF TO lcl,
+         comp   TYPE i,
+       END OF ty.
+DATA lt_js TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA lt_ref TYPE STANDARD TABLE OF REF TO lcl WITH DEFAULT KEY.
+DATA lo TYPE REF TO lcl.
+DATA ls TYPE ty.
+DATA lv_string TYPE string.
+DATA lv_int TYPE i.`;
+
+  const errors = [
+    "lv_string = lt_js[ 1 ]-o_json->stringify( ).",
+    "lv_string = lt_ref[ 1 ]->stringify( ).",
+    "lv_string = lo->mt[ 1 ]->stringify( ).",
+    "lt_js[ 1 ]-o_json->stringify( ).",
+    "lv_int = lt_js[ 1 ]-o_json->attr.",
+    "lv_int = lt_ref[ 1 ]->attr.",
+    "lt_js[ 1 ]-o_json->attr = 2.",
+    "lt_ref[ 1 ]->attr = 2.",
+  ];
+
+  const fine = [
+    "lv_int = lt_js[ 1 ]-comp.",
+    "lv_string = ls-o_json->stringify( ).",
+    "lv_int = lo->attr.",
+    "lo->mt[ 1 ] = lo.",
+    "DATA(lo_json) = lt_js[ 1 ]-o_json.",
+    "lv_string = CAST lcl( lt_ref[ 1 ] )->stringify( ).",
+  ];
+
+  for (const abap of errors) {
+    it("error on 740sp08: " + abap, () => {
+      const issues = runProgram(decl + "\n" + abap, [], Release.v740sp08);
+      expect(issues[0]?.getMessage()).to.include(message);
+    });
+
+    it("ok on 750: " + abap, () => {
+      const issues = runProgram(decl + "\n" + abap, [], Release.v750);
+      expect(issues[0]?.getMessage()).to.equal(undefined);
+    });
+
+    it("ok on Cloud: " + abap, () => {
+      const issues = runProgram(decl + "\n" + abap, [], undefined, undefined, LanguageVersion.Cloud);
+      expect(issues[0]?.getMessage()).to.equal(undefined);
+    });
+  }
+
+  for (const abap of fine) {
+    it("ok on 740sp08: " + abap, () => {
+      const issues = runProgram(decl + "\n" + abap, [], Release.v740sp08);
+      expect(issues[0]?.getMessage()).to.equal(undefined);
+    });
+  }
 });

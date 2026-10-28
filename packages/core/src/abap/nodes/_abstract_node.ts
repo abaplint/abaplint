@@ -5,7 +5,8 @@ import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 const EMPTY: readonly INode[] = Object.freeze([]);
 
 export abstract class AbstractNode<T extends INode> implements INode {
-  protected children: T[];
+  // a single child is stored directly, most nodes have exactly one child and an array costs ~56 bytes
+  private children: T | T[];
 
   public constructor() {
     this.children = EMPTY as T[];
@@ -17,26 +18,36 @@ export abstract class AbstractNode<T extends INode> implements INode {
 
   public addChild(n: T) {
     if (this.children === EMPTY) {
-      this.children = [];
+      this.children = n;
+    } else if (Array.isArray(this.children)) {
+      this.children.push(n);
+    } else {
+      this.children = [this.children, n];
     }
-    this.children.push(n);
   }
 
   public setChildren(children: T[]) {
-    // copy, input arrays are built via push() and carry over-allocated backing stores
-    this.children = children.slice();
+    if (children.length === 1) {
+      this.children = children[0];
+    } else {
+      // copy, input arrays are built via push() and carry over-allocated backing stores
+      this.children = children.length === 0 ? EMPTY as T[] : children.slice();
+    }
   }
 
   public getChildren(): readonly T[] {
-    return this.children;
+    const children = this.children;
+    return Array.isArray(children) ? children : [children];
   }
 
   public getFirstChild(): T | undefined {
-    return this.children[0];
+    const children = this.children;
+    return Array.isArray(children) ? children[0] : children;
   }
 
   public getLastChild(): T | undefined {
-    return this.children[this.children.length - 1];
+    const children = this.children;
+    return Array.isArray(children) ? children[children.length - 1] : children;
   }
 
 }

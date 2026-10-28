@@ -1,3 +1,7 @@
+// largest value that is a Smi on all V8 builds, larger values (eg. Number.MAX_SAFE_INTEGER) make V8
+// store row/col of every Position as boxed heap numbers, costing ~32 bytes per Position
+export const MAX_POSITION_VALUE = 2 ** 30 - 1;
+
 // first position is (1,1)
 export class Position {
   private readonly row: number;

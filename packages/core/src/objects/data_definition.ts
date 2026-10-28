@@ -15,7 +15,7 @@ export type ParsedDataDefinition = {
   sqlViewName: string | undefined;
   definitionName: string | undefined;
   description: string | undefined;
-  /** name is the name of the element, nameInSource the name in the prefixed source, if aliased via "as" */
+  /** name is the name of the element, nameInSource the name in the source, if aliased via "as" */
   fields: {key: boolean, name: string, nameInSource?: string, prefix: string, annotations: string[]}[];
   sources: {name: string, as: string | undefined}[];
   associations: {name: string, as: string | undefined}[],
@@ -196,11 +196,14 @@ export class DataDefinition extends AbstractObject {
       let found = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
       const list = e.findDirectExpression(CDSPrefixedName)?.findAllExpressions(CDSName);
       if (list !== undefined) {
-        const redirected = list.length > 1 && e.concatTokens().toUpperCase().includes(" REDIRECTED TO ");
+        const redirected = e.concatTokens().toUpperCase().includes(" REDIRECTED TO ");
         if (list.length > 1 && redirected === false) {
           // "prefix.field" is looked up as "field" in "prefix", also when aliased via "as"
           prefix = list[0].concatTokens();
           nameInSource = list[list.length - 1].concatTokens();
+        } else if (list.length === 1 && redirected === false) {
+          // unprefixed "field" is looked up in the sources, also when aliased via "as"
+          nameInSource = list[0].concatTokens();
         }
         if (found === undefined) {
           found = redirected === true ? list[0] : list[list.length - 1];

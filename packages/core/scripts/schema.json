@@ -107,7 +107,41 @@
       },
       "type": "object"
     },
+    "AbapdocShorttextLengthConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AddTestAttributesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "AliasNeverReassignedConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -307,6 +341,40 @@
       ],
       "type": "object"
     },
+    "BDEFCheckSyntaxConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "BDEFParserErrorConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "BeginEndNamesConf": {
       "additionalProperties": false,
       "properties": {
@@ -325,6 +393,40 @@
       "type": "object"
     },
     "BeginSingleIncludeConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "BooleanFlagViaIfConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "BoundCheckAfterCreateConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -518,6 +620,23 @@
       "type": "object"
     },
     "CallTransactionAuthorityCheckConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "CastViaGenericReferenceConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -946,6 +1065,40 @@
       },
       "type": "object"
     },
+    "ClearAfterDeclarationConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "ClearBeforeOverwriteConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "ClearExportingParametersConf": {
       "additionalProperties": false,
       "properties": {
@@ -1057,6 +1210,23 @@
       ],
       "type": "object"
     },
+    "ConstantConditionConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "ConstructorVisibilityPublicConf": {
       "additionalProperties": false,
       "properties": {
@@ -1096,6 +1266,40 @@
       "required": [
         "spaces"
       ],
+      "type": "object"
+    },
+    "CopyChainConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "CopyOfInitialVariableConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "CyclicOOConf": {
@@ -2024,6 +2228,17 @@
               ],
               "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
             },
+            "abapdoc_shorttext_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocShorttextLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc shorttexts longer than 60 characters.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_shorttext_length"
+            },
             "add_test_attributes": {
               "anyOf": [
                 {
@@ -2045,6 +2260,17 @@
                 }
               ],
               "description": "Checks for objects that have both AFF (.json) and XML (.xml) files\nTags: Syntax\nhttps://rules.abaplint.org/aff_and_xml"
+            },
+            "alias_never_reassigned": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AliasNeverReassignedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds DATA(a) = b. where neither a nor b changes afterwards, so b can be read instead of a\nTags: Quickfix\nhttps://rules.abaplint.org/alias_never_reassigned"
             },
             "align_parameters": {
               "anyOf": [
@@ -2123,6 +2349,28 @@
               ],
               "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/avoid_use"
             },
+            "bdef_check_syntax": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFCheckSyntaxConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks behavior definition references to entities and implementation classes\nTags: Syntax\nhttps://rules.abaplint.org/bdef_check_syntax"
+            },
+            "bdef_parser_error": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFParserErrorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BDEF parsing\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/bdef_parser_error"
+            },
             "begin_end_names": {
               "anyOf": [
                 {
@@ -2145,6 +2393,28 @@
               ],
               "description": "Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE\nTags: SingleFile\nhttps://rules.abaplint.org/begin_single_include"
             },
+            "boolean_flag_via_if": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BooleanFlagViaIfConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a flag that is initialized to false and set to true in a single IF, use xsdbool\nTags: Quickfix\nhttps://rules.abaplint.org/boolean_flag_via_if"
+            },
+            "bound_check_after_create": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BoundCheckAfterCreateConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds IF r IS BOUND / IS NOT BOUND directly after r was created\nTags: Quickfix\nhttps://rules.abaplint.org/bound_check_after_create"
+            },
             "call_transaction_authority_check": {
               "anyOf": [
                 {
@@ -2155,6 +2425,17 @@
                 }
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
+            },
+            "cast_via_generic_reference": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CastViaGenericReferenceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a down cast from a local reference variable that only holds a copy of another reference\nTags: Quickfix\nhttps://rules.abaplint.org/cast_via_generic_reference"
             },
             "catch_and_raise": {
               "anyOf": [
@@ -2387,6 +2668,28 @@
               ],
               "description": "Find overlapping classic exceptions\nTags: SingleFile\nhttps://rules.abaplint.org/classic_exceptions_overlap"
             },
+            "clear_after_declaration": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearAfterDeclarationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Quickfix\nhttps://rules.abaplint.org/clear_after_declaration"
+            },
+            "clear_before_overwrite": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearBeforeOverwriteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds CLEAR of a local variable whose next use overwrites it completely\nTags: Quickfix\nhttps://rules.abaplint.org/clear_before_overwrite"
+            },
             "clear_exporting_parameters": {
               "anyOf": [
                 {
@@ -2442,6 +2745,17 @@
               ],
               "description": "Checks that constants classes are in sync with domain fixed values\nhttps://rules.abaplint.org/constant_classes"
             },
+            "constant_condition": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ConstantConditionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
+            },
             "constructor_visibility_public": {
               "anyOf": [
                 {
@@ -2463,6 +2777,28 @@
                 }
               ],
               "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace, Quickfix, Styleguide, SingleFile\nhttps://rules.abaplint.org/contains_tab"
+            },
+            "copy_chain": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CopyChainConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a local variable that only passes a value on from one variable to another\nTags: Quickfix\nhttps://rules.abaplint.org/copy_chain"
+            },
+            "copy_of_initial_variable": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CopyOfInitialVariableConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds assignments from a local variable that is always initial\nTags: Quickfix\nhttps://rules.abaplint.org/copy_of_initial_variable"
             },
             "cyclic_oo": {
               "anyOf": [
@@ -3122,7 +3458,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Keep max one method parameter description per line\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/max_one_method_parameter_per_line"
+              "description": "Keep max one method parameter description per line\nTags: SingleFile, Whitespace, Quickfix\nhttps://rules.abaplint.org/max_one_method_parameter_per_line"
             },
             "max_one_statement": {
               "anyOf": [
@@ -3595,7 +3931,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "prefer pragmas over pseudo comments \nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/prefer_pragmas"
+              "description": "prefer pragmas over pseudo comments\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/prefer_pragmas"
             },
             "prefer_raise_exception_new": {
               "anyOf": [
@@ -3607,6 +3943,17 @@
                 }
               ],
               "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile, Quickfix, Upport\nhttps://rules.abaplint.org/prefer_raise_exception_new"
+            },
+            "prefer_raise_message": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferRaiseMessageConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT or TEXTID\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -3850,6 +4197,17 @@
               ],
               "description": "Checks the validity of ICF services\nhttps://rules.abaplint.org/sicf_consistency"
             },
+            "single_use_expression_temp": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SingleUseExpressionTempConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a local variable that only passes the value of an expression on to its single use\nTags: Quickfix\nhttps://rules.abaplint.org/single_use_expression_temp"
+            },
             "slow_parameter_passing": {
               "anyOf": [
                 {
@@ -4037,6 +4395,17 @@
               ],
               "description": "TABLES are always global, so declare them globally\nTags: SingleFile\nhttps://rules.abaplint.org/tables_declared_locally"
             },
+            "try_cast_empty_catch": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TryCastEmptyCatchConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a down cast in TRY with an empty CATCH cx_sy_move_cast_error, use IS INSTANCE OF\nTags: Quickfix\nhttps://rules.abaplint.org/try_cast_empty_catch"
+            },
             "try_without_catch": {
               "anyOf": [
                 {
@@ -4102,6 +4471,17 @@
                 }
               ],
               "description": "Find unnecessary chaining, all statements are checked\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_chaining"
+            },
+            "unnecessary_copy": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnnecessaryCopyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds DATA(a) = b. where a is read exactly once, and b can be read instead\nTags: Quickfix\nhttps://rules.abaplint.org/unnecessary_copy"
             },
             "unnecessary_loop_guard": {
               "anyOf": [
@@ -4389,6 +4769,17 @@
               ],
               "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
             },
+            "abapdoc_shorttext_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocShorttextLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc shorttexts longer than 60 characters.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_shorttext_length"
+            },
             "add_test_attributes": {
               "anyOf": [
                 {
@@ -4410,6 +4801,17 @@
                 }
               ],
               "description": "Checks for objects that have both AFF (.json) and XML (.xml) files\nTags: Syntax\nhttps://rules.abaplint.org/aff_and_xml"
+            },
+            "alias_never_reassigned": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AliasNeverReassignedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds DATA(a) = b. where neither a nor b changes afterwards, so b can be read instead of a\nTags: Quickfix\nhttps://rules.abaplint.org/alias_never_reassigned"
             },
             "align_parameters": {
               "anyOf": [
@@ -4488,6 +4890,28 @@
               ],
               "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/avoid_use"
             },
+            "bdef_check_syntax": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFCheckSyntaxConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks behavior definition references to entities and implementation classes\nTags: Syntax\nhttps://rules.abaplint.org/bdef_check_syntax"
+            },
+            "bdef_parser_error": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFParserErrorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BDEF parsing\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/bdef_parser_error"
+            },
             "begin_end_names": {
               "anyOf": [
                 {
@@ -4510,6 +4934,28 @@
               ],
               "description": "Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE\nTags: SingleFile\nhttps://rules.abaplint.org/begin_single_include"
             },
+            "boolean_flag_via_if": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BooleanFlagViaIfConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a flag that is initialized to false and set to true in a single IF, use xsdbool\nTags: Quickfix\nhttps://rules.abaplint.org/boolean_flag_via_if"
+            },
+            "bound_check_after_create": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BoundCheckAfterCreateConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds IF r IS BOUND / IS NOT BOUND directly after r was created\nTags: Quickfix\nhttps://rules.abaplint.org/bound_check_after_create"
+            },
             "call_transaction_authority_check": {
               "anyOf": [
                 {
@@ -4520,6 +4966,17 @@
                 }
               ],
               "description": "Checks that usages of CALL TRANSACTION contain an authority-check.\nTags: Styleguide, SingleFile, Security\nhttps://rules.abaplint.org/call_transaction_authority_check"
+            },
+            "cast_via_generic_reference": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CastViaGenericReferenceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a down cast from a local reference variable that only holds a copy of another reference\nTags: Quickfix\nhttps://rules.abaplint.org/cast_via_generic_reference"
             },
             "catch_and_raise": {
               "anyOf": [
@@ -4752,6 +5209,28 @@
               ],
               "description": "Find overlapping classic exceptions\nTags: SingleFile\nhttps://rules.abaplint.org/classic_exceptions_overlap"
             },
+            "clear_after_declaration": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearAfterDeclarationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds CLEAR of a local variable that is still initial since its declaration\nTags: Quickfix\nhttps://rules.abaplint.org/clear_after_declaration"
+            },
+            "clear_before_overwrite": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClearBeforeOverwriteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds CLEAR of a local variable whose next use overwrites it completely\nTags: Quickfix\nhttps://rules.abaplint.org/clear_before_overwrite"
+            },
             "clear_exporting_parameters": {
               "anyOf": [
                 {
@@ -4807,6 +5286,17 @@
               ],
               "description": "Checks that constants classes are in sync with domain fixed values\nhttps://rules.abaplint.org/constant_classes"
             },
+            "constant_condition": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ConstantConditionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
+            },
             "constructor_visibility_public": {
               "anyOf": [
                 {
@@ -4828,6 +5318,28 @@
                 }
               ],
               "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace, Quickfix, Styleguide, SingleFile\nhttps://rules.abaplint.org/contains_tab"
+            },
+            "copy_chain": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CopyChainConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a local variable that only passes a value on from one variable to another\nTags: Quickfix\nhttps://rules.abaplint.org/copy_chain"
+            },
+            "copy_of_initial_variable": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CopyOfInitialVariableConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds assignments from a local variable that is always initial\nTags: Quickfix\nhttps://rules.abaplint.org/copy_of_initial_variable"
             },
             "cyclic_oo": {
               "anyOf": [
@@ -5487,7 +5999,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Keep max one method parameter description per line\nTags: SingleFile, Whitespace\nhttps://rules.abaplint.org/max_one_method_parameter_per_line"
+              "description": "Keep max one method parameter description per line\nTags: SingleFile, Whitespace, Quickfix\nhttps://rules.abaplint.org/max_one_method_parameter_per_line"
             },
             "max_one_statement": {
               "anyOf": [
@@ -5960,7 +6472,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "prefer pragmas over pseudo comments \nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/prefer_pragmas"
+              "description": "prefer pragmas over pseudo comments\nTags: SingleFile, Styleguide\nhttps://rules.abaplint.org/prefer_pragmas"
             },
             "prefer_raise_exception_new": {
               "anyOf": [
@@ -5972,6 +6484,17 @@
                 }
               ],
               "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile, Quickfix, Upport\nhttps://rules.abaplint.org/prefer_raise_exception_new"
+            },
+            "prefer_raise_message": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferRaiseMessageConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT or TEXTID\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -6215,6 +6738,17 @@
               ],
               "description": "Checks the validity of ICF services\nhttps://rules.abaplint.org/sicf_consistency"
             },
+            "single_use_expression_temp": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SingleUseExpressionTempConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a local variable that only passes the value of an expression on to its single use\nTags: Quickfix\nhttps://rules.abaplint.org/single_use_expression_temp"
+            },
             "slow_parameter_passing": {
               "anyOf": [
                 {
@@ -6402,6 +6936,17 @@
               ],
               "description": "TABLES are always global, so declare them globally\nTags: SingleFile\nhttps://rules.abaplint.org/tables_declared_locally"
             },
+            "try_cast_empty_catch": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TryCastEmptyCatchConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds a down cast in TRY with an empty CATCH cx_sy_move_cast_error, use IS INSTANCE OF\nTags: Quickfix\nhttps://rules.abaplint.org/try_cast_empty_catch"
+            },
             "try_without_catch": {
               "anyOf": [
                 {
@@ -6467,6 +7012,17 @@
                 }
               ],
               "description": "Find unnecessary chaining, all statements are checked\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/unnecessary_chaining"
+            },
+            "unnecessary_copy": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnnecessaryCopyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds DATA(a) = b. where a is read exactly once, and b can be read instead\nTags: Quickfix\nhttps://rules.abaplint.org/unnecessary_copy"
             },
             "unnecessary_loop_guard": {
               "anyOf": [
@@ -8945,6 +9501,33 @@
       },
       "type": "object"
     },
+    "PreferRaiseMessageConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreExceptionClasses": {
+          "description": "List of exception class names to ignore, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "ignoreExceptionClasses"
+      ],
+      "type": "object"
+    },
     "PreferReturningToExportingConf": {
       "additionalProperties": false,
       "properties": {
@@ -9610,6 +10193,23 @@
       ],
       "type": "object"
     },
+    "SingleUseExpressionTempConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "SlowParameterPassingConf": {
       "additionalProperties": false,
       "properties": {
@@ -9862,6 +10462,23 @@
       },
       "type": "object"
     },
+    "TryCastEmptyCatchConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "TryWithoutCatchConf": {
       "additionalProperties": false,
       "properties": {
@@ -9989,6 +10606,23 @@
       "required": [
         "ignoreExceptions"
       ],
+      "type": "object"
+    },
+    "UnnecessaryCopyConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "UnnecessaryLoopGuardConf": {

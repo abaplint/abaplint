@@ -1280,6 +1280,82 @@ async function runClas(xml: string): Promise<Issue[]> {
   return run(reg);
 }
 
+describe("rule, xml_consistency, fields cleared by abapGit", () => {
+  function clasXml(extra: string): string {
+    return `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_TEST</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Test class</DESCRIPT>
+    <STATE>1</STATE>${extra}
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  }
+
+  function intfXml(extra: string): string {
+    return `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOINTERF>
+    <CLSNAME>ZIF_TEST</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Test interface</DESCRIPT>
+    <EXPOSURE>2</EXPOSURE>
+    <STATE>1</STATE>${extra}
+    <UNICODE>X</UNICODE>
+   </VSEOINTERF>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  }
+
+  async function runIntf(xml: string): Promise<Issue[]> {
+    return run(new Registry().addFile(new MemoryFile("zif_test.intf.xml", xml)));
+  }
+
+  it("CLAS, no cleared fields", async () => {
+    const issues = await runClas(clasXml(""));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CLAS, AUTHOR and CREATEDON", async () => {
+    const issues = await runClas(clasXml("\n    <AUTHOR>LARS</AUTHOR>\n    <CREATEDON>20240101</CREATEDON>"));
+    expect(issues.length).to.equal(2);
+    expect(issues[0].getMessage()).to.contain("AUTHOR");
+    expect(issues[1].getMessage()).to.contain("CREATEDON");
+  });
+
+  it("CLAS, CLSFINAL and EXPOSURE", async () => {
+    const issues = await runClas(clasXml("\n    <CLSFINAL>X</CLSFINAL>\n    <EXPOSURE>2</EXPOSURE>"));
+    expect(issues.length).to.equal(2);
+  });
+
+  it("CLAS, empty element", async () => {
+    const issues = await runClas(clasXml("\n    <VERSION/>"));
+    expect(issues.length).to.equal(1);
+  });
+
+  it("INTF, no cleared fields, EXPOSURE is kept", async () => {
+    const issues = await runIntf(intfXml(""));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("INTF, CHANGEDBY", async () => {
+    const issues = await runIntf(intfXml("\n    <CHANGEDBY>LARS</CHANGEDBY>"));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("CHANGEDBY");
+  });
+});
+
 describe("rule, xml_consistency, CLAS text element length", () => {
 
   it("no issue when text element entry is within its LENGTH", async () => {

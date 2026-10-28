@@ -17,6 +17,7 @@ import {ObjectOriented} from "./_object_oriented";
 import {ReferenceType} from "./_reference";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {Identifier as IdentifierToken} from "../1_lexer/tokens";
+import {IObject} from "../../objects/_iobject";
 
 export class Procedural {
   private readonly scope: CurrentScope;
@@ -159,7 +160,9 @@ export class Procedural {
         }
       }
       if (found === undefined) {
-        found = ddic.lookup(param.type!).type;
+        const lookup = ddic.lookup(param.type!);
+        this.addDDICUsing(lookup.object, nameToken, filename);
+        found = lookup.type;
       }
 
       if (param.direction === FunctionModuleParameterDirection.tables) {
@@ -172,10 +175,12 @@ export class Procedural {
 
       if ((found instanceof UnknownType || found instanceof VoidType) && param.type?.includes("-")) {
         const [name, field] = param.type.split("-");
-        const f = ddic.lookupTableOrView(name).type;
+        const lookup = ddic.lookupTableOrView(name);
+        const f = lookup.type;
         if (f && f instanceof StructureType) {
           const c = f.getComponentByName(field);
           if (c) {
+            this.addDDICUsing(lookup.object, nameToken, filename);
             found = c;
           }
         }
@@ -238,6 +243,13 @@ export class Procedural {
         allNames.add(param.name.toUpperCase());
       }
     }
+  }
+
+  private addDDICUsing(object: IObject | undefined, token: AbstractToken, filename: string) {
+    if (object === undefined) {
+      return;
+    }
+    this.scope.getDDICReferences().addUsing(this.scope.getParentObj(), {object, token, filename});
   }
 
   private functionModuleParameterMeta(param: IFunctionModuleParameter): IdentifierMeta[] {
