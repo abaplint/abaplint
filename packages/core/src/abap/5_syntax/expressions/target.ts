@@ -16,16 +16,18 @@ import {Cast} from "./cast";
 import {isFieldSymbolItself, substringType} from "./_substring";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
+import {targetReference} from "./_target_reference";
 
 export class Target {
-  public static runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType | undefined {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput,
+                          referenceType = ReferenceType.DataWriteReference): AbstractType | undefined {
 
     const concat = node.concatTokens();
     if (concat.includes("-")) {
       // workaround for names with dashes
       const found = input.scope.findVariable(concat);
       if (found) {
-        input.scope.addReference(node.getFirstToken(), found, ReferenceType.DataWriteReference, input.filename);
+        input.scope.addReference(node.getFirstToken(), found, referenceType, input.filename);
         return found.getType();
       }
     }
@@ -36,7 +38,7 @@ export class Target {
       return undefined;
     }
 
-    let context = this.findTop(first, input);
+    let context = this.findTop(first, input, referenceType);
     if (context === undefined) {
       const message = `"${first.getFirstToken().getStr()}" not found, Target`;
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -120,7 +122,7 @@ export class Target {
           context = context.getRowType();
         }
       } else if (current.get() instanceof Expressions.AttributeName) {
-        const type = children.length === 0 ? ReferenceType.DataWriteReference : ReferenceType.DataReadReference;
+        const type = referenceType === ReferenceType.DataWriteReference ? targetReference(children, currentIndex) : referenceType;
         context = AttributeName.runSyntax(context, current, input, type);
       }
     }
@@ -129,7 +131,7 @@ export class Target {
     let substring = context;
     const offset = node.findDirectExpression(Expressions.FieldOffset);
     if (offset) {
-      if (context instanceof XStringType || context instanceof StringType) {
+      if (referenceType === ReferenceType.DataWriteReference && (context instanceof XStringType || context instanceof StringType)) {
         const message = "xstring/string offset/length in writer position not possible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return VoidType.get(CheckSyntaxKey);
@@ -142,7 +144,7 @@ export class Target {
 
     const length = node.findDirectExpression(Expressions.FieldLength);
     if (length) {
-      if (context instanceof XStringType || context instanceof StringType) {
+      if (referenceType === ReferenceType.DataWriteReference && (context instanceof XStringType || context instanceof StringType)) {
         const message = "xstring/string offset/length in writer position not possible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return VoidType.get(CheckSyntaxKey);
@@ -161,7 +163,7 @@ export class Target {
 
 /////////////////////////////////
 
-  private static findTop(node: INode | undefined, input: SyntaxInput): AbstractType | undefined {
+  private static findTop(node: INode | undefined, input: SyntaxInput, referenceType: ReferenceType): AbstractType | undefined {
     if (node === undefined) {
       return undefined;
     }
@@ -173,7 +175,7 @@ export class Target {
         || node.get() instanceof Expressions.TargetFieldSymbol) {
       const found = input.scope.findVariable(name);
       if (found) {
-        input.scope.addReference(token, found, ReferenceType.DataWriteReference, input.filename);
+        input.scope.addReference(token, found, referenceType, input.filename);
       }
       if (name.includes("~")) {
         const idef = input.scope.findInterfaceDefinition(name.split("~")[0]);
