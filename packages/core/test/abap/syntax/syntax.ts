@@ -19024,6 +19024,17 @@ WRITE to_upper( val = bar ).`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.not.equal(undefined);
   });
+
+  it("structure with unnamed field", () => {
+    const abap = `
+DATA: BEGIN OF str,
+        (1024),
+      END OF str.
+CLEAR str.
+WRITE str.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
 });
 
 describe("syntax.ts, object component selector after table expression", () => {

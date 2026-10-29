@@ -16,6 +16,7 @@ const tests = [
   "data lt_data type table of d020s with header line.",
   "DATA sdf TYPE c ##NEEDED.",
   "Data foo(89) type c.",
+  "DATA (1024).",
   "data foo type char100.",
   "data foo100 type c length 100.",
   "DATA lv_int TYPE c LENGTH c_length.",

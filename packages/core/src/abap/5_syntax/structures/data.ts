@@ -38,6 +38,11 @@ export class Data {
     for (const c of node.getChildren()) {
       const ctyp = c.get();
       if (c instanceof StatementNode && ctyp instanceof Statements.Data) {
+        const unnamedLength = c.findDirectExpression(Expressions.Integer);
+        if (unnamedLength && c.findDirectExpression(Expressions.DataDefinition) === undefined) {
+          components.push({name: "", type: new Basic.CharacterType(parseInt(unnamedLength.concatTokens(), 10))});
+          continue;
+        }
         const found = new DataSyntax().runSyntax(c, input);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
