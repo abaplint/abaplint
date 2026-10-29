@@ -52,8 +52,28 @@ TEST-SEAMS: https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md
 
 BREAK points`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile],
-      badExample: `DESCRIBE TABLE items LINES count.`,
-      goodExample: `count = lines( items ).`,
+      badExample: `DEFINE _hello.
+  WRITE 'hello'.
+END-OF-DEFINITION.
+
+STATICS count TYPE i.
+
+TYPES ty_items TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+
+BREAK-POINT.
+
+TEST-SEAM seam_name.
+  count = 1.
+END-TEST-SEAM.
+
+DESCRIBE TABLE items LINES count.
+
+EXPORT data = items TO MEMORY ID 'ZFOO'.
+
+EXPORT data = items TO DATABASE indx(zz) ID 'ZFOO'.`,
+      goodExample: `count = lines( items ).
+
+TYPES ty_items TYPE STANDARD TABLE OF i WITH EMPTY KEY.`,
     };
   }
 

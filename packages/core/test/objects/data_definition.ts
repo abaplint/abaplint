@@ -1,8 +1,9 @@
 import {expect} from "chai";
+import {DDIC} from "../../src/ddic";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {DataDefinition} from "../../src/objects";
-import {CharacterType, PackedType, StructureType, UnknownType, VoidType} from "../../src/abap/types/basic";
+import {CharacterType, IntegerType, PackedType, StructureType, UnknownType, VoidType} from "../../src/abap/types/basic";
 
 describe("Object: DDLS - Data Definition", () => {
 
@@ -48,6 +49,96 @@ define view ZAG_UNIT_TEST
       expect(type.getComponents().length).to.equal(3);
     }
     expect(ddls.getDescription()).to.equal("Hello World,.:");
+  });
+
+  describe("SQL view name annotations", () => {
+    const cases = [
+      {name: "line comment before annotation", annotations: "// @AbapCatalog.sqlViewName: 'ZBAD'\n@AbapCatalog.sqlViewName: 'ZGOOD'", expected: "ZGOOD"},
+      {name: "block comment before annotation", annotations: "/* @AbapCatalog.sqlViewName: 'ZBAD' */\n@AbapCatalog.sqlViewName: 'ZGOOD'", expected: "ZGOOD"},
+      {name: "line comment only", annotations: "// @AbapCatalog.sqlViewName: 'ZBAD'", expected: undefined},
+      {name: "block comment only", annotations: "/* @AbapCatalog.sqlViewName: 'ZBAD' */", expected: undefined},
+      {name: "dash comment before annotation", annotations: "-- @AbapCatalog.sqlViewName: 'ZBAD'\n@AbapCatalog.sqlViewName: 'ZGOOD'", expected: "ZGOOD"},
+      {name: "annotation-like label", annotations: "@EndUserText.label: '@AbapCatalog.sqlViewName: ''ZBAD'''", expected: undefined},
+      {name: "first annotation wins", annotations: "@AbapCatalog.sqlViewName: 'ZFIRST'\n@AbapCatalog.sqlViewName: 'ZSECOND'", expected: "ZFIRST"},
+      {name: "no annotation", annotations: "", expected: undefined},
+      {name: "no space after colon", annotations: "@AbapCatalog.sqlViewName:'ZGOOD'", expected: "ZGOOD"},
+      {name: "whitespace around colon", annotations: "@AbapCatalog.sqlViewName \t:\n  'ZGOOD'", expected: "ZGOOD"},
+      {name: "comment inside annotation", annotations: "@AbapCatalog.sqlViewName: /* name */ 'ZGOOD'", expected: "ZGOOD"},
+      {name: "namespaced lowercase value", annotations: "@AbapCatalog.sqlViewName: '/foo/bar'", expected: "/FOO/BAR"},
+      {name: "unrelated annotation", annotations: "@Other.sqlViewName: 'ZBAD'", expected: undefined},
+      {name: "longer annotation name", annotations: "@AbapCatalog.sqlViewName.extra: 'ZBAD'", expected: undefined},
+    ];
+
+    for (const test of cases) {
+      it(test.name, async () => {
+        const source = `${test.annotations}
+define view ZTEST as select from tadir { key pgmid }`;
+        const reg = new Registry().addFile(new MemoryFile("ztest.ddls.asddls", source));
+        await reg.parseAsync();
+        const ddls = reg.getFirstObject()! as DataDefinition;
+        expect(ddls.hasParserError()).to.not.equal(true);
+        expect(ddls.getSQLViewName()).to.equal(test.expected);
+      });
+    }
+
+    it("keeps SQL view lookup when the view body cannot be parsed", async () => {
+      const source = `// @AbapCatalog.sqlViewName: 'ZBAD'
+@AbapCatalog.sqlViewName: 'ZGOOD'
+define view ZTEST as select from`;
+      const reg = new Registry().addFile(new MemoryFile("ztest.ddls.asddls", source));
+      await reg.parseAsync();
+      const ddls = reg.getFirstObject()! as DataDefinition;
+      expect(ddls.hasParserError()).to.equal(true);
+      expect(ddls.getSQLViewName()).to.equal("ZGOOD");
+      const lookup = new DDIC(reg).lookupDDLS("ZGOOD");
+      expect(lookup?.object).to.equal(ddls);
+      expect(lookup?.type).to.be.instanceof(VoidType);
+      expect(new DDIC(reg).lookup("ZGOOD").type).to.be.instanceof(VoidType);
+      expect(new DDIC(reg).lookupDDLS("ZBAD")).to.equal(undefined);
+    });
+
+    for (const source of [
+      "// @AbapCatalog.sqlViewName: 'ZBAD'\ndefine view ZTEST as select from",
+      "define view ZTEST as select from tadir { @AbapCatalog.sqlViewName: 'ZBAD'",
+    ]) {
+      it("ignores comments and field annotations in an unparsed body: " + source, async () => {
+        const reg = new Registry().addFile(new MemoryFile("ztest.ddls.asddls", source));
+        await reg.parseAsync();
+        const ddls = reg.getFirstObject()! as DataDefinition;
+        expect(ddls.hasParserError()).to.equal(true);
+        expect(ddls.getSQLViewName()).to.equal(undefined);
+      });
+    }
+
+    it("ignores field-level annotations", async () => {
+      const source = `define view ZTEST as select from tadir {
+  @AbapCatalog.sqlViewName: 'ZBAD'
+  key pgmid
+}`;
+      const reg = new Registry().addFile(new MemoryFile("ztest.ddls.asddls", source));
+      await reg.parseAsync();
+      const ddls = reg.getFirstObject()! as DataDefinition;
+      expect(ddls.hasParserError()).to.not.equal(true);
+      expect(ddls.getSQLViewName()).to.equal(undefined);
+    });
+
+    it("refreshes the name when the annotation is changed or commented out", async () => {
+      const filename = "ztest.ddls.asddls";
+      const view = "\ndefine view ZTEST as select from tadir { key pgmid }";
+      const reg = new Registry().addFile(new MemoryFile(filename, "@AbapCatalog.sqlViewName: 'ZOLD'" + view));
+      await reg.parseAsync();
+      const ddls = reg.getFirstObject()! as DataDefinition;
+      expect(ddls.getSQLViewName()).to.equal("ZOLD");
+
+      reg.updateFile(new MemoryFile(filename, "@AbapCatalog.sqlViewName: 'ZNEW'" + view));
+      await reg.parseAsync();
+      expect(ddls.getSQLViewName()).to.equal("ZNEW");
+
+      reg.updateFile(new MemoryFile(filename, "// @AbapCatalog.sqlViewName: 'ZNEW'" + view));
+      await reg.parseAsync();
+      expect(ddls.hasParserError()).to.not.equal(true);
+      expect(ddls.getSQLViewName()).to.equal(undefined);
+    });
   });
 
   it("Get fields", async () => {
@@ -622,5 +713,225 @@ define root view entity ZPOC_I_PoItem
     expect((parsed.getComponentByName("MaterialName") as VoidType).getVoided()).to.equal("I_PRODUCTTEXT");
 
     expect(ddls.listKeys()).to.deep.equal(["PurchasingDocument", "PurchasingDocumentItem"]);
+  });
+
+  const personDtel = new MemoryFile("zperson_id.dtel.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZPERSON_ID</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DDTEXT>person id</DDTEXT>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>INT4</DATATYPE>
+    <LENG>000010</LENG>
+    <OUTPUTLEN>000011</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+  const personTabl = new MemoryFile("ztest_person.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTEST_PERSON</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>person</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>ID</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ROLLNAME>ZPERSON_ID</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <NOTNULL>X</NOTNULL>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>NAME</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000080</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000040</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+  const addressTabl = new MemoryFile("ztest_address.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTEST_ADDRESS</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>address</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>PERSON_ID</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <ROLLNAME>ZPERSON_ID</ROLLNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <NOTNULL>X</NOTNULL>
+     <COMPTYPE>E</COMPTYPE>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>CITY</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000060</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000030</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+  it("unprefixed, with as, type is determined from the source", async () => {
+    const source = `
+define view entity zi_test_person as select from ztest_person
+{
+    key id as PersonId,
+    name as Name
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", source),
+      personDtel,
+      personTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON") as DataDefinition;
+    const parsed = ddls.parseType(reg) as StructureType;
+    expect(parsed.getComponents().length).to.equal(2);
+
+    const id = parsed.getComponentByName("PersonId");
+    expect(id).to.be.instanceof(IntegerType);
+    expect(id?.getQualifiedName()).to.equal("ZPERSON_ID");
+
+    const name = parsed.getComponentByName("Name");
+    expect(name).to.be.instanceof(CharacterType);
+    expect((name as CharacterType).getLength()).to.equal(40);
+
+    expect(ddls.listKeys()).to.deep.equal(["PersonId"]);
+  });
+
+  it("unprefixed, without as, type is determined from the source", async () => {
+    const source = `
+define view entity zi_test_person as select from ztest_person
+{
+    key id,
+    name
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", source),
+      personDtel,
+      personTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON") as DataDefinition;
+    const parsed = ddls.parseType(reg) as StructureType;
+    expect(parsed.getComponents().length).to.equal(2);
+    expect(parsed.getComponentByName("id")).to.be.instanceof(IntegerType);
+    expect(parsed.getComponentByName("name")).to.be.instanceof(CharacterType);
+  });
+
+  it("unprefixed, join, type is determined from the source containing the field", async () => {
+    const source = `
+define view entity zi_test_person as select from ztest_person
+  inner join ztest_address on ztest_address.person_id = ztest_person.id
+{
+    key id   as PersonId,
+        name as Name,
+        city as City
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", source),
+      personDtel,
+      personTabl,
+      addressTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON") as DataDefinition;
+    expect(ddls.listSources()?.length).to.equal(2);
+    const parsed = ddls.parseType(reg) as StructureType;
+
+    expect(parsed.getComponentByName("PersonId")).to.be.instanceof(IntegerType);
+
+    const name = parsed.getComponentByName("Name");
+    expect(name).to.be.instanceof(CharacterType);
+    expect((name as CharacterType).getLength()).to.equal(40);
+
+    const city = parsed.getComponentByName("City");
+    expect(city).to.be.instanceof(CharacterType);
+    expect((city as CharacterType).getLength()).to.equal(30);
+  });
+
+  it("unprefixed, field not found in any source, falls back to void", async () => {
+    const source = `
+define view entity zi_test_person as select from ztest_person
+{
+    key id as PersonId,
+    doesnotexist as DoesNotExist
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", source),
+      personDtel,
+      personTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON") as DataDefinition;
+    const parsed = ddls.parseType(reg) as StructureType;
+
+    expect(parsed.getComponentByName("PersonId")).to.be.instanceof(IntegerType);
+    const notFound = parsed.getComponentByName("DoesNotExist");
+    expect(notFound).to.be.instanceof(VoidType);
+    expect((notFound as VoidType).getVoided()).to.equal("DDLS:fieldname:ZI_TEST_PERSON");
+  });
+
+  it("unprefixed, expressions are not looked up in the sources", async () => {
+    const source = `
+define view entity zi_test_person as select from ztest_person
+{
+    key id as PersonId,
+    'X' as Flag,
+    cast( name as abap.char( 10 ) ) as name
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", source),
+      personDtel,
+      personTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON") as DataDefinition;
+    expect(ddls.hasParserError()).to.equal(undefined);
+
+    const fields = ddls.getParsedData()!.fields;
+    expect(fields.map(f => f.name)).to.deep.equal(["PersonId", "Flag", "name"]);
+    expect(fields[0].nameInSource).to.equal("id");
+    expect(fields[1].nameInSource).to.equal(undefined);
+    expect(fields[2].nameInSource).to.equal(undefined);
+
+    const parsed = ddls.parseType(reg) as StructureType;
+    expect(parsed.getComponentByName("PersonId")).to.be.instanceof(IntegerType);
+    for (const name of ["Flag", "name"]) {
+      const type = parsed.getComponentByName(name);
+      expect(type).to.be.instanceof(VoidType);
+      expect((type as VoidType).getVoided()).to.equal("DDLS:fieldname:ZI_TEST_PERSON");
+    }
   });
 });

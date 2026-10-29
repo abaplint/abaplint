@@ -107,6 +107,40 @@
       },
       "type": "object"
     },
+    "AbapdocShortLinkConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "AbapdocShorttextLengthConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "AddTestAttributesConf": {
       "additionalProperties": false,
       "properties": {
@@ -322,6 +356,40 @@
         "exportToMemory",
         "exportToDatabase"
       ],
+      "type": "object"
+    },
+    "BDEFCheckSyntaxConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "BDEFParserErrorConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "BeginEndNamesConf": {
@@ -1860,6 +1928,34 @@
       ],
       "type": "object"
     },
+    "ForbiddenKernelWriteConf": {
+      "additionalProperties": false,
+      "properties": {
+        "allow": {
+          "description": "Objects allowed to use WRITE '@KERNEL', array of string regex matched against the object name. Empty, the default, allows every object",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "allow"
+      ],
+      "type": "object"
+    },
     "ForbiddenPseudoAndPragmaConf": {
       "additionalProperties": false,
       "properties": {
@@ -2177,6 +2273,28 @@
               ],
               "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
             },
+            "abapdoc_short_link": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocShortLinkConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc links to components of the current global class or interface which repeat the object name.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/abapdoc_short_link"
+            },
+            "abapdoc_shorttext_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocShorttextLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc shorttexts longer than 60 characters.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_shorttext_length"
+            },
             "add_test_attributes": {
               "anyOf": [
                 {
@@ -2286,6 +2404,28 @@
                 }
               ],
               "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/avoid_use"
+            },
+            "bdef_check_syntax": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFCheckSyntaxConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks behavior definition references to entities and implementation classes\nTags: Syntax\nhttps://rules.abaplint.org/bdef_check_syntax"
+            },
+            "bdef_parser_error": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFParserErrorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BDEF parsing\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/bdef_parser_error"
             },
             "begin_end_names": {
               "anyOf": [
@@ -2957,6 +3097,17 @@
                 }
               ],
               "description": "Forbid use of specified identifiers, list of regex.\nTags: SingleFile\nhttps://rules.abaplint.org/forbidden_identifier"
+            },
+            "forbidden_kernel_write": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenKernelWriteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Forbid WRITE '@KERNEL' outside the listed objects\nTags: SingleFile, Security\nhttps://rules.abaplint.org/forbidden_kernel_write"
             },
             "forbidden_pseudo_and_pragma": {
               "anyOf": [
@@ -3859,6 +4010,17 @@
                 }
               ],
               "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile, Quickfix, Upport\nhttps://rules.abaplint.org/prefer_raise_exception_new"
+            },
+            "prefer_raise_message": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferRaiseMessageConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT or TEXTID\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -4685,6 +4847,28 @@
               ],
               "description": "Checks that the parameters documented in ABAP Doc exist in the method definition.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_parameter_names"
             },
+            "abapdoc_short_link": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocShortLinkConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc links to components of the current global class or interface which repeat the object name.\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/abapdoc_short_link"
+            },
+            "abapdoc_shorttext_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocShorttextLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports ABAP Doc shorttexts longer than 60 characters.\nTags: SingleFile\nhttps://rules.abaplint.org/abapdoc_shorttext_length"
+            },
             "add_test_attributes": {
               "anyOf": [
                 {
@@ -4794,6 +4978,28 @@
                 }
               ],
               "description": "Detects usage of certain statements.\nTags: Styleguide, SingleFile\nhttps://rules.abaplint.org/avoid_use"
+            },
+            "bdef_check_syntax": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFCheckSyntaxConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks behavior definition references to entities and implementation classes\nTags: Syntax\nhttps://rules.abaplint.org/bdef_check_syntax"
+            },
+            "bdef_parser_error": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BDEFParserErrorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BDEF parsing\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/bdef_parser_error"
             },
             "begin_end_names": {
               "anyOf": [
@@ -5465,6 +5671,17 @@
                 }
               ],
               "description": "Forbid use of specified identifiers, list of regex.\nTags: SingleFile\nhttps://rules.abaplint.org/forbidden_identifier"
+            },
+            "forbidden_kernel_write": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenKernelWriteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Forbid WRITE '@KERNEL' outside the listed objects\nTags: SingleFile, Security\nhttps://rules.abaplint.org/forbidden_kernel_write"
             },
             "forbidden_pseudo_and_pragma": {
               "anyOf": [
@@ -6367,6 +6584,17 @@
                 }
               ],
               "description": "Prefer RAISE EXCEPTION NEW to RAISE EXCEPTION TYPE\nTags: Styleguide, SingleFile, Quickfix, Upport\nhttps://rules.abaplint.org/prefer_raise_exception_new"
+            },
+            "prefer_raise_message": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferRaiseMessageConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer RAISE EXCEPTION with MESSAGE instead of supplying parameter TEXT or TEXTID\nTags: SingleFile\nhttps://rules.abaplint.org/prefer_raise_message"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -9382,6 +9610,33 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "PreferRaiseMessageConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreExceptionClasses": {
+          "description": "List of exception class names to ignore, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "ignoreExceptionClasses"
+      ],
       "type": "object"
     },
     "PreferReturningToExportingConf": {

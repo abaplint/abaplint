@@ -5,6 +5,8 @@ import {AbapdocConf} from "../src/rules/abapdoc";
 import {AbapdocHtmlTagConf} from "../src/rules/abapdoc_html_tag";
 import {AbapdocLeadingAtConf} from "../src/rules/abapdoc_leading_at";
 import {AbapdocParameterNamesConf} from "../src/rules/abapdoc_parameter_names";
+import {AbapdocShortLinkConf} from "../src/rules/abapdoc_short_link";
+import {AbapdocShorttextLengthConf} from "../src/rules/abapdoc_shorttext_length";
 import {AddTestAttributesConf} from "../src/rules/add_test_attributes";
 import {AFFAndXMLConf} from "../src/rules/aff_and_xml";
 import {AliasNeverReassignedConf} from "../src/rules/alias_never_reassigned";
@@ -15,6 +17,8 @@ import {AllowedObjectNamingConf} from "../src/rules/allowed_object_naming";
 import {AllowedObjectTypesConf} from "../src/rules/allowed_object_types";
 import {AmbiguousStatementConf} from "../src/rules/ambiguous_statement";
 import {AvoidUseConf} from "../src/rules/avoid_use";
+import {BDEFCheckSyntaxConf} from "../src/rules/bdef_check_syntax";
+import {BDEFParserErrorConf} from "../src/rules/bdef_parser_error";
 import {BeginEndNamesConf} from "../src/rules/begin_end_names";
 import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
 import {BooleanFlagViaIfConf} from "../src/rules/boolean_flag_via_if";
@@ -76,6 +80,7 @@ import {ExportingConf} from "../src/rules/exporting";
 import {FinalNewlineConf} from "../src/rules/final_newline";
 import {FMGlobalParametersObsoleteConf} from "../src/rules/fm_global_parameters_obsolete";
 import {ForbiddenIdentifierConf} from "../src/rules/forbidden_identifier";
+import {ForbiddenKernelWriteConf} from "../src/rules/forbidden_kernel_write";
 import {ForbiddenPseudoAndPragmaConf} from "../src/rules/forbidden_pseudo_and_pragma";
 import {ForbiddenVoidTypeConf} from "../src/rules/forbidden_void_type";
 import {FormTablesObsoleteConf} from "../src/rules/form_tables_obsolete";
@@ -158,6 +163,7 @@ import {PreferInsertIntoTableConf} from "../src/rules/prefer_insert_into_table";
 import {PreferIsNotConf} from "../src/rules/prefer_is_not";
 import {PreferPragmasConf} from "../src/rules/prefer_pragmas";
 import {PreferRaiseExceptionNewConf} from "../src/rules/prefer_raise_exception_new";
+import {PreferRaiseMessageConf} from "../src/rules/prefer_raise_message";
 import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_exporting";
 import {PreferStringTemplateConf} from "../src/rules/prefer_string_template";
 import {PreferXsdboolConf} from "../src/rules/prefer_xsdbool";
@@ -246,6 +252,8 @@ export interface IConfig {
     "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
     "abapdoc_leading_at"?: AbapdocLeadingAtConf | boolean,
     "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
+    "abapdoc_short_link"?: AbapdocShortLinkConf | boolean,
+    "abapdoc_shorttext_length"?: AbapdocShorttextLengthConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
     "alias_never_reassigned"?: AliasNeverReassignedConf | boolean,
@@ -256,6 +264,8 @@ export interface IConfig {
     "allowed_object_types"?: AllowedObjectTypesConf | boolean,
     "ambiguous_statement"?: AmbiguousStatementConf | boolean,
     "avoid_use"?: AvoidUseConf | boolean,
+    "bdef_check_syntax"?: BDEFCheckSyntaxConf | boolean,
+    "bdef_parser_error"?: BDEFParserErrorConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
     "boolean_flag_via_if"?: BooleanFlagViaIfConf | boolean,
@@ -317,6 +327,7 @@ export interface IConfig {
     "final_newline"?: FinalNewlineConf | boolean,
     "fm_global_parameters_obsolete"?: FMGlobalParametersObsoleteConf | boolean,
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
+    "forbidden_kernel_write"?: ForbiddenKernelWriteConf | boolean,
     "forbidden_pseudo_and_pragma"?: ForbiddenPseudoAndPragmaConf | boolean,
     "forbidden_void_type"?: ForbiddenVoidTypeConf | boolean,
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
@@ -399,6 +410,7 @@ export interface IConfig {
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_pragmas"?: PreferPragmasConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,
+    "prefer_raise_message"?: PreferRaiseMessageConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "prefer_string_template"?: PreferStringTemplateConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,
@@ -476,6 +488,8 @@ export interface IConfig {
     "abapdoc_html_tag"?: AbapdocHtmlTagConf | boolean,
     "abapdoc_leading_at"?: AbapdocLeadingAtConf | boolean,
     "abapdoc_parameter_names"?: AbapdocParameterNamesConf | boolean,
+    "abapdoc_short_link"?: AbapdocShortLinkConf | boolean,
+    "abapdoc_shorttext_length"?: AbapdocShorttextLengthConf | boolean,
     "add_test_attributes"?: AddTestAttributesConf | boolean,
     "aff_and_xml"?: AFFAndXMLConf | boolean,
     "alias_never_reassigned"?: AliasNeverReassignedConf | boolean,
@@ -486,6 +500,8 @@ export interface IConfig {
     "allowed_object_types"?: AllowedObjectTypesConf | boolean,
     "ambiguous_statement"?: AmbiguousStatementConf | boolean,
     "avoid_use"?: AvoidUseConf | boolean,
+    "bdef_check_syntax"?: BDEFCheckSyntaxConf | boolean,
+    "bdef_parser_error"?: BDEFParserErrorConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
     "begin_single_include"?: BeginSingleIncludeConf | boolean,
     "boolean_flag_via_if"?: BooleanFlagViaIfConf | boolean,
@@ -547,6 +563,7 @@ export interface IConfig {
     "final_newline"?: FinalNewlineConf | boolean,
     "fm_global_parameters_obsolete"?: FMGlobalParametersObsoleteConf | boolean,
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
+    "forbidden_kernel_write"?: ForbiddenKernelWriteConf | boolean,
     "forbidden_pseudo_and_pragma"?: ForbiddenPseudoAndPragmaConf | boolean,
     "forbidden_void_type"?: ForbiddenVoidTypeConf | boolean,
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
@@ -629,6 +646,7 @@ export interface IConfig {
     "prefer_is_not"?: PreferIsNotConf | boolean,
     "prefer_pragmas"?: PreferPragmasConf | boolean,
     "prefer_raise_exception_new"?: PreferRaiseExceptionNewConf | boolean,
+    "prefer_raise_message"?: PreferRaiseMessageConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "prefer_string_template"?: PreferStringTemplateConf | boolean,
     "prefer_xsdbool"?: PreferXsdboolConf | boolean,

@@ -1,6 +1,10 @@
+import {Comment} from "../abap/1_lexer/tokens";
+import {Combi, regex, seq, starPrio} from "../abap/2_statements/combi";
 import {ExpressionNode} from "../abap/nodes";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {CDSDetermineTypes} from "../cds/cds_determine_types";
+import {CDSLexer} from "../cds/cds_lexer";
+import {defaultRelease} from "../version";
 import {CDSParser} from "../cds/cds_parser";
 import {CDSAnnotate, CDSAnnotation, CDSAs, CDSAssociation, CDSDefineProjection, CDSElement, CDSName, CDSPrefixedName, CDSRelation, CDSSelect, CDSSource} from "../cds/expressions";
 import {IRegistry} from "../_iregistry";
@@ -11,7 +15,7 @@ export type ParsedDataDefinition = {
   sqlViewName: string | undefined;
   definitionName: string | undefined;
   description: string | undefined;
-  /** name is the name of the element, nameInSource the name in the prefixed source, if aliased via "as" */
+  /** name is the name of the element, nameInSource the name in the source, if aliased via "as" */
   fields: {key: boolean, name: string, nameInSource?: string, prefix: string, annotations: string[]}[];
   sources: {name: string, as: string | undefined}[];
   associations: {name: string, as: string | undefined}[],
@@ -115,9 +119,8 @@ export class DataDefinition extends AbstractObject {
       tree: undefined,
     };
 
-    this.findSQLViewName();
-
     this.parsedData.tree = new CDSParser().parse(this.findSourceFile());
+    this.findSQLViewName(this.parsedData.tree);
     if (this.parsedData.tree) {
       for (const c of this.parsedData.tree?.getChildren() || []) {
         if (c.get() instanceof CDSAnnotation) {
@@ -144,10 +147,30 @@ export class DataDefinition extends AbstractObject {
 
 //////////
 
-  private findSQLViewName(): void {
-    const match = this.findSourceFile()?.getRaw().match(/@AbapCatalog\.sqlViewName: '([\w/]+)'/);
-    if (match) {
-      this.parsedData!.sqlViewName = match[1].toUpperCase();
+  private findSQLViewName(tree: ExpressionNode | undefined): void {
+    let annotations = tree?.findDirectExpressions(CDSAnnotation);
+    if (annotations === undefined) {
+      const file = this.findSourceFile();
+      if (file === undefined) {
+        return;
+      }
+      // Keep SQL view lookup available even when the view body cannot be parsed.
+      const tokens = CDSLexer.run(file).filter(t => !(t instanceof Comment));
+      const leadingAnnotations = seq(starPrio(CDSAnnotation), starPrio(regex(/.*/)));
+      annotations = Combi.run(leadingAnnotations, tokens, defaultRelease)
+        ?.filter((n): n is ExpressionNode => n instanceof ExpressionNode && n.get() instanceof CDSAnnotation);
+    }
+    for (const annotation of annotations || []) {
+      const tokens = annotation.getTokens().map(t => t.getStr());
+      const colon = tokens.indexOf(":");
+      if (tokens.slice(0, colon).join("") !== "@AbapCatalog.sqlViewName") {
+        continue;
+      }
+      const match = tokens.slice(colon + 1).join(" ").match(/^'([\w/]+)'$/);
+      if (match) {
+        this.parsedData!.sqlViewName = match[1].toUpperCase();
+        return;
+      }
     }
   }
   private findDescription(): string | undefined {
@@ -173,11 +196,14 @@ export class DataDefinition extends AbstractObject {
       let found = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
       const list = e.findDirectExpression(CDSPrefixedName)?.findAllExpressions(CDSName);
       if (list !== undefined) {
-        const redirected = list.length > 1 && e.concatTokens().toUpperCase().includes(" REDIRECTED TO ");
+        const redirected = e.concatTokens().toUpperCase().includes(" REDIRECTED TO ");
         if (list.length > 1 && redirected === false) {
           // "prefix.field" is looked up as "field" in "prefix", also when aliased via "as"
           prefix = list[0].concatTokens();
           nameInSource = list[list.length - 1].concatTokens();
+        } else if (list.length === 1 && redirected === false) {
+          // unprefixed "field" is looked up in the sources, also when aliased via "as"
+          nameInSource = list[0].concatTokens();
         }
         if (found === undefined) {
           found = redirected === true ? list[0] : list[list.length - 1];

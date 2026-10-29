@@ -81,12 +81,29 @@ export class CDSDetermineTypes {
         } else {
           components.push({
             name: f.name,
-            type: VoidType.get("DDLS:fieldname:" + ddlsName),
+            type: this.findInSources(ddic, parsedData, f.nameInSource) ?? VoidType.get("DDLS:fieldname:" + ddlsName),
           });
         }
       }
       return new StructureType(components, parsedData.definitionName, parsedData.definitionName, parsedData.description);
     }
+  }
+
+  /** unprefixed field, take the type from the first source containing it, void or unknown sources are skipped */
+  private findInSources(ddic: DDIC, parsedData: ParsedDataDefinition, nameInSource: string | undefined): AbstractType | undefined {
+    if (nameInSource === undefined) {
+      return undefined;
+    }
+    for (const source of parsedData.sources) {
+      const lookup = ddic.lookupTableOrView(source.name);
+      if (lookup.type instanceof StructureType) {
+        const type = lookup.type.getComponentByName(nameInSource);
+        if (type) {
+          return type;
+        }
+      }
+    }
+    return undefined;
   }
 
 }

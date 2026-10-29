@@ -187,6 +187,27 @@ CREATE DATA md TYPE i.`;
     testFix(abap, expected);
   });
 
+  it("NEW #( value ) into a data reference component, CREATE DATA and the value", async () => {
+    const abap = `TYPES: BEGIN OF ty, ref TYPE REF TO i, END OF ty.
+DATA result TYPE ty.
+result-ref = NEW #( 4 ).`;
+    const expected = `TYPES: BEGIN OF ty, ref TYPE REF TO i, END OF ty.
+DATA result TYPE ty.
+CREATE DATA result-ref.
+result-ref->* = 4.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW #( ) into a data reference component, CREATE DATA", async () => {
+    const abap = `TYPES: BEGIN OF ty, ref TYPE REF TO string, END OF ty.
+DATA result TYPE ty.
+result-ref = NEW #( ).`;
+    const expected = `TYPES: BEGIN OF ty, ref TYPE REF TO string, END OF ty.
+DATA result TYPE ty.
+CREATE DATA result-ref.`;
+    testFix(abap, expected);
+  });
+
   it("NEW into an object reference stays CREATE OBJECT", async () => {
     const abap = `DATA mo TYPE REF TO object.
 mo = NEW #( ).`;
@@ -6811,6 +6832,294 @@ ENDFORM.`;
 ENDFORM.`;
 
     testFixAll(abap, expected);
+  });
+
+  it("chained call with CHANGING, outline the object", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    lcl=>get( )->chg( CHANGING cv = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    DATA temp1 TYPE REF TO lcl.
+    temp1 = lcl=>get( ).
+    temp1->chg( CHANGING cv = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    testFix(abap, expected);
+  });
+
+  it("chained call with IMPORTING on a method of the own class", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    get( )->imp( IMPORTING ev = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    DATA temp1 TYPE REF TO lcl.
+    temp1 = get( ).
+    temp1->imp( IMPORTING ev = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    testFix(abap, expected);
+  });
+
+  it("chained call with CHANGING, object typed via an interface", async () => {
+    const abap = `INTERFACE lif.
+  METHODS chg CHANGING cv TYPE string.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ri) TYPE REF TO lif.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  DATA lv TYPE string.
+  lcl=>get( )->chg( CHANGING cv = lv ).
+ENDFORM.`;
+
+    const expected = `INTERFACE lif.
+  METHODS chg CHANGING cv TYPE string.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ri) TYPE REF TO lif.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  DATA lv TYPE string.
+  DATA temp1 TYPE REF TO lif.
+  temp1 = lcl=>get( ).
+  temp1->chg( CHANGING cv = lv ).
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("chained call without parameter keywords stays", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    lcl=>get( )->run( ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("unchained call with CHANGING stays", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    DATA lo TYPE REF TO lcl.
+    lo->chg( CHANGING cv = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("chained call with CHANGING on open-abap stays", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    lcl=>get( )->chg( CHANGING cv = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("INSERT, outline 702 built-in operand", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  INSERT substring( val = lv_val off = 1 len = 2 ) INTO TABLE result.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  DATA temp1 TYPE string.
+  temp1 = substring( val = lv_val off = 1 len = 2 ).
+  INSERT temp1 INTO TABLE result.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("INSERT, multi-line 702 built-in operand", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  INSERT to_upper(
+    lv_val ) INTO TABLE result.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  DATA temp1 TYPE string.
+  temp1 = to_upper( lv_val ).
+  INSERT temp1 INTO TABLE result.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("INSERT, built-in older than 702 stays", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  INSERT lines( result ) INTO TABLE result.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("INSERT, built-in as part of a longer operand is the existing outline", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  INSERT lv_val && to_upper( lv_val ) INTO TABLE result.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Outline INSERT source expression");
+  });
+
+  it("INSERT, 702 built-in on open-abap stays", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  INSERT to_upper( lv_val ) INTO TABLE result.
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
   });
 
   it("table expression key, built-in older than 702 stays in the operand", async () => {
