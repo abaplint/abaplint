@@ -28,6 +28,10 @@ export enum ReferenceType {
 
 
 export interface IReferenceExtras {
+  /** This attribute access cannot acquire write permission in its enclosing context. */
+  readOnly?: boolean,
+  /** The enclosing operand writes storage, even when this token only names its class. */
+  writeOperand?: boolean,
   ooName?: string,
   ooType?: "CLAS" | "INTF" | "Void",
   foundQualified?: boolean,

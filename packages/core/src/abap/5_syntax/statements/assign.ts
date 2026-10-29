@@ -6,12 +6,18 @@ import {AnyType, CharacterType, DataReference, GenericObjectReferenceType, Objec
 import {StatementSyntax} from "../_statement_syntax";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Dynamic} from "../expressions/dynamic";
+import {Target} from "../expressions/target";
+import {ReferenceType} from "../_reference";
 import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
+    const incrementBase = node.findDirectExpression(Expressions.Target);
+    if (incrementBase) {
+      Target.runSyntax(incrementBase, input, ReferenceType.DataReadReference);
+    }
     const assignSource = node.findDirectExpression(Expressions.AssignSource);
     const isComponent = assignSource?.getFirstChild()?.concatTokens().toUpperCase() === "COMPONENT";
     const sources: ExpressionNode[] = assignSource?.findDirectExpressionsMulti([Expressions.Source, Expressions.SimpleSource3]) || [];

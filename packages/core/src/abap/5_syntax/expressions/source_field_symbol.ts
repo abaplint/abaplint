@@ -5,7 +5,8 @@ import {ReferenceType} from "../_reference";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class SourceFieldSymbol {
-  public static runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput,
+                          type: ReferenceType | ReferenceType[] = ReferenceType.DataReadReference): AbstractType {
     const token = node.getFirstToken();
     const found = input.scope.findVariable(token.getStr());
     if (found === undefined) {
@@ -13,7 +14,7 @@ export class SourceFieldSymbol {
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return VoidType.get(CheckSyntaxKey);
     }
-    input.scope.addReference(token, found, ReferenceType.DataReadReference, input.filename);
+    input.scope.addReference(token, found, type, input.filename);
     return found.getType();
   }
 }

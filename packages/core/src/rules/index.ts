@@ -40,6 +40,7 @@ export * from "./check_ddic";
 export * from "./check_include";
 export * from "./check_subrc";
 export * from "./check_syntax";
+export * from "./read_only_write";
 export * from "./check_text_elements";
 export * from "./check_transformation_exists";
 export * from "./clear_after_declaration";

@@ -111,6 +111,10 @@ export class NewObject {
     if (ret instanceof ObjectReferenceType) {
       this.parameters(node, ret, input);
     } else {
+      if (ret instanceof DataReference) {
+        const tid = new TypedIdentifier(typeToken, input.filename, ret);
+        input.scope.addReference(typeToken, tid, ReferenceType.InferredType, input.filename);
+      }
       for (const s of node.findAllExpressions(Expressions.Source)) {
         Source.runSyntax(s, input, ret);
       }

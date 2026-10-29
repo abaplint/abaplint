@@ -8,7 +8,8 @@ export class EditorCall implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      Source.runSyntax(s, input);
+      const write = node.findDirectTokenByText("REPORT") === undefined && node.findDirectTokenByText("DISPLAY") === undefined;
+      Source.runSyntax(s, input, undefined, write, false, !write);
     }
 
     for (const t of node.findDirectExpressions(Expressions.SimpleSource3)) {
