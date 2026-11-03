@@ -2160,11 +2160,18 @@ CONSTANTS: BEGIN OF ${structureName},\n`;
       return undefined;
     }
 
-    if (!(high.get() instanceof Statements.Move)) {
-      return undefined;
+    let target: ExpressionNode | undefined = undefined;
+    if (high.get() instanceof Statements.Move) {
+      target = high.findDirectExpression(Expressions.Target);
+    } else if (high.get() instanceof Statements.Clear
+        || high.get() instanceof Statements.Free
+        || high.get() instanceof Statements.Append
+        || high.get() instanceof Statements.InsertInternal) {
+      // the writable operand, eg. "CLEAR tab[ 1 ]-comp" or "APPEND 1 TO tab[ 1 ]-sub", is a Target
+      // just like the left-hand side of an assignment, so it is lowered the same way
+      target = high.findDirectExpressions(Expressions.Target).find(
+        t => t.findDirectExpression(Expressions.TableExpression) !== undefined);
     }
-
-    const target = high.findDirectExpression(Expressions.Target);
     if (target === undefined) {
       return undefined;
     }
@@ -2193,14 +2200,17 @@ ${indentation}sy-tabix = ${tabixBackup}.
 ${indentation}IF sy-subrc <> 0.
 ${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ${indentation}ENDIF.
-${indentation}${uniqueName}`;
+${indentation}`;
 
     const start = target.getFirstToken().getStart();
     const end = tableExpression.findDirectTokenByText("]")?.getEnd();
     if (end === undefined) {
       return undefined;
     }
-    const fix = EditHelper.replaceRange(lowFile, start, end, code);
+    // the READ TABLE goes in front of the statement, the target need not be its first operand
+    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, start, end, uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, move with table target", this.getMetadata().key, this.conf.severity, fix);
   }

@@ -2261,6 +2261,215 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("CLEAR, table expression target with component", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  CLEAR lt_f[ name = lv_name ]-t_range.
+ENDFORM.`;
+    const expected = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_f.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_f WITH KEY name = lv_name ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  CLEAR <temp1>-t_range.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("CLEAR, table expression target by index", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  CLEAR lt_f[ 1 ].
+ENDFORM.`;
+    const expected = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_f.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_f INDEX 1 ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  CLEAR <temp1>.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("CLEAR WITH, table expression target", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  CLEAR lt_f[ 1 ]-name WITH space.
+ENDFORM.`;
+    const expected = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_f.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_f INDEX 1 ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  CLEAR <temp1>-name WITH space.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("FREE, table expression target", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FREE lt_f[ name = lv_name ]-t_range.
+ENDFORM.`;
+    const expected = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_f.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_f WITH KEY name = lv_name ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  FREE <temp1>-t_range.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("APPEND TO, table expression target", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  APPEND 1 TO lt_f[ name = lv_name ]-t_range.
+ENDFORM.`;
+    const expected = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_f.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_f WITH KEY name = lv_name ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  APPEND 1 TO <temp1>-t_range.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("INSERT INTO TABLE, table expression target", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  INSERT 1 INTO TABLE lt_f[ name = lv_name ]-t_range.
+ENDFORM.`;
+    const expected = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_f.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_f WITH KEY name = lv_name ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  INSERT 1 INTO TABLE <temp1>-t_range.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("CLEAR, plain target, no downport", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  DATA ls_f TYPE ty_f.
+  CLEAR ls_f-t_range.
+  FREE lt_f.
+ENDFORM.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("contains()", async () => {
     const abap = `
     DATA current_val TYPE string.
