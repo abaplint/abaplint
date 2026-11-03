@@ -633,6 +633,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.replaceInstanceOf(low, high, lowFile, highSyntax, highFile);
+    if (found) {
+      return found;
+    }
+
     found = this.replaceLineFunctions(high, lowFile, highSyntax, highFile);
     if (found) {
       return found;
@@ -3646,6 +3651,61 @@ ${indentation}    output = ${uniqueName}.\n`;
 
         return Issue.atToken(lowFile, token, "Replace line function", this.getMetadata().key, this.conf.severity, fix);
       }
+    }
+
+    return undefined;
+  }
+
+  /** IS [NOT] INSTANCE OF is 750, outline it as a cast in a TRY before the statement,
+   *  the cast of an initial reference succeeds, while IS INSTANCE OF is false, hence the IS BOUND */
+  private replaceInstanceOf(low: StatementNode, high: StatementNode, lowFile: ABAPFile,
+                            highSyntax: ISyntaxResult, highFile: ABAPFile): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    } else if (!(high.get() instanceof Statements.If)
+        && !(high.get() instanceof Statements.ElseIf)
+        && !(high.get() instanceof Statements.Check)) {
+      // the condition of eg. WHILE is evaluated more than once
+      return undefined;
+    }
+
+    for (const c of high.findAllExpressionsRecursive(Expressions.Compare)) {
+      const className = c.findDirectExpression(Expressions.ClassName);
+      const source = c.findDirectExpression(Expressions.Source);
+      if (className === undefined || source === undefined) {
+        continue;
+      }
+      const children = c.getChildren();
+      const operator = children.slice(children.indexOf(source) + 1).map(n => n.concatTokens().toUpperCase()).join(" ");
+      const negated = operator.startsWith("IS NOT INSTANCE OF");
+
+      let insertAt: Position | undefined = high.getFirstToken().getStart();
+      if (high.get() instanceof Statements.ElseIf) {
+        // assumption: no side effects in IF conditions
+        insertAt = this.findStartOfIf(high, highFile);
+        if (insertAt === undefined) {
+          return undefined;
+        }
+      }
+
+      const castName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const boolName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(insertAt.getCol() - 1);
+
+      const code = `DATA ${castName} TYPE REF TO ${className.concatTokens()}.
+${indentation}DATA ${boolName} TYPE abap_bool.
+${indentation}TRY.
+${indentation}    ${castName} ?= ${source.concatTokens()}.
+${indentation}    ${boolName} = boolc( ${castName} IS BOUND ).
+${indentation}  CATCH cx_sy_move_cast_error.
+${indentation}    ${boolName} = abap_false.
+${indentation}ENDTRY.
+${indentation}`;
+      const fix1 = EditHelper.insertAt(lowFile, insertAt, code);
+      const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), className.getLastToken().getEnd(),
+                                           boolName + (negated ? " = abap_false" : " = abap_true"));
+      const fix = EditHelper.merge(fix2, fix1);
+      return Issue.atToken(lowFile, source.getFirstToken(), "Downport IS INSTANCE OF", this.getMetadata().key, this.conf.severity, fix);
     }
 
     return undefined;
