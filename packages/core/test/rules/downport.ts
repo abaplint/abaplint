@@ -187,6 +187,27 @@ CREATE DATA md TYPE i.`;
     testFix(abap, expected);
   });
 
+  it("NEW #( value ) into a data reference component, CREATE DATA and the value", async () => {
+    const abap = `TYPES: BEGIN OF ty, ref TYPE REF TO i, END OF ty.
+DATA result TYPE ty.
+result-ref = NEW #( 4 ).`;
+    const expected = `TYPES: BEGIN OF ty, ref TYPE REF TO i, END OF ty.
+DATA result TYPE ty.
+CREATE DATA result-ref.
+result-ref->* = 4.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW #( ) into a data reference component, CREATE DATA", async () => {
+    const abap = `TYPES: BEGIN OF ty, ref TYPE REF TO string, END OF ty.
+DATA result TYPE ty.
+result-ref = NEW #( ).`;
+    const expected = `TYPES: BEGIN OF ty, ref TYPE REF TO string, END OF ty.
+DATA result TYPE ty.
+CREATE DATA result-ref.`;
+    testFix(abap, expected);
+  });
+
   it("NEW into an object reference stays CREATE OBJECT", async () => {
     const abap = `DATA mo TYPE REF TO object.
 mo = NEW #( ).`;
@@ -6813,6 +6834,294 @@ ENDFORM.`;
     testFixAll(abap, expected);
   });
 
+  it("chained call with CHANGING, outline the object", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    lcl=>get( )->chg( CHANGING cv = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    DATA temp1 TYPE REF TO lcl.
+    temp1 = lcl=>get( ).
+    temp1->chg( CHANGING cv = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    testFix(abap, expected);
+  });
+
+  it("chained call with IMPORTING on a method of the own class", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    get( )->imp( IMPORTING ev = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    DATA temp1 TYPE REF TO lcl.
+    temp1 = get( ).
+    temp1->imp( IMPORTING ev = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    testFix(abap, expected);
+  });
+
+  it("chained call with CHANGING, object typed via an interface", async () => {
+    const abap = `INTERFACE lif.
+  METHODS chg CHANGING cv TYPE string.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ri) TYPE REF TO lif.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  DATA lv TYPE string.
+  lcl=>get( )->chg( CHANGING cv = lv ).
+ENDFORM.`;
+
+    const expected = `INTERFACE lif.
+  METHODS chg CHANGING cv TYPE string.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ri) TYPE REF TO lif.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM bar.
+  DATA lv TYPE string.
+  DATA temp1 TYPE REF TO lif.
+  temp1 = lcl=>get( ).
+  temp1->chg( CHANGING cv = lv ).
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("chained call without parameter keywords stays", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    lcl=>get( )->run( ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("unchained call with CHANGING stays", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    DATA lo TYPE REF TO lcl.
+    lo->chg( CHANGING cv = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("chained call with CHANGING on open-abap stays", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ro) TYPE REF TO lcl.
+    METHODS chg CHANGING cv TYPE string.
+    METHODS imp EXPORTING ev TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD chg.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv TYPE string.
+    lcl=>get( )->chg( CHANGING cv = lv ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("INSERT, outline 702 built-in operand", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  INSERT substring( val = lv_val off = 1 len = 2 ) INTO TABLE result.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  DATA temp1 TYPE string.
+  temp1 = substring( val = lv_val off = 1 len = 2 ).
+  INSERT temp1 INTO TABLE result.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("INSERT, multi-line 702 built-in operand", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  INSERT to_upper(
+    lv_val ) INTO TABLE result.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  DATA temp1 TYPE string.
+  temp1 = to_upper( lv_val ).
+  INSERT temp1 INTO TABLE result.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("INSERT, built-in older than 702 stays", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  INSERT lines( result ) INTO TABLE result.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("INSERT, built-in as part of a longer operand is the existing outline", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  INSERT lv_val && to_upper( lv_val ) INTO TABLE result.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Outline INSERT source expression");
+  });
+
+  it("INSERT, 702 built-in on open-abap stays", async () => {
+    const abap = `FORM bar.
+  DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_val TYPE string.
+  INSERT to_upper( lv_val ) INTO TABLE result.
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("table expression key, built-in older than 702 stays in the operand", async () => {
     const abap = `FORM bar.
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
@@ -6971,6 +7280,419 @@ ENDFORM.`;
 ENDFORM.`;
 
     testFixAll(abap, expected);
+  });
+
+  it("IS INSTANCE OF in IF, cast in a TRY", async () => {
+    const abap = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  IF lo_obj IS INSTANCE OF lcl_case.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  DATA temp1 TYPE REF TO lcl_case.
+  DATA temp2 TYPE abap_bool.
+  TRY.
+      temp1 ?= lo_obj.
+      temp2 = boolc( temp1 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp2 = abap_false.
+  ENDTRY.
+  IF temp2 = abap_true.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("IS NOT INSTANCE OF in IF", async () => {
+    const abap = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  IF lo_obj IS NOT INSTANCE OF lcl_case.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  DATA temp1 TYPE REF TO lcl_case.
+  DATA temp2 TYPE abap_bool.
+  TRY.
+      temp1 ?= lo_obj.
+      temp2 = boolc( temp1 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp2 = abap_false.
+  ENDTRY.
+  IF temp2 = abap_false.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("NOT ... IS INSTANCE OF, combined with another condition", async () => {
+    const abap = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  IF lo_obj IS BOUND AND NOT lo_obj IS INSTANCE OF lcl_case.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  DATA temp1 TYPE REF TO lcl_case.
+  DATA temp2 TYPE abap_bool.
+  TRY.
+      temp1 ?= lo_obj.
+      temp2 = boolc( temp1 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp2 = abap_false.
+  ENDTRY.
+  IF lo_obj IS BOUND AND NOT temp2 = abap_true.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("IS INSTANCE OF in ELSEIF, outlined before the IF", async () => {
+    const abap = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  IF 1 = 2.
+    WRITE / 'foo'.
+  ELSEIF lo_obj IS INSTANCE OF lcl_case.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  DATA temp1 TYPE REF TO lcl_case.
+  DATA temp2 TYPE abap_bool.
+  TRY.
+      temp1 ?= lo_obj.
+      temp2 = boolc( temp1 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp2 = abap_false.
+  ENDTRY.
+  IF 1 = 2.
+    WRITE / 'foo'.
+  ELSEIF temp2 = abap_true.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("IS INSTANCE OF in CHECK", async () => {
+    const abap = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  CHECK lo_obj IS INSTANCE OF lcl_case.
+ENDFORM.`;
+
+    const expected = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  DATA temp1 TYPE REF TO lcl_case.
+  DATA temp2 TYPE abap_bool.
+  TRY.
+      temp1 ?= lo_obj.
+      temp2 = boolc( temp1 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp2 = abap_false.
+  ENDTRY.
+  CHECK temp2 = abap_true.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("IS INSTANCE OF, two in one IF", async () => {
+    const abap = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  IF lo_obj IS INSTANCE OF lcl_case OR lo_obj IS INSTANCE OF lcl_case.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  DATA temp1 TYPE REF TO lcl_case.
+  DATA temp2 TYPE abap_bool.
+  TRY.
+      temp1 ?= lo_obj.
+      temp2 = boolc( temp1 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp2 = abap_false.
+  ENDTRY.
+  DATA temp3 TYPE REF TO lcl_case.
+  DATA temp4 TYPE abap_bool.
+  TRY.
+      temp3 ?= lo_obj.
+      temp4 = boolc( temp3 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp4 = abap_false.
+  ENDTRY.
+  IF temp2 = abap_true OR temp4 = abap_true.
+  ENDIF.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("IS INSTANCE OF in WHILE, not downported", async () => {
+    const issues = await findIssues(`CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  WHILE lo_obj IS INSTANCE OF lcl_case.
+    CLEAR lo_obj.
+  ENDWHILE.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("IS BOUND, no downport", async () => {
+    const issues = await findIssues(`FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  IF lo_obj IS BOUND.
+  ENDIF.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  function ztabTransparent(): MemoryFile {
+    return new MemoryFile("ztab.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTAB</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>test</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZTAB</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL0</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <TABNAME>ZTAB</TABNAME>
+     <FIELDNAME>FIELD1</FIELDNAME>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <POSITION>0001</POSITION>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000020</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+    <DD03P>
+     <TABNAME>ZTAB</TABNAME>
+     <FIELDNAME>FIELD2</FIELDNAME>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <POSITION>0002</POSITION>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000020</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+  }
+
+  it("INSERT dbtab FROM @( VALUE #( ) ), work area typed by the table", async () => {
+    const abap = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  INSERT ztab FROM @( VALUE #( field1 = lv_text ) ).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA temp1 TYPE ztab.
+  temp1 = VALUE #( field1 = lv_text ).
+  INSERT ztab FROM @temp1.
+ENDFORM.`;
+
+    testFix(abap, expected, [ztabTransparent()]);
+  });
+
+  it("INSERT dbtab FROM @( VALUE #( ) ) in a LOOP, all steps", async () => {
+    const abap = `FORM bar.
+  DATA lt_p TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_text TYPE c LENGTH 10.
+  LOOP AT lt_p INTO DATA(ls_p).
+    INSERT ztab FROM @( VALUE #(
+      field1 = lv_text
+      field2 = to_upper( ls_p ) ) ).
+  ENDLOOP.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_p TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA ls_p LIKE LINE OF lt_p.
+  LOOP AT lt_p INTO ls_p.
+    DATA temp1 TYPE ztab.
+    CLEAR temp1.
+    temp1-field1 = lv_text.
+    temp1-field2 = to_upper( ls_p ).
+    INSERT ztab FROM temp1.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFixAll(abap, expected, [ztabTransparent()]);
+  });
+
+  it("MODIFY, UPDATE and DELETE dbtab FROM @( VALUE #( ) ), all steps", async () => {
+    const abap = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  MODIFY ztab FROM @( VALUE #( field1 = lv_text ) ).
+  UPDATE ztab FROM @( VALUE #( field1 = lv_text ) ).
+  DELETE ztab FROM @( VALUE #( field1 = lv_text ) ).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA temp1 TYPE ztab.
+  CLEAR temp1.
+  temp1-field1 = lv_text.
+  MODIFY ztab FROM temp1.
+  DATA temp2 TYPE ztab.
+  CLEAR temp2.
+  temp2-field1 = lv_text.
+  UPDATE ztab FROM temp2.
+  DATA temp3 TYPE ztab.
+  CLEAR temp3.
+  temp3-field1 = lv_text.
+  DELETE ztab FROM temp3.
+ENDFORM.`;
+
+    testFixAll(abap, expected, [ztabTransparent()]);
+  });
+
+  it("INSERT INTO dbtab VALUES @( VALUE #( ) ), all steps", async () => {
+    const abap = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  INSERT INTO ztab VALUES @( VALUE #( field1 = lv_text ) ).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA temp1 TYPE ztab.
+  CLEAR temp1.
+  temp1-field1 = lv_text.
+  INSERT INTO ztab VALUES temp1.
+ENDFORM.`;
+
+    testFixAll(abap, expected, [ztabTransparent()]);
+  });
+
+  it("MODIFY dbtab FROM TABLE @( VALUE #( ) ), table of the database table", async () => {
+    const abap = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  MODIFY ztab FROM TABLE @( VALUE #( ( field1 = lv_text ) ) ).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA temp1 TYPE STANDARD TABLE OF ztab WITH DEFAULT KEY.
+  temp1 = VALUE #( ( field1 = lv_text ) ).
+  MODIFY ztab FROM TABLE @temp1.
+ENDFORM.`;
+
+    testFix(abap, expected, [ztabTransparent()]);
+  });
+
+  it("INSERT dbtab FROM @( variable ), still outlined with DATA( )", async () => {
+    const abap = `
+DATA ls_row TYPE ztab.
+INSERT ztab FROM @( ls_row ).`;
+
+    const expected = `
+DATA ls_row TYPE ztab.
+DATA(temp1) = ls_row.
+INSERT ztab FROM @temp1.`;
+
+    testFix(abap, expected, [ztabTransparent()]);
+  });
+
+  it("INSERT dynamic dbtab FROM @( VALUE #( ) ), no fix", async () => {
+    const abap = `FORM bar.
+  DATA lv_name TYPE string.
+  INSERT (lv_name) FROM @( VALUE #( field1 = lv_name ) ).
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getDefaultFix()).to.equal(undefined);
   });
 
   it("strip WITHOUT AUTHORITY-CHECK from CALL TRANSACTION", async () => {

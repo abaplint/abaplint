@@ -12,6 +12,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
 import {EditHelper, IEdit} from "../edit_helper";
+import {Punctuation} from "../abap/1_lexer/tokens";
 
 type fields = {nameEnd: Position, after: Position}[];
 
@@ -197,11 +198,17 @@ ENDINTERFACE.`,
       let column = 0;
       const st = t.findDirectStatements(Statements.Type);
       for (const s of st) {
-        const name = s.getChildren()[1];
+        const children = s.getChildren();
+        const length = s.findDirectExpression(Expressions.ConstantFieldLength);
+        const nameEnd = (length ?? children[1]).getLastToken().getEnd();
+        const after = children[length ? 3 : 2];
+        if (after === undefined || after.getFirstToken() instanceof Punctuation) {
+          continue; // no TYPE clause, eg. "foo(1)," with implicit type
+        }
         fields.push({
-          nameEnd: name.getLastToken().getEnd(),
-          after: s.getChildren()[2].getFirstToken().getStart()});
-        column = Math.max(column, name.getFirstToken().getEnd().getCol() + 1);
+          nameEnd: nameEnd,
+          after: after.getFirstToken().getStart()});
+        column = Math.max(column, nameEnd.getCol() + 1);
       }
 
       issues.push(...this.check(fields, column, file));

@@ -66,6 +66,9 @@ export class InsertInternal implements StatementSyntax {
       let error = false;
       if (sourceType instanceof IntegerType && targetType instanceof Integer8Type) {
         error = true;
+      } else if (targetType instanceof TableType && targetType.isWithHeader() && sourceType instanceof TableType) {
+        // LINES OF into a table with header line, compare the row types
+        error = new TypeUtils(input.scope).isAssignable(sourceType.getRowType(), targetType.getRowType()) === false;
       } else if (new TypeUtils(input.scope).isAssignable(sourceType, targetType) === false) {
         error = true;
       } else if (sourceType instanceof CharacterType && targetType instanceof StringType) {

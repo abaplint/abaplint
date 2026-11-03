@@ -16,7 +16,9 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPFile} from "../abap/abap_file";
 import {ExpressionNode, StatementNode, StructureNode, TokenNode} from "../abap/nodes";
 import {IClassDefinition} from "../abap/types/_class_definition";
+import {IMethodDefinition} from "../abap/types/_method_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {AnyType, DataReference, ObjectReferenceType, StructureType, TableType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {EditHelper, IEdit} from "../edit_helper";
@@ -339,6 +341,31 @@ Make sure to test the downported code, it might not always be completely correct
         }
       }
 
+      // a chained call with EXPORTING/IMPORTING/CHANGING/RECEIVING/EXCEPTIONS parses in the low
+      // version, but 702 reads the last call of a chain as a functional call,
+      // "Unexpected word CHANGING in functional method call"
+      if (ret.length === 0) {
+        for (let i = 0; i < lowStatements.length; i++) {
+          const issue = this.outlineChainedCallParameters(lowStatements[i], highStatements[i], lowFile, highSyntax);
+          if (issue) {
+            ret.push(issue);
+            break;
+          }
+        }
+      }
+
+      // INSERT with a 702 built-in function as the operand parses in the low version, but 702
+      // reads the function as a method call, "Method SUBSTRING does not exist"
+      if (ret.length === 0) {
+        for (let i = 0; i < lowStatements.length; i++) {
+          const issue = this.outlineInsertBuiltin(lowStatements[i], highStatements[i], lowFile, highSyntax);
+          if (issue) {
+            ret.push(issue);
+            break;
+          }
+        }
+      }
+
       // INTO after WHERE parses as a valid SELECT in the low version, but is only allowed in
       // strict SQL syntax, so move it also when the statement is no longer Unknown
       if (ret.length === 0) {
@@ -606,6 +633,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.replaceInstanceOf(low, high, lowFile, highSyntax, highFile);
+    if (found) {
+      return found;
+    }
+
     found = this.replaceLineFunctions(high, lowFile, highSyntax, highFile);
     if (found) {
       return found;
@@ -709,6 +741,30 @@ Make sure to test the downported code, it might not always be completely correct
     return Issue.atToken(lowFile, low.getFirstToken(), "SQL, move INTO", this.getMetadata().key, this.conf.severity, fix);
   }
 
+  /** the work area of INSERT/MODIFY/UPDATE/DELETE dbtab FROM @( ... ) takes its type from the
+   * database table, a "#" constructor cannot be outlined with DATA( ) as there is nothing to infer from */
+  private sqlWorkAreaType(high: StatementNode, sqlSource: ExpressionNode): string | undefined {
+    if (!(high.get() instanceof Statements.InsertDatabase)
+        && !(high.get() instanceof Statements.ModifyDatabase)
+        && !(high.get() instanceof Statements.UpdateDatabase)
+        && !(high.get() instanceof Statements.DeleteDatabase)) {
+      return undefined;
+    } else if (high.getChildren().includes(sqlSource) === false) {
+      return undefined;
+    }
+
+    const table = high.findDirectExpression(Expressions.DatabaseTable);
+    if (table === undefined || table.findDirectExpression(Expressions.Dynamic) !== undefined) {
+      return undefined;
+    }
+
+    const name = table.concatTokens();
+    if (high.findDirectTokenByText("TABLE") !== undefined) {
+      return `STANDARD TABLE OF ${name} WITH DEFAULT KEY`;
+    }
+    return name;
+  }
+
   /** removes @'s and commas */
   private downportSQLExtras(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(low.get() instanceof Unknown)) {
@@ -744,6 +800,19 @@ Make sure to test the downported code, it might not always be completely correct
         const tokens = c.getAllTokens();
         if (tokens[1] instanceof ParenLeftW && tokens[tokens.length - 1] instanceof WParenRightW) {
           const source = c.findDirectExpression(Expressions.Source);
+          if (source?.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens() === "#") {
+            const workAreaType = this.sqlWorkAreaType(high, c);
+            if (workAreaType === undefined) {
+              return Issue.atToken(lowFile, low.getFirstToken(), "SQL, outline complex @, type of # not known", this.getMetadata().key, this.conf.severity);
+            }
+            const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+            const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+            const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), `DATA ${uniqueName} TYPE ${workAreaType}.
+${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
+            const fix2 = EditHelper.replaceRange(lowFile, c.getFirstToken().getStart(), c.getLastToken().getEnd(), "@" + uniqueName);
+            const fix = EditHelper.merge(fix2, fix1);
+            return Issue.atToken(lowFile, low.getFirstToken(), "SQL, outline complex @", this.getMetadata().key, this.conf.severity, fix);
+          }
           const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
           const fix1 = EditHelper.insertAt(lowFile, high.getStart(), `DATA(${uniqueName}) = ${source?.concatTokens()}.\n`);
           const fix2 = EditHelper.replaceRange(lowFile, c.getFirstToken().getStart(), c.getLastToken().getEnd(), "@" + uniqueName);
@@ -1297,6 +1366,45 @@ ${indentation}`);
     }
 
     return undefined;
+  }
+
+  /** INSERT substring( ... ) INTO TABLE tab, the operand is outlined into a variable */
+  private outlineInsertBuiltin(low: StatementNode, high: StatementNode, lowFile: ABAPFile,
+                               highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.InsertInternal)) {
+      return undefined;
+    } else if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    } else if (low.getFirstToken().getStart() instanceof VirtualPosition) {
+      return undefined;
+    }
+
+    // the whole operand is the call, a longer expression is outlined by replaceInsertExpression
+    const source = high.getChildren()[1];
+    if (!(source instanceof ExpressionNode)
+        || !(source.get() instanceof Expressions.SimpleSource4 || source.get() instanceof Expressions.Source)
+        || source.getChildren().length !== 1
+        || !(source.getFirstChild()?.get() instanceof Expressions.MethodCallChain)) {
+      return undefined;
+    }
+
+    const type = this.builtinReturnType(source, lowFile, highSyntax);
+    if (type === undefined) {
+      return undefined;
+    }
+
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const code = `DATA ${uniqueName} TYPE ${type}.\n` +
+      indentation + `${uniqueName} = ${source.concatTokens()}.\n` +
+      indentation;
+
+    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, source.getFirstToken(), "Outline built-in function in INSERT",
+                         this.getMetadata().key, this.conf.severity, fix);
   }
 
   /** the ABAP type returned by the built-in function this Source starts with, or undefined
@@ -3179,6 +3287,73 @@ ${indentation}    output = ${uniqueName}.\n`;
     return undefined;
   }
 
+  /** a( )->b( CHANGING c = d ), the object the last method is called on is outlined into a
+   * variable typed via the RETURNING parameter of the method before it */
+  private outlineChainedCallParameters(low: StatementNode, high: StatementNode, lowFile: ABAPFile,
+                                       highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.Call)) {
+      return undefined;
+    } else if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    } else if (low.getFirstToken().getStart() instanceof VirtualPosition) {
+      return undefined;
+    }
+
+    const chain = high.findDirectExpression(Expressions.MethodCallChain);
+    const children = chain?.getChildren() || [];
+    const last = children[children.length - 1];
+    const arrow = children[children.length - 2];
+    const previous = children[children.length - 3];
+    if (chain === undefined
+        || !(last instanceof ExpressionNode)
+        || !(last.get() instanceof Expressions.MethodCall)
+        || arrow?.getFirstToken().getStr() !== "->"
+        || !(previous instanceof ExpressionNode)
+        || !(previous.get() instanceof Expressions.MethodCall)) {
+      return undefined;
+    }
+
+    const parameters = last.findDirectExpression(Expressions.MethodCallParam)?.findDirectExpression(Expressions.MethodParameters);
+    if (parameters === undefined) {
+      return undefined;
+    }
+
+    // the type of the object, from the method that returns it
+    const methodToken = previous.findDirectExpression(Expressions.MethodName)?.getFirstToken();
+    if (methodToken === undefined) {
+      return undefined;
+    }
+    const spag = highSyntax.spaghetti.lookupPosition(methodToken.getStart(), lowFile.getFilename());
+    let type: string | undefined = undefined;
+    for (const r of spag?.getData().references || []) {
+      if (r.referenceType === ReferenceType.MethodReference
+          && r.position.getStart().equals(methodToken.getStart())) {
+        const returning = (r.resolved as IMethodDefinition | undefined)?.getParameters().getReturning()?.getType();
+        if (returning instanceof ObjectReferenceType) {
+          type = returning.toABAP();
+        }
+        break;
+      }
+    }
+    if (type === undefined) {
+      return undefined;
+    }
+
+    const object = children.slice(0, children.length - 2).map(c => c.concatTokens()).join("");
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const code = `DATA ${uniqueName} TYPE ${type}.\n` +
+      indentation + `${uniqueName} = ${object}.\n` +
+      indentation;
+
+    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, chain.getFirstToken().getStart(), previous.getLastToken().getEnd(), uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, chain.getFirstToken(), "Outline object of chained call with parameter keywords",
+                         this.getMetadata().key, this.conf.severity, fix);
+  }
+
   /** if the source expression is the complete source of an INSERT or APPEND statement, then the
    * outlined variable must be typed via the row type of the table, returns the table name */
   private findRowTypeOf(high: StatementNode, source: ExpressionNode): string | undefined {
@@ -3518,6 +3693,61 @@ ${indentation}    output = ${uniqueName}.\n`;
     return undefined;
   }
 
+  /** IS [NOT] INSTANCE OF is 750, outline it as a cast in a TRY before the statement,
+   *  the cast of an initial reference succeeds, while IS INSTANCE OF is false, hence the IS BOUND */
+  private replaceInstanceOf(low: StatementNode, high: StatementNode, lowFile: ABAPFile,
+                            highSyntax: ISyntaxResult, highFile: ABAPFile): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    } else if (!(high.get() instanceof Statements.If)
+        && !(high.get() instanceof Statements.ElseIf)
+        && !(high.get() instanceof Statements.Check)) {
+      // the condition of eg. WHILE is evaluated more than once
+      return undefined;
+    }
+
+    for (const c of high.findAllExpressionsRecursive(Expressions.Compare)) {
+      const className = c.findDirectExpression(Expressions.ClassName);
+      const source = c.findDirectExpression(Expressions.Source);
+      if (className === undefined || source === undefined) {
+        continue;
+      }
+      const children = c.getChildren();
+      const operator = children.slice(children.indexOf(source) + 1).map(n => n.concatTokens().toUpperCase()).join(" ");
+      const negated = operator.startsWith("IS NOT INSTANCE OF");
+
+      let insertAt: Position | undefined = high.getFirstToken().getStart();
+      if (high.get() instanceof Statements.ElseIf) {
+        // assumption: no side effects in IF conditions
+        insertAt = this.findStartOfIf(high, highFile);
+        if (insertAt === undefined) {
+          return undefined;
+        }
+      }
+
+      const castName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const boolName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      const indentation = " ".repeat(insertAt.getCol() - 1);
+
+      const code = `DATA ${castName} TYPE REF TO ${className.concatTokens()}.
+${indentation}DATA ${boolName} TYPE abap_bool.
+${indentation}TRY.
+${indentation}    ${castName} ?= ${source.concatTokens()}.
+${indentation}    ${boolName} = boolc( ${castName} IS BOUND ).
+${indentation}  CATCH cx_sy_move_cast_error.
+${indentation}    ${boolName} = abap_false.
+${indentation}ENDTRY.
+${indentation}`;
+      const fix1 = EditHelper.insertAt(lowFile, insertAt, code);
+      const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), className.getLastToken().getEnd(),
+                                           boolName + (negated ? " = abap_false" : " = abap_true"));
+      const fix = EditHelper.merge(fix2, fix1);
+      return Issue.atToken(lowFile, source.getFirstToken(), "Downport IS INSTANCE OF", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    return undefined;
+  }
+
   /** sy-subrc and sy-tabix, when read from the position on, in the procedure around it or the file outside of one;
    *  inside a loop from the start of the outermost loop, as the next pass reads what this one left */
   private readSyFields(position: Position, highFile: ABAPFile): Set<string> {
@@ -3638,12 +3868,9 @@ ${indentation}    output = ${uniqueName}.\n`;
   }
 
   /** NEW into a data reference creates data, CREATE OBJECT cannot: "target = NEW #|type( [value] )"
-   *  with a variable typed REF TO a data type becomes CREATE DATA plus the assignment of the value */
+   *  with a target typed REF TO a data type becomes CREATE DATA plus the assignment of the value */
   private newDataReference(high: StatementNode, target: ExpressionNode, found: ExpressionNode,
                            lowFile: ABAPFile, highSyntax: ISyntaxResult): string | undefined {
-    if (target.getChildren().length !== 1 || !(target.getFirstChild()?.get() instanceof Expressions.TargetField)) {
-      return undefined;
-    }
     const children = found.getChildren();
     const value = found.findDirectExpression(Expressions.Source);
     // NEW, the type, "(", optionally one value, ")"
@@ -3652,13 +3879,23 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     const name = target.concatTokens();
+    const typeExpr = found.findDirectExpression(Expressions.TypeNameOrInfer);
+    const typeName = typeExpr?.concatTokens();
     const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
-    const type = spag?.findVariable(name)?.getType();
+    let type: AbstractType | undefined = undefined;
+    if (typeName === "#") {
+      // the type of the target, as inferred by the syntax check
+      const typeToken = typeExpr!.getFirstToken();
+      const resolved = spag?.getData().references.find(r => r.referenceType === ReferenceType.InferredType
+        && r.position.getStart().equals(typeToken.getStart()))?.resolved;
+      type = resolved instanceof TypedIdentifier ? resolved.getType() : undefined;
+    } else if (target.getChildren().length === 1 && target.getFirstChild()?.get() instanceof Expressions.TargetField) {
+      type = spag?.findVariable(name)?.getType();
+    }
     if (!(type instanceof DataReference)) {
       return undefined;
     }
 
-    const typeName = found.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     let abap = `CREATE DATA ${name}` + (typeName === "#" ? "" : ` TYPE ${typeName}`) + ".";
     if (value === undefined) {
@@ -3704,7 +3941,7 @@ ${indentation}    output = ${uniqueName}.\n`;
               cdef = cglobal?.getDefinition();
             }
           } else {
-            throw new Error("newParameters, downport, unexpected");
+            return undefined; // not an object, CREATE OBJECT does not apply
           }
         }
 

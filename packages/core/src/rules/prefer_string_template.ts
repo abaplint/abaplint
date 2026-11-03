@@ -66,7 +66,7 @@ export class PreferStringTemplate extends ABAPRule {
       }
 
       const operands = this.flattenChain(source);
-      if (!operands.some(op => { const c = op.getFirstToken().getStr()[0]; return c === "'" || c === "`"; })) {
+      if (!operands.some(op => this.isLiteral(op))) {
         continue;
       }
 
@@ -96,15 +96,25 @@ export class PreferStringTemplate extends ABAPRule {
   private buildTemplate(operands: ExpressionNode[]): string {
     let inner = "";
     for (const op of operands) {
-      const raw = op.getFirstToken().getStr();
-      const firstChar = raw[0];
-      if (firstChar === "'" || firstChar === "`") {
-        inner += raw.slice(1, -1);
+      if (this.isLiteral(op)) {
+        const raw = op.getFirstToken().getStr();
+        const delimiter = raw[0];
+        const value = raw.slice(1, -1).split(delimiter + delimiter).join(delimiter);
+        inner += value.replace(/[\\|{}]/g, "\\$&");
       } else {
         inner += `{ ${op.concatTokens()} }`;
       }
     }
     return `|${inner}|`;
+  }
+
+  // plain character or string literal, ie. not text symbols or concatenated constants
+  private isLiteral(op: ExpressionNode): boolean {
+    if (op.getFirstToken() !== op.getLastToken()) {
+      return false;
+    }
+    const firstChar = op.getFirstToken().getStr()[0];
+    return firstChar === "'" || firstChar === "`";
   }
 
 }

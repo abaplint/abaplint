@@ -1,4 +1,4 @@
-import {statementType, statementVersionFail, statementVersionOk} from "../_utils";
+import {statementExpectFail, statementType, statementVersionFail, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release, LanguageVersion} from "../../../src/version";
 
@@ -153,9 +153,35 @@ const tests = [
   "FORM foobar TABLES it_move STRUCTURE data_work-wa.",
   "FORM !bar.",
   "FORM <foobar>.",
+  "FORM foobar USING p_param TYPE TABLE.",
+  "FORM foobar USING p_param TYPE table p_other TYPE i.",
+  "FORM foobar USING p_param TYPE STANDARD TABLE OF i.",
+  "FORM foobar CHANGING p_param TYPE SORTED TABLE OF i.",
+  "FORM foobar USING p_param TYPE c length TYPE i.",
 ];
 
 statementType(tests, "FORM", Statements.Form);
+
+// inline table, range and length typings are not allowed for FORM parameters
+const fails = [
+  "FORM foobar USING p_param TYPE TABLE OF i.",
+  "FORM foobar CHANGING p_param TYPE TABLE OF i.",
+  "FORM foobar TABLES p_param TYPE TABLE OF i.",
+  "FORM foobar USING VALUE(p_param) TYPE TABLE OF i.",
+  "FORM foobar USING p_param TYPE TABLE OF REF TO i.",
+  "FORM foobar USING p_param TYPE TABLE OF i WITH DEFAULT KEY.",
+  "FORM foobar USING p_param TYPE STANDARD TABLE OF i WITH DEFAULT KEY.",
+  "FORM foobar USING p_param TYPE STANDARD TABLE WITH DEFAULT KEY.",
+  "FORM foobar USING p_param TYPE SORTED TABLE OF i WITH UNIQUE KEY table_line.",
+  "FORM foobar USING p_param TYPE STANDARD TABLE OF REF TO i.",
+  "FORM foobar USING p_param TYPE RANGE OF i.",
+  "FORM foobar USING p_param LIKE TABLE OF gt_foo.",
+  "FORM foobar USING p_param LIKE RANGE OF gv_foo.",
+  "FORM foobar USING p_param LIKE STANDARD TABLE OF gt_foo.",
+  "FORM foobar USING p_param TYPE c LENGTH 10.",
+  "FORM foobar USING p_param TYPE p DECIMALS 2.",
+];
+statementExpectFail(fails, "FORM");
 
 statementVersionOk([
   {abap: "FORM foobar USING p_param TYPE ANY STRUCTURE.", rel: Release.v916},

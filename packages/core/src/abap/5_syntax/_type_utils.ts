@@ -569,6 +569,18 @@ export class TypeUtils {
     return this.isAssignable(source, target);
   }
 
+  // character-like arguments of built-in functions must be elementary, flat character-like structures are not allowed
+  public isAssignableBuiltin(source: AbstractType | undefined,
+                             target: AbstractType | undefined,
+                             node?: ExpressionNode): boolean {
+    if (target instanceof CLikeType
+        && (source instanceof StructureType
+          || (source instanceof TableType && source.isWithHeader() && source.getRowType() instanceof StructureType))) {
+      return false;
+    }
+    return this.isAssignableStrict(source, target, node);
+  }
+
   // Typing with the classic STRUCTURE addition, ie. "FORM foo USING bar STRUCTURE zkey",
   // is not a compatibility check: ABAP only checks the fragment view up to the end of the
   // formal structure, so the actual parameter is allowed to be longer. For TABLES parameters

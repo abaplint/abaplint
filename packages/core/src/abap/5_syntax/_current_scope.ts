@@ -294,6 +294,10 @@ export class CurrentScope {
       return undefined;
     }
     const name = (this.parentObj as Class).getClassDefinition()?.behaviorDefinitionName;
+    return this.findBehaviorDefinitionByName(name);
+  }
+
+  public findBehaviorDefinitionByName(name: string | undefined): BehaviorDefinition | undefined {
     if (name === undefined) {
       return undefined;
     }

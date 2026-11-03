@@ -293,7 +293,10 @@ export class ABAPFileInformationParser {
       }
     }
     for (const d of data) {
-      const name = d.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
+      const name = d.findFirstExpression(Expressions.DefinitionName)?.getFirstToken();
+      if (name === undefined) {
+        continue;
+      }
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),

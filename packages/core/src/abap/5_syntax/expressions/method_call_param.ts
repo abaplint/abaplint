@@ -11,6 +11,7 @@ import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Constant} from "./constant";
 import {checkOffsetLength} from "./_check_offset_length";
 import {checkTextSymbol} from "./_check_text_symbol";
+import {BuiltInMethod} from "../_builtin";
 
 export class MethodCallParam {
   /** returns the type of the unnamed argument, if any */
@@ -86,7 +87,7 @@ export class MethodCallParam {
         return;
       } else if (checkTextSymbol(child, targetType, input)) {
         return;
-      } else if (new TypeUtils(input.scope).isAssignableStrict(sourceType, targetType, child) === false) {
+      } else if (this.isAssignable(sourceType, targetType, child, method, input) === false) {
         const message = "Method parameter type not compatible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
@@ -102,5 +103,13 @@ export class MethodCallParam {
       return;
     }
     return undefined;
+  }
+
+  private static isAssignable(sourceType: AbstractType, targetType: AbstractType | undefined, child: ExpressionNode,
+                              method: IMethodDefinition | VoidType, input: SyntaxInput): boolean {
+    const typeUtils = new TypeUtils(input.scope);
+    return method instanceof BuiltInMethod
+      ? typeUtils.isAssignableBuiltin(sourceType, targetType, child)
+      : typeUtils.isAssignableStrict(sourceType, targetType, child);
   }
 }

@@ -23,6 +23,9 @@ export class StructureType extends AbstractType {
 
     this.indexed = {};
     for (const c of components) {
+      if (c.name === "") {
+        continue; // unnamed field, eg. "DATA: BEGIN OF str, (10), END OF str."
+      }
       const upper = c.name.toUpperCase();
       if (this.indexed[upper] !== undefined) {
         throw new Error("Structure, duplicate field name \"" + upper + "\", " + qualifiedName);

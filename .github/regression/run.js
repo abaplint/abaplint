@@ -18,7 +18,7 @@ const repos = [
   "abapify/fetch",
   "abapify/throw",
   "abapinho/abapTimeMachine",
-  "abaplint/abaplint-sci-client",
+//  "abaplint/abaplint-sci-client",  its obsolete
   "abaplint/deps",
 //  "dominikpanzer/cacamber-BDD-for-ABAP",
   "exercism/abap",

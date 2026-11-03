@@ -4,6 +4,8 @@ import {TokenNode} from "../nodes/token_node";
 
 type ResultNode = {
   readonly node: ExpressionNode | TokenNode,
+  // number of tokens covered by node, kept here so ExpressionNode does not have to store it
+  readonly tokenCount: number,
   readonly previous: ResultNode | undefined,
 };
 
@@ -40,26 +42,28 @@ export class Result {
     return this.tokens[this.tokenIndex + offset];
   }
 
-  public shift(node: ExpressionNode | TokenNode): Result {
-    return Result.fromChain(this.tokens, this.tokenIndex + 1, {node, previous: this.nodes}, this.nodeCount + 1);
+  public shift(node: TokenNode): Result {
+    return Result.fromChain(this.tokens, this.tokenIndex + 1, {node, tokenCount: 1, previous: this.nodes}, this.nodeCount + 1);
   }
 
   public wrapConsumed(consumedTokens: number, node: ExpressionNode): Result {
     let current = this.nodes;
     let currentCount = this.nodeCount;
+    let tokenCount = 0;
     const children: (ExpressionNode | TokenNode)[] = [];
     while (consumedTokens > 0) {
       if (current === undefined) {
         break;
       }
       children.push(current.node);
-      consumedTokens = consumedTokens - current.node.countTokens();
+      consumedTokens = consumedTokens - current.tokenCount;
+      tokenCount = tokenCount + current.tokenCount;
       current = current.previous;
       currentCount--;
     }
 
     node.setChildren(children.reverse());
-    this.nodes = {node, previous: current};
+    this.nodes = {node, tokenCount, previous: current};
     this.nodeCount = currentCount + 1;
     return this;
   }
@@ -93,7 +97,7 @@ export class Result {
     this.nodes = undefined;
     this.nodeCount = 0;
     for (const node of n) {
-      this.nodes = {node, previous: this.nodes};
+      this.nodes = {node, tokenCount: node.countTokens(), previous: this.nodes};
       this.nodeCount++;
     }
   }

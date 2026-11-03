@@ -52,6 +52,7 @@ import {Severity} from "./severity";
 import {IMethodDefinition} from "./abap/types/_method_definition";
 import {DDLParser, DDLKind, IDDLParserResult, IDDLParserResultField} from "./ddl/ddl_parser";
 import {CDSParser} from "./cds/cds_parser";
+import {ABAPParser, IABAPParserOptions, IABAPParserResult} from "./abap/abap_parser";
 import {RulesRunner} from "./rules_runner";
 import {RuleTag} from "./rules/_irule";
 import {CyclomaticComplexityStats} from "./utils/cyclomatic_complexity_stats";
@@ -84,6 +85,7 @@ export {Issue, Config, Version, LanguageVersion, ABAPRelease, Release, releaseAt
   ABAPFile, IABAPFile,
   AbstractFile,
   IMethodDefinition, DDLParser, DDLKind, IDDLParserResult, IDDLParserResultField, LanguageServerTypes, CDSParser, ExpressionsCDS,
+  ABAPParser, IABAPParserOptions, IABAPParserResult,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta, RulesRunner,
   CurrentScope, IRegistry, Position, PrettyPrinter, Renamer as Rename,
   Diagnostics, IRenameSettings, Info, Visibility, Severity, RuleTag, LSPEdit};

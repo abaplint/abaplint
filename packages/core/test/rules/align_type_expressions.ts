@@ -156,4 +156,36 @@ ENDINTERFACE.`;
     testFix(input, expected);
   });
 
+  it("Align TYPEs, with length", async () => {
+    const input = `
+TYPES: BEGIN OF bar,
+         hello_world(1) TYPE c,
+         hello(1) TYPE c,
+       END OF bar.`;
+
+    const expected = `
+TYPES: BEGIN OF bar,
+         hello_world(1) TYPE c,
+         hello(1)       TYPE c,
+       END OF bar.`;
+    testFix(input, expected);
+  });
+
+  it("Types, no TYPE clause, no issues expected", async () => {
+    const issues = await findIssues(`
+TYPES: BEGIN OF sdf,
+         dummy,
+       END OF sdf.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Types, mixed with and without TYPE clause, no issues expected", async () => {
+    const issues = await findIssues(`
+TYPES: BEGIN OF sdf,
+         dummy,
+         barrrr TYPE i,
+       END OF sdf.`);
+    expect(issues.length).to.equal(0);
+  });
+
 });

@@ -50,6 +50,7 @@ export class FieldChain {
     context = this.findTop(children[0], input, tableReceiver ? targetReference(children, 1) : refType);
 
     let prev = children[0].concatTokens();
+    let afterTableExpression = false;
     for (let i = 1; i < children.length; i++) {
       const current = children[i];
       if (current === undefined) {
@@ -93,6 +94,9 @@ export class FieldChain {
           }
         }
       } else if (current.get() instanceof InstanceArrow) {
+        if (afterTableExpression && TableExpression.checkArrowAfter(input, current.getFirstToken())) {
+          return VoidType.get(CheckSyntaxKey);
+        }
         if (!(context instanceof ObjectReferenceType)
             && !(context instanceof DataReference)
             && !(context instanceof VoidType)) {
@@ -122,6 +126,7 @@ export class FieldChain {
           return VoidType.get(CheckSyntaxKey);
         }
         TableExpression.runSyntax(current, input, context);
+        afterTableExpression = true;
         if (!(context instanceof VoidType) && !(context instanceof UnknownType)) {
           context = context.getRowType();
         }

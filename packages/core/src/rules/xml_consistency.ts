@@ -35,6 +35,7 @@ export class XMLConsistency implements IRule {
       extendedInformation: `Checks:
 * XML is well-formed and parseable
 * Naming for CLAS and INTF objects
+* CLAS and INTF objects do not contain fields that abapGit clears, eg. AUTHOR, CREATEDON and VERSION
 * QUAN fields in TABL objects have reference table and field values
 * Transparent TABL objects have delivery class and size category set
 * TABL fields with a built-in type carry the INTTYPE abapGit serializes for it, for the confirmed pairs
@@ -117,6 +118,31 @@ export class XMLConsistency implements IRule {
     } else if (obj.getMainABAPFile()?.getStructure() !== undefined && obj.getClassDefinition() === undefined) {
       issues.push(Issue.atRow(file, 1, "Class matching XML name not found in ABAP file", this.getMetadata().key, this.conf.severity));
     }
+    issues.push(...this.checkClearedFields(obj, file, "VSEOCLASS", XMLConsistency.clearedClassFields));
+    return issues;
+  }
+
+  // fields abapGit clears before serializing, see ZCL_ABAPGIT_OO_CLASS and ZCL_ABAPGIT_OO_INTERFACE;
+  // abapGit omits initial fields, so any occurrence shows as a diff on every pull
+  private static readonly clearedInterfaceFields = [
+    "UUID", "AUTHOR", "CREATEDON", "CHANGEDBY", "CHANGEDON", "CHGDANYBY", "CHGDANYON", "R3RELEASE", "VERSION",
+  ];
+  private static readonly clearedClassFields = [
+    ...XMLConsistency.clearedInterfaceFields, "CLSFINAL", "CLSABSTRCT", "EXPOSURE",
+  ];
+
+  private checkClearedFields(obj: IObject, file: IFile, structure: string, fields: string[]): Issue[] {
+    const issues: Issue[] = [];
+    const block = obj.getXML()?.match(new RegExp(`<${structure}>([\\s\\S]*?)</${structure}>`))?.[1];
+    if (block === undefined) {
+      return issues;
+    }
+    for (const field of fields) {
+      if (block.match(new RegExp(`<${field}[\\s/>]`)) !== null) {
+        const message = `Field ${field} in ${structure} is cleared by abapGit and should not be in the XML`;
+        issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity));
+      }
+    }
     return issues;
   }
 
@@ -146,6 +172,7 @@ export class XMLConsistency implements IRule {
     } else if (obj.getDefinition() !== undefined && obj.getDefinition()?.getName().toUpperCase() !== name.toUpperCase()) {
       issues.push(Issue.atRow(file, 1, "Interface matching XML name not found in ABAP file", this.getMetadata().key, this.conf.severity));
     }
+    issues.push(...this.checkClearedFields(obj, file, "VSEOINTERF", XMLConsistency.clearedInterfaceFields));
     return issues;
   }
 

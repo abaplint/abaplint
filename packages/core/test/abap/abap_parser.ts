@@ -6,6 +6,7 @@ import {defaultRelease} from "../../src/version";
 import {ABAPFile} from "../../src/abap/abap_file";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src";
+import * as Expressions from "../../src/abap/2_statements/expressions";
 
 function expectNoUnknown(output: readonly ABAPFile[]) {
   for (const file of output) {
@@ -159,6 +160,26 @@ INCLUDE zincl2.`;
 
     const issues = new Registry().addFiles(files).parse().findIssues().filter(i => i.getKey() === "parser_error");
     expect(issues.length).to.equal(0);
+  });
+
+  it("FORM, TYPE TABLE OF is not a FORM typing, parser error instead of extra parameters", async () => {
+    const file = new MemoryFile("zfoo.prog.abap", "FORM f USING p TYPE TABLE OF i.");
+    const {output} = new ABAPParser({release: defaultRelease}).parse([file]);
+
+    const statements = output[0].getStatements();
+    expect(statements.length).to.equal(1);
+    expect(statements[0].get()).to.be.instanceof(Unknown);
+    expect(statements[0].findAllExpressionsRecursive(Expressions.FormParam).length).to.equal(0);
+  });
+
+  it("FORM, TYPE TABLE is the generic type, followed by another parameter", async () => {
+    const file = new MemoryFile("zfoo.prog.abap", "FORM f USING p TYPE TABLE q TYPE i.");
+    const {output} = new ABAPParser({release: defaultRelease}).parse([file]);
+    expectNoUnknown(output);
+
+    const params = output[0].getStatements()[0].findAllExpressionsRecursive(Expressions.FormParam);
+    expect(params.map(p => p.findDirectExpression(Expressions.FormParamName)?.concatTokens())).to.deep.equal(["p", "q"]);
+    expect(params[0].findFirstExpression(Expressions.FormParamType)?.findDirectExpression(Expressions.TypeName)?.concatTokens()).to.equal("TABLE");
   });
 
 });
