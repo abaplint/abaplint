@@ -6687,6 +6687,128 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("SELECT, WHERE then INTO then UP TO, move UP TO along with INTO", async () => {
+    const abap = `FORM bar USING iv_text TYPE string.
+  TYPES: BEGIN OF ty_row,
+           req_id TYPE c LENGTH 10,
+           name   TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  SELECT req_id, name FROM voiddbtab
+    WHERE name = @iv_text
+    INTO TABLE @lt_rows
+    UP TO 10 ROWS.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_text TYPE string.
+  TYPES: BEGIN OF ty_row,
+           req_id TYPE c LENGTH 10,
+           name   TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  SELECT req_id, name FROM voiddbtab UP TO 10 ROWS INTO TABLE @lt_rows
+    WHERE name = @iv_text
+    
+    .
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT, WHERE then INTO then UP TO, fix all", async () => {
+    const abap = `FORM bar USING iv_text TYPE string.
+  DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
+  SELECT req_id, name FROM voiddbtab WHERE name = @iv_text INTO TABLE @lt_rows UP TO 10 ROWS.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_text TYPE string.
+  DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
+  SELECT req_id name FROM voiddbtab UP TO 10 ROWS INTO TABLE lt_rows WHERE name = iv_text  .
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("SELECT, dynamic WHERE then INTO CORRESPONDING then UP TO", async () => {
+    const abap = `FORM bar USING iv_tab TYPE string iv_where TYPE string.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  SELECT * FROM (iv_tab) WHERE (iv_where) INTO CORRESPONDING FIELDS OF TABLE @<tab> UP TO 100 ROWS.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_tab TYPE string iv_where TYPE string.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  SELECT * FROM (iv_tab) UP TO 100 ROWS INTO CORRESPONDING FIELDS OF TABLE <tab> WHERE (iv_where)  .
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("SELECT DISTINCT, join, WHERE then INTO then UP TO", async () => {
+    const abap = `FORM bar USING iv_name TYPE string.
+  TYPES: BEGIN OF ty_row,
+           fieldname TYPE c LENGTH 30,
+           rollname  TYPE c LENGTH 30,
+         END OF ty_row.
+  DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  SELECT DISTINCT a~fieldname, b~rollname FROM voida AS a INNER JOIN voidb AS b ON a~tabname = b~tabname WHERE a~tabname = @iv_name INTO TABLE @lt_rows UP TO 500 ROWS.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_name TYPE string.
+  TYPES: BEGIN OF ty_row,
+           fieldname TYPE c LENGTH 30,
+           rollname  TYPE c LENGTH 30,
+         END OF ty_row.
+  DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  SELECT DISTINCT a~fieldname b~rollname FROM voida AS a INNER JOIN voidb AS b ON a~tabname = b~tabname UP TO 500 ROWS INTO TABLE lt_rows WHERE a~tabname = iv_name  .
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("SELECT loop, WHERE NOT then INTO structure then UP TO", async () => {
+    const abap = `FORM bar USING iv_text TYPE string.
+  DATA ls_row TYPE voiddbtab.
+  SELECT * FROM voiddbtab WHERE NOT name = @iv_text INTO @ls_row UP TO 1 ROWS.
+  ENDSELECT.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_text TYPE string.
+  DATA ls_row TYPE voiddbtab.
+  SELECT * FROM voiddbtab UP TO 1 ROWS INTO ls_row WHERE NOT name = iv_text  .
+  ENDSELECT.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("SELECT, WHERE then INTO then UP TO then ORDER BY", async () => {
+    const abap = `FORM bar USING iv_text TYPE string.
+  DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
+  SELECT * FROM voiddbtab WHERE name = @iv_text INTO TABLE @lt_rows UP TO 10 ROWS ORDER BY name.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_text TYPE string.
+  DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
+  SELECT * FROM voiddbtab UP TO 10 ROWS INTO TABLE lt_rows WHERE name = iv_text   ORDER BY name.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("SELECT, ORDER BY then INTO then UP TO, UP TO stays behind ORDER BY", async () => {
+    const abap = `FORM bar USING iv_tab TYPE string iv_where TYPE string.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  SELECT * FROM (iv_tab) WHERE (iv_where) ORDER BY PRIMARY KEY INTO CORRESPONDING FIELDS OF TABLE @<tab> UP TO 100 ROWS.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_tab TYPE string iv_where TYPE string.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  SELECT * FROM (iv_tab) INTO CORRESPONDING FIELDS OF TABLE <tab> WHERE (iv_where) ORDER BY PRIMARY KEY  UP TO 100 ROWS.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
   it("Dont outline on open-abap", async () => {
     const abap = `DATA(sdf) = 2.`;
 
