@@ -175,6 +175,7 @@ Current rules:
 * SELECT INTO @DATA definitions are outlined
 * Some occurrences of string template formatting option ALPHA changed to function module call
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
+* OPEN CURSOR/FETCH NEXT CURSOR/CLOSE CURSOR "@" in source/targets removed
 * PARTIALLY IMPLEMENTED removed, it can be quick fixed via rule implement_methods
 * RAISE EXCEPTION ... MESSAGE
 * Moving with +=, -=, /=, *=, &&= is expanded
@@ -521,6 +522,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.downportOpenCursorInline(low, high, lowFile);
+    if (found) {
+      return found;
+    }
+
     found = this.downportSQLMoveInto(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -790,7 +796,10 @@ Make sure to test the downported code, it might not always be completely correct
         && !(high.get() instanceof Statements.UpdateDatabase)
         && !(high.get() instanceof Statements.ModifyDatabase)
         && !(high.get() instanceof Statements.DeleteDatabase)
-        && !(high.get() instanceof Statements.InsertDatabase)) {
+        && !(high.get() instanceof Statements.InsertDatabase)
+        && !(high.get() instanceof Statements.OpenCursor)
+        && !(high.get() instanceof Statements.FetchNextCursor)
+        && !(high.get() instanceof Statements.CloseCursor)) {
       return undefined;
     }
 
@@ -808,7 +817,10 @@ Make sure to test the downported code, it might not always be completely correct
       high.findAllExpressionsRecursive(Expressions.SQLSource),
       high.findAllExpressionsRecursive(Expressions.SQLSourceNoSpace),
       high.findAllExpressionsRecursive(Expressions.SQLSourceSimple)].flat();
-    for (const c of candidates.reverse()) {
+    // the deletions are applied one after the other, so handle the candidates from the end of the statement,
+    // in FETCH NEXT CURSOR and OPEN CURSOR a source or target comes before the others
+    candidates.sort((a, b) => a.getFirstToken().getStart().isAfter(b.getFirstToken().getStart()) ? -1 : 1);
+    for (const c of candidates) {
       if (c.getFirstToken() instanceof WAt
           || c.getFirstToken() instanceof At) {
         const tokens = c.getAllTokens();
@@ -871,6 +883,28 @@ ${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
     }
 
     return undefined;
+  }
+
+  /** OPEN CURSOR @DATA(name), the cursor is always of type cursor */
+  private downportOpenCursorInline(low: StatementNode, high: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    } else if (!(high.get() instanceof Statements.OpenCursor)) {
+      return undefined;
+    }
+
+    const inlineData = high.findDirectExpression(Expressions.SQLTarget)?.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    const name = inlineData?.findFirstExpression(Expressions.TargetField)?.concatTokens();
+    if (inlineData === undefined || name === undefined) {
+      return undefined;
+    }
+
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const fix1 = EditHelper.insertAt(lowFile, high.getStart(), `DATA ${name} TYPE cursor.\n${indentation}`);
+    const fix2 = EditHelper.replaceRange(lowFile, inlineData.getFirstToken().getStart(), inlineData.getLastToken().getEnd(), name);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, inlineData.getFirstToken(), "Outline OPEN CURSOR @DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private downportSelectExistence(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
@@ -1718,6 +1752,17 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
 
       const fix = EditHelper.replaceToken(lowFile, token, "DEFAULT");
       return Issue.atToken(lowFile, i.getFirstToken(), "Downport EMPTY KEY", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    if (node.get() instanceof Statements.CreateData) {
+      // the key of CREATE DATA is not a TypeTableKey expression, its keywords are direct tokens
+      const tokens = node.getChildren().filter(c => c instanceof TokenNode).map(c => c.getFirstToken());
+      for (let j = 0; j < tokens.length - 1; j++) {
+        if (tokens[j].getStr().toUpperCase() === "EMPTY" && tokens[j + 1].getStr().toUpperCase() === "KEY") {
+          const fix = EditHelper.replaceToken(lowFile, tokens[j], "DEFAULT");
+          return Issue.atToken(lowFile, tokens[j], "Downport EMPTY KEY", this.getMetadata().key, this.conf.severity, fix);
+        }
+      }
     }
 
     return undefined;
