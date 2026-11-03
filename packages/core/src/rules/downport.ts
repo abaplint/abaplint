@@ -37,6 +37,7 @@ import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 // todo: refactor each sub-rule to new classes?
 // todo: add configuration
 
+
 export class DownportConf extends BasicRuleConfig {
 }
 
