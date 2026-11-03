@@ -2770,9 +2770,31 @@ ${indentation}    output = ${uniqueName}.\n`;
         type = "TYPE " + type;
       }
 
+      let move = indentation + `MOVE-CORRESPONDING ${correspondingBody?.concatTokens()} TO ${uniqueName}.\n`;
+      if (correspondingBody?.findDirectTokenByText("EXCEPT") !== undefined) {
+        // MOVE-CORRESPONDING has no EXCEPT, move everything and clear the excepted components afterwards
+        if (correspondingBody.findDirectExpression(Expressions.CorrespondingBodyMapping) !== undefined
+            || !(this.findCorrespondingType(s, high, lowFile, highSyntax) instanceof StructureType)) {
+          continue;
+        }
+        const children = correspondingBody.getChildren();
+        const exceptIndex = children.findIndex(c => c instanceof TokenNode && c.getFirstToken().getStr().toUpperCase() === "EXCEPT");
+        const fields = correspondingBody.findDirectExpressions(Expressions.Field);
+        if (fields.length === 0) {
+          // EXCEPT *, without MAPPING nothing is moved
+          move = "";
+        } else {
+          const body = children.slice(0, exceptIndex).map(c => c.concatTokens()).join(" ");
+          move = indentation + `MOVE-CORRESPONDING ${body} TO ${uniqueName}.\n`;
+          for (const f of fields) {
+            move += indentation + `CLEAR ${uniqueName}-${f.concatTokens()}.\n`;
+          }
+        }
+      }
+
       const abap = `DATA ${uniqueName} ${type}.\n` +
         indentation + `CLEAR ${uniqueName}.\n` + // might be called inside a loop
-        indentation + `MOVE-CORRESPONDING ${correspondingBody?.concatTokens()} TO ${uniqueName}.\n` +
+        move +
         indentation;
       const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), abap);
       const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), s.getLastToken().getEnd(), uniqueName);
@@ -3031,6 +3053,37 @@ ${indentation}    output = ${uniqueName}.\n`;
     const fix = new SpagHelper(spag).renameVariable(name, pos, lowFile, newName);
     const issue = Issue.atPosition(lowFile, pos, "Rename before outline", this.getMetadata().key, this.conf.severity, fix);
     throw new SkipToNextFile(issue);
+  }
+
+  /** the type of the value a CORRESPONDING operator returns, if it can be determined */
+  private findCorrespondingType(s: ExpressionNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): AbstractType | undefined {
+    const expr = s.findDirectExpression(Expressions.TypeNameOrInfer);
+    if (expr === undefined) {
+      return undefined;
+    }
+    const spag = highSyntax.spaghetti.lookupPosition(expr.getFirstToken().getStart(), lowFile.getFilename());
+    if (spag === undefined) {
+      return undefined;
+    }
+
+    if (expr.concatTokens() !== "#") {
+      return spag.findType(expr.concatTokens())?.getType();
+    }
+
+    for (const r of spag.getData().references) {
+      if (r.referenceType === ReferenceType.InferredType
+          && r.resolved instanceof TypedIdentifier
+          && r.position.getStart().equals(expr.getFirstToken().getStart())) {
+        return r.resolved.getType();
+      }
+    }
+
+    const target = high.findDirectExpression(Expressions.Target);
+    if (high.get() instanceof Statements.Move && high.findDirectExpression(Expressions.Source) === s && target !== undefined) {
+      return spag.findVariable(target.concatTokens())?.getType();
+    }
+
+    return undefined;
   }
 
   private findType(i: ExpressionNode, lowFile: ABAPFile, highSyntax: ISyntaxResult, ref = false): string | undefined {
