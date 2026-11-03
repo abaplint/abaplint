@@ -7515,6 +7515,186 @@ ENDFORM.`);
     expect(issues.length).to.equal(0);
   });
 
+  function ztabTransparent(): MemoryFile {
+    return new MemoryFile("ztab.tabl.xml", `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZTAB</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>TRANSP</TABCLASS>
+    <DDTEXT>test</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD09L>
+    <TABNAME>ZTAB</TABNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <TABKAT>0</TABKAT>
+    <TABART>APPL0</TABART>
+    <BUFALLOW>N</BUFALLOW>
+   </DD09L>
+   <DD03P_TABLE>
+    <DD03P>
+     <TABNAME>ZTAB</TABNAME>
+     <FIELDNAME>FIELD1</FIELDNAME>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <POSITION>0001</POSITION>
+     <KEYFLAG>X</KEYFLAG>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000020</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+    <DD03P>
+     <TABNAME>ZTAB</TABNAME>
+     <FIELDNAME>FIELD2</FIELDNAME>
+     <DDLANGUAGE>E</DDLANGUAGE>
+     <POSITION>0002</POSITION>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000020</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000010</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+  }
+
+  it("INSERT dbtab FROM @( VALUE #( ) ), work area typed by the table", async () => {
+    const abap = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  INSERT ztab FROM @( VALUE #( field1 = lv_text ) ).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA temp1 TYPE ztab.
+  temp1 = VALUE #( field1 = lv_text ).
+  INSERT ztab FROM @temp1.
+ENDFORM.`;
+
+    testFix(abap, expected, [ztabTransparent()]);
+  });
+
+  it("INSERT dbtab FROM @( VALUE #( ) ) in a LOOP, all steps", async () => {
+    const abap = `FORM bar.
+  DATA lt_p TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_text TYPE c LENGTH 10.
+  LOOP AT lt_p INTO DATA(ls_p).
+    INSERT ztab FROM @( VALUE #(
+      field1 = lv_text
+      field2 = to_upper( ls_p ) ) ).
+  ENDLOOP.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_p TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA ls_p LIKE LINE OF lt_p.
+  LOOP AT lt_p INTO ls_p.
+    DATA temp1 TYPE ztab.
+    CLEAR temp1.
+    temp1-field1 = lv_text.
+    temp1-field2 = to_upper( ls_p ).
+    INSERT ztab FROM temp1.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFixAll(abap, expected, [ztabTransparent()]);
+  });
+
+  it("MODIFY, UPDATE and DELETE dbtab FROM @( VALUE #( ) ), all steps", async () => {
+    const abap = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  MODIFY ztab FROM @( VALUE #( field1 = lv_text ) ).
+  UPDATE ztab FROM @( VALUE #( field1 = lv_text ) ).
+  DELETE ztab FROM @( VALUE #( field1 = lv_text ) ).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA temp1 TYPE ztab.
+  CLEAR temp1.
+  temp1-field1 = lv_text.
+  MODIFY ztab FROM temp1.
+  DATA temp2 TYPE ztab.
+  CLEAR temp2.
+  temp2-field1 = lv_text.
+  UPDATE ztab FROM temp2.
+  DATA temp3 TYPE ztab.
+  CLEAR temp3.
+  temp3-field1 = lv_text.
+  DELETE ztab FROM temp3.
+ENDFORM.`;
+
+    testFixAll(abap, expected, [ztabTransparent()]);
+  });
+
+  it("INSERT INTO dbtab VALUES @( VALUE #( ) ), all steps", async () => {
+    const abap = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  INSERT INTO ztab VALUES @( VALUE #( field1 = lv_text ) ).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA temp1 TYPE ztab.
+  CLEAR temp1.
+  temp1-field1 = lv_text.
+  INSERT INTO ztab VALUES temp1.
+ENDFORM.`;
+
+    testFixAll(abap, expected, [ztabTransparent()]);
+  });
+
+  it("MODIFY dbtab FROM TABLE @( VALUE #( ) ), table of the database table", async () => {
+    const abap = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  MODIFY ztab FROM TABLE @( VALUE #( ( field1 = lv_text ) ) ).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA temp1 TYPE STANDARD TABLE OF ztab WITH DEFAULT KEY.
+  temp1 = VALUE #( ( field1 = lv_text ) ).
+  MODIFY ztab FROM TABLE @temp1.
+ENDFORM.`;
+
+    testFix(abap, expected, [ztabTransparent()]);
+  });
+
+  it("INSERT dbtab FROM @( variable ), still outlined with DATA( )", async () => {
+    const abap = `
+DATA ls_row TYPE ztab.
+INSERT ztab FROM @( ls_row ).`;
+
+    const expected = `
+DATA ls_row TYPE ztab.
+DATA(temp1) = ls_row.
+INSERT ztab FROM @temp1.`;
+
+    testFix(abap, expected, [ztabTransparent()]);
+  });
+
+  it("INSERT dynamic dbtab FROM @( VALUE #( ) ), no fix", async () => {
+    const abap = `FORM bar.
+  DATA lv_name TYPE string.
+  INSERT (lv_name) FROM @( VALUE #( field1 = lv_name ) ).
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getDefaultFix()).to.equal(undefined);
+  });
+
   it("strip WITHOUT AUTHORITY-CHECK from CALL TRANSACTION", async () => {
     const abap = `CALL TRANSACTION 'PA20' WITHOUT AUTHORITY-CHECK AND SKIP FIRST SCREEN.`;
     const expected = `CALL TRANSACTION 'PA20' AND SKIP FIRST SCREEN.`;
