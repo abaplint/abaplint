@@ -741,6 +741,30 @@ Make sure to test the downported code, it might not always be completely correct
     return Issue.atToken(lowFile, low.getFirstToken(), "SQL, move INTO", this.getMetadata().key, this.conf.severity, fix);
   }
 
+  /** the work area of INSERT/MODIFY/UPDATE/DELETE dbtab FROM @( ... ) takes its type from the
+   * database table, a "#" constructor cannot be outlined with DATA( ) as there is nothing to infer from */
+  private sqlWorkAreaType(high: StatementNode, sqlSource: ExpressionNode): string | undefined {
+    if (!(high.get() instanceof Statements.InsertDatabase)
+        && !(high.get() instanceof Statements.ModifyDatabase)
+        && !(high.get() instanceof Statements.UpdateDatabase)
+        && !(high.get() instanceof Statements.DeleteDatabase)) {
+      return undefined;
+    } else if (high.getChildren().includes(sqlSource) === false) {
+      return undefined;
+    }
+
+    const table = high.findDirectExpression(Expressions.DatabaseTable);
+    if (table === undefined || table.findDirectExpression(Expressions.Dynamic) !== undefined) {
+      return undefined;
+    }
+
+    const name = table.concatTokens();
+    if (high.findDirectTokenByText("TABLE") !== undefined) {
+      return `STANDARD TABLE OF ${name} WITH DEFAULT KEY`;
+    }
+    return name;
+  }
+
   /** removes @'s and commas */
   private downportSQLExtras(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(low.get() instanceof Unknown)) {
@@ -776,6 +800,19 @@ Make sure to test the downported code, it might not always be completely correct
         const tokens = c.getAllTokens();
         if (tokens[1] instanceof ParenLeftW && tokens[tokens.length - 1] instanceof WParenRightW) {
           const source = c.findDirectExpression(Expressions.Source);
+          if (source?.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens() === "#") {
+            const workAreaType = this.sqlWorkAreaType(high, c);
+            if (workAreaType === undefined) {
+              return Issue.atToken(lowFile, low.getFirstToken(), "SQL, outline complex @, type of # not known", this.getMetadata().key, this.conf.severity);
+            }
+            const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+            const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+            const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), `DATA ${uniqueName} TYPE ${workAreaType}.
+${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
+            const fix2 = EditHelper.replaceRange(lowFile, c.getFirstToken().getStart(), c.getLastToken().getEnd(), "@" + uniqueName);
+            const fix = EditHelper.merge(fix2, fix1);
+            return Issue.atToken(lowFile, low.getFirstToken(), "SQL, outline complex @", this.getMetadata().key, this.conf.severity, fix);
+          }
           const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
           const fix1 = EditHelper.insertAt(lowFile, high.getStart(), `DATA(${uniqueName}) = ${source?.concatTokens()}.\n`);
           const fix2 = EditHelper.replaceRange(lowFile, c.getFirstToken().getStart(), c.getLastToken().getEnd(), "@" + uniqueName);
