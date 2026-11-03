@@ -734,9 +734,22 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
-    const fix1 = EditHelper.insertAt(lowFile, from.getLastToken().getEnd(), ` ` + into.concatTokens());
-    const fix2 = EditHelper.deleteRange(lowFile, into.getFirstToken().getStart(), into.getLastToken().getEnd());
-    const fix = EditHelper.merge(fix2, fix1);
+    // UP TO after INTO is only valid behind WHERE when it follows an ORDER BY, else move it along in front of INTO
+    let move = into.concatTokens();
+    const fixes: IEdit[] = [];
+    const upTo = high.findFirstExpression(Expressions.SQLUpTo);
+    const orderBy = high.findFirstExpression(Expressions.SQLOrderBy);
+    if (upTo !== undefined
+        && into.getLastToken().getEnd().isBefore(upTo.getFirstToken().getStart())
+        && (orderBy === undefined || upTo.getFirstToken().getStart().isBefore(orderBy.getFirstToken().getStart()))) {
+      move = upTo.concatTokens() + ` ` + move;
+      fixes.push(EditHelper.deleteRange(lowFile, upTo.getFirstToken().getStart(), upTo.getLastToken().getEnd()));
+    }
+
+    // edits are applied in sequence, so work from the end of the statement towards the start
+    fixes.push(EditHelper.deleteRange(lowFile, into.getFirstToken().getStart(), into.getLastToken().getEnd()));
+    fixes.push(EditHelper.insertAt(lowFile, from.getLastToken().getEnd(), ` ` + move));
+    const fix = EditHelper.mergeList(fixes);
 
     return Issue.atToken(lowFile, low.getFirstToken(), "SQL, move INTO", this.getMetadata().key, this.conf.severity, fix);
   }
