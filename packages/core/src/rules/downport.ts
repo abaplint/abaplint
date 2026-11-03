@@ -1746,6 +1746,17 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
       return Issue.atToken(lowFile, i.getFirstToken(), "Downport EMPTY KEY", this.getMetadata().key, this.conf.severity, fix);
     }
 
+    if (node.get() instanceof Statements.CreateData) {
+      // the key of CREATE DATA is not a TypeTableKey expression, its keywords are direct tokens
+      const tokens = node.getChildren().filter(c => c instanceof TokenNode).map(c => c.getFirstToken());
+      for (let j = 0; j < tokens.length - 1; j++) {
+        if (tokens[j].getStr().toUpperCase() === "EMPTY" && tokens[j + 1].getStr().toUpperCase() === "KEY") {
+          const fix = EditHelper.replaceToken(lowFile, tokens[j], "DEFAULT");
+          return Issue.atToken(lowFile, tokens[j], "Downport EMPTY KEY", this.getMetadata().key, this.conf.severity, fix);
+        }
+      }
+    }
+
     return undefined;
   }
 

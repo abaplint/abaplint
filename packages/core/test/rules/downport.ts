@@ -500,6 +500,53 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("EMPTY KEY quick fix, CREATE DATA dynamic line type", async () => {
+    const abap = `FORM bar USING iv_text TYPE string.
+  DATA lr TYPE REF TO data.
+  CREATE DATA lr TYPE STANDARD TABLE OF (iv_text) WITH EMPTY KEY.
+ENDFORM.`;
+    const expected = `FORM bar USING iv_text TYPE string.
+  DATA lr TYPE REF TO data.
+  CREATE DATA lr TYPE STANDARD TABLE OF (iv_text) WITH DEFAULT KEY.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("EMPTY KEY quick fix, CREATE DATA static line type, lower case", async () => {
+    const abap = `FORM bar.
+  DATA lr TYPE REF TO data.
+  create data lr type table of i with empty key.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA lr TYPE REF TO data.
+  create data lr type table of i with DEFAULT key.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("EMPTY KEY quick fix, CREATE DATA LIKE", async () => {
+    const abap = `FORM bar.
+  DATA lr TYPE REF TO data.
+  DATA lv_int TYPE i.
+  CREATE DATA lr LIKE STANDARD TABLE OF lv_int WITH EMPTY KEY.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA lr TYPE REF TO data.
+  DATA lv_int TYPE i.
+  CREATE DATA lr LIKE STANDARD TABLE OF lv_int WITH DEFAULT KEY.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("CREATE DATA with DEFAULT KEY, no downport", async () => {
+    const abap = `FORM bar USING iv_text TYPE string.
+  DATA lr TYPE REF TO data.
+  CREATE DATA lr TYPE STANDARD TABLE OF (iv_text) WITH DEFAULT KEY.
+ENDFORM.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("downport CAST", async () => {
     const abap = `
     CLASS lcl_class DEFINITION.
