@@ -8370,4 +8370,249 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("CONV # for a generic clike parameter, type as string", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE clike.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_name TYPE c LENGTH 10.
+    lcl=>take( CONV #( lv_name ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE clike.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_name TYPE c LENGTH 10.
+    DATA temp1 TYPE string.
+    temp1 = lv_name.
+    lcl=>take( temp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("CONV # for a generic csequence parameter, type as string", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE csequence.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_name TYPE c LENGTH 10.
+    lcl=>take( CONV #( lv_name ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE csequence.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_name TYPE c LENGTH 10.
+    DATA temp1 TYPE string.
+    temp1 = lv_name.
+    lcl=>take( temp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("CONV # for a generic xsequence parameter, type as xstring", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE xsequence.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_name TYPE c LENGTH 10.
+    lcl=>take( CONV #( lv_name ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE xsequence.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_name TYPE c LENGTH 10.
+    DATA temp1 TYPE xstring.
+    temp1 = lv_name.
+    lcl=>take( temp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("CONV # for a generic clike parameter, inside boolc( ) and NOT", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE clike RETURNING VALUE(rv) TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_name TYPE c LENGTH 10.
+    DATA lv_ok TYPE abap_bool.
+    lv_ok = boolc( NOT lcl=>take( CONV #( lv_name ) ) IS INITIAL ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE clike RETURNING VALUE(rv) TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_name TYPE c LENGTH 10.
+    DATA lv_ok TYPE abap_bool.
+    DATA temp1 TYPE string.
+    temp1 = lv_name.
+    lv_ok = boolc( NOT lcl=>take( temp1 ) IS INITIAL ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("CONV # for a generic clike parameter, table expression operand", async () => {
+    const abap = `
+TYPES char10 TYPE c LENGTH 10.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE clike RETURNING VALUE(rv) TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lt_name TYPE STANDARD TABLE OF char10 WITH DEFAULT KEY.
+    DATA lv_ok TYPE abap_bool.
+    lv_ok = boolc( lcl=>take( CONV #( lt_name[ 1 ] ) ) IS NOT INITIAL ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+TYPES char10 TYPE c LENGTH 10.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE clike RETURNING VALUE(rv) TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lt_name TYPE STANDARD TABLE OF char10 WITH DEFAULT KEY.
+    DATA lv_ok TYPE abap_bool.
+    DATA temp1 TYPE string.
+    FIELD-SYMBOLS <temp1> LIKE LINE OF lt_name.
+    DATA temp2 LIKE sy-tabix.
+    temp2 = sy-tabix.
+    READ TABLE lt_name INDEX 1 ASSIGNING <temp1>.
+    sy-tabix = temp2.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+    temp1 = <temp1>.
+    lv_ok = boolc( lcl=>take( temp1 ) IS NOT INITIAL ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFixAll(abap, expected);
+  });
+
+  it("CONV # for a generic numeric parameter, type as decfloat34", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE numeric.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_int TYPE i.
+    lcl=>take( CONV #( lv_int ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE numeric.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_int TYPE i.
+    DATA temp1 TYPE decfloat34.
+    temp1 = lv_int.
+    lcl=>take( temp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
+  it("CONV # for a generic simple parameter, type not known, no fix", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE simple.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_name TYPE c LENGTH 10.
+    lcl=>take( CONV #( lv_name ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Downport CONV, type of # not known");
+    expect(issues[0].getDefaultFix()).to.equal(undefined);
+  });
+
+  it("CONV # for a generic simple parameter, keep the type of a typed argument", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE simple.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_int TYPE i.
+    lcl=>take( CONV #( lv_int ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take IMPORTING val TYPE simple.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+    DATA lv_int TYPE i.
+    DATA temp1 TYPE i.
+    temp1 = lv_int.
+    lcl=>take( temp1 ).
+  ENDMETHOD.
+ENDCLASS.`;
+    testFix(abap, expected);
+  });
+
 });
