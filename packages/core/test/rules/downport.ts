@@ -8370,4 +8370,103 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("READ TABLE INTO inline DATA, voided table", async () => {
+    const abap = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  READ TABLE lt_parts INTO DATA(lv_part1) INDEX 1.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  DATA lv_part1 LIKE LINE OF lt_parts.
+  READ TABLE lt_parts INTO lv_part1 INDEX 1.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("READ TABLE WITH KEY INTO inline DATA, voided table", async () => {
+    const abap = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  READ TABLE lt_parts INTO DATA(lv_part) WITH KEY table_line = \`A\`.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  DATA lv_part LIKE LINE OF lt_parts.
+  READ TABLE lt_parts INTO lv_part WITH KEY table_line = \`A\`.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("READ TABLE REFERENCE INTO inline DATA, voided table", async () => {
+    const abap = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  READ TABLE lt_parts REFERENCE INTO DATA(lr_part) INDEX 1.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  DATA temp1 LIKE LINE OF lt_parts.
+  DATA lr_part LIKE REF TO temp1.
+  READ TABLE lt_parts REFERENCE INTO lr_part INDEX 1.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("READ TABLE INTO inline DATA, voided table, open abap", async () => {
+    const abap = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  READ TABLE lt_parts INTO DATA(lv_part1) INDEX 1.
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("inline DATA of a voided type which cannot be outlined, issue without fix", async () => {
+    const abap = `FORM bar.
+  cl_voided=>get( IMPORTING ev_value = DATA(lv_value) ).
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Cannot downport, type of lv_value is void");
+    expect(issues[0].getDefaultFix()).to.equal(undefined);
+  });
+
+  it("VALUE # of a voided type, issue without fix", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo IMPORTING t_arg TYPE string_table.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD run.
+    foo( t_arg = VALUE #( ( \`A\` ) ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Cannot downport, inferred type is void");
+    expect(issues[0].getDefaultFix()).to.equal(undefined);
+  });
+
+  it("issue without fix only when nothing else can be downported", async () => {
+    const abap = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  cl_voided=>get( IMPORTING ev_value = DATA(lv_value) ).
+  READ TABLE lt_parts INTO DATA(lv_part1) INDEX 1.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Outline DATA");
+  });
+
 });
