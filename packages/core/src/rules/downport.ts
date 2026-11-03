@@ -175,6 +175,7 @@ Current rules:
 * SELECT INTO @DATA definitions are outlined
 * Some occurrences of string template formatting option ALPHA changed to function module call
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
+* OPEN CURSOR/FETCH NEXT CURSOR/CLOSE CURSOR "@" in source/targets removed
 * PARTIALLY IMPLEMENTED removed, it can be quick fixed via rule implement_methods
 * RAISE EXCEPTION ... MESSAGE
 * Moving with +=, -=, /=, *=, &&= is expanded
@@ -576,6 +577,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.downportOpenCursorInline(low, high, lowFile);
+    if (found) {
+      return found;
+    }
+
     found = this.downportSQLMoveInto(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -850,7 +856,10 @@ Make sure to test the downported code, it might not always be completely correct
         && !(high.get() instanceof Statements.UpdateDatabase)
         && !(high.get() instanceof Statements.ModifyDatabase)
         && !(high.get() instanceof Statements.DeleteDatabase)
-        && !(high.get() instanceof Statements.InsertDatabase)) {
+        && !(high.get() instanceof Statements.InsertDatabase)
+        && !(high.get() instanceof Statements.OpenCursor)
+        && !(high.get() instanceof Statements.FetchNextCursor)
+        && !(high.get() instanceof Statements.CloseCursor)) {
       return undefined;
     }
 
@@ -868,7 +877,10 @@ Make sure to test the downported code, it might not always be completely correct
       high.findAllExpressionsRecursive(Expressions.SQLSource),
       high.findAllExpressionsRecursive(Expressions.SQLSourceNoSpace),
       high.findAllExpressionsRecursive(Expressions.SQLSourceSimple)].flat();
-    for (const c of candidates.reverse()) {
+    // the deletions are applied one after the other, so handle the candidates from the end of the statement,
+    // in FETCH NEXT CURSOR and OPEN CURSOR a source or target comes before the others
+    candidates.sort((a, b) => a.getFirstToken().getStart().isAfter(b.getFirstToken().getStart()) ? -1 : 1);
+    for (const c of candidates) {
       if (c.getFirstToken() instanceof WAt
           || c.getFirstToken() instanceof At) {
         const tokens = c.getAllTokens();
@@ -931,6 +943,28 @@ ${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
     }
 
     return undefined;
+  }
+
+  /** OPEN CURSOR @DATA(name), the cursor is always of type cursor */
+  private downportOpenCursorInline(low: StatementNode, high: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    } else if (!(high.get() instanceof Statements.OpenCursor)) {
+      return undefined;
+    }
+
+    const inlineData = high.findDirectExpression(Expressions.SQLTarget)?.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    const name = inlineData?.findFirstExpression(Expressions.TargetField)?.concatTokens();
+    if (inlineData === undefined || name === undefined) {
+      return undefined;
+    }
+
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const fix1 = EditHelper.insertAt(lowFile, high.getStart(), `DATA ${name} TYPE cursor.\n${indentation}`);
+    const fix2 = EditHelper.replaceRange(lowFile, inlineData.getFirstToken().getStart(), inlineData.getLastToken().getEnd(), name);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, inlineData.getFirstToken(), "Outline OPEN CURSOR @DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private downportSelectExistence(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
@@ -999,13 +1033,21 @@ ${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
       return undefined;
     }
 
-    const code = fields.getLastChild()?.concatTokens();
-    if (code === undefined) {
-      return undefined;
+    // everything behind the FIELDS keyword, including DISTINCT
+    const code = fields.concatTokens().replace(/^FIELDS\s+/i, "");
+
+    // the field list goes behind SELECT, or behind SINGLE [FOR UPDATE], which must stay in front of it
+    const tokens = high.getTokens();
+    let insertAfter = tokens[0];
+    if (tokens[1]?.getStr().toUpperCase() === "SINGLE") {
+      insertAfter = tokens[1];
+      if (tokens[2]?.getStr().toUpperCase() === "FOR" && tokens[3]?.getStr().toUpperCase() === "UPDATE") {
+        insertAfter = tokens[3];
+      }
     }
 
     const fix1 = EditHelper.deleteRange(lowFile, fields.getFirstToken().getStart(), fields.getLastToken().getEnd());
-    const fix2 = EditHelper.insertAt(lowFile, high.getFirstToken().getEnd(), " " + code);
+    const fix2 = EditHelper.insertAt(lowFile, insertAfter.getEnd(), " " + code);
     const fix = EditHelper.merge(fix1, fix2);
     return Issue.atToken(lowFile, fields.getFirstToken(), "Replace FIELDS", this.getMetadata().key, this.conf.severity, fix);
   }
@@ -1333,6 +1375,15 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
 
       const condition = this.tableCondition(tableExpression);
 
+      let guard: string[] = [];
+      if (high.get() instanceof Statements.If) {
+        const found = this.shortCircuitGuard(high.findDirectExpression(Expressions.Cond), fieldChain);
+        if (found === "later") {
+          continue;
+        }
+        guard = found;
+      }
+
       // ASSIGNING, not INTO: from v740 a table expression in a read position addresses the
       // row rather than copying it, so "REF #( tab[ i ]-comp )" and "ASSIGN tab[ i ]-comp"
       // hand back an address INTO a work area would not preserve. The write path
@@ -1342,14 +1393,22 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       const firstToken = high.getFirstToken();
       // note that the tabix restore should be done before throwing the exception
+      let read = `${tabixBackup} = sy-tabix.
+READ TABLE ${pre} ${condition}ASSIGNING ${uniqueName}.
+sy-tabix = ${tabixBackup}.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.`;
+      if (guard.length > 0) {
+        // the operands in front of the table expression are evaluated first and can stop the
+        // evaluation, so the row is only read when they let the evaluation reach it
+        read = `IF ${guard.join(" AND ")}.
+${read.replace(/^/gm, "  ")}
+ENDIF.`;
+      }
       const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `FIELD-SYMBOLS ${uniqueName} LIKE LINE OF ${pre}.
 ${indentation}DATA ${tabixBackup} LIKE sy-tabix.
-${indentation}${tabixBackup} = sy-tabix.
-${indentation}READ TABLE ${pre} ${condition}ASSIGNING ${uniqueName}.
-${indentation}sy-tabix = ${tabixBackup}.
-${indentation}IF sy-subrc <> 0.
-${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
-${indentation}ENDIF.
+${read.replace(/\n/g, "\n" + indentation).replace(/^/, indentation)}
 ${indentation}`);
       const fix2 = EditHelper.replaceRange(lowFile, startToken.getStart(), tableExpression.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
@@ -1362,6 +1421,74 @@ ${indentation}`);
     }
 
     return undefined;
+  }
+
+  /** ABAP evaluates the operands of AND and OR left to right and stops as soon as the result
+   * is known, so in "IF lv_last > 0 AND tab[ lv_last ] = x." the table expression is only read
+   * when lv_last > 0. Outlined in front of the IF, the read and its CX_SY_ITAB_LINE_NOT_FOUND
+   * raise would run unconditionally. Returns the operands that must hold for the evaluation to
+   * reach the target, empty when it is always reached (or the shape is not handled, which keeps
+   * the unconditional outline), and "later" when an operand in front of it holds a table
+   * expression itself, which must be outlined first. Operands with method calls or NEW are not
+   * repeated in a guard, as that would evaluate them twice. */
+  private shortCircuitGuard(cond: ExpressionNode | undefined, target: ExpressionNode): string[] | "later" {
+    if (cond === undefined) {
+      return [];
+    }
+    const guard: ExpressionNode[] = [];
+    const negated: ExpressionNode[][] = [];
+    let term: ExpressionNode[] = [];
+    for (const child of cond.getChildren()) {
+      if (child instanceof TokenNode) {
+        const operator = child.getFirstToken().getStr().toUpperCase();
+        if (operator === "EQUIV") {
+          return [];
+        } else if (operator === "OR") {
+          negated.push(term);
+          term = [];
+        }
+        continue;
+      } else if (!(child instanceof ExpressionNode)) {
+        return [];
+      }
+
+      if (child.findAllExpressionsRecursive(Expressions.FieldChain).includes(target) === false) {
+        term.push(child);
+        continue;
+      }
+
+      guard.push(...term);
+      let inner: string[] = [];
+      if (child.get() instanceof Expressions.CondSub) {
+        const found = this.shortCircuitGuard(child.findDirectExpression(Expressions.Cond), target);
+        if (found === "later") {
+          return found;
+        }
+        inner = found;
+      }
+
+      const operands = [...negated.flat(), ...guard];
+      if (operands.some(o => o.findFirstExpression(Expressions.TableExpression) !== undefined)) {
+        return "later";
+      }
+      for (const o of operands) {
+        if (o.findFirstExpression(Expressions.NewObject) !== undefined) {
+          return [];
+        }
+        for (const m of o.findAllExpressionsRecursive(Expressions.MethodCall)) {
+          const name = m.findDirectExpression(Expressions.MethodName)?.concatTokens().toUpperCase();
+          if (BuiltIn.searchBuiltin(name) === undefined) {
+            return [];
+          }
+        }
+      }
+
+      return [
+        ...negated.map(t => "NOT ( " + t.map(o => o.concatTokens()).join(" AND ") + " )"),
+        ...guard.map(o => o.concatTokens()),
+        ...inner];
+    }
+    return [];
   }
 
   private tableCondition(tableExpression: ExpressionNode) {
@@ -1770,6 +1897,17 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
 
       const fix = EditHelper.replaceToken(lowFile, token, "DEFAULT");
       return Issue.atToken(lowFile, i.getFirstToken(), "Downport EMPTY KEY", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    if (node.get() instanceof Statements.CreateData) {
+      // the key of CREATE DATA is not a TypeTableKey expression, its keywords are direct tokens
+      const tokens = node.getChildren().filter(c => c instanceof TokenNode).map(c => c.getFirstToken());
+      for (let j = 0; j < tokens.length - 1; j++) {
+        if (tokens[j].getStr().toUpperCase() === "EMPTY" && tokens[j + 1].getStr().toUpperCase() === "KEY") {
+          const fix = EditHelper.replaceToken(lowFile, tokens[j], "DEFAULT");
+          return Issue.atToken(lowFile, tokens[j], "Downport EMPTY KEY", this.getMetadata().key, this.conf.severity, fix);
+        }
+      }
     }
 
     return undefined;
