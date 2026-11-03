@@ -5598,6 +5598,106 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("SELECT SINGLE FIELDS *, SINGLE stays in front of the field list", async () => {
+    const abap = `FORM bar.
+  DATA ls_row TYPE voided.
+  DATA lv_name TYPE string.
+  SELECT SINGLE FROM zdownport_tab
+    FIELDS *
+    WHERE name = lv_name
+    INTO ls_row.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA ls_row TYPE voided.
+  DATA lv_name TYPE string.
+  SELECT SINGLE * FROM zdownport_tab
+    
+    WHERE name = lv_name
+    INTO ls_row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT SINGLE FIELDS *, all fixes give a v702 SELECT SINGLE", async () => {
+    const abap = `FORM bar.
+  DATA ls_row TYPE voided.
+  DATA lv_name TYPE string.
+  SELECT SINGLE FROM zdownport_tab
+    FIELDS *
+    WHERE name = @lv_name
+    INTO @ls_row.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA ls_row TYPE voided.
+  DATA lv_name TYPE string.
+  SELECT SINGLE * FROM zdownport_tab INTO ls_row
+    
+    WHERE name = lv_name
+    .
+ENDFORM.`;
+    testFixAll(abap, expected);
+  });
+
+  it("SELECT SINGLE FIELDS field list, SINGLE stays in front of the field list", async () => {
+    const abap = `FORM bar.
+  DATA lv_value TYPE string.
+  SELECT SINGLE FROM zdownport_tab FIELDS value WHERE name = 'A' INTO lv_value.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA lv_value TYPE string.
+  SELECT SINGLE value FROM zdownport_tab  WHERE name = 'A' INTO lv_value.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT SINGLE FOR UPDATE FIELDS *, field list goes behind FOR UPDATE", async () => {
+    const abap = `FORM bar.
+  DATA ls_row TYPE voided.
+  SELECT SINGLE FOR UPDATE FROM zdownport_tab FIELDS * WHERE name = 'A' INTO ls_row.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA ls_row TYPE voided.
+  SELECT SINGLE FOR UPDATE * FROM zdownport_tab  WHERE name = 'A' INTO ls_row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT FIELDS single named field, FIELDS keyword is not moved along", async () => {
+    const abap = `FORM bar.
+  DATA lt_names TYPE voided.
+  SELECT FROM zdownport_tab FIELDS name WHERE name = 'A' INTO TABLE lt_names.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA lt_names TYPE voided.
+  SELECT name FROM zdownport_tab  WHERE name = 'A' INTO TABLE lt_names.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT FIELDS DISTINCT, DISTINCT is kept", async () => {
+    const abap = `FORM bar.
+  DATA lt_names TYPE voided.
+  SELECT FROM zdownport_tab FIELDS DISTINCT name value WHERE name = 'A' INTO TABLE lt_names.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA lt_names TYPE voided.
+  SELECT DISTINCT name value FROM zdownport_tab  WHERE name = 'A' INTO TABLE lt_names.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT FIELDS * without SINGLE, field list stays directly behind SELECT", async () => {
+    const abap = `FORM bar.
+  DATA lt_rows TYPE voided.
+  SELECT FROM zdownport_tab FIELDS * WHERE name = 'A' INTO TABLE lt_rows.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA lt_rows TYPE voided.
+  SELECT * FROM zdownport_tab  WHERE name = 'A' INTO TABLE lt_rows.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
   it("outline, READ TABLE ASSIGNING WITH KEY on next line", async () => {
     const abap = `TYPES: BEGIN OF ty_line,
     foo TYPE i,

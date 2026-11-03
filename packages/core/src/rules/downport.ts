@@ -939,13 +939,21 @@ ${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
       return undefined;
     }
 
-    const code = fields.getLastChild()?.concatTokens();
-    if (code === undefined) {
-      return undefined;
+    // everything behind the FIELDS keyword, including DISTINCT
+    const code = fields.concatTokens().replace(/^FIELDS\s+/i, "");
+
+    // the field list goes behind SELECT, or behind SINGLE [FOR UPDATE], which must stay in front of it
+    const tokens = high.getTokens();
+    let insertAfter = tokens[0];
+    if (tokens[1]?.getStr().toUpperCase() === "SINGLE") {
+      insertAfter = tokens[1];
+      if (tokens[2]?.getStr().toUpperCase() === "FOR" && tokens[3]?.getStr().toUpperCase() === "UPDATE") {
+        insertAfter = tokens[3];
+      }
     }
 
     const fix1 = EditHelper.deleteRange(lowFile, fields.getFirstToken().getStart(), fields.getLastToken().getEnd());
-    const fix2 = EditHelper.insertAt(lowFile, high.getFirstToken().getEnd(), " " + code);
+    const fix2 = EditHelper.insertAt(lowFile, insertAfter.getEnd(), " " + code);
     const fix = EditHelper.merge(fix1, fix2);
     return Issue.atToken(lowFile, fields.getFirstToken(), "Replace FIELDS", this.getMetadata().key, this.conf.severity, fix);
   }
