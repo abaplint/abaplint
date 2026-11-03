@@ -1335,6 +1335,15 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
 
       const condition = this.tableCondition(tableExpression);
 
+      let guard: string[] = [];
+      if (high.get() instanceof Statements.If) {
+        const found = this.shortCircuitGuard(high.findDirectExpression(Expressions.Cond), fieldChain);
+        if (found === "later") {
+          continue;
+        }
+        guard = found;
+      }
+
       // ASSIGNING, not INTO: from v740 a table expression in a read position addresses the
       // row rather than copying it, so "REF #( tab[ i ]-comp )" and "ASSIGN tab[ i ]-comp"
       // hand back an address INTO a work area would not preserve. The write path
@@ -1344,14 +1353,22 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       const firstToken = high.getFirstToken();
       // note that the tabix restore should be done before throwing the exception
+      let read = `${tabixBackup} = sy-tabix.
+READ TABLE ${pre} ${condition}ASSIGNING ${uniqueName}.
+sy-tabix = ${tabixBackup}.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.`;
+      if (guard.length > 0) {
+        // the operands in front of the table expression are evaluated first and can stop the
+        // evaluation, so the row is only read when they let the evaluation reach it
+        read = `IF ${guard.join(" AND ")}.
+${read.replace(/^/gm, "  ")}
+ENDIF.`;
+      }
       const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `FIELD-SYMBOLS ${uniqueName} LIKE LINE OF ${pre}.
 ${indentation}DATA ${tabixBackup} LIKE sy-tabix.
-${indentation}${tabixBackup} = sy-tabix.
-${indentation}READ TABLE ${pre} ${condition}ASSIGNING ${uniqueName}.
-${indentation}sy-tabix = ${tabixBackup}.
-${indentation}IF sy-subrc <> 0.
-${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
-${indentation}ENDIF.
+${read.replace(/\n/g, "\n" + indentation).replace(/^/, indentation)}
 ${indentation}`);
       const fix2 = EditHelper.replaceRange(lowFile, startToken.getStart(), tableExpression.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
@@ -1364,6 +1381,74 @@ ${indentation}`);
     }
 
     return undefined;
+  }
+
+  /** ABAP evaluates the operands of AND and OR left to right and stops as soon as the result
+   * is known, so in "IF lv_last > 0 AND tab[ lv_last ] = x." the table expression is only read
+   * when lv_last > 0. Outlined in front of the IF, the read and its CX_SY_ITAB_LINE_NOT_FOUND
+   * raise would run unconditionally. Returns the operands that must hold for the evaluation to
+   * reach the target, empty when it is always reached (or the shape is not handled, which keeps
+   * the unconditional outline), and "later" when an operand in front of it holds a table
+   * expression itself, which must be outlined first. Operands with method calls or NEW are not
+   * repeated in a guard, as that would evaluate them twice. */
+  private shortCircuitGuard(cond: ExpressionNode | undefined, target: ExpressionNode): string[] | "later" {
+    if (cond === undefined) {
+      return [];
+    }
+    const guard: ExpressionNode[] = [];
+    const negated: ExpressionNode[][] = [];
+    let term: ExpressionNode[] = [];
+    for (const child of cond.getChildren()) {
+      if (child instanceof TokenNode) {
+        const operator = child.getFirstToken().getStr().toUpperCase();
+        if (operator === "EQUIV") {
+          return [];
+        } else if (operator === "OR") {
+          negated.push(term);
+          term = [];
+        }
+        continue;
+      } else if (!(child instanceof ExpressionNode)) {
+        return [];
+      }
+
+      if (child.findAllExpressionsRecursive(Expressions.FieldChain).includes(target) === false) {
+        term.push(child);
+        continue;
+      }
+
+      guard.push(...term);
+      let inner: string[] = [];
+      if (child.get() instanceof Expressions.CondSub) {
+        const found = this.shortCircuitGuard(child.findDirectExpression(Expressions.Cond), target);
+        if (found === "later") {
+          return found;
+        }
+        inner = found;
+      }
+
+      const operands = [...negated.flat(), ...guard];
+      if (operands.some(o => o.findFirstExpression(Expressions.TableExpression) !== undefined)) {
+        return "later";
+      }
+      for (const o of operands) {
+        if (o.findFirstExpression(Expressions.NewObject) !== undefined) {
+          return [];
+        }
+        for (const m of o.findAllExpressionsRecursive(Expressions.MethodCall)) {
+          const name = m.findDirectExpression(Expressions.MethodName)?.concatTokens().toUpperCase();
+          if (BuiltIn.searchBuiltin(name) === undefined) {
+            return [];
+          }
+        }
+      }
+
+      return [
+        ...negated.map(t => "NOT ( " + t.map(o => o.concatTokens()).join(" AND ") + " )"),
+        ...guard.map(o => o.concatTokens()),
+        ...inner];
+    }
+    return [];
   }
 
   private tableCondition(tableExpression: ExpressionNode) {

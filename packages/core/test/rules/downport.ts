@@ -7728,6 +7728,234 @@ ENDFORM.`;
     testFixAll(abap, expected);
   });
 
+  it("table expression in IF, first operand, read in front of the IF", async () => {
+    const abap = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  IF lt_item[ lv_last ] = 'A' AND lv_last > 0.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_item INDEX lv_last ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  IF <temp1> = 'A' AND lv_last > 0.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("table expression in IF behind AND, read only when the operands in front hold", async () => {
+    const abap = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  lv_last = lines( lt_item ).
+  IF lv_last > 0 AND lt_item[ lv_last ] = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  lv_last = lines( lt_item ).
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  IF lv_last > 0.
+    temp2 = sy-tabix.
+    READ TABLE lt_item INDEX lv_last ASSIGNING <temp1>.
+    sy-tabix = temp2.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+  ENDIF.
+  IF lv_last > 0 AND <temp1> = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("table expression in IF behind OR, read only when the operand in front is false", async () => {
+    const abap = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  IF lt_item IS INITIAL OR lt_item[ 1 ] = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  IF NOT ( lt_item IS INITIAL ).
+    temp2 = sy-tabix.
+    READ TABLE lt_item INDEX 1 ASSIGNING <temp1>.
+    sy-tabix = temp2.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+  ENDIF.
+  IF lt_item IS INITIAL OR <temp1> = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("table expression in IF, nested in parentheses behind AND and OR", async () => {
+    const abap = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  DATA lv_token TYPE string.
+  IF lv_last > 0 AND ( lv_token = 'ASC' OR lv_token = 'DESC' AND lv_last = 1 OR ( lv_token = 'KEY' AND lt_item[ lv_last ] = 'PRIMARY' ) ).
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  DATA lv_token TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  IF lv_last > 0 AND NOT ( lv_token = 'ASC' ) AND NOT ( lv_token = 'DESC' AND lv_last = 1 ) AND lv_token = 'KEY'.
+    temp2 = sy-tabix.
+    READ TABLE lt_item INDEX lv_last ASSIGNING <temp1>.
+    sy-tabix = temp2.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+  ENDIF.
+  IF lv_last > 0 AND ( lv_token = 'ASC' OR lv_token = 'DESC' AND lv_last = 1 OR ( lv_token = 'KEY' AND <temp1> = 'PRIMARY' ) ).
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("table expression in IF behind AND, NOT on the compare", async () => {
+    const abap = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  IF lv_last > 0 AND NOT lt_item[ lv_last ] = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  IF lv_last > 0.
+    temp2 = sy-tabix.
+    READ TABLE lt_item INDEX lv_last ASSIGNING <temp1>.
+    sy-tabix = temp2.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+  ENDIF.
+  IF lv_last > 0 AND NOT <temp1> = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("table expression in IF behind AND, the operand in front has its own table expression, outlined first", async () => {
+    const abap = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  IF lt_item[ 1 ] = 'A' AND lt_item[ 2 ] = 'B'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_item INDEX 1 ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  FIELD-SYMBOLS <temp2> LIKE LINE OF lt_item.
+  DATA temp3 LIKE sy-tabix.
+  IF <temp1> = 'A'.
+    temp3 = sy-tabix.
+    READ TABLE lt_item INDEX 2 ASSIGNING <temp2>.
+    sy-tabix = temp3.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+  ENDIF.
+  IF <temp1> = 'A' AND <temp2> = 'B'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("table expression in IF behind a functional method call, not repeated in a guard", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS check RETURNING VALUE(rv) TYPE abap_bool.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD check.
+  ENDMETHOD.
+ENDCLASS.
+FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  IF lcl=>check( ) = abap_true AND lt_item[ 1 ] = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS check RETURNING VALUE(rv) TYPE abap_bool.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD check.
+  ENDMETHOD.
+ENDCLASS.
+FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_item INDEX 1 ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  IF lcl=>check( ) = abap_true AND <temp1> = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
   it("IS INSTANCE OF in IF, cast in a TRY", async () => {
     const abap = `CLASS lcl_case DEFINITION.
 ENDCLASS.
