@@ -7282,6 +7282,239 @@ ENDFORM.`;
     testFixAll(abap, expected);
   });
 
+  it("IS INSTANCE OF in IF, cast in a TRY", async () => {
+    const abap = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  IF lo_obj IS INSTANCE OF lcl_case.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  DATA temp1 TYPE REF TO lcl_case.
+  DATA temp2 TYPE abap_bool.
+  TRY.
+      temp1 ?= lo_obj.
+      temp2 = boolc( temp1 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp2 = abap_false.
+  ENDTRY.
+  IF temp2 = abap_true.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("IS NOT INSTANCE OF in IF", async () => {
+    const abap = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  IF lo_obj IS NOT INSTANCE OF lcl_case.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  DATA temp1 TYPE REF TO lcl_case.
+  DATA temp2 TYPE abap_bool.
+  TRY.
+      temp1 ?= lo_obj.
+      temp2 = boolc( temp1 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp2 = abap_false.
+  ENDTRY.
+  IF temp2 = abap_false.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("NOT ... IS INSTANCE OF, combined with another condition", async () => {
+    const abap = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  IF lo_obj IS BOUND AND NOT lo_obj IS INSTANCE OF lcl_case.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  DATA temp1 TYPE REF TO lcl_case.
+  DATA temp2 TYPE abap_bool.
+  TRY.
+      temp1 ?= lo_obj.
+      temp2 = boolc( temp1 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp2 = abap_false.
+  ENDTRY.
+  IF lo_obj IS BOUND AND NOT temp2 = abap_true.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("IS INSTANCE OF in ELSEIF, outlined before the IF", async () => {
+    const abap = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  IF 1 = 2.
+    WRITE / 'foo'.
+  ELSEIF lo_obj IS INSTANCE OF lcl_case.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  DATA temp1 TYPE REF TO lcl_case.
+  DATA temp2 TYPE abap_bool.
+  TRY.
+      temp1 ?= lo_obj.
+      temp2 = boolc( temp1 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp2 = abap_false.
+  ENDTRY.
+  IF 1 = 2.
+    WRITE / 'foo'.
+  ELSEIF temp2 = abap_true.
+    WRITE / 'hello'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("IS INSTANCE OF in CHECK", async () => {
+    const abap = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  CHECK lo_obj IS INSTANCE OF lcl_case.
+ENDFORM.`;
+
+    const expected = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  DATA temp1 TYPE REF TO lcl_case.
+  DATA temp2 TYPE abap_bool.
+  TRY.
+      temp1 ?= lo_obj.
+      temp2 = boolc( temp1 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp2 = abap_false.
+  ENDTRY.
+  CHECK temp2 = abap_true.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("IS INSTANCE OF, two in one IF", async () => {
+    const abap = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  IF lo_obj IS INSTANCE OF lcl_case OR lo_obj IS INSTANCE OF lcl_case.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  DATA temp1 TYPE REF TO lcl_case.
+  DATA temp2 TYPE abap_bool.
+  TRY.
+      temp1 ?= lo_obj.
+      temp2 = boolc( temp1 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp2 = abap_false.
+  ENDTRY.
+  DATA temp3 TYPE REF TO lcl_case.
+  DATA temp4 TYPE abap_bool.
+  TRY.
+      temp3 ?= lo_obj.
+      temp4 = boolc( temp3 IS BOUND ).
+    CATCH cx_sy_move_cast_error.
+      temp4 = abap_false.
+  ENDTRY.
+  IF temp2 = abap_true OR temp4 = abap_true.
+  ENDIF.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("IS INSTANCE OF in WHILE, not downported", async () => {
+    const issues = await findIssues(`CLASS lcl_case DEFINITION.
+ENDCLASS.
+CLASS lcl_case IMPLEMENTATION.
+ENDCLASS.
+FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  WHILE lo_obj IS INSTANCE OF lcl_case.
+    CLEAR lo_obj.
+  ENDWHILE.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("IS BOUND, no downport", async () => {
+    const issues = await findIssues(`FORM bar.
+  DATA lo_obj TYPE REF TO object.
+  IF lo_obj IS BOUND.
+  ENDIF.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
   it("strip WITHOUT AUTHORITY-CHECK from CALL TRANSACTION", async () => {
     const abap = `CALL TRANSACTION 'PA20' WITHOUT AUTHORITY-CHECK AND SKIP FIRST SCREEN.`;
     const expected = `CALL TRANSACTION 'PA20' AND SKIP FIRST SCREEN.`;
