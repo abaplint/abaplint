@@ -7834,4 +7834,165 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+
+  it("OPEN CURSOR, remove @", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA lv_text TYPE c LENGTH 10.
+  OPEN CURSOR @lv_cursor FOR
+    SELECT * FROM zfoo
+      WHERE name = @lv_text.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA lv_text TYPE c LENGTH 10.
+  OPEN CURSOR lv_cursor FOR
+    SELECT * FROM zfoo
+      WHERE name = lv_text.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("OPEN CURSOR WITH HOLD, remove @", async () => {
+    const abap = `FORM bar.
+  DATA lv_cursor TYPE cursor.
+  OPEN CURSOR WITH HOLD @lv_cursor FOR SELECT * FROM zfoo.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_cursor TYPE cursor.
+  OPEN CURSOR WITH HOLD lv_cursor FOR SELECT * FROM zfoo.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("FETCH NEXT CURSOR, remove @", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  FETCH NEXT CURSOR @lv_cursor INTO TABLE @lt_rows PACKAGE SIZE 100.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  FETCH NEXT CURSOR lv_cursor INTO TABLE lt_rows PACKAGE SIZE 100.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("FETCH NEXT CURSOR, remove @, INTO structure and escaped PACKAGE SIZE", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA ls_row TYPE ty_row.
+  DATA lv_size TYPE i.
+  FETCH NEXT CURSOR @lv_cursor INTO @ls_row PACKAGE SIZE @lv_size.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA ls_row TYPE ty_row.
+  DATA lv_size TYPE i.
+  FETCH NEXT CURSOR lv_cursor INTO ls_row PACKAGE SIZE lv_size.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("CLOSE CURSOR, remove @", async () => {
+    const abap = `FORM bar.
+  DATA lv_cursor TYPE cursor.
+  CLOSE CURSOR @lv_cursor.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_cursor TYPE cursor.
+  CLOSE CURSOR lv_cursor.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("cursor statements, remove @, all", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  OPEN CURSOR @lv_cursor FOR
+    SELECT * FROM zfoo
+      WHERE name = @lv_text.
+  FETCH NEXT CURSOR @lv_cursor INTO TABLE @lt_rows PACKAGE SIZE 100.
+  CLOSE CURSOR @lv_cursor.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  OPEN CURSOR lv_cursor FOR
+    SELECT * FROM zfoo
+      WHERE name = lv_text.
+  FETCH NEXT CURSOR lv_cursor INTO TABLE lt_rows PACKAGE SIZE 100.
+  CLOSE CURSOR lv_cursor.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("OPEN CURSOR, outline @DATA", async () => {
+    const abap = `FORM bar.
+  OPEN CURSOR @DATA(lv_cursor) FOR SELECT * FROM zfoo.
+  CLOSE CURSOR @lv_cursor.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_cursor TYPE cursor.
+  OPEN CURSOR lv_cursor FOR SELECT * FROM zfoo.
+  CLOSE CURSOR lv_cursor.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("cursor statements without @, no downport", async () => {
+    const abap = `FORM bar.
+  DATA lv_cursor TYPE cursor.
+  DATA lt_rows TYPE STANDARD TABLE OF zfoo WITH DEFAULT KEY.
+  OPEN CURSOR lv_cursor FOR SELECT * FROM zfoo.
+  FETCH NEXT CURSOR lv_cursor INTO TABLE lt_rows PACKAGE SIZE 100.
+  CLOSE CURSOR lv_cursor.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
