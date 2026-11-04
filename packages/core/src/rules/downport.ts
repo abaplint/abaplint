@@ -296,6 +296,7 @@ Make sure to test the downported code, it might not always be completely correct
       }
 
       let containsUnknown = false;
+      const notDownported: Issue[] = [];
       for (let i = 0; i < lowStatements.length; i++) {
         const low = lowStatements[i];
         const high = highStatements[i];
@@ -307,6 +308,11 @@ Make sure to test the downported code, it might not always be completely correct
             const issue = this.checkStatement(low, high, lowFile, highSyntax, highFile);
             if (issue) {
               ret.push(issue);
+            } else {
+              const nope = this.notDownported(low, high, lowFile, highSyntax);
+              if (nope) {
+                notDownported.push(nope);
+              }
             }
 
           } catch (e) {
@@ -396,12 +402,61 @@ Make sure to test the downported code, it might not always be completely correct
         }
       }
 
+      // nothing could be rewritten, name the statements which stay invalid in the low version
+      if (ret.length === 0) {
+        ret.push(...notDownported);
+      }
+
     }
 
     return ret;
   }
 
 ////////////////////
+
+  /** for a statement no downport applies to, an issue without fix if it stays invalid in the low version */
+  private notDownported(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    }
+
+    // a constructor expression with #, where the type cannot be inferred as it is void
+    if (low.get() instanceof Unknown) {
+      for (const infer of high.findAllExpressionsRecursive(Expressions.TypeNameOrInfer)) {
+        if (infer.concatTokens() !== "#") {
+          continue;
+        }
+        const token = infer.getFirstToken();
+        const spag = highSyntax.spaghetti.lookupPosition(token.getStart(), lowFile.getFilename());
+        const voided = spag?.getData().references.some(r => r.referenceType === ReferenceType.InferredType
+          && r.position.getStart().equals(token.getStart())
+          && r.resolved instanceof TypedIdentifier
+          && r.resolved.getType() instanceof VoidType
+          && r.resolved.getType().getQualifiedName() === undefined);
+        if (voided === true) {
+          return Issue.atToken(lowFile, token, "Cannot downport, inferred type is void",
+                               this.getMetadata().key, this.conf.severity);
+        }
+      }
+      return undefined;
+    }
+
+    // the statement might still parse in the low version, eg. DATA(name) as offset/length access
+    for (const i of high.findAllExpressionsRecursive(Expressions.InlineData)) {
+      const nameToken = i.findDirectExpression(Expressions.TargetField)?.getFirstToken();
+      if (nameToken === undefined) {
+        continue;
+      }
+      const name = nameToken.getStr();
+      const found = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename())?.findVariable(name);
+      if (found?.getType() instanceof VoidType && found.getType().getQualifiedName() === undefined) {
+        return Issue.atToken(lowFile, i.getFirstToken(), `Cannot downport, type of ${name} is void`,
+                             this.getMetadata().key, this.conf.severity);
+      }
+    }
+
+    return undefined;
+  }
 
   /** clones the orginal repository into highReg, and parses it with higher language version */
   private initHighReg() {
@@ -641,6 +696,11 @@ Make sure to test the downported code, it might not always be completely correct
     }
 
     found = this.outlineDataSimple(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    found = this.outlineReadTableVoidTarget(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -3342,6 +3402,53 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     return undefined;
+  }
+
+  /** READ TABLE [REFERENCE] INTO DATA( ) where the row type is void, no TYPE can be written, use LIKE LINE OF like LOOP does */
+  private outlineReadTableVoidTarget(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(node.get() instanceof Statements.ReadTable)) {
+      return undefined;
+    }
+
+    if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    }
+
+    const source = node.findDirectExpression(Expressions.SimpleSource2);
+    const target = node.findDirectExpression(Expressions.ReadTableTarget);
+    const inline = target?.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    if (source === undefined || target === undefined || inline === undefined) {
+      return undefined;
+    }
+
+    const nameToken = inline.findDirectExpression(Expressions.TargetField)?.getFirstToken();
+    if (nameToken === undefined) {
+      return undefined;
+    }
+    const name = nameToken.getStr();
+
+    const spag = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename());
+    const found = spag?.findVariable(name);
+    const table = spag?.findVariable(source.concatTokens());
+    const isReference = target.findDirectTokenByText("REFERENCE") !== undefined;
+    if (isReference === true && !(table?.getType() instanceof VoidType)) {
+      return undefined;
+    } else if (isReference === false
+        && (!(found?.getType() instanceof VoidType) || found.getType().getQualifiedName() !== undefined)) {
+      return undefined;
+    }
+
+    const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+    let code = `DATA ${name} LIKE LINE OF ${source.concatTokens()}.\n${indentation}`;
+    if (isReference === true) {
+      const likeName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      code = `DATA ${likeName} LIKE LINE OF ${source.concatTokens()}.\n${indentation}DATA ${name} LIKE REF TO ${likeName}.\n${indentation}`;
+    }
+    const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, inline.getFirstToken().getStart(), inline.getLastToken().getEnd(), name);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, inline.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private outlineData(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
