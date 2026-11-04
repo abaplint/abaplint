@@ -57,6 +57,12 @@ export class AttributeName {
           return VoidType.get(CheckSyntaxKey);
         }
       }
+      const readOnly = found instanceof ClassAttribute && helper.canWriteAttribute(def, found) === false;
+      if (type === ReferenceType.DataWriteReference && readOnly) {
+        const message = `Attribute "${name}" is read-only and cannot be modified`;
+        input.issues.push(syntaxIssue(input, token, message));
+        return VoidType.get(CheckSyntaxKey);
+      }
       if (type) {
         input.scope.addReference(token, found, type, input.filename);
       }

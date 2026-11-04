@@ -16,9 +16,20 @@ export class Append implements StatementSyntax {
 
     let targetType: AbstractType | undefined = undefined;
 
-    const target = node.findDirectExpression(Expressions.Target);
+    const dataTarget = node.findDirectTokenByText("REFERENCE") ? node.findExpressionAfterToken("INTO") : undefined;
+    const target = node.findDirectExpressions(Expressions.Target).find(t => t !== dataTarget);
     if (target) {
       targetType = Target.runSyntax(target, input);
+    }
+
+    const source = node.findDirectExpression(Expressions.SimpleSource4) || node.findDirectExpression(Expressions.Source);
+    const expected = targetType instanceof TableType ? targetType.getRowType() : targetType;
+    let sourceType = source ? Source.runSyntax(source, input, expected, target === undefined, false, target !== undefined) : undefined;
+    if (target === undefined) {
+      targetType = sourceType;
+      if (sourceType instanceof TableType) {
+        sourceType = sourceType.getRowType();
+      }
     }
 
     // a hashed table has no index, APPEND adds at the end
@@ -39,26 +50,24 @@ export class Append implements StatementSyntax {
       FSTarget.runSyntax(fsTarget, input, rowType);
     }
 
-    const dataTarget = node.findExpressionAfterToken("INTO");
-    if (dataTarget && node.concatTokens().toUpperCase().includes(" REFERENCE INTO DATA(")) {
+    if (dataTarget) {
       if (!(targetType instanceof TableType) && !(targetType instanceof VoidType) && !(targetType instanceof UnknownType)) {
         const message = "APPEND to non table type, " + targetType?.constructor.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
       const rowType = targetType instanceof TableType ? targetType.getRowType() : targetType;
-      InlineData.runSyntax(dataTarget, input, new DataReference(rowType));
+      if (dataTarget.findDirectExpression(Expressions.InlineData)) {
+        InlineData.runSyntax(dataTarget, input, new DataReference(rowType));
+      } else {
+        Target.runSyntax(dataTarget, input);
+      }
     }
 
-    let source = node.findDirectExpression(Expressions.SimpleSource4);
-    if (source === undefined) {
-      source = node.findDirectExpression(Expressions.Source);
-    }
     if (source) {
       if (targetType !== undefined
           && !(targetType instanceof TableType)
           && !(targetType instanceof UnknownType)
-          && dataTarget !== target
           && !(targetType instanceof VoidType)) {
         const message = `Append, target not a table type (${targetType.constructor.name})`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -71,8 +80,6 @@ export class Append implements StatementSyntax {
       } else if (targetType instanceof VoidType) {
         rowType = targetType;
       }
-      let sourceType = Source.runSyntax(source, input, rowType);
-
       if (node.findDirectTokenByText("LINES")) {
         // hmm, checking only the row types are compatible will not check the table type, e.g. sorted or hashed
         if (sourceType instanceof TableType) {
