@@ -9,7 +9,10 @@ export class Import implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      Source.runSyntax(s, input);
+      const children = node.getChildren();
+      const index = children.indexOf(s);
+      const write = children[index - 1]?.concatTokens().toUpperCase() === "INTO";
+      Source.runSyntax(s, input, undefined, write, false, !write);
     }
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {
