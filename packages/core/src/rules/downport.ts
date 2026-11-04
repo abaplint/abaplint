@@ -19,7 +19,7 @@ import {IClassDefinition} from "../abap/types/_class_definition";
 import {IMethodDefinition} from "../abap/types/_method_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
-import {AnyType, DataReference, ObjectReferenceType, StructureType, TableType, VoidType} from "../abap/types/basic";
+import {AnyType, DataReference, ObjectReferenceType, StructureType, TableAccessType, TableType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {EditHelper, IEdit} from "../edit_helper";
 import {Issue} from "../issue";
@@ -374,6 +374,21 @@ Make sure to test the downported code, it might not always be completely correct
         }
       }
 
+      // MOVE-CORRESPONDING between tables parses in the low version, but is only allowed from
+      // v740sp05, "MOVE-CORRESPONDING with tables possible from v740sp05"
+      if (ret.length === 0) {
+        for (let i = 0; i < lowStatements.length; i++) {
+          if (lowStatements[i].getFirstToken().getStart() instanceof VirtualPosition) {
+            continue;
+          }
+          const issue = this.downportMoveCorrespondingTables(highStatements[i], lowFile, highSyntax);
+          if (issue) {
+            ret.push(issue);
+            break;
+          }
+        }
+      }
+
       // INTO after WHERE parses as a valid SELECT in the low version, but is only allowed in
       // strict SQL syntax, so move it also when the statement is no longer Unknown
       if (ret.length === 0) {
@@ -543,6 +558,11 @@ Make sure to test the downported code, it might not always be completely correct
     }
 
     found = this.downportCorrespondingSimple(high, lowFile);
+    if (found) {
+      return found;
+    }
+
+    found = this.downportMoveCorrespondingTables(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -1605,6 +1625,77 @@ ${indentation}`);
     const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, source.getFirstToken(), "Outline built-in function in INSERT",
+                         this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  /** MOVE-CORRESPONDING between internal tables is possible from v740sp05, in 702 move row by row;
+   * a typed target must be a standard table, as a row is added before its fields are filled, and a
+   * fully generic target carries no table kind, so its row is added with INSERT INTO TABLE */
+  private downportMoveCorrespondingTables(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.MoveCorresponding)) {
+      return undefined;
+    } else if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    }
+
+    const concat = high.concatTokens().toUpperCase();
+    if (concat.includes(" EXPANDING NESTED TABLES") || concat.startsWith("MOVE-CORRESPONDING EXACT ")) {
+      return undefined;
+    }
+    const keeping = concat.includes(" KEEPING TARGET LINES");
+
+    // only plain variables and field symbols, their types are known from the scope
+    const source = high.findDirectExpression(Expressions.Source);
+    const sourceField = source?.getFirstChild();
+    const target = high.findDirectExpression(Expressions.SimpleTarget);
+    if (source === undefined
+        || target === undefined
+        || source.getChildren().length !== 1
+        || !(sourceField?.get() instanceof Expressions.FieldChain)
+        || sourceField.getChildren().length !== 1
+        || target.getChildren().length !== 1) {
+      return undefined;
+    }
+    const sourceName = source.concatTokens();
+    const targetName = target.concatTokens();
+    if (sourceName.toUpperCase() === targetName.toUpperCase()) {
+      return undefined;
+    }
+
+    const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
+    const sourceType = spag?.findVariable(sourceName)?.getType();
+    const targetType = spag?.findVariable(targetName)?.getType();
+    if (!(sourceType instanceof TableType)
+        || !(targetType instanceof TableType)
+        || sourceType.isWithHeader() === true
+        || targetType.isWithHeader() === true
+        || (targetType.getAccessType() !== TableAccessType.standard && targetType.getAccessType() !== undefined)) {
+      return undefined;
+    }
+    for (const t of [sourceType, targetType]) {
+      const row = t.getRowType();
+      if (!(row instanceof StructureType || row instanceof AnyType || row instanceof VoidType)) {
+        return undefined;
+      }
+    }
+
+    const fsType = (name: string, type: TableType) => type.isGeneric() ? "TYPE any" : "LIKE LINE OF " + name;
+    const sourceFS = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
+    const targetFS = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
+    const addRow = targetType.getAccessType() === undefined
+      ? `INSERT INITIAL LINE INTO TABLE ${targetName}`
+      : `APPEND INITIAL LINE TO ${targetName}`;
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const code = `FIELD-SYMBOLS ${sourceFS} ${fsType(sourceName, sourceType)}.\n` +
+      indentation + `FIELD-SYMBOLS ${targetFS} ${fsType(targetName, targetType)}.\n` +
+      (keeping ? "" : indentation + `CLEAR ${targetName}.\n`) +
+      indentation + `LOOP AT ${sourceName} ASSIGNING ${sourceFS}.\n` +
+      indentation + `  ${addRow} ASSIGNING ${targetFS}.\n` +
+      indentation + `  MOVE-CORRESPONDING ${sourceFS} TO ${targetFS}.\n` +
+      indentation + `ENDLOOP.`;
+
+    const fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport MOVE-CORRESPONDING with tables",
                          this.getMetadata().key, this.conf.severity, fix);
   }
 
