@@ -5970,6 +5970,128 @@ START-OF-SELECTION.
     testFix(abap, expected);
   });
 
+  it("CORRESPONDING EXCEPT", async () => {
+    const abap = `FORM run.
+  TYPES: BEGIN OF ty,
+           key   TYPE i,
+           value TYPE string,
+         END OF ty.
+  DATA ls_a TYPE ty.
+  DATA ls_b TYPE ty.
+  ls_b = CORRESPONDING #( ls_a EXCEPT value ).
+ENDFORM.`;
+    const expected = `FORM run.
+  TYPES: BEGIN OF ty,
+           key   TYPE i,
+           value TYPE string,
+         END OF ty.
+  DATA ls_a TYPE ty.
+  DATA ls_b TYPE ty.
+  DATA temp1 TYPE ty.
+  CLEAR temp1.
+  MOVE-CORRESPONDING ls_a TO temp1.
+  CLEAR temp1-value.
+  ls_b = temp1.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("CORRESPONDING EXCEPT, dereference and several components as method parameter", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty,
+             key   TYPE i,
+             value TYPE string,
+             data  TYPE string,
+           END OF ty.
+    CLASS-METHODS run IMPORTING is_row TYPE ty.
+    CLASS-METHODS read IMPORTING ir_row TYPE REF TO ty RETURNING VALUE(rs_row) TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+  METHOD read.
+    rs_row = CORRESPONDING #( ir_row->* EXCEPT data ).
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE lcl=>ty.
+  lcl=>run( CORRESPONDING #( foo EXCEPT value data ) ).`;
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty,
+             key   TYPE i,
+             value TYPE string,
+             data  TYPE string,
+           END OF ty.
+    CLASS-METHODS run IMPORTING is_row TYPE ty.
+    CLASS-METHODS read IMPORTING ir_row TYPE REF TO ty RETURNING VALUE(rs_row) TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+  METHOD read.
+    DATA temp1 TYPE lcl=>ty.
+    CLEAR temp1.
+    MOVE-CORRESPONDING ir_row->* TO temp1.
+    CLEAR temp1-data.
+    rs_row = temp1.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE lcl=>ty.
+  DATA temp2 TYPE lcl=>ty.
+  CLEAR temp2.
+  MOVE-CORRESPONDING foo TO temp2.
+  CLEAR temp2-value.
+  CLEAR temp2-data.
+  lcl=>run( temp2 ).`;
+    testFixAll(abap, expected);
+  });
+
+  it("CORRESPONDING EXCEPT *", async () => {
+    const abap = `FORM run.
+  TYPES: BEGIN OF ty,
+           key   TYPE i,
+           value TYPE string,
+         END OF ty.
+  DATA ls_a TYPE ty.
+  DATA ls_b TYPE ty.
+  ls_b = CORRESPONDING #( ls_a EXCEPT * ).
+ENDFORM.`;
+    const expected = `FORM run.
+  TYPES: BEGIN OF ty,
+           key   TYPE i,
+           value TYPE string,
+         END OF ty.
+  DATA ls_a TYPE ty.
+  DATA ls_b TYPE ty.
+  DATA temp1 TYPE ty.
+  CLEAR temp1.
+  ls_b = temp1.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("CORRESPONDING EXCEPT, internal table, not downported", async () => {
+    const abap = `FORM run.
+  TYPES: BEGIN OF ty,
+           key   TYPE i,
+           value TYPE string,
+         END OF ty.
+  TYPES ty_t TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+  DATA lt_a TYPE ty_t.
+  DATA lt_b TYPE ty_t.
+  lt_b = CORRESPONDING #( lt_a EXCEPT value ).
+ENDFORM.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("SELECT, existence check, abap value in field list", async () => {
     const abap = `
 DATA lv_exists TYPE abap_bool.
