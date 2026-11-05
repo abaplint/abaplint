@@ -7513,6 +7513,183 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("MOVE-CORRESPONDING, tables", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+           field2 TYPE string,
+         END OF ty_a.
+  TYPES: BEGIN OF ty_b,
+           field1 TYPE i,
+         END OF ty_b.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_b WITH DEFAULT KEY.
+  MOVE-CORRESPONDING lt_a TO lt_b.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+           field2 TYPE string,
+         END OF ty_a.
+  TYPES: BEGIN OF ty_b,
+           field1 TYPE i,
+         END OF ty_b.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_b WITH DEFAULT KEY.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_a.
+  FIELD-SYMBOLS <temp2> LIKE LINE OF lt_b.
+  CLEAR lt_b.
+  LOOP AT lt_a ASSIGNING <temp1>.
+    APPEND INITIAL LINE TO lt_b ASSIGNING <temp2>.
+    MOVE-CORRESPONDING <temp1> TO <temp2>.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("MOVE-CORRESPONDING, generic table field symbols", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <lt_a> TYPE STANDARD TABLE.
+  FIELD-SYMBOLS <lt_b> TYPE STANDARD TABLE.
+  MOVE-CORRESPONDING <lt_a> TO <lt_b>.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <lt_a> TYPE STANDARD TABLE.
+  FIELD-SYMBOLS <lt_b> TYPE STANDARD TABLE.
+  FIELD-SYMBOLS <temp1> TYPE any.
+  FIELD-SYMBOLS <temp2> TYPE any.
+  CLEAR <lt_b>.
+  LOOP AT <lt_a> ASSIGNING <temp1>.
+    INSERT INITIAL LINE INTO TABLE <lt_b> ASSIGNING <temp2>.
+    MOVE-CORRESPONDING <temp1> TO <temp2>.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("MOVE-CORRESPONDING, tables, KEEPING TARGET LINES", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+         END OF ty_a.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  MOVE-CORRESPONDING lt_a TO lt_b KEEPING TARGET LINES.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+         END OF ty_a.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_a.
+  FIELD-SYMBOLS <temp2> LIKE LINE OF lt_b.
+  LOOP AT lt_a ASSIGNING <temp1>.
+    APPEND INITIAL LINE TO lt_b ASSIGNING <temp2>.
+    MOVE-CORRESPONDING <temp1> TO <temp2>.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("MOVE-CORRESPONDING, CORRESPONDING # over tables ends as the row loop", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+           field2 TYPE string,
+         END OF ty_a.
+  TYPES: BEGIN OF ty_b,
+           field1 TYPE i,
+         END OF ty_b.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_b WITH DEFAULT KEY.
+  lt_b = CORRESPONDING #( lt_a ).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+           field2 TYPE string,
+         END OF ty_a.
+  TYPES: BEGIN OF ty_b,
+           field1 TYPE i,
+         END OF ty_b.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_b WITH DEFAULT KEY.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_a.
+  FIELD-SYMBOLS <temp2> LIKE LINE OF lt_b.
+  CLEAR lt_b.
+  LOOP AT lt_a ASSIGNING <temp1>.
+    APPEND INITIAL LINE TO lt_b ASSIGNING <temp2>.
+    MOVE-CORRESPONDING <temp1> TO <temp2>.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("MOVE-CORRESPONDING, structures stay", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+         END OF ty_a.
+  DATA ls_a TYPE ty_a.
+  DATA ls_b TYPE ty_a.
+  MOVE-CORRESPONDING ls_a TO ls_b.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("MOVE-CORRESPONDING, sorted target table is not lowered", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+         END OF ty_a.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE SORTED TABLE OF ty_a WITH UNIQUE KEY field1.
+  MOVE-CORRESPONDING lt_a TO lt_b.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("MOVE-CORRESPONDING, tables, EXPANDING NESTED TABLES is not lowered", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+         END OF ty_a.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  MOVE-CORRESPONDING lt_a TO lt_b EXPANDING NESTED TABLES.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.some(i => i.getMessage() === "Downport MOVE-CORRESPONDING with tables")).to.equal(false);
+  });
+
+  it("MOVE-CORRESPONDING, tables on open-abap stay", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+         END OF ty_a.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  MOVE-CORRESPONDING lt_a TO lt_b.
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("table expression key, built-in older than 702 stays in the operand", async () => {
     const abap = `FORM bar.
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
