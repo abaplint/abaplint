@@ -166,6 +166,7 @@ import {IStatement} from "../2_statements/statements/_statement";
 import {IStructure} from "../3_structures/structures/_structure";
 import {SELECTION_EVENTS} from "../../stuff";
 import {LoopTableChange} from "./_loop_table_change";
+import {SortedKeyWrite} from "./_sorted_key_write";
 
 // -----------------------------------
 
@@ -324,6 +325,7 @@ export class SyntaxLogic {
 
   private scope: CurrentScope;
   private loopTables: LoopTableChange;
+  private sortedLines: SortedKeyWrite;
 
   private helpers: {
     oooc: ObjectOriented,
@@ -353,6 +355,7 @@ export class SyntaxLogic {
     this.issues = [];
     this.deferred = [];
     this.loopTables = new LoopTableChange();
+    this.sortedLines = new SortedKeyWrite();
     this.reg.getDDICReferences().clear(this.object);
     this.reg.getMSAGReferences().clear(this.object);
 
@@ -435,6 +438,9 @@ export class SyntaxLogic {
     const loop = node instanceof StructureNode
       && node.get() instanceof Structures.Loop
       && this.loopTables.push(node, this.scope);
+    if (node instanceof StructureNode) {
+      this.sortedLines.enter(node, this.currentFile.getFilename());
+    }
 
     for (const child of node.getChildren()) {
       const isStructure = child instanceof StructureNode;
@@ -480,6 +486,9 @@ export class SyntaxLogic {
 
     if (loop === true) {
       this.loopTables.pop();
+    }
+    if (node instanceof StructureNode) {
+      this.sortedLines.leave(node);
     }
   }
 
@@ -567,10 +576,12 @@ export class SyntaxLogic {
     }
 
     this.loopTables.check(node, input);
+    this.sortedLines.check(node, input);
 
     const name = s.constructor.name;
     if (map[name]) {
       map[name].runSyntax(node, input);
+      this.sortedLines.update(node, input);
       return;
     }
 
