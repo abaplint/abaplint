@@ -500,6 +500,53 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("EMPTY KEY quick fix, CREATE DATA dynamic line type", async () => {
+    const abap = `FORM bar USING iv_text TYPE string.
+  DATA lr TYPE REF TO data.
+  CREATE DATA lr TYPE STANDARD TABLE OF (iv_text) WITH EMPTY KEY.
+ENDFORM.`;
+    const expected = `FORM bar USING iv_text TYPE string.
+  DATA lr TYPE REF TO data.
+  CREATE DATA lr TYPE STANDARD TABLE OF (iv_text) WITH DEFAULT KEY.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("EMPTY KEY quick fix, CREATE DATA static line type, lower case", async () => {
+    const abap = `FORM bar.
+  DATA lr TYPE REF TO data.
+  create data lr type table of i with empty key.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA lr TYPE REF TO data.
+  create data lr type table of i with DEFAULT key.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("EMPTY KEY quick fix, CREATE DATA LIKE", async () => {
+    const abap = `FORM bar.
+  DATA lr TYPE REF TO data.
+  DATA lv_int TYPE i.
+  CREATE DATA lr LIKE STANDARD TABLE OF lv_int WITH EMPTY KEY.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA lr TYPE REF TO data.
+  DATA lv_int TYPE i.
+  CREATE DATA lr LIKE STANDARD TABLE OF lv_int WITH DEFAULT KEY.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("CREATE DATA with DEFAULT KEY, no downport", async () => {
+    const abap = `FORM bar USING iv_text TYPE string.
+  DATA lr TYPE REF TO data.
+  CREATE DATA lr TYPE STANDARD TABLE OF (iv_text) WITH DEFAULT KEY.
+ENDFORM.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("downport CAST", async () => {
     const abap = `
     CLASS lcl_class DEFINITION.
@@ -2259,6 +2306,215 @@ ENDFORM.`;
     ENDIF.
     <temp1> = 2.`;
     testFix(abap, expected);
+  });
+
+  it("CLEAR, table expression target with component", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  CLEAR lt_f[ name = lv_name ]-t_range.
+ENDFORM.`;
+    const expected = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_f.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_f WITH KEY name = lv_name ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  CLEAR <temp1>-t_range.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("CLEAR, table expression target by index", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  CLEAR lt_f[ 1 ].
+ENDFORM.`;
+    const expected = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_f.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_f INDEX 1 ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  CLEAR <temp1>.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("CLEAR WITH, table expression target", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  CLEAR lt_f[ 1 ]-name WITH space.
+ENDFORM.`;
+    const expected = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_f.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_f INDEX 1 ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  CLEAR <temp1>-name WITH space.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("FREE, table expression target", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FREE lt_f[ name = lv_name ]-t_range.
+ENDFORM.`;
+    const expected = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_f.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_f WITH KEY name = lv_name ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  FREE <temp1>-t_range.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("APPEND TO, table expression target", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  APPEND 1 TO lt_f[ name = lv_name ]-t_range.
+ENDFORM.`;
+    const expected = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_f.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_f WITH KEY name = lv_name ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  APPEND 1 TO <temp1>-t_range.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("INSERT INTO TABLE, table expression target", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  INSERT 1 INTO TABLE lt_f[ name = lv_name ]-t_range.
+ENDFORM.`;
+    const expected = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_f.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_f WITH KEY name = lv_name ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  INSERT 1 INTO TABLE <temp1>-t_range.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("CLEAR, plain target, no downport", async () => {
+    const abap = `FORM bar.
+  TYPES ty_range TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  TYPES: BEGIN OF ty_f,
+           name    TYPE string,
+           t_range TYPE ty_range,
+         END OF ty_f.
+  DATA lt_f TYPE STANDARD TABLE OF ty_f WITH DEFAULT KEY.
+  DATA lv_name TYPE string.
+  DATA ls_f TYPE ty_f.
+  CLEAR ls_f-t_range.
+  FREE lt_f.
+ENDFORM.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
   });
 
   it("contains()", async () => {
@@ -5598,6 +5854,106 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+  it("SELECT SINGLE FIELDS *, SINGLE stays in front of the field list", async () => {
+    const abap = `FORM bar.
+  DATA ls_row TYPE voided.
+  DATA lv_name TYPE string.
+  SELECT SINGLE FROM zdownport_tab
+    FIELDS *
+    WHERE name = lv_name
+    INTO ls_row.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA ls_row TYPE voided.
+  DATA lv_name TYPE string.
+  SELECT SINGLE * FROM zdownport_tab
+    
+    WHERE name = lv_name
+    INTO ls_row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT SINGLE FIELDS *, all fixes give a v702 SELECT SINGLE", async () => {
+    const abap = `FORM bar.
+  DATA ls_row TYPE voided.
+  DATA lv_name TYPE string.
+  SELECT SINGLE FROM zdownport_tab
+    FIELDS *
+    WHERE name = @lv_name
+    INTO @ls_row.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA ls_row TYPE voided.
+  DATA lv_name TYPE string.
+  SELECT SINGLE * FROM zdownport_tab INTO ls_row
+    
+    WHERE name = lv_name
+    .
+ENDFORM.`;
+    testFixAll(abap, expected);
+  });
+
+  it("SELECT SINGLE FIELDS field list, SINGLE stays in front of the field list", async () => {
+    const abap = `FORM bar.
+  DATA lv_value TYPE string.
+  SELECT SINGLE FROM zdownport_tab FIELDS value WHERE name = 'A' INTO lv_value.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA lv_value TYPE string.
+  SELECT SINGLE value FROM zdownport_tab  WHERE name = 'A' INTO lv_value.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT SINGLE FOR UPDATE FIELDS *, field list goes behind FOR UPDATE", async () => {
+    const abap = `FORM bar.
+  DATA ls_row TYPE voided.
+  SELECT SINGLE FOR UPDATE FROM zdownport_tab FIELDS * WHERE name = 'A' INTO ls_row.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA ls_row TYPE voided.
+  SELECT SINGLE FOR UPDATE * FROM zdownport_tab  WHERE name = 'A' INTO ls_row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT FIELDS single named field, FIELDS keyword is not moved along", async () => {
+    const abap = `FORM bar.
+  DATA lt_names TYPE voided.
+  SELECT FROM zdownport_tab FIELDS name WHERE name = 'A' INTO TABLE lt_names.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA lt_names TYPE voided.
+  SELECT name FROM zdownport_tab  WHERE name = 'A' INTO TABLE lt_names.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT FIELDS DISTINCT, DISTINCT is kept", async () => {
+    const abap = `FORM bar.
+  DATA lt_names TYPE voided.
+  SELECT FROM zdownport_tab FIELDS DISTINCT name value WHERE name = 'A' INTO TABLE lt_names.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA lt_names TYPE voided.
+  SELECT DISTINCT name value FROM zdownport_tab  WHERE name = 'A' INTO TABLE lt_names.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("SELECT FIELDS * without SINGLE, field list stays directly behind SELECT", async () => {
+    const abap = `FORM bar.
+  DATA lt_rows TYPE voided.
+  SELECT FROM zdownport_tab FIELDS * WHERE name = 'A' INTO TABLE lt_rows.
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA lt_rows TYPE voided.
+  SELECT * FROM zdownport_tab  WHERE name = 'A' INTO TABLE lt_rows.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
   it("outline, READ TABLE ASSIGNING WITH KEY on next line", async () => {
     const abap = `TYPES: BEGIN OF ty_line,
     foo TYPE i,
@@ -5821,6 +6177,128 @@ START-OF-SELECTION.
   MOVE-CORRESPONDING foo TO temp1.
   lcl=>run( temp1 ).`;
     testFix(abap, expected);
+  });
+
+  it("CORRESPONDING EXCEPT", async () => {
+    const abap = `FORM run.
+  TYPES: BEGIN OF ty,
+           key   TYPE i,
+           value TYPE string,
+         END OF ty.
+  DATA ls_a TYPE ty.
+  DATA ls_b TYPE ty.
+  ls_b = CORRESPONDING #( ls_a EXCEPT value ).
+ENDFORM.`;
+    const expected = `FORM run.
+  TYPES: BEGIN OF ty,
+           key   TYPE i,
+           value TYPE string,
+         END OF ty.
+  DATA ls_a TYPE ty.
+  DATA ls_b TYPE ty.
+  DATA temp1 TYPE ty.
+  CLEAR temp1.
+  MOVE-CORRESPONDING ls_a TO temp1.
+  CLEAR temp1-value.
+  ls_b = temp1.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("CORRESPONDING EXCEPT, dereference and several components as method parameter", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty,
+             key   TYPE i,
+             value TYPE string,
+             data  TYPE string,
+           END OF ty.
+    CLASS-METHODS run IMPORTING is_row TYPE ty.
+    CLASS-METHODS read IMPORTING ir_row TYPE REF TO ty RETURNING VALUE(rs_row) TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+  METHOD read.
+    rs_row = CORRESPONDING #( ir_row->* EXCEPT data ).
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE lcl=>ty.
+  lcl=>run( CORRESPONDING #( foo EXCEPT value data ) ).`;
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty,
+             key   TYPE i,
+             value TYPE string,
+             data  TYPE string,
+           END OF ty.
+    CLASS-METHODS run IMPORTING is_row TYPE ty.
+    CLASS-METHODS read IMPORTING ir_row TYPE REF TO ty RETURNING VALUE(rs_row) TYPE ty.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+  METHOD read.
+    DATA temp1 TYPE lcl=>ty.
+    CLEAR temp1.
+    MOVE-CORRESPONDING ir_row->* TO temp1.
+    CLEAR temp1-data.
+    rs_row = temp1.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE lcl=>ty.
+  DATA temp2 TYPE lcl=>ty.
+  CLEAR temp2.
+  MOVE-CORRESPONDING foo TO temp2.
+  CLEAR temp2-value.
+  CLEAR temp2-data.
+  lcl=>run( temp2 ).`;
+    testFixAll(abap, expected);
+  });
+
+  it("CORRESPONDING EXCEPT *", async () => {
+    const abap = `FORM run.
+  TYPES: BEGIN OF ty,
+           key   TYPE i,
+           value TYPE string,
+         END OF ty.
+  DATA ls_a TYPE ty.
+  DATA ls_b TYPE ty.
+  ls_b = CORRESPONDING #( ls_a EXCEPT * ).
+ENDFORM.`;
+    const expected = `FORM run.
+  TYPES: BEGIN OF ty,
+           key   TYPE i,
+           value TYPE string,
+         END OF ty.
+  DATA ls_a TYPE ty.
+  DATA ls_b TYPE ty.
+  DATA temp1 TYPE ty.
+  CLEAR temp1.
+  ls_b = temp1.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("CORRESPONDING EXCEPT, internal table, not downported", async () => {
+    const abap = `FORM run.
+  TYPES: BEGIN OF ty,
+           key   TYPE i,
+           value TYPE string,
+         END OF ty.
+  TYPES ty_t TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+  DATA lt_a TYPE ty_t.
+  DATA lt_b TYPE ty_t.
+  lt_b = CORRESPONDING #( lt_a EXCEPT value ).
+ENDFORM.`;
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
   });
 
   it("SELECT, existence check, abap value in field list", async () => {
@@ -7244,6 +7722,183 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("MOVE-CORRESPONDING, tables", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+           field2 TYPE string,
+         END OF ty_a.
+  TYPES: BEGIN OF ty_b,
+           field1 TYPE i,
+         END OF ty_b.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_b WITH DEFAULT KEY.
+  MOVE-CORRESPONDING lt_a TO lt_b.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+           field2 TYPE string,
+         END OF ty_a.
+  TYPES: BEGIN OF ty_b,
+           field1 TYPE i,
+         END OF ty_b.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_b WITH DEFAULT KEY.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_a.
+  FIELD-SYMBOLS <temp2> LIKE LINE OF lt_b.
+  CLEAR lt_b.
+  LOOP AT lt_a ASSIGNING <temp1>.
+    APPEND INITIAL LINE TO lt_b ASSIGNING <temp2>.
+    MOVE-CORRESPONDING <temp1> TO <temp2>.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("MOVE-CORRESPONDING, generic table field symbols", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <lt_a> TYPE STANDARD TABLE.
+  FIELD-SYMBOLS <lt_b> TYPE STANDARD TABLE.
+  MOVE-CORRESPONDING <lt_a> TO <lt_b>.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <lt_a> TYPE STANDARD TABLE.
+  FIELD-SYMBOLS <lt_b> TYPE STANDARD TABLE.
+  FIELD-SYMBOLS <temp1> TYPE any.
+  FIELD-SYMBOLS <temp2> TYPE any.
+  CLEAR <lt_b>.
+  LOOP AT <lt_a> ASSIGNING <temp1>.
+    INSERT INITIAL LINE INTO TABLE <lt_b> ASSIGNING <temp2>.
+    MOVE-CORRESPONDING <temp1> TO <temp2>.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("MOVE-CORRESPONDING, tables, KEEPING TARGET LINES", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+         END OF ty_a.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  MOVE-CORRESPONDING lt_a TO lt_b KEEPING TARGET LINES.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+         END OF ty_a.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_a.
+  FIELD-SYMBOLS <temp2> LIKE LINE OF lt_b.
+  LOOP AT lt_a ASSIGNING <temp1>.
+    APPEND INITIAL LINE TO lt_b ASSIGNING <temp2>.
+    MOVE-CORRESPONDING <temp1> TO <temp2>.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("MOVE-CORRESPONDING, CORRESPONDING # over tables ends as the row loop", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+           field2 TYPE string,
+         END OF ty_a.
+  TYPES: BEGIN OF ty_b,
+           field1 TYPE i,
+         END OF ty_b.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_b WITH DEFAULT KEY.
+  lt_b = CORRESPONDING #( lt_a ).
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+           field2 TYPE string,
+         END OF ty_a.
+  TYPES: BEGIN OF ty_b,
+           field1 TYPE i,
+         END OF ty_b.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_b WITH DEFAULT KEY.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_a.
+  FIELD-SYMBOLS <temp2> LIKE LINE OF lt_b.
+  CLEAR lt_b.
+  LOOP AT lt_a ASSIGNING <temp1>.
+    APPEND INITIAL LINE TO lt_b ASSIGNING <temp2>.
+    MOVE-CORRESPONDING <temp1> TO <temp2>.
+  ENDLOOP.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("MOVE-CORRESPONDING, structures stay", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+         END OF ty_a.
+  DATA ls_a TYPE ty_a.
+  DATA ls_b TYPE ty_a.
+  MOVE-CORRESPONDING ls_a TO ls_b.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("MOVE-CORRESPONDING, sorted target table is not lowered", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+         END OF ty_a.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE SORTED TABLE OF ty_a WITH UNIQUE KEY field1.
+  MOVE-CORRESPONDING lt_a TO lt_b.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("MOVE-CORRESPONDING, tables, EXPANDING NESTED TABLES is not lowered", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+         END OF ty_a.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  MOVE-CORRESPONDING lt_a TO lt_b EXPANDING NESTED TABLES.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.some(i => i.getMessage() === "Downport MOVE-CORRESPONDING with tables")).to.equal(false);
+  });
+
+  it("MOVE-CORRESPONDING, tables on open-abap stay", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_a,
+           field1 TYPE i,
+         END OF ty_a.
+  DATA lt_a TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  DATA lt_b TYPE STANDARD TABLE OF ty_a WITH DEFAULT KEY.
+  MOVE-CORRESPONDING lt_a TO lt_b.
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("table expression key, built-in older than 702 stays in the operand", async () => {
     const abap = `FORM bar.
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
@@ -7402,6 +8057,234 @@ ENDFORM.`;
 ENDFORM.`;
 
     testFixAll(abap, expected);
+  });
+
+  it("table expression in IF, first operand, read in front of the IF", async () => {
+    const abap = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  IF lt_item[ lv_last ] = 'A' AND lv_last > 0.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_item INDEX lv_last ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  IF <temp1> = 'A' AND lv_last > 0.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("table expression in IF behind AND, read only when the operands in front hold", async () => {
+    const abap = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  lv_last = lines( lt_item ).
+  IF lv_last > 0 AND lt_item[ lv_last ] = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  lv_last = lines( lt_item ).
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  IF lv_last > 0.
+    temp2 = sy-tabix.
+    READ TABLE lt_item INDEX lv_last ASSIGNING <temp1>.
+    sy-tabix = temp2.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+  ENDIF.
+  IF lv_last > 0 AND <temp1> = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("table expression in IF behind OR, read only when the operand in front is false", async () => {
+    const abap = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  IF lt_item IS INITIAL OR lt_item[ 1 ] = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  IF NOT ( lt_item IS INITIAL ).
+    temp2 = sy-tabix.
+    READ TABLE lt_item INDEX 1 ASSIGNING <temp1>.
+    sy-tabix = temp2.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+  ENDIF.
+  IF lt_item IS INITIAL OR <temp1> = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("table expression in IF, nested in parentheses behind AND and OR", async () => {
+    const abap = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  DATA lv_token TYPE string.
+  IF lv_last > 0 AND ( lv_token = 'ASC' OR lv_token = 'DESC' AND lv_last = 1 OR ( lv_token = 'KEY' AND lt_item[ lv_last ] = 'PRIMARY' ) ).
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  DATA lv_token TYPE string.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  IF lv_last > 0 AND NOT ( lv_token = 'ASC' ) AND NOT ( lv_token = 'DESC' AND lv_last = 1 ) AND lv_token = 'KEY'.
+    temp2 = sy-tabix.
+    READ TABLE lt_item INDEX lv_last ASSIGNING <temp1>.
+    sy-tabix = temp2.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+  ENDIF.
+  IF lv_last > 0 AND ( lv_token = 'ASC' OR lv_token = 'DESC' AND lv_last = 1 OR ( lv_token = 'KEY' AND <temp1> = 'PRIMARY' ) ).
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("table expression in IF behind AND, NOT on the compare", async () => {
+    const abap = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  IF lv_last > 0 AND NOT lt_item[ lv_last ] = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA lv_last TYPE i.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  IF lv_last > 0.
+    temp2 = sy-tabix.
+    READ TABLE lt_item INDEX lv_last ASSIGNING <temp1>.
+    sy-tabix = temp2.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+  ENDIF.
+  IF lv_last > 0 AND NOT <temp1> = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("table expression in IF behind AND, the operand in front has its own table expression, outlined first", async () => {
+    const abap = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  IF lt_item[ 1 ] = 'A' AND lt_item[ 2 ] = 'B'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_item INDEX 1 ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  FIELD-SYMBOLS <temp2> LIKE LINE OF lt_item.
+  DATA temp3 LIKE sy-tabix.
+  IF <temp1> = 'A'.
+    temp3 = sy-tabix.
+    READ TABLE lt_item INDEX 2 ASSIGNING <temp2>.
+    sy-tabix = temp3.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+  ENDIF.
+  IF <temp1> = 'A' AND <temp2> = 'B'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("table expression in IF behind a functional method call, not repeated in a guard", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS check RETURNING VALUE(rv) TYPE abap_bool.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD check.
+  ENDMETHOD.
+ENDCLASS.
+FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  IF lcl=>check( ) = abap_true AND lt_item[ 1 ] = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS check RETURNING VALUE(rv) TYPE abap_bool.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD check.
+  ENDMETHOD.
+ENDCLASS.
+FORM bar.
+  DATA lt_item TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  FIELD-SYMBOLS <temp1> LIKE LINE OF lt_item.
+  DATA temp2 LIKE sy-tabix.
+  temp2 = sy-tabix.
+  READ TABLE lt_item INDEX 1 ASSIGNING <temp1>.
+  sy-tabix = temp2.
+  IF sy-subrc <> 0.
+    RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ENDIF.
+  IF lcl=>check( ) = abap_true AND <temp1> = 'A'.
+    WRITE 'ok'.
+  ENDIF.
+ENDFORM.`;
+
+    testFix(abap, expected);
   });
 
   it("IS INSTANCE OF in IF, cast in a TRY", async () => {
@@ -7832,6 +8715,266 @@ ENDFORM.`;
   it("does not touch WITH AUTHORITY-CHECK on CALL TRANSACTION", async () => {
     const issues = await findIssues(`CALL TRANSACTION 'PA20' WITH AUTHORITY-CHECK AND SKIP FIRST SCREEN.`);
     expect(issues.length).to.equal(0);
+  });
+
+
+  it("OPEN CURSOR, remove @", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA lv_text TYPE c LENGTH 10.
+  OPEN CURSOR @lv_cursor FOR
+    SELECT * FROM zfoo
+      WHERE name = @lv_text.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA lv_text TYPE c LENGTH 10.
+  OPEN CURSOR lv_cursor FOR
+    SELECT * FROM zfoo
+      WHERE name = lv_text.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("OPEN CURSOR WITH HOLD, remove @", async () => {
+    const abap = `FORM bar.
+  DATA lv_cursor TYPE cursor.
+  OPEN CURSOR WITH HOLD @lv_cursor FOR SELECT * FROM zfoo.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_cursor TYPE cursor.
+  OPEN CURSOR WITH HOLD lv_cursor FOR SELECT * FROM zfoo.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("FETCH NEXT CURSOR, remove @", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  FETCH NEXT CURSOR @lv_cursor INTO TABLE @lt_rows PACKAGE SIZE 100.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  FETCH NEXT CURSOR lv_cursor INTO TABLE lt_rows PACKAGE SIZE 100.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("FETCH NEXT CURSOR, remove @, INTO structure and escaped PACKAGE SIZE", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA ls_row TYPE ty_row.
+  DATA lv_size TYPE i.
+  FETCH NEXT CURSOR @lv_cursor INTO @ls_row PACKAGE SIZE @lv_size.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA ls_row TYPE ty_row.
+  DATA lv_size TYPE i.
+  FETCH NEXT CURSOR lv_cursor INTO ls_row PACKAGE SIZE lv_size.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("CLOSE CURSOR, remove @", async () => {
+    const abap = `FORM bar.
+  DATA lv_cursor TYPE cursor.
+  CLOSE CURSOR @lv_cursor.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_cursor TYPE cursor.
+  CLOSE CURSOR lv_cursor.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("cursor statements, remove @, all", async () => {
+    const abap = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  OPEN CURSOR @lv_cursor FOR
+    SELECT * FROM zfoo
+      WHERE name = @lv_text.
+  FETCH NEXT CURSOR @lv_cursor INTO TABLE @lt_rows PACKAGE SIZE 100.
+  CLOSE CURSOR @lv_cursor.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  TYPES: BEGIN OF ty_row,
+           name TYPE c LENGTH 10,
+         END OF ty_row.
+  DATA lv_cursor TYPE cursor.
+  DATA lv_text TYPE c LENGTH 10.
+  DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+  OPEN CURSOR lv_cursor FOR
+    SELECT * FROM zfoo
+      WHERE name = lv_text.
+  FETCH NEXT CURSOR lv_cursor INTO TABLE lt_rows PACKAGE SIZE 100.
+  CLOSE CURSOR lv_cursor.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("OPEN CURSOR, outline @DATA", async () => {
+    const abap = `FORM bar.
+  OPEN CURSOR @DATA(lv_cursor) FOR SELECT * FROM zfoo.
+  CLOSE CURSOR @lv_cursor.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lv_cursor TYPE cursor.
+  OPEN CURSOR lv_cursor FOR SELECT * FROM zfoo.
+  CLOSE CURSOR lv_cursor.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("cursor statements without @, no downport", async () => {
+    const abap = `FORM bar.
+  DATA lv_cursor TYPE cursor.
+  DATA lt_rows TYPE STANDARD TABLE OF zfoo WITH DEFAULT KEY.
+  OPEN CURSOR lv_cursor FOR SELECT * FROM zfoo.
+  FETCH NEXT CURSOR lv_cursor INTO TABLE lt_rows PACKAGE SIZE 100.
+  CLOSE CURSOR lv_cursor.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("READ TABLE INTO inline DATA, voided table", async () => {
+    const abap = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  READ TABLE lt_parts INTO DATA(lv_part1) INDEX 1.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  DATA lv_part1 LIKE LINE OF lt_parts.
+  READ TABLE lt_parts INTO lv_part1 INDEX 1.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("READ TABLE WITH KEY INTO inline DATA, voided table", async () => {
+    const abap = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  READ TABLE lt_parts INTO DATA(lv_part) WITH KEY table_line = \`A\`.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  DATA lv_part LIKE LINE OF lt_parts.
+  READ TABLE lt_parts INTO lv_part WITH KEY table_line = \`A\`.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("READ TABLE REFERENCE INTO inline DATA, voided table", async () => {
+    const abap = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  READ TABLE lt_parts REFERENCE INTO DATA(lr_part) INDEX 1.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  DATA temp1 LIKE LINE OF lt_parts.
+  DATA lr_part LIKE REF TO temp1.
+  READ TABLE lt_parts REFERENCE INTO lr_part INDEX 1.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("READ TABLE INTO inline DATA, voided table, open abap", async () => {
+    const abap = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  READ TABLE lt_parts INTO DATA(lv_part1) INDEX 1.
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("inline DATA of a voided type which cannot be outlined, issue without fix", async () => {
+    const abap = `FORM bar.
+  cl_voided=>get( IMPORTING ev_value = DATA(lv_value) ).
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Cannot downport, type of lv_value is void");
+    expect(issues[0].getDefaultFix()).to.equal(undefined);
+  });
+
+  it("VALUE # of a voided type, issue without fix", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo IMPORTING t_arg TYPE string_table.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD run.
+    foo( t_arg = VALUE #( ( \`A\` ) ) ).
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Cannot downport, inferred type is void");
+    expect(issues[0].getDefaultFix()).to.equal(undefined);
+  });
+
+  it("issue without fix only when nothing else can be downported", async () => {
+    const abap = `FORM bar.
+  DATA lt_parts TYPE string_table.
+  cl_voided=>get( IMPORTING ev_value = DATA(lv_value) ).
+  READ TABLE lt_parts INTO DATA(lv_part1) INDEX 1.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Outline DATA");
   });
 
 });
