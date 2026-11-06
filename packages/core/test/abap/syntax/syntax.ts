@@ -3435,6 +3435,30 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("RAP for instance authorization, failed and reported", () => {
+    const abap = `
+CLASS lhc_process DEFINITION.
+  PRIVATE SECTION.
+    METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
+      IMPORTING keys REQUEST requested_authorizations FOR Process RESULT result.
+    METHODS get_authorizations FOR AUTHORIZATION
+      IMPORTING keys REQUEST requested_authorizations FOR Process RESULT result.
+ENDCLASS.
+
+CLASS lhc_process IMPLEMENTATION.
+  METHOD get_instance_authorizations.
+    INSERT VALUE #( ) INTO TABLE failed-process.
+    INSERT VALUE #( ) INTO TABLE reported-process.
+  ENDMETHOD.
+  METHOD get_authorizations.
+    INSERT VALUE #( ) INTO TABLE failed-process.
+    INSERT VALUE #( ) INTO TABLE reported-process.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("LOOP AT select option", () => {
     const abap = `
 TYPES: BEGIN OF ty_type,
