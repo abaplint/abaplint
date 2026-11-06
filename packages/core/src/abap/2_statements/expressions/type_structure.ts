@@ -22,7 +22,7 @@ export class TypeStructure extends Expression {
       ver(Release.v780, seq("AUTHORIZATION REQUEST", entity), {also: AlsoIn.OpenABAP}),
       ver(Release.v776, seq("FEATURES REQUEST", entity), {also: AlsoIn.OpenABAP}),
 
-      seq("PERMISSIONS REQUEST", NamespaceSimpleName),
+      seq("PERMISSIONS REQUEST", entity),
       ver(Release.v780, seq("PERMISSIONS RESULT", entity), {also: AlsoIn.OpenABAP}),
 
       seq("READ LINK", EntityAssociation),

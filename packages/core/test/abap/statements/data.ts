@@ -118,6 +118,8 @@ const tests = [
   `DATA create_rapbonode_cba_line TYPE STRUCTURE FOR CREATE ZDMO_R_RAPG_ProjectTP\\_Node.`,
   `DATA create_rapbonode_cba TYPE TABLE FOR CREATE ZDMO_R_RAPG_ProjectTP\\_Node.`,
   `DATA permission_request TYPE STRUCTURE FOR PERMISSIONS REQUEST zfoobar.`,
+  `DATA permission_request TYPE STRUCTURE FOR PERMISSIONS REQUEST zdemo_root\\\\root.`,
+  `DATA permission_request TYPE STRUCTURE FOR PERMISSIONS REQUEST /dmo/r_root.`,
   `DATA update_line TYPE STRUCTURE FOR UPDATE zDMO_R_RAPG_ProjectTP\\\\Project .`,
   `DATA lt_chart_create TYPE TABLE FOR CREATE /dmo/fsa_r_roottp\\\\root\\_chart.`,
   `DATA draft_keys TYPE TABLE FOR DETERMINATION zDMO_R_RAPG_ProjectTP\\\\Node~SetRepositoryObjectNames_det.`,

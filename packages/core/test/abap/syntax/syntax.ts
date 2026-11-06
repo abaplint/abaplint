@@ -8583,6 +8583,32 @@ APPEND binding REFERENCE INTO wa-binding.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("GET PERMISSIONS, ONLY INSTANCE FEATURES and OPERATIONS, inline FINAL", () => {
+    const abap = `
+    DATA request TYPE STRUCTURE FOR PERMISSIONS REQUEST zdemo_root\\\\root.
+    DATA perm_tab TYPE voided.
+
+    GET PERMISSIONS ONLY INSTANCE FEATURES ENTITY zdemo_root\\\\root
+      FROM VALUE #( ( %key-key_field = 1 ) )
+      REQUEST request
+      RESULT FINAL(result)
+      FAILED FINAL(failed)
+      REPORTED FINAL(reported).
+
+    GET PERMISSIONS ONLY INSTANCE FEATURES OPERATIONS perm_tab
+      FAILED FINAL(failed_dyn)
+      REPORTED FINAL(reported_dyn).
+
+    IF result-instances IS INITIAL
+        OR failed IS NOT INITIAL
+        OR reported IS NOT INITIAL
+        OR failed_dyn IS NOT INITIAL
+        OR reported_dyn IS NOT INITIAL.
+    ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("LOOP at deference ref to data", () => {
 // note: this doesnt work in low versions, must be 754+
     const abap = `
