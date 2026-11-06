@@ -16,7 +16,7 @@ export class SQLFromSource extends Expression {
     const privileged = ver(Release.v752, seq("WITH", SQLPrivilegedAccess));
     const providedBy = optPrio(ver(Release.v796, SQLProvidedBy));
     const exposeClient = optPrio(ver(Release.v913, SQLExposeClientAs));
-    const pathForEntity = optPrio(verNotLang(LanguageVersion.KeyUser, new SQLPathForEntity()));
+    const pathForEntity = optPrio(verNotLang(LanguageVersion.KeyUser, new SQLPathForEntity(false)));
 
     return seq(altPrio(new SQLHierarchyAggregate(),
                        new SQLHierarchyAccessor(),
