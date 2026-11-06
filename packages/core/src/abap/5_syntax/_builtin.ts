@@ -1144,14 +1144,14 @@ export class BuiltIn {
       BuiltIn.getCache.push(this.buildConstant("abap_off", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "' '"));
       BuiltIn.getCache.push(this.buildConstant("abap_on", new CharacterType(1, {qualifiedName: "ABAP_BOOL", ddicName: "ABAP_BOOL"}), "'X'"));
 
-      BuiltIn.getCache.push(this.buildConstant("col_background", IntegerType.get(), "0"));
-      BuiltIn.getCache.push(this.buildConstant("col_heading", IntegerType.get(), "1"));
-      BuiltIn.getCache.push(this.buildConstant("col_key", IntegerType.get(), "4"));
-      BuiltIn.getCache.push(this.buildConstant("col_negative", IntegerType.get(), "6"));
-      BuiltIn.getCache.push(this.buildConstant("col_group", IntegerType.get(), "7"));
-      BuiltIn.getCache.push(this.buildConstant("col_normal", IntegerType.get(), "2"));
-      BuiltIn.getCache.push(this.buildConstant("col_positive", IntegerType.get(), "5"));
-      BuiltIn.getCache.push(this.buildConstant("col_total", IntegerType.get(), "3"));
+      BuiltIn.getCache.push(this.buildConstant("col_background", new CharacterType(1), "'0'"));
+      BuiltIn.getCache.push(this.buildConstant("col_heading", new CharacterType(1), "'1'"));
+      BuiltIn.getCache.push(this.buildConstant("col_key", new CharacterType(1), "'4'"));
+      BuiltIn.getCache.push(this.buildConstant("col_negative", new CharacterType(1), "'6'"));
+      BuiltIn.getCache.push(this.buildConstant("col_group", new CharacterType(1), "'7'"));
+      BuiltIn.getCache.push(this.buildConstant("col_normal", new CharacterType(1), "'2'"));
+      BuiltIn.getCache.push(this.buildConstant("col_positive", new CharacterType(1), "'5'"));
+      BuiltIn.getCache.push(this.buildConstant("col_total", new CharacterType(1), "'3'"));
 
       BuiltIn.getCache.push(this.buildConstant("space", new CharacterType(1, {derivedFromConstant: true}), "' '"));
     }
