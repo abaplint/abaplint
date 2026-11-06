@@ -45,6 +45,7 @@ export class StringTemplateFormatting extends Expression {
     const alpha = ver(Release.v740sp02, seq("ALPHA =", alphaOptions), {also: AlsoIn.OpenABAP});
     const xsd = ver(Release.v740sp02, seq("XSD =", zeroXSDOptions));
     const country = seq("COUNTRY =", Source);
+    const currency = seq("CURRENCY =", Source);
 
     const formatting = altPrio(seq("TIME =", dateTimeOptions),
                                seq("DATE =", dateTimeOptions),
@@ -52,8 +53,7 @@ export class StringTemplateFormatting extends Expression {
                                seq("ZERO =", zeroXSDOptions),
                                xsd,
                                seq("STYLE =", styleOptions),
-                               seq("CURRENCY =", Source),
-                               per(sign, number, decimals, width, pad, alpha, align, country, seq("EXPONENT =", Source)),
+                               per(sign, number, decimals, width, pad, alpha, align, country, currency, seq("EXPONENT =", Source)),
                                per(timezone, timestamp));
 
     return formatting;

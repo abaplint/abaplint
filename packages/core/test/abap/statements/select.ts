@@ -717,6 +717,10 @@ statementVersionOk([
   {abap: `SELECT gla, \\_skat-txt50, indi FROM /foo/bar WHERE indi = @abap_false AND \\_skat-spras = @sy-langu ORDER BY gla ASCENDING INTO TABLE @lt.`, rel: Release.v740sp05},
   {abap: `SELECT FROM zcds FIELDS col1, \\_Text[ ONE TO ONE WHERE Language = @sy-langu ]-LanguageName ORDER BY col1 INTO TABLE @DATA(languages).`, rel: Release.v751},
   {abap: `SELECT FROM /foo/bar FIELDS (mv_sql_select) WHERE uuid = @mv__uuid AND \\_foo\\_bar-top IN @mt_top GROUP BY (mv_sql_group) INTO CORRESPONDING FIELDS OF TABLE @mt_result.`, rel: Release.v750},
+  {abap: `SELECT Status, \\_Text-ShortText FROM zi_status WHERE \\_Text-Language = 'E' AND Status IN ( @lv_next, @ls_curr-Status ) INTO TABLE @DATA(lt_texts).`, rel: Release.v740sp05},
+  {abap: `SELECT SINGLE Status FROM zi_status WHERE \\_Text-Language = 'E' INTO @DATA(ls_text).`, rel: Release.v740sp05},
+  {abap: `SELECT * FROM ztab1 \\_assoc1 WHERE \\_assoc2-col = 'E' INTO TABLE @DATA(lt).`, rel: Release.v740sp05},
+  {abap: `SELECT Status FROM zi_status WHERE \\_Text[ ONE TO ONE ]-Language = 'E' INTO TABLE @DATA(lt_texts).`, rel: Release.v751},
 ], "SELECT association path expressions", Statements.Select);
 
 statementVersionFail([

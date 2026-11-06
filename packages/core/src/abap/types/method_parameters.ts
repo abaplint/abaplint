@@ -268,6 +268,8 @@ export class MethodParameters implements IMethodParameters {
           || concat.includes(" FOR FEATURES ")
           || concat.includes(" FOR INSTANCE FEATURES ")
           || concat.includes(" FOR GLOBAL AUTHORIZATION ")
+          || concat.includes(" FOR INSTANCE AUTHORIZATION ")
+          || concat.includes(" FOR AUTHORIZATION ")
           || concat.includes(" FOR PRECHECK ")
           || concat.includes(" FOR NUMBERING ")
           || concat.includes(" FOR READ ")

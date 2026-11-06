@@ -3495,6 +3495,30 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("RAP for instance authorization, failed and reported", () => {
+    const abap = `
+CLASS lhc_process DEFINITION.
+  PRIVATE SECTION.
+    METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
+      IMPORTING keys REQUEST requested_authorizations FOR Process RESULT result.
+    METHODS get_authorizations FOR AUTHORIZATION
+      IMPORTING keys REQUEST requested_authorizations FOR Process RESULT result.
+ENDCLASS.
+
+CLASS lhc_process IMPLEMENTATION.
+  METHOD get_instance_authorizations.
+    INSERT VALUE #( ) INTO TABLE failed-process.
+    INSERT VALUE #( ) INTO TABLE reported-process.
+  ENDMETHOD.
+  METHOD get_authorizations.
+    INSERT VALUE #( ) INTO TABLE failed-process.
+    INSERT VALUE #( ) INTO TABLE reported-process.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("LOOP AT select option", () => {
     const abap = `
 TYPES: BEGIN OF ty_type,
@@ -8638,6 +8662,32 @@ APPEND binding REFERENCE INTO wa-binding.`;
     IF permission_result-global-%field-PackageName = 'X'
         OR failed_permission_result IS NOT INITIAL
         OR reported_permission_result IS NOT INITIAL.
+    ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("GET PERMISSIONS, ONLY INSTANCE FEATURES and OPERATIONS, inline FINAL", () => {
+    const abap = `
+    DATA request TYPE STRUCTURE FOR PERMISSIONS REQUEST zdemo_root\\\\root.
+    DATA perm_tab TYPE voided.
+
+    GET PERMISSIONS ONLY INSTANCE FEATURES ENTITY zdemo_root\\\\root
+      FROM VALUE #( ( %key-key_field = 1 ) )
+      REQUEST request
+      RESULT FINAL(result)
+      FAILED FINAL(failed)
+      REPORTED FINAL(reported).
+
+    GET PERMISSIONS ONLY INSTANCE FEATURES OPERATIONS perm_tab
+      FAILED FINAL(failed_dyn)
+      REPORTED FINAL(reported_dyn).
+
+    IF result-instances IS INITIAL
+        OR failed IS NOT INITIAL
+        OR reported IS NOT INITIAL
+        OR failed_dyn IS NOT INITIAL
+        OR reported_dyn IS NOT INITIAL.
     ENDIF.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
