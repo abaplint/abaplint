@@ -11,7 +11,7 @@ import {applyEditSingle} from "../../../src/edit_helper";
 import {IReference, ReferenceType} from "../../../src/abap/5_syntax/_reference";
 import {tabl_t100xml} from "../../rules/sql_value_conversion";
 import {TypedIdentifier} from "../../../src/abap/types/_typed_identifier";
-import {DataReference} from "../../../src/abap/types/basic";
+import {CharacterType, DataReference, DecFloat34Type, StringType, XStringType} from "../../../src/abap/types/basic";
 
 function run(reg: IRegistry, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
              languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
@@ -1946,6 +1946,66 @@ r3 = NEW #( 4 ).`;
       expect(r.resolved).to.be.instanceof(TypedIdentifier);
       expect((r.resolved as TypedIdentifier).getType()).to.be.instanceof(DataReference);
     }
+  });
+
+  it("CONV #( ) at a generic parameter, inferred type of #", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS clike IMPORTING val TYPE clike.
+    CLASS-METHODS csequence IMPORTING val TYPE csequence.
+    CLASS-METHODS xsequence IMPORTING val TYPE xsequence.
+    CLASS-METHODS numeric IMPORTING val TYPE numeric.
+    CLASS-METHODS simple IMPORTING val TYPE simple.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD clike.
+  ENDMETHOD.
+  METHOD csequence.
+  ENDMETHOD.
+  METHOD xsequence.
+  ENDMETHOD.
+  METHOD numeric.
+  ENDMETHOD.
+  METHOD simple.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_char TYPE c LENGTH 10.
+  DATA lv_hex TYPE x LENGTH 4.
+  DATA lv_int TYPE i.
+  lcl=>clike( CONV #( lv_char ) ).
+  lcl=>csequence( CONV #( lv_char ) ).
+  lcl=>xsequence( CONV #( lv_hex ) ).
+  lcl=>numeric( CONV #( lv_int ) ).
+  lcl=>simple( CONV #( lv_char ) ).`;
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
+    const result = new SyntaxLogic(reg, getABAPObjects(reg)[0]).run();
+
+    expect(result.issues.length).to.equals(0);
+
+    const references: IReference[] = [];
+    const visit = (node: ReturnType<typeof result.spaghetti.getTop>): void => {
+      references.push(...node.getData().references);
+      for (const child of node.getChildren()) {
+        visit(child);
+      }
+    };
+    visit(result.spaghetti.getTop());
+    const typeAtRow = (row: number) => {
+      const found = references.filter(r => r.referenceType === ReferenceType.InferredType
+        && r.position.getName() === "#"
+        && r.position.getStart().getRow() === row);
+      expect(found.length).to.equals(1);
+      return (found[0].resolved as TypedIdentifier).getType();
+    };
+    expect(typeAtRow(27)).to.be.instanceof(StringType);
+    expect(typeAtRow(28)).to.be.instanceof(StringType);
+    expect(typeAtRow(29)).to.be.instanceof(XStringType);
+    expect(typeAtRow(30)).to.be.instanceof(DecFloat34Type);
+    // other generic types keep the type of the argument
+    expect(typeAtRow(31)).to.be.instanceof(CharacterType);
   });
 
   it("built-in to_upper", () => {
