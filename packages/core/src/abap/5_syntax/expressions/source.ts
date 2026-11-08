@@ -4,7 +4,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -136,9 +136,10 @@ export class Source {
             return VoidType.get(CheckSyntaxKey);
           }
           if (foundType?.isGeneric() && bodyType !== undefined) {
-            this.addIfInferred(node, input, bodyType);
+            const derived = this.inferGenericConv(foundType, input) || bodyType;
+            this.addIfInferred(node, input, derived);
             this.traverseRemainingChildren(children, input);
-            return bodyType;
+            return derived;
           }
           this.addIfInferred(node, input, foundType);
           this.traverseRemainingChildren(children, input);
@@ -433,6 +434,18 @@ export class Source {
       }
     }
 
+  }
+
+  /** CONV #( ) at a generic operand position, the type ABAP derives for the # */
+  private static inferGenericConv(foundType: AbstractType, input: SyntaxInput): AbstractType | undefined {
+    if (foundType instanceof CLikeType || foundType instanceof CSequenceType) {
+      return input.scope.getDDIC().lookupBuiltinType("STRING");
+    } else if (foundType instanceof XSequenceType) {
+      return input.scope.getDDIC().lookupBuiltinType("XSTRING");
+    } else if (foundType instanceof NumericGenericType || foundType instanceof DecFloatType) {
+      return input.scope.getDDIC().lookupBuiltinType("DECFLOAT34", undefined, undefined, "DECFLOAT34");
+    }
+    return undefined;
   }
 
   private static determineType(

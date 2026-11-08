@@ -3683,8 +3683,12 @@ ${indentation}    output = ${uniqueName}.\n`;
 
       // the CONV type might just be a component of the row type, so prefer the row type
       const rowOf = this.findRowTypeOf(high, i);
+      const type = rowOf === undefined ? this.findType(i, lowFile, highSyntax) : undefined;
+      if (rowOf === undefined && type === undefined) {
+        return Issue.atToken(lowFile, i.getFirstToken(), "Downport CONV, type of # not known", this.getMetadata().key, this.conf.severity);
+      }
       const declaration = rowOf === undefined
-        ? `DATA ${uniqueName} TYPE ${this.findType(i, lowFile, highSyntax)}.`
+        ? `DATA ${uniqueName} TYPE ${type}.`
         : `DATA ${uniqueName} LIKE LINE OF ${rowOf}.`;
 
       const abap = declaration + "\n" +
