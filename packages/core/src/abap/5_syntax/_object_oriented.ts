@@ -49,8 +49,11 @@ export class ObjectOriented {
     return ret;
   }
 
-  public addAliasedAttributes(classDefinition: IClassDefinition): void {
+  public addAliasedAttributes(classDefinition: IClassDefinition, inherited = false): void {
     for (const alias of classDefinition.getAliases() || []) {
+      if (inherited === true && alias.getVisibility() === Visibility.Private) {
+        continue;
+      }
       const comp = alias.getComponent();
       const idef = this.scope.findInterfaceDefinition(comp.split("~")[0]);
       if (idef) {
@@ -64,13 +67,16 @@ export class ObjectOriented {
     if (superName !== undefined) {
       const def = this.scope.findClassDefinition(superName);
       if (def) {
-        this.addAliasedAttributes(def);
+        this.addAliasedAttributes(def, true);
       }
     }
   }
 
-  public addAliasedTypes(classDefinition: IClassDefinition): void {
+  public addAliasedTypes(classDefinition: IClassDefinition, inherited = false): void {
     for (const alias of classDefinition.getAliases() || []) {
+      if (inherited === true && alias.getVisibility() === Visibility.Private) {
+        continue;
+      }
       const comp = alias.getComponent();
       const idef = this.scope.findInterfaceDefinition(comp.split("~")[0]);
       if (idef) {
@@ -84,7 +90,7 @@ export class ObjectOriented {
     if (superName !== undefined) {
       const def = this.scope.findClassDefinition(superName);
       if (def) {
-        this.addAliasedTypes(def);
+        this.addAliasedTypes(def, true);
       }
     }
   }
