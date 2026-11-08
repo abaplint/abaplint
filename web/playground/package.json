@@ -16,7 +16,7 @@
     "@phosphor/widgets": "^1.9.3",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.1",
-    "monaco-editor": "^0.56.0",
+    "monaco-editor": "^0.57.0",
     "stream-browserify": "^3.0.0",
     "vscode-languageserver-types": "^3.18.3"
   },
@@ -36,6 +36,6 @@
     "url-loader": "^4.1.1",
     "webpack": "^5.111.1",
     "webpack-cli": "^7.2.3",
-    "webpack-dev-server": "^5.2.6"
+    "webpack-dev-server": "^6.1.0"
   }
 }
