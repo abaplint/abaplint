@@ -40,6 +40,7 @@ export class XMLConsistency implements IRule {
 * Transparent TABL objects have delivery class and size category set
 * TABL fields with a built-in type carry the INTTYPE abapGit serializes for it, for the confirmed pairs
 * Lock parameter names in ENQU objects are max 16 characters
+* DEVC objects are serialized as package.devc.xml
 * Texts and translations do not exceed maximum allowed length.`,
       tags: [RuleTag.Naming, RuleTag.Syntax],
     };
@@ -97,6 +98,8 @@ export class XMLConsistency implements IRule {
       issues.push(...this.runTable(obj, file));
     } else if (obj instanceof Objects.LockObject) {
       issues.push(...this.runLockObject(obj, file));
+    } else if (obj instanceof Objects.Package) {
+      issues.push(...this.runPackage(file));
     }
 
     if (obj instanceof ABAPObject) {
@@ -303,6 +306,16 @@ export class XMLConsistency implements IRule {
     }
 
     return issues;
+  }
+
+  private runPackage(file: IFile): Issue[] {
+    // abapGit always serializes DEVC as package.devc.xml, the package name comes from the folder
+    const basename = file.getFilename().replace(/\\/g, "/").split("/").pop() ?? "";
+    if (basename.toLowerCase() !== "package.devc.xml") {
+      const message = `DEVC file must be named "package.devc.xml", found "${basename}"`;
+      return [Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity)];
+    }
+    return [];
   }
 
   private runLockObject(obj: Objects.LockObject, file: IFile): Issue[] {
