@@ -99,7 +99,7 @@ export class XMLConsistency implements IRule {
     } else if (obj instanceof Objects.LockObject) {
       issues.push(...this.runLockObject(obj, file));
     } else if (obj instanceof Objects.Package) {
-      issues.push(...this.runPackage(file));
+      issues.push(...this.runPackage(obj, file));
     }
 
     if (obj instanceof ABAPObject) {
@@ -136,12 +136,26 @@ export class XMLConsistency implements IRule {
 
   private checkClearedFields(obj: IObject, file: IFile, structure: string, fields: string[]): Issue[] {
     const issues: Issue[] = [];
-    const block = obj.getXML()?.match(new RegExp(`<${structure}>([\\s\\S]*?)</${structure}>`))?.[1];
-    if (block === undefined) {
+    const xml = obj.getXML();
+    const start = xml?.indexOf(`<${structure}>`) ?? -1;
+    if (xml === undefined || start < 0) {
       return issues;
     }
+    const end = xml.indexOf(`</${structure}>`, start);
+    if (end < 0) {
+      return issues;
+    }
+
+    const present = new Set<string>();
+    const tag = /<([A-Z0-9_]+)[\s/>]/g;
+    tag.lastIndex = start + structure.length + 2;
+    let match: RegExpExecArray | null;
+    while ((match = tag.exec(xml)) !== null && match.index < end) {
+      present.add(match[1]);
+    }
+
     for (const field of fields) {
-      if (block.match(new RegExp(`<${field}[\\s/>]`)) !== null) {
+      if (present.has(field)) {
         const message = `Field ${field} in ${structure} is cleared by abapGit and should not be in the XML`;
         issues.push(Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity));
       }
@@ -308,11 +322,11 @@ export class XMLConsistency implements IRule {
     return issues;
   }
 
-  private runPackage(file: IFile): Issue[] {
-    // abapGit always serializes DEVC as package.devc.xml, the package name comes from the folder
-    const basename = file.getFilename().replace(/\\/g, "/").split("/").pop() ?? "";
-    if (basename.toLowerCase() !== "package.devc.xml") {
-      const message = `DEVC file must be named "package.devc.xml", found "${basename}"`;
+  private runPackage(obj: Objects.Package, file: IFile): Issue[] {
+    // abapGit always serializes DEVC as package.devc.xml, the package name comes from the folder;
+    // the object name is taken from the filename, so it must be PACKAGE
+    if (obj.getName().toUpperCase() !== "PACKAGE") {
+      const message = `DEVC file must be named "package.devc.xml", found "${obj.getName().toLowerCase()}.devc.xml"`;
       return [Issue.atRow(file, 1, message, this.getMetadata().key, this.conf.severity)];
     }
     return [];
