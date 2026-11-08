@@ -2609,6 +2609,169 @@ WRITE if_sub=>bar.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  describe("aliases of superclasses, inheritance and visibility", () => {
+    const intf = {
+      filename: "zif_demo.intf.abap",
+      contents: `
+INTERFACE zif_demo PUBLIC.
+  CONSTANTS run TYPE string VALUE 'X'.
+  TYPES ty_foo TYPE i.
+ENDINTERFACE.`,
+    };
+
+    function parent(section: string, aliases: string) {
+      return {
+        filename: "zcl_parent.clas.abap",
+        contents: `
+CLASS zcl_parent DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_demo.
+    ${section === "PUBLIC" ? aliases : ""}
+  ${section === "PUBLIC" ? "" : section + " SECTION.\n    " + aliases}
+ENDCLASS.
+
+CLASS zcl_parent IMPLEMENTATION.
+ENDCLASS.`,
+      };
+    }
+
+    function child(aliases: string) {
+      return {
+        filename: "zcl_child.clas.abap",
+        contents: `
+CLASS zcl_child DEFINITION PUBLIC INHERITING FROM zcl_parent CREATE PUBLIC.
+  PUBLIC SECTION.
+    ${aliases}
+ENDCLASS.
+
+CLASS zcl_child IMPLEMENTATION.
+ENDCLASS.`,
+      };
+    }
+
+    it("subclass redeclares private constant alias of superclass", () => {
+      const issues = runMulti([
+        intf,
+        parent("PRIVATE", "ALIASES run FOR zif_demo~run."),
+        child("ALIASES run FOR zif_demo~run.")]);
+      expect(issues[0]?.getMessage()).to.equals(undefined);
+    });
+
+    it("subclass redeclares private type alias of superclass", () => {
+      const issues = runMulti([
+        intf,
+        parent("PRIVATE", "ALIASES ty_foo FOR zif_demo~ty_foo."),
+        child("ALIASES ty_foo FOR zif_demo~ty_foo.")]);
+      expect(issues[0]?.getMessage()).to.equals(undefined);
+    });
+
+    it("subclass redeclares private alias of grandparent, via superclass without own aliases", () => {
+      const middle = {
+        filename: "zcl_middle.clas.abap",
+        contents: `
+CLASS zcl_middle DEFINITION PUBLIC INHERITING FROM zcl_parent CREATE PUBLIC.
+ENDCLASS.
+
+CLASS zcl_middle IMPLEMENTATION.
+ENDCLASS.`,
+      };
+      const issues = runMulti([
+        intf,
+        parent("PRIVATE", "ALIASES run FOR zif_demo~run."),
+        middle,
+        {
+          filename: "zcl_child.clas.abap",
+          contents: `
+CLASS zcl_child DEFINITION PUBLIC INHERITING FROM zcl_middle CREATE PUBLIC.
+  PUBLIC SECTION.
+    ALIASES run FOR zif_demo~run.
+ENDCLASS.
+
+CLASS zcl_child IMPLEMENTATION.
+ENDCLASS.`,
+        }]);
+      expect(issues[0]?.getMessage()).to.equals(undefined);
+    });
+
+    it("alias of superclass is still visible in subclass, public", () => {
+      const issues = runMulti([
+        intf,
+        parent("PUBLIC", "ALIASES run FOR zif_demo~run."),
+        {
+          filename: "zcl_child.clas.abap",
+          contents: `
+CLASS zcl_child DEFINITION PUBLIC INHERITING FROM zcl_parent CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+
+CLASS zcl_child IMPLEMENTATION.
+  METHOD foo.
+    WRITE run.
+  ENDMETHOD.
+ENDCLASS.`,
+        }]);
+      expect(issues[0]?.getMessage()).to.equals(undefined);
+    });
+
+    it("alias of superclass is still visible in subclass, protected", () => {
+      const issues = runMulti([
+        intf,
+        parent("PROTECTED", "ALIASES run FOR zif_demo~run."),
+        {
+          filename: "zcl_child.clas.abap",
+          contents: `
+CLASS zcl_child DEFINITION PUBLIC INHERITING FROM zcl_parent CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+
+CLASS zcl_child IMPLEMENTATION.
+  METHOD foo.
+    WRITE run.
+  ENDMETHOD.
+ENDCLASS.`,
+        }]);
+      expect(issues[0]?.getMessage()).to.equals(undefined);
+    });
+
+    it("error, subclass redeclares public alias of superclass", () => {
+      const issues = runMulti([
+        intf,
+        parent("PUBLIC", "ALIASES run FOR zif_demo~run."),
+        child("ALIASES run FOR zif_demo~run.")]);
+      expect(issues[0]?.getMessage()).to.contain("already defined");
+    });
+
+    it("error, subclass redeclares protected alias of superclass", () => {
+      const issues = runMulti([
+        intf,
+        parent("PROTECTED", "ALIASES run FOR zif_demo~run."),
+        child("ALIASES run FOR zif_demo~run.")]);
+      expect(issues[0]?.getMessage()).to.contain("already defined");
+    });
+
+    it("error, same alias declared twice in the same class", () => {
+      const issues = runMulti([
+        intf,
+        {
+          filename: "zcl_parent.clas.abap",
+          contents: `
+CLASS zcl_parent DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_demo.
+    ALIASES run FOR zif_demo~run.
+  PRIVATE SECTION.
+    ALIASES run FOR zif_demo~run.
+ENDCLASS.
+
+CLASS zcl_parent IMPLEMENTATION.
+ENDCLASS.`,
+        }]);
+      expect(issues[0]?.getMessage()).to.contain("already defined");
+    });
+  });
+
   it("Table with header line", () => {
     const abap = `
 TYPES: BEGIN OF ty_structure,
