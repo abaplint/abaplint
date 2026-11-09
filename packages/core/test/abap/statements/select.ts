@@ -739,6 +739,13 @@ statementVersionOk([
   {abap: "SELECT * FROM @lt_fields AS fields INTO TABLE @DATA(result).", rel: Version.OpenABAP},
 ], "SELECT FROM internal table", Statements.Select);
 
+statementVersionOk([
+  {abap: "SELECT ( 'F' && b~code ) AS code FROM ztab AS b INTO TABLE @DATA(result).", rel: Version.OpenABAP},
+  {abap: "SELECT b~amount * 2 AS amount FROM ztab AS b INTO TABLE @DATA(result).", rel: Version.OpenABAP},
+  {abap: "SELECT b~material, ( b~amount + b~fee ) * 2 AS total FROM ztab AS b INTO TABLE @DATA(result).", rel: Version.OpenABAP},
+  {abap: "SELECT b~material, SUM( b~amount ) + SUM( b~fee ) AS total FROM ztab AS b GROUP BY b~material INTO TABLE @DATA(result).", rel: Version.OpenABAP},
+], "SELECT field arithmetic and concatenation, open-abap", Statements.Select);
+
 const windowVersions = [
   {abap: `SELECT company, category, item, price, row_number( ) over( ) AS rn FROM @ztable AS t ORDER BY rn INTO TABLE @DATA(result).`, rel: Release.v757},
   {abap: `SELECT company, category, item, price, rank( ) over( order by price descending ) AS rnk FROM @ztable AS t ORDER BY rnk, company, category, item INTO TABLE @DATA(result).`, rel: Release.v757},
