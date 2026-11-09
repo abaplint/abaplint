@@ -746,6 +746,19 @@ statementVersionOk([
   {abap: "SELECT b~material, SUM( b~amount ) + SUM( b~fee ) AS total FROM ztab AS b GROUP BY b~material INTO TABLE @DATA(result).", rel: Version.OpenABAP},
 ], "SELECT field arithmetic and concatenation, open-abap", Statements.Select);
 
+statementVersionOk([
+  {abap: `SELECT DISTINCT @zif_const=>sign_include AS sign,
+      @zif_const=>option_equal AS option,
+      field1 AS low,
+      CAST( @space AS CHAR( 4 ) ) AS high
+    FROM zsource AS src
+    WHERE field1 IN @ir_field1
+      AND EXISTS ( SELECT MAX( datefield ) FROM zevents
+                   WHERE field1 = src~field1
+                   HAVING MAX( datefield ) < @sy-datum )
+    INTO TABLE @rt_range.`, rel: Version.OpenABAP},
+], "SELECT host constants, CAST and EXISTS subquery with HAVING, open-abap", Statements.Select);
+
 const windowVersions = [
   {abap: `SELECT company, category, item, price, row_number( ) over( ) AS rn FROM @ztable AS t ORDER BY rn INTO TABLE @DATA(result).`, rel: Release.v757},
   {abap: `SELECT company, category, item, price, rank( ) over( order by price descending ) AS rnk FROM @ztable AS t ORDER BY rnk, company, category, item INTO TABLE @DATA(result).`, rel: Release.v757},
