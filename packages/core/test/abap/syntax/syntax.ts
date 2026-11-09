@@ -19379,3 +19379,30 @@ DATA lv_int TYPE i.`;
     });
   }
 });
+
+describe("syntax.ts, functional call with EXPORTING, incompatible parameter", () => {
+  it("reports only the incompatible parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_c40 TYPE c LENGTH 40.
+    TYPES ty_c18 TYPE c LENGTH 18.
+    METHODS run.
+    METHODS foo
+      IMPORTING i_material TYPE ty_c40
+      RETURNING VALUE(rv)  TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    DATA lv TYPE ty_c18.
+    IF foo( EXPORTING i_material = lv ) = 2.
+    ENDIF.
+  ENDMETHOD.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.map(i => i.getMessage())).to.deep.equal(["Method parameter type not compatible, I_MATERIAL"]);
+  });
+});

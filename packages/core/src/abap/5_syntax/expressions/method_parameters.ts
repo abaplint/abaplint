@@ -160,14 +160,14 @@ export class MethodParameters {
         }
         parameterType = parameter.getType();
       }
+      // the parameter is supplied, even if its type is wrong
+      this.requiredParameters?.delete(item.name);
 
       if (item.targetType && new TypeUtils(input.scope).isAssignableStrict(parameterType, item.targetType) === false) {
         const message = "Method parameter type not compatible, " + item.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
-
-      this.requiredParameters?.delete(item.name);
     }
   }
 
@@ -194,14 +194,16 @@ export class MethodParameters {
         const message = "Method importing parameter \"" + item.name + "\" does not exist";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         continue;
-      } else if (checkTextSymbol(item.source, parameter.getType(), input)) {
+      }
+      // the parameter is supplied, even if its type is wrong
+      this.requiredParameters.delete(item.name);
+      if (checkTextSymbol(item.source, parameter.getType(), input)) {
         return;
       } else if (assignable(item.sourceType, parameter.getType(), item.source) === false) {
         const message = "Method parameter type not compatible, " + item.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
-      this.requiredParameters.delete(item.name);
     }
 
     if (errors === true) {
