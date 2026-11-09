@@ -21,6 +21,9 @@ export class View extends AbstractObject {
       TABNAME: string,
       FIELDNAME: string,
       KEYFLAG: string,
+      EXVDATATYPE?: string,
+      EXVFLENGTH?: string,
+      EXVDECIMALS?: string,
     }[],
     join: {
       LTAB: string,
@@ -77,9 +80,19 @@ export class View extends AbstractObject {
         // ignore, this is a special case of old style .INCLUDE
         continue;
       } else if (this.parsedData.header.VIEWCLASS === ViewClass.ExternalView) {
+        // for external views TABNAME is the view itself, the types are given directly in the xml
+        let type: AbstractType = Types.VoidType.get("ExternalView");
+        if (field.EXVDATATYPE !== undefined) {
+          type = ddic.textToType({
+            text: field.EXVDATATYPE,
+            length: field.EXVFLENGTH,
+            decimals: field.EXVDECIMALS,
+            infoText: this.getName() + "-" + field.VIEWFIELD,
+          });
+        }
         components.push({
           name: field.VIEWFIELD,
-          type: Types.VoidType.get("ExternalView")});
+          type: type});
         continue;
       } else if (field.TABNAME === this.getName()) {
         throw new Error("Unexpected self reference in view " + this.getName() + ", " + field.FIELDNAME + " " + field.FIELDNAME);
@@ -171,6 +184,9 @@ export class View extends AbstractObject {
         TABNAME: field.TABNAME,
         FIELDNAME: field.FIELDNAME,
         KEYFLAG: field.KEYFLAG,
+        EXVDATATYPE: typeof field.EXVDATATYPE === "string" && field.EXVDATATYPE !== "" ? field.EXVDATATYPE : undefined,
+        EXVFLENGTH: typeof field.EXVFLENGTH === "string" ? field.EXVFLENGTH : undefined,
+        EXVDECIMALS: typeof field.EXVDECIMALS === "string" ? field.EXVDECIMALS : undefined,
       });
     }
 
