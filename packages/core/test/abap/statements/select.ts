@@ -717,6 +717,10 @@ statementVersionOk([
   {abap: `SELECT gla, \\_skat-txt50, indi FROM /foo/bar WHERE indi = @abap_false AND \\_skat-spras = @sy-langu ORDER BY gla ASCENDING INTO TABLE @lt.`, rel: Release.v740sp05},
   {abap: `SELECT FROM zcds FIELDS col1, \\_Text[ ONE TO ONE WHERE Language = @sy-langu ]-LanguageName ORDER BY col1 INTO TABLE @DATA(languages).`, rel: Release.v751},
   {abap: `SELECT FROM /foo/bar FIELDS (mv_sql_select) WHERE uuid = @mv__uuid AND \\_foo\\_bar-top IN @mt_top GROUP BY (mv_sql_group) INTO CORRESPONDING FIELDS OF TABLE @mt_result.`, rel: Release.v750},
+  {abap: `SELECT Status, \\_Text-ShortText FROM zi_status WHERE \\_Text-Language = 'E' AND Status IN ( @lv_next, @ls_curr-Status ) INTO TABLE @DATA(lt_texts).`, rel: Release.v740sp05},
+  {abap: `SELECT SINGLE Status FROM zi_status WHERE \\_Text-Language = 'E' INTO @DATA(ls_text).`, rel: Release.v740sp05},
+  {abap: `SELECT * FROM ztab1 \\_assoc1 WHERE \\_assoc2-col = 'E' INTO TABLE @DATA(lt).`, rel: Release.v740sp05},
+  {abap: `SELECT Status FROM zi_status WHERE \\_Text[ ONE TO ONE ]-Language = 'E' INTO TABLE @DATA(lt_texts).`, rel: Release.v751},
 ], "SELECT association path expressions", Statements.Select);
 
 statementVersionFail([
@@ -734,6 +738,26 @@ statementVersionFail([
 statementVersionOk([
   {abap: "SELECT * FROM @lt_fields AS fields INTO TABLE @DATA(result).", rel: Version.OpenABAP},
 ], "SELECT FROM internal table", Statements.Select);
+
+statementVersionOk([
+  {abap: "SELECT ( 'F' && b~code ) AS code FROM ztab AS b INTO TABLE @DATA(result).", rel: Version.OpenABAP},
+  {abap: "SELECT b~amount * 2 AS amount FROM ztab AS b INTO TABLE @DATA(result).", rel: Version.OpenABAP},
+  {abap: "SELECT b~material, ( b~amount + b~fee ) * 2 AS total FROM ztab AS b INTO TABLE @DATA(result).", rel: Version.OpenABAP},
+  {abap: "SELECT b~material, SUM( b~amount ) + SUM( b~fee ) AS total FROM ztab AS b GROUP BY b~material INTO TABLE @DATA(result).", rel: Version.OpenABAP},
+], "SELECT field arithmetic and concatenation, open-abap", Statements.Select);
+
+statementVersionOk([
+  {abap: `SELECT DISTINCT @zif_const=>sign_include AS sign,
+      @zif_const=>option_equal AS option,
+      field1 AS low,
+      CAST( @space AS CHAR( 4 ) ) AS high
+    FROM zsource AS src
+    WHERE field1 IN @ir_field1
+      AND EXISTS ( SELECT MAX( datefield ) FROM zevents
+                   WHERE field1 = src~field1
+                   HAVING MAX( datefield ) < @sy-datum )
+    INTO TABLE @rt_range.`, rel: Version.OpenABAP},
+], "SELECT host constants, CAST and EXISTS subquery with HAVING, open-abap", Statements.Select);
 
 const windowVersions = [
   {abap: `SELECT company, category, item, price, row_number( ) over( ) AS rn FROM @ztable AS t ORDER BY rn INTO TABLE @DATA(result).`, rel: Release.v757},

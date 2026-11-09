@@ -11,7 +11,7 @@ import {applyEditSingle} from "../../../src/edit_helper";
 import {IReference, ReferenceType} from "../../../src/abap/5_syntax/_reference";
 import {tabl_t100xml} from "../../rules/sql_value_conversion";
 import {TypedIdentifier} from "../../../src/abap/types/_typed_identifier";
-import {DataReference} from "../../../src/abap/types/basic";
+import {CharacterType, DataReference, DecFloat34Type, StringType, XStringType} from "../../../src/abap/types/basic";
 
 function run(reg: IRegistry, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
              languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
@@ -1948,6 +1948,66 @@ r3 = NEW #( 4 ).`;
     }
   });
 
+  it("CONV #( ) at a generic parameter, inferred type of #", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS clike IMPORTING val TYPE clike.
+    CLASS-METHODS csequence IMPORTING val TYPE csequence.
+    CLASS-METHODS xsequence IMPORTING val TYPE xsequence.
+    CLASS-METHODS numeric IMPORTING val TYPE numeric.
+    CLASS-METHODS simple IMPORTING val TYPE simple.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD clike.
+  ENDMETHOD.
+  METHOD csequence.
+  ENDMETHOD.
+  METHOD xsequence.
+  ENDMETHOD.
+  METHOD numeric.
+  ENDMETHOD.
+  METHOD simple.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_char TYPE c LENGTH 10.
+  DATA lv_hex TYPE x LENGTH 4.
+  DATA lv_int TYPE i.
+  lcl=>clike( CONV #( lv_char ) ).
+  lcl=>csequence( CONV #( lv_char ) ).
+  lcl=>xsequence( CONV #( lv_hex ) ).
+  lcl=>numeric( CONV #( lv_int ) ).
+  lcl=>simple( CONV #( lv_char ) ).`;
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
+    const result = new SyntaxLogic(reg, getABAPObjects(reg)[0]).run();
+
+    expect(result.issues.length).to.equals(0);
+
+    const references: IReference[] = [];
+    const visit = (node: ReturnType<typeof result.spaghetti.getTop>): void => {
+      references.push(...node.getData().references);
+      for (const child of node.getChildren()) {
+        visit(child);
+      }
+    };
+    visit(result.spaghetti.getTop());
+    const typeAtRow = (row: number) => {
+      const found = references.filter(r => r.referenceType === ReferenceType.InferredType
+        && r.position.getName() === "#"
+        && r.position.getStart().getRow() === row);
+      expect(found.length).to.equals(1);
+      return (found[0].resolved as TypedIdentifier).getType();
+    };
+    expect(typeAtRow(27)).to.be.instanceof(StringType);
+    expect(typeAtRow(28)).to.be.instanceof(StringType);
+    expect(typeAtRow(29)).to.be.instanceof(XStringType);
+    expect(typeAtRow(30)).to.be.instanceof(DecFloat34Type);
+    // other generic types keep the type of the argument
+    expect(typeAtRow(31)).to.be.instanceof(CharacterType);
+  });
+
   it("built-in to_upper", () => {
     const abap = `
 DATA(result) = to_upper( |bar| ).`;
@@ -2607,6 +2667,169 @@ ENDINTERFACE.
 WRITE if_sub=>bar.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  describe("aliases of superclasses, inheritance and visibility", () => {
+    const intf = {
+      filename: "zif_demo.intf.abap",
+      contents: `
+INTERFACE zif_demo PUBLIC.
+  CONSTANTS run TYPE string VALUE 'X'.
+  TYPES ty_foo TYPE i.
+ENDINTERFACE.`,
+    };
+
+    function parent(section: string, aliases: string) {
+      return {
+        filename: "zcl_parent.clas.abap",
+        contents: `
+CLASS zcl_parent DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_demo.
+    ${section === "PUBLIC" ? aliases : ""}
+  ${section === "PUBLIC" ? "" : section + " SECTION.\n    " + aliases}
+ENDCLASS.
+
+CLASS zcl_parent IMPLEMENTATION.
+ENDCLASS.`,
+      };
+    }
+
+    function child(aliases: string) {
+      return {
+        filename: "zcl_child.clas.abap",
+        contents: `
+CLASS zcl_child DEFINITION PUBLIC INHERITING FROM zcl_parent CREATE PUBLIC.
+  PUBLIC SECTION.
+    ${aliases}
+ENDCLASS.
+
+CLASS zcl_child IMPLEMENTATION.
+ENDCLASS.`,
+      };
+    }
+
+    it("subclass redeclares private constant alias of superclass", () => {
+      const issues = runMulti([
+        intf,
+        parent("PRIVATE", "ALIASES run FOR zif_demo~run."),
+        child("ALIASES run FOR zif_demo~run.")]);
+      expect(issues[0]?.getMessage()).to.equals(undefined);
+    });
+
+    it("subclass redeclares private type alias of superclass", () => {
+      const issues = runMulti([
+        intf,
+        parent("PRIVATE", "ALIASES ty_foo FOR zif_demo~ty_foo."),
+        child("ALIASES ty_foo FOR zif_demo~ty_foo.")]);
+      expect(issues[0]?.getMessage()).to.equals(undefined);
+    });
+
+    it("subclass redeclares private alias of grandparent, via superclass without own aliases", () => {
+      const middle = {
+        filename: "zcl_middle.clas.abap",
+        contents: `
+CLASS zcl_middle DEFINITION PUBLIC INHERITING FROM zcl_parent CREATE PUBLIC.
+ENDCLASS.
+
+CLASS zcl_middle IMPLEMENTATION.
+ENDCLASS.`,
+      };
+      const issues = runMulti([
+        intf,
+        parent("PRIVATE", "ALIASES run FOR zif_demo~run."),
+        middle,
+        {
+          filename: "zcl_child.clas.abap",
+          contents: `
+CLASS zcl_child DEFINITION PUBLIC INHERITING FROM zcl_middle CREATE PUBLIC.
+  PUBLIC SECTION.
+    ALIASES run FOR zif_demo~run.
+ENDCLASS.
+
+CLASS zcl_child IMPLEMENTATION.
+ENDCLASS.`,
+        }]);
+      expect(issues[0]?.getMessage()).to.equals(undefined);
+    });
+
+    it("alias of superclass is still visible in subclass, public", () => {
+      const issues = runMulti([
+        intf,
+        parent("PUBLIC", "ALIASES run FOR zif_demo~run."),
+        {
+          filename: "zcl_child.clas.abap",
+          contents: `
+CLASS zcl_child DEFINITION PUBLIC INHERITING FROM zcl_parent CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+
+CLASS zcl_child IMPLEMENTATION.
+  METHOD foo.
+    WRITE run.
+  ENDMETHOD.
+ENDCLASS.`,
+        }]);
+      expect(issues[0]?.getMessage()).to.equals(undefined);
+    });
+
+    it("alias of superclass is still visible in subclass, protected", () => {
+      const issues = runMulti([
+        intf,
+        parent("PROTECTED", "ALIASES run FOR zif_demo~run."),
+        {
+          filename: "zcl_child.clas.abap",
+          contents: `
+CLASS zcl_child DEFINITION PUBLIC INHERITING FROM zcl_parent CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+
+CLASS zcl_child IMPLEMENTATION.
+  METHOD foo.
+    WRITE run.
+  ENDMETHOD.
+ENDCLASS.`,
+        }]);
+      expect(issues[0]?.getMessage()).to.equals(undefined);
+    });
+
+    it("error, subclass redeclares public alias of superclass", () => {
+      const issues = runMulti([
+        intf,
+        parent("PUBLIC", "ALIASES run FOR zif_demo~run."),
+        child("ALIASES run FOR zif_demo~run.")]);
+      expect(issues[0]?.getMessage()).to.contain("already defined");
+    });
+
+    it("error, subclass redeclares protected alias of superclass", () => {
+      const issues = runMulti([
+        intf,
+        parent("PROTECTED", "ALIASES run FOR zif_demo~run."),
+        child("ALIASES run FOR zif_demo~run.")]);
+      expect(issues[0]?.getMessage()).to.contain("already defined");
+    });
+
+    it("error, same alias declared twice in the same class", () => {
+      const issues = runMulti([
+        intf,
+        {
+          filename: "zcl_parent.clas.abap",
+          contents: `
+CLASS zcl_parent DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_demo.
+    ALIASES run FOR zif_demo~run.
+  PRIVATE SECTION.
+    ALIASES run FOR zif_demo~run.
+ENDCLASS.
+
+CLASS zcl_parent IMPLEMENTATION.
+ENDCLASS.`,
+        }]);
+      expect(issues[0]?.getMessage()).to.contain("already defined");
+    });
   });
 
   it("Table with header line", () => {
@@ -3429,6 +3652,30 @@ CLASS lhc_ZASIS_I_RULESET IMPLEMENTATION.
     IF requested_authorizations-%create = 2.
       INSERT VALUE #( ) INTO reported-ruleset.
     ENDIF.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("RAP for instance authorization, failed and reported", () => {
+    const abap = `
+CLASS lhc_process DEFINITION.
+  PRIVATE SECTION.
+    METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
+      IMPORTING keys REQUEST requested_authorizations FOR Process RESULT result.
+    METHODS get_authorizations FOR AUTHORIZATION
+      IMPORTING keys REQUEST requested_authorizations FOR Process RESULT result.
+ENDCLASS.
+
+CLASS lhc_process IMPLEMENTATION.
+  METHOD get_instance_authorizations.
+    INSERT VALUE #( ) INTO TABLE failed-process.
+    INSERT VALUE #( ) INTO TABLE reported-process.
+  ENDMETHOD.
+  METHOD get_authorizations.
+    INSERT VALUE #( ) INTO TABLE failed-process.
+    INSERT VALUE #( ) INTO TABLE reported-process.
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
@@ -8578,6 +8825,32 @@ APPEND binding REFERENCE INTO wa-binding.`;
     IF permission_result-global-%field-PackageName = 'X'
         OR failed_permission_result IS NOT INITIAL
         OR reported_permission_result IS NOT INITIAL.
+    ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("GET PERMISSIONS, ONLY INSTANCE FEATURES and OPERATIONS, inline FINAL", () => {
+    const abap = `
+    DATA request TYPE STRUCTURE FOR PERMISSIONS REQUEST zdemo_root\\\\root.
+    DATA perm_tab TYPE voided.
+
+    GET PERMISSIONS ONLY INSTANCE FEATURES ENTITY zdemo_root\\\\root
+      FROM VALUE #( ( %key-key_field = 1 ) )
+      REQUEST request
+      RESULT FINAL(result)
+      FAILED FINAL(failed)
+      REPORTED FINAL(reported).
+
+    GET PERMISSIONS ONLY INSTANCE FEATURES OPERATIONS perm_tab
+      FAILED FINAL(failed_dyn)
+      REPORTED FINAL(reported_dyn).
+
+    IF result-instances IS INITIAL
+        OR failed IS NOT INITIAL
+        OR reported IS NOT INITIAL
+        OR failed_dyn IS NOT INITIAL
+        OR reported_dyn IS NOT INITIAL.
     ENDIF.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
@@ -19105,4 +19378,31 @@ DATA lv_int TYPE i.`;
       expect(issues[0]?.getMessage()).to.equal(undefined);
     });
   }
+});
+
+describe("syntax.ts, functional call with EXPORTING, incompatible parameter", () => {
+  it("reports only the incompatible parameter", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_c40 TYPE c LENGTH 40.
+    TYPES ty_c18 TYPE c LENGTH 18.
+    METHODS run.
+    METHODS foo
+      IMPORTING i_material TYPE ty_c40
+      RETURNING VALUE(rv)  TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    DATA lv TYPE ty_c18.
+    IF foo( EXPORTING i_material = lv ) = 2.
+    ENDIF.
+  ENDMETHOD.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.map(i => i.getMessage())).to.deep.equal(["Method parameter type not compatible, I_MATERIAL"]);
+  });
 });

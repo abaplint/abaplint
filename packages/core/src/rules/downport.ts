@@ -19,7 +19,7 @@ import {IClassDefinition} from "../abap/types/_class_definition";
 import {IMethodDefinition} from "../abap/types/_method_definition";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
-import {AnyType, DataReference, ObjectReferenceType, StructureType, TableType, VoidType} from "../abap/types/basic";
+import {AnyType, DataReference, ObjectReferenceType, StructureType, TableAccessType, TableType, VoidType} from "../abap/types/basic";
 import {Config} from "../config";
 import {EditHelper, IEdit} from "../edit_helper";
 import {Issue} from "../issue";
@@ -175,6 +175,7 @@ Current rules:
 * SELECT INTO @DATA definitions are outlined
 * Some occurrences of string template formatting option ALPHA changed to function module call
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
+* OPEN CURSOR/FETCH NEXT CURSOR/CLOSE CURSOR "@" in source/targets removed
 * PARTIALLY IMPLEMENTED removed, it can be quick fixed via rule implement_methods
 * RAISE EXCEPTION ... MESSAGE
 * Moving with +=, -=, /=, *=, &&= is expanded
@@ -295,6 +296,7 @@ Make sure to test the downported code, it might not always be completely correct
       }
 
       let containsUnknown = false;
+      const notDownported: Issue[] = [];
       for (let i = 0; i < lowStatements.length; i++) {
         const low = lowStatements[i];
         const high = highStatements[i];
@@ -306,6 +308,11 @@ Make sure to test the downported code, it might not always be completely correct
             const issue = this.checkStatement(low, high, lowFile, highSyntax, highFile);
             if (issue) {
               ret.push(issue);
+            } else {
+              const nope = this.notDownported(low, high, lowFile, highSyntax);
+              if (nope) {
+                notDownported.push(nope);
+              }
             }
 
           } catch (e) {
@@ -367,6 +374,21 @@ Make sure to test the downported code, it might not always be completely correct
         }
       }
 
+      // MOVE-CORRESPONDING between tables parses in the low version, but is only allowed from
+      // v740sp05, "MOVE-CORRESPONDING with tables possible from v740sp05"
+      if (ret.length === 0) {
+        for (let i = 0; i < lowStatements.length; i++) {
+          if (lowStatements[i].getFirstToken().getStart() instanceof VirtualPosition) {
+            continue;
+          }
+          const issue = this.downportMoveCorrespondingTables(highStatements[i], lowFile, highSyntax);
+          if (issue) {
+            ret.push(issue);
+            break;
+          }
+        }
+      }
+
       // INTO after WHERE parses as a valid SELECT in the low version, but is only allowed in
       // strict SQL syntax, so move it also when the statement is no longer Unknown
       if (ret.length === 0) {
@@ -380,12 +402,61 @@ Make sure to test the downported code, it might not always be completely correct
         }
       }
 
+      // nothing could be rewritten, name the statements which stay invalid in the low version
+      if (ret.length === 0) {
+        ret.push(...notDownported);
+      }
+
     }
 
     return ret;
   }
 
 ////////////////////
+
+  /** for a statement no downport applies to, an issue without fix if it stays invalid in the low version */
+  private notDownported(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    }
+
+    // a constructor expression with #, where the type cannot be inferred as it is void
+    if (low.get() instanceof Unknown) {
+      for (const infer of high.findAllExpressionsRecursive(Expressions.TypeNameOrInfer)) {
+        if (infer.concatTokens() !== "#") {
+          continue;
+        }
+        const token = infer.getFirstToken();
+        const spag = highSyntax.spaghetti.lookupPosition(token.getStart(), lowFile.getFilename());
+        const voided = spag?.getData().references.some(r => r.referenceType === ReferenceType.InferredType
+          && r.position.getStart().equals(token.getStart())
+          && r.resolved instanceof TypedIdentifier
+          && r.resolved.getType() instanceof VoidType
+          && r.resolved.getType().getQualifiedName() === undefined);
+        if (voided === true) {
+          return Issue.atToken(lowFile, token, "Cannot downport, inferred type is void",
+                               this.getMetadata().key, this.conf.severity);
+        }
+      }
+      return undefined;
+    }
+
+    // the statement might still parse in the low version, eg. DATA(name) as offset/length access
+    for (const i of high.findAllExpressionsRecursive(Expressions.InlineData)) {
+      const nameToken = i.findDirectExpression(Expressions.TargetField)?.getFirstToken();
+      if (nameToken === undefined) {
+        continue;
+      }
+      const name = nameToken.getStr();
+      const found = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename())?.findVariable(name);
+      if (found?.getType() instanceof VoidType && found.getType().getQualifiedName() === undefined) {
+        return Issue.atToken(lowFile, i.getFirstToken(), `Cannot downport, type of ${name} is void`,
+                             this.getMetadata().key, this.conf.severity);
+      }
+    }
+
+    return undefined;
+  }
 
   /** clones the orginal repository into highReg, and parses it with higher language version */
   private initHighReg() {
@@ -491,6 +562,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.downportMoveCorrespondingTables(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.downportRef(low, high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -517,6 +593,11 @@ Make sure to test the downported code, it might not always be completely correct
     }
 
     found = this.downportSelectExistence(low, high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    found = this.downportOpenCursorInline(low, high, lowFile);
     if (found) {
       return found;
     }
@@ -615,6 +696,11 @@ Make sure to test the downported code, it might not always be completely correct
     }
 
     found = this.outlineDataSimple(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
+    found = this.outlineReadTableVoidTarget(high, lowFile, highSyntax);
     if (found) {
       return found;
     }
@@ -790,7 +876,10 @@ Make sure to test the downported code, it might not always be completely correct
         && !(high.get() instanceof Statements.UpdateDatabase)
         && !(high.get() instanceof Statements.ModifyDatabase)
         && !(high.get() instanceof Statements.DeleteDatabase)
-        && !(high.get() instanceof Statements.InsertDatabase)) {
+        && !(high.get() instanceof Statements.InsertDatabase)
+        && !(high.get() instanceof Statements.OpenCursor)
+        && !(high.get() instanceof Statements.FetchNextCursor)
+        && !(high.get() instanceof Statements.CloseCursor)) {
       return undefined;
     }
 
@@ -808,7 +897,10 @@ Make sure to test the downported code, it might not always be completely correct
       high.findAllExpressionsRecursive(Expressions.SQLSource),
       high.findAllExpressionsRecursive(Expressions.SQLSourceNoSpace),
       high.findAllExpressionsRecursive(Expressions.SQLSourceSimple)].flat();
-    for (const c of candidates.reverse()) {
+    // the deletions are applied one after the other, so handle the candidates from the end of the statement,
+    // in FETCH NEXT CURSOR and OPEN CURSOR a source or target comes before the others
+    candidates.sort((a, b) => a.getFirstToken().getStart().isAfter(b.getFirstToken().getStart()) ? -1 : 1);
+    for (const c of candidates) {
       if (c.getFirstToken() instanceof WAt
           || c.getFirstToken() instanceof At) {
         const tokens = c.getAllTokens();
@@ -871,6 +963,28 @@ ${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
     }
 
     return undefined;
+  }
+
+  /** OPEN CURSOR @DATA(name), the cursor is always of type cursor */
+  private downportOpenCursorInline(low: StatementNode, high: StatementNode, lowFile: ABAPFile): Issue | undefined {
+    if (!(low.get() instanceof Unknown)) {
+      return undefined;
+    } else if (!(high.get() instanceof Statements.OpenCursor)) {
+      return undefined;
+    }
+
+    const inlineData = high.findDirectExpression(Expressions.SQLTarget)?.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    const name = inlineData?.findFirstExpression(Expressions.TargetField)?.concatTokens();
+    if (inlineData === undefined || name === undefined) {
+      return undefined;
+    }
+
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const fix1 = EditHelper.insertAt(lowFile, high.getStart(), `DATA ${name} TYPE cursor.\n${indentation}`);
+    const fix2 = EditHelper.replaceRange(lowFile, inlineData.getFirstToken().getStart(), inlineData.getLastToken().getEnd(), name);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, inlineData.getFirstToken(), "Outline OPEN CURSOR @DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private downportSelectExistence(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
@@ -939,13 +1053,21 @@ ${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
       return undefined;
     }
 
-    const code = fields.getLastChild()?.concatTokens();
-    if (code === undefined) {
-      return undefined;
+    // everything behind the FIELDS keyword, including DISTINCT
+    const code = fields.concatTokens().replace(/^FIELDS\s+/i, "");
+
+    // the field list goes behind SELECT, or behind SINGLE [FOR UPDATE], which must stay in front of it
+    const tokens = high.getTokens();
+    let insertAfter = tokens[0];
+    if (tokens[1]?.getStr().toUpperCase() === "SINGLE") {
+      insertAfter = tokens[1];
+      if (tokens[2]?.getStr().toUpperCase() === "FOR" && tokens[3]?.getStr().toUpperCase() === "UPDATE") {
+        insertAfter = tokens[3];
+      }
     }
 
     const fix1 = EditHelper.deleteRange(lowFile, fields.getFirstToken().getStart(), fields.getLastToken().getEnd());
-    const fix2 = EditHelper.insertAt(lowFile, high.getFirstToken().getEnd(), " " + code);
+    const fix2 = EditHelper.insertAt(lowFile, insertAfter.getEnd(), " " + code);
     const fix = EditHelper.merge(fix1, fix2);
     return Issue.atToken(lowFile, fields.getFirstToken(), "Replace FIELDS", this.getMetadata().key, this.conf.severity, fix);
   }
@@ -1273,6 +1395,15 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
 
       const condition = this.tableCondition(tableExpression);
 
+      let guard: string[] = [];
+      if (high.get() instanceof Statements.If) {
+        const found = this.shortCircuitGuard(high.findDirectExpression(Expressions.Cond), fieldChain);
+        if (found === "later") {
+          continue;
+        }
+        guard = found;
+      }
+
       // ASSIGNING, not INTO: from v740 a table expression in a read position addresses the
       // row rather than copying it, so "REF #( tab[ i ]-comp )" and "ASSIGN tab[ i ]-comp"
       // hand back an address INTO a work area would not preserve. The write path
@@ -1282,14 +1413,22 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       const firstToken = high.getFirstToken();
       // note that the tabix restore should be done before throwing the exception
+      let read = `${tabixBackup} = sy-tabix.
+READ TABLE ${pre} ${condition}ASSIGNING ${uniqueName}.
+sy-tabix = ${tabixBackup}.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.`;
+      if (guard.length > 0) {
+        // the operands in front of the table expression are evaluated first and can stop the
+        // evaluation, so the row is only read when they let the evaluation reach it
+        read = `IF ${guard.join(" AND ")}.
+${read.replace(/^/gm, "  ")}
+ENDIF.`;
+      }
       const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `FIELD-SYMBOLS ${uniqueName} LIKE LINE OF ${pre}.
 ${indentation}DATA ${tabixBackup} LIKE sy-tabix.
-${indentation}${tabixBackup} = sy-tabix.
-${indentation}READ TABLE ${pre} ${condition}ASSIGNING ${uniqueName}.
-${indentation}sy-tabix = ${tabixBackup}.
-${indentation}IF sy-subrc <> 0.
-${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
-${indentation}ENDIF.
+${read.replace(/\n/g, "\n" + indentation).replace(/^/, indentation)}
 ${indentation}`);
       const fix2 = EditHelper.replaceRange(lowFile, startToken.getStart(), tableExpression.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
@@ -1302,6 +1441,74 @@ ${indentation}`);
     }
 
     return undefined;
+  }
+
+  /** ABAP evaluates the operands of AND and OR left to right and stops as soon as the result
+   * is known, so in "IF lv_last > 0 AND tab[ lv_last ] = x." the table expression is only read
+   * when lv_last > 0. Outlined in front of the IF, the read and its CX_SY_ITAB_LINE_NOT_FOUND
+   * raise would run unconditionally. Returns the operands that must hold for the evaluation to
+   * reach the target, empty when it is always reached (or the shape is not handled, which keeps
+   * the unconditional outline), and "later" when an operand in front of it holds a table
+   * expression itself, which must be outlined first. Operands with method calls or NEW are not
+   * repeated in a guard, as that would evaluate them twice. */
+  private shortCircuitGuard(cond: ExpressionNode | undefined, target: ExpressionNode): string[] | "later" {
+    if (cond === undefined) {
+      return [];
+    }
+    const guard: ExpressionNode[] = [];
+    const negated: ExpressionNode[][] = [];
+    let term: ExpressionNode[] = [];
+    for (const child of cond.getChildren()) {
+      if (child instanceof TokenNode) {
+        const operator = child.getFirstToken().getStr().toUpperCase();
+        if (operator === "EQUIV") {
+          return [];
+        } else if (operator === "OR") {
+          negated.push(term);
+          term = [];
+        }
+        continue;
+      } else if (!(child instanceof ExpressionNode)) {
+        return [];
+      }
+
+      if (child.findAllExpressionsRecursive(Expressions.FieldChain).includes(target) === false) {
+        term.push(child);
+        continue;
+      }
+
+      guard.push(...term);
+      let inner: string[] = [];
+      if (child.get() instanceof Expressions.CondSub) {
+        const found = this.shortCircuitGuard(child.findDirectExpression(Expressions.Cond), target);
+        if (found === "later") {
+          return found;
+        }
+        inner = found;
+      }
+
+      const operands = [...negated.flat(), ...guard];
+      if (operands.some(o => o.findFirstExpression(Expressions.TableExpression) !== undefined)) {
+        return "later";
+      }
+      for (const o of operands) {
+        if (o.findFirstExpression(Expressions.NewObject) !== undefined) {
+          return [];
+        }
+        for (const m of o.findAllExpressionsRecursive(Expressions.MethodCall)) {
+          const name = m.findDirectExpression(Expressions.MethodName)?.concatTokens().toUpperCase();
+          if (BuiltIn.searchBuiltin(name) === undefined) {
+            return [];
+          }
+        }
+      }
+
+      return [
+        ...negated.map(t => "NOT ( " + t.map(o => o.concatTokens()).join(" AND ") + " )"),
+        ...guard.map(o => o.concatTokens()),
+        ...inner];
+    }
+    return [];
   }
 
   private tableCondition(tableExpression: ExpressionNode) {
@@ -1418,6 +1625,77 @@ ${indentation}`);
     const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, source.getFirstToken(), "Outline built-in function in INSERT",
+                         this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  /** MOVE-CORRESPONDING between internal tables is possible from v740sp05, in 702 move row by row;
+   * a typed target must be a standard table, as a row is added before its fields are filled, and a
+   * fully generic target carries no table kind, so its row is added with INSERT INTO TABLE */
+  private downportMoveCorrespondingTables(high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.MoveCorresponding)) {
+      return undefined;
+    } else if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    }
+
+    const concat = high.concatTokens().toUpperCase();
+    if (concat.includes(" EXPANDING NESTED TABLES") || concat.startsWith("MOVE-CORRESPONDING EXACT ")) {
+      return undefined;
+    }
+    const keeping = concat.includes(" KEEPING TARGET LINES");
+
+    // only plain variables and field symbols, their types are known from the scope
+    const source = high.findDirectExpression(Expressions.Source);
+    const sourceField = source?.getFirstChild();
+    const target = high.findDirectExpression(Expressions.SimpleTarget);
+    if (source === undefined
+        || target === undefined
+        || source.getChildren().length !== 1
+        || !(sourceField?.get() instanceof Expressions.FieldChain)
+        || sourceField.getChildren().length !== 1
+        || target.getChildren().length !== 1) {
+      return undefined;
+    }
+    const sourceName = source.concatTokens();
+    const targetName = target.concatTokens();
+    if (sourceName.toUpperCase() === targetName.toUpperCase()) {
+      return undefined;
+    }
+
+    const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
+    const sourceType = spag?.findVariable(sourceName)?.getType();
+    const targetType = spag?.findVariable(targetName)?.getType();
+    if (!(sourceType instanceof TableType)
+        || !(targetType instanceof TableType)
+        || sourceType.isWithHeader() === true
+        || targetType.isWithHeader() === true
+        || (targetType.getAccessType() !== TableAccessType.standard && targetType.getAccessType() !== undefined)) {
+      return undefined;
+    }
+    for (const t of [sourceType, targetType]) {
+      const row = t.getRowType();
+      if (!(row instanceof StructureType || row instanceof AnyType || row instanceof VoidType)) {
+        return undefined;
+      }
+    }
+
+    const fsType = (name: string, type: TableType) => type.isGeneric() ? "TYPE any" : "LIKE LINE OF " + name;
+    const sourceFS = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
+    const targetFS = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
+    const addRow = targetType.getAccessType() === undefined
+      ? `INSERT INITIAL LINE INTO TABLE ${targetName}`
+      : `APPEND INITIAL LINE TO ${targetName}`;
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const code = `FIELD-SYMBOLS ${sourceFS} ${fsType(sourceName, sourceType)}.\n` +
+      indentation + `FIELD-SYMBOLS ${targetFS} ${fsType(targetName, targetType)}.\n` +
+      (keeping ? "" : indentation + `CLEAR ${targetName}.\n`) +
+      indentation + `LOOP AT ${sourceName} ASSIGNING ${sourceFS}.\n` +
+      indentation + `  ${addRow} ASSIGNING ${targetFS}.\n` +
+      indentation + `  MOVE-CORRESPONDING ${sourceFS} TO ${targetFS}.\n` +
+      indentation + `ENDLOOP.`;
+
+    const fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
+    return Issue.atToken(lowFile, high.getFirstToken(), "Downport MOVE-CORRESPONDING with tables",
                          this.getMetadata().key, this.conf.severity, fix);
   }
 
@@ -1710,6 +1988,17 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
 
       const fix = EditHelper.replaceToken(lowFile, token, "DEFAULT");
       return Issue.atToken(lowFile, i.getFirstToken(), "Downport EMPTY KEY", this.getMetadata().key, this.conf.severity, fix);
+    }
+
+    if (node.get() instanceof Statements.CreateData) {
+      // the key of CREATE DATA is not a TypeTableKey expression, its keywords are direct tokens
+      const tokens = node.getChildren().filter(c => c instanceof TokenNode).map(c => c.getFirstToken());
+      for (let j = 0; j < tokens.length - 1; j++) {
+        if (tokens[j].getStr().toUpperCase() === "EMPTY" && tokens[j + 1].getStr().toUpperCase() === "KEY") {
+          const fix = EditHelper.replaceToken(lowFile, tokens[j], "DEFAULT");
+          return Issue.atToken(lowFile, tokens[j], "Downport EMPTY KEY", this.getMetadata().key, this.conf.severity, fix);
+        }
+      }
     }
 
     return undefined;
@@ -2160,11 +2449,18 @@ CONSTANTS: BEGIN OF ${structureName},\n`;
       return undefined;
     }
 
-    if (!(high.get() instanceof Statements.Move)) {
-      return undefined;
+    let target: ExpressionNode | undefined = undefined;
+    if (high.get() instanceof Statements.Move) {
+      target = high.findDirectExpression(Expressions.Target);
+    } else if (high.get() instanceof Statements.Clear
+        || high.get() instanceof Statements.Free
+        || high.get() instanceof Statements.Append
+        || high.get() instanceof Statements.InsertInternal) {
+      // the writable operand, eg. "CLEAR tab[ 1 ]-comp" or "APPEND 1 TO tab[ 1 ]-sub", is a Target
+      // just like the left-hand side of an assignment, so it is lowered the same way
+      target = high.findDirectExpressions(Expressions.Target).find(
+        t => t.findDirectExpression(Expressions.TableExpression) !== undefined);
     }
-
-    const target = high.findDirectExpression(Expressions.Target);
     if (target === undefined) {
       return undefined;
     }
@@ -2193,14 +2489,17 @@ ${indentation}sy-tabix = ${tabixBackup}.
 ${indentation}IF sy-subrc <> 0.
 ${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ${indentation}ENDIF.
-${indentation}${uniqueName}`;
+${indentation}`;
 
     const start = target.getFirstToken().getStart();
     const end = tableExpression.findDirectTokenByText("]")?.getEnd();
     if (end === undefined) {
       return undefined;
     }
-    const fix = EditHelper.replaceRange(lowFile, start, end, code);
+    // the READ TABLE goes in front of the statement, the target need not be its first operand
+    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, start, end, uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, high.getFirstToken(), "Downport, move with table target", this.getMetadata().key, this.conf.severity, fix);
   }
@@ -2770,9 +3069,31 @@ ${indentation}    output = ${uniqueName}.\n`;
         type = "TYPE " + type;
       }
 
+      let move = indentation + `MOVE-CORRESPONDING ${correspondingBody?.concatTokens()} TO ${uniqueName}.\n`;
+      if (correspondingBody?.findDirectTokenByText("EXCEPT") !== undefined) {
+        // MOVE-CORRESPONDING has no EXCEPT, move everything and clear the excepted components afterwards
+        if (correspondingBody.findDirectExpression(Expressions.CorrespondingBodyMapping) !== undefined
+            || !(this.findCorrespondingType(s, high, lowFile, highSyntax) instanceof StructureType)) {
+          continue;
+        }
+        const children = correspondingBody.getChildren();
+        const exceptIndex = children.findIndex(c => c instanceof TokenNode && c.getFirstToken().getStr().toUpperCase() === "EXCEPT");
+        const fields = correspondingBody.findDirectExpressions(Expressions.Field);
+        if (fields.length === 0) {
+          // EXCEPT *, without MAPPING nothing is moved
+          move = "";
+        } else {
+          const body = children.slice(0, exceptIndex).map(c => c.concatTokens()).join(" ");
+          move = indentation + `MOVE-CORRESPONDING ${body} TO ${uniqueName}.\n`;
+          for (const f of fields) {
+            move += indentation + `CLEAR ${uniqueName}-${f.concatTokens()}.\n`;
+          }
+        }
+      }
+
       const abap = `DATA ${uniqueName} ${type}.\n` +
         indentation + `CLEAR ${uniqueName}.\n` + // might be called inside a loop
-        indentation + `MOVE-CORRESPONDING ${correspondingBody?.concatTokens()} TO ${uniqueName}.\n` +
+        move +
         indentation;
       const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), abap);
       const fix2 = EditHelper.replaceRange(lowFile, firstToken.getStart(), s.getLastToken().getEnd(), uniqueName);
@@ -3033,6 +3354,37 @@ ${indentation}    output = ${uniqueName}.\n`;
     throw new SkipToNextFile(issue);
   }
 
+  /** the type of the value a CORRESPONDING operator returns, if it can be determined */
+  private findCorrespondingType(s: ExpressionNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): AbstractType | undefined {
+    const expr = s.findDirectExpression(Expressions.TypeNameOrInfer);
+    if (expr === undefined) {
+      return undefined;
+    }
+    const spag = highSyntax.spaghetti.lookupPosition(expr.getFirstToken().getStart(), lowFile.getFilename());
+    if (spag === undefined) {
+      return undefined;
+    }
+
+    if (expr.concatTokens() !== "#") {
+      return spag.findType(expr.concatTokens())?.getType();
+    }
+
+    for (const r of spag.getData().references) {
+      if (r.referenceType === ReferenceType.InferredType
+          && r.resolved instanceof TypedIdentifier
+          && r.position.getStart().equals(expr.getFirstToken().getStart())) {
+        return r.resolved.getType();
+      }
+    }
+
+    const target = high.findDirectExpression(Expressions.Target);
+    if (high.get() instanceof Statements.Move && high.findDirectExpression(Expressions.Source) === s && target !== undefined) {
+      return spag.findVariable(target.concatTokens())?.getType();
+    }
+
+    return undefined;
+  }
+
   private findType(i: ExpressionNode, lowFile: ABAPFile, highSyntax: ISyntaxResult, ref = false): string | undefined {
     const expr = i.findDirectExpression(Expressions.TypeNameOrInfer);
     if (expr === undefined) {
@@ -3113,6 +3465,53 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     return undefined;
+  }
+
+  /** READ TABLE [REFERENCE] INTO DATA( ) where the row type is void, no TYPE can be written, use LIKE LINE OF like LOOP does */
+  private outlineReadTableVoidTarget(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(node.get() instanceof Statements.ReadTable)) {
+      return undefined;
+    }
+
+    if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    }
+
+    const source = node.findDirectExpression(Expressions.SimpleSource2);
+    const target = node.findDirectExpression(Expressions.ReadTableTarget);
+    const inline = target?.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    if (source === undefined || target === undefined || inline === undefined) {
+      return undefined;
+    }
+
+    const nameToken = inline.findDirectExpression(Expressions.TargetField)?.getFirstToken();
+    if (nameToken === undefined) {
+      return undefined;
+    }
+    const name = nameToken.getStr();
+
+    const spag = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename());
+    const found = spag?.findVariable(name);
+    const table = spag?.findVariable(source.concatTokens());
+    const isReference = target.findDirectTokenByText("REFERENCE") !== undefined;
+    if (isReference === true && !(table?.getType() instanceof VoidType)) {
+      return undefined;
+    } else if (isReference === false
+        && (!(found?.getType() instanceof VoidType) || found.getType().getQualifiedName() !== undefined)) {
+      return undefined;
+    }
+
+    const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+    let code = `DATA ${name} LIKE LINE OF ${source.concatTokens()}.\n${indentation}`;
+    if (isReference === true) {
+      const likeName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+      code = `DATA ${likeName} LIKE LINE OF ${source.concatTokens()}.\n${indentation}DATA ${name} LIKE REF TO ${likeName}.\n${indentation}`;
+    }
+    const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, inline.getFirstToken().getStart(), inline.getLastToken().getEnd(), name);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, inline.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
   private outlineData(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
@@ -3284,8 +3683,12 @@ ${indentation}    output = ${uniqueName}.\n`;
 
       // the CONV type might just be a component of the row type, so prefer the row type
       const rowOf = this.findRowTypeOf(high, i);
+      const type = rowOf === undefined ? this.findType(i, lowFile, highSyntax) : undefined;
+      if (rowOf === undefined && type === undefined) {
+        return Issue.atToken(lowFile, i.getFirstToken(), "Downport CONV, type of # not known", this.getMetadata().key, this.conf.severity);
+      }
       const declaration = rowOf === undefined
-        ? `DATA ${uniqueName} TYPE ${this.findType(i, lowFile, highSyntax)}.`
+        ? `DATA ${uniqueName} TYPE ${type}.`
         : `DATA ${uniqueName} LIKE LINE OF ${rowOf}.`;
 
       const abap = declaration + "\n" +

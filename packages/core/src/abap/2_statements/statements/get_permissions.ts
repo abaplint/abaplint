@@ -1,23 +1,34 @@
 import {IStatement} from "./_statement";
-import {altPrio, optPrio, seq, ver, AlsoIn} from "../combi";
-import {SimpleName, Source, Target} from "../expressions";
+import {alt, altPrio, opt, optPrio, per, plus, seq, ver, AlsoIn} from "../combi";
+import {Dynamic, EntityAssociation, NamespaceSimpleName, Source, Target} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Release} from "../../../version";
 
 export class GetPermissions implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const type = altPrio("GLOBAL AUTHORIZATION", "INSTANCE");
+    const aspect = altPrio("FEATURES", "AUTHORIZATION");
+    const only = seq("ONLY", altPrio(
+      seq("GLOBAL", optPrio(aspect)),
+      seq("INSTANCE", optPrio(aspect)),
+      aspect,
+      Dynamic));
 
-    const from = seq("FROM", Source);
+    const query = seq("ENTITY", alt(NamespaceSimpleName, EntityAssociation),
+                      optPrio(seq("FROM", Source)),
+                      "REQUEST", Source,
+                      "RESULT", Target);
 
-    const s = seq("GET PERMISSIONS ONLY", type, "ENTITY",
-                  SimpleName,
-                  optPrio(from),
-                  "REQUEST", Source,
-                  "RESULT", Target,
-                  "FAILED", Target,
-                  "REPORTED", Target);
+    const long = seq("OF", NamespaceSimpleName, plus(query));
+    const operations = seq("OPERATIONS", Source);
+
+    const response = optPrio(per(seq("FAILED", Target), seq("REPORTED", Target)));
+
+    const s = seq("GET PERMISSIONS",
+                  optPrio(seq(opt("FORWARDING"), "PRIVILEGED")),
+                  optPrio(only),
+                  altPrio(long, operations, query),
+                  response);
     return ver(Release.v754, s, {also: AlsoIn.OpenABAP});
   }
 

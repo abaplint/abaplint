@@ -6,8 +6,21 @@ import {SQLCTEPathPrefix} from "./sql_cte_path_prefix";
 import {Release} from "../../../version";
 
 export class SQLPathForEntity extends Expression {
+  private readonly withPrefix: boolean;
+
+  /** withPrefix = false when the entity name is already parsed by the caller, eg. in SQLFromSource,
+   * otherwise the prefix would match a following keyword */
+  public constructor(withPrefix: boolean = true) {
+    super();
+    this.withPrefix = withPrefix;
+  }
+
   public getRunnable(): IStatementRunnable {
+    const segments = plus(new SQLPathSegment());
+    if (this.withPrefix === false) {
+      return ver(Release.v740sp05, segments);
+    }
     const prefix = altPrio(new SQLCTEPathPrefix(), new DatabaseTable());
-    return ver(Release.v740sp05, seq(optPrio(prefix), plus(new SQLPathSegment())));
+    return ver(Release.v740sp05, seq(optPrio(prefix), segments));
   }
 }
