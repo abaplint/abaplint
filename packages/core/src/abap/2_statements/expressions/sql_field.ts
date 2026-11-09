@@ -6,6 +6,7 @@ import {IStatementRunnable} from "../statement_runnable";
 import {SQLFunction} from "./sql_function";
 import {SQLPathForColumn} from "./sql_path_for_column";
 
+
 export class SQLField extends Expression {
   public getRunnable(): IStatementRunnable {
 
@@ -31,10 +32,10 @@ export class SQLField extends Expression {
     const parenFieldNoAgg = seq(tok(WParenLeftW), fieldNoAgg, tok(WParenRightW));
 
     const subNoAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenFieldNoAgg, fieldNoAgg)));
-    const arithNoAgg = ver(Release.v740sp05, subNoAgg);
+    const arithNoAgg = ver(Release.v740sp05, subNoAgg, {also: AlsoIn.OpenABAP});
 
     const subWithAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenField, field)));
-    const arithWithAgg = ver(Release.v754, subWithAgg);
+    const arithWithAgg = ver(Release.v754, subWithAgg, {also: AlsoIn.OpenABAP});
 
     const arith = altPrio(arithWithAgg, arithNoAgg);
 
@@ -43,7 +44,8 @@ export class SQLField extends Expression {
 
     const subExtWithAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenArithSequence, parenField, field)));
     const subExtNoAgg = plusPrio(seq(altPrio("+", "-", "*", "/", "&&"), altPrio(parenArithSequence, parenFieldNoAgg, fieldNoAgg)));
-    const arithExt = altPrio(ver(Release.v754, subExtWithAgg), ver(Release.v740sp05, subExtNoAgg));
+    const arithExt = altPrio(ver(Release.v754, subExtWithAgg, {also: AlsoIn.OpenABAP}),
+                             ver(Release.v740sp05, subExtNoAgg, {also: AlsoIn.OpenABAP}));
 
     return seq(altPrio(
       seq(parenArithSequence, optPrio(arithExt)),
