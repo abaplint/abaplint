@@ -3,6 +3,10 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {View} from "../../src/objects";
 import {StructureType} from "../../src/abap/types/basic/structure_type";
+import {CharacterType, IntegerType, VoidType} from "../../src/abap/types/basic";
+import {SyntaxLogic} from "../../src/abap/5_syntax/syntax";
+import {getABAPObjects} from "../get_abap";
+import {Position} from "../../src/position";
 
 describe("View, parse XML", () => {
   it("test", async () => {
@@ -377,5 +381,105 @@ describe("View, parse XML", () => {
     expect(view).to.not.equal(undefined);
     expect(view.getJoin()?.length).to.equal(1);
 
+  });
+
+  const externalViewXML = (withTypes: boolean) => `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_VIEW" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD25V>
+    <VIEWNAME>ZVEXT_PRIO</VIEWNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <AGGTYPE>V</AGGTYPE>
+    <ROOTTAB>ZVEXT_PRIO</ROOTTAB>
+    <DDTEXT>external view</DDTEXT>
+    <VIEWCLASS>X</VIEWCLASS>
+   </DD25V>
+   <DD27P_TABLE>
+    <DD27P>
+     <VIEWFIELD>ITEM</VIEWFIELD>
+     <TABNAME>ZVEXT_PRIO</TABNAME>
+     <FIELDNAME>ITEM</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+     <DBVIEWFIELD>ITEM</DBVIEWFIELD>${withTypes ? `
+     <EXVDATATYPE>CHAR</EXVDATATYPE>
+     <EXVFLENGTH>000018</EXVFLENGTH>` : ""}
+    </DD27P>
+    <DD27P>
+     <VIEWFIELD>FLAG</VIEWFIELD>
+     <TABNAME>ZVEXT_PRIO</TABNAME>
+     <FIELDNAME>FLAG</FIELDNAME>
+     <DBVIEWFIELD>FLAG</DBVIEWFIELD>${withTypes ? `
+     <EXVDATATYPE>CHAR</EXVDATATYPE>
+     <EXVFLENGTH>000001</EXVFLENGTH>` : ""}
+    </DD27P>
+    <DD27P>
+     <VIEWFIELD>PRIO</VIEWFIELD>
+     <TABNAME>ZVEXT_PRIO</TABNAME>
+     <FIELDNAME>PRIO</FIELDNAME>
+     <DBVIEWFIELD>PRIO</DBVIEWFIELD>${withTypes ? `
+     <EXVDATATYPE>INT4</EXVDATATYPE>
+     <EXVFLENGTH>000010</EXVFLENGTH>` : ""}
+    </DD27P>
+   </DD27P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+  it("external view, types from EXVDATATYPE", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zvext_prio.view.xml", externalViewXML(true)));
+    await reg.parseAsync();
+    const view = reg.getFirstObject()! as View;
+    const structure = view.parseType(reg);
+    expect(structure).to.be.instanceof(StructureType);
+    const components = (structure as StructureType).getComponents();
+    expect(components.length).to.equal(3);
+
+    expect(components[0].name).to.equal("ITEM");
+    expect(components[0].type).to.be.instanceof(CharacterType);
+    expect((components[0].type as CharacterType).getLength()).to.equal(18);
+
+    expect(components[1].name).to.equal("FLAG");
+    expect(components[1].type).to.be.instanceof(CharacterType);
+    expect((components[1].type as CharacterType).getLength()).to.equal(1);
+
+    expect(components[2].name).to.equal("PRIO");
+    expect(components[2].type).to.be.instanceof(IntegerType);
+  });
+
+  it("external view, without EXVDATATYPE gives void", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zvext_prio.view.xml", externalViewXML(false)));
+    await reg.parseAsync();
+    const view = reg.getFirstObject()! as View;
+    const structure = view.parseType(reg);
+    expect(structure).to.be.instanceof(StructureType);
+    const components = (structure as StructureType).getComponents();
+    expect(components.length).to.equal(3);
+    for (const c of components) {
+      expect(c.type).to.be.instanceof(VoidType);
+    }
+  });
+
+  it("external view, syntax", async () => {
+    const abap = `DATA row TYPE zvext_prio.
+row-item = 'A'.`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zvext_prio.view.xml", externalViewXML(true)),
+      new MemoryFile("zvext_syntax.prog.abap", abap),
+    ]);
+    await reg.parseAsync();
+    const prog = getABAPObjects(reg)[0];
+    expect(prog.getType()).to.equal("PROG");
+    const result = new SyntaxLogic(reg, prog).run();
+    expect(result.issues.length).to.equal(0);
+
+    const row = result.spaghetti.lookupPosition(new Position(2, 1), "zvext_syntax.prog.abap")?.findVariable("row");
+    expect(row).to.not.equal(undefined);
+    const rowType = row!.getType();
+    expect(rowType).to.be.instanceof(StructureType);
+    const item = (rowType as StructureType).getComponentByName("item");
+    expect(item).to.be.instanceof(CharacterType);
+    expect((item as CharacterType).getLength()).to.equal(18);
   });
 });
