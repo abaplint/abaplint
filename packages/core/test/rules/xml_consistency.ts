@@ -276,7 +276,7 @@ ENDCLASS.`));
   });
 
   it("not ok ampersand", async () => {
-    const reg = new Registry().addFile(new MemoryFile("zcl_klaus.devc.xml", "<foo>sdfsd & sfds</foo>"));
+    const reg = new Registry().addFile(new MemoryFile("package.devc.xml", "<foo>sdfsd & sfds</foo>"));
     const issues = await run(reg);
     expect(issues.length).to.equals(1);
   });
@@ -1966,6 +1966,33 @@ describe("rule, xml_consistency, ENQU lock parameter name length", () => {
   it("no issues when no parameters present", async () => {
     const issues = await runEnqu("");
     expect(issues.length).to.equal(0);
+  });
+
+});
+
+describe("rule, xml_consistency, DEVC filename", () => {
+  const devc = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DEVC" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DEVC>
+    <CTEXT>Package</CTEXT>
+   </DEVC>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+  it("package.devc.xml, ok", async () => {
+    const reg = new Registry().addFile(new MemoryFile("/src/package.devc.xml", devc));
+    const issues = await run(reg);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("zfoo.devc.xml, error", async () => {
+    const reg = new Registry().addFile(new MemoryFile("/src/zfoo.devc.xml", devc));
+    const issues = await run(reg);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("package.devc.xml");
   });
 
 });
