@@ -6,6 +6,7 @@ import {IStatementRunnable} from "../statement_runnable";
 import {SQLFunction} from "./sql_function";
 import {SQLPathForColumn} from "./sql_path_for_column";
 
+
 export class SQLField extends Expression {
   public getRunnable(): IStatementRunnable {
 
