@@ -38,6 +38,8 @@ export class CurrentScope {
   private readonly localFriends: Map<string, string[]> = new Map();
   /** types of the FOR and LET names used in a procedure, key is the scope node of the procedure */
   private readonly localNameTypes: WeakMap<SpaghettiScopeNode, Map<string, AbstractType>> = new WeakMap();
+  /** row type of the members of a group, key is the identifier of the group variable */
+  private readonly groupMemberTypes: Map<string, AbstractType> = new Map();
 
   public static buildDefault(reg: IRegistry, obj: IObject): CurrentScope {
     const s = new CurrentScope(reg, obj);
@@ -664,6 +666,18 @@ export class CurrentScope {
       && type.containsVoid() === false
       && type.isGeneric() === false
       && type.toText(0).includes("Unknown type") === false;
+  }
+
+  public setGroupMemberType(group: TypedIdentifier, rowType: AbstractType): void {
+    this.groupMemberTypes.set(CurrentScope.groupKey(group), rowType);
+  }
+
+  public findGroupMemberType(group: TypedIdentifier): AbstractType | undefined {
+    return this.groupMemberTypes.get(CurrentScope.groupKey(group));
+  }
+
+  private static groupKey(group: TypedIdentifier): string {
+    return group.getFilename() + ":" + group.getStart().getRow() + ":" + group.getStart().getCol();
   }
 
   public getEnclosingMethodName(): string | undefined {
