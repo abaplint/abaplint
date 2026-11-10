@@ -10,6 +10,7 @@ import {ObjectOriented} from "../_object_oriented";
 import {IMethodDefinition} from "../../types/_method_definition";
 import {MethodParameters} from "../expressions/method_parameters";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {RaiseMessage} from "../_raise_message";
 
 export class Raise implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -74,6 +75,8 @@ export class Raise implements StatementSyntax {
     if (param) {
       new MethodParameters().checkExporting(param, input, method, true);
     }
+
+    RaiseMessage.checkRaise(node, input);
 
     for (const s of node.findDirectExpressions(Expressions.RaiseWith)) {
       RaiseWith.runSyntax(s, input);
