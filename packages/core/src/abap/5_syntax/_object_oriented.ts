@@ -254,7 +254,7 @@ export class ObjectOriented {
     const methodName = this.scope.getEnclosingMethodName();
     const classDef = this.scope.findClassDefinition(this.scope.getEnclosingClassName());
     if (methodName && classDef && this.searchMethodName(classDef, methodName).method?.getExceptions().length) {
-      return "Class based exceptions cannot be raised in methods with classic exceptions";
+      return "Old exceptions and class-based exceptions cannot be used at the same time";
     }
     return undefined;
   }

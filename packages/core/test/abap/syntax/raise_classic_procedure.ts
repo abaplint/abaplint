@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {runProgram} from "./syntax";
 
-const message = "Class based exceptions cannot be raised in methods with classic exceptions";
+const message = "Old exceptions and class-based exceptions cannot be used at the same time";
 
 function run(definition: string, implementation: string): string[] {
   const abap = `
