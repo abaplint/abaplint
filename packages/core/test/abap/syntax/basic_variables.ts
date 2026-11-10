@@ -1329,6 +1329,137 @@ DATA moo TYPE REF TO lif_bar=>type.`;
     expect((rightId as Basic.CharacterType).getLength()).to.equal(4);
   });
 
+  const zselCond = () => buildDatabaseTable("ZSEL_COND", [
+    {name: "MANDT", length: 3},
+    {name: "KEYVAL", length: 30},
+    {name: "STATUS", length: 1}]);
+
+  function runSelCond(abap: string, name: string) {
+    return runMulti([
+      {filename: "zsel_cond.tabl.xml", contents: zselCond()},
+      {filename: "zfoobar.prog.abap", contents: abap}], name);
+  }
+
+  function expectCharComponent(structure: Basic.StructureType, name: string, length: number) {
+    const component = structure.getComponentByName(name);
+    expect(component, name).to.be.instanceof(Basic.CharacterType);
+    expect((component as Basic.CharacterType).getLength(), name).to.equal(length);
+  }
+
+  it("SELECT substring columns into inline table", () => {
+    const abap = `
+DATA lr_cust TYPE RANGE OF string.
+SELECT DISTINCT substring( keyval, 1, 10 ) AS cust,
+                substring( keyval, 11, 7 ) AS prod
+  FROM zsel_cond
+  WHERE status = @space
+    AND substring( keyval, 1, 10 ) IN @lr_cust
+  INTO TABLE @DATA(lt_result).`;
+    const rowType = expectTable(runSelCond(abap, "lt_result"));
+    expect(rowType).to.be.instanceof(Basic.StructureType);
+    const structure = rowType as Basic.StructureType;
+    expect(structure.getComponents().map(c => c.name)).to.deep.equal(["cust", "prod"]);
+    expectCharComponent(structure, "cust", 10);
+    expectCharComponent(structure, "prod", 7);
+  });
+
+  it("SELECT plain field and substring column into inline table", () => {
+    const abap = `
+SELECT status, substring( keyval, 1, 10 ) AS cust
+  FROM zsel_cond
+  INTO TABLE @DATA(lt_result).`;
+    const structure = expectTable(runSelCond(abap, "lt_result")) as Basic.StructureType;
+    expect(structure).to.be.instanceof(Basic.StructureType);
+    expect(structure.getComponents().map(c => c.name)).to.deep.equal(["STATUS", "cust"]);
+    expectCharComponent(structure, "STATUS", 1);
+    expectCharComponent(structure, "cust", 10);
+  });
+
+  it("SELECT substring with host variable length, column voided", () => {
+    const abap = `
+DATA lv_len TYPE i.
+SELECT status, substring( keyval, 1, @lv_len ) AS cust
+  FROM zsel_cond
+  INTO TABLE @DATA(lt_result).`;
+    const structure = expectTable(runSelCond(abap, "lt_result")) as Basic.StructureType;
+    expect(structure).to.be.instanceof(Basic.StructureType);
+    expectCharComponent(structure, "STATUS", 1);
+    expect(structure.getComponentByName("cust")).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("SELECT upper and nested functions into inline table", () => {
+    const abap = `
+SELECT upper( keyval ) AS up, lower( substring( keyval, 1, 4 ) ) AS low
+  FROM zsel_cond
+  INTO TABLE @DATA(lt_result).`;
+    const structure = expectTable(runSelCond(abap, "lt_result")) as Basic.StructureType;
+    expect(structure).to.be.instanceof(Basic.StructureType);
+    expectCharComponent(structure, "up", 30);
+    expectCharComponent(structure, "low", 4);
+  });
+
+  it("SELECT function column without alias, voided", () => {
+    const abap = `
+SELECT status, substring( keyval, 1, 10 )
+  FROM zsel_cond
+  INTO TABLE @DATA(lt_result).`;
+    expectVoid(runSelCond(abap, "lt_result"));
+  });
+
+  it("SELECT SINGLE substring columns into inline structure", () => {
+    const abap = `
+SELECT SINGLE status, substring( keyval, 11, 7 ) AS prod
+  FROM zsel_cond
+  INTO @DATA(ls_result).`;
+    const components = expectStructure(runSelCond(abap, "ls_result"));
+    expect(components.map(c => c.name)).to.deep.equal(["STATUS", "prod"]);
+    expect((components[1].type as Basic.CharacterType).getLength()).to.equal(7);
+  });
+
+  it("SELECT SINGLE single substring column into inline field", () => {
+    const abap = `
+SELECT SINGLE substring( keyval, 1, 10 ) AS cust
+  FROM zsel_cond
+  INTO @DATA(lv_cust).`;
+    expectCharacter(runSelCond(abap, "lv_cust"), 10);
+  });
+
+  it("SELECT single substring column into inline table", () => {
+    const abap = `
+SELECT substring( keyval, 1, 10 ) AS cust
+  FROM zsel_cond
+  INTO TABLE @DATA(lt_result).`;
+    const structure = expectTable(runSelCond(abap, "lt_result")) as Basic.StructureType;
+    expect(structure).to.be.instanceof(Basic.StructureType);
+    expect(structure.getComponents().map(c => c.name)).to.deep.equal(["cust"]);
+    expectCharComponent(structure, "cust", 10);
+  });
+
+  it("SELECT SINGLE substring into inline list", () => {
+    const abap = `
+SELECT SINGLE status, substring( keyval, 1, 10 )
+  FROM zsel_cond
+  INTO (@DATA(lv_status), @DATA(lv_cust)).`;
+    expectCharacter(runSelCond(abap, "lv_status"), 1);
+    expectCharacter(runSelCond(abap, "lv_cust"), 10);
+  });
+
+  it("SELECT join with substring column into inline table", () => {
+    const right = buildDatabaseTable("ZJOIN_RIGHT", [{name: "ID", length: 4}]);
+    const abap = `SELECT r~id, substring( c~keyval, 1, 10 ) AS cust
+      FROM zsel_cond AS c
+      INNER JOIN zjoin_right AS r ON c~status = r~id
+      INTO TABLE @DATA(result).`;
+    const result = runMulti([
+      {filename: "zsel_cond.tabl.xml", contents: zselCond()},
+      {filename: "zjoin_right.tabl.xml", contents: right},
+      {filename: "zfoobar.prog.abap", contents: abap}], "result");
+    const structure = expectTable(result) as Basic.StructureType;
+    expect(structure).to.be.instanceof(Basic.StructureType);
+    expectCharComponent(structure, "ID", 4);
+    expectCharComponent(structure, "cust", 10);
+  });
+
   it("SELECT SINGLE, voided", () => {
     const abap = `SELECT SINGLE * FROM something INTO @DATA(ls_data).`;
     const type = resolveVariable(abap, "ls_data");
