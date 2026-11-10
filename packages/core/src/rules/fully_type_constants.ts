@@ -3,7 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import {Issue} from "../issue";
 import * as Statements from "../abap/2_statements/statements";
 import {StatementNode} from "../abap/nodes/statement_node";
-import {Type, TypeTable, NamespaceSimpleName, DefinitionName} from "../abap/2_statements/expressions";
+import {Type, TypeTable, NamespaceSimpleName, DefinitionName, DataDefinition} from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 
@@ -45,6 +45,11 @@ export class FullyTypeConstants extends ABAPRule {
       if ((stat.get() instanceof Statements.Constant
           || (this.conf.checkData === true && stat.get() instanceof Statements.Data))
           && !this.isTyped(stat)) {
+        if (stat.get() instanceof Statements.Data && stat.findDirectExpression(DataDefinition) === undefined) {
+          // unnamed field, eg. "DATA (10)." inside DATA BEGIN OF, cannot be typed
+          continue;
+        }
+
         const type = stat.get() instanceof Statements.Constant ? "constant definition" : "data definition";
 
         let token = stat.findFirstExpression(NamespaceSimpleName)?.getFirstToken();
@@ -52,7 +57,9 @@ export class FullyTypeConstants extends ABAPRule {
           token = stat.findFirstExpression(DefinitionName)?.getFirstToken();
         }
         if (token === undefined) {
-          throw new Error("fully type constants, unexpected node");
+          const start = stat.getFirstToken().getStart();
+          throw new Error(`fully type constants: unexpected node, ${file.getFilename()}, row ${
+            start.getRow()}, col ${start.getCol()}, statement "${stat.concatTokens()}"`);
         }
 
         issues.push(
