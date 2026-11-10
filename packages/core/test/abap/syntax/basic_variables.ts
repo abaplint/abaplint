@@ -2395,6 +2395,67 @@ DATA(two) = flo * pac.`;
     expect(resolveVariable(abap, "two")!.getType()).to.be.instanceof(Basic.FloatType);
   });
 
+  it("arithmetic, the difference of two dates is a number of days, not a date", () => {
+    // date and time operands count as numbers in the calculation type
+    const abap = `DATA lv_start TYPE d VALUE '20260105'.
+DATA lv_end TYPE d VALUE '20260320'.
+DATA(lv_between) = lv_end - lv_start.`;
+    expect(resolveVariable(abap, "lv_between")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, the sum of two dates is a number, not a date", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_end TYPE d.
+DATA(lv_sum) = lv_start + lv_end.`;
+    expect(resolveVariable(abap, "lv_sum")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, a date plus an integer is an integer", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA(lv_later) = lv_start + 31.`;
+    expect(resolveVariable(abap, "lv_later")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, the difference of two times is a number of seconds, not a time", () => {
+    const abap = `DATA lv_from TYPE t.
+DATA lv_to TYPE t.
+DATA(lv_seconds) = lv_to - lv_from.`;
+    expect(resolveVariable(abap, "lv_seconds")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, sy-datum minus a date is a number", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA(lv_days) = sy-datum - lv_start.`;
+    expect(resolveVariable(abap, "lv_days")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, a date and a float give a float", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_f TYPE f.
+DATA(lv_res) = lv_start * lv_f.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("arithmetic, a date and a packed number give packed", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_p TYPE p LENGTH 8 DECIMALS 2.
+DATA(lv_res) = lv_start + lv_p.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
+  it("arithmetic, a declared date target stays a date", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_x TYPE d.
+lv_x = lv_start + 31.`;
+    expect(resolveVariable(abap, "lv_x")!.getType()).to.be.instanceof(Basic.DateType);
+  });
+
+  it("no arithmetic, an inline copy of a time stays a time", () => {
+    const abap = `DATA lv_from TYPE t.
+DATA(lv_copy) = lv_from.`;
+    expect(resolveVariable(abap, "lv_copy")!.getType()).to.be.instanceof(Basic.TimeType);
+  });
+
   it("concatenation is not arithmetic, a character result stays character", () => {
     const abap = `DATA cha TYPE c LENGTH 10.
 DATA(res) = cha && cha.`;

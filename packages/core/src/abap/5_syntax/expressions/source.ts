@@ -4,7 +4,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType, DateType, TimeType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -359,8 +359,9 @@ export class Source {
   /** The calculation type of an arithmetic expression is the most general of the
    * operand types. An operand of type c, n, d, t or string is converted into it and
    * never becomes the result: "lv_f * '0.25'" is a float, not a character field of
-   * length four. Returns undefined when neither operand is numeric, leaving the
-   * decision to the caller. */
+   * length four. Date and time operands count as numbers of days and seconds, type i:
+   * "lv_end - lv_start" is a number of days, not a date. Returns undefined when neither
+   * operand is numeric, leaving the decision to the caller. */
   private static calculationType(left: AbstractType | undefined, right: AbstractType | undefined) {
     if (left === undefined || right === undefined) {
       return undefined;
@@ -369,6 +370,13 @@ export class Source {
       return left;
     } else if (right instanceof VoidType || right instanceof UnknownType) {
       return right;
+    }
+
+    if (left instanceof DateType || left instanceof TimeType) {
+      left = IntegerType.get();
+    }
+    if (right instanceof DateType || right instanceof TimeType) {
+      right = IntegerType.get();
     }
 
     const leftRank = this.numericRank(left);
