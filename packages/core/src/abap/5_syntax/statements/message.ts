@@ -8,6 +8,7 @@ import {StatementSyntax} from "../_statement_syntax";
 import {MessageSource} from "../expressions/message_source";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {ObjectOriented} from "../_object_oriented";
+import {BuiltInCall} from "../_builtin_call";
 
 export class Message implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -30,7 +31,16 @@ export class Message implements StatementSyntax {
 
     for (const mss of node.findDirectExpressions(Expressions.MessageSourceSource)) {
       for (const s of mss.findDirectExpressions(Expressions.Source)) {
+        const issueCount = input.issues.length;
         Source.runSyntax(s, input);
+        // "Arithmetic calculation not permitted here" on a system, whatever the argument
+        const call = issueCount === input.issues.length && input.scope.getOpenABAP() === false
+          ? BuiltInCall.fromSource(s, input) : undefined;
+        if (call !== undefined && BuiltInCall.isNumeric(call)) {
+          const message = `Numeric function "${BuiltInCall.callName(call)}" cannot be used in MESSAGE WITH`;
+          input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+          return;
+        }
       }
       for (const s of mss.findDirectExpressions(Expressions.SimpleSource3)) {
         Source.runSyntax(s, input);
