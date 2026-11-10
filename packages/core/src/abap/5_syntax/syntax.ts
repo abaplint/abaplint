@@ -18,6 +18,7 @@ import {Types} from "./structures/types";
 import {Statics} from "./structures/statics";
 import {Constants} from "./structures/constants";
 import {Cleanup} from "./structures/cleanup";
+import {Try} from "./structures/try";
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
@@ -543,6 +544,8 @@ export class SyntaxLogic {
       return true;
     } else if (stru instanceof Structures.Cleanup) {
       Cleanup.runSyntax(node, input);
+    } else if (stru instanceof Structures.Try) {
+      Try.runSyntax(node, input);
     }
     return false;
   }
