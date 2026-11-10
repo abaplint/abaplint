@@ -4,7 +4,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType, DateType, TimeType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType, DateType, TimeType, NumericType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -372,6 +372,8 @@ export class Source {
       return right;
     }
 
+    const dateOrTime = left instanceof DateType || left instanceof TimeType
+      || right instanceof DateType || right instanceof TimeType;
     if (left instanceof DateType || left instanceof TimeType) {
       left = IntegerType.get();
     }
@@ -383,12 +385,25 @@ export class Source {
     const rightRank = this.numericRank(right);
     if (leftRank === undefined && rightRank === undefined) {
       return undefined;
-    } else if (rightRank === undefined) {
+    }
+
+    // a character-like operand next to a date or time counts as p: "lv_date + '5'" is p
+    if (leftRank === undefined && this.isCharacterLike(left) && dateOrTime) {
+      return rightRank! >= 3 ? right : new PackedType(8, 0);
+    } else if (rightRank === undefined && this.isCharacterLike(right) && dateOrTime) {
+      return leftRank! >= 3 ? left : new PackedType(8, 0);
+    }
+
+    if (rightRank === undefined) {
       return left;
     } else if (leftRank === undefined) {
       return right;
     }
     return leftRank >= rightRank ? left : right;
+  }
+
+  private static isCharacterLike(type: AbstractType): boolean {
+    return type instanceof CharacterType || type instanceof NumericType || type instanceof StringType;
   }
 
   private static numericRank(type: AbstractType): number | undefined {

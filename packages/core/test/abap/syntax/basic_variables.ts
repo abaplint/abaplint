@@ -2443,6 +2443,27 @@ DATA(lv_res) = lv_start + lv_p.`;
     expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.PackedType);
   });
 
+  it("arithmetic, a date and a character literal give packed", () => {
+    // the character operand counts as p, measured on a system: P(8,0)
+    const abap = `DATA lv_start TYPE d.
+DATA(lv_res) = lv_start + '5'.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
+  it("arithmetic, a time and a string give packed", () => {
+    const abap = `DATA lv_from TYPE t.
+DATA lv_str TYPE string.
+DATA(lv_res) = lv_str - lv_from.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
+  it("arithmetic, a date, a character literal and a float give a float", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_f TYPE f.
+DATA(lv_res) = lv_start + '5' + lv_f.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
   it("arithmetic, a declared date target stays a date", () => {
     const abap = `DATA lv_start TYPE d.
 DATA lv_x TYPE d.
