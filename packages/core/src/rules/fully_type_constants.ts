@@ -52,7 +52,8 @@ export class FullyTypeConstants extends ABAPRule {
           token = stat.findFirstExpression(DefinitionName)?.getFirstToken();
         }
         if (token === undefined) {
-          throw new Error("fully type constants, unexpected node");
+          const start = stat.getFirstToken().getStart();
+          throw new Error(`fully type constants, unexpected node, ${file.getFilename()}, row ${start.getRow()}, col ${start.getCol()}, statement "${stat.concatTokens()}"`);
         }
 
         issues.push(
