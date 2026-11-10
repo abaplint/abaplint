@@ -1,10 +1,11 @@
 import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
+import {ObjectOriented} from "../_object_oriented";
 import {Source} from "./source";
 import {Let} from "./let";
 import {Cond} from "./cond";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class CondBody {
   public static runSyntax(
@@ -14,6 +15,12 @@ export class CondBody {
 
     if (node === undefined) {
       return undefined;
+    }
+
+    const throwNode = node.findDirectExpression(Expressions.Throw);
+    const throwMessage = throwNode ? new ObjectOriented(input.scope).checkClassBasedException() : undefined;
+    if (throwNode && throwMessage) {
+      input.issues.push(syntaxIssue(input, throwNode.getFirstToken(), throwMessage));
     }
 
     let scoped = false;

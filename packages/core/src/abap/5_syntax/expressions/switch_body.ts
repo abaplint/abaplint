@@ -1,5 +1,6 @@
 import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
+import {ObjectOriented} from "../_object_oriented";
 import {Source} from "./source";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AbstractType} from "../../types/basic/_abstract_type";
@@ -12,6 +13,12 @@ export class SwitchBody {
     targetType?: AbstractType): AbstractType | undefined {
     if (node === undefined) {
       return;
+    }
+
+    const throwNode = node.findDirectExpression(Expressions.Throw);
+    const throwMessage = throwNode ? new ObjectOriented(input.scope).checkClassBasedException() : undefined;
+    if (throwNode && throwMessage) {
+      input.issues.push(syntaxIssue(input, throwNode.getFirstToken(), throwMessage));
     }
 
     const thenSource = node.findExpressionAfterToken("THEN");
