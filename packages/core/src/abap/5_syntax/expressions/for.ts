@@ -6,7 +6,10 @@ import {InlineLoopDefinition} from "./inline_loop_definition";
 import {ScopeType} from "../_scope_type";
 import {ComponentCond} from "./component_cond";
 import {Cond} from "./cond";
-import {VoidType} from "../../types/basic";
+import {TableType, VoidType} from "../../types/basic";
+import {AbstractType} from "../../types/basic/_abstract_type";
+import {AbstractToken} from "../../1_lexer/tokens/abstract_token";
+import {LoopGroupBy} from "./loop_group_by";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {ReferenceType} from "../_reference";
 import {Let} from "./let";
@@ -37,14 +40,15 @@ export class For {
       InlineFieldDefinition.runSyntax(f, input);
     }
 
+    let groupsSource: ExpressionNode | undefined = undefined;
     if (groupsToken !== undefined) {
-      const type = VoidType.get("todoGroupBy");
-      const identifier = new TypedIdentifier(groupsToken, input.filename, type, [IdentifierMeta.InlineDefinition]);
-      input.scope.addIdentifier(identifier);
-      input.scope.addReference(groupsToken, identifier, ReferenceType.DataWriteReference, input.filename);
+      groupsSource = this.runGroups(node, groupsToken, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
+      if (s === groupsSource) {
+        continue;
+      }
       Source.runSyntax(s, input);
     }
 
@@ -61,5 +65,35 @@ export class For {
     }
 
     return scoped;
+  }
+
+  /** FOR GROUPS group OF wa IN itab GROUP BY key, returns the itab source */
+  private static runGroups(node: ExpressionNode | StatementNode, groupsToken: AbstractToken,
+                           input: SyntaxInput): ExpressionNode | undefined {
+    const tableSource = node.findExpressionAfterToken("IN");
+    let rowType: AbstractType = VoidType.get("ForGroups");
+    if (tableSource?.get() instanceof Expressions.Source) {
+      const tableType = Source.runSyntax(tableSource, input);
+      if (tableType instanceof TableType) {
+        rowType = tableType.getRowType();
+      }
+    }
+
+    const waToken = node.findExpressionAfterToken("OF")?.getFirstToken();
+    if (waToken !== undefined) {
+      const wa = new TypedIdentifier(waToken, input.filename, rowType, [IdentifierMeta.InlineDefinition]);
+      input.scope.addIdentifier(wa);
+      input.scope.addReference(waToken, wa, ReferenceType.DataWriteReference, input.filename);
+    }
+
+    const keyType = node.findDirectTokenByText("BY") !== undefined
+      ? LoopGroupBy.runKey(node, input)
+      : VoidType.get("ForGroups");
+    const group = new TypedIdentifier(groupsToken, input.filename, keyType, [IdentifierMeta.InlineDefinition]);
+    input.scope.addIdentifier(group);
+    input.scope.addReference(groupsToken, group, ReferenceType.DataWriteReference, input.filename);
+    input.scope.setGroupMemberType(group, rowType);
+
+    return tableSource?.get() instanceof Expressions.Source ? tableSource : undefined;
   }
 }

@@ -24,6 +24,7 @@ import {SyntaxLogic} from "./syntax";
 import {IDDICReferences} from "../../_iddic_references";
 import {FunctionGroup} from "../../objects";
 import {IMSAGReferences} from "../../_imsag_references";
+import {AbstractType} from "../types/basic/_abstract_type";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
@@ -31,6 +32,8 @@ export class CurrentScope {
   protected allowHeaderUse: string | undefined;
   protected parentObj: IObject;
   private readonly localFriends: Map<string, string[]> = new Map();
+  /** row type of the members of a group, key is the identifier of the group variable */
+  private readonly groupMemberTypes: Map<string, AbstractType> = new Map();
 
   public static buildDefault(reg: IRegistry, obj: IObject): CurrentScope {
     const s = new CurrentScope(reg, obj);
@@ -611,6 +614,18 @@ export class CurrentScope {
 
   public isLocalFriend(className: string, friendName: string): boolean {
     return this.localFriends.get(className.toUpperCase())?.includes(friendName.toUpperCase()) === true;
+  }
+
+  public setGroupMemberType(group: TypedIdentifier, rowType: AbstractType): void {
+    this.groupMemberTypes.set(CurrentScope.groupKey(group), rowType);
+  }
+
+  public findGroupMemberType(group: TypedIdentifier): AbstractType | undefined {
+    return this.groupMemberTypes.get(CurrentScope.groupKey(group));
+  }
+
+  private static groupKey(group: TypedIdentifier): string {
+    return group.getFilename() + ":" + group.getStart().getRow() + ":" + group.getStart().getCol();
   }
 
   public getEnclosingMethodName(): string | undefined {

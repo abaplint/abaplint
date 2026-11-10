@@ -3519,6 +3519,10 @@ ${indentation}    output = ${uniqueName}.\n`;
 
     if (this.lowReg.getConfig().isOpenABAP()) {
       return undefined;
+    } else if (node.get() instanceof Statements.Loop
+        && node.concatTokens().toUpperCase().startsWith("LOOP AT GROUP ")) {
+      // rewritten by the LOOP GROUP downport, the inline target is outlined afterwards
+      return undefined;
     }
 
     for (const i of node.findAllExpressionsRecursive(Expressions.InlineData)) {

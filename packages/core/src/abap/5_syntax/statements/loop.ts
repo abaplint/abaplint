@@ -79,6 +79,10 @@ export class Loop implements StatementSyntax {
 
     if (sourceType instanceof TableType) {
       rowType = sourceType.getRowType();
+    } else if (concat.startsWith("LOOP AT GROUP ")) {
+      rowType = LoopGroupBy.findMemberType(firstSource, input);
+    }
+    if (rowType) {
       sourceType = rowType;
       if (targetConcat?.startsWith("REFERENCE INTO ")) {
         sourceType = new DataReference(sourceType);
@@ -163,7 +167,9 @@ export class Loop implements StatementSyntax {
 
     const group = node.findDirectExpression(Expressions.LoopGroupBy);
     if (group) {
-      LoopGroupBy.runSyntax(group, input);
+      const representative = loopTarget?.findDirectExpression(Expressions.Target)
+        ?? loopTarget?.findDirectExpression(Expressions.FSTarget);
+      LoopGroupBy.runSyntax(group, input, rowType, representative);
     }
 
   }
