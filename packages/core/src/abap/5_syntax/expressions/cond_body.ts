@@ -5,6 +5,7 @@ import {Source} from "./source";
 import {Let} from "./let";
 import {Cond} from "./cond";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {RaiseMessage} from "../_raise_message";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class CondBody {
@@ -27,6 +28,10 @@ export class CondBody {
     const l = node.findDirectExpression(Expressions.Let);
     if (l) {
       scoped = Let.runSyntax(l, input);
+    }
+
+    for (const t of node.findDirectExpressions(Expressions.Throw)) {
+      RaiseMessage.checkThrow(t, input);
     }
 
     for (const s of node.findDirectExpressions(Expressions.Cond)) {
