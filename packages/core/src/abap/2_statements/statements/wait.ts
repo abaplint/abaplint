@@ -20,7 +20,7 @@ export class Wait implements IStatement {
 
     const ret = seq("WAIT", alt(until, up));
 
-    return verNotLang(LanguageVersion.KeyUser, ret);
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }

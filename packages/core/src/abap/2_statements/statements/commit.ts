@@ -9,7 +9,7 @@ export class Commit implements IStatement {
   public getMatcher(): IStatementRunnable {
     const work = seq("WORK", opt("AND WAIT"));
 
-    return verNotLang(LanguageVersion.KeyUser, seq("COMMIT", alt(work, DatabaseConnection)));
+    return verNotLang(LanguageVersion.KeyUser, seq("COMMIT", alt(work, verNotLang(LanguageVersion.Cloud, DatabaseConnection))));
   }
 
 }
