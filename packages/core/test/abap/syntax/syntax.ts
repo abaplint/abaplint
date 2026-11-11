@@ -19406,3 +19406,21 @@ ENDCLASS.`;
     expect(issues.map(i => i.getMessage())).to.deep.equal(["Method parameter type not compatible, I_MATERIAL"]);
   });
 });
+
+describe("syntax.ts, full length on packed field", () => {
+  it("WRITE full length of packed field, NO-ZERO NO-GAP", () => {
+    const abap = `
+DATA pdvs(5) TYPE p DECIMALS 0.
+WRITE pdvs(5) NO-ZERO NO-GAP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("inline declaration from full length of packed field", () => {
+    const abap = `
+DATA pdvs(5) TYPE p DECIMALS 0.
+DATA(sdf) = pdvs(5).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
