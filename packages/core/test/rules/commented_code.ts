@@ -60,6 +60,16 @@ write bar.
 * DATA foo TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 
 `, cnt: 3},
+
+  // a statement split from text at a line break, followed by more text on its line
+  {abap: `
+* The check accepts either a fixed list or
+* function modules. Unfortunately, this causes an issue.
+* Another line of text.`, cnt: 0},
+  // a statement split from text at a line break, ending its line
+  {abap: `
+* old implementation:
+* WRITE 'hello'.`, cnt: 1},
 ];
 
 testRule(tests, CommentedCode);
