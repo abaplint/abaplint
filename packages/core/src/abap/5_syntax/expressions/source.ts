@@ -19,6 +19,7 @@ import {ConvBody} from "./conv_body";
 import {FilterBody} from "./filter_body";
 import {CorrespondingBody} from "./corresponding_body";
 import {BuiltIn} from "../_builtin";
+import {BuiltInCall} from "../_builtin_call";
 import {AttributeChain} from "./attribute_chain";
 import {Dereference} from "./dereference";
 import {Cast} from "./cast";
@@ -40,6 +41,9 @@ import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 // TODO: refactor all these method parameters to objects, this is getting messy
 export class Source {
+  // arguments of boolc( ) and xsdbool( ) parsed as method calls, where a predicate function is allowed
+  private static readonly logicalArguments = new WeakSet<ExpressionNode>();
+
   public static runSyntax(
     node: ExpressionNode | undefined,
     input: SyntaxInput,
@@ -254,6 +258,12 @@ export class Source {
       if (first instanceof ExpressionNode) {
         const get = first.get();
         if (get instanceof Expressions.MethodCallChain) {
+          const predicate = this.predicateCall(node, first, input);
+          if (predicate !== undefined) {
+            const message = `Predicate function "${predicate}" can only be used in a logical expression`;
+            input.issues.push(syntaxIssue(input, first.getFirstToken(), message));
+            return VoidType.get(CheckSyntaxKey);
+          }
           const found = MethodCallChain.runSyntax(first, input, targetType);
           context = arithmetic === true ? this.infer(context, found, true) : found;
           if (context === undefined) {
@@ -508,6 +518,26 @@ export class Source {
     }
 
     return targetType;
+  }
+
+  // a predicate function, line_exists( ) or contains( ), is a logical expression and not a value,
+  // a system reports it as an unknown method in any operand position other than the argument of boolc( ) or xsdbool( ),
+  // which parse as method calls in releases before xsdbool( ) was added
+  private static predicateCall(source: ExpressionNode, chain: ExpressionNode, input: SyntaxInput): string | undefined {
+    if (input.scope.getOpenABAP()) {
+      return undefined;
+    }
+    const call = BuiltInCall.fromChain(chain, input);
+    const name = call === undefined ? undefined : BuiltInCall.callName(call);
+    const upper = name?.toUpperCase();
+    if (call !== undefined && (upper === "BOOLC" || upper === "XSDBOOL")) {
+      const argument = call.findDirectExpression(Expressions.MethodCallParam)?.findDirectExpression(Expressions.Source);
+      if (argument !== undefined) {
+        this.logicalArguments.add(argument);
+      }
+      return undefined;
+    }
+    return BuiltIn.isPredicate(name) === true && this.logicalArguments.has(source) === false ? name : undefined;
   }
 
   // "NEW ty( )->*" is a syntax error, also in releases where a method call can be dereferenced
