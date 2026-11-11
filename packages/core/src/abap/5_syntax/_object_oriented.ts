@@ -248,6 +248,17 @@ export class ObjectOriented {
     return undefined;
   }
 
+  // RAISE EXCEPTION and THROW are not allowed in a method whose interface declares classic EXCEPTIONS,
+  // not even for a CX_NO_CHECK class
+  public checkClassBasedException(): string | undefined {
+    const methodName = this.scope.getEnclosingMethodName();
+    const classDef = this.scope.findClassDefinition(this.scope.getEnclosingClassName());
+    if (methodName && classDef && this.searchMethodName(classDef, methodName).method?.getExceptions().length) {
+      return "Old exceptions and class-based exceptions cannot be used at the same time";
+    }
+    return undefined;
+  }
+
   // SUPER-> can only call the previous implementation of the method it is used in, returns the message otherwise
   // both names are resolved in the super class, so an alias and the method it stands for are the same
   public checkSuperCall(
