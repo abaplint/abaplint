@@ -14,7 +14,7 @@ import {EditHelper, IEdit} from "../edit_helper";
 import {StatementNode} from "../abap/nodes/statement_node";
 import * as Statements from "../abap/2_statements/statements";
 import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
-import {ReferenceType} from "../abap/5_syntax/_reference";
+import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
 import {ABAPFile} from "../abap/abap_file";
 
 
@@ -29,25 +29,35 @@ export class UnusedVariablesConf extends BasicRuleConfig {
 
 class WorkArea {
   // keyed by filename + start position, this equals Identifier.equals()
-  private readonly workarea = new Map<string, {id: TypedIdentifier, count: number}>();
+  private readonly workarea = new Map<string, {id: TypedIdentifier, count: number, required: number}>();
 
   public push(id: TypedIdentifier, count = 1) {
-    const key = this.buildKey(id);
+    const key = WorkArea.buildKey(id);
     if (this.workarea.has(key)) {
       return;
     }
-    this.workarea.set(key, {id, count});
+    this.workarea.set(key, {id, count, required: count});
   }
 
   public removeIfExists(id: Identifier | undefined): void {
     if (id === undefined) {
       return;
     }
-    const key = this.buildKey(id);
+    const key = WorkArea.buildKey(id);
     const found = this.workarea.get(key);
     if (found !== undefined) {
       found.count--;
       if (found.count === 0) {
+        this.workarea.delete(key);
+      }
+    }
+  }
+
+  /** removes the identifiers with enough references, counts include all objects, also the one the
+   *  identifiers belong to, so it is compared to the required count and not the remaining count */
+  public removeReferenced(counts: ReadonlyMap<string, number>): void {
+    for (const [key, entry] of this.workarea) {
+      if ((counts.get(key) ?? 0) >= entry.required) {
         this.workarea.delete(key);
       }
     }
@@ -61,7 +71,7 @@ class WorkArea {
     return this.workarea.size;
   }
 
-  private buildKey(id: Identifier): string {
+  public static buildKey(id: Identifier): string {
     const start = id.getStart();
     return id.getFilename() + "," + start.getRow() + "," + start.getCol();
   }
@@ -71,6 +81,8 @@ export class UnusedVariables implements IRule {
   private conf = new UnusedVariablesConf();
   private reg: IRegistry;
   private workarea: WorkArea;
+  /** read, write and type references per identifier key in all objects, built once per run when needed */
+  private referenceCounts: Map<string, number> | undefined = undefined;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -111,6 +123,7 @@ Errors found in INCLUDES are reported for the main program.`,
 
   public initialize(reg: IRegistry) {
     this.reg = reg;
+    this.referenceCounts = undefined;
     return this;
   }
 
@@ -142,38 +155,60 @@ Errors found in INCLUDES are reported for the main program.`,
     if (this.workarea.count() === 0) {
       return this.buildIssues(obj); // exit early if all variables are used
     }
-    this.findUses(top, obj);
-
-    for (const o of this.reg.getObjects()) {
-      if (o === obj) {
-        continue;
-      } else if (o instanceof ABAPObject) {
-        if (this.reg.isDependency(o)) {
-          continue; // do not search in dependencies
-        }
-        const syntax = new SyntaxLogic(this.reg, o).run();
-        this.findUses(syntax.spaghetti.getTop(), o);
-        if (this.workarea.count() === 0) {
-          return this.buildIssues(obj); // exit early if all variables are used
-        }
-      }
+    this.findUses(top);
+    if (this.workarea.count() === 0) {
+      return this.buildIssues(obj); // exit early if all variables are used
     }
+
+    // uses in other objects, the counts are built once instead of searching all objects for each object
+    this.workarea.removeReferenced(this.getReferenceCounts());
 
     return this.buildIssues(obj);
   }
 
-  private findUses(node: ISpaghettiScopeNode, obj: ABAPObject): void {
+  private getReferenceCounts(): ReadonlyMap<string, number> {
+    if (this.referenceCounts === undefined) {
+      const counts = new Map<string, number>();
+      for (const o of this.reg.getObjects()) {
+        if (!(o instanceof ABAPObject) || this.reg.isDependency(o)) {
+          continue; // do not search in dependencies
+        }
+        const syntax = new SyntaxLogic(this.reg, o).run();
+        this.countUses(syntax.spaghetti.getTop(), counts);
+      }
+      this.referenceCounts = counts;
+    }
+    return this.referenceCounts;
+  }
 
+  private static isUse(r: IReference): boolean {
+    return r.referenceType === ReferenceType.DataReadReference
+      || r.referenceType === ReferenceType.DataWriteReference
+      || r.referenceType === ReferenceType.TypeReference;
+  }
+
+  private findUses(node: ISpaghettiScopeNode): void {
     for (const r of node.getData().references) {
-      if (r.referenceType === ReferenceType.DataReadReference
-          || r.referenceType === ReferenceType.DataWriteReference
-          || r.referenceType === ReferenceType.TypeReference) {
+      if (UnusedVariables.isUse(r)) {
         this.workarea.removeIfExists(r.resolved);
       }
     }
 
     for (const c of node.getChildren()) {
-      this.findUses(c, obj);
+      this.findUses(c);
+    }
+  }
+
+  private countUses(node: ISpaghettiScopeNode, counts: Map<string, number>): void {
+    for (const r of node.getData().references) {
+      if (r.resolved !== undefined && UnusedVariables.isUse(r)) {
+        const key = WorkArea.buildKey(r.resolved);
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+      }
+    }
+
+    for (const c of node.getChildren()) {
+      this.countUses(c, counts);
     }
   }
 
