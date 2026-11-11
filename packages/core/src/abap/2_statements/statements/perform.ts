@@ -10,8 +10,8 @@ export class Perform implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const level = seq("LEVEL", Expressions.Source);
-    const commit = alt(seq("ON COMMIT", opt(level)),
-                       "ON ROLLBACK");
+    const commit = verNotLang(LanguageVersion.Cloud, alt(seq("ON COMMIT", opt(level)),
+                                                         "ON ROLLBACK"));
 
     const short = verNotLang(LanguageVersion.Cloud, seq(Expressions.FormName,
                                                         tok(ParenLeft),
