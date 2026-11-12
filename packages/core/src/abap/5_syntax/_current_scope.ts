@@ -32,7 +32,8 @@ export class CurrentScope {
   protected allowHeaderUse: string | undefined;
   protected parentObj: IObject;
   private readonly localFriends: Map<string, string[]> = new Map();
-  /** row type of the members of a group, key is the identifier of the group variable */
+  /** row type of the members of a group, key is the identifier of the group variable,
+   *  a LOOP AT ... GROUP BY binds the group until its ENDLOOP */
   private readonly groupMemberTypes: Map<string, AbstractType> = new Map();
 
   public static buildDefault(reg: IRegistry, obj: IObject): CurrentScope {
@@ -622,6 +623,10 @@ export class CurrentScope {
 
   public findGroupMemberType(group: TypedIdentifier): AbstractType | undefined {
     return this.groupMemberTypes.get(CurrentScope.groupKey(group));
+  }
+
+  public removeGroupMemberType(group: TypedIdentifier): void {
+    this.groupMemberTypes.delete(CurrentScope.groupKey(group));
   }
 
   private static groupKey(group: TypedIdentifier): string {
