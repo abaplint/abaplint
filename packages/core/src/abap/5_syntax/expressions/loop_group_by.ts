@@ -11,6 +11,7 @@ import {Target} from "./target";
 import {SyntaxInput} from "../_syntax_input";
 import {Source} from "./source";
 import {FieldChain} from "./field_chain";
+import {CurrentScope} from "../_current_scope";
 
 export class LoopGroupBy {
   /**
@@ -38,12 +39,46 @@ export class LoopGroupBy {
       FSTarget.runSyntax(fsTarget, input, keyType);
     }
 
-    if (rowType) {
-      const group = this.findTargetIdentifier(target ?? fsTarget ?? representative, input);
-      if (group) {
-        input.scope.setGroupMemberType(group, rowType);
-      }
+    // bind the group until ENDLOOP, see unbind(), also when the row type is unknown
+    const group = this.findTargetIdentifier(target ?? fsTarget ?? representative, input.scope);
+    if (group) {
+      input.scope.setGroupMemberType(group, rowType ?? VoidType.get("GroupMember"));
     }
+  }
+
+  /** the row target of a LOOP, it is the group when GROUP BY has no target */
+  public static findRepresentative(loop: StatementNode): ExpressionNode | undefined {
+    const loopTarget = loop.findDirectExpression(Expressions.LoopTarget);
+    return loopTarget?.findDirectExpression(Expressions.Target) ?? loopTarget?.findDirectExpression(Expressions.FSTarget);
+  }
+
+  /** called at the end of a LOOP structure, the group of a LOOP AT ... GROUP BY is not bound after its ENDLOOP */
+  public static unbind(loop: StatementNode, scope: CurrentScope): void {
+    const groupBy = loop.findDirectExpression(Expressions.LoopGroupBy);
+    if (groupBy === undefined) {
+      return;
+    }
+    const groupTarget = groupBy.findDirectExpression(Expressions.LoopGroupByTarget);
+    const node = groupTarget?.findDirectExpression(Expressions.Target)
+      ?? groupTarget?.findDirectExpression(Expressions.FSTarget)
+      ?? this.findRepresentative(loop);
+    const group = this.findTargetIdentifier(node, scope);
+    if (group) {
+      scope.removeGroupMemberType(group);
+    }
+  }
+
+  /** LOOP AT GROUP group, the name of the group when it is a variable that no enclosing group loop binds */
+  public static findUnboundGroup(source: ExpressionNode | undefined, input: SyntaxInput): string | undefined {
+    if (source === undefined) {
+      return undefined;
+    }
+    const name = this.groupName(source);
+    const found = input.scope.findVariable(name);
+    if (found === undefined || input.scope.findGroupMemberType(found) !== undefined) {
+      return undefined;
+    }
+    return name;
   }
 
   /** type of the group key, from GROUP BY expr or GROUP BY ( name = expr ... ) */
@@ -94,12 +129,15 @@ export class LoopGroupBy {
     if (source === undefined) {
       return undefined;
     }
-    const name = source.concatTokens().replace(/\s/g, "").replace(/->\*$/, "");
-    const found = input.scope.findVariable(name);
+    const found = input.scope.findVariable(this.groupName(source));
     return found ? input.scope.findGroupMemberType(found) : undefined;
   }
 
-  private static findTargetIdentifier(node: ExpressionNode | undefined, input: SyntaxInput): TypedIdentifier | undefined {
+  private static groupName(source: ExpressionNode): string {
+    return source.concatTokens().replace(/\s/g, "").replace(/->\*$/, "");
+  }
+
+  private static findTargetIdentifier(node: ExpressionNode | undefined, scope: CurrentScope): TypedIdentifier | undefined {
     if (node === undefined) {
       return undefined;
     }
@@ -111,6 +149,6 @@ export class LoopGroupBy {
     } else if (node.getChildren().length === 1) {
       name = node.getFirstToken().getStr();
     }
-    return input.scope.findVariable(name);
+    return scope.findVariable(name);
   }
 }

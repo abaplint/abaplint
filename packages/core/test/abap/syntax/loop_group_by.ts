@@ -146,3 +146,286 @@ DATA(result) = VALUE string_table(
   });
 
 });
+
+// Visibility of the group variables, each case checked against a 7.58 (A4H 816) syntax check
+describe("syntax.ts, LOOP AT ... GROUP BY and FOR GROUPS, visibility of the group variables", () => {
+
+  const header2 = header + `
+TYPES: BEGIN OF ty2,
+         n     TYPE i,
+         other TYPE string,
+       END OF ty2.
+DATA tab2 TYPE STANDARD TABLE OF ty2 WITH EMPTY KEY.
+`;
+
+  it("LOOP, inline group variable is visible after ENDLOOP, like any inline declaration", () => {
+    const issues = runProgram(header + `
+LOOP AT tab INTO DATA(row) GROUP BY ( k1 = row-k1 ) INTO DATA(grp).
+ENDLOOP.
+WRITE / grp-k1.`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("LOOP, inline group variable cannot be declared twice in the same procedure", () => {
+    const issues = runProgram(header + `
+LOOP AT tab INTO DATA(row) GROUP BY row-k2 INTO DATA(grp).
+ENDLOOP.
+LOOP AT tab INTO DATA(row2) GROUP BY row2-k2 INTO DATA(grp).
+ENDLOOP.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("LOOP, pre-declared group variable reused for two tables, members follow the table of each loop", () => {
+    const issues = runProgram(header2 + `
+DATA grp TYPE i.
+LOOP AT tab INTO DATA(row) GROUP BY row-k2 INTO grp.
+  LOOP AT GROUP grp INTO DATA(m1).
+    WRITE / m1-v.
+  ENDLOOP.
+ENDLOOP.
+LOOP AT tab2 INTO DATA(row2) GROUP BY row2-n INTO grp.
+  LOOP AT GROUP grp INTO DATA(m2).
+    WRITE / m2-other.
+  ENDLOOP.
+ENDLOOP.`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("LOOP, LOOP AT GROUP outside of the group loop is an error", () => {
+    // A4H 816: No group is bound to "GRP".
+    const issues = runProgram(header + `
+LOOP AT tab INTO DATA(row) GROUP BY row-k2 INTO DATA(grp).
+ENDLOOP.
+LOOP AT GROUP grp INTO DATA(member).
+ENDLOOP.`);
+    expect(issues[0]?.getMessage()).to.equal("No group is bound to \"grp\"");
+  });
+
+  it("LOOP, group is still bound after a nested group loop over its members ends", () => {
+    const issues = runProgram(header + `
+LOOP AT tab INTO DATA(row) GROUP BY row-k1 INTO DATA(grp).
+  LOOP AT GROUP grp INTO DATA(member) GROUP BY member-k2 INTO DATA(sub).
+    LOOP AT GROUP sub INTO DATA(inner).
+    ENDLOOP.
+  ENDLOOP.
+  LOOP AT GROUP grp INTO DATA(again).
+  ENDLOOP.
+ENDLOOP.`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("LOOP, nested group is not bound after its ENDLOOP", () => {
+    // A4H 816: No group is bound to "SUB".
+    const issues = runProgram(header + `
+LOOP AT tab INTO DATA(row) GROUP BY row-k1 INTO DATA(grp).
+  LOOP AT GROUP grp INTO DATA(member) GROUP BY member-k2 INTO DATA(sub).
+  ENDLOOP.
+  LOOP AT GROUP sub INTO DATA(inner).
+  ENDLOOP.
+ENDLOOP.`);
+    expect(issues[0]?.getMessage()).to.equal("No group is bound to \"sub\"");
+  });
+
+  it("LOOP, pre-declared variable without any group loop is not a group", () => {
+    // A4H 816: No group is bound to "GRP".
+    const issues = runProgram(header + `
+DATA grp TYPE i.
+LOOP AT GROUP grp INTO DATA(member).
+ENDLOOP.`);
+    expect(issues[0]?.getMessage()).to.equal("No group is bound to \"grp\"");
+  });
+
+  it("FOR GROUPS, group variable is not visible after the expression", () => {
+    const issues = runProgram(header + `
+DATA(result) = VALUE string_table(
+  FOR GROUPS grp OF wa IN tab GROUP BY wa-k1
+  ( |{ grp }| ) ).
+WRITE / grp.`);
+    expect(issues[0]?.getMessage()).to.contain("grp");
+  });
+
+  it("FOR GROUPS, work area is not visible after the expression", () => {
+    const issues = runProgram(header + `
+DATA(result) = VALUE string_table(
+  FOR GROUPS grp OF wa IN tab GROUP BY wa-k1
+  ( |{ grp }| ) ).
+WRITE / wa-k1.`);
+    expect(issues[0]?.getMessage()).to.contain("wa");
+  });
+
+  it("FOR GROUPS, same group name in two expressions with the same types, ok", () => {
+    const issues = runProgram(header + `
+DATA(r1) = VALUE string_table(
+  FOR GROUPS grp OF wa IN tab GROUP BY wa-k2
+  FOR m IN GROUP grp ( |{ m-v }| ) ).
+DATA(r2) = VALUE string_table(
+  FOR GROUPS grp OF wa IN tab GROUP BY wa-k2
+  FOR m IN GROUP grp ( |{ m-k1 }| ) ).`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+});
+
+// What can be passed to a method inside the group loops, each case checked against a 7.58 (A4H 816) syntax check
+describe("syntax.ts, LOOP AT ... GROUP BY and FOR GROUPS, passing group variables to methods", () => {
+
+  const classHeader = header + `
+TYPES ty_tab TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS row_to_str IMPORTING r TYPE ty RETURNING VALUE(s) TYPE string.
+    CLASS-METHODS int_to_str IMPORTING i TYPE i RETURNING VALUE(s) TYPE string.
+    CLASS-METHODS tab_to_str IMPORTING t TYPE ty_tab RETURNING VALUE(s) TYPE string.
+    CLASS-METHODS change_row CHANGING r TYPE ty.
+    CLASS-METHODS key_of IMPORTING r TYPE ty RETURNING VALUE(k) TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD row_to_str.
+  ENDMETHOD.
+  METHOD int_to_str.
+  ENDMETHOD.
+  METHOD tab_to_str.
+  ENDMETHOD.
+  METHOD change_row.
+  ENDMETHOD.
+  METHOD key_of.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+`;
+
+  // LOOP AT ... GROUP BY
+
+  it("LOOP, group key passed to a parameter of the key type, ok", () => {
+    const issues = runProgram(classHeader + `
+LOOP AT tab INTO DATA(row) GROUP BY row-k2 INTO DATA(grp).
+  lcl=>int_to_str( grp ).
+ENDLOOP.`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("LOOP, component of a structured group key passed, ok", () => {
+    const issues = runProgram(classHeader + `
+LOOP AT tab INTO DATA(row) GROUP BY ( k2 = row-k2 size = GROUP SIZE ) INTO DATA(grp).
+  lcl=>int_to_str( grp-k2 ).
+  lcl=>int_to_str( grp-size ).
+ENDLOOP.`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("LOOP, group key from a method call in GROUP BY, passed to a parameter of the key type, ok", () => {
+    const issues = runProgram(classHeader + `
+LOOP AT tab INTO DATA(row) GROUP BY lcl=>key_of( row ) INTO DATA(grp).
+  lcl=>int_to_str( grp ).
+ENDLOOP.`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("LOOP, representative passed to a parameter of the row type, ok", () => {
+    const issues = runProgram(classHeader + `
+LOOP AT tab INTO DATA(row) GROUP BY row-k2.
+  lcl=>row_to_str( row ).
+ENDLOOP.`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("LOOP, member passed to a parameter of the row type, ok", () => {
+    const issues = runProgram(classHeader + `
+LOOP AT tab INTO DATA(row) GROUP BY row-k2 INTO DATA(grp).
+  LOOP AT GROUP grp INTO DATA(member).
+    lcl=>row_to_str( member ).
+  ENDLOOP.
+ENDLOOP.`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("LOOP, member field symbol passed as CHANGING, ok", () => {
+    const issues = runProgram(classHeader + `
+LOOP AT tab ASSIGNING FIELD-SYMBOL(<row>) GROUP BY <row>-k2 ASSIGNING FIELD-SYMBOL(<grp>).
+  LOOP AT GROUP <grp> ASSIGNING FIELD-SYMBOL(<member>).
+    lcl=>change_row( CHANGING r = <member> ).
+  ENDLOOP.
+ENDLOOP.`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("LOOP, error, group passed to a table parameter, a group is not a table", () => {
+    const issues = runProgram(classHeader + `
+LOOP AT tab INTO DATA(row) GROUP BY row-k2 INTO DATA(grp).
+  lcl=>tab_to_str( grp ).
+ENDLOOP.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("LOOP, error, member passed to a parameter of the key type", () => {
+    const issues = runProgram(classHeader + `
+LOOP AT tab INTO DATA(row) GROUP BY row-k2 INTO DATA(grp).
+  LOOP AT GROUP grp INTO DATA(member).
+    lcl=>int_to_str( member ).
+  ENDLOOP.
+ENDLOOP.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("LOOP, error, structured group key passed to a parameter of the row type", () => {
+    const issues = runProgram(classHeader + `
+LOOP AT tab INTO DATA(row) GROUP BY ( k1 = row-k1 k2 = row-k2 ) INTO DATA(grp).
+  lcl=>row_to_str( grp ).
+ENDLOOP.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  // FOR GROUPS
+
+  it("FOR GROUPS, group key passed to a parameter of the key type, ok", () => {
+    const issues = runProgram(classHeader + `
+DATA(result) = VALUE string_table(
+  FOR GROUPS grp OF wa IN tab GROUP BY wa-k2
+  ( lcl=>int_to_str( grp ) ) ).`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR GROUPS, member passed to a parameter of the row type, ok", () => {
+    const issues = runProgram(classHeader + `
+DATA(result) = VALUE string_table(
+  FOR GROUPS grp OF wa IN tab GROUP BY wa-k2
+  FOR m IN GROUP grp
+  ( lcl=>row_to_str( m ) ) ).`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR GROUPS, method call in GROUP BY, key passed to a parameter of the key type, ok", () => {
+    const issues = runProgram(classHeader + `
+DATA(result) = VALUE string_table(
+  FOR GROUPS grp OF wa IN tab GROUP BY lcl=>key_of( wa )
+  ( lcl=>int_to_str( grp ) ) ).`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR GROUPS, error, group passed to a table parameter, a group is not a table", () => {
+    const issues = runProgram(classHeader + `
+DATA(result) = VALUE string_table(
+  FOR GROUPS grp OF wa IN tab GROUP BY wa-k2
+  ( lcl=>tab_to_str( grp ) ) ).`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("FOR GROUPS, error, member passed to a parameter of the key type", () => {
+    const issues = runProgram(classHeader + `
+DATA(result) = VALUE string_table(
+  FOR GROUPS grp OF wa IN tab GROUP BY wa-k2
+  FOR m IN GROUP grp
+  ( lcl=>int_to_str( m ) ) ).`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("FOR GROUPS, work area passed to a parameter of the row type in the result, ok", () => {
+    const issues = runProgram(classHeader + `
+DATA(result) = VALUE string_table(
+  FOR GROUPS grp OF wa IN tab GROUP BY wa-k2
+  ( lcl=>row_to_str( wa ) ) ).`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+});
