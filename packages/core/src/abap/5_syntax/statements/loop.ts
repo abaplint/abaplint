@@ -132,6 +132,18 @@ export class Loop implements StatementSyntax {
           return;
         }
 
+        if (key.type === TableAccessType.sorted && key.keyFields.length > 0) {
+          // the first component of a sorted secondary key must be compared with = or IS INITIAL
+          // in a part of the condition joined by AND, otherwise the WHERE cannot be optimized
+          const first = key.keyFields[0].toUpperCase();
+          if (this.hasKeyCompare(cond, first) === false) {
+            const message = "Loop, WHERE cannot be optimized for secondary key " + name +
+              ", key component " + first + " needs a comparison with = or IS INITIAL joined by AND";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return;
+          }
+        }
+
         if (!releaseAtLeast(input.scope.getRelease(), Release.v740sp02)) {
           const compares = cond.findAllExpressionsRecursive(Expressions.ComponentCompare).map(c => c.concatTokens().toUpperCase());
           for (const keyField of key.keyFields) {
@@ -176,5 +188,30 @@ export class Loop implements StatementSyntax {
       LoopGroupBy.runSyntax(group, input, rowType, LoopGroupBy.findRepresentative(node));
     }
 
+  }
+
+  // true if a conjunct reachable through AND only, ie. not under OR or NOT, compares the component with = or IS INITIAL
+  private hasKeyCompare(cond: ExpressionNode, component: string): boolean {
+    if (cond.findDirectTokenByText("OR") !== undefined) {
+      return false;
+    }
+    for (const child of cond.getChildren()) {
+      if (child.get() instanceof Expressions.ComponentCompare && child instanceof ExpressionNode) {
+        const concat = child.concatTokens().toUpperCase().replace(/\s+/g, " ");
+        if (concat.startsWith(component + " = ")
+            || concat.startsWith(component + " EQ ")
+            || concat === component + " IS INITIAL") {
+          return true;
+        }
+      } else if (child.get() instanceof Expressions.ComponentCondSub
+          && child instanceof ExpressionNode
+          && child.findDirectTokenByText("NOT") === undefined) {
+        const sub = child.findDirectExpression(Expressions.ComponentCond);
+        if (sub !== undefined && this.hasKeyCompare(sub, component)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }
