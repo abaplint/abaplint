@@ -268,9 +268,24 @@ Make sure to test the downported code, it might not always be completely correct
       highSyntaxObj = this.highReg.findObjectForFile(f) as ABAPObject;
     }
 
-    for (const lowFile of lowObj.getABAPFiles()) {
-      let highSyntax: ISyntaxResult | undefined = undefined;
+    // the syntax run is expensive and most statements need no downport, so run it on first use
+    let computedSyntax: ISyntaxResult | undefined = undefined;
+    const runHighSyntax = (): ISyntaxResult => {
+      if (computedSyntax === undefined) {
+        computedSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
+      }
+      return computedSyntax;
+    };
+    const highSyntax: ISyntaxResult = {
+      get issues() {
+        return runHighSyntax().issues;
+      },
+      get spaghetti() {
+        return runHighSyntax().spaghetti;
+      },
+    };
 
+    for (const lowFile of lowObj.getABAPFiles()) {
       const highFile = highObj.getABAPFileByName(lowFile.getFilename());
       if (highFile === undefined) {
         continue;
@@ -289,10 +304,6 @@ Make sure to test the downported code, it might not always be completely correct
         // alternatively explicit enable it in vscode, its only relevant when a user is
         // actively editing the files
         continue;
-      }
-
-      if (highSyntax === undefined) {
-        highSyntax = new SyntaxLogic(this.highReg, highSyntaxObj).run();
       }
 
       let containsUnknown = false;
