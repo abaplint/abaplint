@@ -9,6 +9,7 @@ import {Dash, Identifier as IdentifierToken} from "../abap/1_lexer/tokens";
 import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
 import {ISpaghettiScope, ISpaghettiScopeNode, ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {getCachedRawRows} from "../files/raw_rows_cache";
 import {ExpressionNode, StatementNode, StructureNode, TokenNode} from "../abap/nodes";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
@@ -1443,18 +1444,6 @@ export class Hierarchy {
 ////////////////////////////////////////
 // edits
 
-const rowCache = new WeakMap<ABAPFile, readonly string[]>();
-
-/** getRawRows() splits the source on every call; a file is never changed, edits create a new one */
-function rowsOf(file: ABAPFile): readonly string[] {
-  let rows = rowCache.get(file);
-  if (rows === undefined) {
-    rows = file.getRawRows();
-    rowCache.set(file, rows);
-  }
-  return rows;
-}
-
 /** edits of one fix, sorted so that applying them one after the other keeps the positions valid */
 export function mergeEdits(file: ABAPFile, edits: IEdit[]): IEdit {
   const list: ITextEdit[] = [];
@@ -1475,7 +1464,7 @@ export function deleteRegion(file: ABAPFile, first: StatementNode, last: Stateme
   if (first === last && first.getColon() !== undefined) {
     return EditHelper.deleteStatement(file, first);
   }
-  const rows = rowsOf(file);
+  const rows = getCachedRawRows(file);
   const start = first.getStart();
   const end = last.getEnd();
   const before = rows[start.getRow() - 1].substring(0, start.getCol() - 1);
@@ -1492,7 +1481,7 @@ export function deleteStatement(file: ABAPFile, statement: StatementNode): IEdit
 
 /** the source code between two positions, as written */
 export function rawText(file: ABAPFile, start: Position, end: Position): string {
-  const rows = rowsOf(file);
+  const rows = getCachedRawRows(file);
   if (start.getRow() === end.getRow()) {
     return rows[start.getRow() - 1].substring(start.getCol() - 1, end.getCol() - 1);
   }
