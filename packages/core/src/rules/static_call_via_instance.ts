@@ -10,6 +10,7 @@ import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {MethodDefinition} from "../abap/types";
 import {Position} from "../position";
+import {VirtualPosition} from "../virtual_position";
 
 export class StaticCallViaInstanceConf extends BasicRuleConfig {
   /** Allow in test class includes */
@@ -51,7 +52,13 @@ ENDMETHOD.`,
       return [];
     }
 
-    const staticMethodCalls = this.listMethodCalls(file.getFilename(), new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
+    const staticMethodCalls = new Set<string>();
+    for (const s of this.listMethodCalls(file.getFilename(), new SyntaxLogic(this.reg, obj).run().spaghetti.getTop())) {
+      staticMethodCalls.add(StaticCallViaInstance.positionKey(s));
+    }
+    if (staticMethodCalls.size === 0) {
+      return [];
+    }
 
     const tokens = file.getTokens();
     for (let i = 0; i < tokens.length - 1; i++) {
@@ -60,17 +67,24 @@ ENDMETHOD.`,
         continue;
       }
 
-      const next = tokens[i + 1];
-      for (const s of staticMethodCalls) {
-        if (s.equals(next!.getStart())) {
-          const message = "Avoid calling static method via instance";
-          issues.push(Issue.atToken(file, token, message, this.getMetadata().key));
-          break;
-        }
+      const next = tokens[i + 1].getStart();
+      // a plain reference position also matches a token inside a macro call at the same row and column
+      if (staticMethodCalls.has(StaticCallViaInstance.positionKey(next))
+          || (next instanceof VirtualPosition
+          && staticMethodCalls.has(StaticCallViaInstance.positionKey(new Position(next.getRow(), next.getCol()))))) {
+        const message = "Avoid calling static method via instance";
+        issues.push(Issue.atToken(file, token, message, this.getMetadata().key));
       }
     }
 
     return issues;
+  }
+
+  private static positionKey(p: Position): string {
+    if (p instanceof VirtualPosition) {
+      return p.getRow() + ":" + p.getCol() + ":" + p.vrow + ":" + p.vcol;
+    }
+    return p.getRow() + ":" + p.getCol();
   }
 
   private listMethodCalls(filename: string, node: ISpaghettiScopeNode): Position[] {
