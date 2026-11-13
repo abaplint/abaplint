@@ -27,23 +27,12 @@ import {CallTransactionAuthorityCheckConf} from "../src/rules/call_transaction_a
 import {CastViaGenericReferenceConf} from "../src/rules/cast_via_generic_reference";
 import {CatchAndRaiseConf} from "../src/rules/catch_and_raise";
 import {CDSAssociationNameConf} from "../src/rules/cds_association_name";
-import {CDSCheckSyntaxConf} from "../src/rules/cds_check_syntax";
 import {CDSCommentStyleConf} from "../src/rules/cds_comment_style";
 import {CDSFieldOrderConf} from "../src/rules/cds_field_order";
+import {CDSCheckSyntaxConf} from "../src/rules/cds_check_syntax";
 import {CDSLegacyViewConf} from "../src/rules/cds_legacy_view";
 import {CDSNamingConf} from "../src/rules/cds_naming";
 import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
-import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
-import {ChangeIfToCaseConf} from "../src/rules/change_if_to_case";
-import {ChangingSortedLineConf} from "../src/rules/changing_sorted_line";
-import {CheckAbstractConf} from "../src/rules/check_abstract";
-import {CheckCommentsConf} from "../src/rules/check_comments";
-import {CheckDDICConf} from "../src/rules/check_ddic";
-import {CheckIncludeConf} from "../src/rules/check_include";
-import {CheckSubrcConf} from "../src/rules/check_subrc";
-import {CheckSyntaxConf} from "../src/rules/check_syntax";
-import {CheckTextElementsConf} from "../src/rules/check_text_elements";
-import {CheckTransformationExistsConf} from "../src/rules/check_transformation_exists";
 import {ClassAttributeNamesConf} from "../src/rules/class_attribute_names";
 import {ClassicExceptionsOverlapConf} from "../src/rules/classic_exceptions_overlap";
 import {ClearAfterDeclarationConf} from "../src/rules/clear_after_declaration";
@@ -90,6 +79,17 @@ import {FunctionModuleRecommendationsConf} from "../src/rules/function_module_re
 import {FunctionalWritingConf} from "../src/rules/functional_writing";
 import {GenericRegexConf} from "../src/rules/generic_regex";
 import {GlobalClassConf} from "../src/rules/global_class";
+import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
+import {ChangeIfToCaseConf} from "../src/rules/change_if_to_case";
+import {ChangingSortedLineConf} from "../src/rules/changing_sorted_line";
+import {CheckAbstractConf} from "../src/rules/check_abstract";
+import {CheckCommentsConf} from "../src/rules/check_comments";
+import {CheckDDICConf} from "../src/rules/check_ddic";
+import {CheckIncludeConf} from "../src/rules/check_include";
+import {CheckSubrcConf} from "../src/rules/check_subrc";
+import {CheckSyntaxConf} from "../src/rules/check_syntax";
+import {CheckTextElementsConf} from "../src/rules/check_text_elements";
+import {CheckTransformationExistsConf} from "../src/rules/check_transformation_exists";
 import {IdenticalConditionsConf} from "../src/rules/identical_conditions";
 import {IdenticalContentsConf} from "../src/rules/identical_contents";
 import {IdenticalDescriptionsConf} from "../src/rules/identical_descriptions";
@@ -132,11 +132,11 @@ import {NamesNoDashConf} from "../src/rules/names_no_dash";
 import {NestingConf} from "../src/rules/nesting";
 import {NewlineBetweenMethodsConf} from "../src/rules/newline_between_methods";
 import {NoAliasesConf} from "../src/rules/no_aliases";
-import {NoChainedAssignmentConf} from "../src/rules/no_chained_assignment";
 import {NoCommentsBetweenMethodsConf} from "../src/rules/no_comments_between_methods";
 import {NoDynamicStuffConf} from "../src/rules/no_dynamic_stuff";
 import {NoExclamationEscapeConf} from "../src/rules/no_exclamation_escape";
 import {NoExternalFormCallsConf} from "../src/rules/no_external_form_calls";
+import {NoChainedAssignmentConf} from "../src/rules/no_chained_assignment";
 import {NoInlineInOptionalBranchesConf} from "../src/rules/no_inline_in_optional_branches";
 import {NoMacrosConf} from "../src/rules/no_macros";
 import {NoMandtInDatabaseOperationsConf} from "../src/rules/no_mandt_in_database_operations";
@@ -210,8 +210,8 @@ import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/types_naming";
 import {UncaughtExceptionConf} from "../src/rules/uncaught_exception";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
-import {UnnecessaryChainingConf} from "../src/rules/unnecessary_chaining";
 import {UnnecessaryCopyConf} from "../src/rules/unnecessary_copy";
+import {UnnecessaryChainingConf} from "../src/rules/unnecessary_chaining";
 import {UnnecessaryLoopGuardConf} from "../src/rules/unnecessary_loop_guard";
 import {UnnecessaryPragmaConf} from "../src/rules/unnecessary_pragma";
 import {UnnecessaryReturnConf} from "../src/rules/unnecessary_return";
@@ -273,23 +273,12 @@ export interface IConfig {
     "cast_via_generic_reference"?: CastViaGenericReferenceConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
-    "cds_check_syntax"?: CDSCheckSyntaxConf | boolean,
     "cds_comment_style"?: CDSCommentStyleConf | boolean,
     "cds_field_order"?: CDSFieldOrderConf | boolean,
+    "cds_check_syntax"?: CDSCheckSyntaxConf | boolean,
     "cds_legacy_view"?: CDSLegacyViewConf | boolean,
     "cds_naming"?: CDSNamingConf | boolean,
     "cds_parser_error"?: CDSParserErrorConf | boolean,
-    "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
-    "change_if_to_case"?: ChangeIfToCaseConf | boolean,
-    "changing_sorted_line"?: ChangingSortedLineConf | boolean,
-    "check_abstract"?: CheckAbstractConf | boolean,
-    "check_comments"?: CheckCommentsConf | boolean,
-    "check_ddic"?: CheckDDICConf | boolean,
-    "check_include"?: CheckIncludeConf | boolean,
-    "check_subrc"?: CheckSubrcConf | boolean,
-    "check_syntax"?: CheckSyntaxConf | boolean,
-    "check_text_elements"?: CheckTextElementsConf | boolean,
-    "check_transformation_exists"?: CheckTransformationExistsConf | boolean,
     "class_attribute_names"?: ClassAttributeNamesConf | boolean,
     "classic_exceptions_overlap"?: ClassicExceptionsOverlapConf | boolean,
     "clear_after_declaration"?: ClearAfterDeclarationConf | boolean,
@@ -336,6 +325,17 @@ export interface IConfig {
     "functional_writing"?: FunctionalWritingConf | boolean,
     "generic_regex"?: GenericRegexConf | boolean,
     "global_class"?: GlobalClassConf | boolean,
+    "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
+    "change_if_to_case"?: ChangeIfToCaseConf | boolean,
+    "changing_sorted_line"?: ChangingSortedLineConf | boolean,
+    "check_abstract"?: CheckAbstractConf | boolean,
+    "check_comments"?: CheckCommentsConf | boolean,
+    "check_ddic"?: CheckDDICConf | boolean,
+    "check_include"?: CheckIncludeConf | boolean,
+    "check_subrc"?: CheckSubrcConf | boolean,
+    "check_syntax"?: CheckSyntaxConf | boolean,
+    "check_text_elements"?: CheckTextElementsConf | boolean,
+    "check_transformation_exists"?: CheckTransformationExistsConf | boolean,
     "identical_conditions"?: IdenticalConditionsConf | boolean,
     "identical_contents"?: IdenticalContentsConf | boolean,
     "identical_descriptions"?: IdenticalDescriptionsConf | boolean,
@@ -378,11 +378,11 @@ export interface IConfig {
     "nesting"?: NestingConf | boolean,
     "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
     "no_aliases"?: NoAliasesConf | boolean,
-    "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_comments_between_methods"?: NoCommentsBetweenMethodsConf | boolean,
     "no_dynamic_stuff"?: NoDynamicStuffConf | boolean,
     "no_exclamation_escape"?: NoExclamationEscapeConf | boolean,
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
+    "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
     "no_macros"?: NoMacrosConf | boolean,
     "no_mandt_in_database_operations"?: NoMandtInDatabaseOperationsConf | boolean,
@@ -456,8 +456,8 @@ export interface IConfig {
     "types_naming"?: TypesNamingConf | boolean,
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
-    "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
     "unnecessary_copy"?: UnnecessaryCopyConf | boolean,
+    "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
     "unnecessary_loop_guard"?: UnnecessaryLoopGuardConf | boolean,
     "unnecessary_pragma"?: UnnecessaryPragmaConf | boolean,
     "unnecessary_return"?: UnnecessaryReturnConf | boolean,
@@ -508,23 +508,12 @@ export interface IConfig {
     "cast_via_generic_reference"?: CastViaGenericReferenceConf | boolean,
     "catch_and_raise"?: CatchAndRaiseConf | boolean,
     "cds_association_name"?: CDSAssociationNameConf | boolean,
-    "cds_check_syntax"?: CDSCheckSyntaxConf | boolean,
     "cds_comment_style"?: CDSCommentStyleConf | boolean,
     "cds_field_order"?: CDSFieldOrderConf | boolean,
+    "cds_check_syntax"?: CDSCheckSyntaxConf | boolean,
     "cds_legacy_view"?: CDSLegacyViewConf | boolean,
     "cds_naming"?: CDSNamingConf | boolean,
     "cds_parser_error"?: CDSParserErrorConf | boolean,
-    "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
-    "change_if_to_case"?: ChangeIfToCaseConf | boolean,
-    "changing_sorted_line"?: ChangingSortedLineConf | boolean,
-    "check_abstract"?: CheckAbstractConf | boolean,
-    "check_comments"?: CheckCommentsConf | boolean,
-    "check_ddic"?: CheckDDICConf | boolean,
-    "check_include"?: CheckIncludeConf | boolean,
-    "check_subrc"?: CheckSubrcConf | boolean,
-    "check_syntax"?: CheckSyntaxConf | boolean,
-    "check_text_elements"?: CheckTextElementsConf | boolean,
-    "check_transformation_exists"?: CheckTransformationExistsConf | boolean,
     "class_attribute_names"?: ClassAttributeNamesConf | boolean,
     "classic_exceptions_overlap"?: ClassicExceptionsOverlapConf | boolean,
     "clear_after_declaration"?: ClearAfterDeclarationConf | boolean,
@@ -571,6 +560,17 @@ export interface IConfig {
     "functional_writing"?: FunctionalWritingConf | boolean,
     "generic_regex"?: GenericRegexConf | boolean,
     "global_class"?: GlobalClassConf | boolean,
+    "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
+    "change_if_to_case"?: ChangeIfToCaseConf | boolean,
+    "changing_sorted_line"?: ChangingSortedLineConf | boolean,
+    "check_abstract"?: CheckAbstractConf | boolean,
+    "check_comments"?: CheckCommentsConf | boolean,
+    "check_ddic"?: CheckDDICConf | boolean,
+    "check_include"?: CheckIncludeConf | boolean,
+    "check_subrc"?: CheckSubrcConf | boolean,
+    "check_syntax"?: CheckSyntaxConf | boolean,
+    "check_text_elements"?: CheckTextElementsConf | boolean,
+    "check_transformation_exists"?: CheckTransformationExistsConf | boolean,
     "identical_conditions"?: IdenticalConditionsConf | boolean,
     "identical_contents"?: IdenticalContentsConf | boolean,
     "identical_descriptions"?: IdenticalDescriptionsConf | boolean,
@@ -613,11 +613,11 @@ export interface IConfig {
     "nesting"?: NestingConf | boolean,
     "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
     "no_aliases"?: NoAliasesConf | boolean,
-    "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_comments_between_methods"?: NoCommentsBetweenMethodsConf | boolean,
     "no_dynamic_stuff"?: NoDynamicStuffConf | boolean,
     "no_exclamation_escape"?: NoExclamationEscapeConf | boolean,
     "no_external_form_calls"?: NoExternalFormCallsConf | boolean,
+    "no_chained_assignment"?: NoChainedAssignmentConf | boolean,
     "no_inline_in_optional_branches"?: NoInlineInOptionalBranchesConf | boolean,
     "no_macros"?: NoMacrosConf | boolean,
     "no_mandt_in_database_operations"?: NoMandtInDatabaseOperationsConf | boolean,
@@ -691,8 +691,8 @@ export interface IConfig {
     "types_naming"?: TypesNamingConf | boolean,
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
-    "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
     "unnecessary_copy"?: UnnecessaryCopyConf | boolean,
+    "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
     "unnecessary_loop_guard"?: UnnecessaryLoopGuardConf | boolean,
     "unnecessary_pragma"?: UnnecessaryPragmaConf | boolean,
     "unnecessary_return"?: UnnecessaryReturnConf | boolean,
