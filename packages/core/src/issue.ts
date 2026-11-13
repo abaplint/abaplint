@@ -6,6 +6,7 @@ import {Identifier} from "./abap/4_file_information/_identifier";
 import {StatementNode} from "./abap/nodes";
 import {IEdit} from "./edit_helper";
 import {Severity} from "./severity";
+import {getCachedRawRows} from "./files/raw_rows_cache";
 
 type Fix = {
   description: string,
@@ -34,7 +35,7 @@ export class Issue {
 
   public static atRow(file: IFile, row: number, message: string, key: string, severity?: Severity) {
     const start = new Position(row, 1);
-    const end = new Position(row, file.getRawRows()[row - 1].length + 1);
+    const end = new Position(row, getCachedRawRows(file)[row - 1].length + 1);
     severity = severity ?? Severity.Error;
     return new Issue({
       filename: file.getFilename(),
@@ -53,7 +54,7 @@ export class Issue {
 
   public static atPosition(file: IFile, start: Position, message: string, key: string, severity?: Severity, fix?: IEdit) {
     const row = start.getRow();
-    const end = new Position(row, file.getRawRows()[row - 1].length + 1);
+    const end = new Position(row, getCachedRawRows(file)[row - 1].length + 1);
     severity = severity ?? Severity.Error;
     return new Issue({
       filename: file.getFilename(),
