@@ -480,8 +480,9 @@ export class SyntaxLogic {
         }
       }
 
-      if (isStructure || isStatement) {
-        this.traverse(child as StatementNode | StructureNode);
+      // statements only have expressions and tokens as children, nothing to traverse
+      if (isStructure) {
+        this.traverse(child as StructureNode);
       }
     }
 
