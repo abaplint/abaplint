@@ -81,7 +81,7 @@ export class Registry implements IRegistry {
   private objects: { [name: string]: { [type: string]: IObject } } = {};
   private objectsByType: { [type: string]: { [name: string]: IObject } } = {};
   private dependencies: { [type: string]: { [name: string]: boolean } } = {};
-  /** upper case filename -> object containing the file, kept in sync by add/remove methods */
+  /** upper case filename to object containing the file, kept in sync by add/remove methods */
   private filenameIndex: Map<string, IObject> = new Map();
   private ddicReferences: IDDICReferences;
   private msagReferences: IMSAGReferences;
