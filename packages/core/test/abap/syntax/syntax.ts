@@ -11,7 +11,7 @@ import {applyEditSingle} from "../../../src/edit_helper";
 import {IReference, ReferenceType} from "../../../src/abap/5_syntax/_reference";
 import {tabl_t100xml} from "../../rules/sql_value_conversion";
 import {TypedIdentifier} from "../../../src/abap/types/_typed_identifier";
-import {CharacterType, DataReference, DecFloat34Type, StringType, XStringType} from "../../../src/abap/types/basic";
+import {CharacterType, DataReference, DecFloat34Type, StringType, StructureType, XStringType} from "../../../src/abap/types/basic";
 
 function run(reg: IRegistry, globalConstants?: string[], release?: ABAPRelease, errorNamespace?: string,
              languageVersion?: LanguageVersion, ambigiousVoids?: string[]): Issue[] {
@@ -2006,6 +2006,45 @@ START-OF-SELECTION.
     expect(typeAtRow(30)).to.be.instanceof(DecFloat34Type);
     // other generic types keep the type of the argument
     expect(typeAtRow(31)).to.be.instanceof(CharacterType);
+  });
+
+  it("MODIFY itab FROM VALUE #( ) TRANSPORTING WHERE, inferred type of #", () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         key1   TYPE c LENGTH 10,
+         key2   TYPE c LENGTH 4,
+         key3   TYPE c LENGTH 2,
+         field1 TYPE c LENGTH 1,
+         field2 TYPE c LENGTH 1,
+         field3 TYPE c LENGTH 1,
+         field4 TYPE c LENGTH 1,
+       END OF ty_row.
+DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA ls_row TYPE ty_row.
+MODIFY lt_rows FROM VALUE #( )
+           TRANSPORTING field1 field2 field3 field4
+           WHERE key1 = ls_row-key1
+             AND key2 = ls_row-key2
+             AND key3 = ls_row-key3.`;
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
+    const result = new SyntaxLogic(reg, getABAPObjects(reg)[0]).run();
+
+    expect(result.issues.length).to.equals(0);
+
+    const references: IReference[] = [];
+    const visit = (node: ReturnType<typeof result.spaghetti.getTop>): void => {
+      references.push(...node.getData().references);
+      for (const child of node.getChildren()) {
+        visit(child);
+      }
+    };
+    visit(result.spaghetti.getTop());
+    const inferred = references.filter(r => r.referenceType === ReferenceType.InferredType
+      && r.position.getName() === "#");
+    expect(inferred.length).to.equals(1);
+    const type = (inferred[0].resolved as TypedIdentifier).getType();
+    expect(type).to.be.instanceof(StructureType);
+    expect(type.getQualifiedName()?.toUpperCase()).to.equal("TY_ROW");
   });
 
   it("built-in to_upper", () => {
