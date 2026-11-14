@@ -19782,3 +19782,78 @@ ENDCLASS.`;
     expect(issues.map(i => i.getMessage())).to.deep.equal([missing]);
   });
 });
+describe("syntax.ts, RAISE EXCEPTION abstract class", () => {
+  it("RAISE EXCEPTION TYPE abstract class, error", () => {
+    const abap = `
+CLASS lcx_abstract DEFINITION ABSTRACT.
+ENDCLASS.
+CLASS lcx_abstract IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  RAISE EXCEPTION TYPE lcx_abstract.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("lcx_abstract is abstract, cannot be instantiated");
+  });
+
+  it("RAISE EXCEPTION TYPE non-abstract class, ok", () => {
+    const abap = `
+CLASS lcx_concrete DEFINITION.
+ENDCLASS.
+CLASS lcx_concrete IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  RAISE EXCEPTION TYPE lcx_concrete.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("RAISE EXCEPTION TYPE global abstract class, error", () => {
+    const clas = `CLASS cx_sy_file_access_error DEFINITION PUBLIC ABSTRACT CREATE PUBLIC.
+ENDCLASS.
+CLASS cx_sy_file_access_error IMPLEMENTATION.
+ENDCLASS.`;
+    const prog = `RAISE EXCEPTION TYPE cx_sy_file_access_error.`;
+    const issues = runMulti([
+      {filename: "cx_sy_file_access_error.clas.abap", contents: clas},
+      {filename: "zfoo.prog.abap", contents: prog}]);
+    expect(issues.map(i => i.getMessage())).to.deep.equal(["cx_sy_file_access_error is abstract, cannot be instantiated"]);
+  });
+});
+
+describe("syntax.ts, VALUE row compatibility", () => {
+  it("VALUE, character literal row into table of xstring, error", () => {
+    const abap = `
+DATA lt_hex TYPE STANDARD TABLE OF xstring WITH DEFAULT KEY.
+lt_hex = VALUE #( ( '0000000000000001' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("VALUE, source type CharacterType not compatible with XStringType");
+  });
+});
+
+describe("syntax.ts, APPEND table expression target", () => {
+  const types = `
+TYPES: BEGIN OF ty_group,
+         rows TYPE STANDARD TABLE OF i WITH DEFAULT KEY,
+       END OF ty_group.
+DATA mt_groups TYPE STANDARD TABLE OF ty_group WITH DEFAULT KEY.
+DATA lv_index TYPE i.
+DATA lo_row TYPE i.`;
+
+  it("APPEND TO table expression, error", () => {
+    const abap = types + `
+APPEND lo_row TO mt_groups[ lv_index ]-rows.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("APPEND, table expression not allowed in target");
+  });
+
+  it("APPEND TO field symbol, ok", () => {
+    const abap = types + `
+FIELD-SYMBOLS <ls_group> LIKE LINE OF mt_groups.
+READ TABLE mt_groups INDEX lv_index ASSIGNING <ls_group>.
+APPEND lo_row TO <ls_group>-rows.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
