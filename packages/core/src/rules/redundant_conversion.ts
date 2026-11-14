@@ -115,7 +115,11 @@ text = text.`,
         const operandHasSameType = operandType !== undefined && this.sameType(target.getType(), operandType);
         const arithmeticHasSameContext = this.arithmeticUsesSameTargetType(
           source, bodySource, file, scope, target.getType());
-        if (operandHasSameType === false && arithmeticHasSameContext === false) {
+        const methodResultHasSameContext = this.methodResultUsesSameTargetType(
+          source, bodySource, file, scope, target.getType());
+        if (operandHasSameType === false
+            && arithmeticHasSameContext === false
+            && methodResultHasSameContext === false) {
           continue;
         }
 
@@ -158,21 +162,56 @@ text = text.`,
       return false;
     }
 
-    const statement = file.getStatements().find(candidate => candidate.includesToken(conversion.getFirstToken()));
-    if (!(statement?.get() instanceof Statements.Move)) {
+    const assignmentType = this.assignmentTargetType(conversion, file, scope, false);
+    return assignmentType !== undefined && this.sameType(conversionType, assignmentType);
+  }
+
+  /** "target = CONV i( meth( ) )." where target has the conversion type, the assignment converts the
+   *  method result to the same type anyway, as reported by SAP for e.g. an int8 result */
+  private methodResultUsesSameTargetType(
+    conversion: ExpressionNode,
+    bodySource: ExpressionNode,
+    file: ABAPFile,
+    scope: ISpaghettiScopeNode,
+    conversionType: AbstractType): boolean {
+
+    if (bodySource.getChildren().length !== 1
+        || !(bodySource.getChildren()[0].get() instanceof Expressions.MethodCallChain)) {
       return false;
     }
 
-    const targetToken = statement.findDirectExpression(Expressions.Target)?.getFirstToken();
-    if (targetToken === undefined) {
-      return false;
+    const assignmentType = this.assignmentTargetType(conversion, file, scope, true);
+    return assignmentType !== undefined && this.sameType(conversionType, assignmentType);
+  }
+
+  /** Type of the target of the Move statement containing the conversion, undefined for inline declarations */
+  private assignmentTargetType(
+    conversion: ExpressionNode,
+    file: ABAPFile,
+    scope: ISpaghettiScopeNode,
+    conversionIsWholeSource: boolean): AbstractType | undefined {
+
+    const statement = file.getStatements().find(candidate => candidate.includesToken(conversion.getFirstToken()));
+    if (!(statement?.get() instanceof Statements.Move)) {
+      return undefined;
     }
+    // "CONV type ( body )" without a trailing "&&", "&" or arithmetic operator
+    if (conversionIsWholeSource
+        && (statement.findDirectExpression(Expressions.Source) !== conversion
+        || conversion.getChildren().length !== 5)) {
+      return undefined;
+    }
+
+    const target = statement.findDirectExpression(Expressions.Target);
+    if (target === undefined || target.findFirstExpression(Expressions.InlineData) !== undefined) {
+      return undefined;
+    }
+    const targetToken = target.getFirstToken();
     const assignmentTarget = scope.getData().references.find(reference =>
       reference.referenceType === ReferenceType.DataWriteReference
       && reference.position.getStart().equals(targetToken.getStart()))?.resolved;
 
-    return assignmentTarget instanceof TypedIdentifier
-      && this.sameType(conversionType, assignmentTarget.getType());
+    return assignmentTarget instanceof TypedIdentifier ? assignmentTarget.getType() : undefined;
   }
 
   private sourceType(source: ExpressionNode, scope: ISpaghettiScopeNode): AbstractType | undefined {

@@ -169,6 +169,57 @@ ENDCLASS.`, cnt: 0},
   {abap: `DATA(t5) = CONV i( strlen( |sdf| ) ).`, cnt: 1},
   {abap: `DATA t30 TYPE f.
 DATA(t31) = CONV f( t30 / 2 ).`, cnt: 0},
+  {abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS read_u32 IMPORTING iv_offset TYPE i RETURNING VALUE(rv_value) TYPE int8.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD read_u32.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv_next TYPE i.
+    lv_next = CONV i( read_u32( iv_offset = 0 ) ).
+  ENDMETHOD.
+ENDCLASS.`, cnt: 1},
+  {abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS read_u32 IMPORTING iv_offset TYPE i RETURNING VALUE(rv_value) TYPE int8.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD read_u32.
+  ENDMETHOD.
+  METHOD run.
+    DATA(lv_next) = CONV i( read_u32( iv_offset = 0 ) ).
+  ENDMETHOD.
+ENDCLASS.`, cnt: 0},
+  {abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS read_u32 IMPORTING iv_offset TYPE i RETURNING VALUE(rv_value) TYPE int8.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD read_u32.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv_next TYPE string.
+    lv_next = CONV i( read_u32( iv_offset = 0 ) ).
+  ENDMETHOD.
+ENDCLASS.`, cnt: 0},
+  {abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS read_u32 IMPORTING iv_offset TYPE i RETURNING VALUE(rv_value) TYPE int8.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD read_u32.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv_next TYPE i.
+    lv_next = CONV i( read_u32( iv_offset = 0 ) ) && |a|.
+  ENDMETHOD.
+ENDCLASS.`, cnt: 0},
 ];
 
 testRule(tests, RedundantConversion);
@@ -210,6 +261,25 @@ DATA(r) = to_upper( iv ).`},
 DATA(r) = condense( CONV string( iv ) ).`, output: `DATA iv TYPE string.
 DATA(r) = condense( iv ).`},
   {input: `DATA(t2) = CONV string( |hello world| ).`, output: `DATA(t2) = |hello world|.`},
+  {input: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS read_u32 RETURNING VALUE(rv_value) TYPE int8.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD read_u32.
+    DATA lv_next TYPE i.
+    lv_next = CONV i( read_u32( ) ).
+  ENDMETHOD.
+ENDCLASS.`, output: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS read_u32 RETURNING VALUE(rv_value) TYPE int8.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD read_u32.
+    DATA lv_next TYPE i.
+    lv_next = read_u32( ).
+  ENDMETHOD.
+ENDCLASS.`},
 ];
 
 testRuleFix(fixes, RedundantConversion);
