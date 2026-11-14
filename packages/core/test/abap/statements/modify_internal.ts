@@ -27,6 +27,11 @@ const tests = [
 //  "MODIFY sdfsd INDEX sy-tabix USING KEY key FROM ls_sdf TRANSPORTING tra.",
   `MODIFY sdf FROM sdsf USING KEY loop_key TRANSPORTING sort.`,
   `MODIFY TABLE tab USING KEY primary_key FROM foo.`,
+  `MODIFY lt_rows FROM VALUE #( )
+           TRANSPORTING field1 field2 field3 field4
+           WHERE key1 = ls_row-key1
+             AND key2 = ls_row-key2
+             AND key3 = ls_row-key3.`,
 ];
 
 statementType(tests, "MODIFY", Statements.ModifyInternal);

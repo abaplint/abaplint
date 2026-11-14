@@ -225,6 +225,72 @@ ENDMETHOD.`;
 
 });
 
+describe("Registry, filename lookups", () => {
+
+  it("getFileByName and findObjectForFile, case insensitive name lookup", () => {
+    const file = new MemoryFile("zcl_foo.clas.abap", "CLASS zcl_foo DEFINITION. ENDCLASS. CLASS zcl_foo IMPLEMENTATION. ENDCLASS.");
+    const reg = new Registry().addFile(file);
+    expect(reg.getFileByName("ZCL_FOO.CLAS.ABAP")).to.equal(file);
+    expect(reg.findObjectForFile(file)?.getName()).to.equal("ZCL_FOO");
+    expect(reg.getFileByName("zcl_bar.clas.abap")).to.equal(undefined);
+  });
+
+  it("findObjectForFile, file not in registry", () => {
+    const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", "WRITE 1."));
+    expect(reg.findObjectForFile(new MemoryFile("zbar.prog.abap", "WRITE 1."))).to.equal(undefined);
+  });
+
+  it("updateFile, lookup returns the new file", () => {
+    const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", "WRITE 1."));
+    const updated = new MemoryFile("zfoo.prog.abap", "WRITE 2.");
+    reg.updateFile(updated);
+    expect(reg.getFileByName("zfoo.prog.abap")).to.equal(updated);
+    expect(reg.findObjectForFile(updated)?.getName()).to.equal("ZFOO");
+  });
+
+  it("removeFile, keeps other files of the object", () => {
+    const main = new MemoryFile("zcl_foo.clas.abap", "CLASS zcl_foo DEFINITION. ENDCLASS. CLASS zcl_foo IMPLEMENTATION. ENDCLASS.");
+    const xml = new MemoryFile("zcl_foo.clas.xml", "<xml/>");
+    const reg = new Registry().addFiles([main, xml]);
+    reg.removeFile(xml);
+    expect(reg.getFileByName("zcl_foo.clas.xml")).to.equal(undefined);
+    expect(reg.getFileByName("zcl_foo.clas.abap")).to.equal(main);
+    reg.removeFile(main);
+    expect(reg.getFileByName("zcl_foo.clas.abap")).to.equal(undefined);
+    expect(reg.findObjectForFile(main)).to.equal(undefined);
+  });
+
+  it("dependency replaced by normal object", () => {
+    const reg = new Registry();
+    reg.addDependency(new MemoryFile("zfoo.prog.abap", "WRITE 1."));
+    reg.addDependency(new MemoryFile("zfoo.prog.xml", "<xml/>"));
+    const file = new MemoryFile("zfoo.prog.abap", "WRITE 2.");
+    reg.addFile(file);
+    expect(reg.getFileByName("zfoo.prog.abap")).to.equal(file);
+    expect(reg.getFileByName("zfoo.prog.xml")).to.equal(undefined);
+    expect(reg.isFileDependency("zfoo.prog.abap")).to.equal(false);
+  });
+
+  it("removeDependency", () => {
+    const reg = new Registry();
+    reg.addDependency(new MemoryFile("zfoo.prog.abap", "WRITE 1."));
+    reg.removeDependency(reg.getFirstObject()!);
+    expect(reg.getFileByName("zfoo.prog.abap")).to.equal(undefined);
+  });
+
+  it("clear", () => {
+    const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", "WRITE 1."));
+    reg.clear();
+    expect(reg.getFileByName("zfoo.prog.abap")).to.equal(undefined);
+  });
+
+  it("non abapGit and excluded files are not found", () => {
+    const reg = new Registry().addFile(new MemoryFile("README.md", "hello"));
+    expect(reg.getFileByName("README.md")).to.equal(undefined);
+  });
+
+});
+
 describe("Registry, object types", () => {
 
   it("Unknown object type", async () => {
