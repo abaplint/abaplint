@@ -181,6 +181,7 @@ export * from "./select_single_full_key";
 export * from "./selection_screen_naming";
 export * from "./selection_screen_texts_missing";
 export * from "./sequential_blank";
+export * from "./sequential_read_sorted";
 export * from "./short_case";
 export * from "./sicf_consistency";
 export * from "./single_use_expression_temp";
