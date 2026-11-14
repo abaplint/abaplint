@@ -19831,3 +19831,29 @@ lt_hex = VALUE #( ( '0000000000000001' ) ).`;
     expect(issues[0]?.getMessage()).to.equal("VALUE, source type CharacterType not compatible with XStringType");
   });
 });
+
+describe("syntax.ts, APPEND table expression target", () => {
+  const types = `
+TYPES: BEGIN OF ty_group,
+         rows TYPE STANDARD TABLE OF i WITH DEFAULT KEY,
+       END OF ty_group.
+DATA mt_groups TYPE STANDARD TABLE OF ty_group WITH DEFAULT KEY.
+DATA lv_index TYPE i.
+DATA lo_row TYPE i.`;
+
+  it("APPEND TO table expression, error", () => {
+    const abap = types + `
+APPEND lo_row TO mt_groups[ lv_index ]-rows.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("APPEND, table expression not allowed in target");
+  });
+
+  it("APPEND TO field symbol, ok", () => {
+    const abap = types + `
+FIELD-SYMBOLS <ls_group> LIKE LINE OF mt_groups.
+READ TABLE mt_groups INDEX lv_index ASSIGNING <ls_group>.
+APPEND lo_row TO <ls_group>-rows.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
