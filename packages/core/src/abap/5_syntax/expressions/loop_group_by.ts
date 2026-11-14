@@ -1,38 +1,154 @@
 import * as Expressions from "../../2_statements/expressions";
-import {ExpressionNode} from "../../nodes";
-import {VoidType} from "../../types/basic";
-import {ComponentCompare} from "./component_compare";
+import {ExpressionNode, StatementNode} from "../../nodes";
+import {DataReference, IntegerType, StructureType, VoidType} from "../../types/basic";
+import {IStructureComponent} from "../../types/basic/structure_type";
+import {AbstractType} from "../../types/basic/_abstract_type";
+import {TypedIdentifier} from "../../types/_typed_identifier";
+import {ReferenceType} from "../_reference";
 import {InlineData} from "./inline_data";
 import {FSTarget} from "./fstarget";
 import {Target} from "./target";
 import {SyntaxInput} from "../_syntax_input";
 import {Source} from "./source";
+import {FieldChain} from "./field_chain";
+import {CurrentScope} from "../_current_scope";
 
 export class LoopGroupBy {
-  public static runSyntax(node: ExpressionNode, input: SyntaxInput): void {
+  /**
+   * @param rowType row type of the grouped table, the type of the members of each group
+   * @param representative the row target of the LOOP, it is the group when GROUP BY has no target
+   */
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput,
+                          rowType: AbstractType | undefined, representative: ExpressionNode | undefined): void {
 
-    for (const t of node.findAllExpressions(Expressions.Target)) {
-      const inline = t.findDirectExpression(Expressions.InlineData);
+    const keyType = this.runKey(node, input);
+
+    const groupTarget = node.findDirectExpression(Expressions.LoopGroupByTarget);
+    const target = groupTarget?.findDirectExpression(Expressions.Target);
+    const fsTarget = groupTarget?.findDirectExpression(Expressions.FSTarget);
+
+    if (target) {
+      const inline = target.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        InlineData.runSyntax(inline, input, VoidType.get("todoGroupBy"));
+        const isReference = groupTarget?.findDirectTokenByText("REFERENCE") !== undefined;
+        InlineData.runSyntax(inline, input, isReference ? new DataReference(keyType) : keyType);
       } else {
-        Target.runSyntax(t, input);
+        Target.runSyntax(target, input);
+      }
+    } else if (fsTarget) {
+      FSTarget.runSyntax(fsTarget, input, keyType);
+    }
+
+    // bind the group until ENDLOOP, see unbind(), also when the row type is unknown
+    const group = this.findTargetIdentifier(target ?? fsTarget ?? representative, input.scope);
+    if (group) {
+      input.scope.setGroupMemberType(group, rowType ?? VoidType.get("GroupMember"));
+    }
+  }
+
+  /** the row target of a LOOP, it is the group when GROUP BY has no target */
+  public static findRepresentative(loop: StatementNode): ExpressionNode | undefined {
+    const loopTarget = loop.findDirectExpression(Expressions.LoopTarget);
+    return loopTarget?.findDirectExpression(Expressions.Target) ?? loopTarget?.findDirectExpression(Expressions.FSTarget);
+  }
+
+  /** called at the end of a LOOP structure, the group of a LOOP AT ... GROUP BY is not bound after its ENDLOOP */
+  public static unbind(loop: StatementNode, scope: CurrentScope): void {
+    const groupBy = loop.findDirectExpression(Expressions.LoopGroupBy);
+    if (groupBy === undefined) {
+      return;
+    }
+    const groupTarget = groupBy.findDirectExpression(Expressions.LoopGroupByTarget);
+    const node = groupTarget?.findDirectExpression(Expressions.Target)
+      ?? groupTarget?.findDirectExpression(Expressions.FSTarget)
+      ?? this.findRepresentative(loop);
+    const group = this.findTargetIdentifier(node, scope);
+    if (group) {
+      scope.removeGroupMemberType(group);
+    }
+  }
+
+  /** LOOP AT GROUP group, the name of the group when it is a variable that no enclosing group loop binds */
+  public static findUnboundGroup(source: ExpressionNode | undefined, input: SyntaxInput): string | undefined {
+    if (source === undefined) {
+      return undefined;
+    }
+    const name = this.groupName(source);
+    const found = input.scope.findVariable(name);
+    if (found === undefined || input.scope.findGroupMemberType(found) !== undefined) {
+      return undefined;
+    }
+    return name;
+  }
+
+  /** type of the group key, from GROUP BY expr or GROUP BY ( name = expr ... ) */
+  public static runKey(node: ExpressionNode | StatementNode, input: SyntaxInput): AbstractType {
+    const components = node.findDirectExpressions(Expressions.LoopGroupByComponent);
+    if (components.length === 0) {
+      // LOOP: the key is the first child of LoopGroupBy, FOR GROUPS: the key follows GROUP BY
+      const key = node.get() instanceof Expressions.LoopGroupBy ? node.getFirstChild() : node.findExpressionAfterToken("BY");
+      let type: AbstractType | undefined = undefined;
+      if (key instanceof ExpressionNode && key.get() instanceof Expressions.Source) {
+        type = Source.runSyntax(key, input);
+      } else if (key instanceof ExpressionNode && key.get() instanceof Expressions.FieldChain) {
+        type = FieldChain.runSyntax(key, input, ReferenceType.DataReadReference);
+      }
+      return type ?? VoidType.get("GroupKey");
+    }
+
+    const fields: IStructureComponent[] = [];
+    let dynamic = false;
+    for (const c of components) {
+      const single = c.findDirectExpression(Expressions.ComponentCompareSingle);
+      if (single) {
+        const source = single.findDirectExpression(Expressions.Source);
+        const type = source ? Source.runSyntax(source, input) : undefined;
+        const name = single.findDirectExpression(Expressions.ComponentChainSimple);
+        if (name === undefined) {
+          dynamic = true;
+          continue;
+        }
+        fields.push({name: name.concatTokens(), type: type ?? VoidType.get("GroupKey")});
+      } else {
+        // GROUP SIZE and GROUP INDEX
+        const name = c.findDirectExpression(Expressions.ComponentName);
+        if (name) {
+          fields.push({name: name.concatTokens(), type: IntegerType.get()});
+        }
       }
     }
 
-    for (const t of node.findAllExpressions(Expressions.FSTarget)) {
-      FSTarget.runSyntax(t, input, VoidType.get("todoGroupBy"));
+    if (dynamic === true || fields.length === 0) {
+      return VoidType.get("GroupKey");
     }
+    return new StructureType(fields);
+  }
 
-    for (const t of node.findDirectExpressions(Expressions.Source)) {
-      Source.runSyntax(t, input, VoidType.get("todoGroupBy"));
+  /** the group variable in LOOP AT GROUP group and FOR ... IN GROUP group */
+  public static findMemberType(source: ExpressionNode | undefined, input: SyntaxInput): AbstractType | undefined {
+    if (source === undefined) {
+      return undefined;
     }
+    const found = input.scope.findVariable(this.groupName(source));
+    return found ? input.scope.findGroupMemberType(found) : undefined;
+  }
 
-    for (const c of node.findDirectExpressions(Expressions.LoopGroupByComponent)) {
-      for (const t of c.findDirectExpressions(Expressions.ComponentCompareSingle)) {
-        ComponentCompare.runSyntax(t, input);
-      }
+  private static groupName(source: ExpressionNode): string {
+    return source.concatTokens().replace(/\s/g, "").replace(/->\*$/, "");
+  }
+
+  private static findTargetIdentifier(node: ExpressionNode | undefined, scope: CurrentScope): TypedIdentifier | undefined {
+    if (node === undefined) {
+      return undefined;
     }
-
+    const inline = node.findDirectExpression(Expressions.InlineData) ?? node.findDirectExpression(Expressions.InlineFS);
+    let name: string | undefined;
+    if (inline) {
+      name = (inline.findFirstExpression(Expressions.TargetField)
+        ?? inline.findFirstExpression(Expressions.TargetFieldSymbol))?.getFirstToken().getStr();
+    } else if (node.getChildren().length === 1) {
+      name = node.getFirstToken().getStr();
+    }
+    return scope.findVariable(name);
   }
 }
