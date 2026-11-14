@@ -19619,9 +19619,17 @@ ENDCLASS.`;
     const issues = runProgram(program(`
     mv_value = iv_value.
     mv_super = iv_value.`));
-    expect(issues.map(i => i.getMessage())).to.deep.equal([missing, early, early]);
-    expect(issues[1].getStart().getRow()).to.equal(28);
-    expect(issues[2].getStart().getRow()).to.equal(29);
+    expect(issues.map(i => i.getMessage())).to.deep.equal([missing]);
+  });
+
+  it("error, only the first early access is reported", () => {
+    const issues = runProgram(program(`
+    mv_value = iv_value.
+    mv_super = iv_value.
+    instance_method( ).
+    super->constructor( ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+    expect(issues[0].getStart().getRow()).to.equal(28);
   });
 
   it("error, attribute written before the call", () => {
@@ -19688,6 +19696,6 @@ ENDCLASS.`;
     const issues = runMulti([
       {filename: "zcl_super.clas.abap", contents: zcl_super},
       {filename: "zcl_sub.clas.abap", contents: zcl_sub}]);
-    expect(issues.map(i => i.getMessage())).to.deep.equal([missing, early]);
+    expect(issues.map(i => i.getMessage())).to.deep.equal([missing]);
   });
 });

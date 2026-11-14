@@ -39,19 +39,21 @@ export class SuperConstructorCall {
     }
 
     const callIndex = statements.findIndex(s => SuperConstructorCall.isSuperConstructorCall(s));
+    // at most one issue is reported per constructor
     if (callIndex < 0) {
       const message = "The constructor of a subclass must call SUPER->CONSTRUCTOR";
       input.issues.push(syntaxIssue(input, methodStatement.getFirstToken(), message));
+      return;
     }
 
     // the statements up to and including the call, the call cannot pass instance attributes either,
     // declarations can refer to instance attributes for typing, eg. DATA ls_row LIKE LINE OF mt_table
-    const before = statements.slice(1, callIndex < 0 ? statements.length - 1 : callIndex + 1)
+    const before = statements.slice(1, callIndex + 1)
       .filter(s => !(s.get() instanceof NativeSQL) && !SuperConstructorCall.isDeclaration(s));
     const offending = SuperConstructorCall.findInstanceAccess(before, classDefinition, scopeNode, input);
-    for (const token of offending) {
+    if (offending !== undefined) {
       const message = "Instance attributes, instance methods and ME can only be accessed after SUPER->CONSTRUCTOR is called";
-      input.issues.push(syntaxIssue(input, token, message));
+      input.issues.push(syntaxIssue(input, offending, message));
     }
   }
 
@@ -85,35 +87,32 @@ export class SuperConstructorCall {
     return false;
   }
 
-  /** returns the first offending token of each statement */
+  /** returns the first offending token */
   private static findInstanceAccess(
     statements: StatementNode[],
     classDefinition: IClassDefinition,
     scopeNode: ISpaghettiScopeNode | undefined,
-    input: SyntaxInput): AbstractToken[] {
+    input: SyntaxInput): AbstractToken | undefined {
 
     const instance = SuperConstructorCall.listInstanceMembers(classDefinition, input);
     const references = SuperConstructorCall.listReferences(scopeNode, input.filename);
 
-    const ret: AbstractToken[] = [];
     for (const statement of statements) {
       const tokens = statement.getTokens();
       for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
         if (SuperConstructorCall.isMe(tokens, i)) {
-          ret.push(token);
-          break;
+          return token;
         }
         const resolved = references.get(SuperConstructorCall.key(token));
         if (resolved !== undefined
             && resolved.some(r => instance.has(r))
             && SuperConstructorCall.isOwnAccess(tokens, i)) {
-          ret.push(token);
-          break;
+          return token;
         }
       }
     }
-    return ret;
+    return undefined;
   }
 
   private static isMe(tokens: readonly AbstractToken[], index: number): boolean {
