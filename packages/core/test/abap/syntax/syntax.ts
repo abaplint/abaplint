@@ -19463,3 +19463,187 @@ DATA(sdf) = pdvs(5).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, subclass constructor must call SUPER->CONSTRUCTOR", () => {
+  const missing = "The constructor of a subclass must call SUPER->CONSTRUCTOR";
+  const early = "Instance attributes, instance methods and ME can only be accessed after SUPER->CONSTRUCTOR is called";
+
+  function program(body: string): string {
+    return `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    DATA mv_super TYPE i.
+    METHODS constructor IMPORTING iv_value TYPE i OPTIONAL.
+    METHODS super_method.
+ENDCLASS.
+
+CLASS lcl_super IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+  METHOD super_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    DATA mv_value TYPE i.
+    CLASS-DATA gv_value TYPE i.
+    METHODS constructor IMPORTING iv_value TYPE i OPTIONAL.
+    METHODS instance_method.
+    CLASS-METHODS static_method.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD constructor.
+${body}
+  ENDMETHOD.
+  METHOD instance_method.
+  ENDMETHOD.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.`;
+  }
+
+  it("ok, super constructor called first", () => {
+    const issues = runProgram(program(`
+    super->constructor( ).
+    mv_value = iv_value.
+    instance_method( ).
+    me->instance_method( ).
+    mv_super = 2.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, CALL METHOD super->constructor", () => {
+    const issues = runProgram(program(`
+    CALL METHOD super->constructor.
+    mv_value = iv_value.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, static members and local variables before the call", () => {
+    const issues = runProgram(program(`
+    DATA lv_local TYPE i.
+    lv_local = iv_value.
+    gv_value = lv_local.
+    lcl_sub=>gv_value = 2.
+    static_method( ).
+    super->constructor( ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, instance members of another object before the call", () => {
+    const issues = runProgram(program(`
+    DATA lo_other TYPE REF TO lcl_sub.
+    lo_other->mv_value = 2.
+    lo_other->instance_method( ).
+    super->constructor( ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, class without super class", () => {
+    const abap = `
+CLASS lcl_class DEFINITION.
+  PUBLIC SECTION.
+    DATA mv_value TYPE i.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl_class IMPLEMENTATION.
+  METHOD constructor.
+    mv_value = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, super constructor with parameters", () => {
+    const issues = runProgram(program(`
+    super->constructor( iv_value ).
+    mv_value = iv_value.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, super constructor not called", () => {
+    const issues = runProgram(program(``));
+    expect(issues[0]?.getMessage()).to.equal(missing);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("error, the example from the issue", () => {
+    const issues = runProgram(program(`
+    mv_value = iv_value.
+    mv_super = iv_value.`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([missing, early, early]);
+    expect(issues[1].getStart().getRow()).to.equal(28);
+    expect(issues[2].getStart().getRow()).to.equal(29);
+  });
+
+  it("error, attribute written before the call", () => {
+    const issues = runProgram(program(`
+    mv_value = iv_value.
+    super->constructor( ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("error, inherited attribute read before the call", () => {
+    const issues = runProgram(program(`
+    DATA(lv_value) = mv_super.
+    super->constructor( ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("error, instance method called before the call", () => {
+    const issues = runProgram(program(`
+    instance_method( ).
+    super->constructor( ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("error, inherited instance method called via me-> before the call", () => {
+    const issues = runProgram(program(`
+    me->super_method( ).
+    super->constructor( ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("error, ME used before the call", () => {
+    const issues = runProgram(program(`
+    DATA lo_ref TYPE REF TO lcl_sub.
+    lo_ref = me.
+    super->constructor( ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("error, instance attribute passed to the super constructor", () => {
+    const issues = runProgram(program(`
+    super->constructor( mv_value ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("error, global class", () => {
+    const zcl_super = `
+CLASS zcl_super DEFINITION PUBLIC.
+  PUBLIC SECTION.
+ENDCLASS.
+CLASS zcl_super IMPLEMENTATION.
+ENDCLASS.`;
+    const zcl_sub = `
+CLASS zcl_sub DEFINITION PUBLIC INHERITING FROM zcl_super.
+  PUBLIC SECTION.
+    METHODS constructor.
+  PRIVATE SECTION.
+    DATA mv_value TYPE i.
+ENDCLASS.
+CLASS zcl_sub IMPLEMENTATION.
+  METHOD constructor.
+    mv_value = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_super.clas.abap", contents: zcl_super},
+      {filename: "zcl_sub.clas.abap", contents: zcl_sub}]);
+    expect(issues.map(i => i.getMessage())).to.deep.equal([missing, early]);
+  });
+});
