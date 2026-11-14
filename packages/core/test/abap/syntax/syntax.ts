@@ -19782,3 +19782,42 @@ ENDCLASS.`;
     expect(issues.map(i => i.getMessage())).to.deep.equal([missing]);
   });
 });
+describe("syntax.ts, RAISE EXCEPTION abstract class", () => {
+  it("RAISE EXCEPTION TYPE abstract class, error", () => {
+    const abap = `
+CLASS lcx_abstract DEFINITION ABSTRACT.
+ENDCLASS.
+CLASS lcx_abstract IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  RAISE EXCEPTION TYPE lcx_abstract.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("lcx_abstract is abstract, cannot be instantiated");
+  });
+
+  it("RAISE EXCEPTION TYPE non-abstract class, ok", () => {
+    const abap = `
+CLASS lcx_concrete DEFINITION.
+ENDCLASS.
+CLASS lcx_concrete IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  RAISE EXCEPTION TYPE lcx_concrete.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("RAISE EXCEPTION TYPE global abstract class, error", () => {
+    const clas = `CLASS cx_sy_file_access_error DEFINITION PUBLIC ABSTRACT CREATE PUBLIC.
+ENDCLASS.
+CLASS cx_sy_file_access_error IMPLEMENTATION.
+ENDCLASS.`;
+    const prog = `RAISE EXCEPTION TYPE cx_sy_file_access_error.`;
+    const issues = runMulti([
+      {filename: "cx_sy_file_access_error.clas.abap", contents: clas},
+      {filename: "zfoo.prog.abap", contents: prog}]);
+    expect(issues.map(i => i.getMessage())).to.deep.equal(["cx_sy_file_access_error is abstract, cannot be instantiated"]);
+  });
+});

@@ -35,6 +35,11 @@ export class Raise implements StatementSyntax {
         input.scope.addReference(classTok, found.id, ReferenceType.ObjectOrientedReference, input.filename);
 
         const def = input.scope.findObjectDefinition(className);
+        if (input.scope.findClassDefinition(className)?.isAbstract() === true) {
+          const message = className + " is abstract, cannot be instantiated";
+          input.issues.push(syntaxIssue(input, classTok, message));
+          return;
+        }
         method = helper.searchMethodName(def, "CONSTRUCTOR")?.method;
       } else if (input.scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
