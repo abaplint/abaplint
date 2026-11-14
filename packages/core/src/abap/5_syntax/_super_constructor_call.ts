@@ -44,14 +44,33 @@ export class SuperConstructorCall {
       input.issues.push(syntaxIssue(input, methodStatement.getFirstToken(), message));
     }
 
-    // the statements up to and including the call, the call cannot pass instance attributes either
+    // the statements up to and including the call, the call cannot pass instance attributes either,
+    // declarations can refer to instance attributes for typing, eg. DATA ls_row LIKE LINE OF mt_table
     const before = statements.slice(1, callIndex < 0 ? statements.length - 1 : callIndex + 1)
-      .filter(s => !(s.get() instanceof NativeSQL));
+      .filter(s => !(s.get() instanceof NativeSQL) && !SuperConstructorCall.isDeclaration(s));
     const offending = SuperConstructorCall.findInstanceAccess(before, classDefinition, scopeNode, input);
     for (const token of offending) {
       const message = "Instance attributes, instance methods and ME can only be accessed after SUPER->CONSTRUCTOR is called";
       input.issues.push(syntaxIssue(input, token, message));
     }
+  }
+
+  private static isDeclaration(statement: StatementNode): boolean {
+    const type = statement.get();
+    return type instanceof Statements.Data
+      || type instanceof Statements.DataBegin
+      || type instanceof Statements.DataEnd
+      || type instanceof Statements.Constant
+      || type instanceof Statements.ConstantBegin
+      || type instanceof Statements.ConstantEnd
+      || type instanceof Statements.Type
+      || type instanceof Statements.TypeBegin
+      || type instanceof Statements.TypeEnd
+      || type instanceof Statements.Static
+      || type instanceof Statements.StaticBegin
+      || type instanceof Statements.StaticEnd
+      || type instanceof Statements.IncludeType
+      || type instanceof Statements.FieldSymbol;
   }
 
   private static isSuperConstructorCall(statement: StatementNode): boolean {

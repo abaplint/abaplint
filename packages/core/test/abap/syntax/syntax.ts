@@ -19532,6 +19532,50 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, declarations typed via instance attributes before the call", () => {
+    const issues = runProgram(program(`
+    DATA lv_like LIKE mv_value.
+    DATA lv_super LIKE mv_super.
+    TYPES ty_like LIKE mv_value.
+    FIELD-SYMBOLS <lv_value> LIKE mv_value.
+    DATA: BEGIN OF ls_struc,
+            field LIKE mv_value,
+          END OF ls_struc.
+    super->constructor( ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, abapGit example, DATA LIKE LINE OF before the call", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_file,
+             file TYPE string,
+           END OF ty_file.
+    DATA mt_files TYPE STANDARD TABLE OF ty_file WITH DEFAULT KEY.
+    METHODS constructor IMPORTING is_file TYPE string.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD constructor.
+    DATA ls_file LIKE LINE OF mt_files.
+    super->constructor( ).
+    ls_file-file = is_file.
+    INSERT ls_file INTO TABLE mt_files.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, instance members of another object before the call", () => {
     const issues = runProgram(program(`
     DATA lo_other TYPE REF TO lcl_sub.
