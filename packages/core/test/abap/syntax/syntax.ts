@@ -19821,3 +19821,13 @@ ENDCLASS.`;
     expect(issues.map(i => i.getMessage())).to.deep.equal(["cx_sy_file_access_error is abstract, cannot be instantiated"]);
   });
 });
+
+describe("syntax.ts, VALUE row compatibility", () => {
+  it("VALUE, character literal row into table of xstring, error", () => {
+    const abap = `
+DATA lt_hex TYPE STANDARD TABLE OF xstring WITH DEFAULT KEY.
+lt_hex = VALUE #( ( '0000000000000001' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("VALUE, source type CharacterType not compatible with XStringType");
+  });
+});
