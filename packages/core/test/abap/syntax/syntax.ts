@@ -19576,6 +19576,75 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, static members via me-> before the call", () => {
+    const issues = runProgram(program(`
+    me->gv_value = 2.
+    me->static_method( ).
+    super->constructor( ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  function interfaceProgram(body: string): string {
+    return `
+INTERFACE lif_destination.
+  TYPES ty_type TYPE string.
+  DATA type TYPE ty_type READ-ONLY.
+ENDINTERFACE.
+
+INTERFACE lif_destination_rfc.
+  INTERFACES lif_destination.
+  CONSTANTS type TYPE lif_destination=>ty_type VALUE 'RFC'.
+ENDINTERFACE.
+
+CLASS lcl_destination DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES lif_destination.
+    METHODS constructor IMPORTING type LIKE lif_destination~type.
+ENDCLASS.
+
+CLASS lcl_destination IMPLEMENTATION.
+  METHOD constructor.
+    lif_destination~type = type.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_destination_rfc DEFINITION INHERITING FROM lcl_destination.
+  PUBLIC SECTION.
+    INTERFACES lif_destination_rfc.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl_destination_rfc IMPLEMENTATION.
+  METHOD constructor.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+  }
+
+  it("ok, interface constant via me-> passed to the super constructor", () => {
+    const issues = runProgram(interfaceProgram(`
+    super->constructor( me->lif_destination_rfc~type ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, interface constant passed to the super constructor", () => {
+    const issues = runProgram(interfaceProgram(`
+    super->constructor( lif_destination_rfc~type ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, interface attribute via me-> passed to the super constructor", () => {
+    const issues = runProgram(interfaceProgram(`
+    super->constructor( me->lif_destination~type ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("error, interface attribute passed to the super constructor", () => {
+    const issues = runProgram(interfaceProgram(`
+    super->constructor( lif_destination~type ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
   it("ok, instance members of another object before the call", () => {
     const issues = runProgram(program(`
     DATA lo_other TYPE REF TO lcl_sub.

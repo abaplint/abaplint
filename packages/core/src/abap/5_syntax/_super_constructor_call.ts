@@ -8,6 +8,7 @@ import {StatementNode, StructureNode} from "../nodes";
 import {VirtualPosition} from "../../virtual_position";
 import {Identifier} from "../4_file_information/_identifier";
 import {IClassDefinition} from "../types/_class_definition";
+import {IInterfaceDefinition} from "../types/_interface_definition";
 import {ISpaghettiScopeNode} from "./_spaghetti_scope";
 import {SyntaxInput, syntaxIssue} from "./_syntax_input";
 
@@ -115,14 +116,18 @@ export class SuperConstructorCall {
     return undefined;
   }
 
+  /** ME used as a value, me->component is allowed for constants and static components,
+   *  instance components are found via the references */
   private static isMe(tokens: readonly AbstractToken[], index: number): boolean {
     const token = tokens[index];
     if (!(token instanceof IdentifierToken) || token.getStr().toUpperCase() !== "ME") {
       return false;
     }
     const prev = tokens[index - 1];
-    return prev === undefined
-      || !(prev instanceof Dash || ["->", "=>", "~"].includes(prev.getStr()));
+    if (prev !== undefined && (prev instanceof Dash || ["->", "=>", "~"].includes(prev.getStr()))) {
+      return false;
+    }
+    return tokens[index + 1]?.getStr() !== "->";
   }
 
   /** the member is accessed via the implicit or explicit self reference, not via another object or class */
@@ -136,12 +141,18 @@ export class SuperConstructorCall {
     return !(prev instanceof Dash || ["=>", "~"].includes(prev.getStr()));
   }
 
+  /** instance attributes and methods of the class, its super classes and implemented interfaces */
   private static listInstanceMembers(classDefinition: IClassDefinition, input: SyntaxInput): Set<Identifier> {
     const ret = new Set<Identifier>();
     const visited = new Set<string>();
-    let current: IClassDefinition | undefined = classDefinition;
-    while (current !== undefined && visited.has(current.getName().toUpperCase()) === false) {
-      visited.add(current.getName().toUpperCase());
+    const stack: (IClassDefinition | IInterfaceDefinition)[] = [classDefinition];
+    while (stack.length > 0) {
+      const current = stack.pop()!;
+      const name = current.getName().toUpperCase();
+      if (visited.has(name)) {
+        continue;
+      }
+      visited.add(name);
       for (const a of current.getAttributes().getInstance()) {
         ret.add(a);
       }
@@ -150,7 +161,18 @@ export class SuperConstructorCall {
           ret.add(m);
         }
       }
-      current = input.scope.findClassDefinition(current.getSuperClass());
+      for (const i of current.getImplementing()) {
+        const intf = input.scope.findInterfaceDefinition(i.name);
+        if (intf !== undefined) {
+          stack.push(intf);
+        }
+      }
+      if ("getSuperClass" in current) {
+        const sup = input.scope.findClassDefinition(current.getSuperClass());
+        if (sup !== undefined) {
+          stack.push(sup);
+        }
+      }
     }
     return ret;
   }
