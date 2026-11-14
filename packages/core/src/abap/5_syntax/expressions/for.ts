@@ -10,7 +10,7 @@ import {VoidType} from "../../types/basic";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {ReferenceType} from "../_reference";
 import {Let} from "./let";
-import {SyntaxInput} from "../_syntax_input";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class For {
   public static runSyntax(node: ExpressionNode | StatementNode, input: SyntaxInput): boolean {
@@ -38,6 +38,11 @@ export class For {
     }
 
     if (groupsToken !== undefined) {
+      const message = input.scope.checkLocalName(groupsToken.getStr(), undefined);
+      if (message !== undefined) {
+        input.issues.push(syntaxIssue(input, groupsToken, message));
+        return scoped;
+      }
       const type = VoidType.get("todoGroupBy");
       const identifier = new TypedIdentifier(groupsToken, input.filename, type, [IdentifierMeta.InlineDefinition]);
       input.scope.addIdentifier(identifier);
