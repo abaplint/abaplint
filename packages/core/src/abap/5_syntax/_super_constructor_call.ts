@@ -47,9 +47,9 @@ export class SuperConstructorCall {
       return;
     }
 
-    // the statements up to and including the call, the call cannot pass instance attributes either,
+    // the statements before the call, the call itself can pass instance attributes, eg. previous = previous,
     // declarations can refer to instance attributes for typing, eg. DATA ls_row LIKE LINE OF mt_table
-    const before = statements.slice(1, callIndex + 1)
+    const before = statements.slice(1, callIndex)
       .filter(s => !(s.get() instanceof NativeSQL) && !SuperConstructorCall.isDeclaration(s));
     const offending = SuperConstructorCall.findInstanceAccess(before, classDefinition, scopeNode, input);
     if (offending !== undefined) {

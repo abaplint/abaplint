@@ -19633,15 +19633,23 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("error, interface attribute via me-> passed to the super constructor", () => {
+  it("ok, interface attribute passed to the super constructor", () => {
     const issues = runProgram(interfaceProgram(`
     super->constructor( me->lif_destination~type ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, interface attribute via me-> read before the call", () => {
+    const issues = runProgram(interfaceProgram(`
+    DATA(lv_type) = me->lif_destination~type.
+    super->constructor( lv_type ).`));
     expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
   });
 
-  it("error, interface attribute passed to the super constructor", () => {
+  it("error, interface attribute read before the call", () => {
     const issues = runProgram(interfaceProgram(`
-    super->constructor( lif_destination~type ).`));
+    DATA(lv_type) = lif_destination~type.
+    super->constructor( lv_type ).`));
     expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
   });
 
@@ -19737,10 +19745,16 @@ ENDCLASS.`;
     expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
   });
 
-  it("error, instance attribute passed to the super constructor", () => {
+  it("ok, instance attribute passed to the super constructor", () => {
     const issues = runProgram(program(`
     super->constructor( mv_value ).`));
-    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, inherited instance attribute passed to the super constructor, open-abap example", () => {
+    const issues = runProgram(program(`
+    super->constructor( iv_value = mv_super ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("error, global class", () => {
