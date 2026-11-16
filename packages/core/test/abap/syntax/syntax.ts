@@ -19857,3 +19857,15 @@ APPEND lo_row TO <ls_group>-rows.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, INSERT INTO TABLE compatibility", () => {
+  it("INSERT character literal into table of c length 20, error", () => {
+    const abap = `
+TYPES tyc TYPE c LENGTH 20.
+TYPES ty_devclass_tt TYPE STANDARD TABLE OF tyc WITH DEFAULT KEY .
+DATA itab TYPE ty_devclass_tt.
+INSERT 'HELLO' INTO TABLE itab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Types not compatible");
+  });
+});
