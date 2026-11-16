@@ -1237,11 +1237,18 @@
           },
           "type": "array"
         },
+        "exclusiveValues": {
+          "description": "Report x <> a OR x <> b, always true, and x = a AND x = b, always false, for different character values a and b",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "exclusiveValues"
+      ],
       "type": "object"
     },
     "ConstructorVisibilityPublicConf": {
@@ -2810,7 +2817,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
+              "description": "Finds IF and ELSEIF conditions on local variables whose value is known, and conditions that compare\na field with two different values and are always true or always false\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -5384,7 +5391,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
+              "description": "Finds IF and ELSEIF conditions on local variables whose value is known, and conditions that compare\na field with two different values and are always true or always false\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -7562,11 +7569,18 @@
           },
           "type": "array"
         },
+        "selfComparison": {
+          "description": "Report a comparison of an operand with itself, like a = a or a <> a",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "selfComparison"
+      ],
       "type": "object"
     },
     "IdenticalContentsConf": {
