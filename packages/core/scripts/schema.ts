@@ -206,6 +206,7 @@ import {SyModificationConf} from "../src/rules/sy_modification";
 import {SyReadRestrictionConf} from "../src/rules/sy_read_restriction";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
 import {TablesDeclaredLocallyConf} from "../src/rules/tables_declared_locally";
+import {TextFieldLiteralBlanksConf} from "../src/rules/text_field_literal_blanks";
 import {TryCastEmptyCatchConf} from "../src/rules/try_cast_empty_catch";
 import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
 import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
@@ -454,6 +455,7 @@ export interface IConfig {
     "sy_read_restriction"?: SyReadRestrictionConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
     "tables_declared_locally"?: TablesDeclaredLocallyConf | boolean,
+    "text_field_literal_blanks"?: TextFieldLiteralBlanksConf | boolean,
     "try_cast_empty_catch"?: TryCastEmptyCatchConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,
     "type_form_parameters"?: TypeFormParametersConf | boolean,
@@ -691,6 +693,7 @@ export interface IConfig {
     "sy_read_restriction"?: SyReadRestrictionConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
     "tables_declared_locally"?: TablesDeclaredLocallyConf | boolean,
+    "text_field_literal_blanks"?: TextFieldLiteralBlanksConf | boolean,
     "try_cast_empty_catch"?: TryCastEmptyCatchConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,
     "type_form_parameters"?: TypeFormParametersConf | boolean,

@@ -203,6 +203,7 @@ export * from "./sy_modification";
 export * from "./sy_read_restriction";
 export * from "./tabl_enhancement_category";
 export * from "./tables_declared_locally";
+export * from "./text_field_literal_blanks";
 export * from "./try_cast_empty_catch";
 export * from "./try_without_catch";
 export * from "./type_form_parameters";
