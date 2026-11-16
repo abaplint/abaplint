@@ -100,6 +100,7 @@ export * from "./in_statement_indentation";
 export * from "./indentation";
 export * from "./index_completely_contained";
 export * from "./inline_data_old_versions";
+export * from "./inline_generic_source";
 export * from "./inline_packed_computation";
 export * from "./intf_referencing_clas";
 export * from "./invalid_table_index";
