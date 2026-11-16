@@ -126,10 +126,22 @@ describe("syntax, local types of the class pool outside the PRIVATE SECTION of t
     });
   }
 
-  it("error: PROTECTED SECTION of a FINAL class", () => {
-    const abap = `PROTECTED SECTION.
-    DATA mv_row TYPE ty_s_row.`;
-    expect(run(abap, "", localsDef, "PUBLIC FINAL CREATE PUBLIC")).to.deep.equal([message("TY_S_ROW", "PROTECTED")]);
+  it("error: PUBLIC SECTION of a FINAL class", () => {
+    const abap = `PUBLIC SECTION.
+    DATA mv_row TYPE ty_s_row.
+  PROTECTED SECTION.
+    DATA mv_prot TYPE ty_s_row.`;
+    expect(run(abap, "", localsDef, "PUBLIC FINAL CREATE PUBLIC")).to.deep.equal([message("TY_S_ROW", "PUBLIC")]);
+  });
+
+  it("fine: PROTECTED SECTION of a FINAL class", () => {
+    const abap = `PUBLIC SECTION.
+  PROTECTED SECTION.
+    DATA foo TYPE ty.
+  PRIVATE SECTION.`;
+    const def = localsDef + `
+TYPES ty TYPE i.`;
+    expect(run(abap, "", def, "PUBLIC FINAL CREATE PUBLIC")).to.deep.equal([]);
   });
 
   const fine: {abap: string, implementation?: string}[] = [
