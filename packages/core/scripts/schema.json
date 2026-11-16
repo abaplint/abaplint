@@ -1890,6 +1890,23 @@
       },
       "type": "object"
     },
+    "FieldSymbolNeverAssignedConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "FinalNewlineConf": {
       "additionalProperties": false,
       "properties": {
@@ -3071,6 +3088,17 @@
                 }
               ],
               "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
+            },
+            "field_symbol_never_assigned": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FieldSymbolNeverAssignedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a local field symbol that is used, but never assigned in its method, form or function module\nTags: SingleFile\nhttps://rules.abaplint.org/field_symbol_never_assigned"
             },
             "final_newline": {
               "anyOf": [
@@ -5656,6 +5684,17 @@
                 }
               ],
               "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
+            },
+            "field_symbol_never_assigned": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FieldSymbolNeverAssignedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a local field symbol that is used, but never assigned in its method, form or function module\nTags: SingleFile\nhttps://rules.abaplint.org/field_symbol_never_assigned"
             },
             "final_newline": {
               "anyOf": [
