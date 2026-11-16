@@ -206,8 +206,11 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     const sections = [
       {section: node.findDirectStructure(Structures.PublicSection), name: "PUBLIC"},
-      {section: node.findDirectStructure(Structures.ProtectedSection), name: "PROTECTED"},
     ];
+    // a FINAL class has no subclasses, so the PROTECTED SECTION is effectively private
+    if (this.finalValue === false) {
+      sections.push({section: node.findDirectStructure(Structures.ProtectedSection), name: "PROTECTED"});
+    }
     for (const {section, name} of sections) {
       for (const statement of section?.findAllStatementNodes() || []) {
         // compare with the tokens, the statements of a chain share the first tokens

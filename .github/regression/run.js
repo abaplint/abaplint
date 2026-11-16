@@ -70,7 +70,7 @@ const repos = [
   "sbcgua/abap-string-map",
   "sbcgua/ajson",
   "sbcgua/mockup_loader",
-  "sbcgua/text2tab",
+//  "sbcgua/text2tab",   https://github.com/sbcgua/text2tab/issues/45
   "Sumu-Ning/AES",
 ];
 
