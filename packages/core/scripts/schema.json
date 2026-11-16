@@ -4242,6 +4242,17 @@
               ],
               "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/sequential_blank"
             },
+            "sequential_read_sorted": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SequentialReadSortedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "A WHERE condition or a free key on a sorted table that does not use the primary key\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/sequential_read_sorted"
+            },
             "short_case": {
               "anyOf": [
                 {
@@ -6804,6 +6815,17 @@
                 }
               ],
               "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/sequential_blank"
+            },
+            "sequential_read_sorted": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SequentialReadSortedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "A WHERE condition or a free key on a sorted table that does not use the primary key\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/sequential_read_sorted"
             },
             "short_case": {
               "anyOf": [
@@ -10227,6 +10249,23 @@
       "required": [
         "lines"
       ],
+      "type": "object"
+    },
+    "SequentialReadSortedConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "SevenBitAsciiConf": {

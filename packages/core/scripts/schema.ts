@@ -184,6 +184,7 @@ import {SelectSingleFullKeyConf} from "../src/rules/select_single_full_key";
 import {SelectionScreenNamingConf} from "../src/rules/selection_screen_naming";
 import {SelectionScreenTextsMissingConf} from "../src/rules/selection_screen_texts_missing";
 import {SequentialBlankConf} from "../src/rules/sequential_blank";
+import {SequentialReadSortedConf} from "../src/rules/sequential_read_sorted";
 import {ShortCaseConf} from "../src/rules/short_case";
 import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
 import {SingleUseExpressionTempConf} from "../src/rules/single_use_expression_temp";
@@ -430,6 +431,7 @@ export interface IConfig {
     "selection_screen_naming"?: SelectionScreenNamingConf | boolean,
     "selection_screen_texts_missing"?: SelectionScreenTextsMissingConf | boolean,
     "sequential_blank"?: SequentialBlankConf | boolean,
+    "sequential_read_sorted"?: SequentialReadSortedConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
     "sicf_consistency"?: SICFConsistencyConf | boolean,
     "single_use_expression_temp"?: SingleUseExpressionTempConf | boolean,
@@ -665,6 +667,7 @@ export interface IConfig {
     "selection_screen_naming"?: SelectionScreenNamingConf | boolean,
     "selection_screen_texts_missing"?: SelectionScreenTextsMissingConf | boolean,
     "sequential_blank"?: SequentialBlankConf | boolean,
+    "sequential_read_sorted"?: SequentialReadSortedConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
     "sicf_consistency"?: SICFConsistencyConf | boolean,
     "single_use_expression_temp"?: SingleUseExpressionTempConf | boolean,
