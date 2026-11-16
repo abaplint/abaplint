@@ -528,7 +528,11 @@ export class Select {
     // only resolve the type here, errors for the host variable are not reported by this lookup
     const issues: Issue[] = [];
     const type = FieldChain.runSyntax(chain, {...input, issues});
-    return issues.length > 0 ? undefined : type;
+    // a generic host type cannot type the inline declaration, keep it voided
+    if (issues.length > 0 || type === undefined || type.isGeneric()) {
+      return undefined;
+    }
+    return type;
   }
 
   /** returns the SQLFunction node if the field list entry is a single SQL function call */
