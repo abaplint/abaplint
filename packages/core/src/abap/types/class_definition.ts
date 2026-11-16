@@ -15,10 +15,11 @@ import {IEventDefinition} from "./_event_definition";
 import {IMethodDefinitions} from "./_method_definitions";
 import {ObjectOriented} from "../5_syntax/_object_oriented";
 import {IImplementing} from "./_interface_definition";
-import {ReferenceType} from "../5_syntax/_reference";
+import {IReference, ReferenceType} from "../5_syntax/_reference";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 import {Alias} from "./alias";
+import {SpaghettiScopeNode} from "../5_syntax/spaghetti_scope";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly methodDefs: MethodDefinitions;
@@ -77,7 +78,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     this.methodDefs = new MethodDefinitions(node, input);
 
-    input.scope.pop(node.getLastToken().getEnd());
+    const scope = input.scope.pop(node.getLastToken().getEnd());
 
     const concat = def!.concatTokens().toUpperCase();
 
@@ -100,6 +101,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.checkClassNameLength(input);
     this.checkMethodNameLength(input);
     this.checkClassConstructor(input);
+    this.checkLocalTypesInPublicSections(input, node, scope.getTop());
   }
 
   public getFriends() {
@@ -169,6 +171,56 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     if (this.getName().length > 30) {
       const message = `Class name "${this.getName()}" is too long, maximum length is 30 characters`;
       input.issues.push(syntaxIssue(input, this.getToken(), message));
+    }
+  }
+
+  // the local types, classes and interfaces of a class pool can only be used in the PRIVATE SECTION of the global class
+  private checkLocalTypesInPublicSections(input: SyntaxInput, node: StructureNode, scope: SpaghettiScopeNode) {
+    if (this.globalValue === false || input.filename.toLowerCase().endsWith(".clas.abap") === false) {
+      return;
+    }
+    const prefix = input.filename.toLowerCase().replace(/abap$/, "");
+    const isLocal = (filename: string) => {
+      const lower = filename.toLowerCase();
+      return lower.startsWith(prefix)
+        && (lower.endsWith(".clas.locals_def.abap") || lower.endsWith(".clas.locals_imp.abap"));
+    };
+
+    const references: IReference[] = [];
+    const collect = (n: SpaghettiScopeNode) => {
+      for (const r of n.getData().references) {
+        if ((r.referenceType === ReferenceType.TypeReference || r.referenceType === ReferenceType.ObjectOrientedReference)
+            && r.position.getFilename() === input.filename
+            && r.position.getName().includes("~") === false // lif~meth of an ALIASES, the INTERFACES statement is reported
+            && r.resolved !== undefined
+            && isLocal(r.resolved.getFilename())) {
+          references.push(r);
+        }
+      }
+      n.getChildren().forEach(collect);
+    };
+    collect(scope);
+    if (references.length === 0) {
+      return;
+    }
+
+    const sections = [
+      {section: node.findDirectStructure(Structures.PublicSection), name: "PUBLIC"},
+      {section: node.findDirectStructure(Structures.ProtectedSection), name: "PROTECTED"},
+    ];
+    for (const {section, name} of sections) {
+      for (const statement of section?.findAllStatementNodes() || []) {
+        // compare with the tokens, the statements of a chain share the first tokens
+        const tokens = statement.getTokens();
+        const found = references
+          .filter(r => tokens.some(t => t.getStart().equals(r.position.getStart())))
+          .sort((a, b) => a.position.getStart().isBefore(b.position.getStart()) ? -1 : 1)[0];
+        if (found !== undefined) {
+          const message = "\"" + found.position.getName().toUpperCase() +
+            "\" is local to the class pool and cannot be used in the " + name + " SECTION of the global class";
+          input.issues.push(syntaxIssue(input, found.position.getToken(), message));
+        }
+      }
     }
   }
 
