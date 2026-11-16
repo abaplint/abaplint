@@ -3347,6 +3347,17 @@
               ],
               "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
             },
+            "inline_generic_source": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlineGenericSourceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds inline declarations whose value is a generically typed parameter or field symbol\nTags: Quickfix\nhttps://rules.abaplint.org/inline_generic_source"
+            },
             "inline_packed_computation": {
               "anyOf": [
                 {
@@ -5921,6 +5932,17 @@
               ],
               "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
             },
+            "inline_generic_source": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlineGenericSourceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds inline declarations whose value is a generically typed parameter or field symbol\nTags: Quickfix\nhttps://rules.abaplint.org/inline_generic_source"
+            },
             "inline_packed_computation": {
               "anyOf": [
                 {
@@ -7798,6 +7820,23 @@
       "type": "object"
     },
     "InlineDataOldVersionsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "InlineGenericSourceConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

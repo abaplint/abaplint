@@ -102,6 +102,7 @@ import {InStatementIndentationConf} from "../src/rules/in_statement_indentation"
 import {IndentationConf} from "../src/rules/indentation";
 import {IndexCompletelyContainedConf} from "../src/rules/index_completely_contained";
 import {InlineDataOldVersionsConf} from "../src/rules/inline_data_old_versions";
+import {InlineGenericSourceConf} from "../src/rules/inline_generic_source";
 import {InlinePackedComputationConf} from "../src/rules/inline_packed_computation";
 import {IntfReferencingClasConf} from "../src/rules/intf_referencing_clas";
 import {InvalidTableIndexConf} from "../src/rules/invalid_table_index";
@@ -349,6 +350,7 @@ export interface IConfig {
     "indentation"?: IndentationConf | boolean,
     "index_completely_contained"?: IndexCompletelyContainedConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
+    "inline_generic_source"?: InlineGenericSourceConf | boolean,
     "inline_packed_computation"?: InlinePackedComputationConf | boolean,
     "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "invalid_table_index"?: InvalidTableIndexConf | boolean,
@@ -585,6 +587,7 @@ export interface IConfig {
     "indentation"?: IndentationConf | boolean,
     "index_completely_contained"?: IndexCompletelyContainedConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
+    "inline_generic_source"?: InlineGenericSourceConf | boolean,
     "inline_packed_computation"?: InlinePackedComputationConf | boolean,
     "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "invalid_table_index"?: InvalidTableIndexConf | boolean,
