@@ -9925,6 +9925,10 @@
     "RedundantConversionConf": {
       "additionalProperties": false,
       "properties": {
+        "assignmentTarget": {
+          "description": "Also report a CONV that is the whole right-hand side of an assignment whose target already has the conversion type, e.g. \"count = CONV i( text ).\" with count TYPE i, the assignment converts by itself",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -9937,6 +9941,9 @@
           "description": "Problem severity"
         }
       },
+      "required": [
+        "assignmentTarget"
+      ],
       "type": "object"
     },
     "ReleaseIdocConf": {
