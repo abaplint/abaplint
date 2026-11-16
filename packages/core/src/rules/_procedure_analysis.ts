@@ -1018,7 +1018,7 @@ export function characterConstant(procedure: Procedure, source: ExpressionNode):
   return undefined;
 }
 
-function textLiteral(text: string): string | undefined {
+export function textLiteral(text: string): string | undefined {
   if (text.length < 2 || !text.startsWith("'") || !text.endsWith("'")) {
     return undefined;
   }
