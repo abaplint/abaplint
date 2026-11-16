@@ -102,6 +102,7 @@ import {InStatementIndentationConf} from "../src/rules/in_statement_indentation"
 import {IndentationConf} from "../src/rules/indentation";
 import {IndexCompletelyContainedConf} from "../src/rules/index_completely_contained";
 import {InlineDataOldVersionsConf} from "../src/rules/inline_data_old_versions";
+import {InlineGenericSourceConf} from "../src/rules/inline_generic_source";
 import {InlinePackedComputationConf} from "../src/rules/inline_packed_computation";
 import {IntfReferencingClasConf} from "../src/rules/intf_referencing_clas";
 import {InvalidTableIndexConf} from "../src/rules/invalid_table_index";
@@ -184,6 +185,7 @@ import {SelectSingleFullKeyConf} from "../src/rules/select_single_full_key";
 import {SelectionScreenNamingConf} from "../src/rules/selection_screen_naming";
 import {SelectionScreenTextsMissingConf} from "../src/rules/selection_screen_texts_missing";
 import {SequentialBlankConf} from "../src/rules/sequential_blank";
+import {SequentialReadSortedConf} from "../src/rules/sequential_read_sorted";
 import {ShortCaseConf} from "../src/rules/short_case";
 import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
 import {SingleUseExpressionTempConf} from "../src/rules/single_use_expression_temp";
@@ -348,6 +350,7 @@ export interface IConfig {
     "indentation"?: IndentationConf | boolean,
     "index_completely_contained"?: IndexCompletelyContainedConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
+    "inline_generic_source"?: InlineGenericSourceConf | boolean,
     "inline_packed_computation"?: InlinePackedComputationConf | boolean,
     "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "invalid_table_index"?: InvalidTableIndexConf | boolean,
@@ -430,6 +433,7 @@ export interface IConfig {
     "selection_screen_naming"?: SelectionScreenNamingConf | boolean,
     "selection_screen_texts_missing"?: SelectionScreenTextsMissingConf | boolean,
     "sequential_blank"?: SequentialBlankConf | boolean,
+    "sequential_read_sorted"?: SequentialReadSortedConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
     "sicf_consistency"?: SICFConsistencyConf | boolean,
     "single_use_expression_temp"?: SingleUseExpressionTempConf | boolean,
@@ -583,6 +587,7 @@ export interface IConfig {
     "indentation"?: IndentationConf | boolean,
     "index_completely_contained"?: IndexCompletelyContainedConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
+    "inline_generic_source"?: InlineGenericSourceConf | boolean,
     "inline_packed_computation"?: InlinePackedComputationConf | boolean,
     "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "invalid_table_index"?: InvalidTableIndexConf | boolean,
@@ -665,6 +670,7 @@ export interface IConfig {
     "selection_screen_naming"?: SelectionScreenNamingConf | boolean,
     "selection_screen_texts_missing"?: SelectionScreenTextsMissingConf | boolean,
     "sequential_blank"?: SequentialBlankConf | boolean,
+    "sequential_read_sorted"?: SequentialReadSortedConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
     "sicf_consistency"?: SICFConsistencyConf | boolean,
     "single_use_expression_temp"?: SingleUseExpressionTempConf | boolean,

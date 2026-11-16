@@ -1237,11 +1237,18 @@
           },
           "type": "array"
         },
+        "exclusiveValues": {
+          "description": "Report x <> a OR x <> b, always true, and x = a AND x = b, always false, for different character values a and b",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "exclusiveValues"
+      ],
       "type": "object"
     },
     "ConstructorVisibilityPublicConf": {
@@ -2810,7 +2817,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
+              "description": "Finds IF and ELSEIF conditions on local variables whose value is known, and conditions that compare\na field with two different values and are always true or always false\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -3339,6 +3346,17 @@
                 }
               ],
               "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
+            },
+            "inline_generic_source": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlineGenericSourceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds inline declarations whose value is a generically typed parameter or field symbol\nTags: Quickfix\nhttps://rules.abaplint.org/inline_generic_source"
             },
             "inline_packed_computation": {
               "anyOf": [
@@ -4241,6 +4259,17 @@
                 }
               ],
               "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/sequential_blank"
+            },
+            "sequential_read_sorted": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SequentialReadSortedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "A WHERE condition or a free key on a sorted table that does not use the primary key\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/sequential_read_sorted"
             },
             "short_case": {
               "anyOf": [
@@ -5373,7 +5402,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
+              "description": "Finds IF and ELSEIF conditions on local variables whose value is known, and conditions that compare\na field with two different values and are always true or always false\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -5902,6 +5931,17 @@
                 }
               ],
               "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
+            },
+            "inline_generic_source": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlineGenericSourceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds inline declarations whose value is a generically typed parameter or field symbol\nTags: Quickfix\nhttps://rules.abaplint.org/inline_generic_source"
             },
             "inline_packed_computation": {
               "anyOf": [
@@ -6805,6 +6845,17 @@
               ],
               "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nTags: Whitespace, Quickfix, SingleFile\nhttps://rules.abaplint.org/sequential_blank"
             },
+            "sequential_read_sorted": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SequentialReadSortedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "A WHERE condition or a free key on a sorted table that does not use the primary key\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/sequential_read_sorted"
+            },
             "short_case": {
               "anyOf": [
                 {
@@ -7540,11 +7591,18 @@
           },
           "type": "array"
         },
+        "selfComparison": {
+          "description": "Report a comparison of an operand with itself, like a = a or a <> a",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "selfComparison"
+      ],
       "type": "object"
     },
     "IdenticalContentsConf": {
@@ -7762,6 +7820,23 @@
       "type": "object"
     },
     "InlineDataOldVersionsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "InlineGenericSourceConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -10222,6 +10297,23 @@
       "required": [
         "lines"
       ],
+      "type": "object"
+    },
+    "SequentialReadSortedConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "SevenBitAsciiConf": {
