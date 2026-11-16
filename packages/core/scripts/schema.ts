@@ -211,6 +211,7 @@ import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
 import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/types_naming";
 import {UncaughtExceptionConf} from "../src/rules/uncaught_exception";
+import {UnitTestAssertionsConf} from "../src/rules/unit_test_assertions";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
 import {UnnecessaryChainingConf} from "../src/rules/unnecessary_chaining";
 import {UnnecessaryCopyConf} from "../src/rules/unnecessary_copy";
@@ -459,6 +460,7 @@ export interface IConfig {
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
+    "unit_test_assertions"?: UnitTestAssertionsConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
     "unnecessary_copy"?: UnnecessaryCopyConf | boolean,
@@ -696,6 +698,7 @@ export interface IConfig {
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
+    "unit_test_assertions"?: UnitTestAssertionsConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
     "unnecessary_copy"?: UnnecessaryCopyConf | boolean,
