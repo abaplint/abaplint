@@ -520,22 +520,15 @@ export class Select {
     if (!(children[0]?.get() instanceof WAt)) {
       return undefined;
     }
-    let chain: ExpressionNode | undefined = undefined;
-    if (children.length === 2 && children[1] instanceof ExpressionNode) {
-      chain = children[1];
-    } else if (children.length === 4 && children[2] instanceof ExpressionNode) {
-      chain = children[2];
-    }
-    if (chain === undefined || !(chain.get() instanceof Expressions.SimpleFieldChain2)) {
+    // "@var" has two children, "@( var )" has four, anything else is an expression
+    const chain = children.length === 2 ? children[1] : children.length === 4 ? children[2] : undefined;
+    if (!(chain instanceof ExpressionNode) || !(chain.get() instanceof Expressions.SimpleFieldChain2)) {
       return undefined;
     }
     // only resolve the type here, errors for the host variable are not reported by this lookup
     const issues: Issue[] = [];
     const type = FieldChain.runSyntax(chain, {...input, issues});
-    if (issues.length > 0 || type instanceof UnknownType) {
-      return undefined;
-    }
-    return type;
+    return issues.length > 0 ? undefined : type;
   }
 
   /** returns the SQLFunction node if the field list entry is a single SQL function call */

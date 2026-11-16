@@ -7,6 +7,7 @@ import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Position} from "../../../src/position";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {TableAccessType} from "../../../src/abap/types/basic";
+import {CheckSyntaxKey} from "../../../src/abap/5_syntax/_syntax_input";
 
 function resolveVariable(abap: string, name: string): TypedIdentifier | undefined {
   const filename = "zfoobar.prog.abap";
@@ -1468,6 +1469,15 @@ SELECT SINGLE @lv_int FROM t100 INTO @DATA(lv_result).`;
 
   it("SELECT SINGLE unknown host variable into inline field, voided", () => {
     const abap = `SELECT SINGLE @lv_unknown FROM zsel_cond INTO @DATA(lv_result).`;
+    const identifier = runSelCond(abap, "lv_result");
+    expectVoid(identifier);
+    expect((identifier!.getType() as Basic.VoidType).getVoided()).to.not.equal(CheckSyntaxKey);
+  });
+
+  it("SELECT SINGLE host variable arithmetic into inline field, voided", () => {
+    const abap = `
+DATA lv_int TYPE i.
+SELECT SINGLE @lv_int + 1 FROM zsel_cond INTO @DATA(lv_result).`;
     expectVoid(runSelCond(abap, "lv_result"));
   });
 
