@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {SortBeforeRead, SortBeforeReadConf} from "../../src/rules/sort_before_read";
+import {SortRequired, SortRequiredConf} from "../../src/rules/sort_required";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Issue} from "../../src/issue";
@@ -22,9 +22,9 @@ ${body}
 ENDFORM.`;
 }
 
-function findIssues(abap: string, conf?: SortBeforeReadConf): readonly Issue[] {
+function findIssues(abap: string, conf?: SortRequiredConf): readonly Issue[] {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
-  const rule = new SortBeforeRead();
+  const rule = new SortRequired();
   if (conf) {
     rule.setConfig(conf);
   }
@@ -261,7 +261,7 @@ SORT lt BY b.
 READ TABLE lt INTO gs_row WITH KEY a = 'X' BINARY SEARCH.`},
 ];
 
-describe("Rule: sort_before_read", () => {
+describe("Rule: sort_required", () => {
 
   for (const test of reported) {
     it("reported: " + test.title, () => {
@@ -301,13 +301,13 @@ describe("Rule: sort_before_read", () => {
   DELETE ADJACENT DUPLICATES FROM lt COMPARING a.`);
     expect(findIssues(abap).length).to.equal(2);
 
-    const noBinary = new SortBeforeReadConf();
+    const noBinary = new SortRequiredConf();
     noBinary.binarySearch = false;
     const binaryOff = findIssues(abap, noBinary);
     expect(binaryOff.length).to.equal(1);
     expect(binaryOff[0].getMessage()).to.contain("DELETE ADJACENT DUPLICATES");
 
-    const noAdjacent = new SortBeforeReadConf();
+    const noAdjacent = new SortRequiredConf();
     noAdjacent.adjacentDuplicates = false;
     const adjacentOff = findIssues(abap, noAdjacent);
     expect(adjacentOff.length).to.equal(1);

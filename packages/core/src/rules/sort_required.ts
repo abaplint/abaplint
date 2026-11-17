@@ -14,7 +14,7 @@ import {ISpaghettiScope} from "../abap/5_syntax/_spaghetti_scope";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {Severity} from "../severity";
 
-export class SortBeforeReadConf extends BasicRuleConfig {
+export class SortRequiredConf extends BasicRuleConfig {
   public severity?: Severity = Severity.Warning;
   /** Check READ TABLE ... WITH KEY ... BINARY SEARCH */
   public binarySearch: boolean = true;
@@ -34,13 +34,13 @@ enum Fill {
   unknown,
 }
 
-export class SortBeforeRead implements IRule {
+export class SortRequired implements IRule {
   private reg: IRegistry;
-  private conf = new SortBeforeReadConf();
+  private conf = new SortRequiredConf();
 
   public getMetadata(): IRuleMetadata {
     return {
-      key: "sort_before_read",
+      key: "sort_required",
       title: "BINARY SEARCH or DELETE ADJACENT DUPLICATES without a matching SORT",
       shortDescription: `BINARY SEARCH or DELETE ADJACENT DUPLICATES ... COMPARING on a local table not sorted by those fields`,
       extendedInformation: `READ TABLE ... WITH KEY ... BINARY SEARCH only finds the row when the table is sorted ascending by
@@ -85,7 +85,7 @@ READ TABLE lt_tadir WITH KEY object = lv_type obj_name = lv_name BINARY SEARCH T
     return this;
   }
 
-  public setConfig(conf: SortBeforeReadConf): void {
+  public setConfig(conf: SortRequiredConf): void {
     this.conf = conf;
   }
 
