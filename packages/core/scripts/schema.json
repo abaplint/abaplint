@@ -803,6 +803,35 @@
       },
       "type": "object"
     },
+    "CharacterFieldLiteralBlanksConf": {
+      "additionalProperties": false,
+      "properties": {
+        "concatenation": {
+          "description": "Report a character field literal ending with a blank as an operand of &&, of CONCATENATE without RESPECTING BLANKS, or as an embedded expression in a string template, the trailing blanks are dropped",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "searchPattern": {
+          "description": "Report a FIND or REPLACE search pattern that is a character field literal containing only blanks, or space, the pattern is empty: ALL OCCURRENCES raises an exception, FIRST OCCURRENCE matches before the first character",
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "searchPattern",
+        "concatenation"
+      ],
+      "type": "object"
+    },
     "CheckAbstractConf": {
       "additionalProperties": false,
       "properties": {
@@ -2637,6 +2666,17 @@
                 }
               ],
               "description": "A field symbol on a whole line of a sorted or hashed table, passed to a CHANGING parameter of a method\nTags: SingleFile\nhttps://rules.abaplint.org/changing_sorted_line"
+            },
+            "character_field_literal_blanks": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CharacterFieldLiteralBlanksConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports character field literals ('...') whose blanks are ignored where the code relies on them\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/character_field_literal_blanks"
             },
             "check_abstract": {
               "anyOf": [
@@ -5266,6 +5306,17 @@
                 }
               ],
               "description": "A field symbol on a whole line of a sorted or hashed table, passed to a CHANGING parameter of a method\nTags: SingleFile\nhttps://rules.abaplint.org/changing_sorted_line"
+            },
+            "character_field_literal_blanks": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CharacterFieldLiteralBlanksConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports character field literals ('...') whose blanks are ignored where the code relies on them\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/character_field_literal_blanks"
             },
             "check_abstract": {
               "anyOf": [

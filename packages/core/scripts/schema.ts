@@ -36,6 +36,7 @@ import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
 import {ChangeIfToCaseConf} from "../src/rules/change_if_to_case";
 import {ChangingSortedLineConf} from "../src/rules/changing_sorted_line";
+import {CharacterFieldLiteralBlanksConf} from "../src/rules/character_field_literal_blanks";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckCommentsConf} from "../src/rules/check_comments";
 import {CheckDDICConf} from "../src/rules/check_ddic";
@@ -288,6 +289,7 @@ export interface IConfig {
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
     "changing_sorted_line"?: ChangingSortedLineConf | boolean,
+    "character_field_literal_blanks"?: CharacterFieldLiteralBlanksConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
@@ -529,6 +531,7 @@ export interface IConfig {
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
     "changing_sorted_line"?: ChangingSortedLineConf | boolean,
+    "character_field_literal_blanks"?: CharacterFieldLiteralBlanksConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
