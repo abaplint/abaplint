@@ -36,6 +36,7 @@ import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
 import {ChangeIfToCaseConf} from "../src/rules/change_if_to_case";
 import {ChangingSortedLineConf} from "../src/rules/changing_sorted_line";
+import {CharacterFieldLiteralBlanksConf} from "../src/rules/character_field_literal_blanks";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckCommentsConf} from "../src/rules/check_comments";
 import {CheckDDICConf} from "../src/rules/check_ddic";
@@ -77,6 +78,7 @@ import {EmptyStructureConf} from "../src/rules/empty_structure";
 import {ExitOrCheckConf} from "../src/rules/exit_or_check";
 import {ExpandMacrosConf} from "../src/rules/expand_macros";
 import {ExportingConf} from "../src/rules/exporting";
+import {FieldSymbolNeverAssignedConf} from "../src/rules/field_symbol_never_assigned";
 import {FinalNewlineConf} from "../src/rules/final_newline";
 import {FMGlobalParametersObsoleteConf} from "../src/rules/fm_global_parameters_obsolete";
 import {ForbiddenIdentifierConf} from "../src/rules/forbidden_identifier";
@@ -102,6 +104,7 @@ import {InStatementIndentationConf} from "../src/rules/in_statement_indentation"
 import {IndentationConf} from "../src/rules/indentation";
 import {IndexCompletelyContainedConf} from "../src/rules/index_completely_contained";
 import {InlineDataOldVersionsConf} from "../src/rules/inline_data_old_versions";
+import {InlineGenericSourceConf} from "../src/rules/inline_generic_source";
 import {InlinePackedComputationConf} from "../src/rules/inline_packed_computation";
 import {IntfReferencingClasConf} from "../src/rules/intf_referencing_clas";
 import {InvalidTableIndexConf} from "../src/rules/invalid_table_index";
@@ -115,6 +118,7 @@ import {LineOnlyPuncConf} from "../src/rules/line_only_punc";
 import {LocalClassNamingConf} from "../src/rules/local_class_naming";
 import {LocalTestclassConsistencyConf} from "../src/rules/local_testclass_consistency";
 import {LocalVariableNamesConf} from "../src/rules/local_variable_names";
+import {LoopTargetMisuseConf} from "../src/rules/loop_target_misuse";
 import {MacroNamingConf} from "../src/rules/macro_naming";
 import {MainFileContentsConf} from "../src/rules/main_file_contents";
 import {ManyParenthesesConf} from "../src/rules/many_parentheses";
@@ -184,6 +188,7 @@ import {SelectSingleFullKeyConf} from "../src/rules/select_single_full_key";
 import {SelectionScreenNamingConf} from "../src/rules/selection_screen_naming";
 import {SelectionScreenTextsMissingConf} from "../src/rules/selection_screen_texts_missing";
 import {SequentialBlankConf} from "../src/rules/sequential_blank";
+import {SequentialReadSortedConf} from "../src/rules/sequential_read_sorted";
 import {ShortCaseConf} from "../src/rules/short_case";
 import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
 import {SingleUseExpressionTempConf} from "../src/rules/single_use_expression_temp";
@@ -194,6 +199,7 @@ import {SpaceBeforeColonConf} from "../src/rules/space_before_colon";
 import {SpaceBeforeDotConf} from "../src/rules/space_before_dot";
 import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables";
 import {SQLValueConversionConf} from "../src/rules/sql_value_conversion";
+import {StaleSubrcConf} from "../src/rules/stale_subrc";
 import {StartAtTabConf} from "../src/rules/start_at_tab";
 import {StaticCallViaInstanceConf} from "../src/rules/static_call_via_instance";
 import {StrictSQLConf} from "../src/rules/strict_sql";
@@ -209,6 +215,7 @@ import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
 import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/types_naming";
 import {UncaughtExceptionConf} from "../src/rules/uncaught_exception";
+import {UnitTestAssertionsConf} from "../src/rules/unit_test_assertions";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
 import {UnnecessaryChainingConf} from "../src/rules/unnecessary_chaining";
 import {UnnecessaryCopyConf} from "../src/rules/unnecessary_copy";
@@ -282,6 +289,7 @@ export interface IConfig {
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
     "changing_sorted_line"?: ChangingSortedLineConf | boolean,
+    "character_field_literal_blanks"?: CharacterFieldLiteralBlanksConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
@@ -323,6 +331,7 @@ export interface IConfig {
     "exit_or_check"?: ExitOrCheckConf | boolean,
     "expand_macros"?: ExpandMacrosConf | boolean,
     "exporting"?: ExportingConf | boolean,
+    "field_symbol_never_assigned"?: FieldSymbolNeverAssignedConf | boolean,
     "final_newline"?: FinalNewlineConf | boolean,
     "fm_global_parameters_obsolete"?: FMGlobalParametersObsoleteConf | boolean,
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
@@ -348,6 +357,7 @@ export interface IConfig {
     "indentation"?: IndentationConf | boolean,
     "index_completely_contained"?: IndexCompletelyContainedConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
+    "inline_generic_source"?: InlineGenericSourceConf | boolean,
     "inline_packed_computation"?: InlinePackedComputationConf | boolean,
     "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "invalid_table_index"?: InvalidTableIndexConf | boolean,
@@ -361,6 +371,7 @@ export interface IConfig {
     "local_class_naming"?: LocalClassNamingConf | boolean,
     "local_testclass_consistency"?: LocalTestclassConsistencyConf | boolean,
     "local_variable_names"?: LocalVariableNamesConf | boolean,
+    "loop_target_misuse"?: LoopTargetMisuseConf | boolean,
     "macro_naming"?: MacroNamingConf | boolean,
     "main_file_contents"?: MainFileContentsConf | boolean,
     "many_parentheses"?: ManyParenthesesConf | boolean,
@@ -430,6 +441,7 @@ export interface IConfig {
     "selection_screen_naming"?: SelectionScreenNamingConf | boolean,
     "selection_screen_texts_missing"?: SelectionScreenTextsMissingConf | boolean,
     "sequential_blank"?: SequentialBlankConf | boolean,
+    "sequential_read_sorted"?: SequentialReadSortedConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
     "sicf_consistency"?: SICFConsistencyConf | boolean,
     "single_use_expression_temp"?: SingleUseExpressionTempConf | boolean,
@@ -440,6 +452,7 @@ export interface IConfig {
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
     "sql_value_conversion"?: SQLValueConversionConf | boolean,
+    "stale_subrc"?: StaleSubrcConf | boolean,
     "start_at_tab"?: StartAtTabConf | boolean,
     "static_call_via_instance"?: StaticCallViaInstanceConf | boolean,
     "strict_sql"?: StrictSQLConf | boolean,
@@ -455,6 +468,7 @@ export interface IConfig {
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
+    "unit_test_assertions"?: UnitTestAssertionsConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
     "unnecessary_copy"?: UnnecessaryCopyConf | boolean,
@@ -517,6 +531,7 @@ export interface IConfig {
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
     "changing_sorted_line"?: ChangingSortedLineConf | boolean,
+    "character_field_literal_blanks"?: CharacterFieldLiteralBlanksConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
@@ -558,6 +573,7 @@ export interface IConfig {
     "exit_or_check"?: ExitOrCheckConf | boolean,
     "expand_macros"?: ExpandMacrosConf | boolean,
     "exporting"?: ExportingConf | boolean,
+    "field_symbol_never_assigned"?: FieldSymbolNeverAssignedConf | boolean,
     "final_newline"?: FinalNewlineConf | boolean,
     "fm_global_parameters_obsolete"?: FMGlobalParametersObsoleteConf | boolean,
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
@@ -583,6 +599,7 @@ export interface IConfig {
     "indentation"?: IndentationConf | boolean,
     "index_completely_contained"?: IndexCompletelyContainedConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
+    "inline_generic_source"?: InlineGenericSourceConf | boolean,
     "inline_packed_computation"?: InlinePackedComputationConf | boolean,
     "intf_referencing_clas"?: IntfReferencingClasConf | boolean,
     "invalid_table_index"?: InvalidTableIndexConf | boolean,
@@ -596,6 +613,7 @@ export interface IConfig {
     "local_class_naming"?: LocalClassNamingConf | boolean,
     "local_testclass_consistency"?: LocalTestclassConsistencyConf | boolean,
     "local_variable_names"?: LocalVariableNamesConf | boolean,
+    "loop_target_misuse"?: LoopTargetMisuseConf | boolean,
     "macro_naming"?: MacroNamingConf | boolean,
     "main_file_contents"?: MainFileContentsConf | boolean,
     "many_parentheses"?: ManyParenthesesConf | boolean,
@@ -665,6 +683,7 @@ export interface IConfig {
     "selection_screen_naming"?: SelectionScreenNamingConf | boolean,
     "selection_screen_texts_missing"?: SelectionScreenTextsMissingConf | boolean,
     "sequential_blank"?: SequentialBlankConf | boolean,
+    "sequential_read_sorted"?: SequentialReadSortedConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
     "sicf_consistency"?: SICFConsistencyConf | boolean,
     "single_use_expression_temp"?: SingleUseExpressionTempConf | boolean,
@@ -675,6 +694,7 @@ export interface IConfig {
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
     "sql_value_conversion"?: SQLValueConversionConf | boolean,
+    "stale_subrc"?: StaleSubrcConf | boolean,
     "start_at_tab"?: StartAtTabConf | boolean,
     "static_call_via_instance"?: StaticCallViaInstanceConf | boolean,
     "strict_sql"?: StrictSQLConf | boolean,
@@ -690,6 +710,7 @@ export interface IConfig {
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
+    "unit_test_assertions"?: UnitTestAssertionsConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
     "unnecessary_copy"?: UnnecessaryCopyConf | boolean,

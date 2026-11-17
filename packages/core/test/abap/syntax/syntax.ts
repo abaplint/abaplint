@@ -19463,3 +19463,409 @@ DATA(sdf) = pdvs(5).`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, subclass constructor must call SUPER->CONSTRUCTOR", () => {
+  const missing = "The constructor of a subclass must call SUPER->CONSTRUCTOR";
+  const early = "Instance attributes, instance methods and ME can only be accessed after SUPER->CONSTRUCTOR is called";
+
+  function program(body: string): string {
+    return `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    DATA mv_super TYPE i.
+    METHODS constructor IMPORTING iv_value TYPE i OPTIONAL.
+    METHODS super_method.
+ENDCLASS.
+
+CLASS lcl_super IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+  METHOD super_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    DATA mv_value TYPE i.
+    CLASS-DATA gv_value TYPE i.
+    METHODS constructor IMPORTING iv_value TYPE i OPTIONAL.
+    METHODS instance_method.
+    CLASS-METHODS static_method.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD constructor.
+${body}
+  ENDMETHOD.
+  METHOD instance_method.
+  ENDMETHOD.
+  METHOD static_method.
+  ENDMETHOD.
+ENDCLASS.`;
+  }
+
+  it("ok, super constructor called first", () => {
+    const issues = runProgram(program(`
+    super->constructor( ).
+    mv_value = iv_value.
+    instance_method( ).
+    me->instance_method( ).
+    mv_super = 2.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, CALL METHOD super->constructor", () => {
+    const issues = runProgram(program(`
+    CALL METHOD super->constructor.
+    mv_value = iv_value.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, static members and local variables before the call", () => {
+    const issues = runProgram(program(`
+    DATA lv_local TYPE i.
+    lv_local = iv_value.
+    gv_value = lv_local.
+    lcl_sub=>gv_value = 2.
+    static_method( ).
+    super->constructor( ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, declarations typed via instance attributes before the call", () => {
+    const issues = runProgram(program(`
+    DATA lv_like LIKE mv_value.
+    DATA lv_super LIKE mv_super.
+    TYPES ty_like LIKE mv_value.
+    FIELD-SYMBOLS <lv_value> LIKE mv_value.
+    DATA: BEGIN OF ls_struc,
+            field LIKE mv_value,
+          END OF ls_struc.
+    super->constructor( ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, abapGit example, DATA LIKE LINE OF before the call", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_file,
+             file TYPE string,
+           END OF ty_file.
+    DATA mt_files TYPE STANDARD TABLE OF ty_file WITH DEFAULT KEY.
+    METHODS constructor IMPORTING is_file TYPE string.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD constructor.
+    DATA ls_file LIKE LINE OF mt_files.
+    super->constructor( ).
+    ls_file-file = is_file.
+    INSERT ls_file INTO TABLE mt_files.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, static members via me-> before the call", () => {
+    const issues = runProgram(program(`
+    me->gv_value = 2.
+    me->static_method( ).
+    super->constructor( ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  function interfaceProgram(body: string): string {
+    return `
+INTERFACE lif_destination.
+  TYPES ty_type TYPE string.
+  DATA type TYPE ty_type READ-ONLY.
+ENDINTERFACE.
+
+INTERFACE lif_destination_rfc.
+  INTERFACES lif_destination.
+  CONSTANTS type TYPE lif_destination=>ty_type VALUE 'RFC'.
+ENDINTERFACE.
+
+CLASS lcl_destination DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES lif_destination.
+    METHODS constructor IMPORTING type LIKE lif_destination~type.
+ENDCLASS.
+
+CLASS lcl_destination IMPLEMENTATION.
+  METHOD constructor.
+    lif_destination~type = type.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_destination_rfc DEFINITION INHERITING FROM lcl_destination.
+  PUBLIC SECTION.
+    INTERFACES lif_destination_rfc.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl_destination_rfc IMPLEMENTATION.
+  METHOD constructor.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+  }
+
+  it("ok, interface constant via me-> passed to the super constructor", () => {
+    const issues = runProgram(interfaceProgram(`
+    super->constructor( me->lif_destination_rfc~type ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, interface constant passed to the super constructor", () => {
+    const issues = runProgram(interfaceProgram(`
+    super->constructor( lif_destination_rfc~type ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, interface attribute passed to the super constructor", () => {
+    const issues = runProgram(interfaceProgram(`
+    super->constructor( me->lif_destination~type ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, interface attribute via me-> read before the call", () => {
+    const issues = runProgram(interfaceProgram(`
+    DATA(lv_type) = me->lif_destination~type.
+    super->constructor( lv_type ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("error, interface attribute read before the call", () => {
+    const issues = runProgram(interfaceProgram(`
+    DATA(lv_type) = lif_destination~type.
+    super->constructor( lv_type ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("ok, instance members of another object before the call", () => {
+    const issues = runProgram(program(`
+    DATA lo_other TYPE REF TO lcl_sub.
+    lo_other->mv_value = 2.
+    lo_other->instance_method( ).
+    super->constructor( ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, class without super class", () => {
+    const abap = `
+CLASS lcl_class DEFINITION.
+  PUBLIC SECTION.
+    DATA mv_value TYPE i.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl_class IMPLEMENTATION.
+  METHOD constructor.
+    mv_value = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, super constructor with parameters", () => {
+    const issues = runProgram(program(`
+    super->constructor( iv_value ).
+    mv_value = iv_value.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, super constructor not called", () => {
+    const issues = runProgram(program(``));
+    expect(issues[0]?.getMessage()).to.equal(missing);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("error, the example from the issue", () => {
+    const issues = runProgram(program(`
+    mv_value = iv_value.
+    mv_super = iv_value.`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([missing]);
+  });
+
+  it("error, only the first early access is reported", () => {
+    const issues = runProgram(program(`
+    mv_value = iv_value.
+    mv_super = iv_value.
+    instance_method( ).
+    super->constructor( ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+    expect(issues[0].getStart().getRow()).to.equal(28);
+  });
+
+  it("error, attribute written before the call", () => {
+    const issues = runProgram(program(`
+    mv_value = iv_value.
+    super->constructor( ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("error, inherited attribute read before the call", () => {
+    const issues = runProgram(program(`
+    DATA(lv_value) = mv_super.
+    super->constructor( ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("error, instance method called before the call", () => {
+    const issues = runProgram(program(`
+    instance_method( ).
+    super->constructor( ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("error, inherited instance method called via me-> before the call", () => {
+    const issues = runProgram(program(`
+    me->super_method( ).
+    super->constructor( ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("error, ME used before the call", () => {
+    const issues = runProgram(program(`
+    DATA lo_ref TYPE REF TO lcl_sub.
+    lo_ref = me.
+    super->constructor( ).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([early]);
+  });
+
+  it("ok, instance attribute passed to the super constructor", () => {
+    const issues = runProgram(program(`
+    super->constructor( mv_value ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, inherited instance attribute passed to the super constructor, open-abap example", () => {
+    const issues = runProgram(program(`
+    super->constructor( iv_value = mv_super ).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, global class", () => {
+    const zcl_super = `
+CLASS zcl_super DEFINITION PUBLIC.
+  PUBLIC SECTION.
+ENDCLASS.
+CLASS zcl_super IMPLEMENTATION.
+ENDCLASS.`;
+    const zcl_sub = `
+CLASS zcl_sub DEFINITION PUBLIC INHERITING FROM zcl_super.
+  PUBLIC SECTION.
+    METHODS constructor.
+  PRIVATE SECTION.
+    DATA mv_value TYPE i.
+ENDCLASS.
+CLASS zcl_sub IMPLEMENTATION.
+  METHOD constructor.
+    mv_value = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_super.clas.abap", contents: zcl_super},
+      {filename: "zcl_sub.clas.abap", contents: zcl_sub}]);
+    expect(issues.map(i => i.getMessage())).to.deep.equal([missing]);
+  });
+});
+describe("syntax.ts, RAISE EXCEPTION abstract class", () => {
+  it("RAISE EXCEPTION TYPE abstract class, error", () => {
+    const abap = `
+CLASS lcx_abstract DEFINITION ABSTRACT.
+ENDCLASS.
+CLASS lcx_abstract IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  RAISE EXCEPTION TYPE lcx_abstract.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("lcx_abstract is abstract, cannot be instantiated");
+  });
+
+  it("RAISE EXCEPTION TYPE non-abstract class, ok", () => {
+    const abap = `
+CLASS lcx_concrete DEFINITION.
+ENDCLASS.
+CLASS lcx_concrete IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  RAISE EXCEPTION TYPE lcx_concrete.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("RAISE EXCEPTION TYPE global abstract class, error", () => {
+    const clas = `CLASS cx_sy_file_access_error DEFINITION PUBLIC ABSTRACT CREATE PUBLIC.
+ENDCLASS.
+CLASS cx_sy_file_access_error IMPLEMENTATION.
+ENDCLASS.`;
+    const prog = `RAISE EXCEPTION TYPE cx_sy_file_access_error.`;
+    const issues = runMulti([
+      {filename: "cx_sy_file_access_error.clas.abap", contents: clas},
+      {filename: "zfoo.prog.abap", contents: prog}]);
+    expect(issues.map(i => i.getMessage())).to.deep.equal(["cx_sy_file_access_error is abstract, cannot be instantiated"]);
+  });
+});
+
+describe("syntax.ts, VALUE row compatibility", () => {
+  it("VALUE, character literal row into table of xstring, error", () => {
+    const abap = `
+DATA lt_hex TYPE STANDARD TABLE OF xstring WITH DEFAULT KEY.
+lt_hex = VALUE #( ( '0000000000000001' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("VALUE, source type CharacterType not compatible with XStringType");
+  });
+});
+
+describe("syntax.ts, APPEND table expression target", () => {
+  const types = `
+TYPES: BEGIN OF ty_group,
+         rows TYPE STANDARD TABLE OF i WITH DEFAULT KEY,
+       END OF ty_group.
+DATA mt_groups TYPE STANDARD TABLE OF ty_group WITH DEFAULT KEY.
+DATA lv_index TYPE i.
+DATA lo_row TYPE i.`;
+
+  it("APPEND TO table expression, error", () => {
+    const abap = types + `
+APPEND lo_row TO mt_groups[ lv_index ]-rows.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("APPEND, table expression not allowed in target");
+  });
+
+  it("APPEND TO field symbol, ok", () => {
+    const abap = types + `
+FIELD-SYMBOLS <ls_group> LIKE LINE OF mt_groups.
+READ TABLE mt_groups INDEX lv_index ASSIGNING <ls_group>.
+APPEND lo_row TO <ls_group>-rows.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
+
+describe("syntax.ts, INSERT INTO TABLE compatibility", () => {
+  it("INSERT character literal into table of c length 20, error", () => {
+    const abap = `
+TYPES tyc TYPE c LENGTH 20.
+TYPES ty_devclass_tt TYPE STANDARD TABLE OF tyc WITH DEFAULT KEY .
+DATA itab TYPE ty_devclass_tt.
+INSERT 'HELLO' INTO TABLE itab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Types not compatible");
+  });
+});

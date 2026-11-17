@@ -168,6 +168,8 @@ import {IStructure} from "../3_structures/structures/_structure";
 import {SELECTION_EVENTS} from "../../stuff";
 import {LoopTableChange} from "./_loop_table_change";
 import {SortedKeyWrite} from "./_sorted_key_write";
+import {SuperConstructorCall} from "./_super_constructor_call";
+import {SpaghettiScope} from "./spaghetti_scope";
 
 // -----------------------------------
 
@@ -326,6 +328,7 @@ export class SyntaxLogic {
 
   private scope: CurrentScope;
   private loopTables: LoopTableChange;
+  private currentMethod: StructureNode | undefined;
   private sortedLines: SortedKeyWrite;
 
   private helpers: {
@@ -547,6 +550,8 @@ export class SyntaxLogic {
       Cleanup.runSyntax(node, input);
     } else if (stru instanceof Structures.Try) {
       Try.runSyntax(node, input);
+    } else if (stru instanceof Structures.Method) {
+      this.currentMethod = node;
     }
     return false;
   }
@@ -598,12 +603,17 @@ export class SyntaxLogic {
         || s instanceof Statements.EndInterface) {
       this.scope.pop(node.getLastToken().getEnd());
     } else if (s instanceof Statements.EndMethod) {
+      let popped: SpaghettiScope | undefined = undefined;
       if (this.scope.getType() === ScopeType.Method) {
-        this.scope.pop(node.getLastToken().getEnd());
+        popped = this.scope.pop(node.getLastToken().getEnd());
       }
       if (this.scope.getType() === ScopeType.MethodInstance) {
-        this.scope.pop(node.getLastToken().getEnd());
+        popped = this.scope.pop(node.getLastToken().getEnd());
       }
+      if (this.currentMethod !== undefined && popped !== undefined) {
+        SuperConstructorCall.check(this.currentMethod, popped.getTop(), input);
+      }
+      this.currentMethod = undefined;
     }
   }
 

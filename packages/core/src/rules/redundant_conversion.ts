@@ -5,10 +5,10 @@ import {ReferenceType} from "../abap/5_syntax/_reference";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {Constant as ConstantSyntax} from "../abap/5_syntax/expressions/constant";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
-import {ExpressionNode} from "../abap/nodes";
+import {ExpressionNode, TokenNode} from "../abap/nodes";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
-import {FloatType, HexType, IntegerType, StringType, StructureType, TableType, UnknownType, VoidType} from "../abap/types/basic";
+import {DataReference, EnumType, FloatType, HexType, IntegerType, StringType, StructureType, TableType, UnknownType, VoidType} from "../abap/types/basic";
 import {Issue} from "../issue";
 import {ABAPObject} from "../objects/_abap_object";
 import {IObject} from "../objects/_iobject";
@@ -19,6 +19,9 @@ import {EditHelper} from "../edit_helper";
 import {Release, releaseAtLeast} from "../version";
 
 export class RedundantConversionConf extends BasicRuleConfig {
+  /** Also report a CONV that is the whole right-hand side of an assignment whose target already has the
+   *  conversion type, e.g. "count = CONV i( text )." with count TYPE i, the assignment converts by itself */
+  public assignmentTarget: boolean = true;
 }
 
 export class RedundantConversion implements IRule {
@@ -41,7 +44,12 @@ export class RedundantConversion implements IRule {
       title: "Redundant Conversion",
       shortDescription: `Find redundant CONV expressions`,
       extendedInformation: `Reports CONV expressions whose operand already has the conversion's target type,
-including the result of a built-in function with a fixed result type, like to_upper( ) or strlen( ).`,
+including the result of a built-in function with a fixed result type, like to_upper( ) or strlen( ).
+
+With option assignmentTarget, also reports a CONV that is the whole right-hand side of an assignment
+whose target already has the conversion's type, "count = CONV i( text )." with count TYPE i, the
+assignment converts by itself. Not reported for inline declarations, enumerated types, LET, and operands
+with a generic type.`,
       tags: [RuleTag.Quickfix],
       badExample: `DATA text TYPE string.
 text = CONV string( text ).`,
@@ -115,7 +123,11 @@ text = text.`,
         const operandHasSameType = operandType !== undefined && this.sameType(target.getType(), operandType);
         const arithmeticHasSameContext = this.arithmeticUsesSameTargetType(
           source, bodySource, file, scope, target.getType());
-        if (operandHasSameType === false && arithmeticHasSameContext === false) {
+        const assignmentHasSameType = this.conf.assignmentTarget !== false
+          && this.assignmentTargetHasSameType(source, file, scope, target.getType());
+        if (operandHasSameType === false
+            && arithmeticHasSameContext === false
+            && assignmentHasSameType === false) {
           continue;
         }
 
@@ -173,6 +185,95 @@ text = text.`,
 
     return assignmentTarget instanceof TypedIdentifier
       && this.sameType(conversionType, assignmentTarget.getType());
+  }
+
+  /** "target = CONV i( text )." where target has the conversion type, the assignment converts the same way */
+  private assignmentTargetHasSameType(
+    conversion: ExpressionNode,
+    file: ABAPFile,
+    scope: ISpaghettiScopeNode,
+    conversionType: AbstractType): boolean {
+
+    // CONV converts the base type to an enumerated type, a plain assignment does not compile
+    if (conversionType instanceof EnumType) {
+      return false;
+    }
+
+    const body = conversion.findDirectExpression(Expressions.ConvBody);
+    if (body === undefined
+        || body.findDirectExpression(Expressions.Let) !== undefined
+        // "CONV type ( body )" without a trailing operator
+        || conversion.getChildren().length !== 5) {
+      return false;
+    }
+
+    // "target = CONV ...", not "+=", "?=", "a = b = CONV ..." or MOVE
+    const statement = file.getStatements().find(candidate => candidate.includesToken(conversion.getFirstToken()));
+    const children = statement?.getChildren() ?? [];
+    const target = children[0];
+    if (!(statement?.get() instanceof Statements.Move)
+        || children.length !== 4
+        || !(target instanceof ExpressionNode)
+        || !(target.get() instanceof Expressions.Target)
+        || children[1].concatTokens() !== "="
+        || children[2] !== conversion) {
+      return false;
+    }
+
+    // a generic operand gets its type from the CONV, also "ref->*" with ref TYPE REF TO data
+    const bodyStart = body.getFirstToken().getStart();
+    const bodyEnd = body.getLastToken().getEnd();
+    const genericOperand = scope.getData().references.some(reference => {
+      if (reference.referenceType !== ReferenceType.DataReadReference
+          || reference.position.getFilename() !== file.getFilename()
+          || reference.position.getStart().isBetween(bodyStart, bodyEnd) === false
+          || !(reference.resolved instanceof TypedIdentifier)) {
+        return false;
+      }
+      const type = reference.resolved.getType();
+      return type.isGeneric() || (type instanceof DataReference && type.getType().isGeneric());
+    });
+    if (genericOperand === true) {
+      return false;
+    }
+
+    const targetType = this.targetType(target, scope);
+    return targetType !== undefined && this.sameType(conversionType, targetType);
+  }
+
+  /** Type of a variable, field symbol, attribute or structure component, undefined for anything else */
+  private targetType(target: ExpressionNode, scope: ISpaghettiScopeNode): AbstractType | undefined {
+    let type: AbstractType | undefined;
+    for (const child of target.getChildren()) {
+      if (child instanceof TokenNode) {
+        if (["-", "->", "=>"].includes(child.getFirstToken().getStr()) === false) {
+          return undefined;
+        }
+      } else if (child.get() instanceof Expressions.TargetField
+          || child.get() instanceof Expressions.TargetFieldSymbol
+          || child.get() instanceof Expressions.AttributeName) {
+        const resolved = scope.getData().references.find(reference =>
+          (reference.referenceType === ReferenceType.DataWriteReference
+          || reference.referenceType === ReferenceType.DataReadReference)
+          && reference.position.getStart().equals(child.getFirstToken().getStart()))?.resolved;
+        if (!(resolved instanceof TypedIdentifier)) {
+          return undefined;
+        }
+        type = resolved.getType();
+      } else if (child.get() instanceof Expressions.ComponentName) {
+        if (type instanceof TableType) {
+          type = type.getRowType();
+        }
+        if (!(type instanceof StructureType)) {
+          return undefined;
+        }
+        type = type.getComponentByName(child.concatTokens());
+      } else if (!(child.get() instanceof Expressions.ClassName)) {
+        // inline declarations, dereferences, table expressions, offsets and lengths
+        return undefined;
+      }
+    }
+    return type;
   }
 
   private sourceType(source: ExpressionNode, scope: ISpaghettiScopeNode): AbstractType | undefined {
