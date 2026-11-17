@@ -169,6 +169,24 @@ ENDCLASS.`, cnt: 0},
   {abap: `DATA(t5) = CONV i( strlen( |sdf| ) ).`, cnt: 1},
   {abap: `DATA t30 TYPE f.
 DATA(t31) = CONV f( t30 / 2 ).`, cnt: 0},
+  {abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty1 TYPE c LENGTH 20.
+    TYPES ty2 TYPE c LENGTH 20.
+    METHODS bar IMPORTING moo TYPE ty1.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA val TYPE ty2.
+    bar( CONV ty1( val ) ).
+  ENDMETHOD.
+ENDCLASS.`, cnt: 1},
+  {abap: `TYPES tabname TYPE c LENGTH 30.
+DATA iv_tablename TYPE c LENGTH 30.
+DATA iv_objectname TYPE c LENGTH 30.
+DATA(lv_tab) = COND tabname(
+  WHEN iv_tablename IS NOT INITIAL THEN iv_tablename
+  ELSE CONV tabname( iv_objectname ) ).`, cnt: 1},
 ];
 
 testRule(tests, RedundantConversion);
