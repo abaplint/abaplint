@@ -116,6 +116,7 @@ export * from "./line_only_punc";
 export * from "./local_class_naming";
 export * from "./local_testclass_consistency";
 export * from "./local_variable_names";
+export * from "./loop_target_misuse";
 export * from "./macro_naming";
 export * from "./main_file_contents";
 export * from "./many_parentheses";
