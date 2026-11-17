@@ -206,6 +206,7 @@ import {StrictSQLConf} from "../src/rules/strict_sql";
 import {SubrcAfterAssignConf} from "../src/rules/subrc_after_assign";
 import {SuperclassFinalConf} from "../src/rules/superclass_final";
 import {SuperfluousValueConf} from "../src/rules/superfluous_value";
+import {SuspiciousLoopConf} from "../src/rules/suspicious_loop";
 import {SyModificationConf} from "../src/rules/sy_modification";
 import {SyReadRestrictionConf} from "../src/rules/sy_read_restriction";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
@@ -459,6 +460,7 @@ export interface IConfig {
     "subrc_after_assign"?: SubrcAfterAssignConf | boolean,
     "superclass_final"?: SuperclassFinalConf | boolean,
     "superfluous_value"?: SuperfluousValueConf | boolean,
+    "suspicious_loop"?: SuspiciousLoopConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
     "sy_read_restriction"?: SyReadRestrictionConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
@@ -701,6 +703,7 @@ export interface IConfig {
     "subrc_after_assign"?: SubrcAfterAssignConf | boolean,
     "superclass_final"?: SuperclassFinalConf | boolean,
     "superfluous_value"?: SuperfluousValueConf | boolean,
+    "suspicious_loop"?: SuspiciousLoopConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
     "sy_read_restriction"?: SyReadRestrictionConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
