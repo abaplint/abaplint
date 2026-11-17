@@ -77,6 +77,7 @@ import {EmptyStructureConf} from "../src/rules/empty_structure";
 import {ExitOrCheckConf} from "../src/rules/exit_or_check";
 import {ExpandMacrosConf} from "../src/rules/expand_macros";
 import {ExportingConf} from "../src/rules/exporting";
+import {FieldSymbolNeverAssignedConf} from "../src/rules/field_symbol_never_assigned";
 import {FinalNewlineConf} from "../src/rules/final_newline";
 import {FMGlobalParametersObsoleteConf} from "../src/rules/fm_global_parameters_obsolete";
 import {ForbiddenIdentifierConf} from "../src/rules/forbidden_identifier";
@@ -327,6 +328,7 @@ export interface IConfig {
     "exit_or_check"?: ExitOrCheckConf | boolean,
     "expand_macros"?: ExpandMacrosConf | boolean,
     "exporting"?: ExportingConf | boolean,
+    "field_symbol_never_assigned"?: FieldSymbolNeverAssignedConf | boolean,
     "final_newline"?: FinalNewlineConf | boolean,
     "fm_global_parameters_obsolete"?: FMGlobalParametersObsoleteConf | boolean,
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
@@ -566,6 +568,7 @@ export interface IConfig {
     "exit_or_check"?: ExitOrCheckConf | boolean,
     "expand_macros"?: ExpandMacrosConf | boolean,
     "exporting"?: ExportingConf | boolean,
+    "field_symbol_never_assigned"?: FieldSymbolNeverAssignedConf | boolean,
     "final_newline"?: FinalNewlineConf | boolean,
     "fm_global_parameters_obsolete"?: FMGlobalParametersObsoleteConf | boolean,
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,

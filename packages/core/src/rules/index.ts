@@ -75,6 +75,7 @@ export * from "./else_after_all_returns";
 export * from "./exit_or_check";
 export * from "./expand_macros";
 export * from "./exporting";
+export * from "./field_symbol_never_assigned";
 export * from "./final_newline";
 export * from "./fm_global_parameters_obsolete";
 export * from "./forbidden_identifier";
