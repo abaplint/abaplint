@@ -209,6 +209,7 @@ export * from "./try_without_catch";
 export * from "./type_form_parameters";
 export * from "./types_naming";
 export * from "./uncaught_exception";
+export * from "./unit_test_assertions";
 export * from "./unknown_types";
 export * from "./unnecessary_chaining";
 export * from "./unnecessary_copy";
