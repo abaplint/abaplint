@@ -192,6 +192,7 @@ export * from "./single_use_expression_temp";
 export * from "./slow_parameter_passing";
 export * from "./smim_consistency";
 export * from "./sort_empty_key";
+export * from "./sort_required";
 export * from "./space_before_colon";
 export * from "./space_before_dot";
 export * from "./sql_escape_host_variables";

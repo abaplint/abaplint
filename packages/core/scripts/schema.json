@@ -4416,6 +4416,17 @@
               ],
               "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
             },
+            "sort_required": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortRequiredConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BINARY SEARCH or DELETE ADJACENT DUPLICATES ... COMPARING on a local table not sorted by those fields\nTags: SingleFile\nhttps://rules.abaplint.org/sort_required"
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -7066,6 +7077,17 @@
                 }
               ],
               "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
+            },
+            "sort_required": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortRequiredConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BINARY SEARCH or DELETE ADJACENT DUPLICATES ... COMPARING on a local table not sorted by those fields\nTags: SingleFile\nhttps://rules.abaplint.org/sort_required"
             },
             "space_before_colon": {
               "anyOf": [
@@ -10637,6 +10659,35 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "SortRequiredConf": {
+      "additionalProperties": false,
+      "properties": {
+        "adjacentDuplicates": {
+          "description": "Check DELETE ADJACENT DUPLICATES ... COMPARING",
+          "type": "boolean"
+        },
+        "binarySearch": {
+          "description": "Check READ TABLE ... WITH KEY ... BINARY SEARCH",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "binarySearch",
+        "adjacentDuplicates"
+      ],
       "type": "object"
     },
     "SpaceBeforeColonConf": {
