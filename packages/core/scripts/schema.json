@@ -4537,6 +4537,17 @@
               ],
               "description": "Find superfluous VALUE expressions\nTags: SingleFile\nhttps://rules.abaplint.org/superfluous_value"
             },
+            "suspicious_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SuspiciousLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds WHILE loops whose condition the loop body never changes\nhttps://rules.abaplint.org/suspicious_loop"
+            },
             "sy_modification": {
               "anyOf": [
                 {
@@ -7176,6 +7187,17 @@
                 }
               ],
               "description": "Find superfluous VALUE expressions\nTags: SingleFile\nhttps://rules.abaplint.org/superfluous_value"
+            },
+            "suspicious_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SuspiciousLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds WHILE loops whose condition the loop body never changes\nhttps://rules.abaplint.org/suspicious_loop"
             },
             "sy_modification": {
               "anyOf": [
@@ -10782,6 +10804,30 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "SuspiciousLoopConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "unchangedCondition": {
+          "description": "Report WHILE loops whose condition the loop body never changes, or sets to the same value in every iteration. The loop runs zero times, once or forever",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "unchangedCondition"
+      ],
       "type": "object"
     },
     "SyModificationConf": {
