@@ -116,6 +116,7 @@ import {LineOnlyPuncConf} from "../src/rules/line_only_punc";
 import {LocalClassNamingConf} from "../src/rules/local_class_naming";
 import {LocalTestclassConsistencyConf} from "../src/rules/local_testclass_consistency";
 import {LocalVariableNamesConf} from "../src/rules/local_variable_names";
+import {LoopTargetMisuseConf} from "../src/rules/loop_target_misuse";
 import {MacroNamingConf} from "../src/rules/macro_naming";
 import {MainFileContentsConf} from "../src/rules/main_file_contents";
 import {ManyParenthesesConf} from "../src/rules/many_parentheses";
@@ -364,6 +365,7 @@ export interface IConfig {
     "local_class_naming"?: LocalClassNamingConf | boolean,
     "local_testclass_consistency"?: LocalTestclassConsistencyConf | boolean,
     "local_variable_names"?: LocalVariableNamesConf | boolean,
+    "loop_target_misuse"?: LoopTargetMisuseConf | boolean,
     "macro_naming"?: MacroNamingConf | boolean,
     "main_file_contents"?: MainFileContentsConf | boolean,
     "many_parentheses"?: ManyParenthesesConf | boolean,
@@ -601,6 +603,7 @@ export interface IConfig {
     "local_class_naming"?: LocalClassNamingConf | boolean,
     "local_testclass_consistency"?: LocalTestclassConsistencyConf | boolean,
     "local_variable_names"?: LocalVariableNamesConf | boolean,
+    "loop_target_misuse"?: LoopTargetMisuseConf | boolean,
     "macro_naming"?: MacroNamingConf | boolean,
     "main_file_contents"?: MainFileContentsConf | boolean,
     "many_parentheses"?: ManyParenthesesConf | boolean,
