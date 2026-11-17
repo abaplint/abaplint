@@ -36,6 +36,7 @@ import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
 import {ChangeIfToCaseConf} from "../src/rules/change_if_to_case";
 import {ChangingSortedLineConf} from "../src/rules/changing_sorted_line";
+import {CharacterFieldLiteralBlanksConf} from "../src/rules/character_field_literal_blanks";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckCommentsConf} from "../src/rules/check_comments";
 import {CheckDDICConf} from "../src/rules/check_ddic";
@@ -117,6 +118,7 @@ import {LineOnlyPuncConf} from "../src/rules/line_only_punc";
 import {LocalClassNamingConf} from "../src/rules/local_class_naming";
 import {LocalTestclassConsistencyConf} from "../src/rules/local_testclass_consistency";
 import {LocalVariableNamesConf} from "../src/rules/local_variable_names";
+import {LoopTargetMisuseConf} from "../src/rules/loop_target_misuse";
 import {MacroNamingConf} from "../src/rules/macro_naming";
 import {MainFileContentsConf} from "../src/rules/main_file_contents";
 import {ManyParenthesesConf} from "../src/rules/many_parentheses";
@@ -287,6 +289,7 @@ export interface IConfig {
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
     "changing_sorted_line"?: ChangingSortedLineConf | boolean,
+    "character_field_literal_blanks"?: CharacterFieldLiteralBlanksConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
@@ -368,6 +371,7 @@ export interface IConfig {
     "local_class_naming"?: LocalClassNamingConf | boolean,
     "local_testclass_consistency"?: LocalTestclassConsistencyConf | boolean,
     "local_variable_names"?: LocalVariableNamesConf | boolean,
+    "loop_target_misuse"?: LoopTargetMisuseConf | boolean,
     "macro_naming"?: MacroNamingConf | boolean,
     "main_file_contents"?: MainFileContentsConf | boolean,
     "many_parentheses"?: ManyParenthesesConf | boolean,
@@ -527,6 +531,7 @@ export interface IConfig {
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
     "changing_sorted_line"?: ChangingSortedLineConf | boolean,
+    "character_field_literal_blanks"?: CharacterFieldLiteralBlanksConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
@@ -608,6 +613,7 @@ export interface IConfig {
     "local_class_naming"?: LocalClassNamingConf | boolean,
     "local_testclass_consistency"?: LocalTestclassConsistencyConf | boolean,
     "local_variable_names"?: LocalVariableNamesConf | boolean,
+    "loop_target_misuse"?: LoopTargetMisuseConf | boolean,
     "macro_naming"?: MacroNamingConf | boolean,
     "main_file_contents"?: MainFileContentsConf | boolean,
     "many_parentheses"?: ManyParenthesesConf | boolean,
