@@ -194,6 +194,7 @@ import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
 import {SingleUseExpressionTempConf} from "../src/rules/single_use_expression_temp";
 import {SlowParameterPassingConf} from "../src/rules/slow_parameter_passing";
 import {SMIMConsistencyConf} from "../src/rules/smim_consistency";
+import {SortBeforeReadConf} from "../src/rules/sort_before_read";
 import {SortEmptyKeyConf} from "../src/rules/sort_empty_key";
 import {SpaceBeforeColonConf} from "../src/rules/space_before_colon";
 import {SpaceBeforeDotConf} from "../src/rules/space_before_dot";
@@ -447,6 +448,7 @@ export interface IConfig {
     "single_use_expression_temp"?: SingleUseExpressionTempConf | boolean,
     "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "smim_consistency"?: SMIMConsistencyConf | boolean,
+    "sort_before_read"?: SortBeforeReadConf | boolean,
     "sort_empty_key"?: SortEmptyKeyConf | boolean,
     "space_before_colon"?: SpaceBeforeColonConf | boolean,
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
@@ -689,6 +691,7 @@ export interface IConfig {
     "single_use_expression_temp"?: SingleUseExpressionTempConf | boolean,
     "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "smim_consistency"?: SMIMConsistencyConf | boolean,
+    "sort_before_read"?: SortBeforeReadConf | boolean,
     "sort_empty_key"?: SortEmptyKeyConf | boolean,
     "space_before_colon"?: SpaceBeforeColonConf | boolean,
     "space_before_dot"?: SpaceBeforeDotConf | boolean,

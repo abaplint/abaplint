@@ -4405,6 +4405,17 @@
               ],
               "description": "SMIM consistency check\nhttps://rules.abaplint.org/smim_consistency"
             },
+            "sort_before_read": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortBeforeReadConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BINARY SEARCH or DELETE ADJACENT DUPLICATES ... COMPARING on a local table not sorted by those fields\nTags: SingleFile\nhttps://rules.abaplint.org/sort_before_read"
+            },
             "sort_empty_key": {
               "anyOf": [
                 {
@@ -7044,6 +7055,17 @@
                 }
               ],
               "description": "SMIM consistency check\nhttps://rules.abaplint.org/smim_consistency"
+            },
+            "sort_before_read": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortBeforeReadConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BINARY SEARCH or DELETE ADJACENT DUPLICATES ... COMPARING on a local table not sorted by those fields\nTags: SingleFile\nhttps://rules.abaplint.org/sort_before_read"
             },
             "sort_empty_key": {
               "anyOf": [
@@ -10598,6 +10620,35 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "SortBeforeReadConf": {
+      "additionalProperties": false,
+      "properties": {
+        "adjacentDuplicates": {
+          "description": "Check DELETE ADJACENT DUPLICATES ... COMPARING",
+          "type": "boolean"
+        },
+        "binarySearch": {
+          "description": "Check READ TABLE ... WITH KEY ... BINARY SEARCH",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "binarySearch",
+        "adjacentDuplicates"
+      ],
       "type": "object"
     },
     "SortEmptyKeyConf": {
