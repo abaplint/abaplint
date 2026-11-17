@@ -204,6 +204,7 @@ export * from "./strict_sql";
 export * from "./subrc_after_assign";
 export * from "./superclass_final";
 export * from "./superfluous_value";
+export * from "./suspicious_loop";
 export * from "./sy_modification";
 export * from "./sy_read_restriction";
 export * from "./tabl_enhancement_category";
