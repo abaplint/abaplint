@@ -197,6 +197,7 @@ import {SpaceBeforeColonConf} from "../src/rules/space_before_colon";
 import {SpaceBeforeDotConf} from "../src/rules/space_before_dot";
 import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables";
 import {SQLValueConversionConf} from "../src/rules/sql_value_conversion";
+import {StaleSubrcConf} from "../src/rules/stale_subrc";
 import {StartAtTabConf} from "../src/rules/start_at_tab";
 import {StaticCallViaInstanceConf} from "../src/rules/static_call_via_instance";
 import {StrictSQLConf} from "../src/rules/strict_sql";
@@ -446,6 +447,7 @@ export interface IConfig {
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
     "sql_value_conversion"?: SQLValueConversionConf | boolean,
+    "stale_subrc"?: StaleSubrcConf | boolean,
     "start_at_tab"?: StartAtTabConf | boolean,
     "static_call_via_instance"?: StaticCallViaInstanceConf | boolean,
     "strict_sql"?: StrictSQLConf | boolean,
@@ -684,6 +686,7 @@ export interface IConfig {
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
     "sql_value_conversion"?: SQLValueConversionConf | boolean,
+    "stale_subrc"?: StaleSubrcConf | boolean,
     "start_at_tab"?: StartAtTabConf | boolean,
     "static_call_via_instance"?: StaticCallViaInstanceConf | boolean,
     "strict_sql"?: StrictSQLConf | boolean,

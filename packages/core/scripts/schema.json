@@ -4409,6 +4409,17 @@
               ],
               "description": "Ensure types match when selecting from database\nhttps://rules.abaplint.org/sql_value_conversion"
             },
+            "stale_subrc": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StaleSubrcConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports IF, CHECK, ASSERT or CASE on sy-subrc directly after a method call without EXCEPTIONS\nTags: SingleFile\nhttps://rules.abaplint.org/stale_subrc"
+            },
             "start_at_tab": {
               "anyOf": [
                 {
@@ -7004,6 +7015,17 @@
                 }
               ],
               "description": "Ensure types match when selecting from database\nhttps://rules.abaplint.org/sql_value_conversion"
+            },
+            "stale_subrc": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StaleSubrcConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports IF, CHECK, ASSERT or CASE on sy-subrc directly after a method call without EXCEPTIONS\nTags: SingleFile\nhttps://rules.abaplint.org/stale_subrc"
             },
             "start_at_tab": {
               "anyOf": [
@@ -10513,6 +10535,23 @@
         "ignoreGlobalDefinition",
         "ignoreExceptions"
       ],
+      "type": "object"
+    },
+    "StaleSubrcConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "StartAtTabConf": {
