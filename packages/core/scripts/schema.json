@@ -1919,6 +1919,23 @@
       },
       "type": "object"
     },
+    "FieldSymbolNeverAssignedConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "FinalNewlineConf": {
       "additionalProperties": false,
       "properties": {
@@ -3112,6 +3129,17 @@
               ],
               "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
             },
+            "field_symbol_never_assigned": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FieldSymbolNeverAssignedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a local field symbol that is used, but never assigned in its method, form or function module\nTags: SingleFile\nhttps://rules.abaplint.org/field_symbol_never_assigned"
+            },
             "final_newline": {
               "anyOf": [
                 {
@@ -4596,6 +4624,17 @@
                 }
               ],
               "description": "Checks for uncaught static exception\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
+            },
+            "unit_test_assertions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnitTestAssertionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports unit test assertions that cannot fail, and the ASSERT statement in FOR TESTING classes\nhttps://rules.abaplint.org/unit_test_assertions"
             },
             "unknown_types": {
               "anyOf": [
@@ -5719,6 +5758,17 @@
               ],
               "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
             },
+            "field_symbol_never_assigned": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FieldSymbolNeverAssignedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a local field symbol that is used, but never assigned in its method, form or function module\nTags: SingleFile\nhttps://rules.abaplint.org/field_symbol_never_assigned"
+            },
             "final_newline": {
               "anyOf": [
                 {
@@ -7203,6 +7253,17 @@
                 }
               ],
               "description": "Checks for uncaught static exception\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
+            },
+            "unit_test_assertions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnitTestAssertionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports unit test assertions that cannot fail, and the ASSERT statement in FOR TESTING classes\nhttps://rules.abaplint.org/unit_test_assertions"
             },
             "unknown_types": {
               "anyOf": [
@@ -10839,6 +10900,35 @@
       "required": [
         "reportDynamic",
         "reportNoCheck"
+      ],
+      "type": "object"
+    },
+    "UnitTestAssertionsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "assertStatement": {
+          "description": "Report the ASSERT statement in FOR TESTING classes",
+          "type": "boolean"
+        },
+        "cannotFail": {
+          "description": "Report assertions that cannot fail: assert_equals or assert_equals_float with the same operand for act and exp, assert_true with abap_true or 'X', assert_false with abap_false, space or ' '",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "cannotFail",
+        "assertStatement"
       ],
       "type": "object"
     },
