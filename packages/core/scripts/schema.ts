@@ -36,6 +36,7 @@ import {CDSParserErrorConf} from "../src/rules/cds_parser_error";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
 import {ChangeIfToCaseConf} from "../src/rules/change_if_to_case";
 import {ChangingSortedLineConf} from "../src/rules/changing_sorted_line";
+import {CharacterFieldLiteralBlanksConf} from "../src/rules/character_field_literal_blanks";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckCommentsConf} from "../src/rules/check_comments";
 import {CheckDDICConf} from "../src/rules/check_ddic";
@@ -207,7 +208,6 @@ import {SyModificationConf} from "../src/rules/sy_modification";
 import {SyReadRestrictionConf} from "../src/rules/sy_read_restriction";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
 import {TablesDeclaredLocallyConf} from "../src/rules/tables_declared_locally";
-import {TextFieldLiteralBlanksConf} from "../src/rules/text_field_literal_blanks";
 import {TryCastEmptyCatchConf} from "../src/rules/try_cast_empty_catch";
 import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
 import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
@@ -286,6 +286,7 @@ export interface IConfig {
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
     "changing_sorted_line"?: ChangingSortedLineConf | boolean,
+    "character_field_literal_blanks"?: CharacterFieldLiteralBlanksConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
@@ -457,7 +458,6 @@ export interface IConfig {
     "sy_read_restriction"?: SyReadRestrictionConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
     "tables_declared_locally"?: TablesDeclaredLocallyConf | boolean,
-    "text_field_literal_blanks"?: TextFieldLiteralBlanksConf | boolean,
     "try_cast_empty_catch"?: TryCastEmptyCatchConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,
     "type_form_parameters"?: TypeFormParametersConf | boolean,
@@ -525,6 +525,7 @@ export interface IConfig {
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "change_if_to_case"?: ChangeIfToCaseConf | boolean,
     "changing_sorted_line"?: ChangingSortedLineConf | boolean,
+    "character_field_literal_blanks"?: CharacterFieldLiteralBlanksConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
@@ -696,7 +697,6 @@ export interface IConfig {
     "sy_read_restriction"?: SyReadRestrictionConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
     "tables_declared_locally"?: TablesDeclaredLocallyConf | boolean,
-    "text_field_literal_blanks"?: TextFieldLiteralBlanksConf | boolean,
     "try_cast_empty_catch"?: TryCastEmptyCatchConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,
     "type_form_parameters"?: TypeFormParametersConf | boolean,

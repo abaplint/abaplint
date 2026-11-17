@@ -10,36 +10,37 @@ import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 import {EditHelper, IEdit} from "../edit_helper";
 import {Severity} from "../severity";
 
-export class TextFieldLiteralBlanksConf extends BasicRuleConfig {
+export class CharacterFieldLiteralBlanksConf extends BasicRuleConfig {
   public severity?: Severity = Severity.Warning;
-  /** Report a FIND or REPLACE search pattern that is a text field literal containing only blanks, or space,
+  /** Report a FIND or REPLACE search pattern that is a character field literal containing only blanks, or space,
    *  the pattern is empty: ALL OCCURRENCES raises an exception, FIRST OCCURRENCE matches before the first character */
   public searchPattern: boolean = true;
-  /** Report a text field literal ending with a blank as an operand of &&, of CONCATENATE without
+  /** Report a character field literal ending with a blank as an operand of &&, of CONCATENATE without
    *  RESPECTING BLANKS, or as an embedded expression in a string template, the trailing blanks are dropped */
   public concatenation: boolean = true;
 }
 
-export class TextFieldLiteralBlanks extends ABAPRule {
-  private conf = new TextFieldLiteralBlanksConf();
+export class CharacterFieldLiteralBlanks extends ABAPRule {
+  private conf = new CharacterFieldLiteralBlanksConf();
 
   // tokens directly before the pattern of FIND and REPLACE, when no FindType is given
   private static readonly beforePattern = new Set(["FIND", "REPLACE", "OF", "OCCURRENCE", "OCCURRENCES", "OCCURENCE", "OCCURENCES"]);
 
   public getMetadata(): IRuleMetadata {
     return {
-      key: "text_field_literal_blanks",
-      title: "Ignored blanks in text field literals",
-      shortDescription: `Reports text field literals ('...') whose blanks are ignored where the code relies on them`,
-      extendedInformation: `A text field literal '...' has type c, and trailing blanks of type c operands are ignored in many positions.
+      key: "character_field_literal_blanks",
+      title: "Ignored blanks in character field literals",
+      shortDescription: `Reports character field literals ('...') whose blanks are ignored where the code relies on them`,
+      extendedInformation: `A character field literal '...' (called text field literal in the ABAP
+documentation) has type c, and trailing blanks of type c operands are ignored in many positions.
 A text string literal \`...\` has type string and keeps them.
 
-Option searchPattern: a FIND or REPLACE search pattern (SUBSTRING, character mode) that is a text field
+Option searchPattern: a FIND or REPLACE search pattern (SUBSTRING, character mode) that is a character field
 literal containing only blanks, '' or space. The pattern is empty: FIND/REPLACE ALL OCCURRENCES raises
 CX_SY_FIND_INFINITE_LOOP/CX_SY_REPLACE_INFINITE_LOOP, the first occurrence is found before the first character.
 https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapfind_pattern.htm
 
-Option concatenation: a text field literal ending with a blank as an operand of &&, as an operand of
+Option concatenation: a character field literal ending with a blank as an operand of &&, as an operand of
 CONCATENATE without RESPECTING BLANKS, or as the whole embedded expression of a string template without
 formatting options. The trailing blanks are dropped, 'Hello ' && name gives "HelloJohn". space is reported
 the same way.
@@ -62,7 +63,7 @@ lv_text = \`Hello \` && lv_name.`,
     return this.conf;
   }
 
-  public setConfig(conf: TextFieldLiteralBlanksConf) {
+  public setConfig(conf: CharacterFieldLiteralBlanksConf) {
     this.conf = conf;
   }
 
@@ -112,7 +113,7 @@ lv_text = \`Hello \` && lv_name.`,
         ? "FIND ALL OCCURRENCES IN TABLE with an empty pattern is not possible"
         : `${name} ALL OCCURRENCES raises CX_SY_${name}_INFINITE_LOOP`;
     }
-    const message = `Search pattern ${token.getStr()} is empty, blanks of text field literals are ignored, ${effect}`;
+    const message = `Search pattern ${token.getStr()} is empty, blanks of character field literals are ignored, ${effect}`;
     return Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity, this.buildFix(file, token));
   }
 
@@ -129,7 +130,7 @@ lv_text = \`Hello \` && lv_name.`,
       const before = children[i - 1];
       if (before instanceof ExpressionNode && before.get() instanceof Expressions.FindType) {
         return before.concatTokens().toUpperCase() === "SUBSTRING" ? child : undefined;
-      } else if (before instanceof TokenNode && TextFieldLiteralBlanks.beforePattern.has(before.concatTokens().toUpperCase())) {
+      } else if (before instanceof TokenNode && CharacterFieldLiteralBlanks.beforePattern.has(before.concatTokens().toUpperCase())) {
         return child;
       }
     }
@@ -204,7 +205,7 @@ lv_text = \`Hello \` && lv_name.`,
     return issues;
   }
 
-  /** the token of a text field literal or of space at the start of the operand */
+  /** the token of a character field literal or of space at the start of the operand */
   private blankOperand(operand: ExpressionNode): AbstractToken | undefined {
     const first = operand.getChildren()[0];
     if (!(first instanceof ExpressionNode)) {
@@ -219,7 +220,7 @@ lv_text = \`Hello \` && lv_name.`,
     return undefined;
   }
 
-  /** the value of a text field literal, " " for space */
+  /** the value of a character field literal, " " for space */
   private content(token: AbstractToken): string {
     const str = token.getStr();
     if (str.startsWith("'") === false) {

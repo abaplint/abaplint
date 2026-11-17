@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {TextFieldLiteralBlanks, TextFieldLiteralBlanksConf} from "../../src/rules/text_field_literal_blanks";
+import {CharacterFieldLiteralBlanks, CharacterFieldLiteralBlanksConf} from "../../src/rules/character_field_literal_blanks";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {testRule, testRuleFix} from "./_utils";
@@ -68,22 +68,22 @@ ENDIF.`, cnt: 0},
   {abap: data + `lv = to_upper( 'Hello ' ).`, cnt: 0},
 ];
 
-testRule(tests, TextFieldLiteralBlanks);
+testRule(tests, CharacterFieldLiteralBlanks);
 
-const searchOnly = new TextFieldLiteralBlanksConf();
+const searchOnly = new CharacterFieldLiteralBlanksConf();
 searchOnly.concatenation = false;
 testRule([
   {abap: data + `REPLACE ALL OCCURRENCES OF ' ' IN lv WITH ''.`, cnt: 1},
   {abap: data + `lv = 'Hello ' && lv.`, cnt: 0},
   {abap: data + `FIND ' ' && lv IN lv.`, cnt: 0},
-], TextFieldLiteralBlanks, searchOnly, "text_field_literal_blanks, concatenation off");
+], CharacterFieldLiteralBlanks, searchOnly, "character_field_literal_blanks, concatenation off");
 
-const concatenationOnly = new TextFieldLiteralBlanksConf();
+const concatenationOnly = new CharacterFieldLiteralBlanksConf();
 concatenationOnly.searchPattern = false;
 testRule([
   {abap: data + `REPLACE ALL OCCURRENCES OF ' ' IN lv WITH ''.`, cnt: 0},
   {abap: data + `lv = 'Hello ' && lv.`, cnt: 1},
-], TextFieldLiteralBlanks, concatenationOnly, "text_field_literal_blanks, searchPattern off");
+], CharacterFieldLiteralBlanks, concatenationOnly, "character_field_literal_blanks, searchPattern off");
 
 const fixes = [
   {
@@ -108,14 +108,14 @@ const fixes = [
   },
 ];
 
-testRuleFix(fixes, TextFieldLiteralBlanks);
+testRuleFix(fixes, CharacterFieldLiteralBlanks);
 
 function findIssues(abap: string) {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
-  return new TextFieldLiteralBlanks().initialize(reg).run(reg.getFirstObject()!);
+  return new CharacterFieldLiteralBlanks().initialize(reg).run(reg.getFirstObject()!);
 }
 
-describe("Rule: text_field_literal_blanks, messages and positions", () => {
+describe("Rule: character_field_literal_blanks, messages and positions", () => {
 
   it("REPLACE ALL OCCURRENCES: names the exception, issue on the literal", () => {
     const issues = findIssues(data + `REPLACE ALL OCCURRENCES OF ' ' IN lv WITH ''.`);
