@@ -2138,6 +2138,63 @@
       },
       "type": "object"
     },
+    "FunctionModuleParameterNamesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "changing": {
+          "description": "The pattern for changing parameters",
+          "type": "string"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "exporting": {
+          "description": "The pattern for exporting parameters",
+          "type": "string"
+        },
+        "ignoreNames": {
+          "description": "A list of names to be ignored",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignorePatterns": {
+          "description": "A list of patterns to be ignored. For example, you can use it to ignore ambiguous prefixes",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "importing": {
+          "description": "The pattern for importing parameters",
+          "type": "string"
+        },
+        "patternKind": {
+          "$ref": "#/definitions/PatternKind",
+          "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "tables": {
+          "description": "The pattern for tables parameters",
+          "type": "string"
+        }
+      },
+      "required": [
+        "importing",
+        "exporting",
+        "changing",
+        "tables"
+      ],
+      "type": "object"
+    },
     "FunctionModuleRecommendationsConf": {
       "additionalProperties": false,
       "properties": {
@@ -3238,6 +3295,17 @@
                 }
               ],
               "description": "No implict table types or table keys\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_itabs"
+            },
+            "function_module_parameter_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FunctionModuleParameterNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for function module parameter names\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/function_module_parameter_names"
             },
             "function_module_recommendations": {
               "anyOf": [
@@ -5900,6 +5968,17 @@
                 }
               ],
               "description": "No implict table types or table keys\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_itabs"
+            },
+            "function_module_parameter_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FunctionModuleParameterNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for function module parameter names\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/function_module_parameter_names"
             },
             "function_module_recommendations": {
               "anyOf": [
