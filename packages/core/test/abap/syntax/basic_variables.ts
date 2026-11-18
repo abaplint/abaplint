@@ -7,6 +7,7 @@ import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Position} from "../../../src/position";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {TableAccessType} from "../../../src/abap/types/basic";
+import {CheckSyntaxKey} from "../../../src/abap/5_syntax/_syntax_input";
 
 function resolveVariable(abap: string, name: string): TypedIdentifier | undefined {
   const filename = "zfoobar.prog.abap";
@@ -1422,6 +1423,67 @@ SELECT SINGLE substring( keyval, 1, 10 ) AS cust
   FROM zsel_cond
   INTO @DATA(lv_cust).`;
     expectCharacter(runSelCond(abap, "lv_cust"), 10);
+  });
+
+  it("SELECT SINGLE host constant into inline field", () => {
+    const abap = `SELECT SINGLE @abap_true FROM zsel_cond INTO @DATA(lv_exists).`;
+    const identifier = runSelCond(abap, "lv_exists");
+    expectCharacter(identifier, 1);
+    expect(identifier!.getType().getQualifiedName()?.toUpperCase()).to.equal("ABAP_BOOL");
+  });
+
+  it("SELECT SINGLE host variable into inline field", () => {
+    const abap = `
+DATA lv_int TYPE i.
+SELECT SINGLE @lv_int FROM zsel_cond INTO @DATA(lv_result).`;
+    const identifier = runSelCond(abap, "lv_result");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("SELECT SINGLE host variable with alias into inline field", () => {
+    const abap = `
+DATA lv_char TYPE c LENGTH 5.
+SELECT SINGLE @lv_char AS foo FROM zsel_cond INTO @DATA(lv_result).`;
+    expectCharacter(runSelCond(abap, "lv_result"), 5);
+  });
+
+  it("SELECT SINGLE parenthesized host component into inline field", () => {
+    const abap = `
+TYPES: BEGIN OF ty_struc,
+         field TYPE c LENGTH 7,
+       END OF ty_struc.
+DATA ls_struc TYPE ty_struc.
+SELECT SINGLE @( ls_struc-field ) FROM zsel_cond INTO @DATA(lv_result).`;
+    expectCharacter(runSelCond(abap, "lv_result"), 7);
+  });
+
+  it("SELECT SINGLE host variable from voided table into inline field", () => {
+    const abap = `
+DATA lv_int TYPE i.
+SELECT SINGLE @lv_int FROM t100 INTO @DATA(lv_result).`;
+    const identifier = resolveVariable(abap, "lv_result");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("SELECT SINGLE unknown host variable into inline field, voided", () => {
+    const abap = `SELECT SINGLE @lv_unknown FROM zsel_cond INTO @DATA(lv_result).`;
+    const identifier = runSelCond(abap, "lv_result");
+    expectVoid(identifier);
+    expect((identifier!.getType() as Basic.VoidType).getVoided()).to.not.equal(CheckSyntaxKey);
+  });
+
+  it("SELECT SINGLE host variable arithmetic into inline field, voided", () => {
+    const abap = `
+DATA lv_int TYPE i.
+SELECT SINGLE @lv_int + 1 FROM zsel_cond INTO @DATA(lv_result).`;
+    expectVoid(runSelCond(abap, "lv_result"));
+  });
+
+  it("SELECT SINGLE column into inline field", () => {
+    const abap = `SELECT SINGLE keyval FROM zsel_cond INTO @DATA(lv_result).`;
+    expectCharacter(runSelCond(abap, "lv_result"), 30);
   });
 
   it("SELECT single substring column into inline table", () => {

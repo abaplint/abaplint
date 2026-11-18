@@ -15,7 +15,7 @@ export class AuthorityCheck implements IStatement {
 
     const ret = seq("AUTHORITY-CHECK OBJECT",
                     Source,
-                    opt(seq("FOR USER", Source)),
+                    opt(verNotLang(LanguageVersion.Cloud, seq("FOR USER", Source))),
                     plus(id));
 
     return verNotLang(LanguageVersion.KeyUser, ret);
