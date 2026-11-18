@@ -1356,6 +1356,76 @@ describe("rule, xml_consistency, fields cleared by abapGit", () => {
   });
 });
 
+describe("rule, xml_consistency, documentation line length", () => {
+  function clasXml(line: string): string {
+    return `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_TEST</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Test class</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <LINES>
+    <TLINE>
+     <TDFORMAT>*</TDFORMAT>
+     <TDLINE>${line}</TDLINE>
+    </TLINE>
+   </LINES>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  }
+
+  it("72 characters, ok", async () => {
+    const issues = await runClas(clasXml("Configuration framework (ZCL_NOVA_CFG_WRITER) or the maintenance dialog"));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("72 characters with entity, ok", async () => {
+    const issues = await runClas(clasXml("Configuration framework (ZCL_NOVA_CFG_WRITER) or the maintenance dialog&apos;"));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("73 characters with entity, error", async () => {
+    const issues = await runClas(clasXml("Configuration framework (ZCL_NOVA_CFG_WRITER) or the maintenance dialog&apos;s"));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("actual: 73");
+    expect(issues[0].getStart().getRow()).to.equal(17);
+  });
+
+  it("INTF, too long", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOINTERF>
+    <CLSNAME>ZIF_TEST</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Test interface</DESCRIPT>
+    <EXPOSURE>2</EXPOSURE>
+    <STATE>1</STATE>
+    <UNICODE>X</UNICODE>
+   </VSEOINTERF>
+   <LINES>
+    <TLINE>
+     <TDFORMAT>*</TDFORMAT>
+     <TDLINE>${"A".repeat(80)}</TDLINE>
+    </TLINE>
+   </LINES>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const issues = await run(new Registry().addFile(new MemoryFile("zif_test.intf.xml", xml)));
+    expect(issues.length).to.equal(1);
+  });
+});
+
 describe("rule, xml_consistency, CLAS text element length", () => {
 
   it("no issue when text element entry is within its LENGTH", async () => {

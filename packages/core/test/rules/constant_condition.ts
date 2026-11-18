@@ -1,4 +1,5 @@
-import {Version} from "../../src";
+import {expect} from "chai";
+import {MemoryFile, Registry, Version} from "../../src";
 import {ConstantCondition} from "../../src/rules";
 import {testRule, testRuleFix} from "./_utils";
 import {IRedundantTest, inMethod, testNested, testSyntaxAfterFix, testVersions} from "./_redundant_code";
@@ -9,6 +10,22 @@ IF ${cond}.
 ELSE.
   result = 2.
 ENDIF.`);
+
+const exclusive = (body: string) => inMethod(`CONSTANTS c_num TYPE c LENGTH 1 VALUE 'N'.
+CONSTANTS c_numeric TYPE c LENGTH 1 VALUE '%'.
+CONSTANTS c_n2 TYPE c LENGTH 1 VALUE 'N'.
+CONSTANTS c_long TYPE c LENGTH 2 VALUE 'ABC'.
+CONSTANTS c_long2 TYPE c LENGTH 2 VALUE 'ABD'.
+TYPES: BEGIN OF ty_row,
+         kind TYPE c LENGTH 1,
+       END OF ty_row.
+DATA kind TYPE c LENGTH 1.
+DATA str TYPE string.
+DATA num TYPE n LENGTH 2.
+DATA ls_row TYPE ty_row.
+FIELD-SYMBOLS <row> TYPE ty_row.
+CLEAR: kind, str, num, ls_row.
+${body}`);
 
 const tests: IRedundantTest[] = [
   // constant variable
@@ -131,6 +148,40 @@ ENDIF.`), cnt: 1, fix: true},
   {abap: inMethod("DATA(c) = abap_true.\nIF c = abap_true.\nENDIF.\nASSIGN ('ATTR') TO FIELD-SYMBOL(<fs>)."), cnt: 0},
   {abap: "DEFINE _if.\n  IF &1 = abap_true. ENDIF.\nEND-OF-DEFINITION.\n" + inMethod("DATA(c) = abap_true.\n_if c."), cnt: 0},
   {abap: inMethod("DATA(c) = abap_true.\nIF c = abap_true.\nENDIF.\nunknown = 1."), cnt: 0, syntaxError: true},
+
+  // exclusive values: x <> a OR x <> b, x = a AND x = b
+  {abap: exclusive("IF kind <> c_num OR kind <> c_numeric.\nENDIF."), cnt: 1},
+  {abap: exclusive("IF kind = 'A' AND kind = 'B'.\nENDIF."), cnt: 1},
+  {abap: exclusive("IF kind NE 'A' OR NOT kind EQ 'B'.\nENDIF."), cnt: 1},
+  {abap: exclusive("IF kind = 'A' AND imp = 1 AND 'B' = kind.\nENDIF."), cnt: 1},
+  {abap: exclusive("IF kind <> 'A' OR kind <> 'B' OR kind <> 'C'.\nENDIF."), cnt: 1},
+  {abap: exclusive("IF ls_row-kind <> 'A' OR ls_row-kind <> 'B'.\nENDIF."), cnt: 1},
+  {abap: exclusive("IF str <> 'A' OR str <> 'B'.\nENDIF."), cnt: 1},
+  {abap: exclusive("ASSIGN ls_row TO <row>.\nIF <row>-kind <> 'A' OR <row>-kind <> 'B'.\nENDIF."), cnt: 1},
+  {abap: exclusive("IF imp = 1 OR ( kind <> 'A' OR kind <> 'B' ).\nENDIF."), cnt: 1},
+  {abap: exclusive("WHILE kind <> 'A' OR kind <> 'B'.\nENDWHILE."), cnt: 1},
+  {abap: exclusive("CHECK kind <> 'A' OR kind <> 'B'."), cnt: 1},
+  {abap: exclusive("DATA(b) = xsdbool( kind = 'A' AND kind = 'B' )."), cnt: 1},
+  {abap: exclusive("IF kind <> 'A' OR kind <> 'B'.\nENDIF.\nASSIGN ('ATTR') TO FIELD-SYMBOL(<fs>)."), cnt: 1},
+  {abap: exclusive("IF kind <> c_long OR kind <> 'AC'.\nENDIF."), cnt: 1},
+  // not reported: same values, other operators, no known value, other types, calls, mixed AND and OR
+  {abap: exclusive("IF kind <> c_num OR kind <> c_n2.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind <> 'A' OR kind <> 'A '.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind <> c_long OR kind <> c_long2.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind = 'A' OR kind = 'B'.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind <> 'A' AND kind <> 'B'.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind < 'A' OR kind > 'B'.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind <> 'A' OR ls_row-kind <> 'B'.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind <> 'A' OR kind <> str.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind <> 'A' OR kind <> |B|.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind <> 'A' OR kind <> `B`.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF num <> '1' OR num <> '01'.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF imp <> 1 OR imp <> 2.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind <> 'A' OR kind <> 'B' AND imp = 1.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind <> 'A' OR imp = get( ) OR kind <> 'B'.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind <> 'A' OR ( imp = 1 OR kind <> 'B' ).\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind+0(1) <> 'A' OR kind+0(1) <> 'B'.\nENDIF."), cnt: 0},
+  {abap: exclusive("ASSERT kind <> 'A' OR kind <> 'B'."), cnt: 0},
 ];
 
 testRule(tests, ConstantCondition);
@@ -269,3 +320,59 @@ testNested(ConstantCondition, [
       result = 2.`,
   },
 ]);
+
+testRule([
+  {abap: exclusive("IF kind <> 'A' OR kind <> 'B'.\nENDIF."), cnt: 0},
+  {abap: exclusive("IF kind = 'A' AND kind = 'B'.\nENDIF."), cnt: 0},
+], ConstantCondition, {exclusiveValues: false}, "constant_condition, exclusiveValues off");
+
+describe("Rule: constant_condition, exclusiveValues message", () => {
+  it("message and position", () => {
+    const abap = exclusive("IF imp = 1 OR kind <> c_num OR kind <> c_numeric.\nENDIF.");
+    const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
+    const issues = new ConstantCondition().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Condition is always true, kind cannot be both c_num and c_numeric");
+    expect(issues[0].getStart().getCol()).to.equal(15);
+    expect(issues[0].getEnd().getCol()).to.equal(49);
+    expect(issues[0].getDefaultFix()).to.equal(undefined);
+  });
+
+  it("constants of a class and an interface", () => {
+    const abap = `INTERFACE lif_kind.
+  CONSTANTS: BEGIN OF kind,
+               num     TYPE c LENGTH 1 VALUE 'N',
+               numeric TYPE c LENGTH 1 VALUE '%',
+             END OF kind.
+ENDINTERFACE.
+CLASS lcl_kind DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS c_num TYPE c LENGTH 1 VALUE 'N'.
+    CONSTANTS c_numeric TYPE c LENGTH 1 VALUE '%'.
+    CLASS-METHODS run IMPORTING kind TYPE c.
+ENDCLASS.
+CLASS lcl_kind IMPLEMENTATION.
+  METHOD run.
+    IF kind <> lcl_kind=>c_num OR kind <> lcl_kind=>c_numeric.
+    ENDIF.
+    IF kind <> lif_kind=>kind-num OR kind <> lif_kind=>kind-numeric.
+    ENDIF.
+    IF kind <> lif_kind=>kind-num OR kind <> lcl_kind=>c_num.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.`;
+    const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
+    const issues = new ConstantCondition().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.map(i => i.getStart().getRow())).to.deep.equal([15, 17]);
+  });
+
+  it("constants of an unknown class", () => {
+    const abap = `FORM run USING kind TYPE c.
+  IF kind <> cl_abap_typedescr=>typekind_num OR kind <> cl_abap_typedescr=>typekind_numeric.
+  ENDIF.
+ENDFORM.`;
+    const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
+    const issues = new ConstantCondition().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equal(0);
+  });
+});

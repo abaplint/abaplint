@@ -803,6 +803,35 @@
       },
       "type": "object"
     },
+    "CharacterFieldLiteralBlanksConf": {
+      "additionalProperties": false,
+      "properties": {
+        "concatenation": {
+          "description": "Report a character field literal ending with a blank as an operand of &&, of CONCATENATE without RESPECTING BLANKS, or as an embedded expression in a string template, the trailing blanks are dropped",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "searchPattern": {
+          "description": "Report a FIND or REPLACE search pattern that is a character field literal containing only blanks, or space, the pattern is empty: ALL OCCURRENCES raises an exception, FIRST OCCURRENCE matches before the first character",
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "searchPattern",
+        "concatenation"
+      ],
+      "type": "object"
+    },
     "CheckAbstractConf": {
       "additionalProperties": false,
       "properties": {
@@ -1237,11 +1266,18 @@
           },
           "type": "array"
         },
+        "exclusiveValues": {
+          "description": "Report x <> a OR x <> b, always true, and x = a AND x = b, always false, for different character values a and b",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "exclusiveValues"
+      ],
       "type": "object"
     },
     "ConstructorVisibilityPublicConf": {
@@ -1867,6 +1903,23 @@
       "type": "object"
     },
     "FMGlobalParametersObsoleteConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "FieldSymbolNeverAssignedConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -2614,6 +2667,17 @@
               ],
               "description": "A field symbol on a whole line of a sorted or hashed table, passed to a CHANGING parameter of a method\nTags: SingleFile\nhttps://rules.abaplint.org/changing_sorted_line"
             },
+            "character_field_literal_blanks": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CharacterFieldLiteralBlanksConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports character field literals ('...') whose blanks are ignored where the code relies on them\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/character_field_literal_blanks"
+            },
             "check_abstract": {
               "anyOf": [
                 {
@@ -2810,7 +2874,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
+              "description": "Finds IF and ELSEIF conditions on local variables whose value is known, and conditions that compare\na field with two different values and are always true or always false\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -3064,6 +3128,17 @@
                 }
               ],
               "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
+            },
+            "field_symbol_never_assigned": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FieldSymbolNeverAssignedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a local field symbol that is used, but never assigned in its method, form or function module\nTags: SingleFile\nhttps://rules.abaplint.org/field_symbol_never_assigned"
             },
             "final_newline": {
               "anyOf": [
@@ -3340,6 +3415,17 @@
               ],
               "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
             },
+            "inline_generic_source": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlineGenericSourceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds inline declarations whose value is a generically typed parameter or field symbol\nTags: Quickfix\nhttps://rules.abaplint.org/inline_generic_source"
+            },
             "inline_packed_computation": {
               "anyOf": [
                 {
@@ -3482,6 +3568,17 @@
                 }
               ],
               "description": "\nAllows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nRegexes are case-insensitive.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/local_variable_names"
+            },
+            "loop_target_misuse": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LoopTargetMisuseConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a nested LOOP that reuses the target of the enclosing LOOP, and INTO <fs> where ASSIGNING was meant\nTags: SingleFile\nhttps://rules.abaplint.org/loop_target_misuse"
             },
             "macro_naming": {
               "anyOf": [
@@ -4319,6 +4416,17 @@
               ],
               "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
             },
+            "sort_required": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortRequiredConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BINARY SEARCH or DELETE ADJACENT DUPLICATES ... COMPARING on a local table not sorted by those fields\nTags: SingleFile\nhttps://rules.abaplint.org/sort_required"
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -4362,6 +4470,17 @@
                 }
               ],
               "description": "Ensure types match when selecting from database\nhttps://rules.abaplint.org/sql_value_conversion"
+            },
+            "stale_subrc": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StaleSubrcConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports IF, CHECK, ASSERT or CASE on sy-subrc directly after a method call without EXCEPTIONS\nTags: SingleFile\nhttps://rules.abaplint.org/stale_subrc"
             },
             "start_at_tab": {
               "anyOf": [
@@ -4428,6 +4547,17 @@
                 }
               ],
               "description": "Find superfluous VALUE expressions\nTags: SingleFile\nhttps://rules.abaplint.org/superfluous_value"
+            },
+            "suspicious_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SuspiciousLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds WHILE loops whose condition the loop body never changes\nhttps://rules.abaplint.org/suspicious_loop"
             },
             "sy_modification": {
               "anyOf": [
@@ -4527,6 +4657,17 @@
                 }
               ],
               "description": "Checks for uncaught static exception\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
+            },
+            "unit_test_assertions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnitTestAssertionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports unit test assertions that cannot fail, and the ASSERT statement in FOR TESTING classes\nhttps://rules.abaplint.org/unit_test_assertions"
             },
             "unknown_types": {
               "anyOf": [
@@ -5188,6 +5329,17 @@
               ],
               "description": "A field symbol on a whole line of a sorted or hashed table, passed to a CHANGING parameter of a method\nTags: SingleFile\nhttps://rules.abaplint.org/changing_sorted_line"
             },
+            "character_field_literal_blanks": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CharacterFieldLiteralBlanksConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports character field literals ('...') whose blanks are ignored where the code relies on them\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/character_field_literal_blanks"
+            },
             "check_abstract": {
               "anyOf": [
                 {
@@ -5384,7 +5536,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds IF and ELSEIF conditions on local variables whose value is known\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
+              "description": "Finds IF and ELSEIF conditions on local variables whose value is known, and conditions that compare\na field with two different values and are always true or always false\nTags: Quickfix\nhttps://rules.abaplint.org/constant_condition"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -5638,6 +5790,17 @@
                 }
               ],
               "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix, SingleFile\nhttps://rules.abaplint.org/exporting"
+            },
+            "field_symbol_never_assigned": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FieldSymbolNeverAssignedConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a local field symbol that is used, but never assigned in its method, form or function module\nTags: SingleFile\nhttps://rules.abaplint.org/field_symbol_never_assigned"
             },
             "final_newline": {
               "anyOf": [
@@ -5914,6 +6077,17 @@
               ],
               "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/inline_data_old_versions"
             },
+            "inline_generic_source": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlineGenericSourceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds inline declarations whose value is a generically typed parameter or field symbol\nTags: Quickfix\nhttps://rules.abaplint.org/inline_generic_source"
+            },
             "inline_packed_computation": {
               "anyOf": [
                 {
@@ -6056,6 +6230,17 @@
                 }
               ],
               "description": "\nAllows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nRegexes are case-insensitive.\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/local_variable_names"
+            },
+            "loop_target_misuse": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LoopTargetMisuseConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a nested LOOP that reuses the target of the enclosing LOOP, and INTO <fs> where ASSIGNING was meant\nTags: SingleFile\nhttps://rules.abaplint.org/loop_target_misuse"
             },
             "macro_naming": {
               "anyOf": [
@@ -6893,6 +7078,17 @@
               ],
               "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
             },
+            "sort_required": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortRequiredConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BINARY SEARCH or DELETE ADJACENT DUPLICATES ... COMPARING on a local table not sorted by those fields\nTags: SingleFile\nhttps://rules.abaplint.org/sort_required"
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -6936,6 +7132,17 @@
                 }
               ],
               "description": "Ensure types match when selecting from database\nhttps://rules.abaplint.org/sql_value_conversion"
+            },
+            "stale_subrc": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StaleSubrcConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports IF, CHECK, ASSERT or CASE on sy-subrc directly after a method call without EXCEPTIONS\nTags: SingleFile\nhttps://rules.abaplint.org/stale_subrc"
             },
             "start_at_tab": {
               "anyOf": [
@@ -7002,6 +7209,17 @@
                 }
               ],
               "description": "Find superfluous VALUE expressions\nTags: SingleFile\nhttps://rules.abaplint.org/superfluous_value"
+            },
+            "suspicious_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SuspiciousLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds WHILE loops whose condition the loop body never changes\nhttps://rules.abaplint.org/suspicious_loop"
             },
             "sy_modification": {
               "anyOf": [
@@ -7101,6 +7319,17 @@
                 }
               ],
               "description": "Checks for uncaught static exception\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
+            },
+            "unit_test_assertions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnitTestAssertionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports unit test assertions that cannot fail, and the ASSERT statement in FOR TESTING classes\nhttps://rules.abaplint.org/unit_test_assertions"
             },
             "unknown_types": {
               "anyOf": [
@@ -7562,11 +7791,18 @@
           },
           "type": "array"
         },
+        "selfComparison": {
+          "description": "Report a comparison of an operand with itself, like a = a or a <> a",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
         }
       },
+      "required": [
+        "selfComparison"
+      ],
       "type": "object"
     },
     "IdenticalContentsConf": {
@@ -7784,6 +8020,23 @@
       "type": "object"
     },
     "InlineDataOldVersionsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "InlineGenericSourceConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
@@ -8187,6 +8440,35 @@
         "expectedData",
         "expectedConstant",
         "expectedFS"
+      ],
+      "type": "object"
+    },
+    "LoopTargetMisuseConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "intoFieldSymbol": {
+          "description": "Report LOOP AT ... INTO <fs> and READ TABLE ... INTO <fs> when the local field symbol is only bound by ASSIGNING, so the statement overwrites a table row",
+          "type": "boolean"
+        },
+        "nestedLoop": {
+          "description": "Report a LOOP inside a LOOP with the same target, when the outer loop body uses the target after the inner ENDLOOP",
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "nestedLoop",
+        "intoFieldSymbol"
       ],
       "type": "object"
     },
@@ -9877,6 +10159,10 @@
     "RedundantConversionConf": {
       "additionalProperties": false,
       "properties": {
+        "assignmentTarget": {
+          "description": "Also report a CONV that is the whole right-hand side of an assignment whose target already has the conversion type, e.g. \"count = CONV i( text ).\" with count TYPE i, the assignment converts by itself",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -9889,6 +10175,9 @@
           "description": "Problem severity"
         }
       },
+      "required": [
+        "assignmentTarget"
+      ],
       "type": "object"
     },
     "ReleaseIdocConf": {
@@ -10377,6 +10666,35 @@
       },
       "type": "object"
     },
+    "SortRequiredConf": {
+      "additionalProperties": false,
+      "properties": {
+        "adjacentDuplicates": {
+          "description": "Check DELETE ADJACENT DUPLICATES ... COMPARING",
+          "type": "boolean"
+        },
+        "binarySearch": {
+          "description": "Check READ TABLE ... WITH KEY ... BINARY SEARCH",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "binarySearch",
+        "adjacentDuplicates"
+      ],
+      "type": "object"
+    },
     "SpaceBeforeColonConf": {
       "additionalProperties": false,
       "properties": {
@@ -10419,6 +10737,23 @@
         "ignoreGlobalDefinition",
         "ignoreExceptions"
       ],
+      "type": "object"
+    },
+    "StaleSubrcConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "StartAtTabConf": {
@@ -10525,6 +10860,30 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "SuspiciousLoopConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "unchangedCondition": {
+          "description": "Report WHILE loops whose condition the loop body never changes, or sets to the same value in every iteration. The loop runs zero times, once or forever",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "unchangedCondition"
+      ],
       "type": "object"
     },
     "SyModificationConf": {
@@ -10694,6 +11053,35 @@
       "required": [
         "reportDynamic",
         "reportNoCheck"
+      ],
+      "type": "object"
+    },
+    "UnitTestAssertionsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "assertStatement": {
+          "description": "Report the ASSERT statement in FOR TESTING classes",
+          "type": "boolean"
+        },
+        "cannotFail": {
+          "description": "Report assertions that cannot fail: assert_equals or assert_equals_float with the same operand for act and exp, assert_true with abap_true or 'X', assert_false with abap_false, space or ' '",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "cannotFail",
+        "assertStatement"
       ],
       "type": "object"
     },

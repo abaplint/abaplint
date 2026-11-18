@@ -19857,3 +19857,58 @@ APPEND lo_row TO <ls_group>-rows.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, INSERT INTO TABLE compatibility", () => {
+  it("INSERT character literal into table of c length 20, error", () => {
+    const abap = `
+TYPES tyc TYPE c LENGTH 20.
+TYPES ty_devclass_tt TYPE STANDARD TABLE OF tyc WITH DEFAULT KEY .
+DATA itab TYPE ty_devclass_tt.
+INSERT 'HELLO' INTO TABLE itab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Types not compatible");
+  });
+});
+
+describe("syntax.ts, SELECT generic host field into inline", () => {
+  it("field symbol TYPE any, no errors", () => {
+    const abap = `
+FORM foo.
+  FIELD-SYMBOLS <fs> TYPE any.
+  SELECT SINGLE @<fs> FROM t100 INTO @DATA(x).
+  WRITE x.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("importing TYPE c, no errors", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS m IMPORTING iv TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    SELECT SINGLE @iv FROM t100 INTO @DATA(x).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("importing TYPE simple, no errors", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS m IMPORTING iv TYPE simple.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    SELECT SINGLE @iv FROM t100 WHERE arbgb = 'X' INTO @DATA(x).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
