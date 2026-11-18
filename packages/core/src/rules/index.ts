@@ -86,6 +86,7 @@ export * from "./forbidden_void_type";
 export * from "./form_tables_obsolete";
 export * from "./fully_type_constants";
 export * from "./fully_type_itabs";
+export * from "./function_module_parameter_names";
 export * from "./function_module_recommendations";
 export * from "./functional_writing";
 export * from "./generic_regex";
