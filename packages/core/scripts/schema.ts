@@ -88,6 +88,7 @@ import {ForbiddenVoidTypeConf} from "../src/rules/forbidden_void_type";
 import {FormTablesObsoleteConf} from "../src/rules/form_tables_obsolete";
 import {FullyTypeConsantsConf} from "../src/rules/fully_type_constants";
 import {FullyTypeITabsConf} from "../src/rules/fully_type_itabs";
+import {FunctionModuleParameterNamesConf} from "../src/rules/function_module_parameter_names";
 import {FunctionModuleRecommendationsConf} from "../src/rules/function_module_recommendations";
 import {FunctionalWritingConf} from "../src/rules/functional_writing";
 import {GenericRegexConf} from "../src/rules/generic_regex";
@@ -343,6 +344,7 @@ export interface IConfig {
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
     "fully_type_constants"?: FullyTypeConsantsConf | boolean,
     "fully_type_itabs"?: FullyTypeITabsConf | boolean,
+    "function_module_parameter_names"?: FunctionModuleParameterNamesConf | boolean,
     "function_module_recommendations"?: FunctionModuleRecommendationsConf | boolean,
     "functional_writing"?: FunctionalWritingConf | boolean,
     "generic_regex"?: GenericRegexConf | boolean,
@@ -587,6 +589,7 @@ export interface IConfig {
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
     "fully_type_constants"?: FullyTypeConsantsConf | boolean,
     "fully_type_itabs"?: FullyTypeITabsConf | boolean,
+    "function_module_parameter_names"?: FunctionModuleParameterNamesConf | boolean,
     "function_module_recommendations"?: FunctionModuleRecommendationsConf | boolean,
     "functional_writing"?: FunctionalWritingConf | boolean,
     "generic_regex"?: GenericRegexConf | boolean,
