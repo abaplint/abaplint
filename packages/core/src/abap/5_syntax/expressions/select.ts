@@ -19,6 +19,9 @@ import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 import {IEdit} from "../../../edit_helper";
 import {checkDatabaseFields} from "./_check_database_fields";
+import {Issue} from "../../../issue";
+import {FieldChain} from "./field_chain";
+import {WAt} from "../../1_lexer/tokens";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 type DatabaseSourceInfo = {source: DatabaseTableSource, name: string, alias: string};
@@ -261,7 +264,7 @@ export class Select {
     if (intoStructure) {
       const inlineList = intoStructure.findAllExpressions(Expressions.InlineData);
       if (inlineList.length === 1) {
-        InlineData.runSyntax(inlineList[0], input, this.buildStructureType(fields, dbSources, input.scope, from));
+        InlineData.runSyntax(inlineList[0], input, this.buildStructureType(fields, dbSources, input, from));
       } else {
         for (const inline of inlineList) {
           // todo, for now these are voided
@@ -336,12 +339,18 @@ export class Select {
 
   private static buildStructureType(fields: FieldList,
                                     dbSources: DatabaseTableSource[],
-                                    scope: CurrentScope,
+                                    input: SyntaxInput,
                                     from: ExpressionNode): AbstractType | undefined {
+    const scope = input.scope;
     if (fields.length === 1 && dbSources.length === 1) {
       // COUNT( * ) yields an integer regardless of the (possibly dynamic) table
       if (/^count\(\s*\*\s*\)$/i.test(fields[0].code)) {
         return this.countResultType(scope);
+      }
+      // a host variable yields its own type regardless of the table
+      const hostType = this.findHostFieldType(fields[0], input);
+      if (hostType) {
+        return hostType;
       }
       const dbType = dbSources[0]?.parseType(scope.getRegistry());
       if (dbType === undefined) {
@@ -499,6 +508,31 @@ export class Select {
       components.push({name: field.as || field.code, type});
     }
     return components;
+  }
+
+  /** returns the type of the field list entry if it is a single ABAP host variable, "@var" or "@( var )" */
+  private static findHostFieldType(field: FieldList[number], input: SyntaxInput): AbstractType | undefined {
+    if (!(field.expression.get() instanceof Expressions.SQLField)) {
+      return undefined;
+    }
+    const children = field.expression.getChildren().filter(c =>
+      !(c.get() instanceof Expressions.SQLAsName) && c.concatTokens().toUpperCase() !== "AS");
+    if (!(children[0]?.get() instanceof WAt)) {
+      return undefined;
+    }
+    // "@var" has two children, "@( var )" has four, anything else is an expression
+    const chain = children.length === 2 ? children[1] : children.length === 4 ? children[2] : undefined;
+    if (!(chain instanceof ExpressionNode) || !(chain.get() instanceof Expressions.SimpleFieldChain2)) {
+      return undefined;
+    }
+    // only resolve the type here, errors for the host variable are not reported by this lookup
+    const issues: Issue[] = [];
+    const type = FieldChain.runSyntax(chain, {...input, issues});
+    // a generic host type cannot type the inline declaration, keep it voided
+    if (issues.length > 0 || type === undefined || type.isGeneric()) {
+      return undefined;
+    }
+    return type;
   }
 
   /** returns the SQLFunction node if the field list entry is a single SQL function call */
