@@ -7,7 +7,7 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Rollback implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    return verNotLang(LanguageVersion.KeyUser, seq("ROLLBACK", altPrio("WORK", DatabaseConnection)));
+    return verNotLang(LanguageVersion.KeyUser, seq("ROLLBACK", altPrio("WORK", verNotLang(LanguageVersion.Cloud, DatabaseConnection))));
   }
 
 }
