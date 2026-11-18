@@ -13,6 +13,7 @@ import {LoopGroupBy} from "../expressions/loop_group_by";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Release, releaseAtLeast} from "../../../version";
+import {hasKeyCompare} from "../_key_compare";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -120,6 +121,18 @@ export class Loop implements StatementSyntax {
           const message = "Loop, secondary key requires an optimizable WHERE, top-level OR not allowed";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return;
+        }
+
+        if (key.type === TableAccessType.sorted && key.keyFields.length > 0) {
+          // the first component of a sorted secondary key must be compared with = or IS INITIAL
+          // in a part of the condition joined by AND, otherwise the WHERE cannot be optimized
+          const first = key.keyFields[0].toUpperCase();
+          if (hasKeyCompare(cond, first) === false) {
+            const message = "Loop, WHERE cannot be optimized for secondary key " + name +
+              ", key component " + first + " needs a comparison with = or IS INITIAL joined by AND";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return;
+          }
         }
 
         if (!releaseAtLeast(input.scope.getRelease(), Release.v740sp02)) {

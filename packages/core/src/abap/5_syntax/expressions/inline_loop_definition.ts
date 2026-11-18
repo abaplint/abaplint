@@ -40,6 +40,11 @@ export class InlineLoopDefinition {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
+      const message = input.scope.checkLocalName(target.getFirstToken().getStr(), rowType);
+      if (message !== undefined) {
+        input.issues.push(syntaxIssue(input, target.getFirstToken(), message));
+        return;
+      }
       const identifier = new TypedIdentifier(target.getFirstToken(), input.filename, rowType, [IdentifierMeta.InlineDefinition]);
       input.scope.addReference(target.getFirstToken(), identifier, ReferenceType.DataWriteReference, input.filename);
       input.scope.addReference(target.getFirstToken(), identifier, ReferenceType.DataReadReference, input.filename);
@@ -48,6 +53,11 @@ export class InlineLoopDefinition {
 
     const index = node.findExpressionAfterToken("INTO");
     if (index && index.get() instanceof Expressions.TargetField) {
+      const message = input.scope.checkLocalName(index.getFirstToken().getStr(), IntegerType.get());
+      if (message !== undefined) {
+        input.issues.push(syntaxIssue(input, index.getFirstToken(), message));
+        return;
+      }
       const identifier = new TypedIdentifier(index.getFirstToken(), input.filename, IntegerType.get(), [IdentifierMeta.InlineDefinition]);
       input.scope.addReference(index.getFirstToken(), identifier, ReferenceType.DataWriteReference, input.filename);
       input.scope.addIdentifier(identifier);

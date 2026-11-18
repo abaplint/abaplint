@@ -81,6 +81,8 @@ export class Registry implements IRegistry {
   private objects: { [name: string]: { [type: string]: IObject } } = {};
   private objectsByType: { [type: string]: { [name: string]: IObject } } = {};
   private dependencies: { [type: string]: { [name: string]: boolean } } = {};
+  /** upper case filename to object containing the file, kept in sync by add/remove methods */
+  private filenameIndex: Map<string, IObject> = new Map();
   private ddicReferences: IDDICReferences;
   private msagReferences: IMSAGReferences;
   private macroReferences: IMacroReferences;
@@ -97,6 +99,7 @@ export class Registry implements IRegistry {
     this.objects = {};
     this.objectsByType = {};
     this.dependencies = {};
+    this.filenameIndex = new Map();
     this.ddicReferences = new DDICReferences();
     this.msagReferences = new MSAGReferences();
     this.macroReferences = new MacroReferences();
@@ -165,11 +168,13 @@ export class Registry implements IRegistry {
 
   public getFileByName(filename: string): IFile | undefined {
     const upper = filename.toUpperCase();
-    for (const o of this.getObjects()) {
-      for (const f of o.getFiles()) {
-        if (f.getFilename().toUpperCase() === upper) {
-          return f;
-        }
+    const obj = this.filenameIndex.get(upper);
+    if (obj === undefined) {
+      return undefined;
+    }
+    for (const f of obj.getFiles()) {
+      if (f.getFilename().toUpperCase() === upper) {
+        return f;
       }
     }
     return undefined;
@@ -219,6 +224,7 @@ export class Registry implements IRegistry {
   public removeFile(file: IFile): IRegistry {
     const obj = this.find(file.getObjectName(), file.getObjectType());
     obj.removeFile(file);
+    this.unindexFile(file.getFilename(), obj);
     if (obj.getFiles().length === 0) {
       this.ddicReferences.clear(obj);
       this.msagReferences.clear(obj);
@@ -249,6 +255,7 @@ export class Registry implements IRegistry {
       }
 
       found.addFile(f);
+      this.filenameIndex.set(filename.toUpperCase(), found);
     }
     return this;
   }
@@ -324,11 +331,13 @@ export class Registry implements IRegistry {
   // assumption: the file is already in the registry
   public findObjectForFile(file: IFile): IObject | undefined {
     const filename = file.getFilename();
-    for (const obj of this.getObjects()) {
-      for (const ofile of obj.getFiles()) {
-        if (ofile.getFilename() === filename) {
-          return obj;
-        }
+    const obj = this.filenameIndex.get(filename.toUpperCase());
+    if (obj === undefined) {
+      return undefined;
+    }
+    for (const ofile of obj.getFiles()) {
+      if (ofile.getFilename() === filename) {
+        return obj;
       }
     }
     return undefined;
@@ -439,6 +448,10 @@ export class Registry implements IRegistry {
       throw new Error("removeObject: object not found");
     }
 
+    for (const f of remove.getFiles()) {
+      this.unindexFile(f.getFilename(), remove);
+    }
+
     if (Object.keys(this.objects[remove.getName()]).length === 1) {
       delete this.objects[remove.getName()];
     } else {
@@ -449,6 +462,13 @@ export class Registry implements IRegistry {
       delete this.objectsByType[remove.getType()];
     } else {
       delete this.objectsByType[remove.getType()][remove.getName()];
+    }
+  }
+
+  private unindexFile(filename: string, obj: IObject): void {
+    const upper = filename.toUpperCase();
+    if (this.filenameIndex.get(upper) === obj) {
+      this.filenameIndex.delete(upper);
     }
   }
 
