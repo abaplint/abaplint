@@ -19912,3 +19912,52 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, EVENTS parameters", () => {
+  it("EVENTS, parameter passed by VALUE, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS message EXPORTING VALUE(iv_text) TYPE string.
+    CLASS-EVENTS other EXPORTING VALUE(iv_text) TYPE string OPTIONAL VALUE(iv_num) TYPE i OPTIONAL.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("EVENTS, parameter not passed by VALUE, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS message EXPORTING iv_text TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Event parameter iv_text must be passed by VALUE");
+  });
+
+  it("EVENTS, second parameter not passed by VALUE, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS message EXPORTING VALUE(iv_text) TYPE string iv_other TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal("Event parameter iv_other must be passed by VALUE");
+  });
+
+  it("INTERFACE EVENTS, parameter not passed by VALUE, error", () => {
+    const abap = `
+INTERFACE lif.
+  EVENTS message EXPORTING iv_text TYPE string.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Event parameter iv_text must be passed by VALUE");
+  });
+});
