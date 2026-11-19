@@ -93,8 +93,17 @@ text = text.`,
         continue;
       }
 
+      const sources = structure.findAllExpressionsRecursive(Expressions.Source);
+      // Sources that are an operand of an enclosing Source, e.g. "2 * CONV i( a + b )" or "- CONV i( a + b )"
+      const operands = new Set<ExpressionNode>();
+      for (const source of sources) {
+        if (source.getChildren().length > 1) {
+          source.findDirectExpressions(Expressions.Source).forEach(operand => operands.add(operand));
+        }
+      }
+
       // recursive, a CONV can be the argument of a built-in function, which is itself a Source
-      for (const source of structure.findAllExpressionsRecursive(Expressions.Source)) {
+      for (const source of sources) {
         if (source.getFirstToken().getStr().toUpperCase() !== "CONV") {
           continue;
         }
@@ -136,8 +145,12 @@ text = text.`,
         if (closingParen === undefined) {
           continue;
         }
-        const preserveParentheses = bodySource.findDirectExpression(Expressions.ArithOperator) !== undefined
-          || bodySource.findDirectTokenByText("&&") !== undefined;
+        // parentheses are only needed when the CONV takes part in a surrounding operation,
+        // "CONV type ( body )" alone has 5 children, more means a trailing operator
+        const partOfOperation = source.getChildren().length !== 5 || operands.has(source);
+        const preserveParentheses = partOfOperation
+          && (bodySource.findDirectExpression(Expressions.ArithOperator) !== undefined
+          || bodySource.findDirectTokenByText("&&") !== undefined);
         // Apply the later edit first so the original positions remain valid when
         // both parts of the CONV wrapper are changed on the same line.
         const fix = EditHelper.merge(
