@@ -13,6 +13,7 @@ import {LoopGroupBy} from "../expressions/loop_group_by";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Release, releaseAtLeast} from "../../../version";
+import {hasKeyCompare} from "../_key_compare";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -79,6 +80,16 @@ export class Loop implements StatementSyntax {
 
     if (sourceType instanceof TableType) {
       rowType = sourceType.getRowType();
+    } else if (concat.startsWith("LOOP AT GROUP ")) {
+      const unbound = LoopGroupBy.findUnboundGroup(firstSource, input);
+      if (unbound !== undefined) {
+        const message = `No group is bound to "${unbound}"`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      }
+      rowType = LoopGroupBy.findMemberType(firstSource, input);
+    }
+    if (rowType) {
       sourceType = rowType;
       if (targetConcat?.startsWith("REFERENCE INTO ")) {
         sourceType = new DataReference(sourceType);
@@ -126,7 +137,7 @@ export class Loop implements StatementSyntax {
           // the first component of a sorted secondary key must be compared with = or IS INITIAL
           // in a part of the condition joined by AND, otherwise the WHERE cannot be optimized
           const first = key.keyFields[0].toUpperCase();
-          if (this.hasKeyCompare(cond, first) === false) {
+          if (hasKeyCompare(cond, first) === false) {
             const message = "Loop, WHERE cannot be optimized for secondary key " + name +
               ", key component " + first + " needs a comparison with = or IS INITIAL joined by AND";
             input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -175,33 +186,8 @@ export class Loop implements StatementSyntax {
 
     const group = node.findDirectExpression(Expressions.LoopGroupBy);
     if (group) {
-      LoopGroupBy.runSyntax(group, input);
+      LoopGroupBy.runSyntax(group, input, rowType, LoopGroupBy.findRepresentative(node));
     }
 
-  }
-
-  // true if a conjunct reachable through AND only, ie. not under OR or NOT, compares the component with = or IS INITIAL
-  private hasKeyCompare(cond: ExpressionNode, component: string): boolean {
-    if (cond.findDirectTokenByText("OR") !== undefined) {
-      return false;
-    }
-    for (const child of cond.getChildren()) {
-      if (child.get() instanceof Expressions.ComponentCompare && child instanceof ExpressionNode) {
-        const concat = child.concatTokens().toUpperCase().replace(/\s+/g, " ");
-        if (concat.startsWith(component + " = ")
-            || concat.startsWith(component + " EQ ")
-            || concat === component + " IS INITIAL") {
-          return true;
-        }
-      } else if (child.get() instanceof Expressions.ComponentCondSub
-          && child instanceof ExpressionNode
-          && child.findDirectTokenByText("NOT") === undefined) {
-        const sub = child.findDirectExpression(Expressions.ComponentCond);
-        if (sub !== undefined && this.hasKeyCompare(sub, component)) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 }

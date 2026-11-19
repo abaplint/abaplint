@@ -74,6 +74,12 @@ export class InsertInternal implements StatementSyntax {
       } else if (sourceType instanceof CharacterType && targetType instanceof StringType) {
         // yea, well, INSERT doesnt convert the values automatically, like everything else?
         error = true;
+      } else if (sourceType instanceof CharacterType
+          && targetType instanceof CharacterType
+          && sourceType.getAbstractTypeData()?.derivedFromConstant === true
+          && sourceType.getLength() !== targetType.getLength()) {
+        // character literal of different length than the row type
+        error = true;
       }
 
       if (error === true) {

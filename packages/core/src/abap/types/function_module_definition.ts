@@ -28,6 +28,8 @@ export class FunctionModuleDefinition {
   private parameters: IFunctionModuleParameter[];
   private globalParameters: boolean;
   private moduleType: FunctionModuleType | undefined;
+  private exceptions: string[];
+  private classBasedExceptions: boolean;
 
   public constructor(data: any) {
     this.parse(data);
@@ -53,6 +55,15 @@ export class FunctionModuleDefinition {
     return this.globalParameters;
   }
 
+  /** the classic exceptions, or the exception classes if isClassBasedExceptions() */
+  public getExceptions(): readonly string[] {
+    return this.exceptions;
+  }
+
+  public isClassBasedExceptions(): boolean {
+    return this.classBasedExceptions;
+  }
+
 ///////////////
 
   private parse(data: any) {
@@ -63,6 +74,8 @@ export class FunctionModuleDefinition {
     this.description = data.SHORT_TEXT;
     this.parameters = [];
     this.globalParameters = data.GLOBAL_FLAG === "X";
+    this.exceptions = [];
+    this.classBasedExceptions = data.EXCEPTION_CLASSES === "X";
 
     this.moduleType = FunctionModuleType.regular;
     if (data.REMOTE_CALL === "R") {
@@ -133,6 +146,14 @@ export class FunctionModuleDefinition {
           defaultValue: undefined,
           passByValue: false,
         });
+      }
+    }
+
+    if (data.EXCEPTION) {
+      for (const exception of xmlToArray(data.EXCEPTION.RSEXC)) {
+        if (typeof exception.EXCEPTION === "string") {
+          this.exceptions.push(exception.EXCEPTION);
+        }
       }
     }
 

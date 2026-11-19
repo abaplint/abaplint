@@ -6,6 +6,7 @@ import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {LoopGroupBy} from "./loop_group_by";
 
 export class InlineLoopDefinition {
   public static runSyntax(node: ExpressionNode | undefined, input: SyntaxInput): void {
@@ -21,8 +22,11 @@ export class InlineLoopDefinition {
 
     if (source && target) {
       const sourceType = Source.runSyntax(source, input);
-      let rowType: AbstractType | undefined = undefined;
-      if (sourceType instanceof TableType) {
+      const inGroup = node.concatTokens().toUpperCase().includes(" IN GROUP ");
+      let rowType: AbstractType | undefined = inGroup ? LoopGroupBy.findMemberType(source, input) : undefined;
+      if (rowType !== undefined) {
+        // FOR ... IN GROUP, the members have the row type of the grouped table
+      } else if (sourceType instanceof TableType) {
         rowType = sourceType.getRowType();
       } else if (sourceType instanceof VoidType) {
         rowType = sourceType;
@@ -32,12 +36,17 @@ export class InlineLoopDefinition {
         return;
       }
       if (rowType === undefined
-          && node.concatTokens().toUpperCase().includes(" IN GROUP ")
+          && inGroup
           && sourceType !== undefined) {
         rowType = sourceType;
       } else if (rowType === undefined) {
         const message = "InlineLoopDefinition, not a table type";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      }
+      const message = input.scope.checkLocalName(target.getFirstToken().getStr(), rowType);
+      if (message !== undefined) {
+        input.issues.push(syntaxIssue(input, target.getFirstToken(), message));
         return;
       }
       const identifier = new TypedIdentifier(target.getFirstToken(), input.filename, rowType, [IdentifierMeta.InlineDefinition]);
@@ -48,6 +57,11 @@ export class InlineLoopDefinition {
 
     const index = node.findExpressionAfterToken("INTO");
     if (index && index.get() instanceof Expressions.TargetField) {
+      const message = input.scope.checkLocalName(index.getFirstToken().getStr(), IntegerType.get());
+      if (message !== undefined) {
+        input.issues.push(syntaxIssue(input, index.getFirstToken(), message));
+        return;
+      }
       const identifier = new TypedIdentifier(index.getFirstToken(), input.filename, IntegerType.get(), [IdentifierMeta.InlineDefinition]);
       input.scope.addReference(index.getFirstToken(), identifier, ReferenceType.DataWriteReference, input.filename);
       input.scope.addIdentifier(identifier);

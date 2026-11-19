@@ -18,6 +18,11 @@ export class Append implements StatementSyntax {
 
     const target = node.findDirectExpression(Expressions.Target);
     if (target) {
+      if (target.findDirectExpression(Expressions.TableExpression) !== undefined) {
+        const message = "APPEND, table expression not allowed in target";
+        input.issues.push(syntaxIssue(input, target.getFirstToken(), message));
+        return;
+      }
       targetType = Target.runSyntax(target, input);
     }
 

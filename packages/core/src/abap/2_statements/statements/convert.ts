@@ -1,8 +1,8 @@
 import {IStatement} from "./_statement";
-import {seq, alt, per, ver, AlsoIn} from "../combi";
+import {seq, alt, per, ver, AlsoIn, verNotLang} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
-import {Release} from "../../../version";
+import {Release, LanguageVersion} from "../../../version";
 
 export class Convert implements IStatement {
 
@@ -24,12 +24,12 @@ export class Convert implements IStatement {
 
     const stamp = seq("INTO TIME STAMP", Target);
     const intoutc = ver(Release.v754, seq("INTO UTCLONG", Target), {also: AlsoIn.OpenABAP});
-    const invert = seq("INTO INVERTED-DATE", Target);
+    const invert = verNotLang(LanguageVersion.Cloud, seq("INTO INVERTED-DATE", Target));
 
     const date = seq(per(dat, tim),
                      per(daylightSource, stamp, zone, invert, intoutc));
 
-    const inv = seq("INVERTED-DATE", Source, "INTO DATE", Target);
+    const inv = verNotLang(LanguageVersion.Cloud, seq("INVERTED-DATE", Source, "INTO DATE", Target));
 
     const utclong = ver(Release.v754, seq("UTCLONG", Source, per(zone, into, daylightTarget)), {also: AlsoIn.OpenABAP});
 

@@ -8,6 +8,7 @@ import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {XMLValidator} from "fast-xml-parser";
 import {Severity} from "../severity";
+import {unescape} from "../xml_utils";
 
 const ABAPGIT_ATTRIBUTES: [string, RegExp][] = [
   ["version", /<abapGit\b[^>]*\bversion="([^"]+)"/],
@@ -39,6 +40,7 @@ export class XMLConsistency implements IRule {
 * QUAN fields in TABL objects have reference table and field values
 * Transparent TABL objects have delivery class and size category set
 * TABL fields with a built-in type carry the INTTYPE abapGit serializes for it, for the confirmed pairs
+* Documentation lines(TDLINE) in CLAS and INTF objects are max 72 characters, longer lines are cut by the system
 * Lock parameter names in ENQU objects are max 16 characters
 * DEVC objects are serialized as package.devc.xml
 * Texts and translations do not exceed maximum allowed length.`,
@@ -122,6 +124,28 @@ export class XMLConsistency implements IRule {
       issues.push(Issue.atRow(file, 1, "Class matching XML name not found in ABAP file", this.getMetadata().key, this.conf.severity));
     }
     issues.push(...this.checkClearedFields(obj, file, "VSEOCLASS", XMLConsistency.clearedClassFields));
+    issues.push(...this.checkDocumentationLines(obj, file));
+    return issues;
+  }
+
+  // the documentation editor stores lines of max 72 characters, longer TDLINEs are cut when deserialized
+  private checkDocumentationLines(obj: IObject, file: IFile): Issue[] {
+    const maxLength = 72;
+    const issues: Issue[] = [];
+    const xml = obj.getXML();
+    if (xml === undefined) {
+      return issues;
+    }
+    const regex = /<TDLINE>([^<]*)<\/TDLINE>/g;
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(xml)) !== null) {
+      const text = unescape(match[1]);
+      if (text.length > maxLength) {
+        const row = xml.substring(0, match.index).split("\n").length;
+        const message = `Documentation line exceeds maximum length of ${maxLength} characters (actual: ${text.length}), "${text}"`;
+        issues.push(Issue.atRow(file, row, message, this.getMetadata().key, this.conf.textAndTranslationLengthSeverity));
+      }
+    }
     return issues;
   }
 
@@ -190,6 +214,7 @@ export class XMLConsistency implements IRule {
       issues.push(Issue.atRow(file, 1, "Interface matching XML name not found in ABAP file", this.getMetadata().key, this.conf.severity));
     }
     issues.push(...this.checkClearedFields(obj, file, "VSEOINTERF", XMLConsistency.clearedInterfaceFields));
+    issues.push(...this.checkDocumentationLines(obj, file));
     return issues;
   }
 

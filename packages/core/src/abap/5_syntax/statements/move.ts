@@ -61,6 +61,13 @@ export class Move implements StatementSyntax {
     }
 
     if (inline) {
+      // the length of a text symbol depends on the text pool, "DATA(x) = TEXT-abc." does not compile
+      const sourceChildren = source?.getChildren() ?? [];
+      if (sourceChildren.length === 1 && sourceChildren[0].get() instanceof Expressions.TextElement) {
+        const message = `"${source!.concatTokens().toUpperCase()}" has a generic type that cannot be used for declarations`;
+        input.issues.push(syntaxIssue(input, source!.getFirstToken(), message));
+        return;
+      }
       if (sourceType instanceof PackedType && source?.findDirectExpression(Expressions.ArithOperator)) {
         sourceType = new PackedType(8, 0);
       }
