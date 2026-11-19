@@ -4726,6 +4726,17 @@
               ],
               "description": "Checks for uncaught static exception\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
             },
+            "unhandled_classic_exception": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnhandledClassicExceptionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds calls that do not map every classic exception the callee can raise\nTags: Syntax\nhttps://rules.abaplint.org/unhandled_classic_exception"
+            },
             "unit_test_assertions": {
               "anyOf": [
                 {
@@ -7398,6 +7409,17 @@
                 }
               ],
               "description": "Checks for uncaught static exception\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
+            },
+            "unhandled_classic_exception": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnhandledClassicExceptionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds calls that do not map every classic exception the callee can raise\nTags: Syntax\nhttps://rules.abaplint.org/unhandled_classic_exception"
             },
             "unit_test_assertions": {
               "anyOf": [
@@ -11127,6 +11149,40 @@
       "required": [
         "reportDynamic",
         "reportNoCheck"
+      ],
+      "type": "object"
+    },
+    "UnhandledClassicExceptionConf": {
+      "additionalProperties": false,
+      "properties": {
+        "allowLiteralArguments": {
+          "description": "missingExceptions: do not report a method call whose arguments are all literals or me, like describe_by_name( 'T100' )",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "missingExceptions": {
+          "description": "Report a call without EXCEPTIONS, including a functional call, of a method or function module that declares classic exceptions",
+          "type": "boolean"
+        },
+        "missingOthers": {
+          "description": "Report an EXCEPTIONS list without OTHERS, unless the method or function module is known and all its exceptions are listed",
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "missingOthers",
+        "missingExceptions",
+        "allowLiteralArguments"
       ],
       "type": "object"
     },
