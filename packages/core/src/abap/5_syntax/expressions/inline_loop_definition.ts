@@ -6,6 +6,7 @@ import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {LoopGroupBy} from "./loop_group_by";
 
 export class InlineLoopDefinition {
   public static runSyntax(node: ExpressionNode | undefined, input: SyntaxInput): void {
@@ -21,8 +22,11 @@ export class InlineLoopDefinition {
 
     if (source && target) {
       const sourceType = Source.runSyntax(source, input);
-      let rowType: AbstractType | undefined = undefined;
-      if (sourceType instanceof TableType) {
+      const inGroup = node.concatTokens().toUpperCase().includes(" IN GROUP ");
+      let rowType: AbstractType | undefined = inGroup ? LoopGroupBy.findMemberType(source, input) : undefined;
+      if (rowType !== undefined) {
+        // FOR ... IN GROUP, the members have the row type of the grouped table
+      } else if (sourceType instanceof TableType) {
         rowType = sourceType.getRowType();
       } else if (sourceType instanceof VoidType) {
         rowType = sourceType;
@@ -32,7 +36,7 @@ export class InlineLoopDefinition {
         return;
       }
       if (rowType === undefined
-          && node.concatTokens().toUpperCase().includes(" IN GROUP ")
+          && inGroup
           && sourceType !== undefined) {
         rowType = sourceType;
       } else if (rowType === undefined) {
