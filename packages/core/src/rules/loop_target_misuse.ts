@@ -8,6 +8,7 @@ import {StatementNode} from "../abap/nodes/statement_node";
 import {ExpressionNode} from "../abap/nodes/expression_node";
 import {ABAPFile} from "../abap/abap_file";
 import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
+import {MacroCall, Unknown} from "../abap/2_statements/statements/_statement";
 
 export class LoopTargetMisuseConf extends BasicRuleConfig {
   /** Report a LOOP inside a LOOP with the same target, when the outer loop body uses the target after the inner ENDLOOP */
@@ -15,6 +16,19 @@ export class LoopTargetMisuseConf extends BasicRuleConfig {
   /** Report LOOP AT ... INTO <fs> and READ TABLE ... INTO <fs> when the local field symbol is only bound by ASSIGNING,
    * so the statement overwrites a table row */
   public intoFieldSymbol: boolean = true;
+  /** Report a field symbol of LOOP AT ... ASSIGNING used after ENDLOOP, and a field symbol of READ TABLE ... ASSIGNING
+   * used after the check of sy-subrc, outside the branch that found the row */
+  public usedAfterLoop: boolean = true;
+}
+
+/** a control block opened after the LOOP or READ TABLE, while looking for a use of its field symbol */
+interface IScanFrame {
+  /** the condition of the block checks sy-subrc, the table or a variable set in the loop */
+  guard: boolean;
+  /** the block uses the field symbol */
+  uses: boolean;
+  /** the block contains a statement that leaves it, like RETURN, EXIT or RAISE */
+  leaves: boolean;
 }
 
 export class LoopTargetMisuse extends ABAPRule {
@@ -37,7 +51,21 @@ Option intoFieldSymbol: LOOP AT ... INTO <fs> or READ TABLE ... INTO <fs>. INTO 
 into the data object the field symbol points to. When <fs> was bound by ASSIGNING, that data
 object is a row of a table, and the statement overwrites it. ASSIGNING was meant.
 Reported only for a field symbol declared in the method, form or function module, and only when
-no ASSIGN and no STRUCTURE ... DEFAULT binds it there, so it can only point to a table row.`,
+no ASSIGN and no STRUCTURE ... DEFAULT binds it there, so it can only point to a table row.
+
+Option usedAfterLoop: a field symbol of LOOP AT ... ASSIGNING used after ENDLOOP. It points to
+the last row the loop processed. When the loop processed no row, it is not assigned, and the use
+raises GETWA_NOT_ASSIGNED, or it still points to what it was bound to before the loop.
+Also a field symbol of READ TABLE ... ASSIGNING used after sy-subrc was checked, outside the
+branch of that check. When the READ fails, the field symbol keeps its previous binding.
+Reported at the first such use in the method, form or function module.
+Not reported: a use inside IF, ELSEIF, CASE or WHILE whose condition reads sy-subrc, the table of
+the loop or a variable the loop body sets (a flag), a use after such a check that leaves with
+RETURN, EXIT, CONTINUE, CHECK, RAISE or MESSAGE or that does not use the field symbol, a use after
+CHECK or ASSERT of such a condition, and any use after IS ASSIGNED, UNASSIGN or another binding of
+the field symbol, or after a macro call. Work areas of INTO are not checked, they keep a value.
+A READ TABLE whose sy-subrc is not checked at all is left to check_subrc, a LOOP inside a LOOP
+with the same field symbol to the option nestedLoop.`,
       tags: [RuleTag.SingleFile],
       badExample: `LOOP AT lt_header INTO ls_row.
   LOOP AT lt_items INTO ls_row WHERE parent = ls_row-id.
@@ -49,7 +77,12 @@ ENDLOOP.
 
 LOOP AT lt_a ASSIGNING <ls_a>.
 ENDLOOP.
-READ TABLE lt_a INTO <ls_a> INDEX 1.`,
+READ TABLE lt_a INTO <ls_a> INDEX 1.
+
+LOOP AT lt_a ASSIGNING <ls_a> WHERE id = lv_id.
+  EXIT.
+ENDLOOP.
+<ls_a>-flag = abap_true.`,
       goodExample: `LOOP AT lt_header INTO ls_row.
   LOOP AT lt_items INTO ls_item WHERE parent = ls_row-id.
     lv_sum = lv_sum + ls_item-amount.
@@ -60,7 +93,14 @@ ENDLOOP.
 
 LOOP AT lt_a ASSIGNING <ls_a>.
 ENDLOOP.
-READ TABLE lt_a ASSIGNING <ls_a> INDEX 1.`,
+READ TABLE lt_a ASSIGNING <ls_a> INDEX 1.
+
+LOOP AT lt_a ASSIGNING <ls_a> WHERE id = lv_id.
+  EXIT.
+ENDLOOP.
+IF sy-subrc = 0.
+  <ls_a>-flag = abap_true.
+ENDIF.`,
     };
   }
 
@@ -81,6 +121,14 @@ READ TABLE lt_a ASSIGNING <ls_a> INDEX 1.`,
     }
     if (this.conf.intoFieldSymbol !== false) {
       issues.push(...this.checkIntoFieldSymbol(file, statements));
+    }
+    if (this.conf.usedAfterLoop !== false) {
+      for (const issue of this.checkUsedAfterLoop(file, statements)) {
+        // a READ TABLE ... INTO <fs> after the loop is already reported by the option intoFieldSymbol
+        if (issues.some(i => i.getStart().equals(issue.getStart())) === false) {
+          issues.push(issue);
+        }
+      }
     }
 
     return issues;
@@ -143,7 +191,7 @@ READ TABLE lt_a ASSIGNING <ls_a> INDEX 1.`,
     let depth = 0;
     for (let i = index + 1; i < statements.length && this.isBlockBoundary(statements[i]) === false; i++) {
       const s = statements[i].get();
-      if (s instanceof Statements.Loop) {
+      if (s instanceof Statements.Loop || s instanceof Statements.LoopAtScreen || s instanceof Statements.LoopExtract) {
         depth++;
       } else if (s instanceof Statements.EndLoop) {
         if (depth === 0) {
@@ -256,6 +304,246 @@ READ TABLE lt_a ASSIGNING <ls_a> INDEX 1.`,
 
   private fsName(fsTarget: ExpressionNode): string | undefined {
     return fsTarget.findFirstExpression(Expressions.FieldSymbol)?.concatTokens().toUpperCase();
+  }
+
+  private checkUsedAfterLoop(file: ABAPFile, statements: readonly StatementNode[]): Issue[] {
+    const issues: Issue[] = [];
+    // the field symbols of the open LOOPs, undefined for a LOOP without field symbol
+    let open: (string | undefined)[] = [];
+
+    for (let i = 0; i < statements.length; i++) {
+      const statement = statements[i];
+      const s = statement.get();
+      if (this.isBlockBoundary(statement)) {
+        open = [];
+        continue;
+      } else if (s instanceof Statements.EndLoop) {
+        open.pop();
+        continue;
+      }
+
+      let use: number | undefined = undefined;
+      let name: string | undefined = undefined;
+      let what = "";
+      if (s instanceof Statements.Loop) {
+        const node = this.loopTarget(statement);
+        name = node?.get() instanceof Expressions.FSTarget ? this.targetName(node) : undefined;
+        const end = this.findEndLoop(statements, i);
+        // a LOOP inside a LOOP with the same field symbol is left to the option nestedLoop
+        if (name !== undefined && end !== undefined && open.includes(name) === false) {
+          const guards = this.loopGuards(statements, i, end, name);
+          use = this.findUncheckedUse(statements, end + 1, name, guards, false);
+          what = `after ENDLOOP, it points to the last row, or is not assigned when the loop processed no row`;
+        }
+        open.push(name);
+      } else if (s instanceof Statements.LoopAtScreen || s instanceof Statements.LoopExtract) {
+        open.push(undefined);
+      } else if (s instanceof Statements.ReadTable) {
+        const fs = statement.findDirectExpression(Expressions.ReadTableTarget)?.findDirectExpression(Expressions.FSTarget);
+        name = fs ? this.targetName(fs) : undefined;
+        if (name !== undefined) {
+          use = this.findUncheckedUse(statements, i + 1, name, new Set<string>(), true);
+          what = `outside the check of sy-subrc, when the READ TABLE fails it is not assigned or points to an earlier row`;
+        }
+      }
+
+      if (use !== undefined && name !== undefined) {
+        const token = statements[use].getTokens().find(t => t.getStr().toUpperCase() === name);
+        const message = `${token?.getStr()} is used ${what}`;
+        issues.push(Issue.atStatement(file, statements[use], message, this.getMetadata().key, this.conf.severity));
+      }
+    }
+
+    return issues;
+  }
+
+  /** upper case names of the variables whose check counts as a check that the LOOP processed a row:
+   * the table and the variables the loop body writes */
+  private loopGuards(statements: readonly StatementNode[], loop: number, end: number, name: string): Set<string> {
+    const guards = new Set<string>();
+    const first = statements[loop].findDirectExpression(Expressions.LoopSource)?.getFirstToken().getStr().toUpperCase();
+    if (first !== undefined) {
+      guards.add(first);
+    }
+    for (let i = loop + 1; i < end; i++) {
+      for (const target of statements[i].findAllExpressions(Expressions.Target)) {
+        guards.add(this.firstName(target));
+      }
+    }
+    guards.delete(name);
+    return guards;
+  }
+
+  /** upper case name of the variable a Target writes, also declared inline */
+  private firstName(target: ExpressionNode): string {
+    const inline = target.findFirstExpression(Expressions.TargetField);
+    return (inline ? inline.getFirstToken() : target.getFirstToken()).getStr().toUpperCase();
+  }
+
+  /** index of the first statement from the index on that uses the field symbol without a check before it,
+   * looking until the end of the method, form or function module or until the field symbol is bound again.
+   * With checkFirst, only a use after a check is returned, an unchecked READ TABLE is left to check_subrc */
+  private findUncheckedUse(statements: readonly StatementNode[], from: number, name: string,
+                           guards: Set<string>, checkFirst: boolean): number | undefined {
+    const frames: IScanFrame[] = [];
+    let checked = false;
+    let sawCheck = false;
+
+    for (let i = from; i < statements.length && this.isBlockBoundary(statements[i]) === false; i++) {
+      const statement = statements[i];
+      const s = statement.get();
+      if (s instanceof MacroCall || s instanceof Unknown || this.bindsOrTests(statement, name)) {
+        return undefined;
+      }
+
+      const isCondition = s instanceof Statements.If || s instanceof Statements.ElseIf || s instanceof Statements.Case
+        || s instanceof Statements.When || s instanceof Statements.While
+        || s instanceof Statements.Check || s instanceof Statements.Assert;
+      const guard = isCondition && this.isGuard(statement, guards);
+      sawCheck = sawCheck || guard;
+      if ((s instanceof Statements.Check || s instanceof Statements.Assert) && guard) {
+        checked = true;
+      }
+
+      if (s instanceof Statements.FieldSymbol === false && this.mentions(statement, name)) {
+        if (guard || checked || frames.some(f => f.guard)) {
+          frames.forEach(f => f.uses = true);
+        } else if (checkFirst === false || sawCheck === true) {
+          return i;
+        }
+      }
+
+      if (guard || frames.some(f => f.guard)) {
+        // a flag set where the check holds, like lv_found = abap_true, checks it as well
+        for (const target of statement.findAllExpressions(Expressions.Target)) {
+          guards.add(this.firstName(target));
+        }
+        guards.delete(name);
+      }
+
+      if (this.leaves(statement)) {
+        frames.forEach(f => f.leaves = true);
+      }
+
+      if (this.opensBlock(statement)) {
+        frames.push({guard, uses: false, leaves: false});
+      } else if (this.isBranch(statement)) {
+        if (frames.length === 0) {
+          // another branch of a block around the binding, it does not run after it
+          return undefined;
+        }
+        frames[frames.length - 1].guard = frames[frames.length - 1].guard || guard;
+      } else if (this.closesBlock(statement)) {
+        const frame = frames.pop();
+        // IF sy-subrc <> 0. RETURN. ENDIF., or a check that sets a flag
+        if (frame && frame.guard && (frame.leaves || frame.uses === false)) {
+          checked = true;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  /** true when the statement binds the field symbol again, unassigns it, or checks IS ASSIGNED */
+  private bindsOrTests(statement: StatementNode, name: string): boolean {
+    if (statement.get() instanceof Statements.Unassign && this.mentions(statement, name)) {
+      return true;
+    }
+    for (const fsTarget of statement.findAllExpressions(Expressions.FSTarget)) {
+      if (this.targetName(fsTarget) === name) {
+        return true;
+      }
+    }
+    const tokens = statement.getTokens().map(t => t.getStr().toUpperCase());
+    for (let i = 0; i < tokens.length - 2; i++) {
+      if (tokens[i] === name && tokens[i + 1] === "IS"
+          && (tokens[i + 2] === "ASSIGNED" || (tokens[i + 2] === "NOT" && tokens[i + 3] === "ASSIGNED"))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /** true when the condition reads sy-subrc or one of the variables */
+  private isGuard(statement: StatementNode, guards: Set<string>): boolean {
+    const tokens = statement.getTokens();
+    for (let i = 0; i < tokens.length; i++) {
+      const str = tokens[i].getStr().toUpperCase();
+      const previous = i > 0 ? tokens[i - 1].getStr() : "";
+      if (["-", "->", "=>", "~"].includes(previous)) {
+        continue;
+      }
+      if ((str === "SY" && tokens[i + 1]?.getStr() === "-" && tokens[i + 2]?.getStr().toUpperCase() === "SUBRC")
+          || guards.has(str)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private mentions(statement: StatementNode, name: string): boolean {
+    return statement.getTokens().some(t => t.getStr().toUpperCase() === name);
+  }
+
+  /** true for a statement that can leave the current block, a call of a method named like RAISE counts */
+  private leaves(statement: StatementNode): boolean {
+    const s = statement.get();
+    return s instanceof Statements.Return
+      || s instanceof Statements.Exit
+      || s instanceof Statements.Continue
+      || s instanceof Statements.Check
+      || s instanceof Statements.Raise
+      || s instanceof Statements.Leave
+      || s instanceof Statements.Message
+      || s instanceof Statements.Assert
+      || (s instanceof Statements.Call && statement.getTokens().some(t => /raise/i.test(t.getStr())));
+  }
+
+  private opensBlock(statement: StatementNode): boolean {
+    const s = statement.get();
+    return s instanceof Statements.If
+      || s instanceof Statements.Case
+      || s instanceof Statements.CaseType
+      || s instanceof Statements.Loop
+      || s instanceof Statements.LoopAtScreen
+      || s instanceof Statements.LoopExtract
+      || s instanceof Statements.Do
+      || s instanceof Statements.While
+      || s instanceof Statements.Try
+      || s instanceof Statements.SelectLoop
+      || s instanceof Statements.At
+      || s instanceof Statements.AtFirst
+      || s instanceof Statements.AtLast
+      || s instanceof Statements.OnChange
+      || s instanceof Statements.Provide
+      || s instanceof Statements.CatchSystemExceptions;
+  }
+
+  private isBranch(statement: StatementNode): boolean {
+    const s = statement.get();
+    return s instanceof Statements.ElseIf
+      || s instanceof Statements.Else
+      || s instanceof Statements.When
+      || s instanceof Statements.WhenOthers
+      || s instanceof Statements.WhenType
+      || s instanceof Statements.Catch
+      || s instanceof Statements.Cleanup;
+  }
+
+  private closesBlock(statement: StatementNode): boolean {
+    const s = statement.get();
+    return s instanceof Statements.EndIf
+      || s instanceof Statements.EndCase
+      || s instanceof Statements.EndLoop
+      || s instanceof Statements.EndDo
+      || s instanceof Statements.EndWhile
+      || s instanceof Statements.EndTry
+      || s instanceof Statements.EndSelect
+      || s instanceof Statements.EndAt
+      || s instanceof Statements.EndOn
+      || s instanceof Statements.EndProvide
+      || s instanceof Statements.EndCatch;
   }
 
   private isBlockBoundary(statement: StatementNode): boolean {

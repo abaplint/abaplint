@@ -140,7 +140,7 @@ FORM bar.
 ENDFORM.`, cnt: 0},
 ];
 
-testRule(nested, LoopTargetMisuse, {nestedLoop: true, intoFieldSymbol: false}, "loop_target_misuse, nestedLoop");
+testRule(nested, LoopTargetMisuse, {nestedLoop: true, intoFieldSymbol: false, usedAfterLoop: false}, "loop_target_misuse, nestedLoop");
 
 const into = [
   // reported
@@ -223,7 +223,277 @@ ENDFORM.`, cnt: 0},
 ENDFORM.`, cnt: 0},
 ];
 
-testRule(into, LoopTargetMisuse, {nestedLoop: false, intoFieldSymbol: true}, "loop_target_misuse, intoFieldSymbol");
+testRule(into, LoopTargetMisuse, {nestedLoop: false, intoFieldSymbol: true, usedAfterLoop: false}, "loop_target_misuse, intoFieldSymbol");
+
+const after = [
+  // reported
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row>.
+  ENDLOOP.
+  WRITE <ls_row>-text.
+ENDFORM.`, cnt: 1},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING FIELD-SYMBOL(<ls_a>).
+    <ls_a>-text = 'x'.
+  ENDLOOP.
+  <ls_a>-id = 2.
+ENDFORM.`, cnt: 1},
+  {abap: data + `FORM foo.
+  FIELD-SYMBOLS <ls_b> TYPE ty_row.
+  LOOP AT lt_a ASSIGNING <ls_row>.
+    CLEAR <ls_row>-text.
+  ENDLOOP.
+  LOOP AT lt_b ASSIGNING <ls_b>.
+    CLEAR <ls_row>-text.
+  ENDLOOP.
+ENDFORM.`, cnt: 1},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row> WHERE id = 2.
+    EXIT.
+  ENDLOOP.
+  <ls_row>-text = 'x'.
+ENDFORM.`, cnt: 1},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row> WHERE id = 2.
+    RETURN.
+  ENDLOOP.
+  CLEAR <ls_row>.
+ENDFORM.`, cnt: 1},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row>.
+  ENDLOOP.
+  IF ls_other-id = 2.
+    WRITE <ls_row>-text.
+  ENDIF.
+ENDFORM.`, cnt: 1},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row> WHERE id = 2.
+    EXIT.
+  ENDLOOP.
+  IF sy-subrc = 0.
+    WRITE <ls_row>-text.
+  ENDIF.
+  WRITE <ls_row>-id.
+ENDFORM.`, cnt: 1},
+  {abap: data + `FORM foo.
+  LOOP AT lt_b INTO ls_other.
+    LOOP AT lt_a ASSIGNING <ls_row> WHERE id = ls_other-id.
+    ENDLOOP.
+    WRITE <ls_row>-text.
+  ENDLOOP.
+ENDFORM.`, cnt: 1},
+  {abap: data + `FORM foo.
+  IF ls_other-id = 2.
+    LOOP AT lt_a ASSIGNING <ls_row>.
+    ENDLOOP.
+  ENDIF.
+  WRITE <ls_row>-text.
+ENDFORM.`, cnt: 1},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row>.
+  ENDLOOP.
+  WRITE <ls_row>-text.
+  WRITE <ls_row>-id.
+ENDFORM.`, cnt: 1},
+  {abap: data + `FORM foo.
+  READ TABLE lt_a ASSIGNING <ls_row> WITH KEY id = 2.
+  IF sy-subrc = 0.
+    WRITE <ls_row>-text.
+  ENDIF.
+  WRITE <ls_row>-id.
+ENDFORM.`, cnt: 1},
+  {abap: data + `FORM foo.
+  READ TABLE lt_a ASSIGNING <ls_row> WITH KEY id = 2.
+  IF sy-subrc = 0.
+    ls_other-text = <ls_row>-text.
+  ENDIF.
+  IF ls_row-id = 2.
+    WRITE <ls_row>-id.
+  ENDIF.
+ENDFORM.`, cnt: 1},
+
+  // not reported
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row> WHERE id = 2.
+    EXIT.
+  ENDLOOP.
+  IF sy-subrc = 0.
+    WRITE <ls_row>-text.
+  ENDIF.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row> WHERE id = 2.
+    EXIT.
+  ENDLOOP.
+  IF <ls_row> IS ASSIGNED.
+    WRITE <ls_row>-text.
+  ENDIF.
+  WRITE <ls_row>-id.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  DATA lv_found TYPE abap_bool.
+  LOOP AT lt_a ASSIGNING <ls_row> WHERE id = 2.
+    lv_found = abap_true.
+    EXIT.
+  ENDLOOP.
+  IF lv_found = abap_true.
+    WRITE <ls_row>-text.
+  ENDIF.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row>.
+  ENDLOOP.
+  IF lt_a IS NOT INITIAL.
+    <ls_row>-text = 'last'.
+  ENDIF.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row> WHERE id = 2.
+    EXIT.
+  ENDLOOP.
+  IF sy-subrc <> 0.
+    RETURN.
+  ENDIF.
+  WRITE <ls_row>-text.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row> WHERE id = 2.
+    EXIT.
+  ENDLOOP.
+  CHECK sy-subrc = 0.
+  WRITE <ls_row>-text.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row> WHERE id = 2.
+    EXIT.
+  ENDLOOP.
+  IF sy-subrc = 0 AND <ls_row>-text = 'x'.
+    WRITE <ls_row>-text.
+  ENDIF.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row> WHERE id = 2.
+    EXIT.
+  ENDLOOP.
+  CASE sy-subrc.
+    WHEN 0.
+      WRITE <ls_row>-text.
+  ENDCASE.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row>.
+  ENDLOOP.
+  ASSIGN ls_other TO <ls_row>.
+  WRITE <ls_row>-text.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row>.
+  ENDLOOP.
+  LOOP AT lt_b ASSIGNING <ls_row>.
+  ENDLOOP.
+  IF sy-subrc = 0.
+    WRITE <ls_row>-text.
+  ENDIF.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row>.
+  ENDLOOP.
+  UNASSIGN <ls_row>.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  IF ls_other-id = 2.
+    LOOP AT lt_a ASSIGNING <ls_row>.
+    ENDLOOP.
+  ELSE.
+    WRITE <ls_row>-text.
+  ENDIF.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row>.
+    LOOP AT lt_b ASSIGNING <ls_row>.
+    ENDLOOP.
+    WRITE <ls_row>-text.
+  ENDLOOP.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row>.
+    LOOP AT SCREEN.
+    ENDLOOP.
+    WRITE <ls_row>-text.
+  ENDLOOP.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row>.
+  ENDLOOP.
+ENDFORM.
+FORM bar.
+  WRITE <ls_row>-text.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  LOOP AT lt_a INTO ls_row.
+  ENDLOOP.
+  WRITE ls_row-text.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  READ TABLE lt_a ASSIGNING <ls_row> INDEX 1.
+  WRITE <ls_row>-text.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  READ TABLE lt_a ASSIGNING <ls_row> WITH KEY id = 2.
+  IF sy-subrc = 0.
+    WRITE <ls_row>-text.
+  ENDIF.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  READ TABLE lt_a ASSIGNING <ls_row> WITH KEY id = 2.
+  IF sy-subrc <> 0.
+    RETURN.
+  ENDIF.
+  WRITE <ls_row>-text.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  READ TABLE lt_a ASSIGNING <ls_row> WITH KEY id = 2.
+  IF sy-subrc <> 0.
+    RETURN.
+  ELSE.
+    WRITE <ls_row>-text.
+  ENDIF.
+  WRITE <ls_row>-id.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  READ TABLE lt_a ASSIGNING <ls_row> WITH KEY id = 2.
+  IF sy-subrc = 0.
+    WRITE <ls_row>-text.
+  ELSE.
+    RETURN.
+  ENDIF.
+  WRITE <ls_row>-id.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  DATA lv_text TYPE string.
+  READ TABLE lt_a ASSIGNING <ls_row> WITH KEY id = 2.
+  IF sy-subrc = 0.
+    lv_text = <ls_row>-text.
+  ENDIF.
+  IF lv_text IS NOT INITIAL.
+    WRITE <ls_row>-text.
+  ENDIF.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  READ TABLE lt_a ASSIGNING <ls_row> WITH KEY id = 2.
+  IF <ls_row> IS NOT ASSIGNED.
+    RETURN.
+  ENDIF.
+  WRITE <ls_row>-text.
+ENDFORM.`, cnt: 0},
+  {abap: data + `FORM foo.
+  READ TABLE lt_a ASSIGNING <ls_row> WITH KEY id = 2.
+  ASSERT sy-subrc = 0.
+  WRITE <ls_row>-text.
+ENDFORM.`, cnt: 0},
+];
+
+testRule(after, LoopTargetMisuse, {nestedLoop: false, intoFieldSymbol: false, usedAfterLoop: true}, "loop_target_misuse, usedAfterLoop");
 
 describe("loop_target_misuse, defaults and messages", () => {
   function run(abap: string) {
@@ -235,6 +505,7 @@ describe("loop_target_misuse, defaults and messages", () => {
     const conf = new LoopTargetMisuseConf();
     expect(conf.nestedLoop).to.equal(true);
     expect(conf.intoFieldSymbol).to.equal(true);
+    expect(conf.usedAfterLoop).to.equal(true);
   });
 
   it("nested LOOP, message and position", () => {
@@ -257,6 +528,33 @@ ENDLOOP.`);
 ENDFORM.`);
     expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.equal("READ TABLE ... INTO <ls_a> overwrites the row the field symbol points to, use ASSIGNING");
+  });
+
+  it("used after ENDLOOP, message and position", () => {
+    const issues = run(data + `FORM foo.
+  LOOP AT lt_a ASSIGNING <ls_row> WHERE id = 2.
+    EXIT.
+  ENDLOOP.
+  WRITE <ls_row>-text.
+ENDFORM.`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("<ls_row> is used after ENDLOOP, it points to the last row, "
+      + "or is not assigned when the loop processed no row");
+    expect(issues[0].getStart().getRow()).to.equal(16);
+  });
+
+  it("used after the sy-subrc check of READ TABLE, message", () => {
+    const issues = run(data + `FORM foo.
+  READ TABLE lt_a ASSIGNING <ls_row> WITH KEY id = 2.
+  IF sy-subrc = 0.
+    WRITE <ls_row>-text.
+  ENDIF.
+  WRITE <ls_row>-id.
+ENDFORM.`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("<ls_row> is used outside the check of sy-subrc, "
+      + "when the READ TABLE fails it is not assigned or points to an earlier row");
+    expect(issues[0].getStart().getRow()).to.equal(17);
   });
 
   it("the same issue is not reported twice", () => {

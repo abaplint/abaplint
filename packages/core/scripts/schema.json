@@ -8565,11 +8565,16 @@
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        },
+        "usedAfterLoop": {
+          "description": "Report a field symbol of LOOP AT ... ASSIGNING used after ENDLOOP, and a field symbol of READ TABLE ... ASSIGNING used after the check of sy-subrc, outside the branch that found the row",
+          "type": "boolean"
         }
       },
       "required": [
         "nestedLoop",
-        "intoFieldSymbol"
+        "intoFieldSymbol",
+        "usedAfterLoop"
       ],
       "type": "object"
     },
