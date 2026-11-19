@@ -26,4 +26,31 @@ END-OF-DEFINITION.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("same macro name inline and in class macro include", () => {
+    const classFile = () => new MemoryFile(`zcl_redef.clas.abap`, `CLASS zcl_redef DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS process.
+ENDCLASS.
+
+CLASS zcl_redef IMPLEMENTATION.
+  METHOD process.
+    DEFINE check_return.
+      LOOP AT et_return INTO ls_return WHERE type = 'A' OR type = 'E'.
+        WRITE ls_return.
+      ENDLOOP.
+    END-OF-DEFINITION.
+    check_return.
+  ENDMETHOD.
+ENDCLASS.`);
+    const macroFile = () => new MemoryFile(`zcl_redef.clas.macros.abap`, `DEFINE check_return.
+  LOOP AT &1.
+END-OF-DEFINITION.`);
+
+    for (const files of [[classFile(), macroFile()], [macroFile(), classFile()]]) {
+      const reg = new Registry().addFiles(files);
+      const issues = reg.findIssues().filter(i => i.getKey() === "parser_error" || i.getKey() === "structure");
+      expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+    }
+  });
+
 });

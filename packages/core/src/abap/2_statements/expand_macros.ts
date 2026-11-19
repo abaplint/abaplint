@@ -15,14 +15,22 @@ import {Program} from "../../objects/program";
 import {IFile} from "../../files/_ifile";
 import {Position} from "../../position";
 
+interface IMacroDefinition {
+  statements: StatementNode[],
+  filename: string | undefined,
+}
+
 class Macros {
-  private readonly macros: {[index: string]: {
-    statements: StatementNode[],
-    filename: string | undefined,
-  }};
+  private readonly macros: {[index: string]: IMacroDefinition};
+  // macros can be redefined, e.g. a class defines the same macro both in its
+  // macro include and inline in a method. The definition in the file where the
+  // macro is used takes precedence, so the result does not depend on the order
+  // the files are parsed in.
+  private readonly byFile: {[filename: string]: {[index: string]: IMacroDefinition}};
 
   public constructor(globalMacros: readonly string[]) {
     this.macros = {};
+    this.byFile = {};
     for (const m of globalMacros) {
       this.macros[m.toUpperCase()] = {
         statements: [],
@@ -32,17 +40,36 @@ class Macros {
   }
 
   public addMacro(name: string, contents: StatementNode[], filename: string): void {
-    if (this.isMacro(name)) {
-      return;
+    const key = name.toUpperCase();
+    if (this.byFile[filename] === undefined) {
+      this.byFile[filename] = {};
     }
-    this.macros[name.toUpperCase()] = {
-      statements: contents,
-      filename: filename,
-    };
+    if (this.byFile[filename][key] === undefined) {
+      this.byFile[filename][key] = {
+        statements: contents,
+        filename: filename,
+      };
+    }
+    if (this.macros[key] === undefined) {
+      this.macros[key] = {
+        statements: contents,
+        filename: filename,
+      };
+    }
   }
 
-  public getContents(name: string): StatementNode[] | undefined {
-    return this.macros[name.toUpperCase()].statements;
+  private lookup(name: string, filename?: string): IMacroDefinition | undefined {
+    const key = name.toUpperCase();
+    if (filename !== undefined
+        && this.byFile[filename] !== undefined
+        && this.byFile[filename][key] !== undefined) {
+      return this.byFile[filename][key];
+    }
+    return this.macros[key];
+  }
+
+  public getContents(name: string, filename?: string): StatementNode[] | undefined {
+    return this.lookup(name, filename)?.statements;
   }
 
   public listMacroNames(): string[] {
@@ -56,8 +83,8 @@ class Macros {
     return false;
   }
 
-  public getMacroFilename(name: string): string | undefined {
-    return this.macros[name.toUpperCase()].filename;
+  public getMacroFilename(name: string, filename?: string): string | undefined {
+    return this.lookup(name, filename)?.filename;
   }
 }
 
@@ -143,7 +170,7 @@ export class ExpandMacros {
         const macroName = ExpandMacros.findName(statement.getTokens());
         if (macroName && this.macros.isMacro(macroName)) {
 
-          const filename = this.macros.getMacroFilename(macroName);
+          const filename = this.macros.getMacroFilename(macroName, file.getFilename());
           if (filename) {
             macroReferences?.addReference({
               filename: filename,
@@ -154,7 +181,7 @@ export class ExpandMacros {
           result.push(new StatementNode(new MacroCall(), statement.getColon()).setChildren(this.tokensToNodes(statement.getTokens())));
 
           if (!seen.has(macroName.toUpperCase())) {
-            const expanded = this.expandContents(macroName, statement);
+            const expanded = this.expandContents(macroName, statement, file);
             const nextSeen = new Set(seen).add(macroName.toUpperCase());
             const handled = this.handleMacros(expanded, file, nextSeen);
             for (const e of handled.statements) {
@@ -181,8 +208,8 @@ export class ExpandMacros {
 
   //////////////
 
-  private expandContents(name: string, statement: StatementNode): readonly StatementNode[] {
-    const contents = this.macros.getContents(name);
+  private expandContents(name: string, statement: StatementNode, sourceFile: IFile): readonly StatementNode[] {
+    const contents = this.macros.getContents(name, sourceFile.getFilename());
     if (contents === undefined || contents.length === 0) {
       return [];
     }
