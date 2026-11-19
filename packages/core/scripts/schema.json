@@ -10144,6 +10144,10 @@
     "RFCErrorHandlingConf": {
       "additionalProperties": false,
       "properties": {
+        "errorMessage": {
+          "description": "Report error_message in the EXCEPTIONS of an RFC call, it is ignored in RFC",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -10151,11 +10155,24 @@
           },
           "type": "array"
         },
+        "requireMessage": {
+          "description": "Report SYSTEM_FAILURE and COMMUNICATION_FAILURE without the addition MESSAGE, the error text is lost",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        },
+        "startingNewTask": {
+          "description": "Also check CALL FUNCTION ... STARTING NEW TASK without DESTINATION, an asynchronous RFC to the destination NONE",
+          "type": "boolean"
         }
       },
+      "required": [
+        "startingNewTask",
+        "errorMessage",
+        "requireMessage"
+      ],
       "type": "object"
     },
     "RangeRowValuesConf": {
