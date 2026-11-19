@@ -19960,4 +19960,30 @@ ENDINTERFACE.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal("Event parameter iv_text must be passed by VALUE");
   });
+
+  it("inline declaration from text symbol, error", () => {
+    const abap = `DATA(lv_open_url) = TEXT-dev.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`"TEXT-DEV" has a generic type that cannot be used for declarations`);
+  });
+
+  it("inline FINAL declaration from text symbol, error", () => {
+    const abap = `FINAL(lv_open_url) = TEXT-dev.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`"TEXT-DEV" has a generic type that cannot be used for declarations`);
+  });
+
+  it("inline declaration from converted text symbol, ok", () => {
+    const abap = `DATA(lv_open_url) = CONV string( TEXT-dev ).
+DATA(lv_concat) = TEXT-dev && TEXT-abc.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("assignment from text symbol, ok", () => {
+    const abap = `DATA lv_open_url TYPE string.
+lv_open_url = TEXT-dev.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
 });
