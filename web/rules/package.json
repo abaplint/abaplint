@@ -10,8 +10,8 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@abaplint/core": "^2.120.91",
-    "@abaplint/monaco": "^2.120.91",
+    "@abaplint/core": "^2.120.109",
+    "@abaplint/monaco": "^2.120.109",
     "@types/node": "^25.9.9",
     "buffer": "^6.0.3",
     "fuse.js": "=7.1.0",
@@ -20,7 +20,7 @@
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
     "webpack": "^5.112.2",
-    "webpack-cli": "^7.2.3",
+    "webpack-cli": "^7.3.1",
     "yaserver": "^0.4.0"
   }
 }

@@ -5,7 +5,7 @@ import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
-import {AnyType, CharacterType, HexType, StringType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, CharacterType, HexType, StringType, TableAccessType, TableType, UnknownType, VoidType, XStringType} from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ValueBody {
@@ -101,8 +101,8 @@ export class ValueBody {
       }
       for (const s of foo.findDirectExpressions(Expressions.Source)) {
         const sourceType = Source.runSyntax(s, input, rowType);
-        if (rowType instanceof StringType && sourceType instanceof CharacterType) {
-          const message = "VALUE, source type CharacterType not compatible with StringType";
+        if ((rowType instanceof StringType || rowType instanceof XStringType) && sourceType instanceof CharacterType) {
+          const message = "VALUE, source type CharacterType not compatible with " + rowType.constructor.name;
           input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
         } else if (this.insertsUsingTableKey(targetType)) {
 // only STANDARD tables append the rows, and thus allow padding of shorter c and x values

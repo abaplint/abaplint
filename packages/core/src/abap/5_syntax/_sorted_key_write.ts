@@ -77,16 +77,19 @@ export class SortedKeyWrite {
       return;
     }
 
-    // any assignment of a field symbol or reference ends its binding
-    for (const fs of node.findAllExpressions(Expressions.FSTarget)) {
-      this.unbind(fs.findFirstExpression(Expressions.TargetFieldSymbol), input.scope);
-    }
-    if (node.get() instanceof Statements.Unassign) {
-      this.unbind(node.findDirectExpression(Expressions.TargetFieldSymbol), input.scope);
-    }
-    for (const target of node.findAllExpressions(Expressions.Target)) {
-      if (target.getChildren().length === 1) {
-        this.unbind(target.findDirectExpression(Expressions.TargetField), input.scope);
+    // any assignment of a field symbol or reference ends its binding,
+    // skipped when nothing is bound, this runs for every statement
+    if (this.bindings.size > 0) {
+      for (const fs of node.findAllExpressions(Expressions.FSTarget)) {
+        this.unbind(fs.findFirstExpression(Expressions.TargetFieldSymbol), input.scope);
+      }
+      if (node.get() instanceof Statements.Unassign) {
+        this.unbind(node.findDirectExpression(Expressions.TargetFieldSymbol), input.scope);
+      }
+      for (const target of node.findAllExpressions(Expressions.Target)) {
+        if (target.getChildren().length === 1) {
+          this.unbind(target.findDirectExpression(Expressions.TargetField), input.scope);
+        }
       }
     }
 

@@ -13,6 +13,7 @@ import {LoopGroupBy} from "../expressions/loop_group_by";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Release, releaseAtLeast} from "../../../version";
+import {hasKeyCompare} from "../_key_compare";
 
 export class Loop implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -79,6 +80,16 @@ export class Loop implements StatementSyntax {
 
     if (sourceType instanceof TableType) {
       rowType = sourceType.getRowType();
+    } else if (concat.startsWith("LOOP AT GROUP ")) {
+      const unbound = LoopGroupBy.findUnboundGroup(firstSource, input);
+      if (unbound !== undefined) {
+        const message = `No group is bound to "${unbound}"`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      }
+      rowType = LoopGroupBy.findMemberType(firstSource, input);
+    }
+    if (rowType) {
       sourceType = rowType;
       if (targetConcat?.startsWith("REFERENCE INTO ")) {
         sourceType = new DataReference(sourceType);
@@ -122,6 +133,18 @@ export class Loop implements StatementSyntax {
           return;
         }
 
+        if (key.type === TableAccessType.sorted && key.keyFields.length > 0) {
+          // the first component of a sorted secondary key must be compared with = or IS INITIAL
+          // in a part of the condition joined by AND, otherwise the WHERE cannot be optimized
+          const first = key.keyFields[0].toUpperCase();
+          if (hasKeyCompare(cond, first) === false) {
+            const message = "Loop, WHERE cannot be optimized for secondary key " + name +
+              ", key component " + first + " needs a comparison with = or IS INITIAL joined by AND";
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return;
+          }
+        }
+
         if (!releaseAtLeast(input.scope.getRelease(), Release.v740sp02)) {
           const compares = cond.findAllExpressionsRecursive(Expressions.ComponentCompare).map(c => c.concatTokens().toUpperCase());
           for (const keyField of key.keyFields) {
@@ -163,7 +186,7 @@ export class Loop implements StatementSyntax {
 
     const group = node.findDirectExpression(Expressions.LoopGroupBy);
     if (group) {
-      LoopGroupBy.runSyntax(group, input);
+      LoopGroupBy.runSyntax(group, input, rowType, LoopGroupBy.findRepresentative(node));
     }
 
   }

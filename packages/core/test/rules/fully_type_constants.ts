@@ -27,6 +27,12 @@ const testCases: string[] = [
     foo VALUE 1,
     bar TYPE i VALUE 1,
   END OF multi.`,
+
+  `DATA: BEGIN OF unnamed,
+    foo TYPE c LENGTH 10,
+    (10),
+    bar TYPE c LENGTH 10,
+  END OF unnamed.`,
 ];
 
 const fullyTypeTests = [
@@ -125,6 +131,12 @@ const fullyTypeTests = [
     description: "both, data struc, one not typed",
     config: configDataAndConstants,
     issueLength: 1,
+  },
+  {
+    abap: testCases[8],
+    description: "both, data struc with unnamed field",
+    config: configDataAndConstants,
+    issueLength: 0,
   },
 ];
 

@@ -7,6 +7,7 @@ import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Position} from "../../../src/position";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {TableAccessType} from "../../../src/abap/types/basic";
+import {CheckSyntaxKey} from "../../../src/abap/5_syntax/_syntax_input";
 
 function resolveVariable(abap: string, name: string): TypedIdentifier | undefined {
   const filename = "zfoobar.prog.abap";
@@ -1424,6 +1425,67 @@ SELECT SINGLE substring( keyval, 1, 10 ) AS cust
     expectCharacter(runSelCond(abap, "lv_cust"), 10);
   });
 
+  it("SELECT SINGLE host constant into inline field", () => {
+    const abap = `SELECT SINGLE @abap_true FROM zsel_cond INTO @DATA(lv_exists).`;
+    const identifier = runSelCond(abap, "lv_exists");
+    expectCharacter(identifier, 1);
+    expect(identifier!.getType().getQualifiedName()?.toUpperCase()).to.equal("ABAP_BOOL");
+  });
+
+  it("SELECT SINGLE host variable into inline field", () => {
+    const abap = `
+DATA lv_int TYPE i.
+SELECT SINGLE @lv_int FROM zsel_cond INTO @DATA(lv_result).`;
+    const identifier = runSelCond(abap, "lv_result");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("SELECT SINGLE host variable with alias into inline field", () => {
+    const abap = `
+DATA lv_char TYPE c LENGTH 5.
+SELECT SINGLE @lv_char AS foo FROM zsel_cond INTO @DATA(lv_result).`;
+    expectCharacter(runSelCond(abap, "lv_result"), 5);
+  });
+
+  it("SELECT SINGLE parenthesized host component into inline field", () => {
+    const abap = `
+TYPES: BEGIN OF ty_struc,
+         field TYPE c LENGTH 7,
+       END OF ty_struc.
+DATA ls_struc TYPE ty_struc.
+SELECT SINGLE @( ls_struc-field ) FROM zsel_cond INTO @DATA(lv_result).`;
+    expectCharacter(runSelCond(abap, "lv_result"), 7);
+  });
+
+  it("SELECT SINGLE host variable from voided table into inline field", () => {
+    const abap = `
+DATA lv_int TYPE i.
+SELECT SINGLE @lv_int FROM t100 INTO @DATA(lv_result).`;
+    const identifier = resolveVariable(abap, "lv_result");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("SELECT SINGLE unknown host variable into inline field, voided", () => {
+    const abap = `SELECT SINGLE @lv_unknown FROM zsel_cond INTO @DATA(lv_result).`;
+    const identifier = runSelCond(abap, "lv_result");
+    expectVoid(identifier);
+    expect((identifier!.getType() as Basic.VoidType).getVoided()).to.not.equal(CheckSyntaxKey);
+  });
+
+  it("SELECT SINGLE host variable arithmetic into inline field, voided", () => {
+    const abap = `
+DATA lv_int TYPE i.
+SELECT SINGLE @lv_int + 1 FROM zsel_cond INTO @DATA(lv_result).`;
+    expectVoid(runSelCond(abap, "lv_result"));
+  });
+
+  it("SELECT SINGLE column into inline field", () => {
+    const abap = `SELECT SINGLE keyval FROM zsel_cond INTO @DATA(lv_result).`;
+    expectCharacter(runSelCond(abap, "lv_result"), 30);
+  });
+
   it("SELECT single substring column into inline table", () => {
     const abap = `
 SELECT substring( keyval, 1, 10 ) AS cust
@@ -2393,6 +2455,88 @@ DATA(one) = pac * flo.
 DATA(two) = flo * pac.`;
     expect(resolveVariable(abap, "one")!.getType()).to.be.instanceof(Basic.FloatType);
     expect(resolveVariable(abap, "two")!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("arithmetic, the difference of two dates is a number of days, not a date", () => {
+    // date and time operands count as numbers in the calculation type
+    const abap = `DATA lv_start TYPE d VALUE '20260105'.
+DATA lv_end TYPE d VALUE '20260320'.
+DATA(lv_between) = lv_end - lv_start.`;
+    expect(resolveVariable(abap, "lv_between")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, the sum of two dates is a number, not a date", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_end TYPE d.
+DATA(lv_sum) = lv_start + lv_end.`;
+    expect(resolveVariable(abap, "lv_sum")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, a date plus an integer is an integer", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA(lv_later) = lv_start + 31.`;
+    expect(resolveVariable(abap, "lv_later")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, the difference of two times is a number of seconds, not a time", () => {
+    const abap = `DATA lv_from TYPE t.
+DATA lv_to TYPE t.
+DATA(lv_seconds) = lv_to - lv_from.`;
+    expect(resolveVariable(abap, "lv_seconds")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, sy-datum minus a date is a number", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA(lv_days) = sy-datum - lv_start.`;
+    expect(resolveVariable(abap, "lv_days")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, a date and a float give a float", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_f TYPE f.
+DATA(lv_res) = lv_start * lv_f.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("arithmetic, a date and a packed number give packed", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_p TYPE p LENGTH 8 DECIMALS 2.
+DATA(lv_res) = lv_start + lv_p.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
+  it("arithmetic, a date and a character literal give packed", () => {
+    // the character operand counts as p, measured on a system: P(8,0)
+    const abap = `DATA lv_start TYPE d.
+DATA(lv_res) = lv_start + '5'.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
+  it("arithmetic, a time and a string give packed", () => {
+    const abap = `DATA lv_from TYPE t.
+DATA lv_str TYPE string.
+DATA(lv_res) = lv_str - lv_from.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
+  it("arithmetic, a date, a character literal and a float give a float", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_f TYPE f.
+DATA(lv_res) = lv_start + '5' + lv_f.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("arithmetic, a declared date target stays a date", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_x TYPE d.
+lv_x = lv_start + 31.`;
+    expect(resolveVariable(abap, "lv_x")!.getType()).to.be.instanceof(Basic.DateType);
+  });
+
+  it("no arithmetic, an inline copy of a time stays a time", () => {
+    const abap = `DATA lv_from TYPE t.
+DATA(lv_copy) = lv_from.`;
+    expect(resolveVariable(abap, "lv_copy")!.getType()).to.be.instanceof(Basic.TimeType);
   });
 
   it("concatenation is not arithmetic, a character result stays character", () => {

@@ -7,9 +7,10 @@ import {LanguageVersion} from "../../../version";
 export class GetTime implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const options = seq(alt("STAMP FIELD", "FIELD"), Target);
+    const stamp = seq("GET TIME STAMP FIELD", Target);
+    const time = verNotLang(LanguageVersion.Cloud, seq("GET TIME", opt(seq("FIELD", Target))));
 
-    return verNotLang(LanguageVersion.KeyUser, seq("GET TIME", opt(options)));
+    return verNotLang(LanguageVersion.KeyUser, alt(stamp, time));
   }
 
 }

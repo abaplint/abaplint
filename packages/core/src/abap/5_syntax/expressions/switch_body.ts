@@ -1,6 +1,7 @@
 import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {Source} from "./source";
+import {RaiseMessage} from "../_raise_message";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {VoidType} from "../../types/basic";
@@ -12,6 +13,10 @@ export class SwitchBody {
     targetType?: AbstractType): AbstractType | undefined {
     if (node === undefined) {
       return;
+    }
+
+    for (const t of node.findDirectExpressions(Expressions.Throw)) {
+      RaiseMessage.checkThrow(t, input);
     }
 
     const thenSource = node.findExpressionAfterToken("THEN");
