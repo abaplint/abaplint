@@ -11166,6 +11166,10 @@
           },
           "type": "array"
         },
+        "missingErrorMessage": {
+          "description": "Report CALL FUNCTION without error_message, the policy \"always list error_message\", for code that runs outside dialog",
+          "type": "boolean"
+        },
         "missingExceptions": {
           "description": "Report a call without EXCEPTIONS, including a functional call, of a method or function module that declares classic exceptions",
           "type": "boolean"
@@ -11182,7 +11186,8 @@
       "required": [
         "missingOthers",
         "missingExceptions",
-        "allowLiteralArguments"
+        "allowLiteralArguments",
+        "missingErrorMessage"
       ],
       "type": "object"
     },
