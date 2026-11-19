@@ -1,5 +1,10 @@
 import {expect} from "chai";
 import {runProgram} from "./syntax";
+import {Registry} from "../../../src/registry";
+import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
+import {MemoryFile} from "../../../src/files/memory_file";
+import {CharacterType} from "../../../src/abap/types/basic";
+import {getABAPObjects} from "../../get_abap";
 
 const errors = (abap: string): string | undefined => runProgram(abap)[0]?.getMessage();
 
@@ -93,9 +98,55 @@ TYPES: BEGIN OF ts,
        END OF ts.`)).to.equal(undefined);
   });
 
-  it("ok, LIKE has its own rules, not checked", () => {
+  it("ok, LIKE with LENGTH, ignored by a system, any type", () => {
     expect(errors(`DATA c1 TYPE c LENGTH 5.
-DATA c2 LIKE c1 LENGTH 3.`)).to.equal(undefined);
+DATA c2 LIKE c1 LENGTH 3.
+DATA d1 TYPE d.
+DATA d2 LIKE d1 LENGTH 3.
+DATA s1 TYPE string.
+DATA s2 LIKE s1 LENGTH 3.
+DATA p1 TYPE p LENGTH 8 DECIMALS 2.
+DATA p2 LIKE p1 LENGTH 4.`)).to.equal(undefined);
+  });
+
+  it("ok, LIKE with LENGTH keeps the length of the referenced field", () => {
+    const abap = `DATA c1 TYPE c LENGTH 5.
+DATA c2 LIKE c1 LENGTH 3.`;
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
+    const spaghetti = new SyntaxLogic(reg, getABAPObjects(reg)[0]).run().spaghetti;
+    // builtin, global, program
+    const type = spaghetti.getTop().getFirstChild()?.getFirstChild()?.findVariable("c2")?.getType();
+    expect(type).to.be.instanceof(CharacterType);
+    expect((type as CharacterType).getLength()).to.equal(5);
+  });
+
+  describe("LIKE with DECIMALS", () => {
+    const likeMessage = "When referencing another field (with LIKE), type and length cannot be changed";
+
+    it("error, type p, also with the same decimals", () => {
+      expect(errors(`DATA p1 TYPE p LENGTH 8 DECIMALS 2.
+DATA p2 LIKE p1 DECIMALS 2.`)).to.equal(likeMessage);
+    });
+
+    it("error, type c", () => {
+      expect(errors(`DATA c1 TYPE c LENGTH 5.
+DATA c2 LIKE c1 DECIMALS 2.`)).to.equal(likeMessage);
+    });
+
+    it("error, type i, with LENGTH", () => {
+      expect(errors(`DATA i1 TYPE i.
+DATA i2 LIKE i1 LENGTH 3 DECIMALS 2.`)).to.equal(likeMessage);
+    });
+
+    it("error, LIKE LINE OF", () => {
+      expect(errors(`DATA itab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+DATA l1 LIKE LINE OF itab DECIMALS 2.`)).to.equal(likeMessage);
+    });
+
+    it("error, LIKE REF TO", () => {
+      expect(errors(`DATA p1 TYPE p.
+DATA r1 LIKE REF TO p1 DECIMALS 2.`)).to.equal(likeMessage);
+    });
   });
 
 });
