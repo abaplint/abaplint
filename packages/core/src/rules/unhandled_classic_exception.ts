@@ -27,6 +27,8 @@ export class UnhandledClassicExceptionConf extends BasicRuleConfig {
   public missingExceptions: boolean = true;
   /** missingExceptions: do not report a method call whose arguments are all literals or me, like describe_by_name( 'T100' ) */
   public allowLiteralArguments: boolean = true;
+  /** Report CALL FUNCTION without error_message, the policy "always list error_message", for code that runs outside dialog */
+  public missingErrorMessage: boolean = false;
 }
 
 interface ICallee {
@@ -54,6 +56,13 @@ CALL FUNCTION ... STARTING NEW TASK, IN UPDATE TASK and IN BACKGROUND are not ch
 missingExceptions: reports calls without EXCEPTIONS of a method or function module that declares classic exceptions,
 this includes functional calls, which cannot have EXCEPTIONS.
 With allowLiteralArguments, a method call whose arguments are all literals or me is not reported.
+
+missingErrorMessage, off by default: reports every CALL FUNCTION that does not list the predefined exception error_message,
+the policy "always list error_message". Any function module can send a MESSAGE without RAISING, directly or from a
+function module it calls, and OTHERS does not catch it. Outside dialog, in HTTP handlers, RFC and background jobs,
+a message of type E or A ends the processing. Use it together with check_subrc, otherwise error_message turns a
+visible abort into a silent failure. Not reported: DESTINATION, STARTING NEW TASK, IN UPDATE TASK, IN BACKGROUND,
+EXCEPTION-TABLE, and function modules in the registry with class-based exceptions.
 
 Signatures are taken from the registry, including dependencies. Methods and function modules that are not
 found (void) are only checked by missingOthers.
@@ -123,7 +132,7 @@ cl_abap_typedescr=>describe_by_name(
           const token = nameNode.getFirstToken();
           const callee = nameNode.get() instanceof Expressions.Dynamic ? undefined : this.findMethod(methods, token);
           const issue = this.checkCall(file, token, callee, body?.findDirectExpression(Expressions.MethodParameters),
-                                       body?.findDirectTokenByText("EXCEPTION-TABLE") !== undefined, false, this.onlyLiterals(body));
+                                       body?.findDirectTokenByText("EXCEPTION") !== undefined, false, this.onlyLiterals(body));
           if (issue) {
             issues.push(issue);
           }
@@ -160,21 +169,40 @@ cl_abap_typedescr=>describe_by_name(
     }
 
     let callee: ICallee | undefined = undefined;
+    let classBased = false;
     if (nameNode.findFirstExpression(Expressions.FieldChain) === undefined) {
       const name = nameNode.concatTokens().replace(/'/g, "").replace(/`/g, "");
       const module = this.findFunctionModule(name);
       if (module) {
+        classBased = module.isClassBasedExceptions();
         callee = {
           name: module.getName(),
-          exceptions: module.isClassBasedExceptions() ? [] : module.getExceptions().map(e => e.toUpperCase()),
+          exceptions: classBased ? [] : module.getExceptions().map(e => e.toUpperCase()),
         };
       }
     }
 
-    const issue = this.checkCall(file, nameNode.getFirstToken(), callee, statement.findDirectExpression(Expressions.FunctionParameters),
-                                 statement.findDirectTokenByText("EXCEPTION-TABLE") !== undefined,
-                                 statement.findDirectExpression(Expressions.Destination) !== undefined, false);
-    return issue ? [issue] : [];
+    const issues: Issue[] = [];
+    const parameters = statement.findDirectExpression(Expressions.FunctionParameters);
+    const exceptionTable = statement.findDirectTokenByText("EXCEPTION") !== undefined;
+    const destination = statement.findDirectExpression(Expressions.Destination) !== undefined;
+    const issue = this.checkCall(file, nameNode.getFirstToken(), callee, parameters, exceptionTable, destination, false);
+    if (issue) {
+      issues.push(issue);
+    }
+
+    if (this.conf.missingErrorMessage === true && exceptionTable === false && destination === false && classBased === false) {
+      const listed = parameters?.findDirectExpression(Expressions.ParameterListExceptions)
+        ?.findDirectExpressions(Expressions.ParameterException)
+        .some(e => e.getFirstChild()!.concatTokens().toUpperCase() === "ERROR_MESSAGE");
+      if (listed !== true) {
+        const position = parameters?.findDirectTokenByText("EXCEPTIONS") || nameNode.getFirstToken();
+        const message = "No error_message, OTHERS does not catch a message that the function module sends without RAISING";
+        issues.push(Issue.atToken(file, position, message, this.getMetadata().key, this.conf.severity));
+      }
+    }
+
+    return issues;
   }
 
   private checkCall(file: ABAPFile, token: AbstractToken, callee: ICallee | undefined,

@@ -38,6 +38,10 @@ const tests = [
     ASCENDING
     ASSIGNING FIELD-SYMBOL(<group>).`,
   "LOOP AT findings ASSIGNING FIELD-SYMBOL(<finding>) STEP -1.",
+  "LOOP AT tab INTO DATA(r) GROUP BY r-k DESCENDING INTO DATA(g).",
+  "LOOP AT tab ASSIGNING FIELD-SYMBOL(<r>) GROUP BY ( k = <r>-k ) DESCENDING WITHOUT MEMBERS REFERENCE INTO DATA(gref).",
+  "LOOP AT tab INTO DATA(t) GROUP BY t-k ASCENDING AS TEXT INTO DATA(gt).",
+  "LOOP AT tab INTO DATA(t) GROUP BY t-k DESCENDING AS TEXT.",
 ];
 
 statementType(tests, "LOOP", Statements.Loop);
