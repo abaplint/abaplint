@@ -85,6 +85,52 @@ describe("Funcion Group, parse main xml", () => {
     expect(fugr.getDescription()).to.equal("test");
   });
 
+  it("test, getExceptions", async () => {
+    const withExceptions = xml.replace("     <DOCUMENTATION>\n",
+                                       "     <EXCEPTION>\n" +
+                                       "      <RSEXC>\n" +
+                                       "       <EXCEPTION>NOT_FOUND</EXCEPTION>\n" +
+                                       "      </RSEXC>\n" +
+                                       "      <RSEXC>\n" +
+                                       "       <EXCEPTION>INVALID</EXCEPTION>\n" +
+                                       "      </RSEXC>\n" +
+                                       "     </EXCEPTION>\n" +
+                                       "     <DOCUMENTATION>\n");
+    const reg = new Registry().addFile(new MemoryFile("zagtest_function_group.fugr.xml", withExceptions));
+    await reg.parseAsync();
+    const fugr = getABAPObjects(reg)[0] as FunctionGroup;
+
+    const module = fugr.getModules()[0];
+    expect(module.getExceptions()).to.deep.equal(["NOT_FOUND", "INVALID"]);
+    expect(module.isClassBasedExceptions()).to.equal(false);
+  });
+
+  it("test, getExceptions, class-based", async () => {
+    const withExceptions = xml.replace("     <DOCUMENTATION>\n",
+                                       "     <EXCEPTION_CLASSES>X</EXCEPTION_CLASSES>\n" +
+                                       "     <EXCEPTION>\n" +
+                                       "      <RSEXC>\n" +
+                                       "       <EXCEPTION>ZCX_ERROR</EXCEPTION>\n" +
+                                       "      </RSEXC>\n" +
+                                       "     </EXCEPTION>\n" +
+                                       "     <DOCUMENTATION>\n");
+    const reg = new Registry().addFile(new MemoryFile("zagtest_function_group.fugr.xml", withExceptions));
+    await reg.parseAsync();
+    const fugr = getABAPObjects(reg)[0] as FunctionGroup;
+
+    const module = fugr.getModules()[0];
+    expect(module.getExceptions()).to.deep.equal(["ZCX_ERROR"]);
+    expect(module.isClassBasedExceptions()).to.equal(true);
+  });
+
+  it("test, getModules, no exceptions", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zagtest_function_group.fugr.xml", xml));
+    await reg.parseAsync();
+    const fugr = getABAPObjects(reg)[0] as FunctionGroup;
+
+    expect(fugr.getModules()[0].getExceptions()).to.deep.equal([]);
+  });
+
   it("test, getIncludes", async () => {
     const reg = new Registry().addFile(new MemoryFile("zagtest_function_group.fugr.xml", xml));
     await reg.parseAsync();
