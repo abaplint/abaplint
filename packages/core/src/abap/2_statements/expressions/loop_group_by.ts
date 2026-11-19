@@ -10,7 +10,7 @@ export class LoopGroupBy extends Expression {
     const components = seq(tok(WParenLeftW), plus(LoopGroupByComponent), tok(WParenRightW));
 
     const ret = seq(alt(Source, components),
-                    optPrio("ASCENDING"),
+                    optPrio(seq(alt("ASCENDING", "DESCENDING"), optPrio("AS TEXT"))),
                     optPrio("WITHOUT MEMBERS"),
                     LoopGroupByTarget);
 
