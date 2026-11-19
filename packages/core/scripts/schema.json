@@ -8565,11 +8565,16 @@
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        },
+        "usedAfterLoop": {
+          "description": "Report a field symbol of LOOP AT ... ASSIGNING used after ENDLOOP, and a field symbol of READ TABLE ... ASSIGNING used after the check of sy-subrc, outside the branch that found the row",
+          "type": "boolean"
         }
       },
       "required": [
         "nestedLoop",
-        "intoFieldSymbol"
+        "intoFieldSymbol",
+        "usedAfterLoop"
       ],
       "type": "object"
     },
@@ -10149,6 +10154,10 @@
     "RFCErrorHandlingConf": {
       "additionalProperties": false,
       "properties": {
+        "errorMessage": {
+          "description": "Report error_message in the EXCEPTIONS of an RFC call, it is ignored in RFC",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
@@ -10156,11 +10165,24 @@
           },
           "type": "array"
         },
+        "requireMessage": {
+          "description": "Report SYSTEM_FAILURE and COMMUNICATION_FAILURE without the addition MESSAGE, the error text is lost",
+          "type": "boolean"
+        },
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        },
+        "startingNewTask": {
+          "description": "Also check CALL FUNCTION ... STARTING NEW TASK without DESTINATION, an asynchronous RFC to the destination NONE",
+          "type": "boolean"
         }
       },
+      "required": [
+        "startingNewTask",
+        "errorMessage",
+        "requireMessage"
+      ],
       "type": "object"
     },
     "RangeRowValuesConf": {
@@ -11171,6 +11193,10 @@
           },
           "type": "array"
         },
+        "missingErrorMessage": {
+          "description": "Report CALL FUNCTION without error_message, the policy \"always list error_message\", for code that runs outside dialog",
+          "type": "boolean"
+        },
         "missingExceptions": {
           "description": "Report a call without EXCEPTIONS, including a functional call, of a method or function module that declares classic exceptions",
           "type": "boolean"
@@ -11187,7 +11213,8 @@
       "required": [
         "missingOthers",
         "missingExceptions",
-        "allowLiteralArguments"
+        "allowLiteralArguments",
+        "missingErrorMessage"
       ],
       "type": "object"
     },

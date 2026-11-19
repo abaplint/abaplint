@@ -425,10 +425,118 @@ WRITE lv_unknown.`));
       expect(issues.length).to.equal(0);
     });
 
+    it("known function module with EXCEPTION-TABLE", async () => {
+      const issues = await findIssues(`
+  DATA lt_exc TYPE abap_func_excpbind_tab.
+  CALL FUNCTION 'Z_READ'
+    EXCEPTION-TABLE lt_exc.`, undefined, buildFugr(["NOT_FOUND"]));
+      expect(issues.length).to.equal(0);
+    });
+
     it("option off", async () => {
       const issues = await findIssues(`
   lo_type = lcl_typedescr=>describe_by_name( lv_name ).`, {missingExceptions: false});
       expect(issues.length).to.equal(0);
+    });
+
+  });
+
+  describe("missingErrorMessage", () => {
+
+    const on = {missingOthers: false, missingExceptions: false, missingErrorMessage: true};
+    const message = "No error_message, OTHERS does not catch a message that the function module sends without RAISING";
+
+    it("off by default", async () => {
+      const issues = await findIssues(`
+  CALL FUNCTION 'Z_READ'
+    EXCEPTIONS
+      OTHERS = 1.`);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("EXCEPTIONS with OTHERS, no error_message", async () => {
+      const issues = await findIssues(`
+  CALL FUNCTION 'Z_READ'
+    EXCEPTIONS
+      not_found = 1
+      OTHERS    = 2.`, on);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.equal(message);
+      expect(issues[0].getStart().getRow()).to.equal(84);
+    });
+
+    it("call without EXCEPTIONS, issue on the name", async () => {
+      const issues = await findIssues(`
+  CALL FUNCTION 'Z_READ'.`, on);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getStart().getRow()).to.equal(83);
+    });
+
+    it("known function module, every exception listed", async () => {
+      const issues = await findIssues(`
+  CALL FUNCTION 'Z_READ'
+    EXCEPTIONS
+      not_found = 1.`, on, buildFugr(["NOT_FOUND"]));
+      expect(issues.length).to.equal(1);
+    });
+
+    it("dynamic function module name", async () => {
+      const issues = await findIssues(`
+  lv_fm = 'Z_READ'.
+  CALL FUNCTION lv_fm
+    EXCEPTIONS
+      OTHERS = 1.`, on);
+      expect(issues.length).to.equal(1);
+    });
+
+    it("error_message listed", async () => {
+      const issues = await findIssues(`
+  CALL FUNCTION 'Z_READ'
+    EXCEPTIONS
+      error_message = 1
+      OTHERS        = 2.`, on);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("error_message listed in upper case, without OTHERS", async () => {
+      const issues = await findIssues(`
+  CALL FUNCTION 'Z_READ'
+    EXCEPTIONS
+      ERROR_MESSAGE = 1.`, on);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("DESTINATION, STARTING NEW TASK, IN UPDATE TASK and IN BACKGROUND are not reported", async () => {
+      const issues = await findIssues(`
+  CALL FUNCTION 'Z_READ' DESTINATION 'NONE'
+    EXCEPTIONS
+      system_failure        = 1
+      communication_failure = 2
+      OTHERS                = 3.
+  CALL FUNCTION 'Z_READ' STARTING NEW TASK 'TASK'.
+  CALL FUNCTION 'Z_READ' IN UPDATE TASK.
+  CALL FUNCTION 'Z_READ' IN BACKGROUND TASK.`, on);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("EXCEPTION-TABLE", async () => {
+      const issues = await findIssues(`
+  DATA lt_exc TYPE abap_func_excpbind_tab.
+  CALL FUNCTION 'Z_READ'
+    EXCEPTION-TABLE lt_exc.`, on);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("known function module with class-based exceptions", async () => {
+      const issues = await findIssues(`
+  CALL FUNCTION 'Z_READ'.`, on, buildFugr(["ZCX_ERROR"], true));
+      expect(issues.length).to.equal(0);
+    });
+
+    it("together with missingExceptions, two issues", async () => {
+      const issues = await findIssues(`
+  CALL FUNCTION 'Z_READ'.`, {missingErrorMessage: true}, buildFugr(["NOT_FOUND"]));
+      expect(issues.length).to.equal(2);
     });
 
   });
