@@ -50,7 +50,9 @@ export class BuiltInCall {
   public static hasDataObjectArgument(call: ExpressionNode): boolean {
     const argument = call.findDirectExpression(Expressions.MethodCallParam)?.findDirectExpression(Expressions.Source);
     const children = argument?.getChildren() || [];
-    if (children.length === 1 && children[0].get() instanceof Expressions.Constant) {
+    // a literal or a text symbol, text-001
+    if (children.length === 1
+        && (children[0].get() instanceof Expressions.Constant || children[0].get() instanceof Expressions.TextElement)) {
       return true;
     }
     // a field, a component, an offset/length or a dereference, r->*

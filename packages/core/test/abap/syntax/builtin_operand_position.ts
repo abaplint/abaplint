@@ -73,6 +73,36 @@ describe("syntax.ts, predicate function outside a logical expression", () => {
     s = boolc( contains( val = s sub = \`b\` ) ).`)).to.equal(undefined);
   });
 
+  it("ok, the bool parameter of boolx( )", () => {
+    expect(errors(`DATA(b) = boolx( bool = line_exists( itab[ 1 ] ) bit = 1 ).
+    DATA(c) = boolx( bit = 2 bool = contains( val = s sub = \`b\` ) ).`)).to.equal(undefined);
+  });
+
+  it("error, the bit parameter of boolx( )", () => {
+    expect(errors(`DATA(b) = boolx( bool = abap_true bit = line_exists( itab[ 1 ] ) ).`)).to.equal(message("line_exists"));
+  });
+
+  it("error, the arguments are still checked", () => {
+    const messages = runProgram(program(`DATA(b) = line_exists( nosuch[ 1 ] ).`)).map(i => i.getMessage());
+    expect(messages[0]).to.equal(message("line_exists"));
+    expect(messages.some(m => m.includes("nosuch"))).to.equal(true);
+  });
+
+  it("error, comparison, the operands are still checked", () => {
+    const messages = runProgram(program(`IF line_exists( nosuch[ 1 ] ) = abap_true.
+    ENDIF.`)).map(i => i.getMessage());
+    expect(messages[0]).to.equal(`Predicate function "line_exists" cannot be the operand of a comparison`);
+    expect(messages.some(m => m.includes("nosuch"))).to.equal(true);
+    expect(messages.some(m => m.includes("logical expression"))).to.equal(false);
+  });
+
+  it("error, IS INITIAL, the operand is still checked", () => {
+    const messages = runProgram(program(`IF to_upper( nosuch ) IS INITIAL.
+    ENDIF.`)).map(i => i.getMessage());
+    expect(messages[0]).to.equal(`Built-in function "to_upper" cannot be the operand of IS INITIAL`);
+    expect(messages.some(m => m.includes("nosuch"))).to.equal(true);
+  });
+
   it("ok, inside boolc( ) in 702, where it parses as a method call", () => {
     const abap = `
 DATA s TYPE string.
@@ -149,6 +179,7 @@ describe("syntax.ts, numeric function in WRITE", () => {
     WRITE / strlen( c10+1(2) ).
     WRITE / sqrt( f ).
     WRITE / strlen( r->* ).
+    WRITE / strlen( text-001 ).
     WRITE lines( itab ) TO c20.`)).to.equal(undefined);
   });
 

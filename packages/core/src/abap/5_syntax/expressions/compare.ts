@@ -15,19 +15,15 @@ export class Compare {
 
     const sources = node.findDirectExpressions(Expressions.Source);
 
-    // before the operands are checked, Source reports a predicate function operand in more general terms
+    // reported before the operands are checked, which then skip the more general predicate function message
     const initialMessage = this.checkInitialOperand(node, input);
-    if (initialMessage !== undefined) {
-      input.issues.push(syntaxIssue(input, node.getFirstToken(), initialMessage));
-      return;
-    }
-
     const predicateMessage = this.checkPredicateOperand(sources, input);
-    if (predicateMessage !== undefined) {
-      input.issues.push(syntaxIssue(input, node.getFirstToken(), predicateMessage));
-      return;
+    const operandMessage = initialMessage ?? predicateMessage;
+    if (operandMessage !== undefined) {
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), operandMessage));
     }
 
+    // the operands are always checked, for their own errors and references
     const sourceTypes: (AbstractType | undefined)[] = [];
     for (const t of sources) {
       sourceTypes.push(Source.runSyntax(t, input));
@@ -39,6 +35,10 @@ export class Compare {
 
     for (const t of node.findDirectExpressions(Expressions.MethodCallChain)) {
       MethodCallChain.runSyntax(t, input);
+    }
+
+    if (operandMessage !== undefined) {
+      return;
     }
 
     const typeUtils = new TypeUtils(input.scope);
@@ -95,13 +95,15 @@ export class Compare {
     if (input.scope.getOpenABAP()) {
       return undefined;
     }
+    let message: string | undefined = undefined;
     for (const source of sources) {
       const name = this.builtinCallName(source, input);
       if (BuiltIn.isPredicate(name) === true) {
-        return `Predicate function "${name}" cannot be the operand of a comparison`;
+        Source.predicateReported(source);
+        message = message ?? `Predicate function "${name}" cannot be the operand of a comparison`;
       }
     }
-    return undefined;
+    return message;
   }
 
   // the name of the built-in function when the source is exactly one call of it, not hidden by a method of the same name

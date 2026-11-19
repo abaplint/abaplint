@@ -41,8 +41,14 @@ import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 // TODO: refactor all these method parameters to objects, this is getting messy
 export class Source {
-  // arguments of boolc( ) and xsdbool( ) parsed as method calls, where a predicate function is allowed
+  // arguments of boolc( ), xsdbool( ) and the bool parameter of boolx( ) parsed as method calls, where a predicate function is allowed,
+  // and operands where the caller has already reported the predicate function in more specific terms
   private static readonly logicalArguments = new WeakSet<ExpressionNode>();
+
+  // the predicate function in this source is already reported by the caller, Source only checks its arguments
+  public static predicateReported(source: ExpressionNode): void {
+    this.logicalArguments.add(source);
+  }
 
   public static runSyntax(
     node: ExpressionNode | undefined,
@@ -262,6 +268,8 @@ export class Source {
           if (predicate !== undefined) {
             const message = `Predicate function "${predicate}" can only be used in a logical expression`;
             input.issues.push(syntaxIssue(input, first.getFirstToken(), message));
+            // the arguments are still checked, for their own errors and references
+            MethodCallChain.runSyntax(first, input, targetType);
             return VoidType.get(CheckSyntaxKey);
           }
           const found = MethodCallChain.runSyntax(first, input, targetType);
@@ -499,7 +507,7 @@ export class Source {
 
   // a predicate function, line_exists( ) or contains( ), is a logical expression and not a value,
   // a system reports it as an unknown method in any operand position other than the argument of boolc( ) or xsdbool( ),
-  // which parse as method calls in releases before xsdbool( ) was added
+  // which parse as method calls in releases before xsdbool( ) was added, or the bool parameter of boolx( )
   private static predicateCall(source: ExpressionNode, chain: ExpressionNode, input: SyntaxInput): string | undefined {
     if (input.scope.getOpenABAP()) {
       return undefined;
@@ -507,10 +515,19 @@ export class Source {
     const call = BuiltInCall.fromChain(chain, input);
     const name = call === undefined ? undefined : BuiltInCall.callName(call);
     const upper = name?.toUpperCase();
-    if (call !== undefined && (upper === "BOOLC" || upper === "XSDBOOL")) {
-      const argument = call.findDirectExpression(Expressions.MethodCallParam)?.findDirectExpression(Expressions.Source);
+    const param = call?.findDirectExpression(Expressions.MethodCallParam);
+    if (upper === "BOOLC" || upper === "XSDBOOL") {
+      const argument = param?.findDirectExpression(Expressions.Source);
       if (argument !== undefined) {
         this.logicalArguments.add(argument);
+      }
+      return undefined;
+    } else if (upper === "BOOLX") {
+      for (const p of param?.findDirectExpression(Expressions.ParameterListS)?.findDirectExpressions(Expressions.ParameterS) || []) {
+        const argument = p.findDirectExpression(Expressions.Source);
+        if (p.findDirectExpression(Expressions.ParameterName)?.concatTokens().toUpperCase() === "BOOL" && argument !== undefined) {
+          this.logicalArguments.add(argument);
+        }
       }
       return undefined;
     }
