@@ -19869,3 +19869,121 @@ INSERT 'HELLO' INTO TABLE itab.`;
     expect(issues[0]?.getMessage()).to.equal("Types not compatible");
   });
 });
+
+describe("syntax.ts, SELECT generic host field into inline", () => {
+  it("field symbol TYPE any, no errors", () => {
+    const abap = `
+FORM foo.
+  FIELD-SYMBOLS <fs> TYPE any.
+  SELECT SINGLE @<fs> FROM t100 INTO @DATA(x).
+  WRITE x.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("importing TYPE c, no errors", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS m IMPORTING iv TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    SELECT SINGLE @iv FROM t100 INTO @DATA(x).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("importing TYPE simple, no errors", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS m IMPORTING iv TYPE simple.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    SELECT SINGLE @iv FROM t100 WHERE arbgb = 'X' INTO @DATA(x).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
+
+describe("syntax.ts, EVENTS parameters", () => {
+  it("EVENTS, parameter passed by VALUE, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS message EXPORTING VALUE(iv_text) TYPE string.
+    CLASS-EVENTS other EXPORTING VALUE(iv_text) TYPE string OPTIONAL VALUE(iv_num) TYPE i OPTIONAL.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("EVENTS, parameter not passed by VALUE, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS message EXPORTING iv_text TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Event parameter iv_text must be passed by VALUE");
+  });
+
+  it("EVENTS, second parameter not passed by VALUE, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS message EXPORTING VALUE(iv_text) TYPE string iv_other TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal("Event parameter iv_other must be passed by VALUE");
+  });
+
+  it("INTERFACE EVENTS, parameter not passed by VALUE, error", () => {
+    const abap = `
+INTERFACE lif.
+  EVENTS message EXPORTING iv_text TYPE string.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("Event parameter iv_text must be passed by VALUE");
+  });
+
+  it("inline declaration from text symbol, error", () => {
+    const abap = `DATA(lv_open_url) = TEXT-dev.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`"TEXT-DEV" has a generic type that cannot be used for declarations`);
+  });
+
+  it("inline FINAL declaration from text symbol, error", () => {
+    const abap = `FINAL(lv_open_url) = TEXT-dev.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`"TEXT-DEV" has a generic type that cannot be used for declarations`);
+  });
+
+  it("inline declaration from converted text symbol, ok", () => {
+    const abap = `DATA(lv_open_url) = CONV string( TEXT-dev ).
+DATA(lv_concat) = TEXT-dev && TEXT-abc.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("assignment from text symbol, ok", () => {
+    const abap = `DATA lv_open_url TYPE string.
+lv_open_url = TEXT-dev.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+});

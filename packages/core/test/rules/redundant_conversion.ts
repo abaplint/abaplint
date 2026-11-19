@@ -187,6 +187,7 @@ DATA iv_objectname TYPE c LENGTH 30.
 DATA(lv_tab) = COND tabname(
   WHEN iv_tablename IS NOT INITIAL THEN iv_tablename
   ELSE CONV tabname( iv_objectname ) ).`, cnt: 1},
+  {abap: `DATA(lv) = CONV string( TEXT-dev ).`, cnt: 0}, // "DATA(lv) = TEXT-dev." does not compile
 ];
 
 testRule(tests, RedundantConversion);
@@ -314,6 +315,8 @@ lr_i->* = CONV i( lv_s ).`, cnt: 0},
   {abap: `DATA lv_s TYPE string.
 DATA ls_void TYPE bapiret2.
 ls_void-message = CONV i( lv_s ).`, cnt: 0},
+  {abap: `DATA lv_open_url TYPE string.
+lv_open_url = CONV string( TEXT-dev ).`, cnt: 1}, // the assignment converts the text symbol by itself
 ];
 
 testRule(assignmentTarget, RedundantConversion, undefined, "redundant_conversion, assignmentTarget");

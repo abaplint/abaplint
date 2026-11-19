@@ -88,6 +88,7 @@ import {ForbiddenVoidTypeConf} from "../src/rules/forbidden_void_type";
 import {FormTablesObsoleteConf} from "../src/rules/form_tables_obsolete";
 import {FullyTypeConsantsConf} from "../src/rules/fully_type_constants";
 import {FullyTypeITabsConf} from "../src/rules/fully_type_itabs";
+import {FunctionModuleParameterNamesConf} from "../src/rules/function_module_parameter_names";
 import {FunctionModuleRecommendationsConf} from "../src/rules/function_module_recommendations";
 import {FunctionalWritingConf} from "../src/rules/functional_writing";
 import {GenericRegexConf} from "../src/rules/generic_regex";
@@ -195,6 +196,7 @@ import {SingleUseExpressionTempConf} from "../src/rules/single_use_expression_te
 import {SlowParameterPassingConf} from "../src/rules/slow_parameter_passing";
 import {SMIMConsistencyConf} from "../src/rules/smim_consistency";
 import {SortEmptyKeyConf} from "../src/rules/sort_empty_key";
+import {SortRequiredConf} from "../src/rules/sort_required";
 import {SpaceBeforeColonConf} from "../src/rules/space_before_colon";
 import {SpaceBeforeDotConf} from "../src/rules/space_before_dot";
 import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables";
@@ -206,6 +208,7 @@ import {StrictSQLConf} from "../src/rules/strict_sql";
 import {SubrcAfterAssignConf} from "../src/rules/subrc_after_assign";
 import {SuperclassFinalConf} from "../src/rules/superclass_final";
 import {SuperfluousValueConf} from "../src/rules/superfluous_value";
+import {SuspiciousLoopConf} from "../src/rules/suspicious_loop";
 import {SyModificationConf} from "../src/rules/sy_modification";
 import {SyReadRestrictionConf} from "../src/rules/sy_read_restriction";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
@@ -215,6 +218,7 @@ import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
 import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/types_naming";
 import {UncaughtExceptionConf} from "../src/rules/uncaught_exception";
+import {UnhandledClassicExceptionConf} from "../src/rules/unhandled_classic_exception";
 import {UnitTestAssertionsConf} from "../src/rules/unit_test_assertions";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
 import {UnnecessaryChainingConf} from "../src/rules/unnecessary_chaining";
@@ -341,6 +345,7 @@ export interface IConfig {
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
     "fully_type_constants"?: FullyTypeConsantsConf | boolean,
     "fully_type_itabs"?: FullyTypeITabsConf | boolean,
+    "function_module_parameter_names"?: FunctionModuleParameterNamesConf | boolean,
     "function_module_recommendations"?: FunctionModuleRecommendationsConf | boolean,
     "functional_writing"?: FunctionalWritingConf | boolean,
     "generic_regex"?: GenericRegexConf | boolean,
@@ -448,6 +453,7 @@ export interface IConfig {
     "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "smim_consistency"?: SMIMConsistencyConf | boolean,
     "sort_empty_key"?: SortEmptyKeyConf | boolean,
+    "sort_required"?: SortRequiredConf | boolean,
     "space_before_colon"?: SpaceBeforeColonConf | boolean,
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
@@ -459,6 +465,7 @@ export interface IConfig {
     "subrc_after_assign"?: SubrcAfterAssignConf | boolean,
     "superclass_final"?: SuperclassFinalConf | boolean,
     "superfluous_value"?: SuperfluousValueConf | boolean,
+    "suspicious_loop"?: SuspiciousLoopConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
     "sy_read_restriction"?: SyReadRestrictionConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
@@ -468,6 +475,7 @@ export interface IConfig {
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
+    "unhandled_classic_exception"?: UnhandledClassicExceptionConf | boolean,
     "unit_test_assertions"?: UnitTestAssertionsConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,
@@ -583,6 +591,7 @@ export interface IConfig {
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
     "fully_type_constants"?: FullyTypeConsantsConf | boolean,
     "fully_type_itabs"?: FullyTypeITabsConf | boolean,
+    "function_module_parameter_names"?: FunctionModuleParameterNamesConf | boolean,
     "function_module_recommendations"?: FunctionModuleRecommendationsConf | boolean,
     "functional_writing"?: FunctionalWritingConf | boolean,
     "generic_regex"?: GenericRegexConf | boolean,
@@ -690,6 +699,7 @@ export interface IConfig {
     "slow_parameter_passing"?: SlowParameterPassingConf | boolean,
     "smim_consistency"?: SMIMConsistencyConf | boolean,
     "sort_empty_key"?: SortEmptyKeyConf | boolean,
+    "sort_required"?: SortRequiredConf | boolean,
     "space_before_colon"?: SpaceBeforeColonConf | boolean,
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
@@ -701,6 +711,7 @@ export interface IConfig {
     "subrc_after_assign"?: SubrcAfterAssignConf | boolean,
     "superclass_final"?: SuperclassFinalConf | boolean,
     "superfluous_value"?: SuperfluousValueConf | boolean,
+    "suspicious_loop"?: SuspiciousLoopConf | boolean,
     "sy_modification"?: SyModificationConf | boolean,
     "sy_read_restriction"?: SyReadRestrictionConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
@@ -710,6 +721,7 @@ export interface IConfig {
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,
     "uncaught_exception"?: UncaughtExceptionConf | boolean,
+    "unhandled_classic_exception"?: UnhandledClassicExceptionConf | boolean,
     "unit_test_assertions"?: UnitTestAssertionsConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unnecessary_chaining"?: UnnecessaryChainingConf | boolean,

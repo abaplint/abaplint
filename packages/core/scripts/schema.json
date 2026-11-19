@@ -2138,6 +2138,63 @@
       },
       "type": "object"
     },
+    "FunctionModuleParameterNamesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "changing": {
+          "description": "The pattern for changing parameters",
+          "type": "string"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "exporting": {
+          "description": "The pattern for exporting parameters",
+          "type": "string"
+        },
+        "ignoreNames": {
+          "description": "A list of names to be ignored",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignorePatterns": {
+          "description": "A list of patterns to be ignored. For example, you can use it to ignore ambiguous prefixes",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "importing": {
+          "description": "The pattern for importing parameters",
+          "type": "string"
+        },
+        "patternKind": {
+          "$ref": "#/definitions/PatternKind",
+          "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "tables": {
+          "description": "The pattern for tables parameters",
+          "type": "string"
+        }
+      },
+      "required": [
+        "importing",
+        "exporting",
+        "changing",
+        "tables"
+      ],
+      "type": "object"
+    },
     "FunctionModuleRecommendationsConf": {
       "additionalProperties": false,
       "properties": {
@@ -3238,6 +3295,17 @@
                 }
               ],
               "description": "No implict table types or table keys\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_itabs"
+            },
+            "function_module_parameter_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FunctionModuleParameterNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for function module parameter names\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/function_module_parameter_names"
             },
             "function_module_recommendations": {
               "anyOf": [
@@ -4416,6 +4484,17 @@
               ],
               "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
             },
+            "sort_required": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortRequiredConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BINARY SEARCH or DELETE ADJACENT DUPLICATES ... COMPARING on a local table not sorted by those fields\nTags: SingleFile\nhttps://rules.abaplint.org/sort_required"
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -4537,6 +4616,17 @@
               ],
               "description": "Find superfluous VALUE expressions\nTags: SingleFile\nhttps://rules.abaplint.org/superfluous_value"
             },
+            "suspicious_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SuspiciousLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds WHILE loops whose condition the loop body never changes\nhttps://rules.abaplint.org/suspicious_loop"
+            },
             "sy_modification": {
               "anyOf": [
                 {
@@ -4635,6 +4725,17 @@
                 }
               ],
               "description": "Checks for uncaught static exception\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
+            },
+            "unhandled_classic_exception": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnhandledClassicExceptionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds calls that do not map every classic exception the callee can raise\nTags: Syntax\nhttps://rules.abaplint.org/unhandled_classic_exception"
             },
             "unit_test_assertions": {
               "anyOf": [
@@ -5879,6 +5980,17 @@
               ],
               "description": "No implict table types or table keys\nTags: SingleFile\nhttps://rules.abaplint.org/fully_type_itabs"
             },
+            "function_module_parameter_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FunctionModuleParameterNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for function module parameter names\nTags: Naming, SingleFile\nhttps://rules.abaplint.org/function_module_parameter_names"
+            },
             "function_module_recommendations": {
               "anyOf": [
                 {
@@ -7056,6 +7168,17 @@
               ],
               "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
             },
+            "sort_required": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SortRequiredConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "BINARY SEARCH or DELETE ADJACENT DUPLICATES ... COMPARING on a local table not sorted by those fields\nTags: SingleFile\nhttps://rules.abaplint.org/sort_required"
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -7177,6 +7300,17 @@
               ],
               "description": "Find superfluous VALUE expressions\nTags: SingleFile\nhttps://rules.abaplint.org/superfluous_value"
             },
+            "suspicious_loop": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SuspiciousLoopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds WHILE loops whose condition the loop body never changes\nhttps://rules.abaplint.org/suspicious_loop"
+            },
             "sy_modification": {
               "anyOf": [
                 {
@@ -7275,6 +7409,17 @@
                 }
               ],
               "description": "Checks for uncaught static exception\nTags: Syntax\nhttps://rules.abaplint.org/uncaught_exception"
+            },
+            "unhandled_classic_exception": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnhandledClassicExceptionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds calls that do not map every classic exception the callee can raise\nTags: Syntax\nhttps://rules.abaplint.org/unhandled_classic_exception"
             },
             "unit_test_assertions": {
               "anyOf": [
@@ -10622,6 +10767,35 @@
       },
       "type": "object"
     },
+    "SortRequiredConf": {
+      "additionalProperties": false,
+      "properties": {
+        "adjacentDuplicates": {
+          "description": "Check DELETE ADJACENT DUPLICATES ... COMPARING",
+          "type": "boolean"
+        },
+        "binarySearch": {
+          "description": "Check READ TABLE ... WITH KEY ... BINARY SEARCH",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "binarySearch",
+        "adjacentDuplicates"
+      ],
+      "type": "object"
+    },
     "SpaceBeforeColonConf": {
       "additionalProperties": false,
       "properties": {
@@ -10787,6 +10961,30 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "SuspiciousLoopConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "unchangedCondition": {
+          "description": "Report WHILE loops whose condition the loop body never changes, or sets to the same value in every iteration. The loop runs zero times, once or forever",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "unchangedCondition"
+      ],
       "type": "object"
     },
     "SyModificationConf": {
@@ -10956,6 +11154,40 @@
       "required": [
         "reportDynamic",
         "reportNoCheck"
+      ],
+      "type": "object"
+    },
+    "UnhandledClassicExceptionConf": {
+      "additionalProperties": false,
+      "properties": {
+        "allowLiteralArguments": {
+          "description": "missingExceptions: do not report a method call whose arguments are all literals or me, like describe_by_name( 'T100' )",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "missingExceptions": {
+          "description": "Report a call without EXCEPTIONS, including a functional call, of a method or function module that declares classic exceptions",
+          "type": "boolean"
+        },
+        "missingOthers": {
+          "description": "Report an EXCEPTIONS list without OTHERS, unless the method or function module is known and all its exceptions are listed",
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "missingOthers",
+        "missingExceptions",
+        "allowLiteralArguments"
       ],
       "type": "object"
     },
