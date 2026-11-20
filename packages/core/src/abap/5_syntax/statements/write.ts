@@ -8,6 +8,7 @@ import {TypeUtils} from "../_type_utils";
 import {FieldChain} from "../expressions/field_chain";
 import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {BuiltInCall} from "../_builtin_call";
 
 export class Write implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -20,7 +21,18 @@ export class Write implements StatementSyntax {
     }
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
+      const issueCount = input.issues.length;
       const type = Source.runSyntax(s, input);
+
+      // "Arithmetic calculation not permitted here" on a system, while abs( x ) or lines( itab ) is fine
+      const call = s === second && issueCount === input.issues.length && input.scope.getOpenABAP() === false
+        ? BuiltInCall.fromSource(s, input) : undefined;
+      if (call !== undefined && BuiltInCall.isNumeric(call) && BuiltInCall.hasDataObjectArgument(call) === false) {
+        const message = `Numeric function "${BuiltInCall.callName(call)}" in WRITE takes only a single data object as argument`;
+        input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+        return;
+      }
+
       if (s === second
           && new TypeUtils(input.scope).isCharLike(type) === false
           && new TypeUtils(input.scope).isHexLike(type) === false) {
