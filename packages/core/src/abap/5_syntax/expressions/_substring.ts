@@ -10,7 +10,8 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 // a syntax error. Other types, a dynamic offset or length and "*" (undefined) are left alone, as is
 // length 0. The offset is applied first, so the length is compared to what remains after the offset.
 // A substring of a date, time or numeric text field has type n; its bounds are not checked.
-// An offset or length on a numeric field (i, int8, p, f, decfloat) is a syntax error, whatever its value.
+// An offset or length on a numeric field (i, int8, p, f, decfloat) is a syntax error, whatever its value,
+// except a length without offset covering the full packed field, eg. "lv_p(5)" for "lv_p(5) TYPE p".
 export function substringType(
   context: AbstractType | undefined,
   offset: number | undefined,
@@ -19,8 +20,11 @@ export function substringType(
   input: SyntaxInput): AbstractType | undefined {
 
   const numericName = numericTypeName(context);
-  if (numericName !== undefined) {
-    const message = `Offset or length specification not possible on a field of numeric type "${numericName}"`;
+  if (context instanceof PackedType && offset === undefined && length === context.getLength()) {
+    // the offset is checked in a separate call before the length, so this is a length without offset
+    return context;
+  } else if (numericName !== undefined) {
+    const message = `Field type "${numericName}" does not permit substrings to be accessed`;
     input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
     return VoidType.get(CheckSyntaxKey);
   }
@@ -55,19 +59,20 @@ export function substringType(
   return context;
 }
 
+// the internal type code the ABAP syntax check names: I, 8, P, F, a (decfloat16), e (decfloat34)
 function numericTypeName(context: AbstractType | undefined): string | undefined {
   if (context instanceof IntegerType) {
     return "I";
   } else if (context instanceof Integer8Type) {
-    return "INT8";
+    return "8";
   } else if (context instanceof PackedType) {
     return "P";
   } else if (context instanceof FloatType || context instanceof FloatingPointType) {
     return "F";
   } else if (context instanceof DecFloat16Type) {
-    return "DECFLOAT16";
+    return "a";
   } else if (context instanceof DecFloat34Type) {
-    return "DECFLOAT34";
+    return "e";
   } else if (context instanceof DecFloatType) {
     return "DECFLOAT";
   }

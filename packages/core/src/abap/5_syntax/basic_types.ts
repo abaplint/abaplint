@@ -536,6 +536,12 @@ export class BasicTypes {
       text = "TYPE";
     }
 
+    const additionIssue = this.checkLengthDecimals(node, text);
+    if (additionIssue !== undefined) {
+      this.input.issues.push(additionIssue);
+      return VoidType.get(CheckSyntaxKey);
+    }
+
     let found: AbstractType | undefined = undefined;
     if (this.isRAPTypeStructure(text)) {
       return Types.VoidType.get(node.findFirstExpression(Expressions.TypeStructure)?.concatTokens());
@@ -1089,6 +1095,30 @@ export class BasicTypes {
     }
 
     throw new Error("findValue, unexpected");
+  }
+
+  // the LENGTH and DECIMALS additions of DATA, TYPES, CONSTANTS and STATICS, as a system checks them:
+  // LENGTH only with TYPE c, n, x or p, DECIMALS only with TYPE p, also not without a TYPE addition,
+  // a named type cannot be given a length either. With LIKE, a system ignores LENGTH and rejects DECIMALS
+  private checkLengthDecimals(node: StatementNode | ExpressionNode, text: string) {
+    const length = node.findDirectExpression(Expressions.Length);
+    const decimals = node.findDirectExpression(Expressions.Decimals);
+    if (length === undefined && decimals === undefined) {
+      return undefined;
+    } else if (text.startsWith("LIKE")) {
+      if (decimals === undefined) {
+        return undefined;
+      }
+      const message = "When referencing another field (with LIKE), type and length cannot be changed";
+      return syntaxIssue(this.input, decimals.getFirstToken(), message);
+    }
+    const builtin = text.startsWith("TYPE") ? text.substring(4).trim() : "";
+    if (length !== undefined && ["C", "N", "X", "P"].includes(builtin) === false) {
+      return syntaxIssue(this.input, length.getFirstToken(), "\"LENGTH\" can only be specified for types C, N, X, or P");
+    } else if (decimals !== undefined && builtin !== "P") {
+      return syntaxIssue(this.input, decimals.getFirstToken(), "\"DECIMALS\" can be specified only for type P");
+    }
+    return undefined;
   }
 
   private findDecimals(node: StatementNode | ExpressionNode): number | undefined {

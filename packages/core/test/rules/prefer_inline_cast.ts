@@ -88,6 +88,7 @@ CLASS lcx DEFINITION INHERITING FROM cx_static_check.
 ENDCLASS.
 CLASS lcx IMPLEMENTATION.
   METHOD constructor.
+    super->constructor( ).
   ENDMETHOD.
 ENDCLASS.
 ${declaration}

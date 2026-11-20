@@ -24,6 +24,11 @@ import {SyntaxLogic} from "./syntax";
 import {IDDICReferences} from "../../_iddic_references";
 import {FunctionGroup} from "../../objects";
 import {IMSAGReferences} from "../../_imsag_references";
+import {AbstractType} from "../types/basic/_abstract_type";
+import {UnknownType, VoidType} from "../types/basic";
+
+/** scopes of constructor expressions, their names are local to the expression */
+const EXPRESSION_SCOPES = new Set<string>([ScopeType.For, ScopeType.Let, ScopeType.OpenSQL]);
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
@@ -31,6 +36,11 @@ export class CurrentScope {
   protected allowHeaderUse: string | undefined;
   protected parentObj: IObject;
   private readonly localFriends: Map<string, string[]> = new Map();
+  /** types of the FOR and LET names used in a procedure, key is the scope node of the procedure */
+  private readonly localNameTypes: WeakMap<SpaghettiScopeNode, Map<string, AbstractType>> = new WeakMap();
+  /** row type of the members of a group, key is the identifier of the group variable,
+   *  a LOOP AT ... GROUP BY binds the group until its ENDLOOP */
+  private readonly groupMemberTypes: Map<string, AbstractType> = new Map();
 
   public static buildDefault(reg: IRegistry, obj: IObject): CurrentScope {
     const s = new CurrentScope(reg, obj);
@@ -611,6 +621,68 @@ export class CurrentScope {
 
   public isLocalFriend(className: string, friendName: string): boolean {
     return this.localFriends.get(className.toUpperCase())?.includes(friendName.toUpperCase()) === true;
+  }
+
+  /**
+   * Checks a local name of a constructor expression, FOR, LET and REDUCE INIT, before it is added,
+   * returns the error message, or undefined when the name can be declared.
+   * The name cannot be a data object of the procedure or of an enclosing expression, attributes and
+   * globals seen from a method or a form are only obscured, which ABAP reports as a warning.
+   * Within a procedure, a name can be reused by another expression only with the same type.
+   */
+  public checkLocalName(name: string, type: AbstractType | undefined): string | undefined {
+    const upper = name.toUpperCase();
+    let procedure = this.current;
+    while (procedure !== undefined) {
+      if (procedure.getData().vars[upper] !== undefined) {
+        return `Variable ${name} already defined`;
+      }
+      if (EXPRESSION_SCOPES.has(procedure.getIdentifier().stype) === false) {
+        break;
+      }
+      procedure = procedure.getParent();
+    }
+
+    if (procedure === undefined || type === undefined || CurrentScope.isComparable(type) === false) {
+      return undefined;
+    }
+    let names = this.localNameTypes.get(procedure);
+    if (names === undefined) {
+      names = new Map();
+      this.localNameTypes.set(procedure, names);
+    }
+    const previous = names.get(upper);
+    if (previous === undefined) {
+      names.set(upper, type);
+    } else if (previous.toText(0) !== type.toText(0)) {
+      return `Variable ${name} already defined with a different type`;
+    }
+    return undefined;
+  }
+
+  /** types are compared by their structure, ABAP compares the declared types, so this finds a subset of the errors */
+  private static isComparable(type: AbstractType): boolean {
+    return !(type instanceof VoidType)
+      && !(type instanceof UnknownType)
+      && type.containsVoid() === false
+      && type.isGeneric() === false
+      && type.toText(0).includes("Unknown type") === false;
+  }
+
+  public setGroupMemberType(group: TypedIdentifier, rowType: AbstractType): void {
+    this.groupMemberTypes.set(CurrentScope.groupKey(group), rowType);
+  }
+
+  public findGroupMemberType(group: TypedIdentifier): AbstractType | undefined {
+    return this.groupMemberTypes.get(CurrentScope.groupKey(group));
+  }
+
+  public removeGroupMemberType(group: TypedIdentifier): void {
+    this.groupMemberTypes.delete(CurrentScope.groupKey(group));
+  }
+
+  private static groupKey(group: TypedIdentifier): string {
+    return group.getFilename() + ":" + group.getStart().getRow() + ":" + group.getStart().getCol();
   }
 
   public getEnclosingMethodName(): string | undefined {

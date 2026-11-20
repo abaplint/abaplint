@@ -14,34 +14,45 @@ import {Identifier} from "../abap/4_file_information/_identifier";
 import {ABAPFile} from "../abap/abap_file";
 import {StatementNode} from "../abap/nodes";
 import {Comment, Unknown} from "../abap/2_statements/statements/_statement";
+import {VirtualPosition} from "../virtual_position";
 
 class WorkArea {
-  private readonly workarea: TypedIdentifier[] = [];
+  // keyed by identifier position, insertion order is kept
+  private readonly workarea = new Map<string, TypedIdentifier>();
 
   public push(id: TypedIdentifier) {
-    for (const w of this.workarea) {
-      if (id.equals(w)) {
-        return;
-      }
+    const key = WorkArea.buildKey(id);
+    if (this.workarea.has(key) === false) {
+      this.workarea.set(key, id);
     }
-    this.workarea.push(id);
   }
 
   public removeIfExists(id: Identifier) {
-    for (let i = 0; i < this.workarea.length; i++) {
-      if (id.equals(this.workarea[i])) {
-        this.workarea.splice(i, 1);
-        return;
+    this.workarea.delete(WorkArea.buildKey(id));
+  }
+
+  /** removes the identifiers referenced somewhere */
+  public removeReferenced(referenced: ReadonlySet<string>) {
+    for (const key of [...this.workarea.keys()]) {
+      if (referenced.has(key)) {
+        this.workarea.delete(key);
       }
     }
   }
 
   public get(): readonly TypedIdentifier[] {
-    return this.workarea;
+    return [...this.workarea.values()];
   }
 
   public count(): number {
-    return this.workarea.length;
+    return this.workarea.size;
+  }
+
+  /** identifiers from one macro call share the row and column, the virtual position tells them apart */
+  public static buildKey(id: Identifier): string {
+    const start = id.getStart();
+    const key = id.getFilename() + "," + start.getRow() + "," + start.getCol();
+    return start instanceof VirtualPosition ? key + "," + start.vrow + "," + start.vcol : key;
   }
 }
 
@@ -56,6 +67,8 @@ export class UnusedTypes implements IRule {
   private conf = new UnusedTypesConf();
   private reg: IRegistry;
   private workarea: WorkArea;
+  /** keys of the identifiers with a type reference in any object, built once per run when needed */
+  private referenced: Set<string> | undefined = undefined;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -82,6 +95,7 @@ export class UnusedTypes implements IRule {
 
   public initialize(reg: IRegistry) {
     this.reg = reg;
+    this.referenced = undefined;
     return this;
   }
 
@@ -111,19 +125,10 @@ export class UnusedTypes implements IRule {
       return []; // exit early if all types are used in the current object
     }
 
-    for (const o of this.reg.getObjects()) {
-      if (o === obj) {
-        continue;
-      } else if (o instanceof ABAPObject) {
-        if (this.reg.isDependency(o)) {
-          continue; // do not search in dependencies
-        }
-        const syntax = new SyntaxLogic(this.reg, o).run();
-        this.traverse(syntax.spaghetti.getTop(), o, false);
-      }
-      if (this.workarea.count() === 0) {
-        return []; // exit early if all types are used
-      }
+    // uses in other objects, collected once instead of searching all objects for each object
+    this.workarea.removeReferenced(this.getReferenced());
+    if (this.workarea.count() === 0) {
+      return []; // exit early if all types are used
     }
 
     // what is left is unused
@@ -174,6 +179,36 @@ export class UnusedTypes implements IRule {
   }
 
 ////////////////////////////
+
+  private getReferenced(): ReadonlySet<string> {
+    if (this.referenced === undefined) {
+      const referenced = new Set<string>();
+      for (const o of this.reg.getObjects()) {
+        if (!(o instanceof ABAPObject) || this.reg.isDependency(o)) {
+          continue; // do not search in dependencies
+        }
+        const syntax = new SyntaxLogic(this.reg, o).run();
+        this.collectReferenced(syntax.spaghetti.getTop(), referenced);
+      }
+      this.referenced = referenced;
+    }
+    return this.referenced;
+  }
+
+  /** same nodes and references as checkNode() with add = false */
+  private collectReferenced(node: ISpaghettiScopeNode, referenced: Set<string>) {
+    if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
+      for (const r of node.getData().references) {
+        if (r.referenceType === ReferenceType.TypeReference && r.resolved) {
+          referenced.add(WorkArea.buildKey(r.resolved));
+        }
+      }
+    }
+
+    for (const c of node.getChildren()) {
+      this.collectReferenced(c, referenced);
+    }
+  }
 
   private traverse(node: ISpaghettiScopeNode, obj: ABAPObject, add: boolean) {
 

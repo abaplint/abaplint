@@ -5,7 +5,7 @@ import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
 import {IRuleMetadata, RuleTag} from "./_irule";
-import {ExpressionNode, StructureNode} from "../abap/nodes";
+import {ExpressionNode, StructureNode, TokenNode} from "../abap/nodes";
 import {ABAPFile} from "../abap/abap_file";
 
 class Conditions {
@@ -26,6 +26,8 @@ class Conditions {
 
 
 export class IdenticalConditionsConf extends BasicRuleConfig {
+  /** Report a comparison of an operand with itself, like a = a or a <> a */
+  public selfComparison: boolean = true;
 }
 
 export class IdenticalConditions extends ABAPRule {
@@ -38,19 +40,30 @@ export class IdenticalConditions extends ABAPRule {
       shortDescription: `Find identical conditions in IF + CASE + WHILE etc
 
 Prerequsites: code is pretty printed with identical cAsE`,
+      extendedInformation: `Option selfComparison: reports a comparison with =, <>, <, >, <= or >= (and EQ, NE, LT, GT, LE, GE)
+whose two operands are the same data object, like a = a or ls_new-id <> ls_new-id. The comparison is always true or
+always false, usually one side should be another field.
+
+Only operands that are data objects are compared: fields, components, attributes, field symbols, dereferences,
+offset/length and table expressions without calls. Not reported: method calls and built-in functions, which can
+return different values, literals like 1 = 1, ASSERT, and SQL conditions.`,
       tags: [RuleTag.SingleFile],
       badExample: `IF foo = bar OR 1 = a OR foo = bar.
 ENDIF.
 CASE bar.
   WHEN '1'.
   WHEN 'A' OR '1'.
-ENDCASE.`,
+ENDCASE.
+IF ls_new-id = ls_new-id.
+ENDIF.`,
       goodExample: `IF foo = bar OR 1 = a.
 ENDIF.
 CASE bar.
   WHEN '1'.
   WHEN 'A'.
-ENDCASE.`,
+ENDCASE.
+IF ls_new-id = ls_old-id.
+ENDIF.`,
     };
   }
 
@@ -79,11 +92,74 @@ ENDCASE.`,
     for (const i of structure.findAllExpressions(Expressions.Cond)) {
       issues = issues.concat(this.analyzeCond(file, i));
     }
+    if (this.conf.selfComparison) {
+      issues = issues.concat(this.analyzeSelfComparison(file));
+    }
 
     return issues;
   }
 
 ////////////////
+
+  private analyzeSelfComparison(file: ABAPFile): Issue[] {
+    const issues: Issue[] = [];
+
+    for (const statement of file.getStatements()) {
+      if (statement.get() instanceof Statements.Assert) {
+        continue;
+      }
+      for (const compare of statement.findAllExpressionsRecursive(Expressions.Compare)) {
+        const children = compare.getChildren();
+        const negated = children[0] instanceof TokenNode && children[0].getFirstToken().getStr().toUpperCase() === "NOT";
+        const rest = children.slice(negated ? 1 : 0);
+        if (rest.length !== 3
+            || !(rest[0] instanceof ExpressionNode) || !(rest[0].get() instanceof Expressions.Source)
+            || !(rest[1] instanceof ExpressionNode) || !(rest[1].get() instanceof Expressions.CompareOperator)
+            || !(rest[2] instanceof ExpressionNode) || !(rest[2].get() instanceof Expressions.Source)) {
+          continue;
+        }
+        const operator = rest[1].concatTokens().toUpperCase().replace(/ /g, "");
+        const value = this.selfValue(operator);
+        const left = this.dataObject(rest[0]);
+        if (value === undefined || left === undefined || left !== this.dataObject(rest[2])) {
+          continue;
+        }
+        const result = value !== negated ? "true" : "false";
+        const message = "Comparison is always " + result + ", " + rest[0].concatTokens() + " is compared with itself";
+        issues.push(Issue.atRange(file, compare.getFirstToken().getStart(), compare.getLastToken().getEnd(),
+                                  message, this.getMetadata().key, this.conf.severity));
+      }
+    }
+
+    return issues;
+  }
+
+  /** result of comparing a value with itself, undefined for operators like CO or CP */
+  private selfValue(operator: string): boolean | undefined {
+    if (["=", "EQ", "<=", "=<", "LE", ">=", "=>", "GE"].includes(operator)) {
+      return true;
+    } else if (["<>", "><", "NE", "<", "LT", ">", "GT"].includes(operator)) {
+      return false;
+    }
+    return undefined;
+  }
+
+  /** the text of an operand that is a data object without calls, names in upper case, literals as they are */
+  private dataObject(source: ExpressionNode): string | undefined {
+    const children = source.getChildren();
+    if (!(children[0] instanceof ExpressionNode) || !(children[0].get() instanceof Expressions.FieldChain)
+        || (children.length === 2 && !(children[1].get() instanceof Expressions.Dereference))
+        || children.length > 2
+        || source.findFirstExpression(Expressions.MethodCall) !== undefined
+        || source.findFirstExpression(Expressions.MethodCallChain) !== undefined
+        || source.findFirstExpression(Expressions.NewObject) !== undefined) {
+      return undefined;
+    }
+    return source.getTokens().map(t => {
+      const str = t.getStr();
+      return str.startsWith("'") || str.startsWith("`") || str.startsWith("|") || str.startsWith("}") ? str : str.toUpperCase();
+    }).join(" ");
+  }
 
   private analyzeCond(file: ABAPFile, node: ExpressionNode): Issue[] {
     const conditions = new Conditions();

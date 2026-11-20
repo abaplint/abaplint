@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {runProgram} from "./syntax";
 import {LanguageVersion, Release} from "../../../src/version";
 
-const message = (type: string) => `Offset or length specification not possible on a field of numeric type "${type}"`;
+const message = (type: string) => `Field type "${type}" does not permit substrings to be accessed`;
 
 describe("syntax.ts, offset or length on a numeric field", () => {
   const program = (code: string): string => `
@@ -47,11 +47,11 @@ ENDFORM.
     {abap: `lv_int+1 = '01'.`, type: "I"},
     {abap: `lv_int(2) = '01'.`, type: "I"},
     {abap: `lv_int+lv_off(2) = '01'.`, type: "I"},
-    {abap: `lv_int8+1(2) = '01'.`, type: "INT8"},
+    {abap: `lv_int8+1(2) = '01'.`, type: "8"},
     {abap: `lv_p+1(2) = '01'.`, type: "P"},
     {abap: `lv_f+1(2) = '01'.`, type: "F"},
-    {abap: `lv_df16+1(2) = '01'.`, type: "DECFLOAT16"},
-    {abap: `lv_df34+1(2) = '01'.`, type: "DECFLOAT34"},
+    {abap: `lv_df16+1(2) = '01'.`, type: "a"},
+    {abap: `lv_df34+1(2) = '01'.`, type: "e"},
     {abap: `ls_struc-num+1(2) = '01'.`, type: "I"},
     {abap: `<ls_struc>-num+1(2) = '01'.`, type: "I"},
     {abap: `lr_int->*+1(2) = '01'.`, type: "I"},
