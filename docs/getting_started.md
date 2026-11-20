@@ -92,6 +92,9 @@ Suggest starting by running only the syntax check relevant rules, having this wo
   },
   "rules": {
     "begin_end_names": true,
+    "bdef_check_syntax": true,
+    "bdef_parser_error": true,
+    "cds_check_syntax": true,
     "cds_parser_error": true,
     "check_ddic": true,
     "strict_sql": true,
@@ -99,14 +102,23 @@ Suggest starting by running only the syntax check relevant rules, having this wo
     "allowed_object_naming": true,
     "check_include": true,
     "check_syntax": true,
+    "check_transformation_exists": true,
     "cloud_types": true,
     "sy_modification": true,
     "global_class": true,
     "implement_methods": true,
+    "local_testclass_consistency": true,
     "method_implemented_twice": true,
+    "mix_returning": true,
+    "no_comments_between_methods": true,
+    "no_mandt_in_database_operations": true,
+    "parser_bad_exceptions": true,
     "parser_error": true,
+    "parser_missing_space": true,
+    "range_row_values": true,
     "superclass_final": true,
     "unknown_types": true,
+    "xml_bom": true,
     "xml_consistency": true
   }
 }
