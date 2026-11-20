@@ -19,6 +19,7 @@ import {ConvBody} from "./conv_body";
 import {FilterBody} from "./filter_body";
 import {CorrespondingBody} from "./corresponding_body";
 import {BuiltIn} from "../_builtin";
+import {BuiltInCall} from "../_builtin_call";
 import {AttributeChain} from "./attribute_chain";
 import {Dereference} from "./dereference";
 import {Cast} from "./cast";
@@ -40,6 +41,15 @@ import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 // TODO: refactor all these method parameters to objects, this is getting messy
 export class Source {
+  // arguments of boolc( ), xsdbool( ) and the bool parameter of boolx( ) parsed as method calls, where a predicate function is allowed,
+  // and operands where the caller has already reported the predicate function in more specific terms
+  private static readonly logicalArguments = new WeakSet<ExpressionNode>();
+
+  // the predicate function in this source is already reported by the caller, Source only checks its arguments
+  public static predicateReported(source: ExpressionNode): void {
+    this.logicalArguments.add(source);
+  }
+
   public static runSyntax(
     node: ExpressionNode | undefined,
     input: SyntaxInput,
@@ -254,6 +264,14 @@ export class Source {
       if (first instanceof ExpressionNode) {
         const get = first.get();
         if (get instanceof Expressions.MethodCallChain) {
+          const predicate = this.predicateCall(node, first, input);
+          if (predicate !== undefined) {
+            const message = `Predicate function "${predicate}" can only be used in a logical expression`;
+            input.issues.push(syntaxIssue(input, first.getFirstToken(), message));
+            // the arguments are still checked, for their own errors and references
+            MethodCallChain.runSyntax(first, input, targetType);
+            return VoidType.get(CheckSyntaxKey);
+          }
           const found = MethodCallChain.runSyntax(first, input, targetType);
           context = arithmetic === true ? this.infer(context, found, true) : found;
           if (context === undefined) {
@@ -508,6 +526,35 @@ export class Source {
     }
 
     return targetType;
+  }
+
+  // a predicate function, line_exists( ) or contains( ), is a logical expression and not a value,
+  // a system reports it as an unknown method in any operand position other than the argument of boolc( ) or xsdbool( ),
+  // which parse as method calls in releases before xsdbool( ) was added, or the bool parameter of boolx( )
+  private static predicateCall(source: ExpressionNode, chain: ExpressionNode, input: SyntaxInput): string | undefined {
+    if (input.scope.getOpenABAP()) {
+      return undefined;
+    }
+    const call = BuiltInCall.fromChain(chain, input);
+    const name = call === undefined ? undefined : BuiltInCall.callName(call);
+    const upper = name?.toUpperCase();
+    const param = call?.findDirectExpression(Expressions.MethodCallParam);
+    if (upper === "BOOLC" || upper === "XSDBOOL") {
+      const argument = param?.findDirectExpression(Expressions.Source);
+      if (argument !== undefined) {
+        this.logicalArguments.add(argument);
+      }
+      return undefined;
+    } else if (upper === "BOOLX") {
+      for (const p of param?.findDirectExpression(Expressions.ParameterListS)?.findDirectExpressions(Expressions.ParameterS) || []) {
+        const argument = p.findDirectExpression(Expressions.Source);
+        if (p.findDirectExpression(Expressions.ParameterName)?.concatTokens().toUpperCase() === "BOOL" && argument !== undefined) {
+          this.logicalArguments.add(argument);
+        }
+      }
+      return undefined;
+    }
+    return BuiltIn.isPredicate(name) === true && this.logicalArguments.has(source) === false ? name : undefined;
   }
 
   // "NEW ty( )->*" is a syntax error, also in releases where a method call can be dereferenced

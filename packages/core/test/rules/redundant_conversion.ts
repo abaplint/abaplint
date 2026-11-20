@@ -234,6 +234,10 @@ CLASS lcl IMPLEMENTATION.
     lcl=>gv_i = CONV i( get( ) ).
   ENDMETHOD.
 ENDCLASS.`, cnt: 3},
+  {abap: `DATA rv_value TYPE i.
+DATA mv_seed TYPE i.
+DATA iv_limit TYPE i.
+rv_value = CONV i( mv_seed MOD iv_limit ).`, cnt: 1},
 // not reported
   {abap: `DATA lv_s TYPE string.
 DATA(lv_i) = CONV i( lv_s ).`, cnt: 0},
@@ -377,6 +381,18 @@ DATA lv_i TYPE i.
 lv_i = CONV i( lv_s ).`, output: `DATA lv_s TYPE string.
 DATA lv_i TYPE i.
 lv_i = lv_s.`},
+  {input: `DATA rv_value TYPE i.
+DATA mv_seed TYPE i.
+DATA iv_limit TYPE i.
+rv_value = CONV i( mv_seed MOD iv_limit ).`, output: `DATA rv_value TYPE i.
+DATA mv_seed TYPE i.
+DATA iv_limit TYPE i.
+rv_value = mv_seed MOD iv_limit.`},
+  {input: `DATA source TYPE i.
+DATA target TYPE i.
+target = 2 * CONV i( source + 1 ).`, output: `DATA source TYPE i.
+DATA target TYPE i.
+target = 2 * (source + 1).`},
 ];
 
 testRuleFix(fixes, RedundantConversion);
