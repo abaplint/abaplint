@@ -27,6 +27,12 @@ export class Raise implements StatementSyntax {
       return;
     }
 
+    const classBasedMessage = exceptionName === undefined && node.findDirectTokenByText("EXCEPTION")
+      ? helper.checkClassBasedException() : undefined;
+    if (classBasedMessage) {
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), classBasedMessage));
+    }
+
     const classTok = node.findDirectExpression(Expressions.ClassName)?.getFirstToken();
     const className = classTok?.getStr();
     if (classTok && className) {
