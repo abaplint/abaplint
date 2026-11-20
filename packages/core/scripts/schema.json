@@ -922,6 +922,14 @@
         "authorityCheck": {
           "type": "boolean"
         },
+        "callFunction": {
+          "description": "CALL FUNCTION with EXCEPTIONS, unless every exception is mapped to 0",
+          "type": "boolean"
+        },
+        "callMethod": {
+          "description": "Method call with EXCEPTIONS, unless every exception is mapped to 0",
+          "type": "boolean"
+        },
         "deleteDatabase": {
           "type": "boolean"
         },
@@ -972,7 +980,9 @@
         "deleteDatabase",
         "readTable",
         "assign",
-        "find"
+        "find",
+        "callFunction",
+        "callMethod"
       ],
       "type": "object"
     },
