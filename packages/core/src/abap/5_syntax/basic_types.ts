@@ -1103,14 +1103,22 @@ export class BasicTypes {
   private checkLengthDecimals(node: StatementNode | ExpressionNode, text: string) {
     const length = node.findDirectExpression(Expressions.Length);
     const decimals = node.findDirectExpression(Expressions.Decimals);
-    if (length === undefined && decimals === undefined) {
+    const fieldLength = node.get() instanceof Statements.Parameter
+      ? undefined : node.findDirectExpression(Expressions.ConstantFieldLength);
+    if (length === undefined && decimals === undefined && fieldLength === undefined) {
       return undefined;
     } else if (text.startsWith("LIKE")) {
-      if (decimals === undefined) {
+      if (decimals === undefined && fieldLength === undefined) {
         return undefined;
       }
       const message = "When referencing another field (with LIKE), type and length cannot be changed";
-      return syntaxIssue(this.input, decimals.getFirstToken(), message);
+      return syntaxIssue(this.input, (decimals ?? node).getFirstToken(), message);
+    }
+    if (fieldLength !== undefined) {
+      const fieldLengthIssue = this.checkFieldLength(node, text);
+      if (fieldLengthIssue !== undefined) {
+        return fieldLengthIssue;
+      }
     }
     const builtin = text.startsWith("TYPE") ? text.substring(4).trim() : "";
     if (length !== undefined && ["C", "N", "X", "P"].includes(builtin) === false) {
@@ -1119,6 +1127,33 @@ export class BasicTypes {
       return syntaxIssue(this.input, decimals.getFirstToken(), "\"DECIMALS\" can be specified only for type P");
     }
     return undefined;
+  }
+
+  // the length in brackets, "DATA foo(8) TYPE d", as a system checks it: c, n, x and p take any length,
+  // d, t and f only their own length, i any length. Their allowed lengths are ignored with a warning,
+  // which is an error in classes and interfaces. Any other type is an error
+  private checkFieldLength(node: StatementNode | ExpressionNode, text: string) {
+    const typeNameExpression = node.findFirstExpression(Expressions.TypeName);
+    const typeName = typeNameExpression?.concatTokens().toUpperCase() ?? "";
+    if (typeNameExpression === undefined
+        || text.includes(" REF TO ")
+        || ["C", "N", "X", "P"].includes(typeName)) {
+      return undefined;
+    }
+
+    const token = typeNameExpression.getFirstToken();
+    const ownLength: {[type: string]: number} = {"D": 8, "T": 6, "F": 8};
+    if (ownLength[typeName] !== undefined) {
+      const length = this.findLength(node);
+      if (length !== undefined && length !== ownLength[typeName]) {
+        const message = "Type \"" + typeName + "\" can only have the specified length \"" + ownLength[typeName] + "\" or no length specified at all";
+        return syntaxIssue(this.input, token, message);
+      }
+    }
+    if ((ownLength[typeName] !== undefined || typeName === "I") && this.input.scope.isAnyOO() === false) {
+      return undefined;
+    }
+    return syntaxIssue(this.input, token, "Lengths specified in combination with type \"" + typeName + "\" are ignored");
   }
 
   private findDecimals(node: StatementNode | ExpressionNode): number | undefined {

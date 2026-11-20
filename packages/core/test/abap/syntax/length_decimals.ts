@@ -150,3 +150,90 @@ DATA r1 LIKE REF TO p1 DECIMALS 2.`)).to.equal(likeMessage);
   });
 
 });
+
+describe("syntax.ts, length in brackets, #4613", () => {
+  const ignored = (type: string) => "Lengths specified in combination with type \"" + type + "\" are ignored";
+  const own = (type: string, length: number) =>
+    "Type \"" + type + "\" can only have the specified length \"" + length + "\" or no length specified at all";
+  const inClass = (declaration: string) => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS m.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    ${declaration}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error, d, t and f with another length than their own", () => {
+    expect(errors(`DATA foo(4) TYPE d.`)).to.equal(own("D", 8));
+    expect(errors(`DATA foo(8) TYPE t.`)).to.equal(own("T", 6));
+    expect(errors(`DATA foo(4) TYPE f.`)).to.equal(own("F", 8));
+  });
+
+  it("error, d with a constant length", () => {
+    expect(errors(`CONSTANTS len TYPE i VALUE 4.
+DATA foo(len) TYPE d.`)).to.equal(own("D", 8));
+  });
+
+  it("error, string, xstring, int8, decfloat34 and utclong", () => {
+    for (const type of ["string", "xstring", "int8", "decfloat34", "utclong"]) {
+      expect(errors(`DATA foo(8) TYPE ${type}.`), type).to.equal(ignored(type.toUpperCase()));
+    }
+  });
+
+  it("error, type defined in the program", () => {
+    expect(errors(`TYPES ty TYPE c LENGTH 3.
+DATA foo(5) TYPE ty.`)).to.equal(ignored("TY"));
+  });
+
+  it("error, TYPES, CONSTANTS and structure component", () => {
+    expect(errors(`TYPES ty(8) TYPE string.`)).to.equal(ignored("STRING"));
+    expect(errors(`CONSTANTS co(4) TYPE d VALUE '20260101'.`)).to.equal(own("D", 8));
+    expect(errors(`DATA: BEGIN OF s,
+        comp(8) TYPE string,
+      END OF s.`)).to.equal(ignored("STRING"));
+  });
+
+  it("error, LIKE", () => {
+    expect(errors(`DATA base TYPE c LENGTH 10.
+DATA foo(5) LIKE base.`)).to.equal("When referencing another field (with LIKE), type and length cannot be changed");
+  });
+
+  it("ok outside classes, d, t and f with their own length and i with any length, a warning on the system", () => {
+    expect(errors(`DATA d8(8) TYPE d.
+DATA t6(6) TYPE t.
+DATA f8(8) TYPE f.
+DATA i1(1) TYPE i.
+DATA i16(16) TYPE i.
+TYPES tyd(8) TYPE d.
+FORM f.
+  DATA fi8(8) TYPE i.
+ENDFORM.`)).to.equal(undefined);
+  });
+
+  it("error in classes, d with its own length and i", () => {
+    expect(errors(inClass(`DATA loc(8) TYPE d.`))).to.equal(ignored("D"));
+    expect(errors(inClass(`DATA loc(8) TYPE i.`))).to.equal(ignored("I"));
+    expect(errors(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA attr(8) TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`)).to.equal(ignored("I"));
+  });
+
+  it("ok, c, n, x and p, and no type", () => {
+    expect(errors(`DATA c1(5) TYPE c.
+DATA n1(5) TYPE n.
+DATA x1(5) TYPE x.
+DATA p1(8) TYPE p DECIMALS 2.
+DATA p3(3) TYPE p.
+DATA c2(5).
+TYPES ty2(4) TYPE c.
+CONSTANTS co(3) TYPE c VALUE 'abc'.`)).to.equal(undefined);
+    expect(errors(inClass(`DATA loc(5) TYPE c.`))).to.equal(undefined);
+  });
+});
