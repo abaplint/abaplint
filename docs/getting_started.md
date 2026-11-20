@@ -186,7 +186,11 @@ Note: `select_single_full_key` to give all findings, abaplint must know the data
     "errorNamespace": "."
   },
   "rules": {
+    "aff_and_xml": true,
     "begin_end_names": true,
+    "bdef_check_syntax": true,
+    "bdef_parser_error": true,
+    "cds_check_syntax": true,
     "cds_parser_error": true,
     "check_ddic": true,
     "check_include": true,
@@ -198,16 +202,22 @@ Note: `select_single_full_key` to give all findings, abaplint must know the data
     "identical_form_names": true,
     "implement_methods": true,
     "local_testclass_consistency": true,
+    "main_file_contents": true,
     "message_exists": true,
     "method_implemented_twice": true,
     "mix_returning": true,
     "no_comments_between_methods": true,
+    "no_mandt_in_database_operations": true,
     "parser_bad_exceptions": true,
     "parser_error": true,
     "parser_missing_space": true,
+    "range_row_values": true,
     "sql_escape_host_variables": true,
     "superclass_final": true,
+    "uncaught_exception": true,
+    "unhandled_classic_exception": true,
     "unknown_types": true,
+    "xml_bom": true,
     "xml_consistency": true
   }
 }
