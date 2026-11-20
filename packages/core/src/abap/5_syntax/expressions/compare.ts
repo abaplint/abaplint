@@ -8,13 +8,23 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {CharacterType, DateType, IntegerType, StringType} from "../../types/basic";
 import {TypeUtils} from "../_type_utils";
 import {BuiltIn} from "../_builtin";
-import {ObjectOriented} from "../_object_oriented";
+import {BuiltInCall} from "../_builtin_call";
 
 export class Compare {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput): void {
 
-    const sourceTypes: (AbstractType | undefined)[] = [];
     const sources = node.findDirectExpressions(Expressions.Source);
+
+    // reported before the operands are checked, which then skip the more general predicate function message
+    const initialMessage = this.checkInitialOperand(node, input);
+    const predicateMessage = this.checkPredicateOperand(sources, input);
+    const operandMessage = initialMessage ?? predicateMessage;
+    if (operandMessage !== undefined) {
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), operandMessage));
+    }
+
+    // the operands are always checked, for their own errors and references
+    const sourceTypes: (AbstractType | undefined)[] = [];
     for (const t of sources) {
       sourceTypes.push(Source.runSyntax(t, input));
     }
@@ -27,15 +37,7 @@ export class Compare {
       MethodCallChain.runSyntax(t, input);
     }
 
-    const initialMessage = this.checkInitialOperand(node, input);
-    if (initialMessage !== undefined) {
-      input.issues.push(syntaxIssue(input, node.getFirstToken(), initialMessage));
-      return;
-    }
-
-    const predicateMessage = this.checkPredicateOperand(sources, input);
-    if (predicateMessage !== undefined) {
-      input.issues.push(syntaxIssue(input, node.getFirstToken(), predicateMessage));
+    if (operandMessage !== undefined) {
       return;
     }
 
@@ -93,35 +95,21 @@ export class Compare {
     if (input.scope.getOpenABAP()) {
       return undefined;
     }
+    let message: string | undefined = undefined;
     for (const source of sources) {
       const name = this.builtinCallName(source, input);
       if (BuiltIn.isPredicate(name) === true) {
-        return `Predicate function "${name}" cannot be the operand of a comparison`;
+        Source.predicateReported(source);
+        message = message ?? `Predicate function "${name}" cannot be the operand of a comparison`;
       }
     }
-    return undefined;
+    return message;
   }
 
   // the name of the built-in function when the source is exactly one call of it, not hidden by a method of the same name
   private static builtinCallName(source: ExpressionNode | undefined, input: SyntaxInput): string | undefined {
-    const chain = source?.getChildren();
-    if (chain?.length !== 1 || !(chain[0] instanceof ExpressionNode) || !(chain[0].get() instanceof Expressions.MethodCallChain)) {
-      return undefined;
-    }
-    const calls = chain[0].getChildren();
-    if (calls.length !== 1 || !(calls[0] instanceof ExpressionNode) || !(calls[0].get() instanceof Expressions.MethodCall)) {
-      return undefined;
-    }
-    const name = calls[0].findDirectExpression(Expressions.MethodName)?.concatTokens();
-    if (name === undefined || BuiltIn.searchBuiltin(name) === undefined) {
-      return undefined;
-    }
-    // a method of the same name hides the built-in function
-    const enclosing = input.scope.findClassDefinition(input.scope.getEnclosingClassName());
-    if (enclosing !== undefined && new ObjectOriented(input.scope).searchMethodName(enclosing, name).method !== undefined) {
-      return undefined;
-    }
-    return name;
+    const call = BuiltInCall.fromSource(source, input);
+    return call === undefined ? undefined : BuiltInCall.callName(call);
   }
 
 }
