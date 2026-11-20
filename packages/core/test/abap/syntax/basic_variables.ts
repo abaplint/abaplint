@@ -7,6 +7,7 @@ import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Position} from "../../../src/position";
 import {MemoryFile} from "../../../src/files/memory_file";
 import {TableAccessType} from "../../../src/abap/types/basic";
+import {CheckSyntaxKey} from "../../../src/abap/5_syntax/_syntax_input";
 
 function resolveVariable(abap: string, name: string): TypedIdentifier | undefined {
   const filename = "zfoobar.prog.abap";
@@ -1329,6 +1330,198 @@ DATA moo TYPE REF TO lif_bar=>type.`;
     expect((rightId as Basic.CharacterType).getLength()).to.equal(4);
   });
 
+  const zselCond = () => buildDatabaseTable("ZSEL_COND", [
+    {name: "MANDT", length: 3},
+    {name: "KEYVAL", length: 30},
+    {name: "STATUS", length: 1}]);
+
+  function runSelCond(abap: string, name: string) {
+    return runMulti([
+      {filename: "zsel_cond.tabl.xml", contents: zselCond()},
+      {filename: "zfoobar.prog.abap", contents: abap}], name);
+  }
+
+  function expectCharComponent(structure: Basic.StructureType, name: string, length: number) {
+    const component = structure.getComponentByName(name);
+    expect(component, name).to.be.instanceof(Basic.CharacterType);
+    expect((component as Basic.CharacterType).getLength(), name).to.equal(length);
+  }
+
+  it("SELECT substring columns into inline table", () => {
+    const abap = `
+DATA lr_cust TYPE RANGE OF string.
+SELECT DISTINCT substring( keyval, 1, 10 ) AS cust,
+                substring( keyval, 11, 7 ) AS prod
+  FROM zsel_cond
+  WHERE status = @space
+    AND substring( keyval, 1, 10 ) IN @lr_cust
+  INTO TABLE @DATA(lt_result).`;
+    const rowType = expectTable(runSelCond(abap, "lt_result"));
+    expect(rowType).to.be.instanceof(Basic.StructureType);
+    const structure = rowType as Basic.StructureType;
+    expect(structure.getComponents().map(c => c.name)).to.deep.equal(["cust", "prod"]);
+    expectCharComponent(structure, "cust", 10);
+    expectCharComponent(structure, "prod", 7);
+  });
+
+  it("SELECT plain field and substring column into inline table", () => {
+    const abap = `
+SELECT status, substring( keyval, 1, 10 ) AS cust
+  FROM zsel_cond
+  INTO TABLE @DATA(lt_result).`;
+    const structure = expectTable(runSelCond(abap, "lt_result")) as Basic.StructureType;
+    expect(structure).to.be.instanceof(Basic.StructureType);
+    expect(structure.getComponents().map(c => c.name)).to.deep.equal(["STATUS", "cust"]);
+    expectCharComponent(structure, "STATUS", 1);
+    expectCharComponent(structure, "cust", 10);
+  });
+
+  it("SELECT substring with host variable length, column voided", () => {
+    const abap = `
+DATA lv_len TYPE i.
+SELECT status, substring( keyval, 1, @lv_len ) AS cust
+  FROM zsel_cond
+  INTO TABLE @DATA(lt_result).`;
+    const structure = expectTable(runSelCond(abap, "lt_result")) as Basic.StructureType;
+    expect(structure).to.be.instanceof(Basic.StructureType);
+    expectCharComponent(structure, "STATUS", 1);
+    expect(structure.getComponentByName("cust")).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("SELECT upper and nested functions into inline table", () => {
+    const abap = `
+SELECT upper( keyval ) AS up, lower( substring( keyval, 1, 4 ) ) AS low
+  FROM zsel_cond
+  INTO TABLE @DATA(lt_result).`;
+    const structure = expectTable(runSelCond(abap, "lt_result")) as Basic.StructureType;
+    expect(structure).to.be.instanceof(Basic.StructureType);
+    expectCharComponent(structure, "up", 30);
+    expectCharComponent(structure, "low", 4);
+  });
+
+  it("SELECT function column without alias, voided", () => {
+    const abap = `
+SELECT status, substring( keyval, 1, 10 )
+  FROM zsel_cond
+  INTO TABLE @DATA(lt_result).`;
+    expectVoid(runSelCond(abap, "lt_result"));
+  });
+
+  it("SELECT SINGLE substring columns into inline structure", () => {
+    const abap = `
+SELECT SINGLE status, substring( keyval, 11, 7 ) AS prod
+  FROM zsel_cond
+  INTO @DATA(ls_result).`;
+    const components = expectStructure(runSelCond(abap, "ls_result"));
+    expect(components.map(c => c.name)).to.deep.equal(["STATUS", "prod"]);
+    expect((components[1].type as Basic.CharacterType).getLength()).to.equal(7);
+  });
+
+  it("SELECT SINGLE single substring column into inline field", () => {
+    const abap = `
+SELECT SINGLE substring( keyval, 1, 10 ) AS cust
+  FROM zsel_cond
+  INTO @DATA(lv_cust).`;
+    expectCharacter(runSelCond(abap, "lv_cust"), 10);
+  });
+
+  it("SELECT SINGLE host constant into inline field", () => {
+    const abap = `SELECT SINGLE @abap_true FROM zsel_cond INTO @DATA(lv_exists).`;
+    const identifier = runSelCond(abap, "lv_exists");
+    expectCharacter(identifier, 1);
+    expect(identifier!.getType().getQualifiedName()?.toUpperCase()).to.equal("ABAP_BOOL");
+  });
+
+  it("SELECT SINGLE host variable into inline field", () => {
+    const abap = `
+DATA lv_int TYPE i.
+SELECT SINGLE @lv_int FROM zsel_cond INTO @DATA(lv_result).`;
+    const identifier = runSelCond(abap, "lv_result");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("SELECT SINGLE host variable with alias into inline field", () => {
+    const abap = `
+DATA lv_char TYPE c LENGTH 5.
+SELECT SINGLE @lv_char AS foo FROM zsel_cond INTO @DATA(lv_result).`;
+    expectCharacter(runSelCond(abap, "lv_result"), 5);
+  });
+
+  it("SELECT SINGLE parenthesized host component into inline field", () => {
+    const abap = `
+TYPES: BEGIN OF ty_struc,
+         field TYPE c LENGTH 7,
+       END OF ty_struc.
+DATA ls_struc TYPE ty_struc.
+SELECT SINGLE @( ls_struc-field ) FROM zsel_cond INTO @DATA(lv_result).`;
+    expectCharacter(runSelCond(abap, "lv_result"), 7);
+  });
+
+  it("SELECT SINGLE host variable from voided table into inline field", () => {
+    const abap = `
+DATA lv_int TYPE i.
+SELECT SINGLE @lv_int FROM t100 INTO @DATA(lv_result).`;
+    const identifier = resolveVariable(abap, "lv_result");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("SELECT SINGLE unknown host variable into inline field, voided", () => {
+    const abap = `SELECT SINGLE @lv_unknown FROM zsel_cond INTO @DATA(lv_result).`;
+    const identifier = runSelCond(abap, "lv_result");
+    expectVoid(identifier);
+    expect((identifier!.getType() as Basic.VoidType).getVoided()).to.not.equal(CheckSyntaxKey);
+  });
+
+  it("SELECT SINGLE host variable arithmetic into inline field, voided", () => {
+    const abap = `
+DATA lv_int TYPE i.
+SELECT SINGLE @lv_int + 1 FROM zsel_cond INTO @DATA(lv_result).`;
+    expectVoid(runSelCond(abap, "lv_result"));
+  });
+
+  it("SELECT SINGLE column into inline field", () => {
+    const abap = `SELECT SINGLE keyval FROM zsel_cond INTO @DATA(lv_result).`;
+    expectCharacter(runSelCond(abap, "lv_result"), 30);
+  });
+
+  it("SELECT single substring column into inline table", () => {
+    const abap = `
+SELECT substring( keyval, 1, 10 ) AS cust
+  FROM zsel_cond
+  INTO TABLE @DATA(lt_result).`;
+    const structure = expectTable(runSelCond(abap, "lt_result")) as Basic.StructureType;
+    expect(structure).to.be.instanceof(Basic.StructureType);
+    expect(structure.getComponents().map(c => c.name)).to.deep.equal(["cust"]);
+    expectCharComponent(structure, "cust", 10);
+  });
+
+  it("SELECT SINGLE substring into inline list", () => {
+    const abap = `
+SELECT SINGLE status, substring( keyval, 1, 10 )
+  FROM zsel_cond
+  INTO (@DATA(lv_status), @DATA(lv_cust)).`;
+    expectCharacter(runSelCond(abap, "lv_status"), 1);
+    expectCharacter(runSelCond(abap, "lv_cust"), 10);
+  });
+
+  it("SELECT join with substring column into inline table", () => {
+    const right = buildDatabaseTable("ZJOIN_RIGHT", [{name: "ID", length: 4}]);
+    const abap = `SELECT r~id, substring( c~keyval, 1, 10 ) AS cust
+      FROM zsel_cond AS c
+      INNER JOIN zjoin_right AS r ON c~status = r~id
+      INTO TABLE @DATA(result).`;
+    const result = runMulti([
+      {filename: "zsel_cond.tabl.xml", contents: zselCond()},
+      {filename: "zjoin_right.tabl.xml", contents: right},
+      {filename: "zfoobar.prog.abap", contents: abap}], "result");
+    const structure = expectTable(result) as Basic.StructureType;
+    expect(structure).to.be.instanceof(Basic.StructureType);
+    expectCharComponent(structure, "ID", 4);
+    expectCharComponent(structure, "cust", 10);
+  });
+
   it("SELECT SINGLE, voided", () => {
     const abap = `SELECT SINGLE * FROM something INTO @DATA(ls_data).`;
     const type = resolveVariable(abap, "ls_data");
@@ -2262,6 +2455,88 @@ DATA(one) = pac * flo.
 DATA(two) = flo * pac.`;
     expect(resolveVariable(abap, "one")!.getType()).to.be.instanceof(Basic.FloatType);
     expect(resolveVariable(abap, "two")!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("arithmetic, the difference of two dates is a number of days, not a date", () => {
+    // date and time operands count as numbers in the calculation type
+    const abap = `DATA lv_start TYPE d VALUE '20260105'.
+DATA lv_end TYPE d VALUE '20260320'.
+DATA(lv_between) = lv_end - lv_start.`;
+    expect(resolveVariable(abap, "lv_between")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, the sum of two dates is a number, not a date", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_end TYPE d.
+DATA(lv_sum) = lv_start + lv_end.`;
+    expect(resolveVariable(abap, "lv_sum")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, a date plus an integer is an integer", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA(lv_later) = lv_start + 31.`;
+    expect(resolveVariable(abap, "lv_later")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, the difference of two times is a number of seconds, not a time", () => {
+    const abap = `DATA lv_from TYPE t.
+DATA lv_to TYPE t.
+DATA(lv_seconds) = lv_to - lv_from.`;
+    expect(resolveVariable(abap, "lv_seconds")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, sy-datum minus a date is a number", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA(lv_days) = sy-datum - lv_start.`;
+    expect(resolveVariable(abap, "lv_days")!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("arithmetic, a date and a float give a float", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_f TYPE f.
+DATA(lv_res) = lv_start * lv_f.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("arithmetic, a date and a packed number give packed", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_p TYPE p LENGTH 8 DECIMALS 2.
+DATA(lv_res) = lv_start + lv_p.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
+  it("arithmetic, a date and a character literal give packed", () => {
+    // the character operand counts as p, measured on a system: P(8,0)
+    const abap = `DATA lv_start TYPE d.
+DATA(lv_res) = lv_start + '5'.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
+  it("arithmetic, a time and a string give packed", () => {
+    const abap = `DATA lv_from TYPE t.
+DATA lv_str TYPE string.
+DATA(lv_res) = lv_str - lv_from.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
+  it("arithmetic, a date, a character literal and a float give a float", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_f TYPE f.
+DATA(lv_res) = lv_start + '5' + lv_f.`;
+    expect(resolveVariable(abap, "lv_res")!.getType()).to.be.instanceof(Basic.FloatType);
+  });
+
+  it("arithmetic, a declared date target stays a date", () => {
+    const abap = `DATA lv_start TYPE d.
+DATA lv_x TYPE d.
+lv_x = lv_start + 31.`;
+    expect(resolveVariable(abap, "lv_x")!.getType()).to.be.instanceof(Basic.DateType);
+  });
+
+  it("no arithmetic, an inline copy of a time stays a time", () => {
+    const abap = `DATA lv_from TYPE t.
+DATA(lv_copy) = lv_from.`;
+    expect(resolveVariable(abap, "lv_copy")!.getType()).to.be.instanceof(Basic.TimeType);
   });
 
   it("concatenation is not arithmetic, a character result stays character", () => {

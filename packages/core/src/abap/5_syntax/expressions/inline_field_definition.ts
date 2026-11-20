@@ -39,8 +39,8 @@ export class InlineFieldDefinition {
     }
 
     const name = field.getStr();
-    if (input.scope.findVariable(name) !== undefined) {
-      const message = `Variable ${name} already defined`;
+    const message = input.scope.checkLocalName(name, type);
+    if (message !== undefined) {
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return VoidType.get(CheckSyntaxKey);
     }

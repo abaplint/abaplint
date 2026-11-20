@@ -18,6 +18,8 @@ import {Types} from "./structures/types";
 import {Statics} from "./structures/statics";
 import {Constants} from "./structures/constants";
 import {Cleanup} from "./structures/cleanup";
+import {Try} from "./structures/try";
+import {LoopGroupBy} from "./expressions/loop_group_by";
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
@@ -167,6 +169,8 @@ import {IStructure} from "../3_structures/structures/_structure";
 import {SELECTION_EVENTS} from "../../stuff";
 import {LoopTableChange} from "./_loop_table_change";
 import {SortedKeyWrite} from "./_sorted_key_write";
+import {SuperConstructorCall} from "./_super_constructor_call";
+import {SpaghettiScope} from "./spaghetti_scope";
 
 // -----------------------------------
 
@@ -325,6 +329,7 @@ export class SyntaxLogic {
 
   private scope: CurrentScope;
   private loopTables: LoopTableChange;
+  private currentMethod: StructureNode | undefined;
   private sortedLines: SortedKeyWrite;
 
   private helpers: {
@@ -479,13 +484,20 @@ export class SyntaxLogic {
         }
       }
 
-      if (isStructure || isStatement) {
-        this.traverse(child as StatementNode | StructureNode);
+      // statements only have expressions and tokens as children, nothing to traverse
+      if (isStructure) {
+        this.traverse(child as StructureNode);
       }
     }
 
     if (loop === true) {
       this.loopTables.pop();
+    }
+    if (node instanceof StructureNode && node.get() instanceof Structures.Loop) {
+      const loopStatement = node.findDirectStatement(Statements.Loop);
+      if (loopStatement) {
+        LoopGroupBy.unbind(loopStatement, this.scope);
+      }
     }
     if (node instanceof StructureNode) {
       this.sortedLines.leave(node);
@@ -543,6 +555,10 @@ export class SyntaxLogic {
       return true;
     } else if (stru instanceof Structures.Cleanup) {
       Cleanup.runSyntax(node, input);
+    } else if (stru instanceof Structures.Try) {
+      Try.runSyntax(node, input);
+    } else if (stru instanceof Structures.Method) {
+      this.currentMethod = node;
     }
     return false;
   }
@@ -594,12 +610,17 @@ export class SyntaxLogic {
         || s instanceof Statements.EndInterface) {
       this.scope.pop(node.getLastToken().getEnd());
     } else if (s instanceof Statements.EndMethod) {
+      let popped: SpaghettiScope | undefined = undefined;
       if (this.scope.getType() === ScopeType.Method) {
-        this.scope.pop(node.getLastToken().getEnd());
+        popped = this.scope.pop(node.getLastToken().getEnd());
       }
       if (this.scope.getType() === ScopeType.MethodInstance) {
-        this.scope.pop(node.getLastToken().getEnd());
+        popped = this.scope.pop(node.getLastToken().getEnd());
       }
+      if (this.currentMethod !== undefined && popped !== undefined) {
+        SuperConstructorCall.check(this.currentMethod, popped.getTop(), input);
+      }
+      this.currentMethod = undefined;
     }
   }
 

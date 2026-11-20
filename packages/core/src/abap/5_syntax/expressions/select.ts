@@ -1,7 +1,8 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {Integer8Type, IntegerType, IStructureComponent, ITableOptions, StructureType, TableKeyType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {CharacterType, DateType, Integer8Type, IntegerType, IStructureComponent, ITableOptions, NumericType, StringType,
+  StructureType, TableKeyType, TableType, TimeType, UnknownType, VoidType} from "../../types/basic";
 import {InlineData} from "./inline_data";
 import {Target} from "./target";
 import {SQLFrom} from "./sql_from";
@@ -18,10 +19,16 @@ import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 import {IEdit} from "../../../edit_helper";
 import {checkDatabaseFields} from "./_check_database_fields";
+import {Issue} from "../../../issue";
+import {FieldChain} from "./field_chain";
+import {WAt} from "../../1_lexer/tokens";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 type DatabaseSourceInfo = {source: DatabaseTableSource, name: string, alias: string};
+type FieldTypeLookup = (code: string) => AbstractType | undefined;
 const isSimple = /^\w+$/;
+// SQL functions where the result has the same type as the first argument
+const sameTypeAsFirstArgument = new Set(["UPPER", "LOWER", "LTRIM", "RTRIM"]);
 
 export class Select {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, skipImplicitInto = false, selectLoop = false): void {
@@ -257,7 +264,7 @@ export class Select {
     if (intoStructure) {
       const inlineList = intoStructure.findAllExpressions(Expressions.InlineData);
       if (inlineList.length === 1) {
-        InlineData.runSyntax(inlineList[0], input, this.buildStructureType(fields, dbSources, input.scope));
+        InlineData.runSyntax(inlineList[0], input, this.buildStructureType(fields, dbSources, input, from));
       } else {
         for (const inline of inlineList) {
           // todo, for now these are voided
@@ -291,7 +298,11 @@ export class Select {
 
           let type: AbstractType = VoidType.get("SELECT_todo2");
 
-          if (isSimple.test(field.code)) {
+          const fn = this.findFunctionColumn(field, false);
+          if (fn) {
+            const sourceInfos = this.buildDatabaseSourceInfos(from, dbSources);
+            type = this.inferFunctionType(fn, code => this.findFieldType(code, sourceInfos, input.scope)) || type;
+          } else if (isSimple.test(field.code)) {
             for (const dbSource of dbSources) {
               if (dbSource === undefined) {
                 continue;
@@ -326,11 +337,20 @@ export class Select {
     }
   }
 
-  private static buildStructureType(fields: FieldList, dbSources: DatabaseTableSource[], scope: CurrentScope): AbstractType | undefined {
+  private static buildStructureType(fields: FieldList,
+                                    dbSources: DatabaseTableSource[],
+                                    input: SyntaxInput,
+                                    from: ExpressionNode): AbstractType | undefined {
+    const scope = input.scope;
     if (fields.length === 1 && dbSources.length === 1) {
       // COUNT( * ) yields an integer regardless of the (possibly dynamic) table
       if (/^count\(\s*\*\s*\)$/i.test(fields[0].code)) {
         return this.countResultType(scope);
+      }
+      // a host variable yields its own type regardless of the table
+      const hostType = this.findHostFieldType(fields[0], input);
+      if (hostType) {
+        return hostType;
       }
       const dbType = dbSources[0]?.parseType(scope.getRegistry());
       if (dbType === undefined) {
@@ -356,10 +376,17 @@ export class Select {
             } else {
               return IntegerType.get();
             }
-          } else {
-            // todo: aggregated/calculated values
-            return VoidType.get("SELECT_todo11");
           }
+          const fn = this.findFunctionColumn(fields[0], false);
+          if (fn) {
+            const sourceInfos = this.buildDatabaseSourceInfos(from, dbSources);
+            const type = this.inferFunctionType(fn, code => this.findFieldType(code, sourceInfos, scope));
+            if (type) {
+              return type;
+            }
+          }
+          // todo: aggregated/calculated values
+          return VoidType.get("SELECT_todo11");
         } else {
           return VoidType.get("SELECT_todo10");
         }
@@ -377,15 +404,10 @@ export class Select {
       if (!(dbType instanceof StructureType)) {
         return VoidType.get("SELECT_todo14");
       }
-      const allFieldsSimple = fields.every(f => isSimple.test(f.code));
-      if (allFieldsSimple === true) {
-        const components: IStructureComponent[] = [];
-        for (const field of fields) {
-          const type = dbType.getComponentByName(field.code);
-          if (type === undefined) {
-            return VoidType.get("SELECT_todo9");
-          }
-          components.push({name: field.as || field.code, type});
+      if (this.allFieldsSupported(fields) === true) {
+        const components = this.buildSingleSourceComponents(fields, dbType, from, dbSources, scope);
+        if (components === undefined) {
+          return VoidType.get("SELECT_todo9");
         }
         return new StructureType(components);
       }
@@ -415,9 +437,15 @@ export class Select {
         return new TableType(new StructureType(components), tableOptions, undefined);
       }
 
+      const lookup: FieldTypeLookup = code => this.findFieldType(code, sourceInfos, scope);
       const components: IStructureComponent[] = [];
       for (const field of fields) {
-        const type = this.findFieldType(field.code, sourceInfos, scope);
+        const fn = this.findFunctionColumn(field);
+        if (fn) {
+          components.push({name: field.as, type: this.inferFunctionType(fn, lookup) || VoidType.get("SELECT_function")});
+          continue;
+        }
+        const type = lookup(field.code);
         if (type === undefined) {
           return VoidType.get("SELECT_todo3");
         }
@@ -442,20 +470,134 @@ export class Select {
       return new TableType(dbType, tableOptions, undefined);
     }
 
-    const allFieldsSimple = fields.every(f => isSimple.test(f.code));
-    if (allFieldsSimple === true) {
-      const components: IStructureComponent[] = [];
-      for (const field of fields) {
-        const type = dbType.getComponentByName(field.code);
-        if (type === undefined) {
-          return VoidType.get("SELECT_todo6");
-        }
-        components.push({name: field.as || field.code, type});
+    if (this.allFieldsSupported(fields) === true) {
+      const components = this.buildSingleSourceComponents(fields, dbType, from, dbSources, scope);
+      if (components === undefined) {
+        return VoidType.get("SELECT_todo6");
       }
       return new TableType(new StructureType(components), tableOptions, undefined);
     }
 
     return VoidType.get("SELECT_todo7");
+  }
+
+  /** plain field names, or SQL function columns with an alias */
+  private static allFieldsSupported(fields: FieldList): boolean {
+    return fields.every(f => isSimple.test(f.code) || this.findFunctionColumn(f) !== undefined);
+  }
+
+  /** returns undefined if a plain field is not found in the database table */
+  private static buildSingleSourceComponents(fields: FieldList,
+                                             dbType: StructureType,
+                                             from: ExpressionNode,
+                                             dbSources: DatabaseTableSource[],
+                                             scope: CurrentScope): IStructureComponent[] | undefined {
+    const sourceInfos = this.buildDatabaseSourceInfos(from, dbSources);
+    const lookup: FieldTypeLookup = code => this.findFieldType(code, sourceInfos, scope);
+    const components: IStructureComponent[] = [];
+    for (const field of fields) {
+      const fn = this.findFunctionColumn(field);
+      if (fn) {
+        components.push({name: field.as, type: this.inferFunctionType(fn, lookup) || VoidType.get("SELECT_function")});
+        continue;
+      }
+      const type = dbType.getComponentByName(field.code);
+      if (type === undefined) {
+        return undefined;
+      }
+      components.push({name: field.as || field.code, type});
+    }
+    return components;
+  }
+
+  /** returns the type of the field list entry if it is a single ABAP host variable, "@var" or "@( var )" */
+  private static findHostFieldType(field: FieldList[number], input: SyntaxInput): AbstractType | undefined {
+    if (!(field.expression.get() instanceof Expressions.SQLField)) {
+      return undefined;
+    }
+    const children = field.expression.getChildren().filter(c =>
+      !(c.get() instanceof Expressions.SQLAsName) && c.concatTokens().toUpperCase() !== "AS");
+    if (!(children[0]?.get() instanceof WAt)) {
+      return undefined;
+    }
+    // "@var" has two children, "@( var )" has four, anything else is an expression
+    const chain = children.length === 2 ? children[1] : children.length === 4 ? children[2] : undefined;
+    if (!(chain instanceof ExpressionNode) || !(chain.get() instanceof Expressions.SimpleFieldChain2)) {
+      return undefined;
+    }
+    // only resolve the type here, errors for the host variable are not reported by this lookup
+    const issues: Issue[] = [];
+    const type = FieldChain.runSyntax(chain, {...input, issues});
+    // a generic host type cannot type the inline declaration, keep it voided
+    if (issues.length > 0 || type === undefined || type.isGeneric()) {
+      return undefined;
+    }
+    return type;
+  }
+
+  /** returns the SQLFunction node if the field list entry is a single SQL function call */
+  private static findFunctionColumn(field: FieldList[number], requireAlias = true): ExpressionNode | undefined {
+    if (requireAlias === true && field.as === "") {
+      return undefined;
+    } else if (!(field.expression.get() instanceof Expressions.SQLField)) {
+      return undefined;
+    }
+    const children = field.expression.getChildren().filter(c =>
+      !(c.get() instanceof Expressions.SQLAsName) && c.concatTokens().toUpperCase() !== "AS");
+    if (children.length === 1
+        && children[0] instanceof ExpressionNode
+        && children[0].get() instanceof Expressions.SQLFunction) {
+      return children[0];
+    }
+    return undefined;
+  }
+
+  /** infers the result type of a SQL function, returns undefined if not possible */
+  private static inferFunctionType(fn: ExpressionNode, lookup: FieldTypeLookup): AbstractType | undefined {
+    const name = fn.getFirstToken().getStr().toUpperCase();
+    const inputs = fn.findDirectExpressions(Expressions.SQLFunctionInput);
+    if (inputs.length === 0) {
+      return undefined;
+    }
+
+    if (name === "SUBSTRING" && inputs.length === 3) {
+      const len = inputs[2].concatTokens();
+      if (/^\d+$/.test(len) === false || parseInt(len, 10) <= 0) {
+        return undefined;
+      }
+      const argType = this.inferFunctionInputType(inputs[0], lookup);
+      if (argType instanceof StringType) {
+        return argType;
+      } else if (argType instanceof CharacterType
+          || argType instanceof NumericType
+          || argType instanceof DateType
+          || argType instanceof TimeType) {
+        return new CharacterType(parseInt(len, 10));
+      }
+      return undefined;
+    } else if (sameTypeAsFirstArgument.has(name)) {
+      const argType = this.inferFunctionInputType(inputs[0], lookup);
+      if (argType instanceof CharacterType || argType instanceof StringType) {
+        return argType;
+      }
+      return undefined;
+    }
+
+    return undefined;
+  }
+
+  private static inferFunctionInputType(input: ExpressionNode, lookup: FieldTypeLookup): AbstractType | undefined {
+    const children = input.getChildren();
+    if (children.length !== 1 || !(children[0] instanceof ExpressionNode)) {
+      return undefined;
+    }
+    const child = children[0];
+    if (child.get() instanceof Expressions.SQLFieldName || child.get() instanceof Expressions.SQLAliasField) {
+      return lookup(child.concatTokens().toUpperCase());
+    } else if (child.get() instanceof Expressions.SQLFunction) {
+      return this.inferFunctionType(child, lookup);
+    }
+    return undefined;
   }
 
   private static buildDatabaseSourceInfos(from: ExpressionNode,
@@ -497,7 +639,11 @@ export class Select {
   }
 
   private static findFields(node: ExpressionNode, input: SyntaxInput): FieldList {
-    const expr = node.findFirstExpression(Expressions.SQLFieldList);
+    let expr = node.findFirstExpression(Expressions.SQLFieldList);
+    // a single field can be wrapped in a nested SQLFieldList
+    while (expr && expr.getChildren().length === 1 && expr.getFirstChild()?.get() instanceof Expressions.SQLFieldList) {
+      expr = expr.getFirstChild() as ExpressionNode;
+    }
     const ret = [];
     if (expr?.getFirstChild()?.get() instanceof Expressions.Dynamic) {
       Dynamic.runSyntax(expr.getFirstChild() as ExpressionNode, input);
