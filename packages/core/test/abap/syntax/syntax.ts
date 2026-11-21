@@ -9398,6 +9398,63 @@ DATA itab TYPE STANDARD TABLE OF ty_row WITH UNIQUE KEY i.`;
     expect(issues[0].getMessage()).to.contain("STANDARD tables cannot have UNIQUE key");
   });
 
+  it("Error, hashed with non-unique key, #3218", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field TYPE c LENGTH 3,
+       END OF ty.
+DATA tab TYPE HASHED TABLE OF ty WITH NON-UNIQUE KEY field.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("HASHED tables cannot have NON-UNIQUE key");
+  });
+
+  it("Error, hashed with non-unique key named primary_key, #3218", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field TYPE c LENGTH 3,
+       END OF ty.
+TYPES ty_tab TYPE HASHED TABLE OF ty WITH NON-UNIQUE KEY primary_key COMPONENTS field.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("HASHED tables cannot have NON-UNIQUE key");
+  });
+
+  it("Ok, hashed with unique key, generic hashed key and non-unique sorted secondary key, #3218", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field TYPE c LENGTH 3,
+         other TYPE i,
+       END OF ty.
+TYPES ty_generic TYPE HASHED TABLE OF ty WITH KEY field.
+DATA tab1 TYPE HASHED TABLE OF ty WITH UNIQUE KEY field.
+DATA tab2 TYPE HASHED TABLE OF ty WITH UNIQUE KEY field WITH NON-UNIQUE SORTED KEY sec COMPONENTS other.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Error, sorted with unique empty key, #3924", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE i,
+       END OF ty.
+TYPES ty_timestamps_tt TYPE SORTED TABLE OF ty WITH UNIQUE EMPTY KEY.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("EMPTY KEY cannot be UNIQUE");
+  });
+
+  it("Ok, standard with empty key, #3924", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE i,
+       END OF ty.
+TYPES ty_tab TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+DATA tab TYPE STANDARD TABLE OF ty WITH EMPTY KEY.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("Error, field does not exist", () => {
     const abap = `
 INTERFACE lif.
