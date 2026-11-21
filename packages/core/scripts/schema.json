@@ -9640,6 +9640,10 @@
           "description": "Check for SUBTRACT statement",
           "type": "boolean"
         },
+        "translate": {
+          "description": "Checks for TRANSLATE statement",
+          "type": "boolean"
+        },
         "typePools": {
           "description": "Checks for TYPE-POOLS",
           "type": "boolean"
@@ -9682,7 +9686,8 @@
         "fieldGroups",
         "replaceInto",
         "loopExtract",
-        "sortExtract"
+        "sortExtract",
+        "translate"
       ],
       "type": "object"
     },
