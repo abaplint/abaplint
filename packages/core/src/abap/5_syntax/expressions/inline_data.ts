@@ -5,6 +5,7 @@ import {CGenericType, CharacterType, CLikeType, CSequenceType, IntegerType, Stri
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {checkReservedName} from "../_reserved_names";
 
 export class InlineData {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, type: AbstractType | undefined): void {
@@ -13,6 +14,7 @@ export class InlineData {
       const message = "DATA name too long, " + token.getStr();
       input.issues.push(syntaxIssue(input, token, message));
     }
+    checkReservedName(token, input);
     if (token && type) {
       if (type instanceof CSequenceType || type instanceof CLikeType) {
         type = StringType.get();
