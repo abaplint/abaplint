@@ -99,6 +99,18 @@ describe("Rule: parser_error", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("too deep statement, reported instead of a crash", async () => {
+    let abap = "DATA lv TYPE string.\nlv = `start`";
+    for (let i = 0; i < 5000; i++) {
+      abap += "\n  && `x" + i + "`";
+    }
+    abap += ".\nWRITE lv.";
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Statement too deep to parse, split it into smaller statements");
+    expect(issues[0].getStart().getRow()).to.equal(2);
+  });
+
   it("non field symbol, IF result IS ASSIGNED. ENDIF.", async () => {
     const issues = await findIssues("IF result IS ASSIGNED. ENDIF.");
     expect(issues.length).to.equal(2);

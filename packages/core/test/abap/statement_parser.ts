@@ -1,8 +1,8 @@
 import {expect} from "chai";
 import {getStatements} from "./_utils";
-import {Empty, MacroCall, Unknown} from "../../src/abap/2_statements/statements/_statement";
+import {Empty, MacroCall, Unknown, UnknownTooDeep} from "../../src/abap/2_statements/statements/_statement";
 import {StatementParser} from "../../src/abap/2_statements/statement_parser";
-import {Write, Data, InsertDatabase} from "../../src/abap/2_statements/statements";
+import {Write, Data, InsertDatabase, Move} from "../../src/abap/2_statements/statements";
 import {defaultRelease, Release, LanguageVersion} from "../../src/version";
 import {Lexer} from "../../src/abap/1_lexer/lexer";
 import {MemoryFile} from "../../src/files/memory_file";
@@ -127,6 +127,21 @@ describe("statement parser", () => {
     const statements = getStatements(abap);
     expect(statements.length).to.equal(1);
     expect(statements[0].get()).to.be.instanceof(Write);
+  });
+
+  it("too deep statement does not overflow the stack, following statements still parse", () => {
+    let abap = "lv = `start`";
+    for (let i = 0; i < 5000; i++) {
+      abap += "\n  && `x" + i + "`";
+    }
+    abap += ".\nlv = `a` && `b` && `c`.\nWRITE lv.";
+
+    const statements = getStatements(abap);
+    expect(statements.length).to.equal(3);
+    expect(statements[0].get()).to.be.instanceof(UnknownTooDeep);
+    expect(statements[0].getTokens().length).to.equal(5000 * 2 + 4);
+    expect(statements[1].get()).to.be.instanceof(Move);
+    expect(statements[2].get()).to.be.instanceof(Write);
   });
 
 });
