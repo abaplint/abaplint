@@ -1491,6 +1491,82 @@ DATA d_string_table TYPE ty_string_table.`;
     expect(identifier!.getType().getDDICName()).to.equal("ZCHAR1");
   });
 
+  it("DATA TYPE DDIC data elements of any data type and table type, keeps the DDIC name, #4610", () => {
+    const doma = (name: string, dataType: string, length: string) => `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>${name}</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>${dataType}</DATATYPE>
+    <LENG>${length}</LENG>
+    <DDTEXT>domain</DDTEXT>
+   </DD01V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const dtel = (name: string) => `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>${name}</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DOMNAME>${name}</DOMNAME>
+    <DDTEXT>data element</DDTEXT>
+    <REFKIND>D</REFKIND>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const ttyp = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZSTRING_TABLE</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>STRG</DATATYPE>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const elements: [string, string, string, any][] = [
+      ["ZINT4", "INT4", "000010", Basic.IntegerType],
+      ["ZINT8", "INT8", "000019", Basic.Integer8Type],
+      ["ZSTRING", "STRG", "000000", Basic.StringType],
+      ["ZXSTRING", "RSTR", "000000", Basic.XStringType],
+      ["ZNUMC4", "NUMC", "000004", Basic.NumericType],
+      ["ZRAW16", "RAW", "000016", Basic.HexType],
+      ["ZDATS", "DATS", "000008", Basic.DateType],
+      ["ZTIMS", "TIMS", "000006", Basic.TimeType],
+      ["ZFLTP", "FLTP", "000016", Basic.FloatingPointType]];
+    const files = [{filename: "zstring_table.ttyp.xml", contents: ttyp}];
+    for (const [name, dataType, length] of elements) {
+      files.push({filename: name.toLowerCase() + ".doma.xml", contents: doma(name, dataType, length)});
+      files.push({filename: name.toLowerCase() + ".dtel.xml", contents: dtel(name)});
+    }
+    const expected: [string, any][] = [...elements.map(e => [e[0], e[3]] as [string, any]),
+      ["ZSTRING_TABLE", Basic.TableType]];
+    const abap = expected.map(e => `DATA d_${e[0]} TYPE ${e[0]}.\nTYPES ty_${e[0]} TYPE ${e[0]}.\nDATA l_${e[0]} TYPE ty_${e[0]}.`).join("\n");
+    for (const [name, clas] of expected) {
+      const all = [...files, {filename: "zfoobar.prog.abap", contents: abap}];
+      const direct = runMulti(all.slice(), "d_" + name);
+      expect(direct!.getType(), name).to.be.instanceof(clas);
+      expect(direct!.getType().getQualifiedName(), name).to.equal(name);
+      expect(direct!.getType().getDDICName(), name).to.equal(name);
+      // TYPES creates a new type, it is no longer the DDIC type
+      const local = runMulti(all.slice(), "l_" + name);
+      expect(local!.getType(), name).to.be.instanceof(clas);
+      expect(local!.getType().getQualifiedName(), name).to.equal("ty_" + name);
+      expect(local!.getType().getDDICName(), name).to.equal(undefined);
+    }
+  });
+
   it("SELECT substring columns into inline table", () => {
     const abap = `
 DATA lr_cust TYPE RANGE OF string.
