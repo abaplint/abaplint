@@ -404,7 +404,7 @@ export class DDIC {
         if (input.length === undefined) {
           return new Types.UnknownType(input.text + " unknown length", input.infoText);
         }
-        return new Types.NumericType(parseInt(input.length, 10), input.qualifiedName);
+        return new Types.NumericType(parseInt(input.length, 10), extra);
       case "CHAR": // 1 <= len <= 30000 (1333 for table fields)
       case "LCHR": // 256 <= len <= 32000
         if (input.length === undefined) {
@@ -416,10 +416,10 @@ export class DDIC {
         if (input.length === undefined) {
           return new Types.UnknownType(input.text + " unknown length", input.infoText);
         }
-        return new Types.HexType(parseInt(input.length, 10), input.qualifiedName);
+        return new Types.HexType(parseInt(input.length, 10), extra);
       case "TIMN": // Native HANA
       case "TIMS":
-        return new Types.TimeType({qualifiedName: input.qualifiedName}); //HHMMSS
+        return new Types.TimeType(extra); //HHMMSS
       case "DECFLOAT16": // len = 16
       case "DECFLOAT34": // len = 34
       case "D16R":       // len = 16
@@ -430,25 +430,25 @@ export class DDIC {
         if (input.length === undefined) {
           return new Types.UnknownType(input.text + " unknown length", input.infoText);
         }
-        return new Types.FloatingPointType(parseInt(input.length, 10), input.qualifiedName);
+        return new Types.FloatingPointType(parseInt(input.length, 10), extra);
       case "DATN": // Native HANA
       case "DATS":
-        return new Types.DateType({qualifiedName: input.qualifiedName}); //YYYYMMDD
+        return new Types.DateType(extra); //YYYYMMDD
       case "INT1":
       case "INT2":
       case "INT4":
-        return Types.IntegerType.get({qualifiedName: input.qualifiedName});
+        return Types.IntegerType.get(extra);
       case "INT8":
-        return new Types.Integer8Type({qualifiedName: input.qualifiedName});
+        return new Types.Integer8Type(extra);
       case "SSTR":    // 1 <= len <= 1333
       case "SSTRING": // 1 <= len <= 1333
       case "STRG":    // 256 <= len
       case "STRING":  // 256 <= len
-        return Types.StringType.get({qualifiedName: input.qualifiedName});
+        return Types.StringType.get(extra);
       case "RSTR":      // 256 <= len
       case "RAWSTRING": // 256 <= len
       case "GEOM_EWKB":
-        return Types.XStringType.get({qualifiedName: input.qualifiedName});
+        return Types.XStringType.get(extra);
       case "D16S":
       case "D34S":
       case "DF16_SCL":

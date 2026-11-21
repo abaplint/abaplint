@@ -1,12 +1,12 @@
-import {AbstractType} from "./_abstract_type";
+import {AbstractType, AbstractTypeData} from "./_abstract_type";
 
 // this is the DDIC floating point type
 
 export class FloatingPointType extends AbstractType {
   private readonly length: number;
 
-  public constructor(length: number, qualifiedName?: string) {
-    super({qualifiedName: qualifiedName});
+  public constructor(length: number, extra?: string | AbstractTypeData) {
+    super(extra === undefined || typeof extra === "string" ? {qualifiedName: extra} : extra);
     if (length <= 0) {
       throw new Error("Bad LENGTH, Floating Point");
     }
