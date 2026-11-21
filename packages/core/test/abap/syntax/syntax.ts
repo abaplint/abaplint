@@ -11759,6 +11759,75 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("error, me read inside static method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+  PRIVATE SECTION.
+    CLASS-DATA foo TYPE REF TO object.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    foo = me.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("\"me\" cannot be used in static methods");
+  });
+
+  it("error, me->method call inside class_constructor", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS class_constructor.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD class_constructor.
+    me->foo( ).
+  ENDMETHOD.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("\"me\" cannot be used in static methods");
+  });
+
+  it("error, me->attribute written inside static method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+    DATA mv TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    me->mv = 1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("\"me\" cannot be used in static methods");
+  });
+
+  it("ok, me inside instance method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+    DATA mv TYPE i.
+    DATA ref TYPE REF TO object.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    me->mv = 1.
+    ref = me.
+    me->run( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("error, CALL METHOD instance method inside static method", () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
