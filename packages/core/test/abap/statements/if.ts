@@ -40,6 +40,7 @@ const tests = [
   "if child is INSTANCE OF cl_gui_container.",
   "if not line_exists( added[ function = iv_function ] ).",
   "if foo = bar and line_exists( fcat[ fieldname = 'MOO' ] ).",
+  "IF !line_exists( table[ table_line = 'test' ] ).",
   "IF foo(2) = 12 OR foo(2) = 12.",
   "IF foo BYTE-CO bar.",
   "IF data BYTE-NS end.",

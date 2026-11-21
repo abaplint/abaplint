@@ -3541,6 +3541,35 @@ DATA(parameters) = VALUE ty_distance( LET distance = 10 IN distance = distance )
     expect(issues.length).to.equals(0);
   });
 
+  it("escaped function and method names, !line_exists(, #2529", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m RETURNING VALUE(r) TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA(table) = VALUE string_table( ( |test| ) ).
+  IF !line_exists( table[ table_line = |test| ] ).
+  ENDIF.
+  DATA(upper) = !to_upper( |test| ).
+  DATA(lines) = !lines( table ).
+  DATA(int) = lcl=>!m( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("escaped function name, not found, #2529", () => {
+    const abap = `
+DATA(sdf) = !no_such_function( 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not found");
+  });
+
   it("condense() with del parameter", () => {
     const abap = `WRITE condense( val = |dsf| del = |\r| ).`;
     const issues = runProgram(abap);
@@ -18354,6 +18383,54 @@ ENDCLASS.`;
     const issues = runProgram(method(`
     DATA lr TYPE REF TO data.
     GET REFERENCE OF it INTO lr.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
+
+describe("syntax.ts, LIKE REF TO a generic data object, #3231", () => {
+  const message = "LIKE REF TO not possible";
+  const method = (body: string) => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run IMPORTING val TYPE data simp TYPE simple str TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error, parameter TYPE data", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO val.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, parameter TYPE simple", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO simp.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, field symbol TYPE data", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <fs> TYPE data.
+    ASSIGN str TO <fs>.
+    DATA lr LIKE REF TO <fs>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("ok, fully typed parameter", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO str.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, TYPE REF TO data", () => {
+    const issues = runProgram(method(`
+    DATA lr TYPE REF TO data.
+    GET REFERENCE OF val INTO lr.`));
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });

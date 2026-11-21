@@ -611,6 +611,10 @@ export class BasicTypes {
       if (type === undefined) {
         return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
       }
+      // generic tables are reported via DataReference.isGeneric()
+      if (type.isGeneric() === true && !(type instanceof TableType)) {
+        throw new Error("LIKE REF TO not possible, \"" + name + "\" is generic");
+      }
       return new Types.DataReference(type, name);
     } else if (text === "TYPE STANDARD TABLE"
         || text === "TYPE SORTED TABLE"
