@@ -25,7 +25,7 @@ export class Write implements StatementSyntax {
       const type = Source.runSyntax(s, input);
 
       // "Arithmetic calculation not permitted here" on a system, while abs( x ) or lines( itab ) is fine
-      const call = s === second && issueCount === input.issues.length && input.scope.getOpenABAP() === false
+      const call = s === second && issueCount === input.issues.length
         ? BuiltInCall.fromSource(s, input) : undefined;
       if (call !== undefined && BuiltInCall.isNumeric(call) && BuiltInCall.hasDataObjectArgument(call) === false) {
         const message = `Numeric function "${BuiltInCall.callName(call)}" in WRITE takes only a single data object as argument`;
