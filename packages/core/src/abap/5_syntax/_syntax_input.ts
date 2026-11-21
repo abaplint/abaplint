@@ -15,6 +15,8 @@ export type SyntaxInput = {
   /** checks which can only run once the full object has been traversed, eg. PERFORM parameters,
    * the FORM might be defined after the PERFORM */
   deferred: (() => void)[],
+  /** the statement is inside a LOOP structure */
+  inLoop?: boolean,
 };
 
 export function syntaxIssue(input: SyntaxInput, token: AbstractToken, message: string, fix?: IEdit) {
