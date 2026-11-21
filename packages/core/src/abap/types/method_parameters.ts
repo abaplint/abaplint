@@ -59,7 +59,6 @@ export class MethodParameters implements IMethodParameters {
     try {
       this.parse(node, input, parentName, abstractMethod);
       this.checkNameLengths(input);
-      this.checkDuplicateNames();
     } finally {
       input.scope.pop(node.getEnd());
     }
@@ -212,21 +211,23 @@ export class MethodParameters implements IMethodParameters {
 
     const returning = node.findFirstExpression(Expressions.MethodDefReturning);
     if (returning) {
-      this.returning = MethodDefReturning.runSyntax(returning, input, [IdentifierMeta.MethodReturning]);
+      const id = MethodDefReturning.runSyntax(returning, input, [IdentifierMeta.MethodReturning]);
+      if (this.isDuplicateName(id, input) === false) {
+        this.returning = id;
+      }
     }
 
     this.workaroundRAP(node, input, parentName);
   }
 
-  private checkDuplicateNames(): void {
-    const names = new Set<string>();
-    for (const parameter of this.getAll()) {
-      const name = parameter.getName().toUpperCase();
-      if (names.has(name)) {
-        throw new Error(`Method parameter "${name}" already defined`);
-      }
-      names.add(name);
+  /** reports a parameter with the name of an earlier one, the method definition is kept without it */
+  private isDuplicateName(id: TypedIdentifier, input: SyntaxInput): boolean {
+    const name = id.getName().toUpperCase();
+    if (this.getAll().some(p => p.getName().toUpperCase() === name)) {
+      input.issues.push(syntaxIssue(input, id.getToken(), `Method parameter "${name}" already defined`));
+      return true;
     }
+    return false;
   }
 
   private checkNameLengths(input: SyntaxInput): void {
@@ -307,7 +308,8 @@ export class MethodParameters implements IMethodParameters {
 
   private add(target: TypedIdentifier[], source: ExpressionNode, input: SyntaxInput, meta: IdentifierMeta[], abstractMethod: boolean): void {
     this.checkKeywordNames(source, input);
-    for (const opt of source.findAllExpressions(Expressions.MethodParamOptional)) {
+    const optionals = source.findAllExpressions(Expressions.MethodParamOptional);
+    for (const opt of optionals) {
       const p = opt.findDirectExpression(Expressions.MethodParam);
       if (p === undefined) {
         continue;
@@ -322,6 +324,9 @@ export class MethodParameters implements IMethodParameters {
         extraMeta.push(IdentifierMeta.Abstract);
       }
       const id = MethodParam.runSyntax(p, input, [...meta, ...extraMeta]);
+      if (this.isDuplicateName(id, input)) {
+        continue;
+      }
       input.scope.addIdentifier(id);
       target.push(id);
       const optionalToken = opt.findDirectTokenByText("OPTIONAL");
@@ -342,14 +347,17 @@ export class MethodParameters implements IMethodParameters {
         }
       }
     }
-    if (target.length > 0) {
+    if (optionals.length > 0) {
       return;
     }
 
     const params = source.findAllExpressions(Expressions.MethodParam);
     for (const param of params) {
       const extraMeta = this.isPassByValue(param) ? [IdentifierMeta.PassByValue] : [];
-      target.push(MethodParam.runSyntax(param, input, [...meta, ...extraMeta]));
+      const id = MethodParam.runSyntax(param, input, [...meta, ...extraMeta]);
+      if (this.isDuplicateName(id, input) === false) {
+        target.push(id);
+      }
     }
   }
 
