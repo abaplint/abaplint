@@ -84,6 +84,7 @@ import {FMGlobalParametersObsoleteConf} from "../src/rules/fm_global_parameters_
 import {ForbiddenIdentifierConf} from "../src/rules/forbidden_identifier";
 import {ForbiddenKernelWriteConf} from "../src/rules/forbidden_kernel_write";
 import {ForbiddenPseudoAndPragmaConf} from "../src/rules/forbidden_pseudo_and_pragma";
+import {ForbiddenStatementConf} from "../src/rules/forbidden_statement";
 import {ForbiddenVoidTypeConf} from "../src/rules/forbidden_void_type";
 import {FormTablesObsoleteConf} from "../src/rules/form_tables_obsolete";
 import {FullyTypeConsantsConf} from "../src/rules/fully_type_constants";
@@ -341,6 +342,7 @@ export interface IConfig {
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
     "forbidden_kernel_write"?: ForbiddenKernelWriteConf | boolean,
     "forbidden_pseudo_and_pragma"?: ForbiddenPseudoAndPragmaConf | boolean,
+    "forbidden_statement"?: ForbiddenStatementConf | boolean,
     "forbidden_void_type"?: ForbiddenVoidTypeConf | boolean,
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
     "fully_type_constants"?: FullyTypeConsantsConf | boolean,
@@ -587,6 +589,7 @@ export interface IConfig {
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
     "forbidden_kernel_write"?: ForbiddenKernelWriteConf | boolean,
     "forbidden_pseudo_and_pragma"?: ForbiddenPseudoAndPragmaConf | boolean,
+    "forbidden_statement"?: ForbiddenStatementConf | boolean,
     "forbidden_void_type"?: ForbiddenVoidTypeConf | boolean,
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
     "fully_type_constants"?: FullyTypeConsantsConf | boolean,
