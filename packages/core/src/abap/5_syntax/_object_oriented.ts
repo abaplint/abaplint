@@ -221,6 +221,37 @@ export class ObjectOriented {
     return "private";
   }
 
+  /** a READ-ONLY attribute can be changed through a reference or class name whose static type is the class
+   *  doing the change or one of its super classes, or a class it is a friend of; never through an interface */
+  public readOnlyWriteAllowed(def: IClassDefinition | IInterfaceDefinition, enclosing: string | undefined): boolean {
+    if (enclosing === undefined || !(def instanceof ClassDefinition)) {
+      return false;
+    }
+
+    const name = def.getName().toUpperCase();
+    const visited: string[] = [];
+    let current: string | undefined = enclosing;
+    while (current !== undefined && visited.includes(current.toUpperCase()) === false) {
+      if (current.toUpperCase() === name) {
+        return true;
+      }
+      visited.push(current.toUpperCase());
+      current = this.scope.findClassDefinition(current)?.getSuperClass();
+    }
+
+    const friendsVisited: string[] = [];
+    let granting: IClassDefinition | undefined = def;
+    while (granting !== undefined && friendsVisited.includes(granting.getName().toUpperCase()) === false) {
+      friendsVisited.push(granting.getName().toUpperCase());
+      if (this.hasFriendship(granting, enclosing)) {
+        return true;
+      }
+      const sup: string | undefined = granting.getSuperClass();
+      granting = sup === undefined ? undefined : this.scope.findClassDefinition(sup);
+    }
+    return false;
+  }
+
   // the fixture methods of a test class are called by ABAP Unit only, returns the message otherwise
   public checkSpecialTestMethodCall(
     method: IMethodDefinition | undefined,

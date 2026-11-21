@@ -24,6 +24,8 @@ export const enum IdentifierMeta {
   Static = "static",
   Enum = "enum",
   SelectionScreenTab = "selection_screen_tab",
+  /** class or interface attribute declared READ-ONLY */
+  ReadOnlyAttribute = "read_only_attribute",
 // todo, MethodPreferred
 // todo, Optional
 }

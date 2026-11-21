@@ -16,6 +16,9 @@ import {Cast} from "./cast";
 import {isFieldSymbolItself, substringType} from "./_substring";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
+import {ObjectOriented} from "../_object_oriented";
+import {IdentifierMeta} from "../../types/_typed_identifier";
+import {ClassDefinition} from "../../types/class_definition";
 
 export class Target {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType | undefined {
@@ -45,6 +48,8 @@ export class Target {
 
     let currentIndex = 1;
     let afterTableExpression = false;
+    // a READ-ONLY attribute written from outside, unless a reference in it is followed
+    let readOnly: string | undefined = undefined;
     while (currentIndex <= children.length) {
       const current = children[currentIndex];
       if (current === undefined) {
@@ -67,6 +72,7 @@ export class Target {
           return VoidType.get(CheckSyntaxKey);
         }
       } else if (current.get() instanceof InstanceArrow) {
+        readOnly = undefined;
         if (afterTableExpression && TableExpression.checkArrowAfter(input, current.getFirstToken())) {
           return VoidType.get(CheckSyntaxKey);
         }
@@ -78,6 +84,7 @@ export class Target {
           return VoidType.get(CheckSyntaxKey);
         }
       } else if (current.get() instanceof Dereference) {
+        readOnly = undefined;
         if (!(context instanceof DataReference) && !(context instanceof VoidType)) {
           const message = "Not an object reference, target";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -121,8 +128,15 @@ export class Target {
         }
       } else if (current.get() instanceof Expressions.AttributeName) {
         const type = children.length === 0 ? ReferenceType.DataWriteReference : ReferenceType.DataReadReference;
+        const objectContext = context;
         context = AttributeName.runSyntax(context, current, input, type);
+        readOnly = this.readOnlyWrittenOutside(objectContext, current, input);
       }
+    }
+
+    if (readOnly !== undefined) {
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), readOnly));
+      return VoidType.get(CheckSyntaxKey);
     }
 
     // the substring is checked, but the type of the whole field is returned
@@ -160,6 +174,29 @@ export class Target {
   }
 
 /////////////////////////////////
+
+  /** the message, when the attribute is READ-ONLY and the enclosing class may not change it */
+  private static readOnlyWrittenOutside(context: AbstractType | undefined, node: INode, input: SyntaxInput): string | undefined {
+    if (!(context instanceof ObjectReferenceType)) {
+      return undefined;
+    }
+    const def = input.scope.findObjectDefinition(context.getIdentifierName());
+    if (def === undefined) {
+      return undefined;
+    }
+    const name = node.getFirstToken().getStr();
+    const helper = new ObjectOriented(input.scope);
+    const found = helper.searchAttributeName(def, name);
+    if (found === undefined
+        || found.getMeta().includes(IdentifierMeta.ReadOnlyAttribute) === false
+        || helper.readOnlyWriteAllowed(def, input.scope.getEnclosingClassName())) {
+      return undefined;
+    }
+    if (def instanceof ClassDefinition) {
+      return `READ-ONLY attribute "${name}" can only be changed in "${def.getName()}", its subclasses and friends`;
+    }
+    return `READ-ONLY attribute "${name}" cannot be changed through interface "${def.getName()}"`;
+  }
 
   private static findTop(node: INode | undefined, input: SyntaxInput): AbstractType | undefined {
     if (node === undefined) {
