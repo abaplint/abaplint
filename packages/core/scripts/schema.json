@@ -2062,6 +2062,34 @@
       ],
       "type": "object"
     },
+    "ForbiddenStatementConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "statements": {
+          "description": "List of forbidden statements, given as abaplint statement names, case insensitive, spaces, underscores and dashes are ignored, so \"READ TABLE\", \"ReadTable\" and \"read_table\" are the same",
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "statements"
+      ],
+      "type": "object"
+    },
     "ForbiddenVoidTypeConf": {
       "additionalProperties": false,
       "properties": {
@@ -3261,6 +3289,17 @@
                 }
               ],
               "description": "Checks for unwanted pseudo comments and pragma\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/forbidden_pseudo_and_pragma"
+            },
+            "forbidden_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Forbid use of specified statements.\nTags: SingleFile\nhttps://rules.abaplint.org/forbidden_statement"
             },
             "forbidden_void_type": {
               "anyOf": [
@@ -5945,6 +5984,17 @@
                 }
               ],
               "description": "Checks for unwanted pseudo comments and pragma\nTags: Quickfix, SingleFile\nhttps://rules.abaplint.org/forbidden_pseudo_and_pragma"
+            },
+            "forbidden_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Forbid use of specified statements.\nTags: SingleFile\nhttps://rules.abaplint.org/forbidden_statement"
             },
             "forbidden_void_type": {
               "anyOf": [
