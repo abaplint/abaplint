@@ -1347,6 +1347,36 @@ DATA moo TYPE REF TO lif_bar=>type.`;
     expect((component as Basic.CharacterType).getLength(), name).to.equal(length);
   }
 
+  it("DATA TYPE DDIC structure, keeps the DDIC name", () => {
+    const identifier = runSelCond(`DATA s TYPE zsel_cond.`, "s");
+    expectStructure(identifier);
+    expect(identifier!.getType().getQualifiedName()).to.equal("ZSEL_COND");
+    expect(identifier!.getType().getDDICName()).to.equal("ZSEL_COND");
+  });
+
+  it("TYPES TYPE DDIC structure, new local type, #4608", () => {
+    const identifier = runSelCond(`
+TYPES ty_alias TYPE zsel_cond.
+DATA s TYPE ty_alias.`, "s");
+    expectStructure(identifier);
+    const type = identifier!.getType() as Basic.StructureType;
+    expect(type.getQualifiedName()).to.equal("ty_alias");
+    expect(type.getDDICName()).to.equal(undefined);
+    expectCharComponent(type, "KEYVAL", 30);
+  });
+
+  it("TYPES TYPE local structure, new qualified name", () => {
+    const abap = `
+TYPES: BEGIN OF ty_base,
+         field TYPE i,
+       END OF ty_base.
+TYPES ty_alias TYPE ty_base.
+DATA s TYPE ty_alias.`;
+    const identifier = resolveVariable(abap, "s");
+    expectStructure(identifier);
+    expect(identifier!.getType().getQualifiedName()).to.equal("ty_alias");
+  });
+
   it("SELECT substring columns into inline table", () => {
     const abap = `
 DATA lr_cust TYPE RANGE OF string.

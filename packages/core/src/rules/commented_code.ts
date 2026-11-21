@@ -11,6 +11,7 @@ import {RuleTag, IRuleMetadata} from "./_irule";
 import {EditHelper} from "../edit_helper";
 import {ABAPFile} from "../abap/abap_file";
 import {MemoryFile} from "../files/memory_file";
+import {StatementNode} from "../abap/nodes";
 
 export class CommentedCodeConf extends BasicRuleConfig {
   /** Allow INCLUDEs in function groups */
@@ -88,7 +89,8 @@ https://docs.abapopenchecks.org/checks/14/`,
     }
 
     let containsStatement: boolean = false;
-    for (const statementNode of statementNodes) {
+    for (let i = 0; i < statementNodes.length; i++) {
+      const statementNode = statementNodes[i];
       const statement = statementNode.get();
       if (this.getConfig().allowIncludeInFugr === true
           && obj instanceof FunctionGroup
@@ -98,6 +100,9 @@ https://docs.abapopenchecks.org/checks/14/`,
       if (!(statement instanceof Unknown
           || statement instanceof Empty
           || statement instanceof Comment)) {
+        if (this.isSplitFromText(statementNodes, i)) {
+          continue;
+        }
         containsStatement = true;
         break;
       }
@@ -109,6 +114,23 @@ https://docs.abapopenchecks.org/checks/14/`,
     const fix = EditHelper.deleteRange(file, posStart, posEnd);
     const issue = Issue.atRange(file, posStart, posEnd, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
     return [issue];
+  }
+
+  /**
+   * The statement parser splits an Unknown statement at a line break if the rest parses as a statement.
+   * In comment text, such a split is code only if no further text follows the statement on its line.
+   */
+  private isSplitFromText(statementNodes: readonly StatementNode[], index: number): boolean {
+    const previous = statementNodes[index - 1];
+    if (previous === undefined
+        || !(previous.get() instanceof Unknown)
+        || [".", ","].includes(previous.getLastToken().getStr())) {
+      return false;
+    }
+    const next = statementNodes[index + 1];
+    return next !== undefined
+      && next.get() instanceof Unknown
+      && next.getFirstToken().getRow() === statementNodes[index].getLastToken().getRow();
   }
 
   private isCommentLine(text: string): boolean {
