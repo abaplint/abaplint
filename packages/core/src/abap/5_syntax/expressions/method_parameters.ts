@@ -14,6 +14,7 @@ import {FieldChain} from "./field_chain";
 import {ReferenceType} from "../_reference";
 import {checkOffsetLength} from "./_check_offset_length";
 import {checkTextSymbol} from "./_check_text_symbol";
+import {checkHeaderLine} from "./_check_header_line";
 import {BuiltInMethod} from "../_builtin";
 
 interface IListItemT {
@@ -198,6 +199,8 @@ export class MethodParameters {
       // the parameter is supplied, even if its type is wrong
       this.requiredParameters.delete(item.name);
       if (checkTextSymbol(item.source, parameter.getType(), input)) {
+        return;
+      } else if (checkHeaderLine(item.source, item.sourceType, parameter.getType(), input)) {
         return;
       } else if (assignable(item.sourceType, parameter.getType(), item.source) === false) {
         const message = "Method parameter type not compatible, " + item.name;

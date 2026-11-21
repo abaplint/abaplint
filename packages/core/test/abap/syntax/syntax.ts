@@ -12532,6 +12532,61 @@ ${statement}`;
     }
   });
 
+  it("error, table with header line passed to a table parameter, #3209", () => {
+    const calls = ["lcl=>foo( tab ).", "lcl=>foo( sdf = tab ).", "lcl=>bar( sdf = tab other = 1 )."];
+    for (const call of calls) {
+      const abap = `
+TYPES ty1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo IMPORTING sdf TYPE ty1.
+    CLASS-METHODS bar IMPORTING sdf TYPE ty1 other TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA tab TYPE i OCCURS 0 WITH HEADER LINE.
+  ${call}`;
+      const issues = runProgram(abap);
+      expect(issues[0]?.getMessage(), call).to.contain("is the header line");
+    }
+  });
+
+  it("ok, table body of a table with header line passed to a table parameter, #3209", () => {
+    const abap = `
+TYPES ty1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo IMPORTING sdf TYPE ty1.
+    CLASS-METHODS int IMPORTING val TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD int.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA tab TYPE i OCCURS 0 WITH HEADER LINE.
+  DATA plain TYPE ty1.
+  lcl=>foo( tab[] ).
+  lcl=>foo( sdf = tab[] ).
+  lcl=>foo( plain ).
+  lcl=>int( tab ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, short forms with header line, MODIFY and INSERT, #1790", () => {
     const abap = `
 DATA lt_hl TYPE i OCCURS 0 WITH HEADER LINE.
@@ -13035,6 +13090,32 @@ DATA mt_functions TYPE STANDARD TABLE OF string WITH EMPTY KEY.
 INSERT 'hello' INTO TABLE mt_functions.`;
     const issues = runProgram(abap);
     expect(issues[0].getMessage()).to.contain("Types not compatible");
+  });
+
+  it("not compatible, character-like data object into a numeric table, #2455", () => {
+    const sources = ["str", "char"];
+    for (const source of sources) {
+      const abap = `
+DATA str TYPE string.
+DATA char TYPE c LENGTH 10.
+DATA int_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+INSERT ${source} INTO TABLE int_tab.`;
+      const issues = runProgram(abap);
+      expect(issues[0]?.getMessage(), source).to.contain("Types not compatible");
+    }
+  });
+
+  it("ok, numeric data object into a numeric table, #2455", () => {
+    const abap = `
+DATA int TYPE i.
+DATA int_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+DATA str_tab TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA str TYPE string.
+INSERT int INTO TABLE int_tab.
+INSERT 5 INTO TABLE int_tab.
+INSERT str INTO TABLE str_tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("Field defined twice in inline value", () => {
