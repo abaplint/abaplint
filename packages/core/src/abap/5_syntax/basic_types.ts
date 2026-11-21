@@ -247,7 +247,7 @@ export class BasicTypes {
     if (type instanceof CharacterType) {
       type = new CharacterType(type.getLength(), data);
     } else if (type instanceof Types.IntegerType) {
-      type = Types.IntegerType.get(data);
+      type = Types.IntegerType.get(data, type.getBytes());
     } else if (type instanceof Types.StringType) {
       type = Types.StringType.get(data);
     } else if (type instanceof Types.XStringType) {

@@ -1491,6 +1491,87 @@ DATA d_string_table TYPE ty_string_table.`;
     expect(identifier!.getType().getDDICName()).to.equal("ZCHAR1");
   });
 
+  it("DDIC INT1, INT2 and INT4 keep their byte size, also after TYPES", () => {
+    const dtel = (name: string, dataType: string, length: string) => `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>${name}</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DDTEXT>data element</DDTEXT>
+    <DATATYPE>${dataType}</DATATYPE>
+    <LENG>${length}</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const tabl = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ZINTS</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <DDTEXT>integers</DDTEXT>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>ONE</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>b</INTTYPE>
+     <INTLEN>000001</INTLEN>
+     <DATATYPE>INT1</DATATYPE>
+     <LENG>000003</LENG>
+     <MASK>  INT1</MASK>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>TWO</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>s</INTTYPE>
+     <INTLEN>000002</INTLEN>
+     <DATATYPE>INT2</DATATYPE>
+     <LENG>000005</LENG>
+     <MASK>  INT2</MASK>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const files = [
+      {filename: "zint1.dtel.xml", contents: dtel("ZINT1", "INT1", "000003")},
+      {filename: "zint2.dtel.xml", contents: dtel("ZINT2", "INT2", "000005")},
+      {filename: "zint4.dtel.xml", contents: dtel("ZINT4", "INT4", "000010")},
+      {filename: "zints.tabl.xml", contents: tabl},
+      {filename: "zfoobar.prog.abap", contents: `
+TYPES ty_int1 TYPE zint1.
+DATA d_int1 TYPE zint1.
+DATA l_int1 TYPE ty_int1.
+DATA d_int2 TYPE zint2.
+DATA d_int4 TYPE zint4.
+DATA d_i TYPE i.
+DATA d_one TYPE zints-one.
+DATA d_two TYPE zints-two.`}];
+    const expected: [string, number, string, string][] = [
+      ["d_int1", 1, "```b```", "abap.int1"],
+      ["l_int1", 1, "```b```", "abap.int1"],
+      ["d_int2", 2, "```s```", "abap.int2"],
+      ["d_int4", 4, "```i```", "abap.int4"],
+      ["d_i", 4, "```i```", "abap.int4"],
+      ["d_one", 1, "```b```", "abap.int1"],
+      ["d_two", 2, "```s```", "abap.int2"]];
+    for (const [name, bytes, text, cds] of expected) {
+      const type = runMulti(files.slice(), name)!.getType();
+      expect(type, name).to.be.instanceof(Basic.IntegerType);
+      expect((type as Basic.IntegerType).getBytes(), name).to.equal(bytes);
+      expect(type.toText(0), name).to.equal(text);
+      expect(type.toABAP(), name).to.equal("i");
+      expect(type.toCDS(), name).to.equal(cds);
+    }
+  });
+
   it("DATA TYPE DDIC data elements of any data type and table type, keeps the DDIC name, #4610", () => {
     const doma = (name: string, dataType: string, length: string) => `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">

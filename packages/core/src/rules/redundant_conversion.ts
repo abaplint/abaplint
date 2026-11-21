@@ -428,6 +428,10 @@ text = text.`,
       return firstName !== undefined && firstName === secondName;
     }
 
+    if (first instanceof IntegerType && second instanceof IntegerType) {
+      return first.getBytes() === second.getBytes();
+    }
+
     return first.toABAP() === second.toABAP();
   }
 }

@@ -934,6 +934,9 @@ export function identicalTypes(first: AbstractType, second: AbstractType): boole
   if (isReferenceType(first)) {
     return first.toABAP().toUpperCase() === second.toABAP().toUpperCase();
   }
+  if (first instanceof IntegerType && second instanceof IntegerType) {
+    return first.getBytes() === second.getBytes();
+  }
   return first.toABAP() === second.toABAP();
 }
 

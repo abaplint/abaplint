@@ -55,7 +55,7 @@ export class InlineData {
     if (type instanceof CharacterType) {
       return new CharacterType(type.getLength(), rest);
     } else if (type instanceof IntegerType) {
-      return IntegerType.get(rest);
+      return IntegerType.get(rest, type.getBytes());
     } else if (type instanceof StringType) {
       return StringType.get(rest);
     }
