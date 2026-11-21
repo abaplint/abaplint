@@ -5,6 +5,7 @@ import {DataDefinition} from "../expressions/data_definition";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {VoidType} from "../../types/basic";
+import {checkReservedName} from "../_reserved_names";
 
 export class ClassData {
   public runSyntax(node: StatementNode, input: SyntaxInput): TypedIdentifier | undefined {
@@ -14,6 +15,7 @@ export class ClassData {
       if (found === undefined) {
         return undefined;
       }
+      checkReservedName(found.getToken(), input);
       if (found?.getType().isGeneric() === true
           && found?.getType().containsVoid() === false) {
         const message = "DATA definition cannot be generic, " + found.getName();

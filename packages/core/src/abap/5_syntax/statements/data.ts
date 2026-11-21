@@ -5,6 +5,7 @@ import {DataDefinition} from "../expressions/data_definition";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {VoidType} from "../../types/basic";
+import {checkReservedName} from "../_reserved_names";
 
 export class Data {
   public runSyntax(node: StatementNode, input: SyntaxInput): TypedIdentifier | undefined {
@@ -13,6 +14,7 @@ export class Data {
     const dd = node.findFirstExpression(Expressions.DataDefinition);
     if (dd) {
       const id = DataDefinition.runSyntax(dd, input);
+      checkReservedName(id?.getToken(), input);
       if (id && this.isOnlyDigits(id.getName()) && this.allowOnlyDigitsName(node, input) === false) {
         const message = "not possible to have a name with only digits";
         input.issues.push(syntaxIssue(input, id.getToken(), message));
