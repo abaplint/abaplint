@@ -11759,6 +11759,54 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("error, me as RETURNING parameter name", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS test RETURNING VALUE(me) TYPE REF TO data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD test.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("\"me\" is a reserved name");
+  });
+
+  it("error, me as attribute name", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA me TYPE REF TO data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("\"me\" is a reserved name");
+  });
+
+  it("error, me as inline variable name in method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS test.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD test.
+    DATA(me) = \`abc\`.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("\"me\" is a reserved name");
+  });
+
+  it("ok, me as variable name outside classes", () => {
+    const abap = `DATA me TYPE i.
+me = 2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("error, FOR TESTING method in a class which is not a test class", () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
