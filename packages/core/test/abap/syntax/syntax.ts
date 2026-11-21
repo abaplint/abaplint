@@ -12982,6 +12982,32 @@ INSERT 'hello' INTO TABLE mt_functions.`;
     expect(issues[0].getMessage()).to.contain("Types not compatible");
   });
 
+  it("not compatible, character-like data object into a numeric table, #2455", () => {
+    const sources = ["str", "char"];
+    for (const source of sources) {
+      const abap = `
+DATA str TYPE string.
+DATA char TYPE c LENGTH 10.
+DATA int_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+INSERT ${source} INTO TABLE int_tab.`;
+      const issues = runProgram(abap);
+      expect(issues[0]?.getMessage(), source).to.contain("Types not compatible");
+    }
+  });
+
+  it("ok, numeric data object into a numeric table, #2455", () => {
+    const abap = `
+DATA int TYPE i.
+DATA int_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+DATA str_tab TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA str TYPE string.
+INSERT int INTO TABLE int_tab.
+INSERT 5 INTO TABLE int_tab.
+INSERT str INTO TABLE str_tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("Field defined twice in inline value", () => {
     const abap = `
 TYPES: BEGIN OF ty,
