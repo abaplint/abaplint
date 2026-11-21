@@ -6,7 +6,7 @@ import {IFile} from "../../files/_ifile";
 import {TokenNode, StatementNode} from "../nodes";
 import {ArtifactsABAP} from "../artifacts";
 import {Combi} from "./combi";
-import {Unknown, Empty, Comment, NativeSQL, IStatement} from "./statements/_statement";
+import {Unknown, UnknownTooDeep, Empty, Comment, NativeSQL, IStatement} from "./statements/_statement";
 import {IStatementResult} from "./statement_result";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {IABAPLexerResult} from "../1_lexer/lexer_result";
@@ -150,7 +150,8 @@ export class StatementParser {
 
     for (let statement of wa.statements) {
       // dont use CALL METHOD, when executing lazy, it easily gives a Move for the last statement if lazy logic is evaluated
-      if (statement.get() instanceof Unknown) {
+      // skip too deep statements, they failed on depth not on a missing period, and trying every line split is quadratic
+      if (statement.get() instanceof Unknown && !(statement.get() instanceof UnknownTooDeep)) {
         const concat = statement.concatTokens().toUpperCase();
         if (concat.startsWith("CALL METHOD ") === false
             && concat.startsWith("RAISE EXCEPTION TYPE ") === false
@@ -293,24 +294,33 @@ export class StatementParser {
       return new StatementNode(new Empty()).setChildren(this.tokensToNodes(tokens));
     }
 
-    for (const st of StatementParser.map.lookup(filtered[0].getStr())) {
-      const match = Combi.run(st.matcher, filtered, this.release, this.languageVersion);
-      if (match) {
-        const last = tokens[tokens.length - 1];
-        match.push(new TokenNode(last));
-        const matched = new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
-        return reclassifySelect(matched, st.statement, pragmas);
+    try {
+      for (const st of StatementParser.map.lookup(filtered[0].getStr())) {
+        const match = Combi.run(st.matcher, filtered, this.release, this.languageVersion);
+        if (match) {
+          const last = tokens[tokens.length - 1];
+          match.push(new TokenNode(last));
+          const matched = new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
+          return reclassifySelect(matched, st.statement, pragmas);
+        }
       }
-    }
-    // next try the statements without specific keywords
-    for (const st of StatementParser.map.lookup("")) {
-      const match = Combi.run(st.matcher, filtered, this.release, this.languageVersion);
-      if (match) {
-        const last = tokens[tokens.length - 1];
-        match.push(new TokenNode(last));
-        const matched = new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
-        return reclassifySelect(matched, st.statement, pragmas);
+      // next try the statements without specific keywords
+      for (const st of StatementParser.map.lookup("")) {
+        const match = Combi.run(st.matcher, filtered, this.release, this.languageVersion);
+        if (match) {
+          const last = tokens[tokens.length - 1];
+          match.push(new TokenNode(last));
+          const matched = new StatementNode(st.statement, statement.getColon(), pragmas).setChildren(match);
+          return reclassifySelect(matched, st.statement, pragmas);
+        }
       }
+    } catch (error) {
+      // the expression grammar is recursive, eg. a chain of a thousand "&&" exhausts the call stack,
+      // give up on this statement only, the matchers keep no state between runs
+      if (error instanceof RangeError) {
+        return new StatementNode(new UnknownTooDeep(), statement.getColon()).setChildren(this.tokensToNodes(tokens));
+      }
+      throw error;
     }
 
     return statement;
