@@ -88,6 +88,9 @@ END OF li_order.`, cnt: 1, fix: false},
   {abap: `DATA BEGIN OF COMMON PART zsdf.
 CONSTANTS yes TYPE c LENGTH 1 VALUE 'X'.
 DATA END OF COMMON PART zsdf.`, cnt: 1},
+  {abap: "TRANSLATE lv_foo TO UPPER CASE.", cnt: 1, fix: true},
+  {abap: "TRANSLATE lv_foo TO LOWER CASE.", cnt: 1, fix: true},
+  {abap: "TRANSLATE lv_foo USING '/ '.", cnt: 1, fix: false},
 ];
 
 testRule(tests, ObsoleteStatement);
@@ -166,6 +169,8 @@ const fixes = [
   {input: "INTERFACE foo LOAD.", output: "INTERFACE foo."},
   {input: "RANGES werks FOR sdfsdsd-werks.", output: "TYPES werks LIKE RANGE OF sdfsdsd-werks."},
   {input: "TYPE-POOLS bar.", output: ""},
+  {input: "TRANSLATE lv_foo TO UPPER CASE.", output: "lv_foo = to_upper( lv_foo )."},
+  {input: "TRANSLATE lv_foo TO LOWER CASE.", output: "lv_foo = to_lower( lv_foo )."},
 ];
 
 testRuleFix(fixes, ObsoleteStatement);

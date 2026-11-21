@@ -78,6 +78,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public replaceInto: boolean = true;
   public loopExtract: boolean = true;
   public sortExtract: boolean = true;
+  /** Checks for TRANSLATE statement */
+  public translate: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -132,7 +134,9 @@ POSIX REGEX: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABE
 
 OCCURENCES: check for OCCURENCES vs OCCURRENCES
 
-CLIENT SPECIFIED, from 754: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapselect_client_obsolete.html`,
+CLIENT SPECIFIED, from 754: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapselect_client_obsolete.html
+
+TRANSLATE: https://help.sap.com/docs/abap-cloud/abap-keywords-standard-abap/translate`,
       badExample: `REFRESH itab.
 
 COMPUTE foo = 2 + 2.
@@ -370,6 +374,12 @@ ENDIF.`,
         issues.push(issue);
       }
 
+      if (this.conf.translate && sta instanceof Statements.Translate) {
+        const fix = this.getTranslateFix(file, staNode);
+        const issue = Issue.atStatement(file, staNode, "TRANSLATE is obsolete", this.getMetadata().key, this.conf.severity, fix);
+        issues.push(issue);
+      }
+
       if (releaseAtLeast(configRelease, Release.v754) && this.conf.clientSpecified
           && (sta instanceof Statements.Select
           || sta instanceof Statements.SelectLoop
@@ -495,6 +505,27 @@ ENDIF.`,
       return EditHelper.deleteRange(file, startPosition, token.getEnd());
     }
 
+    return undefined;
+  }
+
+  private getTranslateFix(file: ABAPFile, statementNode: StatementNode): IEdit | undefined {
+    const tokens = statementNode.getTokens();
+    // tokens: TRANSLATE <target> TO UPPER|LOWER CASE .
+    // or:     TRANSLATE <target> USING <source> .
+    if (tokens.length < 4) {
+      return undefined;
+    }
+    const thirdToken = tokens[2].getStr().toUpperCase();
+    if (thirdToken !== "TO") {
+      return undefined;
+    }
+    const targetStr = tokens[1].getStr();
+    const directionToken = tokens[3].getStr().toUpperCase();
+    if (directionToken === "UPPER") {
+      return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), targetStr + " = to_upper( " + targetStr + " ).");
+    } else if (directionToken === "LOWER") {
+      return EditHelper.replaceRange(file, statementNode.getStart(), statementNode.getEnd(), targetStr + " = to_lower( " + targetStr + " ).");
+    }
     return undefined;
   }
 }
