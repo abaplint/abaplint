@@ -1377,6 +1377,120 @@ DATA s TYPE ty_alias.`;
     expect(identifier!.getType().getQualifiedName()).to.equal("ty_alias");
   });
 
+  it("TYPES TYPE local integer, string and table, new qualified name, #4609", () => {
+    const abap = `
+TYPES loc_i_base TYPE i.
+TYPES loc_str_base TYPE string.
+TYPES loc_tab_base TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+TYPES ty_loc_i TYPE loc_i_base.
+TYPES ty_loc_str TYPE loc_str_base.
+TYPES ty_loc_tab TYPE loc_tab_base.
+DATA d_loc_i TYPE ty_loc_i.
+DATA d_loc_str TYPE ty_loc_str.
+DATA d_loc_tab TYPE ty_loc_tab.`;
+    const expected: [string, string, any][] = [
+      ["d_loc_i", "ty_loc_i", Basic.IntegerType],
+      ["d_loc_str", "ty_loc_str", Basic.StringType],
+      ["d_loc_tab", "ty_loc_tab", Basic.TableType]];
+    for (const [name, qualifiedName, clas] of expected) {
+      const identifier = resolveVariable(abap, name);
+      expect(identifier!.getType(), name).to.be.instanceof(clas);
+      expect(identifier!.getType().getQualifiedName(), name).to.equal(qualifiedName);
+    }
+  });
+
+  it("TYPES TYPE DDIC data elements and table type, new local type, #4609", () => {
+    const doma = (name: string, dataType: string) => `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>${name}</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>${dataType}</DATATYPE>
+    <LENG>000010</LENG>
+    <OUTPUTLEN>000010</OUTPUTLEN>
+    <DDTEXT>domain</DDTEXT>
+   </DD01V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const dtel = (name: string) => `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>${name}</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DOMNAME>${name}</DOMNAME>
+    <DDTEXT>data element</DDTEXT>
+    <REFKIND>D</REFKIND>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const ttyp = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZSTRING_TABLE</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>STRG</DATATYPE>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const files = [
+      {filename: "zchar10.doma.xml", contents: doma("ZCHAR10", "CHAR")},
+      {filename: "zchar10.dtel.xml", contents: dtel("ZCHAR10")},
+      {filename: "zint4.doma.xml", contents: doma("ZINT4", "INT4")},
+      {filename: "zint4.dtel.xml", contents: dtel("ZINT4")},
+      {filename: "zstring_table.ttyp.xml", contents: ttyp}];
+    const abap = `
+TYPES ty_char10 TYPE zchar10.
+TYPES ty_int4 TYPE zint4.
+TYPES ty_string_table TYPE zstring_table.
+DATA d_char10 TYPE ty_char10.
+DATA d_int4 TYPE ty_int4.
+DATA d_string_table TYPE ty_string_table.`;
+    const expected: [string, string, any][] = [
+      ["d_char10", "ty_char10", Basic.CharacterType],
+      ["d_int4", "ty_int4", Basic.IntegerType],
+      ["d_string_table", "ty_string_table", Basic.TableType]];
+    for (const [name, qualifiedName, clas] of expected) {
+      const identifier = runMulti([...files, {filename: "zfoobar.prog.abap", contents: abap}], name);
+      expect(identifier!.getType(), name).to.be.instanceof(clas);
+      expect(identifier!.getType().getQualifiedName(), name).to.equal(qualifiedName);
+      expect(identifier!.getType().getDDICName(), name).to.equal(undefined);
+    }
+  });
+
+  it("DATA TYPE DDIC character data element, keeps the DDIC name", () => {
+    const identifier = runMulti([
+      {filename: "zchar1.dtel.xml", contents: `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZCHAR1</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DDTEXT>data element</DDTEXT>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`},
+      {filename: "zfoobar.prog.abap", contents: `DATA d TYPE zchar1.`}], "d");
+    expect(identifier!.getType()).to.be.instanceof(Basic.CharacterType);
+    expect(identifier!.getType().getQualifiedName()).to.equal("ZCHAR1");
+    expect(identifier!.getType().getDDICName()).to.equal("ZCHAR1");
+  });
+
   it("SELECT substring columns into inline table", () => {
     const abap = `
 DATA lr_cust TYPE RANGE OF string.

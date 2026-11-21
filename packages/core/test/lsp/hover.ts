@@ -1473,7 +1473,8 @@ ENDINTERFACE.`;
     const hover = new Hover(reg).find(buildPosition(file1, 1, 10));
     expect(hover).to.not.equal(undefined);
     expect(hover?.value).to.contain("Qualified Type Name: ```lif_test_types=>foobar```");
-    expect(hover?.value).to.contain("DDIC Name: ```ABAP_ENCOD```");
+    // TYPES creates a new type, it is no longer the DDIC type, #4609
+    expect(hover?.value).to.not.contain("DDIC Name:");
   });
 
   it("Hover, prefer STRING over generic type when inferred", () => {
