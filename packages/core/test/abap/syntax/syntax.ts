@@ -18254,6 +18254,54 @@ ENDCLASS.`;
   });
 });
 
+describe("syntax.ts, LIKE REF TO a generic data object, #3231", () => {
+  const message = "LIKE REF TO not possible";
+  const method = (body: string) => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run IMPORTING val TYPE data simp TYPE simple str TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error, parameter TYPE data", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO val.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, parameter TYPE simple", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO simp.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, field symbol TYPE data", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <fs> TYPE data.
+    ASSIGN str TO <fs>.
+    DATA lr LIKE REF TO <fs>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("ok, fully typed parameter", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO str.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, TYPE REF TO data", () => {
+    const issues = runProgram(method(`
+    DATA lr TYPE REF TO data.
+    GET REFERENCE OF val INTO lr.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
+
 describe("syntax.ts, generic data reference dereferenced as a target", () => {
   const message = "A generic reference cannot be dereferenced";
   const method = (body: string) => `
