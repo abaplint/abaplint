@@ -102,6 +102,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.checkMethodNameLength(input);
     this.checkClassConstructor(input);
     this.checkLocalTypesInPublicSections(input, node, scope.getTop());
+    this.checkTestMethodsInTestClass(input, node);
   }
 
   public getFriends() {
@@ -172,6 +173,41 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       const message = `Class name "${this.getName()}" is too long, maximum length is 30 characters`;
       input.issues.push(syntaxIssue(input, this.getToken(), message));
     }
+  }
+
+  private checkTestMethodsInTestClass(input: SyntaxInput, node: StructureNode) {
+    if (this.isTestClass(input)) {
+      return;
+    }
+    for (const m of node.findAllStatements(Statements.MethodDef)) {
+      if (m.concatTokens().toUpperCase().includes(" FOR TESTING") === false) {
+        continue;
+      }
+      const name = m.findDirectExpression(Expressions.MethodName)?.getFirstToken();
+      const message = `Test method "${name?.getStr()}" can only be defined in a test class, FOR TESTING`;
+      input.issues.push(syntaxIssue(input, name ?? m.getFirstToken(), message));
+    }
+  }
+
+  /** the class or one of its super classes is defined FOR TESTING */
+  private isTestClass(input: SyntaxInput): boolean {
+    if (this.testing === true) {
+      return true;
+    }
+    const visited = new Set<string>();
+    let sup = this.superClass;
+    while (sup !== undefined && visited.has(sup.toUpperCase()) === false) {
+      visited.add(sup.toUpperCase());
+      const def = input.scope.findClassDefinition(sup);
+      if (def === undefined) {
+        // void or unknown super class, cannot tell
+        return true;
+      } else if (def.isForTesting()) {
+        return true;
+      }
+      sup = def.getSuperClass();
+    }
+    return false;
   }
 
   // the local types, classes and interfaces of a class pool can only be used in the PRIVATE SECTION of the global class
