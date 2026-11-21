@@ -250,6 +250,20 @@ export class BasicTypes {
       type = Types.IntegerType.get(data);
     } else if (type instanceof Types.StringType) {
       type = Types.StringType.get(data);
+    } else if (type instanceof Types.XStringType) {
+      type = Types.XStringType.get(data);
+    } else if (type instanceof Types.Integer8Type) {
+      type = new Types.Integer8Type(data);
+    } else if (type instanceof Types.NumericType) {
+      type = new Types.NumericType(type.getLength(), data);
+    } else if (type instanceof Types.HexType) {
+      type = new Types.HexType(type.getLength(), data);
+    } else if (type instanceof Types.FloatingPointType) {
+      type = new Types.FloatingPointType(type.getLength(), data);
+    } else if (type instanceof Types.DateType) {
+      type = new Types.DateType(data);
+    } else if (type instanceof Types.TimeType) {
+      type = new Types.TimeType(data);
     } else if (type instanceof StructureType) {
       type = new StructureType(type.getComponents().slice(), qualifiedName, undefined, type.getDescription());
     } else if (type instanceof TableType) {
