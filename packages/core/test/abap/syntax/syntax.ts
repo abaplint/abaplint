@@ -12503,6 +12503,61 @@ ${statement}`;
     }
   });
 
+  it("error, table with header line passed to a table parameter, #3209", () => {
+    const calls = ["lcl=>foo( tab ).", "lcl=>foo( sdf = tab ).", "lcl=>bar( sdf = tab other = 1 )."];
+    for (const call of calls) {
+      const abap = `
+TYPES ty1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo IMPORTING sdf TYPE ty1.
+    CLASS-METHODS bar IMPORTING sdf TYPE ty1 other TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA tab TYPE i OCCURS 0 WITH HEADER LINE.
+  ${call}`;
+      const issues = runProgram(abap);
+      expect(issues[0]?.getMessage(), call).to.contain("is the header line");
+    }
+  });
+
+  it("ok, table body of a table with header line passed to a table parameter, #3209", () => {
+    const abap = `
+TYPES ty1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo IMPORTING sdf TYPE ty1.
+    CLASS-METHODS int IMPORTING val TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD int.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA tab TYPE i OCCURS 0 WITH HEADER LINE.
+  DATA plain TYPE ty1.
+  lcl=>foo( tab[] ).
+  lcl=>foo( sdf = tab[] ).
+  lcl=>foo( plain ).
+  lcl=>int( tab ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, short forms with header line, MODIFY and INSERT, #1790", () => {
     const abap = `
 DATA lt_hl TYPE i OCCURS 0 WITH HEADER LINE.
