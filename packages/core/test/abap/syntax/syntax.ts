@@ -12435,6 +12435,27 @@ MODIFY TABLE mt_locals INDEX lv_index FROM ii_value.`;
     expect(issues[0].getMessage()).to.contain("Table does not have header line");
   });
 
+  it("error, short forms without header line, MODIFY and INSERT, #1790", () => {
+    const statements = ["MODIFY lt_tab.", "MODIFY lt_tab INDEX 1.", "MODIFY TABLE lt_tab.", "INSERT lt_tab."];
+    for (const statement of statements) {
+      const abap = `
+DATA lt_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+${statement}`;
+      const issues = runProgram(abap);
+      expect(issues[0]?.getMessage(), statement).to.contain("Table does not have header line");
+    }
+  });
+
+  it("ok, short forms with header line, MODIFY and INSERT, #1790", () => {
+    const abap = `
+DATA lt_hl TYPE i OCCURS 0 WITH HEADER LINE.
+MODIFY lt_hl INDEX 1.
+MODIFY TABLE lt_hl.
+INSERT lt_hl.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, MODIFY INDEX FROM", () => {
     const abap = `
 DATA mt_locals TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
