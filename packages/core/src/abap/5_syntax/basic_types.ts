@@ -250,6 +250,20 @@ export class BasicTypes {
       type = Types.IntegerType.get(data);
     } else if (type instanceof Types.StringType) {
       type = Types.StringType.get(data);
+    } else if (type instanceof Types.XStringType) {
+      type = Types.XStringType.get(data);
+    } else if (type instanceof Types.Integer8Type) {
+      type = new Types.Integer8Type(data);
+    } else if (type instanceof Types.NumericType) {
+      type = new Types.NumericType(type.getLength(), data);
+    } else if (type instanceof Types.HexType) {
+      type = new Types.HexType(type.getLength(), data);
+    } else if (type instanceof Types.FloatingPointType) {
+      type = new Types.FloatingPointType(type.getLength(), data);
+    } else if (type instanceof Types.DateType) {
+      type = new Types.DateType(data);
+    } else if (type instanceof Types.TimeType) {
+      type = new Types.TimeType(data);
     } else if (type instanceof StructureType) {
       type = new StructureType(type.getComponents().slice(), qualifiedName, undefined, type.getDescription());
     } else if (type instanceof TableType) {
@@ -596,6 +610,10 @@ export class BasicTypes {
       const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);
       if (type === undefined) {
         return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
+      }
+      // generic tables are reported via DataReference.isGeneric()
+      if (type.isGeneric() === true && !(type instanceof TableType)) {
+        throw new Error("LIKE REF TO not possible, \"" + name + "\" is generic");
       }
       return new Types.DataReference(type, name);
     } else if (text === "TYPE STANDARD TABLE"

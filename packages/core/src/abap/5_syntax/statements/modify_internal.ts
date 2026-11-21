@@ -48,6 +48,13 @@ export class ModifyInternal implements StatementSyntax {
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return;
         }
+        if (node.findDirectTokenByText("FROM") === undefined
+            && targetType.isWithHeader() === false) {
+          // short form, the header line is the work area, eg. "MODIFY itab."
+          const message = "Table does not have header line";
+          input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+          return;
+        }
       } else if (targetType instanceof StructureType) {
         // it might originate from a TABLES statement
         if (target.concatTokens().toUpperCase() !== targetType.getDDICName()) {

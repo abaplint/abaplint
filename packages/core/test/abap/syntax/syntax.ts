@@ -3541,6 +3541,35 @@ DATA(parameters) = VALUE ty_distance( LET distance = 10 IN distance = distance )
     expect(issues.length).to.equals(0);
   });
 
+  it("escaped function and method names, !line_exists(, #2529", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m RETURNING VALUE(r) TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA(table) = VALUE string_table( ( |test| ) ).
+  IF !line_exists( table[ table_line = |test| ] ).
+  ENDIF.
+  DATA(upper) = !to_upper( |test| ).
+  DATA(lines) = !lines( table ).
+  DATA(int) = lcl=>!m( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("escaped function name, not found, #2529", () => {
+    const abap = `
+DATA(sdf) = !no_such_function( 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not found");
+  });
+
   it("condense() with del parameter", () => {
     const abap = `WRITE condense( val = |dsf| del = |\r| ).`;
     const issues = runProgram(abap);
@@ -9369,6 +9398,63 @@ DATA itab TYPE STANDARD TABLE OF ty_row WITH UNIQUE KEY i.`;
     expect(issues[0].getMessage()).to.contain("STANDARD tables cannot have UNIQUE key");
   });
 
+  it("Error, hashed with non-unique key, #3218", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field TYPE c LENGTH 3,
+       END OF ty.
+DATA tab TYPE HASHED TABLE OF ty WITH NON-UNIQUE KEY field.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("HASHED tables cannot have NON-UNIQUE key");
+  });
+
+  it("Error, hashed with non-unique key named primary_key, #3218", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field TYPE c LENGTH 3,
+       END OF ty.
+TYPES ty_tab TYPE HASHED TABLE OF ty WITH NON-UNIQUE KEY primary_key COMPONENTS field.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("HASHED tables cannot have NON-UNIQUE key");
+  });
+
+  it("Ok, hashed with unique key, generic hashed key and non-unique sorted secondary key, #3218", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         field TYPE c LENGTH 3,
+         other TYPE i,
+       END OF ty.
+TYPES ty_generic TYPE HASHED TABLE OF ty WITH KEY field.
+DATA tab1 TYPE HASHED TABLE OF ty WITH UNIQUE KEY field.
+DATA tab2 TYPE HASHED TABLE OF ty WITH UNIQUE KEY field WITH NON-UNIQUE SORTED KEY sec COMPONENTS other.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Error, sorted with unique empty key, #3924", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE i,
+       END OF ty.
+TYPES ty_timestamps_tt TYPE SORTED TABLE OF ty WITH UNIQUE EMPTY KEY.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("EMPTY KEY cannot be UNIQUE");
+  });
+
+  it("Ok, standard with empty key, #3924", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         foo TYPE i,
+       END OF ty.
+TYPES ty_tab TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+DATA tab TYPE STANDARD TABLE OF ty WITH EMPTY KEY.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("Error, field does not exist", () => {
     const abap = `
 INTERFACE lif.
@@ -11673,6 +11759,54 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("error, me as RETURNING parameter name", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS test RETURNING VALUE(me) TYPE REF TO data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD test.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("\"me\" is a reserved name");
+  });
+
+  it("error, me as attribute name", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA me TYPE REF TO data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("\"me\" is a reserved name");
+  });
+
+  it("error, me as inline variable name in method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS test.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD test.
+    DATA(me) = \`abc\`.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("\"me\" is a reserved name");
+  });
+
+  it("ok, me as variable name outside classes", () => {
+    const abap = `DATA me TYPE i.
+me = 2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("error, CALL METHOD instance method inside static method", () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -12435,6 +12569,108 @@ MODIFY TABLE mt_locals INDEX lv_index FROM ii_value.`;
     expect(issues[0].getMessage()).to.contain("Table does not have header line");
   });
 
+  it("error, short forms without header line, MODIFY and INSERT, #1790", () => {
+    const statements = ["MODIFY lt_tab.", "MODIFY lt_tab INDEX 1.", "MODIFY TABLE lt_tab.", "INSERT lt_tab."];
+    for (const statement of statements) {
+      const abap = `
+DATA lt_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+${statement}`;
+      const issues = runProgram(abap);
+      expect(issues[0]?.getMessage(), statement).to.contain("Table does not have header line");
+    }
+  });
+
+  it("error, table with header line passed to a table parameter, #3209", () => {
+    const calls = ["lcl=>foo( tab ).", "lcl=>foo( sdf = tab ).", "lcl=>bar( sdf = tab other = 1 )."];
+    for (const call of calls) {
+      const abap = `
+TYPES ty1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo IMPORTING sdf TYPE ty1.
+    CLASS-METHODS bar IMPORTING sdf TYPE ty1 other TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA tab TYPE i OCCURS 0 WITH HEADER LINE.
+  ${call}`;
+      const issues = runProgram(abap);
+      expect(issues[0]?.getMessage(), call).to.contain("is the header line");
+    }
+  });
+
+  it("ok, table body of a table with header line passed to a table parameter, #3209", () => {
+    const abap = `
+TYPES ty1 TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS foo IMPORTING sdf TYPE ty1.
+    CLASS-METHODS int IMPORTING val TYPE i.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+  METHOD int.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA tab TYPE i OCCURS 0 WITH HEADER LINE.
+  DATA plain TYPE ty1.
+  lcl=>foo( tab[] ).
+  lcl=>foo( sdf = tab[] ).
+  lcl=>foo( plain ).
+  lcl=>int( tab ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, short forms with header line, MODIFY and INSERT, #1790", () => {
+    const abap = `
+DATA lt_hl TYPE i OCCURS 0 WITH HEADER LINE.
+MODIFY lt_hl INDEX 1.
+MODIFY TABLE lt_hl.
+INSERT lt_hl.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, DELETE short forms without header line, #1790", () => {
+    const statements = ["DELETE lt_tab.", "DELETE TABLE lt_tab.", "LOOP AT lt_tab INTO DATA(row). DELETE TABLE lt_tab. ENDLOOP."];
+    for (const statement of statements) {
+      const abap = `
+DATA lt_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+${statement}`;
+      const issues = runProgram(abap);
+      expect(issues[0]?.getMessage(), statement).to.contain("Table does not have header line");
+    }
+  });
+
+  it("ok, DELETE itab inside LOOP deletes the current line, and short forms with header line, #1790", () => {
+    const abap = `
+DATA lt_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+DATA lt_hl TYPE i OCCURS 0 WITH HEADER LINE.
+LOOP AT lt_tab INTO DATA(row).
+  DELETE lt_tab.
+ENDLOOP.
+DELETE lt_hl.
+DELETE TABLE lt_hl.
+DELETE lt_tab INDEX 1.
+DELETE TABLE lt_tab FROM 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, MODIFY INDEX FROM", () => {
     const abap = `
 DATA mt_locals TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
@@ -12902,6 +13138,32 @@ DATA mt_functions TYPE STANDARD TABLE OF string WITH EMPTY KEY.
 INSERT 'hello' INTO TABLE mt_functions.`;
     const issues = runProgram(abap);
     expect(issues[0].getMessage()).to.contain("Types not compatible");
+  });
+
+  it("not compatible, character-like data object into a numeric table, #2455", () => {
+    const sources = ["str", "char"];
+    for (const source of sources) {
+      const abap = `
+DATA str TYPE string.
+DATA char TYPE c LENGTH 10.
+DATA int_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+INSERT ${source} INTO TABLE int_tab.`;
+      const issues = runProgram(abap);
+      expect(issues[0]?.getMessage(), source).to.contain("Types not compatible");
+    }
+  });
+
+  it("ok, numeric data object into a numeric table, #2455", () => {
+    const abap = `
+DATA int TYPE i.
+DATA int_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+DATA str_tab TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA str TYPE string.
+INSERT int INTO TABLE int_tab.
+INSERT 5 INTO TABLE int_tab.
+INSERT str INTO TABLE str_tab.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
   it("Field defined twice in inline value", () => {
@@ -18250,6 +18512,54 @@ ENDCLASS.`;
     const issues = runProgram(method(`
     DATA lr TYPE REF TO data.
     GET REFERENCE OF it INTO lr.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
+
+describe("syntax.ts, LIKE REF TO a generic data object, #3231", () => {
+  const message = "LIKE REF TO not possible";
+  const method = (body: string) => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run IMPORTING val TYPE data simp TYPE simple str TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error, parameter TYPE data", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO val.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, parameter TYPE simple", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO simp.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, field symbol TYPE data", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <fs> TYPE data.
+    ASSIGN str TO <fs>.
+    DATA lr LIKE REF TO <fs>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("ok, fully typed parameter", () => {
+    const issues = runProgram(method(`
+    DATA lr LIKE REF TO str.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, TYPE REF TO data", () => {
+    const issues = runProgram(method(`
+    DATA lr TYPE REF TO data.
+    GET REFERENCE OF val INTO lr.`));
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });

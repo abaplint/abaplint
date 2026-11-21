@@ -5,7 +5,8 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {AnyType, CharacterType, DataReference, Integer8Type, IntegerType, StringType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, CharacterType, DataReference, DecFloat16Type, DecFloat34Type, FloatType, Integer8Type, IntegerType, PackedType,
+  StringType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
 import {TypeUtils} from "../_type_utils";
@@ -73,6 +74,17 @@ export class InsertInternal implements StatementSyntax {
         error = true;
       } else if (sourceType instanceof CharacterType && targetType instanceof StringType) {
         // yea, well, INSERT doesnt convert the values automatically, like everything else?
+        error = true;
+      } else if ((sourceType instanceof StringType || sourceType instanceof CharacterType)
+          && sourceType.getAbstractTypeData()?.derivedFromConstant !== true
+          && source?.findDirectExpression(Expressions.Constant) === undefined
+          && (targetType instanceof IntegerType
+            || targetType instanceof Integer8Type
+            || targetType instanceof PackedType
+            || targetType instanceof FloatType
+            || targetType instanceof DecFloat16Type
+            || targetType instanceof DecFloat34Type)) {
+        // a character-like data object into a table with a numeric row type, no conversion
         error = true;
       } else if (sourceType instanceof CharacterType
           && targetType instanceof CharacterType
