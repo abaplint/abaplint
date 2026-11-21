@@ -11,6 +11,7 @@ import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Constant} from "./constant";
 import {checkOffsetLength} from "./_check_offset_length";
 import {checkTextSymbol} from "./_check_text_symbol";
+import {checkHeaderLine} from "./_check_header_line";
 import {BuiltInMethod} from "../_builtin";
 
 export class MethodCallParam {
@@ -86,6 +87,8 @@ export class MethodCallParam {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       } else if (checkTextSymbol(child, targetType, input)) {
+        return;
+      } else if (checkHeaderLine(child, sourceType, targetType, input)) {
         return;
       } else if (this.isAssignable(sourceType, targetType, child, method, input) === false) {
         const message = "Method parameter type not compatible";
