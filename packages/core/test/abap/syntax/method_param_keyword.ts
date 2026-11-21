@@ -197,6 +197,31 @@ ENDINTERFACE.`;
     }
   });
 
+  describe("DEFAULT and OPTIONAL on the same parameter, #1738", () => {
+    const message = `Parameter "per_page" cannot have both DEFAULT and OPTIONAL`;
+
+    it("IMPORTING, error", () => {
+      const issues = run(`IMPORTING outdated TYPE string OPTIONAL per_page TYPE i DEFAULT 30 OPTIONAL`);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.equals(message);
+      expect(issues[0].getStart().getCol()).to.equals(91);
+    });
+
+    it("CHANGING, error", () => {
+      const issues = run(`CHANGING per_page TYPE i DEFAULT 30 OPTIONAL`);
+      expect(issues.map(i => i.getMessage())).to.deep.equal([message]);
+    });
+
+    it("LIKE with DEFAULT, error", () => {
+      const issues = run(`IMPORTING per_page LIKE sy-tabix DEFAULT 30 OPTIONAL`);
+      expect(issues.map(i => i.getMessage())).to.deep.equal([message]);
+    });
+
+    it("DEFAULT or OPTIONAL alone, ok", () => {
+      expect(run(`IMPORTING per_page TYPE i DEFAULT 30 other TYPE i OPTIONAL`).length).to.equals(0);
+    });
+  });
+
   it("names that start with a keyword", () => {
     expect(run(`IMPORTING val TYPE i fallback TYPE i default_value TYPE i optional_flag TYPE i`).length).to.equals(0);
   });

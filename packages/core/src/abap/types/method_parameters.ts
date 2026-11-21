@@ -324,9 +324,14 @@ export class MethodParameters implements IMethodParameters {
       const id = MethodParam.runSyntax(p, input, [...meta, ...extraMeta]);
       input.scope.addIdentifier(id);
       target.push(id);
-      if (opt.findDirectTokenByText("OPTIONAL")) {
+      const optionalToken = opt.findDirectTokenByText("OPTIONAL");
+      if (optionalToken) {
         const name = target[target.length - 1].getName().toUpperCase();
         this.optional.push(name);
+        if (opt.findFirstExpression(Expressions.Default)) {
+          const message = "Parameter \"" + id.getName() + "\" cannot have both DEFAULT and OPTIONAL";
+          input.issues.push(syntaxIssue(input, optionalToken, message));
+        }
       } else if (opt.findFirstExpression(Expressions.Default)) {
         const name = target[target.length - 1].getName().toUpperCase();
         this.optional.push(name);
