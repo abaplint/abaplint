@@ -12597,6 +12597,32 @@ INSERT lt_hl.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("error, DELETE short forms without header line, #1790", () => {
+    const statements = ["DELETE lt_tab.", "DELETE TABLE lt_tab.", "LOOP AT lt_tab INTO DATA(row). DELETE TABLE lt_tab. ENDLOOP."];
+    for (const statement of statements) {
+      const abap = `
+DATA lt_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+${statement}`;
+      const issues = runProgram(abap);
+      expect(issues[0]?.getMessage(), statement).to.contain("Table does not have header line");
+    }
+  });
+
+  it("ok, DELETE itab inside LOOP deletes the current line, and short forms with header line, #1790", () => {
+    const abap = `
+DATA lt_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+DATA lt_hl TYPE i OCCURS 0 WITH HEADER LINE.
+LOOP AT lt_tab INTO DATA(row).
+  DELETE lt_tab.
+ENDLOOP.
+DELETE lt_hl.
+DELETE TABLE lt_hl.
+DELETE lt_tab INDEX 1.
+DELETE TABLE lt_tab FROM 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, MODIFY INDEX FROM", () => {
     const abap = `
 DATA mt_locals TYPE STANDARD TABLE OF i WITH DEFAULT KEY.

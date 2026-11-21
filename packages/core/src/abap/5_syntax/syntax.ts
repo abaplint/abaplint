@@ -329,6 +329,7 @@ export class SyntaxLogic {
 
   private scope: CurrentScope;
   private loopTables: LoopTableChange;
+  private loopDepth: number;
   private currentMethod: StructureNode | undefined;
   private sortedLines: SortedKeyWrite;
 
@@ -360,6 +361,7 @@ export class SyntaxLogic {
     this.issues = [];
     this.deferred = [];
     this.loopTables = new LoopTableChange();
+    this.loopDepth = 0;
     this.sortedLines = new SortedKeyWrite();
     this.reg.getDDICReferences().clear(this.object);
     this.reg.getMSAGReferences().clear(this.object);
@@ -443,6 +445,10 @@ export class SyntaxLogic {
     const loop = node instanceof StructureNode
       && node.get() instanceof Structures.Loop
       && this.loopTables.push(node, this.scope);
+    const isLoop = node instanceof StructureNode && node.get() instanceof Structures.Loop;
+    if (isLoop) {
+      this.loopDepth++;
+    }
     if (node instanceof StructureNode) {
       this.sortedLines.enter(node, this.currentFile.getFilename());
     }
@@ -492,6 +498,9 @@ export class SyntaxLogic {
 
     if (loop === true) {
       this.loopTables.pop();
+    }
+    if (isLoop) {
+      this.loopDepth--;
     }
     if (node instanceof StructureNode && node.get() instanceof Structures.Loop) {
       const loopStatement = node.findDirectStatement(Statements.Loop);
@@ -574,6 +583,7 @@ export class SyntaxLogic {
       filename,
       issues: this.issues,
       deferred: this.deferred,
+      inLoop: this.loopDepth > 0,
     };
 
     // todo, refactor
