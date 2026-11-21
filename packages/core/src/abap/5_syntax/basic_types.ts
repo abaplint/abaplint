@@ -238,11 +238,15 @@ export class BasicTypes {
 
   private cloneType(type: AbstractType, qualifiedName?: string): AbstractType {
     // nested types(containing "-") will inherit the qualified names if possible
-    // todo, this needs to be extended to all AbstractTypes instead of just CharacterType
-    if (type instanceof CharacterType
-        && qualifiedName
-        && qualifiedName.includes("-") === false) {
+    // todo, this needs to be extended to all AbstractTypes instead of just CharacterType and StructureType
+    if (!qualifiedName || qualifiedName.includes("-") === true) {
+      return type;
+    }
+    if (type instanceof CharacterType) {
       type = type.cloneType({qualifiedName});
+    } else if (type instanceof StructureType) {
+      // TYPES creates a new type, it is no longer the DDIC type
+      type = new StructureType(type.getComponents().slice(), qualifiedName, undefined, type.getDescription());
     }
     return type;
   }
