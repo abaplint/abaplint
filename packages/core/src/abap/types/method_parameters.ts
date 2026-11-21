@@ -14,6 +14,7 @@ import {ReferenceType} from "../5_syntax/_reference";
 import {Identifier as IdentifierToken} from "../1_lexer/tokens/identifier";
 import {ScopeType} from "../5_syntax/_scope_type";
 import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
+import {checkReservedName} from "../5_syntax/_reserved_names";
 
 // the keywords that can follow a parameter in each section, a plain parameter name is read as them
 const KEYWORDS_AFTER: {[section: string]: string[]} = {
@@ -233,6 +234,7 @@ export class MethodParameters implements IMethodParameters {
       if (parameter.getName().length > 30) {
         input.issues.push(syntaxIssue(input, parameter.getToken(), "Method parameter name longer than 30 characters"));
       }
+      checkReservedName(parameter.getToken(), input);
     }
   }
 
