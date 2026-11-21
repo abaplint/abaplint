@@ -57,7 +57,7 @@ export class MethodCallChain {
         // for built-in methods set className to undefined
         const className = context instanceof ObjectReferenceType ? context.getIdentifierName() : undefined;
         const methodToken = current.findDirectExpression(Expressions.MethodName)?.getFirstToken();
-        const methodName = methodToken?.getStr();
+        const methodName = methodToken?.getStr().replace(/^!/, "");
         const def = input.scope.findObjectDefinition(className);
         const isSuper = current === children[2]
           && first.get() instanceof Expressions.FieldChain

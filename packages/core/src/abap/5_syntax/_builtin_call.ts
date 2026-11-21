@@ -38,7 +38,7 @@ export class BuiltInCall {
   }
 
   public static callName(call: ExpressionNode): string | undefined {
-    return call.findDirectExpression(Expressions.MethodName)?.concatTokens();
+    return call.findDirectExpression(Expressions.MethodName)?.concatTokens().replace(/^!/, "");
   }
 
   public static isNumeric(call: ExpressionNode): boolean {

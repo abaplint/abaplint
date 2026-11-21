@@ -3541,6 +3541,35 @@ DATA(parameters) = VALUE ty_distance( LET distance = 10 IN distance = distance )
     expect(issues.length).to.equals(0);
   });
 
+  it("escaped function and method names, !line_exists(, #2529", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m RETURNING VALUE(r) TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA(table) = VALUE string_table( ( |test| ) ).
+  IF !line_exists( table[ table_line = |test| ] ).
+  ENDIF.
+  DATA(upper) = !to_upper( |test| ).
+  DATA(lines) = !lines( table ).
+  DATA(int) = lcl=>!m( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("escaped function name, not found, #2529", () => {
+    const abap = `
+DATA(sdf) = !no_such_function( 2 ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not found");
+  });
+
   it("condense() with del parameter", () => {
     const abap = `WRITE condense( val = |dsf| del = |\r| ).`;
     const issues = runProgram(abap);
