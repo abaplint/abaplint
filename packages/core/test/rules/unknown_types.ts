@@ -1,6 +1,11 @@
 import {fullErrorNamespace, runMulti, testRule} from "./_utils";
 import {UnknownTypes} from "../../src/rules";
 import {expect} from "chai";
+import {Registry} from "../../src/registry";
+import {MemoryFile} from "../../src/files/memory_file";
+import {SyntaxLogic} from "../../src/abap/5_syntax/syntax";
+import {IntegerType} from "../../src/abap/types/basic";
+import {ABAPObject} from "../../src/objects/_abap_object";
 
 // note that the errorNamespace is respected
 
@@ -232,6 +237,94 @@ ENDCLASS.`;
     let issues = runMulti([{filename: "zcl_foobar.clas.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);
+  });
+
+  describe("method parameter typed with a type defined after the METHODS statement, #2556", () => {
+    function run(abap: string) {
+      return runMulti([{filename: "zfoobar.prog.abap", contents: abap}]).filter(i => i.getKey() === key);
+    }
+
+    it("type in a later section, error", () => {
+      const issues = run(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS add_edge IMPORTING is_edge TYPE ty_edge.
+  PRIVATE SECTION.
+    TYPES ty_edge TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD add_edge.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.contain("TY_EDGE not found");
+      expect(issues[0].getStart().getRow()).to.equal(4);
+    });
+
+    it("type later in the same section, RETURNING, error", () => {
+      const issues = run(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS get_edge RETURNING VALUE(rs_edge) TYPE ty_edge.
+    TYPES ty_edge TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get_edge.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.contain("TY_EDGE not found");
+    });
+
+    it("interface, error", () => {
+      const issues = run(`
+INTERFACE lif.
+  METHODS add_edge IMPORTING is_edge TYPE ty_edge.
+  TYPES ty_edge TYPE string.
+ENDINTERFACE.`);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.contain("TY_EDGE not found");
+    });
+
+    it("type defined before the METHODS statement, ok", () => {
+      const issues = run(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_edge TYPE string.
+    METHODS add_edge IMPORTING is_edge TYPE ty_edge RETURNING VALUE(rs_edge) TYPE ty_edge.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD add_edge.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("a program type of the same name is used until the class type is defined", () => {
+      const abap = `
+TYPES ty_edge TYPE i.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS add_edge IMPORTING is_edge TYPE ty_edge.
+    TYPES ty_edge TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD add_edge.
+    DATA lv_int TYPE i.
+    lv_int = is_edge.
+  ENDMETHOD.
+ENDCLASS.`;
+      const issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+      expect(issues.filter(i => i.getKey() === key || i.getKey() === "check_syntax").length).to.equal(0);
+      const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
+      const spaghetti = new SyntaxLogic(reg, reg.getFirstObject() as ABAPObject).run().spaghetti;
+      const cdef = spaghetti.getTop().getFirstChild()?.getFirstChild()?.findClassDefinition("lcl");
+      const param = cdef?.getMethodDefinitions().getByName("add_edge")?.getParameters().getImporting()[0];
+      expect(param?.getType()).to.be.instanceOf(IntegerType);
+    });
   });
 
   it("ms_metadata could not be resolved, expect error", () => {

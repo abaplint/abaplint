@@ -66,11 +66,15 @@ export class MethodDefinitions implements IMethodDefinitions {
   }
 
   private add(def: StatementNode, visibility: Visibility, input: SyntaxInput): void {
+    // the parameters only see the types defined above the METHODS statement
+    input.scope.setTypesDefinedBefore(def.getStart(), input.filename);
     try {
       const m = new MethodDefinition(def, visibility, input);
       this.all[m.getName().toUpperCase()] = m;
     } catch (e) {
       input.issues.push(syntaxIssue(input, def.getFirstToken(), e.message));
+    } finally {
+      input.scope.setTypesDefinedBefore(undefined, input.filename);
     }
   }
 
