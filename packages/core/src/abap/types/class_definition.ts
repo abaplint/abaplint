@@ -20,6 +20,7 @@ import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 import {Alias} from "./alias";
 import {SpaghettiScopeNode} from "../5_syntax/spaghetti_scope";
+import {checkAliasNameConflicts} from "./_alias_conflicts";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly methodDefs: MethodDefinitions;
@@ -97,6 +98,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.checkInterfaceVisibility(input, node);
     this.checkMethodsFromSuperClasses(input);
     this.checkMethodNameConflicts(input);
+    checkAliasNameConflicts(input, this.aliases, this.methodDefs, this.attributes, this.types);
     this.checkEventNameConflicts(input);
     this.checkClassNameLength(input);
     this.checkMethodNameLength(input);

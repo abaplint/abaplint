@@ -20249,3 +20249,86 @@ lv_open_url = TEXT-dev.`;
     expect(issues.length).to.equal(0);
   });
 });
+
+describe("syntax.ts, ALIASES name already used by a component", () => {
+  const intf = `INTERFACE lif_entity.
+  METHODS get_foo.
+  DATA mv TYPE i.
+ENDINTERFACE.
+`;
+
+  it("error, interface, alias then method of the same name", () => {
+    const abap = intf + `INTERFACE lif_request.
+  INTERFACES lif_entity.
+  ALIASES get_foo FOR lif_entity~get_foo.
+  METHODS get_foo.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(`"get_foo" already defined, ALIASES`);
+    expect(issues[0].getStart().getRow()).to.equal(8);
+  });
+
+  it("error, interface, method then alias of the same name", () => {
+    const abap = intf + `INTERFACE lif_request.
+  INTERFACES lif_entity.
+  METHODS get_foo.
+  ALIASES get_foo FOR lif_entity~get_foo.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(`"get_foo" already defined, ALIASES`);
+    expect(issues[0].getStart().getRow()).to.equal(8);
+  });
+
+  it("error, class, alias then attribute of the same name", () => {
+    const abap = intf + `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_entity.
+    ALIASES get_foo FOR lif_entity~get_foo.
+    DATA get_foo TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD lif_entity~get_foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(`"get_foo" already defined, ALIASES`);
+  });
+
+  it("error, class, alias then type of the same name", () => {
+    const abap = intf + `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_entity.
+    ALIASES get_foo FOR lif_entity~get_foo.
+    TYPES get_foo TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD lif_entity~get_foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(`"get_foo" already defined, ALIASES`);
+  });
+
+  it("ok, aliases with their own names, for a method and an attribute", () => {
+    const abap = intf + `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_entity.
+    ALIASES foo FOR lif_entity~get_foo.
+    ALIASES mv FOR lif_entity~mv.
+    METHODS get_foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get_foo.
+    mv = 2.
+  ENDMETHOD.
+  METHOD lif_entity~get_foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+});
