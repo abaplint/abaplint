@@ -3,6 +3,20 @@ import {VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {TypedIdentifier} from "../../types/_typed_identifier";
+import {AbstractToken} from "../../1_lexer/tokens/abstract_token";
+import {BuiltIn} from "../_builtin";
+
+/** "me" is only available in instance methods, returns true if an issue was added */
+export function checkMeInStaticMethod(found: TypedIdentifier, token: AbstractToken, input: SyntaxInput): boolean {
+  if (found.getName().toLowerCase() === "me"
+      && found.getFilename() === BuiltIn.filename
+      && input.scope.isInStaticMethod() === true) {
+    input.issues.push(syntaxIssue(input, token, "\"me\" cannot be used in static methods"));
+    return true;
+  }
+  return false;
+}
 
 export class SourceField {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, type?: ReferenceType | ReferenceType[],
@@ -16,6 +30,8 @@ export class SourceField {
       if (error === true) {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       }
+      return VoidType.get(CheckSyntaxKey);
+    } else if (checkMeInStaticMethod(found, token, input) === true) {
       return VoidType.get(CheckSyntaxKey);
     }
 
