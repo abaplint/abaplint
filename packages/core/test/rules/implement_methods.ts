@@ -613,6 +613,76 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  describe("redefined through an ALIAS of the super class, #1561", () => {
+    const interfaces = `
+INTERFACE lif_repo.
+  METHODS has_remote_source.
+ENDINTERFACE.
+
+INTERFACE lif_online.
+  INTERFACES lif_repo.
+  ALIASES has_remote_source FOR lif_repo~has_remote_source.
+ENDINTERFACE.
+
+CLASS lcl_repo DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES lif_repo ABSTRACT METHODS has_remote_source.
+    ALIASES has_remote_source FOR lif_repo~has_remote_source.
+ENDCLASS.
+CLASS lcl_repo IMPLEMENTATION.
+ENDCLASS.`;
+
+    it("redefined, ok", async () => {
+      const prog = interfaces + `
+CLASS lcl_online DEFINITION INHERITING FROM lcl_repo.
+  PUBLIC SECTION.
+    INTERFACES lif_online.
+    METHODS has_remote_source REDEFINITION.
+ENDCLASS.
+CLASS lcl_online IMPLEMENTATION.
+  METHOD has_remote_source.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+      const issues = await runMulti([{filename: "zfoobar.prog.abap", contents: prog}]);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("alias two super classes up, ok", async () => {
+      const prog = interfaces + `
+CLASS lcl_middle DEFINITION ABSTRACT INHERITING FROM lcl_repo.
+ENDCLASS.
+CLASS lcl_middle IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_online DEFINITION INHERITING FROM lcl_middle.
+  PUBLIC SECTION.
+    INTERFACES lif_online.
+    METHODS has_remote_source REDEFINITION.
+ENDCLASS.
+CLASS lcl_online IMPLEMENTATION.
+  METHOD has_remote_source.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+      const issues = await runMulti([{filename: "zfoobar.prog.abap", contents: prog}]);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("not redefined, error", async () => {
+      const prog = interfaces + `
+CLASS lcl_online DEFINITION INHERITING FROM lcl_repo.
+  PUBLIC SECTION.
+    INTERFACES lif_online.
+ENDCLASS.
+CLASS lcl_online IMPLEMENTATION.
+ENDCLASS.`;
+      const issues = await runMulti([{filename: "zfoobar.prog.abap", contents: prog}]);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.equal(`Implement method "has_remote_source" from interface "lif_repo"`);
+    });
+  });
+
   it("ALIASes and super class", async () => {
     const prog = `
 INTERFACE lif_entity.
@@ -895,6 +965,32 @@ ENDCLASS.`;
       {filename: "zcl_x.clas.locals_imp.abap", contents: imp},
       {filename: "zcl_x.clas.abap", contents: main}]);
     expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("interface reached via two implemented interfaces, report missing method once", async () => {
+    const unit = `INTERFACE zif_unit PUBLIC.
+  METHODS lock.
+ENDINTERFACE.`;
+    const a = `INTERFACE zif_a PUBLIC.
+  INTERFACES zif_unit.
+ENDINTERFACE.`;
+    const b = `INTERFACE zif_b PUBLIC.
+  INTERFACES zif_unit.
+ENDINTERFACE.`;
+    const clas = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_a.
+    INTERFACES zif_b.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_unit.intf.abap", contents: unit},
+      {filename: "zif_a.intf.abap", contents: a},
+      {filename: "zif_b.intf.abap", contents: b},
+      {filename: "zcl_foobar.clas.abap", contents: clas}]);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equals("Implement method \"lock\" from interface \"zif_unit\"");
   });
 
 });
