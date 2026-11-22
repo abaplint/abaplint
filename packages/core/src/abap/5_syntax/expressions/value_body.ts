@@ -5,7 +5,7 @@ import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
-import {AnyType, CharacterType, HexType, StringType, TableAccessType, TableType, UnknownType, VoidType, XStringType} from "../../types/basic";
+import {AnyType, CharacterType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatType, HexType, Integer8Type, IntegerType, StringType, TableAccessType, TableType, UnknownType, VoidType, XStringType} from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class ValueBody {
@@ -104,6 +104,13 @@ export class ValueBody {
         if ((rowType instanceof StringType || rowType instanceof XStringType) && sourceType instanceof CharacterType) {
           const message = "VALUE, source type CharacterType not compatible with " + rowType.constructor.name;
           input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+        } else if (this.isDataObject(s)
+            && this.numericKind(rowType) !== undefined
+            && this.numericKind(sourceType) !== undefined
+            && this.numericKind(rowType) !== this.numericKind(sourceType)) {
+// a data object given as a row must be compatible with the row type, it is not converted
+          const message = `VALUE, source type ${this.numericKind(sourceType)} not compatible with row type ${this.numericKind(rowType)}`;
+          input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
         } else if (this.insertsUsingTableKey(targetType)) {
 // only STANDARD tables append the rows, and thus allow padding of shorter c and x values
           const row = this.characterOrHexLength(rowType);
@@ -143,6 +150,31 @@ export class ValueBody {
     }
     const accessType = targetType.getAccessType();
     return accessType === TableAccessType.sorted || accessType === TableAccessType.hashed;
+  }
+
+  /** true for a row given as a single data object, a literal or a variable, not an expression */
+  private static isDataObject(source: ExpressionNode): boolean {
+    const children = source.getChildren();
+    return children.length === 1
+      && children[0] instanceof ExpressionNode
+      && (children[0].get() instanceof Expressions.Constant || children[0].get() instanceof Expressions.FieldChain);
+  }
+
+  private static numericKind(type: AbstractType | undefined): string | undefined {
+    if (type instanceof IntegerType) {
+      return "i";
+    } else if (type instanceof Integer8Type) {
+      return "int8";
+    } else if (type instanceof FloatType) {
+      return "f";
+    } else if (type instanceof DecFloat16Type) {
+      return "decfloat16";
+    } else if (type instanceof DecFloat34Type) {
+      return "decfloat34";
+    } else if (type instanceof DecFloatType) {
+      return "decfloat";
+    }
+    return undefined;
   }
 
   private static characterOrHexLength(type: AbstractType | undefined): {abap: string, length: number} | undefined {
