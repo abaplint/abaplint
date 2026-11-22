@@ -324,8 +324,8 @@ export class TypeUtils {
     return calculated;
   }
 
-  // a character constant is only assignable to a hexadecimal target if it can be
-  // interpreted as a hexadecimal value
+  // a text or string literal is only assignable to an xstring or xsequence parameter if its
+  // content is hexadecimal: one or more of 0-9 and A-F, upper case, nothing else, or ``
   private isHexConstant(node: ExpressionNode | undefined): boolean {
     const constant = node?.concatTokens();
     if (constant === undefined) {
@@ -334,7 +334,8 @@ export class TypeUtils {
     if ((constant.startsWith("'") && constant.endsWith("'"))
         || (constant.startsWith("`") && constant.endsWith("`"))) {
       const value = constant.substring(1, constant.length - 1);
-      return value.length > 0 && /^[0-9A-Fa-f]+$/.test(value);
+      // an empty string literal is an empty byte string, while '' is a text field of one blank
+      return /^[0-9A-F]+$/.test(value) || constant === "``";
     }
     return true;
   }
@@ -416,6 +417,11 @@ export class TypeUtils {
           return this.isHexConstant(node);
         }
         return false;
+      } else if (target instanceof XSequenceType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return this.isHexConstant(node);
+        }
+        return true;
       } else if (target instanceof StringType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
           return true;
@@ -458,7 +464,7 @@ export class TypeUtils {
         return false;
       } else if (target instanceof XSequenceType || target instanceof XStringType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
-          return true;
+          return this.isHexConstant(node);
         }
         return false;
       } else if (target instanceof TableType

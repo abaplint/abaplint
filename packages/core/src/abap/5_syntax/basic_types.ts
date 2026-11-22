@@ -264,6 +264,14 @@ export class BasicTypes {
       type = new Types.DateType(data);
     } else if (type instanceof Types.TimeType) {
       type = new Types.TimeType(data);
+    } else if (type instanceof Types.PackedType) {
+      type = new Types.PackedType(type.getLength(), type.getDecimals(), data);
+    } else if (type instanceof Types.DecFloat16Type) {
+      type = new Types.DecFloat16Type(data);
+    } else if (type instanceof Types.DecFloat34Type) {
+      type = new Types.DecFloat34Type(data);
+    } else if (type instanceof Types.UTCLongType) {
+      type = new Types.UTCLongType(data);
     } else if (type instanceof StructureType) {
       type = new StructureType(type.getComponents().slice(), qualifiedName, undefined, type.getDescription());
     } else if (type instanceof TableType) {

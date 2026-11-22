@@ -236,6 +236,8 @@ export class ImplementMethods extends ABAPRule {
 
   private checkInterfaces(def: InfoClassDefinition, impl: InfoClassImplementation | undefined): Issue[] {
     const ret: Issue[] = [];
+    // an interface can be reached via several implemented interfaces, check each method once
+    const checked = new Set<string>();
 
     for (const interfaceInfo of def.interfaces) {
       const idef = this.findInterface(def.identifier, interfaceInfo.name);
@@ -247,6 +249,12 @@ export class ImplementMethods extends ABAPRule {
       }
 
       for (const m of this.findInterfaceMethods(idef)) {
+        const key = (m.objectName + "~" + m.method.name).toUpperCase();
+        if (checked.has(key)) {
+          continue;
+        }
+        checked.add(key);
+
         if (m.method.isDefaultIgnore === true || m.method.isDefaultFail === true) {
           // the interface says an implementation is optional, so asking for one
           // reports an error where ABAP reports none
@@ -310,12 +318,11 @@ export class ImplementMethods extends ABAPRule {
     let found = impl.methods.find(m => m.getName().toUpperCase() === name.toUpperCase());
 
     if (found === undefined) {
-      // try looking for ALIASes
-      for (const alias of def.aliases) {
-        if (alias.component.toUpperCase() === name.toUpperCase()) {
-          found = impl.methods.find(m => m.getName().toUpperCase() === alias.name.toUpperCase());
-          break;
-        }
+      // try looking for ALIASes, also the ones inherited from super classes,
+      // "METHODS alias_name REDEFINITION" implements the method through an alias of the super class
+      const alias = this.findAlias(def, name);
+      if (alias !== undefined) {
+        found = impl.methods.find(m => m.getName().toUpperCase() === alias.toUpperCase());
       }
     }
 
@@ -340,6 +347,21 @@ export class ImplementMethods extends ABAPRule {
     }
 
     return found !== undefined;
+  }
+
+  /** name of the alias for the component, in the class or in one of its super classes */
+  private findAlias(def: InfoClassDefinition, component: string): string | undefined {
+    const visited = new Set<string>();
+    let current: InfoClassDefinition | undefined = def;
+    while (current !== undefined && !visited.has(current.name.toUpperCase())) {
+      visited.add(current.name.toUpperCase());
+      const alias = current.aliases.find(a => a.component.toUpperCase() === component.toUpperCase());
+      if (alias !== undefined) {
+        return alias.name;
+      }
+      current = current.superClassName ? this.findClass(current.superClassName)?.def : undefined;
+    }
+    return undefined;
   }
 
   private viaAliasInInterface(m: IMethod, intf: InfoInterfaceDefinition, impl: InfoClassImplementation): boolean {

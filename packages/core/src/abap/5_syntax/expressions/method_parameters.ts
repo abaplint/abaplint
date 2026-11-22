@@ -200,7 +200,7 @@ export class MethodParameters {
       this.requiredParameters.delete(item.name);
       if (checkTextSymbol(item.source, parameter.getType(), input)) {
         return;
-      } else if (checkHeaderLine(item.source, item.sourceType, parameter.getType(), input)) {
+      } else if (checkHeaderLine(item.source, item.sourceType, parameter.getType(), method, input)) {
         return;
       } else if (assignable(item.sourceType, parameter.getType(), item.source) === false) {
         const message = "Method parameter type not compatible, " + item.name;

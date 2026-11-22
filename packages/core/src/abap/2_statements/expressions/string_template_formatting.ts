@@ -46,14 +46,14 @@ export class StringTemplateFormatting extends Expression {
     const xsd = ver(Release.v740sp02, seq("XSD =", zeroXSDOptions));
     const country = seq("COUNTRY =", Source);
     const currency = seq("CURRENCY =", Source);
+    const style = seq("STYLE =", styleOptions);
 
     const formatting = altPrio(seq("TIME =", dateTimeOptions),
                                seq("DATE =", dateTimeOptions),
                                seq("CASE =", caseOptions),
                                seq("ZERO =", zeroXSDOptions),
                                xsd,
-                               seq("STYLE =", styleOptions),
-                               per(sign, number, decimals, width, pad, alpha, align, country, currency, seq("EXPONENT =", Source)),
+                               per(sign, number, decimals, width, pad, alpha, align, country, currency, style, seq("EXPONENT =", Source)),
                                per(timezone, timestamp));
 
     return formatting;
