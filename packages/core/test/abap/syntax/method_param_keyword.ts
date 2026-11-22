@@ -197,6 +197,61 @@ ENDINTERFACE.`;
     }
   });
 
+  describe("DEFAULT and OPTIONAL on the same parameter, #1738", () => {
+    const message = `Parameter "per_page" cannot have both DEFAULT and OPTIONAL`;
+
+    it("IMPORTING, error", () => {
+      const issues = run(`IMPORTING outdated TYPE string OPTIONAL per_page TYPE i DEFAULT 30 OPTIONAL`);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.equals(message);
+      expect(issues[0].getStart().getCol()).to.equals(91);
+    });
+
+    it("CHANGING, error", () => {
+      const issues = run(`CHANGING per_page TYPE i DEFAULT 30 OPTIONAL`);
+      expect(issues.map(i => i.getMessage())).to.deep.equal([message]);
+    });
+
+    it("LIKE with DEFAULT, error", () => {
+      const issues = run(`IMPORTING per_page LIKE sy-tabix DEFAULT 30 OPTIONAL`);
+      expect(issues.map(i => i.getMessage())).to.deep.equal([message]);
+    });
+
+    it("DEFAULT or OPTIONAL alone, ok", () => {
+      expect(run(`IMPORTING per_page TYPE i DEFAULT 30 other TYPE i OPTIONAL`).length).to.equals(0);
+    });
+  });
+
+  describe("two parameters with the same name, #1727", () => {
+    // the method definition is kept without the second parameter, so METHOD finds it
+
+    it("IMPORTING and RETURNING", () => {
+      const issues = run(`IMPORTING license TYPE string RETURNING VALUE(license) TYPE string`);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.equal(`Method parameter "LICENSE" already defined`);
+    });
+
+    it("twice IMPORTING, reported at the second", () => {
+      const issues = run(`IMPORTING msg TYPE string OPTIONAL
+                msg TYPE string OPTIONAL`);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.equal(`Method parameter "MSG" already defined`);
+      expect(issues[0].getStart().getRow()).to.equals(4);
+    });
+
+    it("IMPORTING and EXPORTING, case does not matter", () => {
+      const issues = run(`IMPORTING val TYPE i EXPORTING VAL TYPE i`);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.equal(`Method parameter "VAL" already defined`);
+    });
+
+    it("the first parameter is still known", () => {
+      const issues = run(`IMPORTING val TYPE i CHANGING val TYPE i`, `lcl=>meth( val = lv1 ).`);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.equal(`Method parameter "VAL" already defined`);
+    });
+  });
+
   it("names that start with a keyword", () => {
     expect(run(`IMPORTING val TYPE i fallback TYPE i default_value TYPE i optional_flag TYPE i`).length).to.equals(0);
   });

@@ -466,6 +466,102 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("program, class inheriting from itself", () => {
+    const abap = `
+CLASS lcl DEFINITION INHERITING FROM lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal("Cyclic inheritance: LCL -> LCL");
+  });
+
+  it("program, indirect cycle, deferred class is not a super class", () => {
+    const abap = `
+CLASS lcl_b DEFINITION DEFERRED.
+CLASS lcl_a DEFINITION INHERITING FROM lcl_b.
+ENDCLASS.
+CLASS lcl_b DEFINITION INHERITING FROM lcl_a.
+ENDCLASS.
+CLASS lcl_a IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_b IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not found");
+  });
+
+  it("global classes, cyclic inheritance", () => {
+    const clasA = `
+CLASS zcl_a DEFINITION PUBLIC INHERITING FROM zcl_b CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+CLASS zcl_a IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const clasB = `
+CLASS zcl_b DEFINITION PUBLIC INHERITING FROM zcl_a CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_b IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_a.clas.abap", contents: clasA},
+      {filename: "zcl_b.clas.abap", contents: clasB}]);
+    expect(issues.map(i => i.getMessage())).to.deep.equal([
+      "Cyclic inheritance: ZCL_A -> ZCL_B -> ZCL_A",
+      "Cyclic inheritance: ZCL_B -> ZCL_A -> ZCL_B"]);
+  });
+
+  it("global class, inheriting from a class in a cycle", () => {
+    const clasA = `
+CLASS zcl_a DEFINITION PUBLIC INHERITING FROM zcl_b CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_a IMPLEMENTATION.
+ENDCLASS.`;
+    const clasB = `
+CLASS zcl_b DEFINITION PUBLIC INHERITING FROM zcl_a CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_b IMPLEMENTATION.
+ENDCLASS.`;
+    const clasC = `
+CLASS zcl_c DEFINITION PUBLIC INHERITING FROM zcl_a CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_c IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_a.clas.abap", contents: clasA},
+      {filename: "zcl_b.clas.abap", contents: clasB},
+      {filename: "zcl_c.clas.abap", contents: clasC}]);
+    expect(issues.map(i => i.getFilename())).to.deep.equal(["zcl_a.clas.abap", "zcl_b.clas.abap"]);
+  });
+
+  it("global classes, inheritance without cycle", () => {
+    const clasA = `
+CLASS zcl_a DEFINITION PUBLIC INHERITING FROM zcl_b CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_a IMPLEMENTATION.
+ENDCLASS.`;
+    const clasB = `
+CLASS zcl_b DEFINITION PUBLIC INHERITING FROM zcl_c CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_b IMPLEMENTATION.
+ENDCLASS.`;
+    const clasC = `
+CLASS zcl_c DEFINITION PUBLIC CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_c IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_a.clas.abap", contents: clasA},
+      {filename: "zcl_b.clas.abap", contents: clasB},
+      {filename: "zcl_c.clas.abap", contents: clasC}]);
+    expect(issues.length).to.equals(0);
+  });
+
   it("program, READ TABLE", () => {
     const abap = `TYPES: BEGIN OF ty_bar,
     tag TYPE string,
@@ -2290,6 +2386,68 @@ START-OF-SELECTION.
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.equal("Method parameter \"VALUE\" is supplied more than once");
+  });
+
+  it("error, function module exporting parameter supplied twice", () => {
+    const abap = `
+DATA a TYPE i.
+CALL FUNCTION 'ZFOO'
+  EXPORTING
+    p1 = a
+    P1 = a.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal("Function module parameter \"P1\" is supplied more than once");
+    expect(issues[0].getStart().getRow()).to.equal(6);
+  });
+
+  it("error, function module importing, changing and tables parameter supplied twice", () => {
+    const abap = `
+DATA a TYPE i.
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+CALL FUNCTION 'ZFOO' DESTINATION 'NONE'
+  IMPORTING
+    p1 = a
+    p1 = a
+  TABLES
+    p2 = tab
+    p2 = tab
+  CHANGING
+    p3 = a
+    p3 = a.`;
+    const issues = runProgram(abap);
+    expect(issues.map(i => i.getMessage())).to.deep.equal([
+      "Function module parameter \"P1\" is supplied more than once",
+      "Function module parameter \"P2\" is supplied more than once",
+      "Function module parameter \"P3\" is supplied more than once"]);
+  });
+
+  it("error, function module exception supplied twice", () => {
+    const abap = `
+CALL FUNCTION 'ZFOO'
+  EXCEPTIONS
+    not_found = 1
+    NOT_FOUND = 2
+    OTHERS = 3.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal("Exception \"NOT_FOUND\" is supplied more than once");
+  });
+
+  it("ok, same function module parameter name in different sections", () => {
+    const abap = `
+DATA a TYPE i.
+CALL FUNCTION 'ZFOO'
+  EXPORTING
+    p1 = a
+  IMPORTING
+    p1 = a
+  CHANGING
+    p1 = a
+  EXCEPTIONS
+    p1 = 1.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 
   it("error, no importing parameters", () => {
@@ -12704,6 +12862,20 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, table with header line passed to built-in functions", () => {
+    const abap = `
+DATA foo TYPE i.
+SELECT-OPTIONS s_messag FOR foo.
+DATA tab TYPE i OCCURS 0 WITH HEADER LINE.
+
+START-OF-SELECTION.
+  ASSERT lines( s_messag ) > 0.
+  ASSERT lines( tab ) > 0.
+  ASSERT line_exists( tab[ table_line = 1 ] ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, short forms with header line, MODIFY and INSERT, #1790", () => {
     const abap = `
 DATA lt_hl TYPE i OCCURS 0 WITH HEADER LINE.
@@ -20364,5 +20536,88 @@ DATA(lv_concat) = TEXT-dev && TEXT-abc.`;
 lv_open_url = TEXT-dev.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(0);
+  });
+});
+
+describe("syntax.ts, ALIASES name already used by a component", () => {
+  const intf = `INTERFACE lif_entity.
+  METHODS get_foo.
+  DATA mv TYPE i.
+ENDINTERFACE.
+`;
+
+  it("error, interface, alias then method of the same name", () => {
+    const abap = intf + `INTERFACE lif_request.
+  INTERFACES lif_entity.
+  ALIASES get_foo FOR lif_entity~get_foo.
+  METHODS get_foo.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(`"get_foo" already defined, ALIASES`);
+    expect(issues[0].getStart().getRow()).to.equal(8);
+  });
+
+  it("error, interface, method then alias of the same name", () => {
+    const abap = intf + `INTERFACE lif_request.
+  INTERFACES lif_entity.
+  METHODS get_foo.
+  ALIASES get_foo FOR lif_entity~get_foo.
+ENDINTERFACE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(`"get_foo" already defined, ALIASES`);
+    expect(issues[0].getStart().getRow()).to.equal(8);
+  });
+
+  it("error, class, alias then attribute of the same name", () => {
+    const abap = intf + `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_entity.
+    ALIASES get_foo FOR lif_entity~get_foo.
+    DATA get_foo TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD lif_entity~get_foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(`"get_foo" already defined, ALIASES`);
+  });
+
+  it("error, class, alias then type of the same name", () => {
+    const abap = intf + `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_entity.
+    ALIASES get_foo FOR lif_entity~get_foo.
+    TYPES get_foo TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD lif_entity~get_foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(`"get_foo" already defined, ALIASES`);
+  });
+
+  it("ok, aliases with their own names, for a method and an attribute", () => {
+    const abap = intf + `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_entity.
+    ALIASES foo FOR lif_entity~get_foo.
+    ALIASES mv FOR lif_entity~mv.
+    METHODS get_foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get_foo.
+    mv = 2.
+  ENDMETHOD.
+  METHOD lif_entity~get_foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 });
