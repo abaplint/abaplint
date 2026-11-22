@@ -287,6 +287,86 @@ ENDCLASS.`;
     expect(issues).to.equal(1);
   });
 
+  it("me-> on an attribute, method call without me-> in the same statement, issue #2033", async () => {
+    const abap = `CLASS lcl_test DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor
+      IMPORTING
+        val TYPE i.
+  PRIVATE SECTION.
+    DATA val TYPE i.
+    METHODS test
+      RETURNING
+        VALUE(result) TYPE i.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD constructor.
+    me->val = val.
+    me->val = 1.
+    me->val = test( ).
+  ENDMETHOD.
+
+  METHOD test.
+    result = 1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await run(abap);
+    expect(issues).to.equal(0);
+  });
+
+  it("me-> on an attribute and on a method call in the same statement, the method call is reported", async () => {
+    const abap = `CLASS lcl_test DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+  PRIVATE SECTION.
+    DATA val TYPE i.
+    METHODS test
+      RETURNING
+        VALUE(result) TYPE i.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD run.
+    me->val = me->test( ).
+  ENDMETHOD.
+
+  METHOD test.
+    result = 1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
+    await reg.parseAsync();
+    const issues = new PrefixIsCurrentClass().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getStart().getCol()).to.equal(15);
+  });
+
+  it("me-> reference instance method in a method call parameter", async () => {
+    const abap = `CLASS lcl_test DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+  PRIVATE SECTION.
+    METHODS test
+      IMPORTING
+        val TYPE i OPTIONAL
+      RETURNING
+        VALUE(result) TYPE i.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD run.
+    test( me->test( ) ).
+  ENDMETHOD.
+
+  METHOD test.
+    result = 1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await run(abap);
+    expect(issues).to.equal(1);
+  });
+
 });
 
 
