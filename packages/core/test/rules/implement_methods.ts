@@ -967,4 +967,30 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("interface reached via two implemented interfaces, report missing method once", async () => {
+    const unit = `INTERFACE zif_unit PUBLIC.
+  METHODS lock.
+ENDINTERFACE.`;
+    const a = `INTERFACE zif_a PUBLIC.
+  INTERFACES zif_unit.
+ENDINTERFACE.`;
+    const b = `INTERFACE zif_b PUBLIC.
+  INTERFACES zif_unit.
+ENDINTERFACE.`;
+    const clas = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_a.
+    INTERFACES zif_b.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zif_unit.intf.abap", contents: unit},
+      {filename: "zif_a.intf.abap", contents: a},
+      {filename: "zif_b.intf.abap", contents: b},
+      {filename: "zcl_foobar.clas.abap", contents: clas}]);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equals("Implement method \"lock\" from interface \"zif_unit\"");
+  });
+
 });
