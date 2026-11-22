@@ -87,6 +87,12 @@ const tests = [
   `WRITE / (10) moo.`,
   `WRITE / (10) <pnumber>.`,
   `WRITE |{ float EXPONENT = 0 DECIMALS = foo-bar NUMBER = RAW }|.`,
+  `WRITE / |{ lv_f STYLE = ENGINEERING DECIMALS = 2 }|.`,
+  `WRITE / |{ lv_f STYLE = ENGINEERING WIDTH = 15 ALIGN = RIGHT }|.`,
+  `WRITE / |{ lv_f STYLE = SCIENTIFIC DECIMALS = 2 }|.`,
+  `WRITE / |{ lv_f STYLE = SCIENTIFIC EXPONENT = 2 }|.`,
+  `WRITE / |{ lv_f DECIMALS = 2 STYLE = SCIENTIFIC PAD = '0' }|.`,
+  `WRITE / |{ lv_f STYLE = lv_style }|.`,
 ];
 
 statementType(tests, "WRITE", Statements.Write);

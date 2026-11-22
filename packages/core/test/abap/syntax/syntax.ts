@@ -11965,6 +11965,119 @@ me = 2.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("error, FOR TESTING method in a class which is not a test class", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS t FOR TESTING.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD t.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("can only be defined in a test class");
+  });
+
+  it("ok, FOR TESTING method in a test class", () => {
+    const abap = `CLASS ltcl DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS t FOR TESTING.
+ENDCLASS.
+CLASS ltcl IMPLEMENTATION.
+  METHOD t.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, FOR TESTING method in a subclass of a test class", () => {
+    const abap = `CLASS ltcl_base DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+ENDCLASS.
+CLASS ltcl_base IMPLEMENTATION.
+ENDCLASS.
+CLASS ltcl_sub DEFINITION INHERITING FROM ltcl_base.
+  PRIVATE SECTION.
+    METHODS t FOR TESTING.
+ENDCLASS.
+CLASS ltcl_sub IMPLEMENTATION.
+  METHOD t.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("error, me read inside static method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+  PRIVATE SECTION.
+    CLASS-DATA foo TYPE REF TO object.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    foo = me.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("\"me\" cannot be used in static methods");
+  });
+
+  it("error, me->method call inside class_constructor", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS class_constructor.
+    METHODS foo.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD class_constructor.
+    me->foo( ).
+  ENDMETHOD.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("\"me\" cannot be used in static methods");
+  });
+
+  it("error, me->attribute written inside static method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+    DATA mv TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    me->mv = 1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("\"me\" cannot be used in static methods");
+  });
+
+  it("ok, me inside instance method", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+    DATA mv TYPE i.
+    DATA ref TYPE REF TO object.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    me->mv = 1.
+    ref = me.
+    me->run( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("error, CALL METHOD instance method inside static method", () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
@@ -20465,6 +20578,58 @@ DATA(lv_concat) = TEXT-dev && TEXT-abc.`;
   it("assignment from text symbol, ok", () => {
     const abap = `DATA lv_open_url TYPE string.
 lv_open_url = TEXT-dev.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("string template, STYLE combined with other options, ok", () => {
+    const abap = `DATA lv_f TYPE f VALUE '-1234.5'.
+DATA lv_s TYPE string.
+lv_s = |{ lv_f STYLE = ENGINEERING DECIMALS = 2 }|.
+lv_s = |{ lv_f STYLE = ENGINEERING WIDTH = 15 ALIGN = RIGHT }|.
+lv_s = |{ lv_f STYLE = SCIENTIFIC DECIMALS = 2 }|.
+lv_s = |{ lv_f STYLE = SCIENTIFIC EXPONENT = 2 }|.
+lv_s = |{ lv_f EXPONENT = 2 }|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("string template, STYLE with SIGN, error", () => {
+    const abap = `DATA lv_f TYPE f VALUE '-1234.5'.
+DATA lv_s TYPE string.
+lv_s = |{ lv_f STYLE = ENGINEERING SIGN = RIGHT }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("STYLE cannot be combined with SIGN");
+  });
+
+  it("string template, EXPONENT with STYLE = ENGINEERING, error", () => {
+    const abap = `DATA lv_f TYPE f VALUE '-1234.5'.
+DATA lv_s TYPE string.
+lv_s = |{ lv_f STYLE = ENGINEERING EXPONENT = 2 }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("EXPONENT can only be combined with STYLE = SCIENTIFIC");
+  });
+
+  it("string template, EXPONENT with STYLE = SIMPLE, error", () => {
+    const abap = `DATA lv_f TYPE f VALUE '-1234.5'.
+DATA lv_s TYPE string.
+lv_s = |{ lv_f STYLE = SIMPLE EXPONENT = 2 }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("EXPONENT can only be combined with STYLE = SCIENTIFIC");
+  });
+
+  it("string template, EXPONENT on integer, error", () => {
+    const abap = `DATA lv_i TYPE i.
+DATA lv_s TYPE string.
+lv_s = |{ lv_i EXPONENT = 2 }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Cannot apply EXPONENT to this type");
+  });
+
+  it("string template, EXPONENT on decfloat34, ok", () => {
+    const abap = `DATA lv_d TYPE decfloat34.
+DATA lv_s TYPE string.
+lv_s = |{ lv_d EXPONENT = 2 }|.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(0);
   });

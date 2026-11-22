@@ -236,6 +236,8 @@ export class ImplementMethods extends ABAPRule {
 
   private checkInterfaces(def: InfoClassDefinition, impl: InfoClassImplementation | undefined): Issue[] {
     const ret: Issue[] = [];
+    // an interface can be reached via several implemented interfaces, check each method once
+    const checked = new Set<string>();
 
     for (const interfaceInfo of def.interfaces) {
       const idef = this.findInterface(def.identifier, interfaceInfo.name);
@@ -247,6 +249,12 @@ export class ImplementMethods extends ABAPRule {
       }
 
       for (const m of this.findInterfaceMethods(idef)) {
+        const key = (m.objectName + "~" + m.method.name).toUpperCase();
+        if (checked.has(key)) {
+          continue;
+        }
+        checked.add(key);
+
         if (m.method.isDefaultIgnore === true || m.method.isDefaultFail === true) {
           // the interface says an implementation is optional, so asking for one
           // reports an error where ABAP reports none
