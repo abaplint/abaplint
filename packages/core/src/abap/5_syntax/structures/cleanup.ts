@@ -1,21 +1,8 @@
 import * as Statements from "../../2_statements/statements";
 import * as Structures from "../../3_structures/structures";
 import {StatementNode, StructureNode} from "../../nodes";
-import {IStructure} from "../../3_structures/structures/_structure";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
-
-type StructureType = new () => IStructure;
-
-const LOOPS: StructureType[] = [
-  Structures.Loop,
-  Structures.LoopAtScreen,
-  Structures.LoopExtract,
-  Structures.Do,
-  Structures.While,
-  Structures.Select,
-  Structures.With,
-  Structures.Provide,
-];
+import {isLoopStructure} from "../_loop_structures";
 
 // a CLEANUP block cannot contain statements that statically leave it: RETURN, and EXIT, CONTINUE or CHECK
 // that do not belong to a loop inside the block, these end a loop outside the TRY or the processing block
@@ -40,9 +27,9 @@ export class Cleanup {
             || stru instanceof Structures.TestInjection) {
           continue;
         }
-        this.walk(child, inLoop || LOOPS.some(l => stru instanceof l), input);
+        this.walk(child, inLoop || isLoopStructure(stru), input);
       } else if (child instanceof StatementNode) {
-        const name = this.leavingStatement(child, inLoop);
+        const name = this.leavingStatement(child, inLoop, input);
         if (name !== undefined) {
           const message = `${name} cannot leave a CLEANUP block`;
           input.issues.push(syntaxIssue(input, child.getFirstToken(), message));
@@ -51,7 +38,7 @@ export class Cleanup {
     }
   }
 
-  private static leavingStatement(node: StatementNode, inLoop: boolean): string | undefined {
+  private static leavingStatement(node: StatementNode, inLoop: boolean, input: SyntaxInput): string | undefined {
     const s = node.get();
     if (s instanceof Statements.Return) {
       return "RETURN";
@@ -59,7 +46,8 @@ export class Cleanup {
       return undefined;
     } else if (s instanceof Statements.Exit && node.findDirectTokenByText("FROM") === undefined) {
       return "EXIT";
-    } else if (s instanceof Statements.Continue) {
+    } else if (s instanceof Statements.Continue && input.inAnyLoop === true) {
+      // without any enclosing loop, the CONTINUE statement itself is reported
       return "CONTINUE";
     } else if (s instanceof Statements.Check) {
       return "CHECK";

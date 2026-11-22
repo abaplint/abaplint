@@ -17,6 +17,8 @@ export type SyntaxInput = {
   deferred: (() => void)[],
   /** the statement is inside a LOOP structure */
   inLoop?: boolean,
+  /** the statement is inside any loop structure, LOOP, DO, WHILE, SELECT etc. */
+  inAnyLoop?: boolean,
 };
 
 export function syntaxIssue(input: SyntaxInput, token: AbstractToken, message: string, fix?: IEdit) {
