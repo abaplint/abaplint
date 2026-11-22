@@ -11965,6 +11965,50 @@ me = 2.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("error, FOR TESTING method in a class which is not a test class", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS t FOR TESTING.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD t.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("can only be defined in a test class");
+  });
+
+  it("ok, FOR TESTING method in a test class", () => {
+    const abap = `CLASS ltcl DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+  PRIVATE SECTION.
+    METHODS t FOR TESTING.
+ENDCLASS.
+CLASS ltcl IMPLEMENTATION.
+  METHOD t.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, FOR TESTING method in a subclass of a test class", () => {
+    const abap = `CLASS ltcl_base DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+ENDCLASS.
+CLASS ltcl_base IMPLEMENTATION.
+ENDCLASS.
+CLASS ltcl_sub DEFINITION INHERITING FROM ltcl_base.
+  PRIVATE SECTION.
+    METHODS t FOR TESTING.
+ENDCLASS.
+CLASS ltcl_sub IMPLEMENTATION.
+  METHOD t.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("error, me read inside static method", () => {
     const abap = `CLASS lcl DEFINITION.
   PUBLIC SECTION.
