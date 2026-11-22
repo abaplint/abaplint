@@ -5,12 +5,16 @@ import {Release} from "../../../src/version";
 const program = (body: string): string => `
 CLASS lcl DEFINITION.
   PUBLIC SECTION.
+    TYPES ty_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
     METHODS get_int RETURNING VALUE(r) TYPE i.
+    METHODS get_tab RETURNING VALUE(r) TYPE ty_tab.
     METHODS run.
 ENDCLASS.
 
 CLASS lcl IMPLEMENTATION.
   METHOD get_int.
+  ENDMETHOD.
+  METHOD get_tab.
   ENDMETHOD.
   METHOD run.
     DATA itab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
@@ -194,8 +198,30 @@ describe("syntax.ts, numeric function in WRITE", () => {
     s = |{ line_index( itab[ table_line = 1 ] ) }|.`)).to.equal(undefined);
   });
 
-  it("ok, open-abap", () => {
-    expect(openABAP(`WRITE / line_index( itab[ table_line = 1 ] ).`)).to.equal(undefined);
+  it("error, a method call argument", () => {
+    expect(errors(`WRITE / lines( get_tab( ) ).`)).to.equal(message("lines"));
+  });
+
+  it("error, named parameters, nmax( )", () => {
+    expect(errors(`WRITE: / 'max:', nmax( val1 = 2 val2 = 3 ).`)).to.equal(message("nmax"));
+  });
+
+  it("error, open-abap", () => {
+    expect(openABAP(`WRITE / line_index( itab[ table_line = 1 ] ).`)).to.equal(message("line_index"));
+  });
+
+  it("error, open-abap, a method call argument", () => {
+    expect(openABAP(`WRITE: / 'lines:', lines( get_tab( ) ).`)).to.equal(message("lines"));
+  });
+
+  it("error, open-abap, named parameters", () => {
+    expect(openABAP(`WRITE: / 'max:', nmax( val1 = 2 val2 = 3 ).`)).to.equal(message("nmax"));
+  });
+
+  it("ok, open-abap, data objects", () => {
+    expect(openABAP(`WRITE / lines( itab ).
+    WRITE / strlen( s ).
+    WRITE lines( itab ) TO c20.`)).to.equal(undefined);
   });
 });
 
