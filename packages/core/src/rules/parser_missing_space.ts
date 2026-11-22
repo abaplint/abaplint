@@ -6,6 +6,7 @@ import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 
 // todo: this rule needs refactoring
 
@@ -270,13 +271,13 @@ This rule makes sure the spaces are consistently required across the language.`,
   }
 
   private checkSource(cond: ExpressionNode): Position | undefined {
-    const children = cond.getAllTokens();
-    if (children.length < 2) {
+    // Source nests recursively, eg. "a && b && c", read only the tokens at the edges
+    const lastTokens = this.lastTokens(cond, 2);
+    if (lastTokens.length < 2) {
       return undefined;
     }
 
-    if (children.length >= 4
-        && children[0].getStr().toUpperCase() === "CONV") {
+    if (cond.getFirstToken().getStr().toUpperCase() === "CONV") {
       const directChildren = cond.getChildren();
       const first = directChildren[2]?.getLastToken();
       const second = directChildren[3]?.getFirstToken();
@@ -290,8 +291,7 @@ This rule makes sure the spaces are consistently required across the language.`,
     }
 
     {
-      const nextLast = children[children.length - 2];
-      const last = children[children.length - 1];
+      const [nextLast, last] = lastTokens;
       if (nextLast.getStr().startsWith("'")
           && nextLast.getRow() === last.getRow()
           && nextLast.getEnd().getCol() === last.getStart().getCol()) {
@@ -300,6 +300,20 @@ This rule makes sure the spaces are consistently required across the language.`,
     }
 
     return undefined;
+  }
+
+  /** collects the last "count" tokens of the node in source order, without visiting the rest of the tree */
+  private lastTokens(node: ExpressionNode | TokenNode, count: number, found: AbstractToken[] = []): AbstractToken[] {
+    if (node instanceof TokenNode) {
+      found.unshift(node.get());
+      return found;
+    }
+
+    const children = node.getChildren();
+    for (let i = children.length - 1; i >= 0 && found.length < count; i--) {
+      this.lastTokens(children[i], count, found);
+    }
+    return found;
   }
 
   private checkMethodCallParam(call: ExpressionNode): Position | undefined {
