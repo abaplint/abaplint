@@ -12635,6 +12635,20 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, table with header line passed to built-in functions", () => {
+    const abap = `
+DATA foo TYPE i.
+SELECT-OPTIONS s_messag FOR foo.
+DATA tab TYPE i OCCURS 0 WITH HEADER LINE.
+
+START-OF-SELECTION.
+  ASSERT lines( s_messag ) > 0.
+  ASSERT lines( tab ) > 0.
+  ASSERT line_exists( tab[ table_line = 1 ] ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, short forms with header line, MODIFY and INSERT, #1790", () => {
     const abap = `
 DATA lt_hl TYPE i OCCURS 0 WITH HEADER LINE.

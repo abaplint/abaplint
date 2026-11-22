@@ -88,7 +88,7 @@ export class MethodCallParam {
         return;
       } else if (checkTextSymbol(child, targetType, input)) {
         return;
-      } else if (checkHeaderLine(child, sourceType, targetType, input)) {
+      } else if (checkHeaderLine(child, sourceType, targetType, method, input)) {
         return;
       } else if (this.isAssignable(sourceType, targetType, child, method, input) === false) {
         const message = "Method parameter type not compatible";
