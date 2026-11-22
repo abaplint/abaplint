@@ -2292,6 +2292,68 @@ START-OF-SELECTION.
     expect(issues[0].getMessage()).to.equal("Method parameter \"VALUE\" is supplied more than once");
   });
 
+  it("error, function module exporting parameter supplied twice", () => {
+    const abap = `
+DATA a TYPE i.
+CALL FUNCTION 'ZFOO'
+  EXPORTING
+    p1 = a
+    P1 = a.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal("Function module parameter \"P1\" is supplied more than once");
+    expect(issues[0].getStart().getRow()).to.equal(6);
+  });
+
+  it("error, function module importing, changing and tables parameter supplied twice", () => {
+    const abap = `
+DATA a TYPE i.
+DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+CALL FUNCTION 'ZFOO' DESTINATION 'NONE'
+  IMPORTING
+    p1 = a
+    p1 = a
+  TABLES
+    p2 = tab
+    p2 = tab
+  CHANGING
+    p3 = a
+    p3 = a.`;
+    const issues = runProgram(abap);
+    expect(issues.map(i => i.getMessage())).to.deep.equal([
+      "Function module parameter \"P1\" is supplied more than once",
+      "Function module parameter \"P2\" is supplied more than once",
+      "Function module parameter \"P3\" is supplied more than once"]);
+  });
+
+  it("error, function module exception supplied twice", () => {
+    const abap = `
+CALL FUNCTION 'ZFOO'
+  EXCEPTIONS
+    not_found = 1
+    NOT_FOUND = 2
+    OTHERS = 3.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal("Exception \"NOT_FOUND\" is supplied more than once");
+  });
+
+  it("ok, same function module parameter name in different sections", () => {
+    const abap = `
+DATA a TYPE i.
+CALL FUNCTION 'ZFOO'
+  EXPORTING
+    p1 = a
+  IMPORTING
+    p1 = a
+  CHANGING
+    p1 = a
+  EXCEPTIONS
+    p1 = 1.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("error, no importing parameters", () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
