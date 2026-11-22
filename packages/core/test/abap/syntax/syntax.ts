@@ -10949,6 +10949,193 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
+  it("xsequence, text literal with a trailing blank, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING bytes TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>m( '0102 ' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("xsequence, empty text literal, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING bytes TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>m( '' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("xsequence, lower case text literal, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING bytes TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>m( 'abcd' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("xsequence, lower case string literal, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING bytes TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>m( \`ab\` ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("xsequence, non hex text literal, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING bytes TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>m( 'XYZ1' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("xsequence, odd number of hex digits, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING bytes TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>m( '012' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("xsequence, hex text literal, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING bytes TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>m( '0102' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("xsequence, hex string literal, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING bytes TYPE xsequence.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>m( \`0102\` ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("xstring, lower case text literal, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING bytes TYPE xstring.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>m( 'abcd' ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("xstring, non hex string literal, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING bytes TYPE xstring.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>m( \`XYZ1\` ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("not compatible");
+  });
+
+  it("xstring, hex string literal, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m IMPORTING bytes TYPE xstring.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>m( \`0102\` ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("non hex character constant to xstring", () => {
     const abap = `
 CLASS lcl DEFINITION.
