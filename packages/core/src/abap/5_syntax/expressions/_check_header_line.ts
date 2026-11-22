@@ -1,18 +1,23 @@
 import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
-import {TableType} from "../../types/basic";
+import {TableType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {BuiltInMethod} from "../_builtin";
+import {IMethodDefinition} from "../../types/_method_definition";
 
 // A table with header line written without [] is the header line, not the table body,
-// so it cannot be passed to a table typed method parameter. Returns true if an issue was reported.
+// so it cannot be passed to a table typed method parameter. Built-in functions like lines( ) use
+// the table body, so they are not checked. Returns true if an issue was reported.
 export function checkHeaderLine(
   source: ExpressionNode | undefined,
   sourceType: AbstractType | undefined,
   parameterType: AbstractType | undefined,
+  method: IMethodDefinition | VoidType,
   input: SyntaxInput): boolean {
 
   if (source === undefined
+      || method instanceof BuiltInMethod
       || !(parameterType instanceof TableType)
       || !(sourceType instanceof TableType)
       || sourceType.isWithHeader() === false) {
