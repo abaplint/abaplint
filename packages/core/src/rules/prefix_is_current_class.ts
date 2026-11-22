@@ -131,7 +131,7 @@ ENDMETHOD.`,
         } else if (this.conf.omitMeInstanceCalls === true
             && concat.includes(meAccess)
             && s.findFirstExpression(MethodCall)) {
-          const tokenPos = s.findTokenSequencePosition("me", "->");
+          const tokenPos = this.findMeMethodCall(s);
           if (tokenPos) {
             const end = new Position(tokenPos.getRow(), tokenPos.getCol() + 4);
             const fix = EditHelper.deleteRange(file, tokenPos, end);
@@ -145,6 +145,21 @@ ENDMETHOD.`,
       }
     }
     return issues;
+  }
+
+  /** finds "me->method( )", position is the start of "me", "me->attribute" is not a method call */
+  private findMeMethodCall(s: StatementNode): Position | undefined {
+    const tokens = s.getTokens();
+    for (const call of s.findAllExpressionsRecursive(MethodCall)) {
+      const start = call.getFirstToken().getStart();
+      const index = tokens.findIndex(t => t.getStart().equals(start));
+      if (index >= 2
+          && tokens[index - 1].getStr() === "->"
+          && tokens[index - 2].getStr().toUpperCase() === "ME") {
+        return tokens[index - 2].getStart();
+      }
+    }
+    return undefined;
   }
 
   /** finds "className=>member" references in the statement, position is the start of the class name */
