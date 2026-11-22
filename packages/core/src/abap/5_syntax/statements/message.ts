@@ -1,7 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
-import {StatementNode} from "../../nodes";
 import {InlineData} from "../expressions/inline_data";
-import {StringType} from "../../types/basic";
+import {CharacterType, StringType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
@@ -9,6 +8,8 @@ import {MessageSource} from "../expressions/message_source";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {ObjectOriented} from "../_object_oriented";
 import {BuiltInCall} from "../_builtin_call";
+import {ExpressionNode, StatementNode} from "../../nodes";
+import {IdentifierMeta} from "../../types/_typed_identifier";
 
 export class Message implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -57,5 +58,64 @@ export class Message implements StatementSyntax {
       MessageSource.runSyntax(s, input);
     }
 
+    const messageTypes = [
+      node.findExpressionAfterToken("TYPE"),
+      node.findExpressionAfterToken("LIKE"),
+      node.findDirectExpression(Expressions.MessageSource)?.findExpressionAfterToken("TYPE"),
+    ];
+    for (const messageType of messageTypes) {
+      if (messageType !== undefined && this.checkMessageType(messageType, input) === false) {
+        return;
+      }
+    }
+  }
+
+  // the message type is checked when it is known statically, ie. a literal or a constant
+  private checkMessageType(node: ExpressionNode, input: SyntaxInput): boolean {
+    const value = this.staticValue(node, input);
+    if (value === undefined || /^[AEISWX]$/i.test(value.trimEnd())) {
+      return true;
+    }
+    const message = `Message type "${value}" is not valid, expected A, E, I, S, W or X`;
+    input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+    return false;
+  }
+
+  private staticValue(node: ExpressionNode, input: SyntaxInput): string | undefined {
+    const literal = this.literalValue(node.concatTokens());
+    if (literal !== undefined) {
+      return literal;
+    }
+
+    const name = node.concatTokens();
+    if (/^[\w\/]+$/.test(name) === false) {
+      return undefined;
+    }
+    const found = input.scope.findVariable(name);
+    const meta = found?.getMeta() ?? [];
+    if (found === undefined
+        || meta.includes(IdentifierMeta.ReadOnly) === false
+        || meta.includes(IdentifierMeta.Static) === false) {
+      return undefined;
+    }
+    const value = found.getValue();
+    if (typeof value !== "string") {
+      return undefined;
+    }
+    let constant = this.literalValue(value);
+    const type = found.getType();
+    if (constant !== undefined && type instanceof CharacterType) {
+      constant = constant.substring(0, type.getLength());
+    }
+    return constant;
+  }
+
+  private literalValue(code: string): string | undefined {
+    if (/^'([^']|'')*'$/.test(code)) {
+      return code.substring(1, code.length - 1).replace(/''/g, "'");
+    } else if (/^`([^`]|``)*`$/.test(code)) {
+      return code.substring(1, code.length - 1).replace(/``/g, "`");
+    }
+    return undefined;
   }
 }
