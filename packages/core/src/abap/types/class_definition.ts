@@ -21,6 +21,7 @@ import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 import {Alias} from "./alias";
 import {SpaghettiScopeNode} from "../5_syntax/spaghetti_scope";
 import {checkAliasNameConflicts} from "./_alias_conflicts";
+import {Class} from "../../objects/class";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly methodDefs: MethodDefinitions;
@@ -233,7 +234,47 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     const token = def?.findDirectExpression(SuperClassName)?.getFirstToken();
     this.addReference(token, input);
     const name = token?.getStr();
+    if (token === undefined || name === undefined) {
+      return undefined;
+    }
+
+    const cycle = this.findInheritanceCycle(name, input);
+    if (cycle !== undefined) {
+      input.issues.push(syntaxIssue(input, token, "Cyclic inheritance: " + cycle.join(" -> ")));
+      // the class is kept without super class, so nothing walking the super classes loops
+      return undefined;
+    }
+
     return name;
+  }
+
+  /** returns the class names of the cycle when the super class chain leads back to this class */
+  private findInheritanceCycle(superName: string, input: SyntaxInput): string[] | undefined {
+    const own = this.getName().toUpperCase();
+    const chain: string[] = [own];
+    let current: string | undefined = superName.toUpperCase();
+    while (current !== undefined) {
+      chain.push(current);
+      if (current === own) {
+        return chain;
+      } else if (chain.indexOf(current) < chain.length - 1) {
+        // a cycle not involving this class, reported for the classes in it
+        return undefined;
+      }
+      current = this.findSuperName(current, input)?.toUpperCase();
+    }
+    return undefined;
+  }
+
+  private findSuperName(name: string, input: SyntaxInput): string | undefined {
+    const found = input.scope.findClassDefinition(name);
+    if (found !== undefined && found.isGlobal() === false) {
+      return found.getSuperClass();
+    }
+    // global classes are followed via the file information, their definition is not
+    // available yet or has its super class removed when they are part of a cycle
+    const clas = input.scope.getRegistry().getObject("CLAS", name) as Class | undefined;
+    return clas?.getClassDefinition()?.superClassName ?? found?.getSuperClass();
   }
 
   private checkMethodNameLength(input: SyntaxInput) {
