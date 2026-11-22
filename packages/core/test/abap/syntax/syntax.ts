@@ -466,6 +466,102 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("program, class inheriting from itself", () => {
+    const abap = `
+CLASS lcl DEFINITION INHERITING FROM lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal("Cyclic inheritance: LCL -> LCL");
+  });
+
+  it("program, indirect cycle, deferred class is not a super class", () => {
+    const abap = `
+CLASS lcl_b DEFINITION DEFERRED.
+CLASS lcl_a DEFINITION INHERITING FROM lcl_b.
+ENDCLASS.
+CLASS lcl_b DEFINITION INHERITING FROM lcl_a.
+ENDCLASS.
+CLASS lcl_a IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_b IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not found");
+  });
+
+  it("global classes, cyclic inheritance", () => {
+    const clasA = `
+CLASS zcl_a DEFINITION PUBLIC INHERITING FROM zcl_b CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS foo.
+ENDCLASS.
+CLASS zcl_a IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const clasB = `
+CLASS zcl_b DEFINITION PUBLIC INHERITING FROM zcl_a CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_b IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_a.clas.abap", contents: clasA},
+      {filename: "zcl_b.clas.abap", contents: clasB}]);
+    expect(issues.map(i => i.getMessage())).to.deep.equal([
+      "Cyclic inheritance: ZCL_A -> ZCL_B -> ZCL_A",
+      "Cyclic inheritance: ZCL_B -> ZCL_A -> ZCL_B"]);
+  });
+
+  it("global class, inheriting from a class in a cycle", () => {
+    const clasA = `
+CLASS zcl_a DEFINITION PUBLIC INHERITING FROM zcl_b CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_a IMPLEMENTATION.
+ENDCLASS.`;
+    const clasB = `
+CLASS zcl_b DEFINITION PUBLIC INHERITING FROM zcl_a CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_b IMPLEMENTATION.
+ENDCLASS.`;
+    const clasC = `
+CLASS zcl_c DEFINITION PUBLIC INHERITING FROM zcl_a CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_c IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_a.clas.abap", contents: clasA},
+      {filename: "zcl_b.clas.abap", contents: clasB},
+      {filename: "zcl_c.clas.abap", contents: clasC}]);
+    expect(issues.map(i => i.getFilename())).to.deep.equal(["zcl_a.clas.abap", "zcl_b.clas.abap"]);
+  });
+
+  it("global classes, inheritance without cycle", () => {
+    const clasA = `
+CLASS zcl_a DEFINITION PUBLIC INHERITING FROM zcl_b CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_a IMPLEMENTATION.
+ENDCLASS.`;
+    const clasB = `
+CLASS zcl_b DEFINITION PUBLIC INHERITING FROM zcl_c CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_b IMPLEMENTATION.
+ENDCLASS.`;
+    const clasC = `
+CLASS zcl_c DEFINITION PUBLIC CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_c IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_a.clas.abap", contents: clasA},
+      {filename: "zcl_b.clas.abap", contents: clasB},
+      {filename: "zcl_c.clas.abap", contents: clasC}]);
+    expect(issues.length).to.equals(0);
+  });
+
   it("program, READ TABLE", () => {
     const abap = `TYPES: BEGIN OF ty_bar,
     tag TYPE string,
