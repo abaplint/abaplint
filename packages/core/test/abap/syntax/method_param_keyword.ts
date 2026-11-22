@@ -222,6 +222,36 @@ ENDINTERFACE.`;
     });
   });
 
+  describe("two parameters with the same name, #1727", () => {
+    // the method definition is kept without the second parameter, so METHOD finds it
+
+    it("IMPORTING and RETURNING", () => {
+      const issues = run(`IMPORTING license TYPE string RETURNING VALUE(license) TYPE string`);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.equal(`Method parameter "LICENSE" already defined`);
+    });
+
+    it("twice IMPORTING, reported at the second", () => {
+      const issues = run(`IMPORTING msg TYPE string OPTIONAL
+                msg TYPE string OPTIONAL`);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.equal(`Method parameter "MSG" already defined`);
+      expect(issues[0].getStart().getRow()).to.equals(4);
+    });
+
+    it("IMPORTING and EXPORTING, case does not matter", () => {
+      const issues = run(`IMPORTING val TYPE i EXPORTING VAL TYPE i`);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.equal(`Method parameter "VAL" already defined`);
+    });
+
+    it("the first parameter is still known", () => {
+      const issues = run(`IMPORTING val TYPE i CHANGING val TYPE i`, `lcl=>meth( val = lv1 ).`);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.equal(`Method parameter "VAL" already defined`);
+    });
+  });
+
   it("names that start with a keyword", () => {
     expect(run(`IMPORTING val TYPE i fallback TYPE i default_value TYPE i optional_flag TYPE i`).length).to.equals(0);
   });

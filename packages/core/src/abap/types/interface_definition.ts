@@ -17,6 +17,7 @@ import {ReferenceType} from "../5_syntax/_reference";
 import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 import {Alias} from "./alias";
 import {ObjectOriented} from "../5_syntax/_object_oriented";
+import {checkAliasNameConflicts} from "./_alias_conflicts";
 
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
@@ -47,6 +48,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
     // perform checks after everything has been initialized
     this.checkMethodNameLength(input);
+    checkAliasNameConflicts(input, this.aliases, this.methodDefinitions, this.attributes, this.typeDefinitions);
   }
 
   public getSuperClass(): undefined {
