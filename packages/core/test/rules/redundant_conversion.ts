@@ -169,6 +169,15 @@ ENDCLASS.`, cnt: 0},
   {abap: `DATA(t5) = CONV i( strlen( |sdf| ) ).`, cnt: 1},
   {abap: `DATA t30 TYPE f.
 DATA(t31) = CONV f( t30 / 2 ).`, cnt: 0},
+  // #4254, without the CONV the inline declaration gets the calculation type instead of ty_p
+  {abap: `TYPES ty_p TYPE p LENGTH 5 DECIMALS 2.
+DATA x TYPE ty_p VALUE '4.1'.
+DATA(y) = CONV ty_p( 2 * x ).`, cnt: 0},
+  // the declared target takes part in the calculation type, the assignment converts into ty_p by itself
+  {abap: `TYPES ty_p TYPE p LENGTH 5 DECIMALS 2.
+DATA x TYPE ty_p VALUE '4.1'.
+DATA y TYPE ty_p.
+y = CONV ty_p( 2 * x ).`, cnt: 1},
   {abap: `CLASS lcl DEFINITION.
   PUBLIC SECTION.
     TYPES ty1 TYPE c LENGTH 20.
