@@ -1,5 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
-import {ExpressionNode} from "../../nodes";
+import {ExpressionNode, TokenNode} from "../../nodes";
+import {AbstractToken} from "../../1_lexer/tokens/abstract_token";
 import {Source} from "./source";
 import {Target} from "./target";
 import {FieldChain} from "./field_chain";
@@ -9,6 +10,7 @@ import {IdentifierMeta} from "../../types/_typed_identifier";
 
 export class FunctionParameters {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput): void {
+    this.checkDuplicates(node, input);
 
     // EXPORTING: process sources in each FunctionExportingParameter
     for (const param of node.findAllExpressions(Expressions.FunctionExportingParameter)) {
@@ -52,5 +54,49 @@ export class FunctionParameters {
         Target.runSyntax(t, input);
       }
     }
+  }
+
+  /** a parameter or exception name given twice within the same section, EXPORTING, IMPORTING, TABLES, CHANGING or EXCEPTIONS */
+  private static checkDuplicates(node: ExpressionNode, input: SyntaxInput): void {
+    const sections: ExpressionNode[] = [];
+    const exporting = node.findDirectExpression(Expressions.FunctionExporting);
+    if (exporting) {
+      sections.push(exporting);
+    }
+    sections.push(...node.findDirectExpressions(Expressions.ParameterListT));
+    for (const section of sections) {
+      const supplied = new Set<string>();
+      for (const p of section.getChildren()) {
+        const token = p instanceof ExpressionNode ? p.findDirectExpression(Expressions.ParameterName)?.getFirstToken() : undefined;
+        this.checkDuplicate(token, token?.getStr().toUpperCase(), supplied, "Function module parameter", input);
+      }
+    }
+
+    const exceptions = node.findDirectExpression(Expressions.ParameterListExceptions);
+    const supplied = new Set<string>();
+    for (const e of exceptions?.findDirectExpressions(Expressions.ParameterException) || []) {
+      this.checkDuplicate(e.getFirstToken(), this.exceptionName(e), supplied, "Exception", input);
+    }
+  }
+
+  private static exceptionName(node: ExpressionNode): string {
+    let name = "";
+    for (const c of node.getChildren()) {
+      if (c instanceof TokenNode && c.getFirstToken().getStr() === "=") {
+        break;
+      }
+      name += c.concatTokens();
+    }
+    return name.toUpperCase();
+  }
+
+  private static checkDuplicate(token: AbstractToken | undefined, name: string | undefined,
+                                supplied: Set<string>, what: string, input: SyntaxInput): void {
+    if (token === undefined || name === undefined) {
+      return;
+    } else if (supplied.has(name)) {
+      input.issues.push(syntaxIssue(input, token, `${what} "${name}" is supplied more than once`));
+    }
+    supplied.add(name);
   }
 }
