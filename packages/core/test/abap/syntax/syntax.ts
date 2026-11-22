@@ -20296,4 +20296,56 @@ lv_open_url = TEXT-dev.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(0);
   });
+
+  it("string template, STYLE combined with other options, ok", () => {
+    const abap = `DATA lv_f TYPE f VALUE '-1234.5'.
+DATA lv_s TYPE string.
+lv_s = |{ lv_f STYLE = ENGINEERING DECIMALS = 2 }|.
+lv_s = |{ lv_f STYLE = ENGINEERING WIDTH = 15 ALIGN = RIGHT }|.
+lv_s = |{ lv_f STYLE = SCIENTIFIC DECIMALS = 2 }|.
+lv_s = |{ lv_f STYLE = SCIENTIFIC EXPONENT = 2 }|.
+lv_s = |{ lv_f EXPONENT = 2 }|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("string template, STYLE with SIGN, error", () => {
+    const abap = `DATA lv_f TYPE f VALUE '-1234.5'.
+DATA lv_s TYPE string.
+lv_s = |{ lv_f STYLE = ENGINEERING SIGN = RIGHT }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("STYLE cannot be combined with SIGN");
+  });
+
+  it("string template, EXPONENT with STYLE = ENGINEERING, error", () => {
+    const abap = `DATA lv_f TYPE f VALUE '-1234.5'.
+DATA lv_s TYPE string.
+lv_s = |{ lv_f STYLE = ENGINEERING EXPONENT = 2 }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("EXPONENT can only be combined with STYLE = SCIENTIFIC");
+  });
+
+  it("string template, EXPONENT with STYLE = SIMPLE, error", () => {
+    const abap = `DATA lv_f TYPE f VALUE '-1234.5'.
+DATA lv_s TYPE string.
+lv_s = |{ lv_f STYLE = SIMPLE EXPONENT = 2 }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("EXPONENT can only be combined with STYLE = SCIENTIFIC");
+  });
+
+  it("string template, EXPONENT on integer, error", () => {
+    const abap = `DATA lv_i TYPE i.
+DATA lv_s TYPE string.
+lv_s = |{ lv_i EXPONENT = 2 }|.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("Cannot apply EXPONENT to this type");
+  });
+
+  it("string template, EXPONENT on decfloat34, ok", () => {
+    const abap = `DATA lv_d TYPE decfloat34.
+DATA lv_s TYPE string.
+lv_s = |{ lv_d EXPONENT = 2 }|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
 });
