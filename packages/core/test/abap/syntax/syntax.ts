@@ -4316,6 +4316,113 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("not compatible with row type x LENGTH 4");
   });
 
+  it("VALUE, integer literal row for int8 table, error", () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF int8 WITH EMPTY KEY.
+DATA n TYPE i VALUE 1.
+DATA(result) = VALUE ty_tab( ( 0 ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with row type");
+  });
+
+  it("VALUE, integer variable row for int8 table, error", () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF int8 WITH EMPTY KEY.
+DATA n TYPE i VALUE 1.
+DATA(result) = VALUE ty_tab( ( n ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with row type");
+  });
+
+  it("VALUE, integer literal row for float table, error", () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF f WITH EMPTY KEY.
+DATA n TYPE i VALUE 1.
+DATA(result) = VALUE ty_tab( ( 0 ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with row type");
+  });
+
+  it("VALUE, integer literal row for decfloat34 table, error", () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF decfloat34 WITH EMPTY KEY.
+DATA n TYPE i VALUE 1.
+DATA(result) = VALUE ty_tab( ( 1 ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with row type");
+  });
+
+  it("VALUE, int8 variable row for integer table, error", () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+DATA n TYPE i VALUE 1.
+DATA big TYPE int8.
+DATA(result) = VALUE ty_tab( ( big ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with row type");
+  });
+
+  it("VALUE, integer literal row for integer table, ok", () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+DATA n TYPE i VALUE 1.
+DATA(result) = VALUE ty_tab( ( 1 ) ( n ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("VALUE, CONV row for int8 table, ok", () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF int8 WITH EMPTY KEY.
+DATA n TYPE i VALUE 1.
+DATA(result) = VALUE ty_tab( ( CONV #( 0 ) ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("VALUE, int8 variable row for int8 table, ok", () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF int8 WITH EMPTY KEY.
+DATA n TYPE i VALUE 1.
+DATA big TYPE int8.
+DATA(result) = VALUE ty_tab( ( big ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("VALUE, arithmetic expression row for int8 table, not checked", () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF int8 WITH EMPTY KEY.
+DATA n TYPE i VALUE 1.
+DATA(result) = VALUE ty_tab( ( n + 1 ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("VALUE, integer literal row for packed table, not checked", () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF p WITH EMPTY KEY.
+DATA n TYPE i VALUE 1.
+DATA dummy TYPE i.
+DATA(result) = VALUE ty_tab( ( 1 ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("VALUE, integer literal row for string table, not checked", () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA n TYPE i VALUE 1.
+DATA(result) = VALUE ty_tab( ( 1 ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("VALUE #, too short hex in standard table, ok, padded", () => {
     const abap = `
 CLASS lcl DEFINITION.
