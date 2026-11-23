@@ -21594,3 +21594,106 @@ ENDCLASS.`;
     });
   }
 });
+
+describe("syntax.ts, VALUE component of reference type, #3226", () => {
+  const errors: {name: string, abap: string}[] = [
+    {name: "character literal into REF TO object", abap: `
+DATA: BEGIN OF result,
+        locals TYPE REF TO object,
+      END OF result.
+result = VALUE #( locals = '' ).`},
+    {name: "integer literal into REF TO object", abap: `
+DATA: BEGIN OF result,
+        locals TYPE REF TO object,
+      END OF result.
+result = VALUE #( locals = 1 ).`},
+    {name: "string template into REF TO object", abap: `
+DATA: BEGIN OF result,
+        locals TYPE REF TO object,
+      END OF result.
+result = VALUE #( locals = |a| ).`},
+    {name: "character literal into REF TO data", abap: `
+DATA: BEGIN OF result,
+        locals TYPE REF TO data,
+      END OF result.
+result = VALUE #( locals = '' ).`},
+    {name: "object reference into REF TO data", abap: `
+DATA: BEGIN OF result,
+        locals TYPE REF TO data,
+      END OF result.
+DATA obj TYPE REF TO object.
+result = VALUE #( locals = obj ).`},
+    {name: "character literal into REF TO object, table row", abap: `
+TYPES: BEGIN OF ty_row,
+         locals TYPE REF TO object,
+       END OF ty_row.
+TYPES ty_tab TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+DATA(tab) = VALUE ty_tab( ( locals = '' ) ).`},
+    {name: "character literal into REF TO object, nested component", abap: `
+DATA: BEGIN OF result,
+        BEGIN OF sub,
+          locals TYPE REF TO object,
+        END OF sub,
+      END OF result.
+result = VALUE #( sub-locals = '' ).`},
+    {name: "functional method returning an object reference into REF TO data", abap: `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(r) TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA: BEGIN OF result,
+          dref TYPE REF TO data,
+        END OF result.
+  result = VALUE #( dref = lcl=>get( ) ).`},
+  ];
+
+  for (const e of errors) {
+    it(e.name + ", error", () => {
+      const issues = runProgram(e.abap);
+      expect(issues.length).to.equal(1);
+    });
+  }
+
+  it("references into reference components, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(r) TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA: BEGIN OF result,
+          locals TYPE REF TO object,
+          lref   TYPE REF TO lcl,
+          dref   TYPE REF TO data,
+          iref   TYPE REF TO i,
+        END OF result.
+  DATA int TYPE i.
+  DATA obj TYPE REF TO object.
+  result = VALUE #( locals = NEW lcl( ) lref = lcl=>get( ) dref = REF #( int ) iref = REF #( int ) ).
+  result = VALUE #( locals = VALUE #( ) dref = NEW i( ) iref = NEW #( ) lref = CAST #( obj ) ).
+  result = VALUE #( locals = lcl=>get( ) lref = NEW #( ) dref = result-iref ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("void reference component, ok", () => {
+    const abap = `
+DATA: BEGIN OF result,
+        locals TYPE REF TO cl_void_class,
+      END OF result.
+result = VALUE #( locals = '' ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+});
