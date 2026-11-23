@@ -1680,7 +1680,7 @@ ${indentation}`);
         || !(targetType instanceof TableType)
         || sourceType.isWithHeader() === true
         || targetType.isWithHeader() === true
-        || (targetType.getAccessType() !== TableAccessType.standard && targetType.getAccessType() !== undefined)) {
+        || (this.concreteAccessType(targetType) !== TableAccessType.standard && this.concreteAccessType(targetType) !== undefined)) {
       return undefined;
     }
     for (const t of [sourceType, targetType]) {
@@ -1693,7 +1693,7 @@ ${indentation}`);
     const fsType = (name: string, type: TableType) => type.isGeneric() ? "TYPE any" : "LIKE LINE OF " + name;
     const sourceFS = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
     const targetFS = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
-    const addRow = targetType.getAccessType() === undefined
+    const addRow = this.concreteAccessType(targetType) === undefined
       ? `INSERT INITIAL LINE INTO TABLE ${targetName}`
       : `APPEND INITIAL LINE TO ${targetName}`;
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
@@ -3821,6 +3821,11 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     return undefined;
+  }
+
+  /** the table kind of a table with a known line type, undefined for generic tables such as TYPE STANDARD TABLE */
+  private concreteAccessType(type: TableType): TableAccessType | undefined {
+    return type.getRowType() instanceof AnyType ? undefined : type.getAccessType();
   }
 
   /** a FIELD-SYMBOLS declaration is known to the scope under its bracketed spelling, so

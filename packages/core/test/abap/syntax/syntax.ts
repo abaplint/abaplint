@@ -20165,19 +20165,35 @@ INSERT LINES OF lt_std INTO TABLE lt_map.`));
 
   it("ok, APPEND TO generic tables", () => {
     const issues = runProgram(`
-FORM foo CHANGING ct_any TYPE ANY TABLE ct_index TYPE INDEX TABLE ct_hashed TYPE HASHED TABLE.
+FORM foo CHANGING ct_any TYPE ANY TABLE ct_index TYPE INDEX TABLE ct_sorted TYPE SORTED TABLE.
   DATA ls TYPE i.
   FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
   FIELD-SYMBOLS <lt_index> TYPE INDEX TABLE.
   APPEND INITIAL LINE TO ct_index ASSIGNING FIELD-SYMBOL(<lv_index>).
   APPEND INITIAL LINE TO ct_any ASSIGNING FIELD-SYMBOL(<lv_any>).
-  APPEND INITIAL LINE TO ct_hashed ASSIGNING FIELD-SYMBOL(<lv_hashed>).
+  APPEND INITIAL LINE TO ct_sorted ASSIGNING FIELD-SYMBOL(<lv_sorted>).
   ASSIGN ct_any TO <lt_any>.
   APPEND ls TO <lt_any>.
   ASSIGN ct_index TO <lt_index>.
   APPEND ls TO <lt_index>.
 ENDFORM.`);
     expect(issues.length).to.equal(0);
+  });
+
+  it("error, APPEND TO generic HASHED TABLE", () => {
+    const issues = runProgram(`
+FORM foo CHANGING ct_hashed TYPE HASHED TABLE.
+  APPEND INITIAL LINE TO ct_hashed ASSIGNING FIELD-SYMBOL(<lv_hashed>).
+ENDFORM.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("error, SORT generic SORTED TABLE", () => {
+    const issues = runProgram(`
+FORM foo CHANGING ct_sorted TYPE SORTED TABLE.
+  SORT ct_sorted.
+ENDFORM.`);
+    expect(issues.length).to.equal(1);
   });
 
   it("ok, APPEND TO a void type", () => {
@@ -21445,4 +21461,133 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
   });
+});
+
+describe("syntax.ts, actual parameter compatible with a fully typed formal parameter, #4676", () => {
+  function build(call: string): string {
+    return `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_s1, a TYPE c LENGTH 4, b TYPE i, END OF ty_s1.
+    TYPES: BEGIN OF ty_s2, x TYPE c LENGTH 4, y TYPE i, END OF ty_s2.
+    TYPES: BEGIN OF ty_s3, x TYPE c LENGTH 8, END OF ty_s3.
+    TYPES ty_t1 TYPE STANDARD TABLE OF ty_s1 WITH DEFAULT KEY.
+    TYPES ty_t3 TYPE SORTED TABLE OF ty_s1 WITH UNIQUE KEY a.
+    TYPES ty_th TYPE HASHED TABLE OF ty_s1 WITH UNIQUE KEY a.
+    TYPES ty_rs1 TYPE REF TO ty_s1.
+    TYPES ty_ri TYPE REF TO i.
+    METHODS imp_s3 IMPORTING foo TYPE ty_s3.
+    METHODS imp_t1 IMPORTING foo TYPE ty_t1.
+    METHODS imp_t3 IMPORTING foo TYPE ty_t3.
+    METHODS imp_std IMPORTING foo TYPE STANDARD TABLE.
+    METHODS imp_srt IMPORTING foo TYPE SORTED TABLE.
+    METHODS imp_hsh IMPORTING foo TYPE HASHED TABLE.
+    METHODS imp_idx IMPORTING foo TYPE INDEX TABLE.
+    METHODS imp_any IMPORTING foo TYPE ANY TABLE.
+    METHODS imp_rs1 IMPORTING foo TYPE ty_rs1.
+    METHODS imp_ri IMPORTING foo TYPE ty_ri.
+    METHODS imp_rd IMPORTING foo TYPE REF TO data.
+    METHODS exp_rd EXPORTING foo TYPE REF TO data.
+    METHODS exp_t3 EXPORTING foo TYPE ty_t3.
+    METHODS chg_rd CHANGING foo TYPE REF TO data.
+    METHODS chg_rs1 CHANGING foo TYPE ty_rs1.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD imp_s3. ENDMETHOD.
+  METHOD imp_t1. ENDMETHOD.
+  METHOD imp_t3. ENDMETHOD.
+  METHOD imp_std. ENDMETHOD.
+  METHOD imp_srt. ENDMETHOD.
+  METHOD imp_hsh. ENDMETHOD.
+  METHOD imp_idx. ENDMETHOD.
+  METHOD imp_any. ENDMETHOD.
+  METHOD imp_rs1. ENDMETHOD.
+  METHOD imp_ri. ENDMETHOD.
+  METHOD imp_rd. ENDMETHOD.
+  METHOD exp_rd. ENDMETHOD.
+  METHOD exp_t3. ENDMETHOD.
+  METHOD chg_rd. ENDMETHOD.
+  METHOD chg_rs1. ENDMETHOD.
+ENDCLASS.
+FORM f_s3 USING foo TYPE lcl=>ty_s3.
+ENDFORM.
+FORM f_rs1 USING foo TYPE lcl=>ty_rs1.
+ENDFORM.
+FORM f_t1 USING foo TYPE lcl=>ty_t1.
+ENDFORM.
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  DATA c8 TYPE c LENGTH 8.
+  DATA c4 TYPE c LENGTH 4.
+  DATA str TYPE string.
+  DATA n8 TYPE n LENGTH 8.
+  DATA t1 TYPE lcl=>ty_t1.
+  DATA t3 TYPE lcl=>ty_t3.
+  DATA th TYPE lcl=>ty_th.
+  DATA rdata TYPE REF TO data.
+  DATA rstr TYPE REF TO string.
+  DATA rs1 TYPE REF TO lcl=>ty_s1.
+  DATA rs2 TYPE REF TO lcl=>ty_s2.
+  DATA rc4 LIKE REF TO c4.
+  DATA ri TYPE REF TO i.
+  CONSTANTS cc8 TYPE c LENGTH 8 VALUE 'abc'.
+  ${call}`;
+  }
+
+  const errors = [
+    "lo->imp_s3( c8 ).",
+    "lo->imp_s3( c4 ).",
+    "lo->imp_s3( str ).",
+    "lo->imp_s3( n8 ).",
+    "lo->imp_s3( cc8 ).",
+    "lo->imp_s3( 'abcdefgh' ).",
+    "lo->imp_s3( `abc` ).",
+    "lo->imp_t1( t3 ).",
+    "lo->imp_t1( th ).",
+    "lo->imp_t3( t1 ).",
+    "lo->imp_t3( th ).",
+    "lo->imp_std( t3 ).",
+    "lo->imp_std( th ).",
+    "lo->imp_srt( t1 ).",
+    "lo->imp_srt( th ).",
+    "lo->imp_hsh( t1 ).",
+    "lo->imp_hsh( t3 ).",
+    "lo->imp_idx( th ).",
+    "lo->imp_rs1( rdata ).",
+    "lo->imp_rs1( rs2 ).",
+    "lo->imp_ri( rstr ).",
+    "lo->imp_ri( rc4 ).",
+    "lo->exp_rd( IMPORTING foo = rs1 ).",
+    "lo->exp_t3( IMPORTING foo = t1 ).",
+    "lo->chg_rd( CHANGING foo = rs1 ).",
+    "lo->chg_rs1( CHANGING foo = rdata ).",
+    "PERFORM f_s3 USING c8.",
+    "PERFORM f_rs1 USING rdata.",
+    "PERFORM f_t1 USING t3.",
+  ];
+  for (const call of errors) {
+    it("error: " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(1, call);
+    });
+  }
+
+  const ok = [
+    "lo->imp_std( t1 ).",
+    "lo->imp_srt( t3 ).",
+    "lo->imp_hsh( th ).",
+    "lo->imp_idx( t1 ).",
+    "lo->imp_idx( t3 ).",
+    "lo->imp_any( th ).",
+    "lo->imp_rs1( rs1 ).",
+    "lo->imp_ri( ri ).",
+    "lo->imp_rd( rs1 ).",
+    "lo->imp_rd( rdata ).",
+    "lo->exp_rd( IMPORTING foo = rdata ).",
+  ];
+  for (const call of ok) {
+    it("ok: " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.map(i => i.getMessage())).to.deep.equal([], call);
+    });
+  }
 });
