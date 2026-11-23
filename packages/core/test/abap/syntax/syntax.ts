@@ -11885,6 +11885,133 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
   });
 
+  it("packed without LENGTH and without DECIMALS, only the DECIMALS error", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
+  });
+
+  const lengthMissing: {name: string, abap: string}[] = [
+    {name: "TYPE c in class definition", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ddlanguage TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "TYPE n", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE n.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "TYPE x", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE x.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "TYPE p with DECIMALS", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p DECIMALS 2.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "implicit type", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "structure component", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_s,
+             f TYPE c,
+           END OF ty_s.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "implicit structure component", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_s,
+             f,
+           END OF ty_s.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "in a method", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS m.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    TYPES ty TYPE c.
+  ENDMETHOD.
+ENDCLASS.`},
+    {name: "in an interface", abap: `INTERFACE lif.
+  TYPES ty TYPE c.
+ENDINTERFACE.`},
+  ];
+
+  for (const t of lengthMissing) {
+    it("TYPES without LENGTH in OO context, " + t.name, () => {
+      const issues = runProgram(t.abap);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("Specify LENGTH");
+    });
+  }
+
+  it("TYPES with LENGTH in OO context, ok", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_c1(1) TYPE c.
+    TYPES ty_c2 TYPE c LENGTH 1.
+    TYPES ty_n(3) TYPE n.
+    TYPES ty_x TYPE x LENGTH 2.
+    TYPES ty_p TYPE p LENGTH 8 DECIMALS 2.
+    TYPES ty_impl(1).
+    TYPES ty_ref TYPE ty_c1.
+    TYPES ty_d TYPE d.
+    TYPES ty_t TYPE t.
+    TYPES ty_str TYPE string.
+    TYPES ty_f TYPE f.
+    TYPES ty_tab TYPE STANDARD TABLE OF c WITH EMPTY KEY.
+    TYPES ty_range TYPE RANGE OF c.
+    CONSTANTS c_a TYPE c VALUE 'A'.
+    DATA: BEGIN OF ms,
+            f TYPE c,
+          END OF ms.
+    DATA mv TYPE n.
+    METHODS m.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    DATA lv TYPE c.
+    DATA lv_x TYPE x.
+    DATA lv_impl.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("TYPES without LENGTH outside OO context, ok", () => {
+    const abap = `
+TYPES ty_c TYPE c.
+TYPES ty_p TYPE p.
+TYPES ty_impl.
+FORM f.
+  TYPES ty_c2 TYPE c.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
   it("INSERT INITIAL LINE, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_language,
@@ -21007,6 +21134,67 @@ CLASS lcl IMPLEMENTATION.
   METHOD lif_entity~get_foo.
   ENDMETHOD.
 ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+  const replaceNotCharLike: {name: string, abap: string}[] = [
+    {name: "WITH integer, inline declaration", abap: `DATA lv_uri TYPE string.
+lv_uri = '/repasdpulls/{pull_number}sdfds'.
+DATA(pull_number) = 1.
+REPLACE ALL OCCURRENCES OF '{pull_number}' IN lv_uri WITH pull_number.`},
+    {name: "WITH integer literal", abap: `DATA lv_uri TYPE string.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH 1.`},
+    {name: "WITH xstring", abap: `DATA lv_uri TYPE string.
+DATA lv_x TYPE xstring.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH lv_x.`},
+    {name: "pattern integer", abap: `DATA lv_uri TYPE string.
+DATA lv_i TYPE i.
+REPLACE ALL OCCURRENCES OF lv_i IN lv_uri WITH 'a'.`},
+    {name: "IN integer", abap: `DATA lv_i TYPE i.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_i WITH 'b'.`},
+    {name: "short form, WITH integer", abap: `DATA lv_uri TYPE string.
+DATA lv_i TYPE i.
+REPLACE 'a' WITH lv_i INTO lv_uri.`},
+    {name: "SECTION, WITH integer", abap: `DATA lv_uri TYPE string.
+DATA lv_i TYPE i.
+REPLACE SECTION OFFSET 1 LENGTH 1 OF lv_uri WITH lv_i.`},
+    {name: "BYTE MODE, WITH integer", abap: `DATA lv_x TYPE xstring.
+DATA lv_i TYPE i.
+REPLACE ALL OCCURRENCES OF lv_x IN lv_x WITH lv_i IN BYTE MODE.`},
+    {name: "IN TABLE, row type integer", abap: `DATA lt_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+REPLACE ALL OCCURRENCES OF 'a' IN TABLE lt_tab WITH 'b'.`},
+  ];
+  for (const t of replaceNotCharLike) {
+    it("REPLACE, not character or byte like: " + t.name, () => {
+      const issues = runProgram(t.abap);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("REPLACE");
+    });
+  }
+
+  it("REPLACE, character like operands are fine", () => {
+    const abap = `TYPES: BEGIN OF ty, a TYPE c LENGTH 2, b TYPE n LENGTH 2, END OF ty.
+DATA ls TYPE ty.
+DATA lv_uri TYPE string.
+DATA lv_n TYPE n LENGTH 3.
+DATA lv_d TYPE d.
+DATA lv_c TYPE c LENGTH 3.
+DATA lv_i TYPE i.
+DATA lo_regex TYPE REF TO cl_abap_regex.
+DATA lt_tab TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA lv_x TYPE xstring.
+DATA lv_y TYPE x LENGTH 2.
+REPLACE ALL OCCURRENCES OF lv_n IN lv_uri WITH lv_d.
+REPLACE FIRST OCCURRENCE OF 'a' IN lv_uri WITH lv_c.
+REPLACE 'a' WITH lv_n INTO lv_uri.
+REPLACE SECTION OFFSET 1 LENGTH 1 OF lv_uri WITH lv_c.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH ls.
+REPLACE ALL OCCURRENCES OF 'a' IN ls WITH 'b'.
+REPLACE ALL OCCURRENCES OF REGEX lo_regex IN lv_uri WITH 'b'.
+REPLACE ALL OCCURRENCES OF 'a' IN TABLE lt_tab WITH 'b'.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH |{ 1 }|.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH 'b' REPLACEMENT COUNT lv_i REPLACEMENT OFFSET lv_i.
+REPLACE ALL OCCURRENCES OF lv_y IN lv_x WITH lv_y IN BYTE MODE.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
