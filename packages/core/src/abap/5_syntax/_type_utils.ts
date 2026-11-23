@@ -1,6 +1,6 @@
 import {ClassDefinition, InterfaceDefinition} from "../types";
 import {AnyType, CharacterType, CLikeType, CSequenceType, DataReference, DataType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, GenericObjectReferenceType, HexType, Integer8Type, IntegerType, NumericGenericType, NumericType, ObjectReferenceType, PackedType, PGenericType, SimpleType, StringType, StructureType, TableType, TimeType, UnknownType, UTCLongType, VoidType, XGenericType, XSequenceType, XStringType} from "../types/basic";
-import {TableKeyType} from "../types/basic/table_type";
+import {TableAccessType, TableKeyType} from "../types/basic/table_type";
 import {EnumType} from "../types/basic/enum_type";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {CGenericType} from "../types/basic/cgeneric_type";
@@ -485,6 +485,13 @@ export class TypeUtils {
       return this.isAssignable(source, target);
     }
 
+    // an elementary text field is not compatible with a structure, also not with a flat character-like one
+    if (target instanceof StructureType
+        && target.containsVoid() === false
+        && (source instanceof CharacterType || source instanceof StringType || source instanceof NumericType)) {
+      return false;
+    }
+
     if (target instanceof CLikeType) {
       return this.isCharLikeStrict(source);
     }
@@ -645,8 +652,12 @@ export class TypeUtils {
           || target instanceof HexType) {
         return false;
       }
+    } else if (source instanceof DataReference && target instanceof DataReference) {
+      return this.isDataReferenceCompatible(source, target);
     } else if (source instanceof TableType) {
-      if (source.getRowType() instanceof AnyType) {
+      if (target instanceof TableType && this.isTableKindCompatible(source, target) === false) {
+        return false;
+      } else if (source.getRowType() instanceof AnyType) {
         // then its a generic table, todo: add top level generic table type?
         return true;
       } else if (target instanceof TableType && target.getRowType() instanceof AnyType) {
@@ -672,6 +683,77 @@ export class TypeUtils {
       }
     }
     return this.isAssignable(source, target);
+  }
+
+  // a standard, sorted or hashed table only fits a table type of the same kind, generic or not,
+  // INDEX TABLE takes standard and sorted tables, ANY TABLE takes all
+  private isTableKindCompatible(source: TableType, target: TableType): boolean {
+    const sourceAccess = source.getAccessType();
+    const targetAccess = target.getAccessType();
+    if (sourceAccess === undefined
+        || targetAccess === undefined
+        || sourceAccess === TableAccessType.index
+        || sourceAccess === TableAccessType.any
+        || source.isWithHeader()
+        || target.isWithHeader()) {
+      return true;
+    } else if (targetAccess === TableAccessType.any) {
+      return true;
+    } else if (targetAccess === TableAccessType.index) {
+      return sourceAccess !== TableAccessType.hashed;
+    }
+    return sourceAccess === targetAccess;
+  }
+
+  // a data reference fits REF TO data, or a reference to the same type, no down cast
+  private isDataReferenceCompatible(source: DataReference, target: DataReference): boolean {
+    const targetType = target.getType();
+    const sourceType = source.getType();
+    if (targetType instanceof DataType || targetType instanceof AnyType || target.isGeneric()) {
+      return true;
+    } else if (sourceType instanceof DataType || sourceType instanceof AnyType) {
+      return false;
+    }
+    return this.isSameType(sourceType, targetType);
+  }
+
+  // types of the same kind and technical attributes, structures also with the same component names;
+  // returns true whenever this cannot be decided
+  private isSameType(source: AbstractType, target: AbstractType): boolean {
+    if (source instanceof VoidType || target instanceof VoidType
+        || source instanceof UnknownType || target instanceof UnknownType
+        || source instanceof AnyType || target instanceof AnyType
+        || source.containsVoid() || target.containsVoid()) {
+      return true;
+    } else if (source.constructor !== target.constructor) {
+      return false;
+    }
+
+    if ((source instanceof CharacterType && target instanceof CharacterType)
+        || (source instanceof HexType && target instanceof HexType)
+        || (source instanceof NumericType && target instanceof NumericType)) {
+      return source.getLength() === target.getLength();
+    } else if (source instanceof PackedType && target instanceof PackedType) {
+      return source.getLength() === target.getLength() && source.getDecimals() === target.getDecimals();
+    } else if (source instanceof StructureType && target instanceof StructureType) {
+      const sourceComponents = source.getComponents();
+      const targetComponents = target.getComponents();
+      if (sourceComponents.length !== targetComponents.length) {
+        return false;
+      }
+      for (let i = 0; i < sourceComponents.length; i++) {
+        if (sourceComponents[i].name.toUpperCase() !== targetComponents[i].name.toUpperCase()
+            || this.isSameType(sourceComponents[i].type, targetComponents[i].type) === false) {
+          return false;
+        }
+      }
+    } else if (source instanceof TableType && target instanceof TableType) {
+      return source.getAccessType() === target.getAccessType()
+        && this.isSameType(source.getRowType(), target.getRowType());
+    } else if (source instanceof DataReference && target instanceof DataReference) {
+      return this.isSameType(source.getType(), target.getType());
+    }
+    return true;
   }
 
   // character-like arguments of built-in functions must be elementary, flat character-like structures are not allowed
