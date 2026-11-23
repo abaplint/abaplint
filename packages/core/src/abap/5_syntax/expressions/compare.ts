@@ -5,7 +5,8 @@ import {MethodCallChain} from "./method_call_chain";
 import {SourceFieldSymbol} from "./source_field_symbol";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {CharacterType, DateType, IntegerType, StringType} from "../../types/basic";
+import {CGenericType, CharacterType, CLikeType, CSequenceType, DateType, HexType, IntegerType, NGenericType, NumericType,
+  StringType, StructureType, TimeType, XGenericType, XSequenceType, XStringType} from "../../types/basic";
 import {TypeUtils} from "../_type_utils";
 import {BuiltIn} from "../_builtin";
 import {BuiltInCall} from "../_builtin_call";
@@ -38,6 +39,12 @@ export class Compare {
     }
 
     if (operandMessage !== undefined) {
+      return;
+    }
+
+    const arithmeticMessage = this.checkArithmeticOperands(node, sources, sourceTypes);
+    if (arithmeticMessage !== undefined) {
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), arithmeticMessage));
       return;
     }
 
@@ -110,6 +117,70 @@ export class Compare {
   private static builtinCallName(source: ExpressionNode | undefined, input: SyntaxInput): string | undefined {
     const call = BuiltInCall.fromSource(source, input);
     return call === undefined ? undefined : BuiltInCall.callName(call);
+  }
+
+  // an arithmetic expression can only be compared with a numeric operand or another arithmetic expression,
+  // a character-like, byte-like, date, time or structured operand is expected to be a syntax error,
+  // the operand can be made an arithmetic expression with a "+" in front, "+ lv_c"
+  private static checkArithmeticOperands(node: ExpressionNode, sources: readonly ExpressionNode[],
+                                         types: readonly (AbstractType | undefined)[]): string | undefined {
+    let pairs: [number, number][] = [];
+    if (node.findDirectExpression(Expressions.CompareOperator) !== undefined && sources.length === 2) {
+      pairs = [[0, 1]];
+    } else if (node.findDirectTokenByText("BETWEEN") !== undefined && sources.length === 3) {
+      pairs = [[0, 1], [0, 2]];
+    }
+
+    for (const [a, b] of pairs) {
+      for (const [arith, other] of [[a, b], [b, a]]) {
+        if (this.isArithmetic(sources[arith]) === true
+            && this.isArithmetic(sources[other]) === false
+            && this.isNonNumeric(types[other]) === true) {
+          const operand = sources[other].concatTokens();
+          return `Arithmetic expression cannot be compared with non-numeric operand "${operand}", use "+ ${operand}"`;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  // "a + b", "- a", "( a * b )", but not "( a )", "a && b" or "a BIT-AND b"
+  private static isArithmetic(source: ExpressionNode): boolean {
+    const children = source.getChildren();
+    const first = children[0];
+    if (first instanceof TokenNode) {
+      const str = first.getFirstToken().getStr();
+      if (str === "+" || str === "-") {
+        return true;
+      } else if (str === "(" && children.length === 3 && children[1] instanceof ExpressionNode) {
+        return this.isArithmetic(children[1]);
+      }
+    }
+    for (const child of children) {
+      if (child instanceof ExpressionNode
+          && child.get() instanceof Expressions.ArithOperator
+          && child.concatTokens().toUpperCase().startsWith("BIT-") === false) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static isNonNumeric(type: AbstractType | undefined): boolean {
+    return type instanceof CharacterType
+      || type instanceof StringType
+      || type instanceof NumericType
+      || type instanceof DateType
+      || type instanceof TimeType
+      || type instanceof HexType
+      || type instanceof XStringType
+      || type instanceof StructureType
+      || type instanceof CLikeType
+      || type instanceof CSequenceType
+      || type instanceof CGenericType
+      || type instanceof NGenericType
+      || type instanceof XSequenceType
+      || type instanceof XGenericType;
   }
 
 }

@@ -8,6 +8,7 @@ import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {TypeUtils} from "../_type_utils";
 import {IClassDefinition} from "../../types/_class_definition";
+import {AbstractType} from "../../types/basic/_abstract_type";
 
 export class Catch implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -46,12 +47,9 @@ export class Catch implements StatementSyntax {
       if (token) {
         const classNames = Array.from(names);
         const unknownClass = classNames.find(name => input.scope.findClassDefinition(name) === undefined);
-        const commonSuperclass = unknownClass === undefined
-          ? this.findCommonSuperclass(classNames, input)
-          : undefined;
-        const type = commonSuperclass
-          ? new ObjectReferenceType(commonSuperclass)
-          : VoidType.get(unknownClass || classNames.join(" "));
+        const type = unknownClass === undefined
+          ? this.inlineType(classNames, input)
+          : VoidType.get(unknownClass);
         const identifier = new TypedIdentifier(token, input.filename, type, [IdentifierMeta.InlineDefinition]);
         input.scope.addIdentifier(identifier);
         input.scope.addReference(token, identifier, ReferenceType.DataWriteReference, input.filename);
@@ -77,21 +75,36 @@ export class Catch implements StatementSyntax {
 
   }
 
-  private findCommonSuperclass(classNames: readonly string[], input: SyntaxInput): IClassDefinition | undefined {
-    const lineages: IClassDefinition[][] = [];
-    for (const className of classNames) {
-      const lineage: IClassDefinition[] = [];
-      let current = input.scope.findClassDefinition(className);
-      const visited = new Set<string>();
-      while (current && visited.has(current.getName().toUpperCase()) === false) {
-        lineage.push(current);
-        visited.add(current.getName().toUpperCase());
-        current = input.scope.findClassDefinition(current.getSuperClass());
+  // static type of an inline target: the first class, replaced by each following class that is one of its
+  // super classes; any other following class makes it CX_ROOT, also when the classes share a closer super class
+  private inlineType(classNames: readonly string[], input: SyntaxInput): AbstractType {
+    let current = input.scope.findClassDefinition(classNames[0]);
+    for (const name of classNames.slice(1)) {
+      if (current === undefined) {
+        break;
       }
-      lineages.push(lineage);
+      const next = input.scope.findClassDefinition(name);
+      current = next && this.isSuperClass(next, current, input) ? next : undefined;
     }
 
-    return lineages[0]?.find(candidate => lineages.every(lineage =>
-      lineage.some(item => item.getName().toUpperCase() === candidate.getName().toUpperCase())));
+    if (current !== undefined) {
+      return new ObjectReferenceType(current);
+    }
+    const root = input.scope.findClassDefinition("CX_ROOT");
+    return root ? new ObjectReferenceType(root) : VoidType.get("CX_ROOT");
+  }
+
+  private isSuperClass(candidate: IClassDefinition, cls: IClassDefinition, input: SyntaxInput): boolean {
+    const name = candidate.getName().toUpperCase();
+    const visited = new Set<string>();
+    let current: IClassDefinition | undefined = cls;
+    while (current && visited.has(current.getName().toUpperCase()) === false) {
+      if (current.getName().toUpperCase() === name) {
+        return true;
+      }
+      visited.add(current.getName().toUpperCase());
+      current = input.scope.findClassDefinition(current.getSuperClass());
+    }
+    return false;
   }
 }
