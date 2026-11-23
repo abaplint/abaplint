@@ -1,5 +1,9 @@
+import {expect} from "chai";
 import {testRule} from "./_utils";
 import {ParserMissingSpace} from "../../src/rules/parser_missing_space";
+import {Registry} from "../../src/registry";
+import {MemoryFile} from "../../src/files/memory_file";
+import {IRegistry} from "../../src/_iregistry";
 
 const tests = [
   {abap: "ro_html->add('foo' && 'bar' ).", cnt: 1},
@@ -43,3 +47,42 @@ const tests = [
 ];
 
 testRule(tests, ParserMissingSpace);
+
+describe("parser_missing_space, long statements", function () {
+  // note that timeout() only works inside function()
+  this.timeout(250);
+
+  // 500 operands stays below the depth where the parser exhausts the call stack in a fresh process
+  const concatenation = "result = " + Array.from({length: 500}, () => "`a`").join(" && ") + ".";
+
+  let reg: IRegistry;
+
+  before(function () {
+    // parsing is not what is measured, it gets its own time limit
+    this.timeout(5000);
+    const abap = Array.from({length: 10}, () => concatenation).join("\n");
+    reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
+  });
+
+  it("ten 500 operand string concatenations, checked within the time limit", () => {
+    const issues = new ParserMissingSpace().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equals(0);
+  });
+});
+
+describe("parser_missing_space, issue positions", () => {
+  const positions = [
+    {abap: "DATA(ls_foo) = VALUE foo( tknum = '0000000001').", col: 48},
+    {abap: "foo = CONV #('DEFAULT' ).", col: 14},
+  ];
+
+  for (const test of positions) {
+    it("\"" + test.abap + "\" reported at column " + test.col, () => {
+      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
+      const issues = new ParserMissingSpace().initialize(reg).run(reg.getFirstObject()!);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getStart().getRow()).to.equal(1);
+      expect(issues[0].getStart().getCol()).to.equal(test.col);
+    });
+  }
+});
