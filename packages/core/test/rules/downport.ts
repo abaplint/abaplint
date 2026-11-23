@@ -7273,7 +7273,7 @@ ENDFORM.`;
     testFixAll(abap, expected);
   });
 
-  it("SELECT, ORDER BY then INTO then UP TO, UP TO stays behind ORDER BY", async () => {
+  it("SELECT, ORDER BY then INTO then UP TO, UP TO moves along with INTO", async () => {
     const abap = `FORM bar USING iv_tab TYPE string iv_where TYPE string.
   FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
   SELECT * FROM (iv_tab) WHERE (iv_where) ORDER BY PRIMARY KEY INTO CORRESPONDING FIELDS OF TABLE @<tab> UP TO 100 ROWS.
@@ -7281,7 +7281,7 @@ ENDFORM.`;
 
     const expected = `FORM bar USING iv_tab TYPE string iv_where TYPE string.
   FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
-  SELECT * FROM (iv_tab) INTO CORRESPONDING FIELDS OF TABLE <tab> WHERE (iv_where) ORDER BY PRIMARY KEY  UP TO 100 ROWS.
+  SELECT * FROM (iv_tab) UP TO 100 ROWS INTO CORRESPONDING FIELDS OF TABLE <tab> WHERE (iv_where) ORDER BY PRIMARY KEY  .
 ENDFORM.`;
 
     testFixAll(abap, expected);
