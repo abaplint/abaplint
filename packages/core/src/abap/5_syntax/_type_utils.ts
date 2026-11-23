@@ -377,6 +377,8 @@ export class TypeUtils {
       kind = "d";
     } else if (source instanceof TimeType) {
       kind = "t";
+    } else if (source instanceof UTCLongType) {
+      kind = "utclong";
     } else {
       return true;
     }
@@ -399,6 +401,8 @@ export class TypeUtils {
       return kind === "d";
     } else if (target instanceof TimeType) {
       return kind === "t";
+    } else if (target instanceof UTCLongType) {
+      return kind === "utclong";
     } else if (target instanceof CGenericType) {
       return kind === "c";
     } else if (target instanceof XGenericType) {
@@ -408,7 +412,7 @@ export class TypeUtils {
     } else if (target instanceof XSequenceType) {
       return kind === "x" || kind === "xstring";
     } else if (target instanceof CLikeType) {
-      return kind !== "number" && kind !== "x" && kind !== "xstring";
+      return kind !== "number" && kind !== "x" && kind !== "xstring" && kind !== "utclong";
     }
     return true;
   }
