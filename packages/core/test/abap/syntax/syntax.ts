@@ -21010,4 +21010,65 @@ ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
+  const replaceNotCharLike: {name: string, abap: string}[] = [
+    {name: "WITH integer, inline declaration", abap: `DATA lv_uri TYPE string.
+lv_uri = '/repasdpulls/{pull_number}sdfds'.
+DATA(pull_number) = 1.
+REPLACE ALL OCCURRENCES OF '{pull_number}' IN lv_uri WITH pull_number.`},
+    {name: "WITH integer literal", abap: `DATA lv_uri TYPE string.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH 1.`},
+    {name: "WITH xstring", abap: `DATA lv_uri TYPE string.
+DATA lv_x TYPE xstring.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH lv_x.`},
+    {name: "pattern integer", abap: `DATA lv_uri TYPE string.
+DATA lv_i TYPE i.
+REPLACE ALL OCCURRENCES OF lv_i IN lv_uri WITH 'a'.`},
+    {name: "IN integer", abap: `DATA lv_i TYPE i.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_i WITH 'b'.`},
+    {name: "short form, WITH integer", abap: `DATA lv_uri TYPE string.
+DATA lv_i TYPE i.
+REPLACE 'a' WITH lv_i INTO lv_uri.`},
+    {name: "SECTION, WITH integer", abap: `DATA lv_uri TYPE string.
+DATA lv_i TYPE i.
+REPLACE SECTION OFFSET 1 LENGTH 1 OF lv_uri WITH lv_i.`},
+    {name: "BYTE MODE, WITH integer", abap: `DATA lv_x TYPE xstring.
+DATA lv_i TYPE i.
+REPLACE ALL OCCURRENCES OF lv_x IN lv_x WITH lv_i IN BYTE MODE.`},
+    {name: "IN TABLE, row type integer", abap: `DATA lt_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+REPLACE ALL OCCURRENCES OF 'a' IN TABLE lt_tab WITH 'b'.`},
+  ];
+  for (const t of replaceNotCharLike) {
+    it("REPLACE, not character or byte like: " + t.name, () => {
+      const issues = runProgram(t.abap);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("REPLACE");
+    });
+  }
+
+  it("REPLACE, character like operands are fine", () => {
+    const abap = `TYPES: BEGIN OF ty, a TYPE c LENGTH 2, b TYPE n LENGTH 2, END OF ty.
+DATA ls TYPE ty.
+DATA lv_uri TYPE string.
+DATA lv_n TYPE n LENGTH 3.
+DATA lv_d TYPE d.
+DATA lv_c TYPE c LENGTH 3.
+DATA lv_i TYPE i.
+DATA lo_regex TYPE REF TO cl_abap_regex.
+DATA lt_tab TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA lv_x TYPE xstring.
+DATA lv_y TYPE x LENGTH 2.
+REPLACE ALL OCCURRENCES OF lv_n IN lv_uri WITH lv_d.
+REPLACE FIRST OCCURRENCE OF 'a' IN lv_uri WITH lv_c.
+REPLACE 'a' WITH lv_n INTO lv_uri.
+REPLACE SECTION OFFSET 1 LENGTH 1 OF lv_uri WITH lv_c.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH ls.
+REPLACE ALL OCCURRENCES OF 'a' IN ls WITH 'b'.
+REPLACE ALL OCCURRENCES OF REGEX lo_regex IN lv_uri WITH 'b'.
+REPLACE ALL OCCURRENCES OF 'a' IN TABLE lt_tab WITH 'b'.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH |{ 1 }|.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH 'b' REPLACEMENT COUNT lv_i REPLACEMENT OFFSET lv_i.
+REPLACE ALL OCCURRENCES OF lv_y IN lv_x WITH lv_y IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
 });
