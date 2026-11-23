@@ -212,6 +212,43 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  describe("me=> is not a class or interface", () => {
+    function run(typing: string) {
+      const abap = `
+CLASS lcl_test DEFINITION.
+  PUBLIC SECTION.
+    METHODS m.
+  PRIVATE SECTION.
+    TYPES ty_i TYPE i.
+ENDCLASS.
+CLASS lcl_test IMPLEMENTATION.
+  METHOD m.
+    DATA lv ${typing}.
+    CLEAR lv.
+  ENDMETHOD.
+ENDCLASS.`;
+      return runMulti([{filename: "zfoobar.prog.abap", contents: abap}]).filter(i => i.getKey() === key);
+    }
+
+    it("TYPE me=>ty_i, error", () => {
+      const issues = run("TYPE me=>ty_i");
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.contain(`"me" is not a class or interface`);
+    });
+
+    it("TYPE STANDARD TABLE OF and TYPE REF TO me=>ty_i, error", () => {
+      expect(run("TYPE STANDARD TABLE OF me=>ty_i WITH EMPTY KEY").length).to.equal(1);
+      expect(run("TYPE REF TO me=>ty_i").length).to.equal(1);
+    });
+
+    it("me->ty_i and the class name, ok", () => {
+      expect(run("TYPE me->ty_i").length).to.equal(0);
+      expect(run("TYPE REF TO me->ty_i").length).to.equal(0);
+      expect(run("TYPE STANDARD TABLE OF me->ty_i WITH EMPTY KEY").length).to.equal(0);
+      expect(run("TYPE lcl_test=>ty_i").length).to.equal(0);
+    });
+  });
+
   it("protected and private attribute", () => {
     const abap = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PROTECTED.
   PROTECTED SECTION.
