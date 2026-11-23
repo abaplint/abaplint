@@ -1101,6 +1101,29 @@ statementExpectFail([
   `SELECT field FROM table INTO TABLE lt_table WHERE field IN ( SELECT SINGLE FOR UPDATE * FROM ztab WHERE field = lv_field ).`,
 ], "SELECT SINGLE FOR UPDATE in IN subquery");
 
+// #2555, UP TO and OFFSET go before ORDER BY or after a trailing INTO, not directly after ORDER BY
+statementExpectFail([
+  `SELECT * FROM tadir INTO TABLE lt_tadir ORDER BY obj_name UP TO 100 ROWS.`,
+  `SELECT * FROM tadir INTO TABLE lt_tadir ORDER BY PRIMARY KEY UP TO 100 ROWS.`,
+  `SELECT * FROM tadir INTO TABLE lt_tadir ORDER BY obj_name UP TO lv_n ROWS.`,
+  `SELECT * FROM tadir INTO TABLE lt_tadir ORDER BY obj_name DESCENDING UP TO 10 ROWS.`,
+  `SELECT * FROM tadir INTO TABLE lt_tadir ORDER BY obj_name, pgmid UP TO 10 ROWS.`,
+  `SELECT * FROM tadir INTO TABLE lt_tadir WHERE obj_name = 'X' ORDER BY obj_name UP TO 100 ROWS.`,
+  `SELECT * FROM tadir INTO TABLE @lt_tadir ORDER BY obj_name UP TO 10 ROWS OFFSET 5.`,
+  `SELECT * FROM tadir INTO TABLE @lt_tadir ORDER BY obj_name OFFSET 5.`,
+  `SELECT * FROM tadir INTO ls_tadir ORDER BY obj_name UP TO 10 ROWS.`,
+  `SELECT FROM tadir FIELDS * ORDER BY obj_name UP TO 10 ROWS INTO TABLE @lt_tadir.`,
+], "SELECT, UP TO or OFFSET directly after ORDER BY");
+
+statementType([
+  `SELECT * FROM tadir INTO TABLE lt_tadir UP TO 100 ROWS ORDER BY obj_name.`,
+  `SELECT * FROM tadir UP TO 100 ROWS INTO TABLE lt_tadir WHERE obj_name = 'X' ORDER BY PRIMARY KEY.`,
+  `SELECT * FROM tadir ORDER BY obj_name INTO TABLE @lt_tadir UP TO 100 ROWS.`,
+  `SELECT FROM tadir FIELDS * ORDER BY obj_name INTO TABLE @lt_tadir UP TO 10 ROWS OFFSET 2.`,
+  `SELECT * FROM tadir INTO TABLE lt_tadir ORDER BY obj_name pgmid DESCENDING object.`,
+  `SELECT * FROM tadir INTO TABLE @lt_tadir ORDER BY obj_name, pgmid DESCENDING.`,
+], "SELECT, UP TO before ORDER BY or after a trailing INTO", Statements.Select);
+
 // keywords that are valid column names in SELECT <kw> FROM ztab INTO @wa.
 statementType([
   `SELECT ABAP FROM ztab INTO @wa.`,
