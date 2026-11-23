@@ -7,6 +7,8 @@ import {CGenericType} from "../types/basic/cgeneric_type";
 import {CurrentScope} from "./_current_scope";
 import * as Expressions from "../2_statements/expressions";
 import {ExpressionNode, TokenNodeRegex} from "../nodes";
+import {NGenericType} from "../types/basic/ngeneric_type";
+import {BuiltIn} from "./_builtin";
 
 // todo: refactor to static? for performance
 export class TypeUtils {
@@ -324,8 +326,99 @@ export class TypeUtils {
     return calculated;
   }
 
-  // a character constant is only assignable to a hexadecimal target if it can be
-  // interpreted as a hexadecimal value
+  /** the source is only a call of a functional method, not a built-in function */
+  private isFunctionalMethodResult(node: ExpressionNode): boolean {
+    if (!(node.get() instanceof Expressions.Source) || node.getChildren().length !== 1) {
+      return false;
+    }
+    const chain = node.getFirstChild();
+    if (!(chain instanceof ExpressionNode) || !(chain.get() instanceof Expressions.MethodCallChain)) {
+      return false;
+    }
+    const children = chain.getChildren();
+    const last = children[children.length - 1];
+    if (!(last instanceof ExpressionNode) || !(last.get() instanceof Expressions.MethodCall)) {
+      return false;
+    }
+    if (children.length === 1) {
+      const name = last.findDirectExpression(Expressions.MethodName)?.concatTokens().toUpperCase();
+      if (name === undefined || BuiltIn.searchBuiltin(name) !== undefined) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /** the result of a functional method passed to a formal parameter: the result is expected to be of
+   * the same kind as the parameter, numeric types mix, c, n and x only into the same or a longer length.
+   * Returns false for a known mismatch of elementary types, true otherwise */
+  private isFunctionalResultAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
+    const isNumber = (t: AbstractType | undefined) => t instanceof IntegerType
+      || t instanceof Integer8Type
+      || t instanceof PackedType
+      || t instanceof FloatType
+      || t instanceof DecFloat16Type
+      || t instanceof DecFloat34Type;
+
+    let kind: string;
+    if (isNumber(source)) {
+      kind = "number";
+    } else if (source instanceof CharacterType) {
+      kind = "c";
+    } else if (source instanceof NumericType && !(source instanceof NGenericType)) {
+      kind = "n";
+    } else if (source instanceof HexType) {
+      kind = "x";
+    } else if (source instanceof StringType) {
+      kind = "string";
+    } else if (source instanceof XStringType) {
+      kind = "xstring";
+    } else if (source instanceof DateType) {
+      kind = "d";
+    } else if (source instanceof TimeType) {
+      kind = "t";
+    } else if (source instanceof UTCLongType) {
+      kind = "utclong";
+    } else {
+      return true;
+    }
+
+    if (isNumber(target) || target instanceof NumericGenericType || target instanceof PGenericType) {
+      return kind === "number";
+    } else if (target instanceof CharacterType) {
+      return source instanceof CharacterType && source.getLength() <= target.getLength();
+    } else if (target instanceof NGenericType) {
+      return kind === "n";
+    } else if (target instanceof NumericType) {
+      return source instanceof NumericType && source.getLength() <= target.getLength();
+    } else if (target instanceof HexType) {
+      return source instanceof HexType && source.getLength() <= target.getLength();
+    } else if (target instanceof StringType) {
+      return kind === "c" || kind === "string";
+    } else if (target instanceof XStringType) {
+      return kind === "x" || kind === "xstring";
+    } else if (target instanceof DateType) {
+      return kind === "d";
+    } else if (target instanceof TimeType) {
+      return kind === "t";
+    } else if (target instanceof UTCLongType) {
+      return kind === "utclong";
+    } else if (target instanceof CGenericType) {
+      return kind === "c";
+    } else if (target instanceof XGenericType) {
+      return kind === "x";
+    } else if (target instanceof CSequenceType) {
+      return kind === "c" || kind === "string";
+    } else if (target instanceof XSequenceType) {
+      return kind === "x" || kind === "xstring";
+    } else if (target instanceof CLikeType) {
+      return kind !== "number" && kind !== "x" && kind !== "xstring" && kind !== "utclong";
+    }
+    return true;
+  }
+
+  // a text or string literal is only assignable to an xstring or xsequence parameter if its
+  // content is hexadecimal: one or more of 0-9 and A-F, upper case, nothing else, or ``
   private isHexConstant(node: ExpressionNode | undefined): boolean {
     const constant = node?.concatTokens();
     if (constant === undefined) {
@@ -334,7 +427,8 @@ export class TypeUtils {
     if ((constant.startsWith("'") && constant.endsWith("'"))
         || (constant.startsWith("`") && constant.endsWith("`"))) {
       const value = constant.substring(1, constant.length - 1);
-      return value.length > 0 && /^[0-9A-Fa-f]+$/.test(value);
+      // an empty string literal is an empty byte string, while '' is a text field of one blank
+      return /^[0-9A-F]+$/.test(value) || constant === "``";
     }
     return true;
   }
@@ -353,7 +447,8 @@ export class TypeUtils {
 
   public isAssignableStrict(source: AbstractType | undefined,
                             target: AbstractType | undefined,
-                            node?: ExpressionNode): boolean {
+                            node?: ExpressionNode,
+                            builtin = false): boolean {
     const calculated = node ? this.isCalculated(node) : false;
 /*
     console.dir(source);
@@ -379,6 +474,11 @@ export class TypeUtils {
           && /^\d*$/.test(constant.substring(1, constant.length - 1)) === false) {
         return false;
       }
+    }
+
+    if (node && builtin === false && this.isFunctionalMethodResult(node)
+        && this.isFunctionalResultAssignable(source, target) === false) {
+      return false;
     }
 
     if (calculated) {
@@ -416,6 +516,11 @@ export class TypeUtils {
           return this.isHexConstant(node);
         }
         return false;
+      } else if (target instanceof XSequenceType) {
+        if (source.getAbstractTypeData()?.derivedFromConstant === true) {
+          return this.isHexConstant(node);
+        }
+        return true;
       } else if (target instanceof StringType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
           return true;
@@ -458,7 +563,7 @@ export class TypeUtils {
         return false;
       } else if (target instanceof XSequenceType || target instanceof XStringType) {
         if (source.getAbstractTypeData()?.derivedFromConstant === true) {
-          return true;
+          return this.isHexConstant(node);
         }
         return false;
       } else if (target instanceof TableType
@@ -578,7 +683,7 @@ export class TypeUtils {
           || (source instanceof TableType && source.isWithHeader() && source.getRowType() instanceof StructureType))) {
       return false;
     }
-    return this.isAssignableStrict(source, target, node);
+    return this.isAssignableStrict(source, target, node, true);
   }
 
   // Typing with the classic STRUCTURE addition, ie. "FORM foo USING bar STRUCTURE zkey",

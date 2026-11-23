@@ -1,4 +1,5 @@
 import * as Expressions from "../abap/2_statements/expressions";
+import * as Tokens from "../abap/1_lexer/tokens";
 import {Issue} from "../issue";
 import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
@@ -6,11 +7,30 @@ import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
-
-// todo: this rule needs refactoring
+import {AbstractToken} from "../abap/1_lexer/tokens/abstract_token";
 
 export class ParserMissingSpaceConf extends BasicRuleConfig {
 }
+
+/** state carried through the walk of one statement */
+interface IWalkState {
+  prev: AbstractToken | undefined;
+  /** outermost Cond or ComponentCond the previous token is part of */
+  prevCond: ExpressionNode | undefined;
+  prevInDynamic: boolean;
+  /** leftmost missing space found so far */
+  first: Position | undefined;
+}
+
+/*
+ * The lexer records whitespace around parentheses in the token type, eg. "WParenLeft" is a "(" with whitespace
+ * before but not after. In the expressions below the grammar also accepts the variants without inner whitespace,
+ * this rule reports them. Elsewhere the grammar is strict, and missing whitespace gives a parser error instead.
+ * Matched on the constructor, none of these expressions is subclassed.
+ */
+const PAREN_EXPRESSIONS = new Set<unknown>([
+  Expressions.MethodCallParam, Expressions.CondSub, Expressions.ComponentCondSub, Expressions.SQLCond,
+  Expressions.ValueBodyLine, Expressions.NewObject, Expressions.Source]);
 
 export class ParserMissingSpace extends ABAPRule {
   private conf = new ParserMissingSpaceConf();
@@ -37,293 +57,115 @@ This rule makes sure the spaces are consistently required across the language.`,
 
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
+    const message = "Missing space between string or character literal and parentheses";
 
-    let start: Position;
     for (const statement of file.getStatements()) {
       const missing = this.missingSpace(statement);
       if (missing) {
-        const message = "Missing space between string or character literal and parentheses";
-        start = missing;
-        const issue = Issue.atPosition(file, start, message, this.getMetadata().key, this.conf.severity);
-        issues.push(issue);
+        issues.push(Issue.atPosition(file, missing, message, this.getMetadata().key, this.conf.severity));
       }
     }
 
     return issues;
   }
 
+  /** returns the position of the first missing space in the statement, the rule reports one issue per statement */
   private missingSpace(statement: StatementNode): Position | undefined {
-
-    {
-      const tokens = statement.getTokens();
-      for (let i = 1; i < tokens.length; i++) {
-        const prev = tokens[i - 1];
-        const current = tokens[i];
-        if (prev.getStr() === ")"
-            && current.getStr() === "="
-            && prev.getRow() === current.getRow()
-            && prev.getEnd().getCol() === current.getStart().getCol()) {
-          return current.getStart();
-        }
-      }
+    const state: IWalkState = {prev: undefined, prevCond: undefined, prevInDynamic: false, first: undefined};
+    for (const child of statement.getChildren()) {
+      this.walk(child, undefined, false, state);
     }
-
-    const found = statement.findAllExpressionsMulti([
-      Expressions.CondSub, Expressions.SQLCond, Expressions.ValueBodyLine,
-      Expressions.NewObject, Expressions.Cond, Expressions.ComponentCond,
-      Expressions.Source,
-      Expressions.ComponentCondSub, Expressions.MethodCallParam], true);
-    let pos: Position | undefined = undefined;
-    for (const f of found) {
-      const type = f.get();
-      if (type instanceof Expressions.Cond) {
-        pos = this.checkCond(f);
-      } else if (type instanceof Expressions.Source) {
-        pos = this.checkSource(f);
-      } else if (type instanceof Expressions.CondSub) {
-        pos = this.checkCondSub(f);
-      } else if (type instanceof Expressions.ComponentCond) {
-        pos = this.checkComponentCond(f);
-      } else if (type instanceof Expressions.ComponentCondSub) {
-        pos = this.checkComponentCondSub(f);
-      } else if (type instanceof Expressions.SQLCond) {
-        pos = this.checkSQLCond(f);
-      } else if (type instanceof Expressions.ValueBodyLine) {
-        pos = this.checkValueBodyLine(f);
-      } else if (type instanceof Expressions.NewObject) {
-        pos = this.checkNewObject(f);
-      } else if (type instanceof Expressions.MethodCallParam) {
-        pos = this.checkMethodCallParam(f);
-      }
-
-      if (pos) {
-        return pos;
-      }
-    }
-
-    return undefined;
+    return state.first;
   }
 
-  private checkSQLCond(cond: ExpressionNode): Position | undefined {
-    const children = cond.getChildren();
+  private report(state: IWalkState, pos: Position): void {
+    if (state.first === undefined || pos.isBefore(state.first)) {
+      state.first = pos;
+    }
+  }
+
+  /** visits each node once in source order, checking the parentheses of expressions and each pair of tokens */
+  private walk(node: ExpressionNode | TokenNode, cond: ExpressionNode | undefined, inDynamic: boolean,
+               state: IWalkState): void {
+    if (node instanceof TokenNode) {
+      this.checkToken(node.get(), cond, inDynamic, state);
+      return;
+    }
+
+    const type = node.get();
+    if (cond === undefined && (type instanceof Expressions.Cond || type instanceof Expressions.ComponentCond)) {
+      cond = node;
+    }
+    inDynamic = inDynamic || type instanceof Expressions.Dynamic;
+
+    if (PAREN_EXPRESSIONS.has(type.constructor)) {
+      this.checkParens(node, state);
+    }
+
+    for (const child of node.getChildren()) {
+      this.walk(child, cond, inDynamic, state);
+    }
+  }
+
+  /** "foo( 'bar')" and "IF (foo = bar )", parentheses directly part of the expression need inner whitespace */
+  private checkParens(node: ExpressionNode, state: IWalkState): void {
+    const children = node.getChildren();
+    let dynamicAccess = false;
     for (let i = 0; i < children.length; i++) {
-      if (children[i].get() instanceof Expressions.SQLCond) {
-        const current = children[i];
-        const prev = children[i - 1].getLastToken();
-        const next = children[i + 1].getFirstToken();
+      const child = children[i];
+      if (!(child instanceof TokenNode)) {
+        continue;
+      }
+      const token = child.get();
 
-        if (prev.getStr() === "("
-            && prev.getRow() === current.getFirstToken().getRow()
-            && prev.getCol() + 1 === current.getFirstToken().getStart().getCol()) {
-          return current.getFirstToken().getStart();
+      if (token instanceof Tokens.ParenLeft || token instanceof Tokens.WParenLeft) {
+        // dynamic component and attribute access, "foo-(name)" and "foo->(name)"
+        const prev = children[i - 1]?.get();
+        if (prev instanceof Tokens.Dash || prev instanceof Tokens.InstanceArrow) {
+          dynamicAccess = true;
+        } else {
+          this.report(state, token.getEnd());
         }
-
-        if (next.getStr() === ")"
-            && next.getRow() === current.getLastToken().getRow()
-            && next.getCol() === current.getLastToken().getEnd().getCol()) {
-          return current.getLastToken().getEnd();
+      } else if (token instanceof Tokens.ParenRight || token instanceof Tokens.ParenRightW) {
+        if (dynamicAccess) {
+          dynamicAccess = false;
+        } else {
+          this.report(state, token.getStart());
         }
+      } else if (token instanceof Tokens.WParenRight || token instanceof Tokens.WParenRightW) {
+        dynamicAccess = false;
       }
     }
-    return undefined;
   }
 
-  private checkNewObject(cond: ExpressionNode): Position | undefined {
-    const children = cond.getChildren();
+  private checkToken(current: AbstractToken, cond: ExpressionNode | undefined, inDynamic: boolean,
+                     state: IWalkState): void {
+    const prev = state.prev;
+    if (prev !== undefined) {
+      // "foo( )= bar"
+      if ((prev instanceof Tokens.ParenRight || prev instanceof Tokens.WParenRight) && current.getStr() === "=") {
+        this.report(state, current.getStart());
+      }
 
-    {
-      const first = children[children.length - 2].getLastToken();
-      const second = children[children.length - 1].getFirstToken();
-      if (first.getRow() === second.getRow()
-          && first.getEnd().getCol() === second.getStart().getCol()) {
-        return second.getStart();
+      // "IF foo ='bar'", dynamic parts like "('NAME')" are allowed without spaces
+      if (current.getStr().startsWith("'")
+          && cond !== undefined
+          && cond === state.prevCond
+          && state.prevInDynamic === false
+          && inDynamic === false
+          && this.isAdjacent(prev, current)) {
+        this.report(state, prev.getEnd());
       }
     }
 
-    return undefined;
+    state.prev = current;
+    state.prevCond = cond;
+    state.prevInDynamic = inDynamic;
   }
 
-  private checkCondSub(cond: ExpressionNode): Position | undefined {
-    const children = cond.getChildren();
-    for (let i = 0; i < children.length; i++) {
-      if (children[i].get() instanceof Expressions.Cond) {
-        const current = children[i];
-        const prev = children[i - 1].getLastToken();
-        const next = children[i + 1].getFirstToken();
-
-        if (prev.getStr() === "("
-            && prev.getRow() === current.getFirstToken().getRow()
-            && prev.getCol() + 1 === current.getFirstToken().getStart().getCol()) {
-          return current.getFirstToken().getStart();
-        }
-
-        if (next.getStr() === ")"
-            && next.getRow() === current.getLastToken().getRow()
-            && next.getCol() === current.getLastToken().getEnd().getCol()) {
-          return current.getLastToken().getEnd();
-        }
-
-      }
-    }
-    return undefined;
-  }
-
-  private checkComponentCondSub(cond: ExpressionNode): Position | undefined {
-    const children = cond.getChildren();
-    for (let i = 0; i < children.length; i++) {
-      if (children[i].get() instanceof Expressions.ComponentCond) {
-        const current = children[i];
-        const prev = children[i - 1].getLastToken();
-        const next = children[i + 1].getFirstToken();
-
-        if (prev.getStr() === "("
-            && prev.getRow() === current.getFirstToken().getRow()
-            && prev.getCol() + 1 === current.getFirstToken().getStart().getCol()) {
-          return current.getFirstToken().getStart();
-        }
-
-        if (next.getStr() === ")"
-            && next.getRow() === current.getLastToken().getRow()
-            && next.getCol() === current.getLastToken().getEnd().getCol()) {
-          return current.getLastToken().getEnd();
-        }
-
-      }
-    }
-    return undefined;
-  }
-
-  private checkComponentCond(cond: ExpressionNode): Position | undefined {
-    const children = cond.getAllTokens();
-    for (let i = 0; i < children.length - 1; i++) {
-      const current = children[i];
-      const next = children[i + 1];
-
-      if (next.getStr().startsWith("'")
-          && next.getRow() === current.getRow()
-          && next.getCol() === current.getEnd().getCol()) {
-        return current.getEnd();
-      }
-    }
-
-    return undefined;
-  }
-
-  private checkValueBodyLine(vb: ExpressionNode): Position | undefined {
-    const children = vb.getChildren();
-    for (let i = 0; i < children.length; i++) {
-      const current = children[i];
-
-      if (current instanceof TokenNode) {
-        const prev = children[i - 1]?.getLastToken();
-        const next = children[i + 1]?.getFirstToken();
-
-        if (current.getFirstToken().getStr() === "("
-            && next
-            && next.getRow() === current.getLastToken().getRow()
-            && next.getCol() === current.getLastToken().getEnd().getCol()) {
-          return current.getFirstToken().getStart();
-        }
-
-        if (current.getFirstToken().getStr() === ")"
-            && prev
-            && prev.getRow() === current.getFirstToken().getRow()
-            && prev.getEnd().getCol() === current.getFirstToken().getStart().getCol()) {
-          return current.getLastToken().getEnd();
-        }
-
-      }
-    }
-    return undefined;
-  }
-
-  private checkCond(cond: ExpressionNode): Position | undefined {
-    const children = cond.getAllTokens();
-
-    const dynamic = cond.findAllExpressions(Expressions.Dynamic);
-
-    for (let i = 0; i < children.length - 1; i++) {
-      const current = children[i];
-      const next = children[i + 1];
-
-      if (next.getStr().startsWith("'")
-          && next.getRow() === current.getRow()
-          && next.getCol() === current.getEnd().getCol()) {
-
-        // skip if the token is part of a DYNAMIC expression
-        let isDynamic = false;
-        outer: for (const d of dynamic) {
-          for (const t of d.getAllTokens()) {
-            if (t === next || t === current) {
-              isDynamic = true;
-              break outer;
-            }
-          }
-        }
-        if (isDynamic === false) {
-          return current.getEnd();
-        }
-      }
-    }
-
-    return undefined;
-  }
-
-  private checkSource(cond: ExpressionNode): Position | undefined {
-    const children = cond.getAllTokens();
-    if (children.length < 2) {
-      return undefined;
-    }
-
-    if (children.length >= 4
-        && children[0].getStr().toUpperCase() === "CONV") {
-      const directChildren = cond.getChildren();
-      const first = directChildren[2]?.getLastToken();
-      const second = directChildren[3]?.getFirstToken();
-      if (first
-          && first.getStr() === "("
-          && second
-          && first.getRow() === second.getRow()
-          && first.getCol() + 1 === second.getStart().getCol()) {
-        return second.getStart();
-      }
-    }
-
-    {
-      const nextLast = children[children.length - 2];
-      const last = children[children.length - 1];
-      if (nextLast.getStr().startsWith("'")
-          && nextLast.getRow() === last.getRow()
-          && nextLast.getEnd().getCol() === last.getStart().getCol()) {
-        return last.getEnd();
-      }
-    }
-
-    return undefined;
-  }
-
-  private checkMethodCallParam(call: ExpressionNode): Position | undefined {
-    const children = call.getChildren();
-
-    {
-      const first = children[0].getFirstToken();
-      const second = children[1].getFirstToken();
-      if (first.getRow() === second.getRow()
-          && first.getCol() + 1 === second.getStart().getCol()) {
-        return second.getStart();
-      }
-    }
-
-    {
-      const first = children[children.length - 2].getLastToken();
-      const second = children[children.length - 1].getFirstToken();
-      if (first.getRow() === second.getRow()
-          && first.getEnd().getCol() === second.getStart().getCol()) {
-        return second.getStart();
-      }
-    }
-
-    return undefined;
+  private isAdjacent(first: AbstractToken, second: AbstractToken): boolean {
+    return first.getRow() === second.getRow()
+      && first.getEnd().getCol() === second.getStart().getCol();
   }
 
 }
