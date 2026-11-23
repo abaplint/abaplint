@@ -832,14 +832,12 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
-    // UP TO after INTO is only valid behind WHERE when it follows an ORDER BY, else move it along in front of INTO
+    // UP TO after INTO is not valid behind WHERE or ORDER BY, move it along in front of INTO
     let move = into.concatTokens();
     const fixes: IEdit[] = [];
     const upTo = high.findFirstExpression(Expressions.SQLUpTo);
-    const orderBy = high.findFirstExpression(Expressions.SQLOrderBy);
     if (upTo !== undefined
-        && into.getLastToken().getEnd().isBefore(upTo.getFirstToken().getStart())
-        && (orderBy === undefined || upTo.getFirstToken().getStart().isBefore(orderBy.getFirstToken().getStart()))) {
+        && into.getLastToken().getEnd().isBefore(upTo.getFirstToken().getStart())) {
       move = upTo.concatTokens() + ` ` + move;
       fixes.push(EditHelper.deleteRange(lowFile, upTo.getFirstToken().getStart(), upTo.getLastToken().getEnd()));
     }
