@@ -21264,3 +21264,185 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 });
+
+describe("syntax.ts, result of a functional method passed to a parameter, #3585", () => {
+  const types: {[name: string]: string} = {
+    c2: "c LENGTH 2", c4: "c LENGTH 4", c10: "c LENGTH 10", n2: "n LENGTH 2", n4: "n LENGTH 4",
+    x2: "x LENGTH 2", x4: "x LENGTH 4", i: "i", int8: "int8", p: "p LENGTH 8 DECIMALS 2",
+    p3: "p LENGTH 8 DECIMALS 3", f: "f", df: "decfloat34", df16: "decfloat16", d: "d", t: "t", str: "string",
+    xstr: "xstring", utc: "utclong",
+    gc: "c", gn: "n", gx: "x", gp: "p", num: "numeric", cs: "csequence", xs: "xsequence", cl: "clike",
+    simple: "simple", any: "any"};
+
+  function build(call: string): string {
+    let def = "";
+    let impl = "";
+    for (const name of Object.keys(types)) {
+      let type = types[name];
+      if (["gc", "gn", "gx", "gp", "num", "cs", "xs", "cl", "simple", "any"].includes(name) === false) {
+        def += `    TYPES ty_${name} TYPE ${type}.\n`;
+        type = "ty_" + name;
+        def += `    METHODS r_${name} RETURNING VALUE(r) TYPE ${type}.\n`;
+        impl += `  METHOD r_${name}.\n  ENDMETHOD.\n`;
+      }
+      def += `    METHODS i_${name} IMPORTING foo TYPE ${type}.\n`;
+      impl += `  METHOD i_${name}.\n  ENDMETHOD.\n`;
+    }
+    return `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+${def}    METHODS i_val IMPORTING VALUE(foo) TYPE ty_c4.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD i_val.
+  ENDMETHOD.
+${impl}ENDCLASS.
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  ${call}`;
+  }
+
+  const errors = [
+    "lo->i_c4( lo->r_str( ) ).",
+    "lo->i_c4( foo = lo->r_str( ) ).",
+    "lo->i_c4( EXPORTING foo = lo->r_str( ) ).",
+    "lo->i_val( lo->r_str( ) ).",
+    "lo->i_c4( lo->r_c10( ) ).",
+    "lo->i_c4( lo->r_i( ) ).",
+    "lo->i_c4( lo->r_n4( ) ).",
+    "lo->i_c4( lo->r_x2( ) ).",
+    "lo->i_n4( lo->r_c4( ) ).",
+    "lo->i_n4( lo->r_str( ) ).",
+    "lo->i_x2( lo->r_c4( ) ).",
+    "lo->i_x4( lo->r_xstr( ) ).",
+    "lo->i_i( lo->r_str( ) ).",
+    "lo->i_i( lo->r_c4( ) ).",
+    "lo->i_i( lo->r_n4( ) ).",
+    "lo->i_i( lo->r_d( ) ).",
+    "lo->i_str( lo->r_i( ) ).",
+    "lo->i_str( lo->r_n4( ) ).",
+    "lo->i_str( lo->r_d( ) ).",
+    "lo->i_str( lo->r_xstr( ) ).",
+    "lo->i_xstr( lo->r_str( ) ).",
+    "lo->i_d( lo->r_c4( ) ).",
+    "lo->i_d( lo->r_t( ) ).",
+    "lo->i_d( lo->r_i( ) ).",
+    "lo->i_d( lo->r_str( ) ).",
+    "lo->i_gc( lo->r_str( ) ).",
+    "lo->i_gc( lo->r_n4( ) ).",
+    "lo->i_gn( lo->r_c4( ) ).",
+    "lo->i_gn( lo->r_str( ) ).",
+    "lo->i_gx( lo->r_xstr( ) ).",
+    "lo->i_gp( lo->r_c4( ) ).",
+    "lo->i_num( lo->r_str( ) ).",
+    "lo->i_num( lo->r_n4( ) ).",
+    "lo->i_num( lo->r_d( ) ).",
+    "lo->i_cs( lo->r_n4( ) ).",
+    "lo->i_cs( lo->r_d( ) ).",
+    "lo->i_cs( lo->r_xstr( ) ).",
+    "lo->i_xs( lo->r_c4( ) ).",
+    "lo->i_xs( lo->r_str( ) ).",
+    "lo->i_cl( lo->r_i( ) ).",
+    "lo->i_cl( lo->r_x2( ) ).",
+    "lo->i_cl( lo->r_f( ) ).",
+    "lo->i_cl( lo->r_xstr( ) ).",
+    "lo->i_str( lo->r_t( ) ).",
+    "lo->i_cs( lo->r_x2( ) ).",
+    "lo->i_i( lo->r_xstr( ) ).",
+    "lo->i_gc( lo->r_d( ) ).",
+    "lo->i_gx( lo->r_i( ) ).",
+    "lo->i_x2( lo->r_n4( ) ).",
+    "lo->i_xstr( lo->r_i( ) ).",
+    "lo->i_xs( lo->r_d( ) ).",
+    "lo->i_utc( lo->r_str( ) ).",
+    "lo->i_utc( lo->r_c4( ) ).",
+    "lo->i_utc( lo->r_i( ) ).",
+    "lo->i_utc( lo->r_d( ) ).",
+    "lo->i_str( lo->r_utc( ) ).",
+    "lo->i_c4( lo->r_utc( ) ).",
+    "lo->i_i( lo->r_utc( ) ).",
+    "lo->i_cl( lo->r_utc( ) ).",
+    "lo->i_cs( lo->r_utc( ) ).",
+    "lo->i_num( lo->r_utc( ) ).",
+  ];
+
+  for (const call of errors) {
+    it("error, " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+    });
+  }
+
+  const ok = [
+    "lo->i_c4( lo->r_c2( ) ).",
+    "lo->i_c4( lo->r_c4( ) ).",
+    "lo->i_n4( lo->r_n2( ) ).",
+    "lo->i_x4( lo->r_x2( ) ).",
+    "lo->i_str( lo->r_c10( ) ).",
+    "lo->i_str( lo->r_str( ) ).",
+    "lo->i_xstr( lo->r_x2( ) ).",
+    "lo->i_int8( lo->r_i( ) ).",
+    "lo->i_i( lo->r_int8( ) ).",
+    "lo->i_i( lo->r_p( ) ).",
+    "lo->i_i( lo->r_f( ) ).",
+    "lo->i_p( lo->r_i( ) ).",
+    "lo->i_p3( lo->r_p( ) ).",
+    "lo->i_f( lo->r_i( ) ).",
+    "lo->i_df( lo->r_f( ) ).",
+    "lo->i_p( lo->r_df( ) ).",
+    "lo->i_d( lo->r_d( ) ).",
+    "lo->i_t( lo->r_t( ) ).",
+    "lo->i_gc( lo->r_c4( ) ).",
+    "lo->i_gn( lo->r_n4( ) ).",
+    "lo->i_gx( lo->r_x2( ) ).",
+    "lo->i_gp( lo->r_i( ) ).",
+    "lo->i_gp( lo->r_f( ) ).",
+    "lo->i_num( lo->r_i( ) ).",
+    "lo->i_cs( lo->r_str( ) ).",
+    "lo->i_cs( lo->r_c4( ) ).",
+    "lo->i_xs( lo->r_x2( ) ).",
+    "lo->i_cl( lo->r_str( ) ).",
+    "lo->i_cl( lo->r_n4( ) ).",
+    "lo->i_simple( lo->r_str( ) ).",
+    "lo->i_any( lo->r_str( ) ).",
+    "lo->i_cl( lo->r_d( ) ).",
+    "lo->i_cl( lo->r_t( ) ).",
+    "lo->i_xs( lo->r_xstr( ) ).",
+    "lo->i_p( lo->r_df16( ) ).",
+    "lo->i_df16( lo->r_i( ) ).",
+    "lo->i_utc( lo->r_utc( ) ).",
+    "lo->i_simple( lo->r_utc( ) ).",
+    "lo->i_c4( |abc| ).",
+    "lo->i_c4( `ab` && `cd` ).",
+    "lo->i_c4( to_upper( `ab` ) ).",
+  ];
+
+  for (const call of ok) {
+    it("ok, " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(0);
+    });
+  }
+
+  it("error, the example from the issue", () => {
+    const issues = runProgram(`CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_val TYPE c LENGTH 4.
+    METHODS ret RETURNING VALUE(sdf) TYPE string.
+    METHODS imp IMPORTING foo TYPE ty_val.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD ret.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  lo->imp( lo->ret( ) ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+  });
+});
