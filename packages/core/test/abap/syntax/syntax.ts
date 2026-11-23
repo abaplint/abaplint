@@ -7197,7 +7197,7 @@ DATA date1 TYPE d.
 DATA date2 TYPE d.
 result = xsdbool( date1 < date2 + 2 ).`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal("Date cannot be compared with arithmetic result of type Integer");
+    expect(issues[0]?.getMessage()).to.include("Arithmetic expression cannot be compared with non-numeric operand");
   });
 
   it("but this is okay, comparing date with constant", () => {
@@ -17337,17 +17337,69 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
-  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, below 7.55", () => {
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, error, #1772", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, error at v750 too, #1772", () => {
     const abap = `
 SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
     const issues = runProgram(abap, [], Release.v750);
-    expect(issues[0]?.getMessage()).to.contain("requires 7.55");
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
   });
 
-  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, 7.55", () => {
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, error in Cloud, #1772", () => {
     const abap = `
 SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
-    const issues = runProgram(abap, [], Release.v755);
+    const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT field list INTO CORRESPONDING FIELDS OF TABLE @DATA, error, #1772", () => {
+    const abap = `
+SELECT msgnr, text FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT APPENDING CORRESPONDING FIELDS OF TABLE @DATA, error, #1772", () => {
+    const abap = `
+SELECT * FROM t100 APPENDING CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT SINGLE INTO CORRESPONDING FIELDS OF @DATA, error, #1772", () => {
+    const abap = `
+SELECT SINGLE * FROM t100 INTO CORRESPONDING FIELDS OF @DATA(ls_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @FINAL, error, #1772", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @FINAL(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, declared, no follow-up error, #1772", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).
+LOOP AT lt_t100 INTO DATA(ls_t100).
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("SELECT SINGLE INTO CORRESPONDING FIELDS OF declared structure, ok, #1772", () => {
+    const abap = `
+DATA ls_t100 TYPE t100.
+SELECT SINGLE * FROM t100 INTO CORRESPONDING FIELDS OF @ls_t100.`;
+    const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -17385,20 +17437,6 @@ DATA lv_big TYPE int8.`;
     const abap = `
 DATA lv_big TYPE int8.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, no version set", () => {
-    const abap = `
-SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
-    const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, Cloud", () => {
-    const abap = `
-SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
-    const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -21263,6 +21301,298 @@ START-OF-SELECTION.
   res = 1 - ref->attr.`);
     expect(issues.length).to.equals(0);
   });
+});
+
+describe("syntax.ts, result of a functional method passed to a parameter, #3585", () => {
+  const types: {[name: string]: string} = {
+    c2: "c LENGTH 2", c4: "c LENGTH 4", c10: "c LENGTH 10", n2: "n LENGTH 2", n4: "n LENGTH 4",
+    x2: "x LENGTH 2", x4: "x LENGTH 4", i: "i", int8: "int8", p: "p LENGTH 8 DECIMALS 2",
+    p3: "p LENGTH 8 DECIMALS 3", f: "f", df: "decfloat34", df16: "decfloat16", d: "d", t: "t", str: "string",
+    xstr: "xstring", utc: "utclong",
+    gc: "c", gn: "n", gx: "x", gp: "p", num: "numeric", cs: "csequence", xs: "xsequence", cl: "clike",
+    simple: "simple", any: "any"};
+
+  function build(call: string): string {
+    let def = "";
+    let impl = "";
+    for (const name of Object.keys(types)) {
+      let type = types[name];
+      if (["gc", "gn", "gx", "gp", "num", "cs", "xs", "cl", "simple", "any"].includes(name) === false) {
+        def += `    TYPES ty_${name} TYPE ${type}.\n`;
+        type = "ty_" + name;
+        def += `    METHODS r_${name} RETURNING VALUE(r) TYPE ${type}.\n`;
+        impl += `  METHOD r_${name}.\n  ENDMETHOD.\n`;
+      }
+      def += `    METHODS i_${name} IMPORTING foo TYPE ${type}.\n`;
+      impl += `  METHOD i_${name}.\n  ENDMETHOD.\n`;
+    }
+    return `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+${def}    METHODS i_val IMPORTING VALUE(foo) TYPE ty_c4.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD i_val.
+  ENDMETHOD.
+${impl}ENDCLASS.
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  ${call}`;
+  }
+
+  const errors = [
+    "lo->i_c4( lo->r_str( ) ).",
+    "lo->i_c4( foo = lo->r_str( ) ).",
+    "lo->i_c4( EXPORTING foo = lo->r_str( ) ).",
+    "lo->i_val( lo->r_str( ) ).",
+    "lo->i_c4( lo->r_c10( ) ).",
+    "lo->i_c4( lo->r_i( ) ).",
+    "lo->i_c4( lo->r_n4( ) ).",
+    "lo->i_c4( lo->r_x2( ) ).",
+    "lo->i_n4( lo->r_c4( ) ).",
+    "lo->i_n4( lo->r_str( ) ).",
+    "lo->i_x2( lo->r_c4( ) ).",
+    "lo->i_x4( lo->r_xstr( ) ).",
+    "lo->i_i( lo->r_str( ) ).",
+    "lo->i_i( lo->r_c4( ) ).",
+    "lo->i_i( lo->r_n4( ) ).",
+    "lo->i_i( lo->r_d( ) ).",
+    "lo->i_str( lo->r_i( ) ).",
+    "lo->i_str( lo->r_n4( ) ).",
+    "lo->i_str( lo->r_d( ) ).",
+    "lo->i_str( lo->r_xstr( ) ).",
+    "lo->i_xstr( lo->r_str( ) ).",
+    "lo->i_d( lo->r_c4( ) ).",
+    "lo->i_d( lo->r_t( ) ).",
+    "lo->i_d( lo->r_i( ) ).",
+    "lo->i_d( lo->r_str( ) ).",
+    "lo->i_gc( lo->r_str( ) ).",
+    "lo->i_gc( lo->r_n4( ) ).",
+    "lo->i_gn( lo->r_c4( ) ).",
+    "lo->i_gn( lo->r_str( ) ).",
+    "lo->i_gx( lo->r_xstr( ) ).",
+    "lo->i_gp( lo->r_c4( ) ).",
+    "lo->i_num( lo->r_str( ) ).",
+    "lo->i_num( lo->r_n4( ) ).",
+    "lo->i_num( lo->r_d( ) ).",
+    "lo->i_cs( lo->r_n4( ) ).",
+    "lo->i_cs( lo->r_d( ) ).",
+    "lo->i_cs( lo->r_xstr( ) ).",
+    "lo->i_xs( lo->r_c4( ) ).",
+    "lo->i_xs( lo->r_str( ) ).",
+    "lo->i_cl( lo->r_i( ) ).",
+    "lo->i_cl( lo->r_x2( ) ).",
+    "lo->i_cl( lo->r_f( ) ).",
+    "lo->i_cl( lo->r_xstr( ) ).",
+    "lo->i_str( lo->r_t( ) ).",
+    "lo->i_cs( lo->r_x2( ) ).",
+    "lo->i_i( lo->r_xstr( ) ).",
+    "lo->i_gc( lo->r_d( ) ).",
+    "lo->i_gx( lo->r_i( ) ).",
+    "lo->i_x2( lo->r_n4( ) ).",
+    "lo->i_xstr( lo->r_i( ) ).",
+    "lo->i_xs( lo->r_d( ) ).",
+    "lo->i_utc( lo->r_str( ) ).",
+    "lo->i_utc( lo->r_c4( ) ).",
+    "lo->i_utc( lo->r_i( ) ).",
+    "lo->i_utc( lo->r_d( ) ).",
+    "lo->i_str( lo->r_utc( ) ).",
+    "lo->i_c4( lo->r_utc( ) ).",
+    "lo->i_i( lo->r_utc( ) ).",
+    "lo->i_cl( lo->r_utc( ) ).",
+    "lo->i_cs( lo->r_utc( ) ).",
+    "lo->i_num( lo->r_utc( ) ).",
+  ];
+
+  for (const call of errors) {
+    it("error, " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+    });
+  }
+
+  const ok = [
+    "lo->i_c4( lo->r_c2( ) ).",
+    "lo->i_c4( lo->r_c4( ) ).",
+    "lo->i_n4( lo->r_n2( ) ).",
+    "lo->i_x4( lo->r_x2( ) ).",
+    "lo->i_str( lo->r_c10( ) ).",
+    "lo->i_str( lo->r_str( ) ).",
+    "lo->i_xstr( lo->r_x2( ) ).",
+    "lo->i_int8( lo->r_i( ) ).",
+    "lo->i_i( lo->r_int8( ) ).",
+    "lo->i_i( lo->r_p( ) ).",
+    "lo->i_i( lo->r_f( ) ).",
+    "lo->i_p( lo->r_i( ) ).",
+    "lo->i_p3( lo->r_p( ) ).",
+    "lo->i_f( lo->r_i( ) ).",
+    "lo->i_df( lo->r_f( ) ).",
+    "lo->i_p( lo->r_df( ) ).",
+    "lo->i_d( lo->r_d( ) ).",
+    "lo->i_t( lo->r_t( ) ).",
+    "lo->i_gc( lo->r_c4( ) ).",
+    "lo->i_gn( lo->r_n4( ) ).",
+    "lo->i_gx( lo->r_x2( ) ).",
+    "lo->i_gp( lo->r_i( ) ).",
+    "lo->i_gp( lo->r_f( ) ).",
+    "lo->i_num( lo->r_i( ) ).",
+    "lo->i_cs( lo->r_str( ) ).",
+    "lo->i_cs( lo->r_c4( ) ).",
+    "lo->i_xs( lo->r_x2( ) ).",
+    "lo->i_cl( lo->r_str( ) ).",
+    "lo->i_cl( lo->r_n4( ) ).",
+    "lo->i_simple( lo->r_str( ) ).",
+    "lo->i_any( lo->r_str( ) ).",
+    "lo->i_cl( lo->r_d( ) ).",
+    "lo->i_cl( lo->r_t( ) ).",
+    "lo->i_xs( lo->r_xstr( ) ).",
+    "lo->i_p( lo->r_df16( ) ).",
+    "lo->i_df16( lo->r_i( ) ).",
+    "lo->i_utc( lo->r_utc( ) ).",
+    "lo->i_simple( lo->r_utc( ) ).",
+    "lo->i_c4( |abc| ).",
+    "lo->i_c4( `ab` && `cd` ).",
+    "lo->i_c4( to_upper( `ab` ) ).",
+  ];
+
+  for (const call of ok) {
+    it("ok, " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(0);
+    });
+  }
+
+  it("error, the example from the issue", () => {
+    const issues = runProgram(`CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_val TYPE c LENGTH 4.
+    METHODS ret RETURNING VALUE(sdf) TYPE string.
+    METHODS imp IMPORTING foo TYPE ty_val.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD ret.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  lo->imp( lo->ret( ) ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+  });
+});
+
+describe("syntax.ts, arithmetic expression compared with a non-numeric operand, #2067", () => {
+  const prefix = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS str RETURNING VALUE(r) TYPE string.
+    CLASS-METHODS num RETURNING VALUE(r) TYPE i.
+    CLASS-METHODS run IMPORTING cl TYPE clike cs TYPE csequence xs TYPE xsequence sp TYPE simple nu TYPE numeric.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD str.
+  ENDMETHOD.
+  METHOD num.
+  ENDMETHOD.
+  METHOD run.
+    TYPES: BEGIN OF ty, a TYPE c LENGTH 1, END OF ty.
+    DATA lv_i TYPE i.
+    DATA lv_p TYPE p LENGTH 8 DECIMALS 2.
+    DATA lv_f TYPE f.
+    DATA lv_8 TYPE int8.
+    DATA lv_df TYPE decfloat34.
+    DATA lv_c TYPE c LENGTH 5.
+    DATA lv_s TYPE string.
+    DATA lv_n TYPE n LENGTH 5.
+    DATA lv_d TYPE d.
+    DATA lv_t TYPE t.
+    DATA lv_x TYPE x LENGTH 4.
+    DATA lv_xs TYPE xstring.
+    DATA ls TYPE ty.
+    CONSTANTS lc_c TYPE c LENGTH 1 VALUE '1'.
+    FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <c> TYPE c.`;
+  const suffix = `
+  ENDMETHOD.
+ENDCLASS.`;
+
+  const errors: {name: string, code: string}[] = [
+    {name: "string, from the issue", code: `IF lv_i * 2 > lv_s. ENDIF.`},
+    {name: "xstring, from the issue", code: `IF lv_xs = lv_xs + 1. ENDIF.`},
+    {name: "c", code: `IF lv_c = lv_i + 1. ENDIF.`},
+    {name: "n", code: `IF lv_n = lv_i + 1. ENDIF.`},
+    {name: "d", code: `IF lv_d = lv_i + 1. ENDIF.`},
+    {name: "t", code: `IF lv_t = lv_i + 1. ENDIF.`},
+    {name: "x", code: `IF lv_x = lv_i + 1. ENDIF.`},
+    {name: "text literal", code: `IF '5' = lv_i + 1. ENDIF.`},
+    {name: "string literal", code: `IF \`5\` = lv_i + 1. ENDIF.`},
+    {name: "constant", code: `IF lc_c = lv_i + 1. ENDIF.`},
+    {name: "field symbol TYPE c", code: `IF <c> = lv_i + 1. ENDIF.`},
+    {name: "clike", code: `IF cl = lv_i + 1. ENDIF.`},
+    {name: "csequence", code: `IF cs = lv_i + 1. ENDIF.`},
+    {name: "xsequence", code: `IF xs = lv_i + 1. ENDIF.`},
+    {name: "structure", code: `IF ls = lv_i + 1. ENDIF.`},
+    {name: "structure component", code: `IF ls-a = lv_i + 1. ENDIF.`},
+    {name: "offset and length", code: `IF lv_c+1(2) = lv_i + 1. ENDIF.`},
+    {name: "method result", code: `IF lcl=>str( ) = lv_i + 1. ENDIF.`},
+    {name: "CONV string", code: `IF CONV string( lv_i ) = lv_i + 1. ENDIF.`},
+    {name: "arithmetic on the left", code: `IF lv_i + 1 <> lv_c. ENDIF.`},
+    {name: "power", code: `IF lv_c = 2 ** lv_i. ENDIF.`},
+    {name: "MOD", code: `IF lv_c = lv_i MOD 2. ENDIF.`},
+    {name: "unary minus", code: `IF lv_c = - lv_i. ENDIF.`},
+    {name: "unary minus, integer", code: `IF lv_c = - 1. ENDIF.`},
+    {name: "unary plus", code: `IF + lv_i = lv_c. ENDIF.`},
+    {name: "in parentheses", code: `IF lv_c = ( lv_i + 1 ). ENDIF.`},
+    {name: "parentheses as operand", code: `IF lv_c = lv_i * ( 2 ). ENDIF.`},
+    {name: "built-in function as operand", code: `IF lv_c = strlen( lv_c ) + 1. ENDIF.`},
+    {name: "method call as operand", code: `IF lv_c = lcl=>num( ) + 1. ENDIF.`},
+    {name: "CONV as operand", code: `IF lv_c = CONV i( lv_c ) + 1. ENDIF.`},
+    {name: "BETWEEN, arithmetic first", code: `IF lv_i + 1 BETWEEN lv_c AND 5. ENDIF.`},
+    {name: "BETWEEN, arithmetic lower bound", code: `IF lv_c BETWEEN lv_i + 1 AND 5. ENDIF.`},
+    {name: "BETWEEN, arithmetic upper bound", code: `IF lv_c BETWEEN 1 AND lv_i + 1. ENDIF.`},
+    {name: "xsdbool", code: `DATA(lv_b) = xsdbool( lv_c = lv_i + 1 ).`},
+    {name: "WHILE", code: `WHILE lv_c = lv_i + 1. ENDWHILE.`},
+  ];
+
+  for (const e of errors) {
+    it("error, " + e.name, () => {
+      const issues = runProgram(prefix + "\n    " + e.code + suffix);
+      expect(issues[0]?.getMessage()).to.include("Arithmetic expression cannot be compared with non-numeric operand");
+    });
+  }
+
+  const okay: {name: string, code: string}[] = [
+    {name: "plus in front, from the issue", code: `IF + lv_xs = lv_xs + 1. ENDIF.`},
+    {name: "plus in front, string", code: `IF lv_i * 2 > + lv_s. ENDIF.`},
+    {name: "i", code: `IF lv_i = lv_i + 1. ENDIF.`},
+    {name: "p", code: `IF lv_p = lv_i + 1. ENDIF.`},
+    {name: "f", code: `IF lv_f = lv_i + 1. ENDIF.`},
+    {name: "int8", code: `IF lv_8 = lv_i + 1. ENDIF.`},
+    {name: "decfloat34", code: `IF lv_df = lv_i + 1. ENDIF.`},
+    {name: "integer literal", code: `IF 5 = lv_i + 1. ENDIF.`},
+    {name: "negative integer literal", code: `IF lv_c = -1. ENDIF.`},
+    {name: "field symbol TYPE any", code: `IF <any> = lv_i + 1. ENDIF.`},
+    {name: "simple", code: `IF sp = lv_i + 1. ENDIF.`},
+    {name: "numeric", code: `IF nu = lv_i + 1. ENDIF.`},
+    {name: "arithmetic on both sides", code: `IF lv_c + 1 = lv_i + 1. ENDIF.`},
+    {name: "character operand inside the arithmetic expression", code: `IF lv_i = lv_c + 1. ENDIF.`},
+    {name: "single operand in parentheses", code: `IF lv_c = ( lv_i ). ENDIF.`},
+    {name: "built-in function alone", code: `IF lv_c = abs( lv_i ). ENDIF.`},
+    {name: "method call alone", code: `IF lv_c = lcl=>num( ). ENDIF.`},
+    {name: "concatenation", code: `IF lv_c = lv_c && 'a'. ENDIF.`},
+    {name: "bit expression", code: `IF lv_xs = lv_xs BIT-AND lv_xs. ENDIF.`},
+  ];
+
+  for (const o of okay) {
+    it("okay, " + o.name, () => {
+      const issues = runProgram(prefix + "\n    " + o.code + suffix);
+      expect(issues.length).to.equal(0, issues.map(i => i.getMessage()).join(", "));
+    });
+  }
 });
 
 describe("syntax.ts, VALUE component of reference type, #3226", () => {
