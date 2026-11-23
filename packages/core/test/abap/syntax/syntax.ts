@@ -17337,17 +17337,69 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
-  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, below 7.55", () => {
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, error, #1772", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, error at v750 too, #1772", () => {
     const abap = `
 SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
     const issues = runProgram(abap, [], Release.v750);
-    expect(issues[0]?.getMessage()).to.contain("requires 7.55");
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
   });
 
-  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, 7.55", () => {
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, error in Cloud, #1772", () => {
     const abap = `
 SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
-    const issues = runProgram(abap, [], Release.v755);
+    const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT field list INTO CORRESPONDING FIELDS OF TABLE @DATA, error, #1772", () => {
+    const abap = `
+SELECT msgnr, text FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT APPENDING CORRESPONDING FIELDS OF TABLE @DATA, error, #1772", () => {
+    const abap = `
+SELECT * FROM t100 APPENDING CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT SINGLE INTO CORRESPONDING FIELDS OF @DATA, error, #1772", () => {
+    const abap = `
+SELECT SINGLE * FROM t100 INTO CORRESPONDING FIELDS OF @DATA(ls_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @FINAL, error, #1772", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @FINAL(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, declared, no follow-up error, #1772", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).
+LOOP AT lt_t100 INTO DATA(ls_t100).
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("SELECT SINGLE INTO CORRESPONDING FIELDS OF declared structure, ok, #1772", () => {
+    const abap = `
+DATA ls_t100 TYPE t100.
+SELECT SINGLE * FROM t100 INTO CORRESPONDING FIELDS OF @ls_t100.`;
+    const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -17385,20 +17437,6 @@ DATA lv_big TYPE int8.`;
     const abap = `
 DATA lv_big TYPE int8.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, no version set", () => {
-    const abap = `
-SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
-    const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, Cloud", () => {
-    const abap = `
-SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
-    const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
