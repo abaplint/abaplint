@@ -59,9 +59,8 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
   const fae = optPrio(SQLForAllEntries);
   const whereClause = optPrio(where);
   const groupHaving = seq(optPrio(SQLGroupBy), optPrio(SQLHaving));
-  const orderUpOff: IStatementRunnable[] = allowOrderBy
-    ? [optPrio(seq(SQLOrderBy, optPrio(SQLUpTo), optPrio(offset)))]
-    : [];
+  // UP TO and OFFSET are not allowed directly after ORDER BY, they go before it or after a trailing INTO
+  const orderBy: IStatementRunnable[] = allowOrderBy ? [optPrio(SQLOrderBy)] : [];
   const trailingOpts = seq(conn, optPrio(SQLHints), optPrio(privileged), optPrio(SQLOptions));
 
   const intoSingle = seq(altPrio(SQLIntoStructure, SQLIntoList), extResult, creating);
@@ -70,7 +69,7 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
   if (!allowInto) {
     const afterFromNoInto = seq(
       SQLFrom, client, byp,
-      seq(optPrio(sqlFields), fae, whereClause, groupHaving, ...orderUpOff, trailingOpts),
+      seq(optPrio(sqlFields), fae, whereClause, groupHaving, ...orderBy, trailingOpts),
     );
     return altPrio(
       seq("SINGLE", buildSelectSingleCore(false)),
@@ -92,10 +91,10 @@ export function buildSelectCore(allowInto = false, allowOrderBy = true): IStatem
     optPrio(SQLFrom), client, byp, fromPackSize,
     altPrio(
       seq(intoForPackSize, optPrio(SQLPackageSize), byp, conn,
-          optPrio(SQLUpTo), byp, optPrio(offset), fae, whereClause, groupHaving, ...orderUpOff, trailingOpts),
+          optPrio(SQLUpTo), byp, optPrio(offset), fae, whereClause, groupHaving, ...orderBy, trailingOpts),
       seq(intoSingle, byp, optPrio(SQLUpTo), byp, fae, optPrio(SQLUpTo), byp,
-          optPrio(offset), whereClause, groupHaving, ...orderUpOff, trailingOpts),
-      seq(optPrio(sqlFields), fae, whereClause, groupHaving, ...orderUpOff, trailingOpts, trailingInto),
+          optPrio(offset), whereClause, groupHaving, ...orderBy, trailingOpts),
+      seq(optPrio(sqlFields), fae, whereClause, groupHaving, ...orderBy, trailingOpts, trailingInto),
     ),
   );
 
