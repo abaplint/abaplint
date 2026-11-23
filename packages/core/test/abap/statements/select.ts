@@ -2125,3 +2125,27 @@ statementType([
   "SELECT zcol FROM ztab WHERE zc > FLTP`0.78` INTO TABLE @itab.",
   "SELECT zcol FROM ztab WHERE zc = STRING`abc` INTO TABLE @itab.",
 ], "SELECT typed literals", Statements.Select);
+
+// https://github.com/abaplint/abaplint/issues/3376
+statementType([
+  `SELECT FROM dbdtab AS t1
+  INNER JOIN db2 AS t2
+    ON t1~f1 && 'X' = t2~f1
+  FIELDS 'X' && f1 AS foo
+  INTO TABLE @DATA(itab).`,
+  `SELECT FROM dbdtab AS t1 INNER JOIN db2 AS t2 ON 'X' && t1~f1 = t2~f1 FIELDS t1~f1 INTO TABLE @DATA(itab).`,
+  `SELECT FROM dbdtab AS t1 INNER JOIN db2 AS t2 ON t1~f1 && t1~f2 = t2~f1 FIELDS t1~f1 INTO TABLE @DATA(itab).`,
+  `SELECT FROM dbdtab FIELDS f1 WHERE f1 && 'X' = 'AX' INTO TABLE @DATA(itab).`,
+  `SELECT FROM dbdtab FIELDS f1 WHERE f1 && @lv = 'AX' INTO TABLE @DATA(itab).`,
+  `SELECT FROM dbdtab FIELDS f1 WHERE @lv && f1 = 'XA' INTO TABLE @DATA(itab).`,
+  `SELECT FROM dbdtab FIELDS f1 WHERE f1 && 'X' && f1 = 'AXA' INTO TABLE @DATA(itab).`,
+], "SELECT, && on the left side of a comparison", Statements.Select);
+
+statementVersion([
+  {abap: `SELECT f1 FROM dbdtab INTO TABLE @itab WHERE f1 && 'X' = 'AX'.`, rel: Release.v750},
+], "SELECT, && on the left side of a comparison", Statements.Select);
+
+statementExpectFail([
+  `SELECT FROM dbdtab AS t1 INNER JOIN db2 AS t2 ON t1~f1 = t2~f1 && 'X' FIELDS t1~f1 INTO TABLE @DATA(itab).`,
+  `SELECT FROM dbdtab FIELDS f1 WHERE f1 = f2 && 'X' INTO TABLE @DATA(itab).`,
+], "SELECT, && on the right side of a comparison");
