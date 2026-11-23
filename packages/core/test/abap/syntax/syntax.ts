@@ -11885,6 +11885,133 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
   });
 
+  it("packed without LENGTH and without DECIMALS, only the DECIMALS error", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
+  });
+
+  const lengthMissing: {name: string, abap: string}[] = [
+    {name: "TYPE c in class definition", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ddlanguage TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "TYPE n", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE n.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "TYPE x", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE x.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "TYPE p with DECIMALS", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p DECIMALS 2.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "implicit type", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "structure component", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_s,
+             f TYPE c,
+           END OF ty_s.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "implicit structure component", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_s,
+             f,
+           END OF ty_s.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "in a method", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS m.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    TYPES ty TYPE c.
+  ENDMETHOD.
+ENDCLASS.`},
+    {name: "in an interface", abap: `INTERFACE lif.
+  TYPES ty TYPE c.
+ENDINTERFACE.`},
+  ];
+
+  for (const t of lengthMissing) {
+    it("TYPES without LENGTH in OO context, " + t.name, () => {
+      const issues = runProgram(t.abap);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("Specify LENGTH");
+    });
+  }
+
+  it("TYPES with LENGTH in OO context, ok", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_c1(1) TYPE c.
+    TYPES ty_c2 TYPE c LENGTH 1.
+    TYPES ty_n(3) TYPE n.
+    TYPES ty_x TYPE x LENGTH 2.
+    TYPES ty_p TYPE p LENGTH 8 DECIMALS 2.
+    TYPES ty_impl(1).
+    TYPES ty_ref TYPE ty_c1.
+    TYPES ty_d TYPE d.
+    TYPES ty_t TYPE t.
+    TYPES ty_str TYPE string.
+    TYPES ty_f TYPE f.
+    TYPES ty_tab TYPE STANDARD TABLE OF c WITH EMPTY KEY.
+    TYPES ty_range TYPE RANGE OF c.
+    CONSTANTS c_a TYPE c VALUE 'A'.
+    DATA: BEGIN OF ms,
+            f TYPE c,
+          END OF ms.
+    DATA mv TYPE n.
+    METHODS m.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    DATA lv TYPE c.
+    DATA lv_x TYPE x.
+    DATA lv_impl.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("TYPES without LENGTH outside OO context, ok", () => {
+    const abap = `
+TYPES ty_c TYPE c.
+TYPES ty_p TYPE p.
+TYPES ty_impl.
+FORM f.
+  TYPES ty_c2 TYPE c.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
   it("INSERT INITIAL LINE, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_language,
