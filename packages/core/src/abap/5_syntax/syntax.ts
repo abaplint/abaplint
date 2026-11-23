@@ -23,6 +23,7 @@ import {LoopGroupBy} from "./expressions/loop_group_by";
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
+import {checkAbapdocInFrontOfChain} from "./_abapdoc_position";
 
 import {DeleteMemory} from "./statements/delete_memory";
 import {Perform} from "./statements/perform";
@@ -429,6 +430,7 @@ export class SyntaxLogic {
       if (structure === undefined) {
         return this.scope;
       } else {
+        this.issues.push(...checkAbapdocInFrontOfChain(file, CheckSyntaxKey));
         this.traverse(structure);
       }
     }

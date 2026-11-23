@@ -21842,3 +21842,136 @@ result = VALUE #( locals = '' ).`;
     expect(issues.length).to.equal(0);
   });
 });
+
+describe("syntax.ts, ABAP Doc in front of a chained statement, #4647", () => {
+  it("in front of chained TYPES and CONSTANTS, error", () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    "! before a chained TYPES
+    TYPES:
+      BEGIN OF ty_pair,
+        a TYPE i,
+        b TYPE i,
+      END OF ty_pair.
+    "! before a chained CONSTANTS
+    "! second row
+    CONSTANTS:
+      BEGIN OF c_kinds,
+        one TYPE i VALUE 1,
+      END OF c_kinds.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runClass(abap);
+    expect(issues.length).to.equal(2);
+    expect(issues[0].getMessage()).to.include("ABAP Doc in front of chained statement");
+    expect(issues[0].getStart().getRow()).to.equal(4);
+    expect(issues[1].getStart().getRow()).to.equal(10);
+  });
+
+  it("in front of chained DATA in an interface, error", () => {
+    const abap = `
+INTERFACE zif_foobar PUBLIC.
+  "! the value
+  DATA: value TYPE i.
+ENDINTERFACE.`;
+    const issues = runInterface(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("ABAP Doc in front of chained statement");
+  });
+
+  it("in front of chained METHODS in a local class, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    "! the method
+    METHODS: run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("ABAP Doc in front of chained statement");
+  });
+
+  it("after the colon, ok", () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES:
+      "! after the colon
+      BEGIN OF ty_pair,
+        a TYPE i,
+        b TYPE i,
+      END OF ty_pair.
+    CONSTANTS:
+      "! after the colon
+      one TYPE i VALUE 1,
+      "! second one
+      two TYPE i VALUE 2.
+ENDCLASS.
+
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runClass(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("in front of a statement without chaining, ok", () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    "! the type
+    TYPES ty_int TYPE i.
+    "! the constant
+    CONSTANTS one TYPE i VALUE 1.
+ENDCLASS.
+
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runClass(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("in front of the class definition, ok", () => {
+    const abap = `
+"! the class
+CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    CONSTANTS: one TYPE i VALUE 1.
+ENDCLASS.
+
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runClass(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("normal comment in front of a chained statement, ok", () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    " normal comment
+    CONSTANTS: one TYPE i VALUE 1.
+ENDCLASS.
+
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runClass(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("outside a class definition, not reported", () => {
+    const abap = `
+"! the value
+DATA: value TYPE i.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+});
