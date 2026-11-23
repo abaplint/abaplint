@@ -21237,3 +21237,68 @@ REPLACE ALL OCCURRENCES OF lv_y IN lv_x WITH lv_y IN BYTE MODE.`;
     expect(issues.length).to.equals(0);
   });
 });
+
+describe("syntax.ts, arithmetic with a reference, #3234", () => {
+  const ref = `DATA foo TYPE REF TO object.
+DATA dref TYPE REF TO i.
+DATA res TYPE i.
+`;
+
+  const errors: {name: string, code: string}[] = [
+    {name: "inline declaration, foo - 1", code: `DATA(inl) = foo - 1.`},
+    {name: "reference on the right, 1 + foo", code: `res = 1 + foo.`},
+    {name: "data reference", code: `res = dref * 2.`},
+    {name: "power", code: `res = dref ** 2.`},
+    {name: "MOD", code: `res = foo MOD 2.`},
+    {name: "DIV, in the middle", code: `res = 1 + foo DIV 2.`},
+    {name: "parentheses", code: `res = 1 + ( foo ) + 2.`},
+    {name: "sign", code: `res = - foo.`},
+    {name: "in a comparison", code: `IF foo + 1 > 2.\nENDIF.`},
+    {name: "functional method returning a reference", code: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ref) TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  res = lcl=>get( ) + 1.`},
+    {name: "ADD source", code: `ADD foo TO res.`},
+    {name: "ADD target", code: `ADD 1 TO foo.`},
+    {name: "SUBTRACT", code: `SUBTRACT dref FROM res.`},
+    {name: "MULTIPLY", code: `MULTIPLY foo BY 2.`},
+    {name: "DIVIDE", code: `DIVIDE res BY dref.`},
+  ];
+
+  for (const e of errors) {
+    it("error, " + e.name, () => {
+      const issues = runProgram(ref + e.code);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("is a reference, it cannot be used in a calculation");
+    });
+  }
+
+  it("ok, dereferenced", () => {
+    const issues = runProgram(ref + `res = dref->* - 1.
+res = 1 + dref->*.
+res = - dref->*.
+ADD dref->* TO res.`);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, attribute of a referenced object", () => {
+    const issues = runProgram(`CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA attr TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA ref TYPE REF TO lcl.
+  DATA res TYPE i.
+  res = ref->attr + 1.
+  res = 1 - ref->attr.`);
+    expect(issues.length).to.equals(0);
+  });
+});
