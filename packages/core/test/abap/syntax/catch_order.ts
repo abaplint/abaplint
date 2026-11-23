@@ -123,6 +123,42 @@ describe("syntax.ts, CATCH of a subclass after the CATCH of its superclass", () 
     expect(issues[0].getMessage()).to.equal("CATCH of ZCX_NOT_FOUND after the CATCH of its superclass CX_STATIC_CHECK");
   });
 
+  it("error, superclass before its subclass in one CATCH", () => {
+    const issues = runLocal(`    CATCH lcx_base lcx_sub.`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("CATCH of LCX_SUB after the CATCH of its superclass LCX_BASE");
+  });
+
+  it("error, cx_root before a subclass in one CATCH, INTO DATA", () => {
+    const issues = runLocal(`    CATCH cx_root lcx_sub INTO DATA(lx).`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("CATCH of LCX_SUB after the CATCH of its superclass CX_ROOT");
+  });
+
+  it("error, unrelated class between superclass and subclass in one CATCH", () => {
+    const issues = runLocal(`    CATCH lcx_base lcx_other lcx_subsub.`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("CATCH of LCX_SUBSUB after the CATCH of its superclass LCX_BASE");
+  });
+
+  it("error, global classes in one CATCH", () => {
+    const issues = runGlobal(`      CATCH zcx_base zcx_not_found.`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("CATCH of ZCX_NOT_FOUND after the CATCH of its superclass ZCX_BASE");
+  });
+
+  it("ok, subclass before its superclass in one CATCH", () => {
+    const issues = runLocal(`    CATCH lcx_subsub lcx_sub lcx_base INTO DATA(lx).
+    CATCH cx_root.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("duplicate class in one CATCH is reported once, by the CATCH statement", () => {
+    const issues = runLocal(`    CATCH lcx_base lcx_base.`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Duplicate class name in CATCH: LCX_BASE");
+  });
+
   it("ok, subclasses before their superclasses", () => {
     const issues = runLocal(`    CATCH lcx_subsub.
     CATCH lcx_sub.
