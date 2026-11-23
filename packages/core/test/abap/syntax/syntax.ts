@@ -21011,3 +21011,111 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 });
+
+describe("syntax.ts, => with a data object, #3561", () => {
+  const lcl = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS inst.
+    CLASS-METHODS stat.
+    CLASS-DATA sattr TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD inst.
+  ENDMETHOD.
+  METHOD stat.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+`;
+  const message = (name: string) => `"${name}" is not a class or interface, => cannot be used with a data object`;
+
+  it("error, reference to a void interface", () => {
+    const abap = `DATA mi_env TYPE REF TO if_function_test_environment.
+mi_env=>clear_doubles( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("mi_env"));
+  });
+
+  it("error, reference to a local class, instance method", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+lo=>inst( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, reference to a local class, static method", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+lo=>stat( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, CALL METHOD", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+CALL METHOD lo=>stat.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, integer variable", () => {
+    const issues = runProgram(`DATA lv TYPE i.
+lv=>foo( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lv"));
+  });
+
+  it("error, read of a static attribute", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+DATA lv TYPE i.
+lv = lo=>sattr.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, write to a static attribute", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+lo=>sattr = 1.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, me=>", () => {
+    const issues = runProgram(`CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS inst.
+    CLASS-METHODS stat.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD inst.
+    me=>stat( ).
+  ENDMETHOD.
+  METHOD stat.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("me"));
+  });
+
+  it("ok, class name", () => {
+    const issues = runProgram(lcl + `DATA lv TYPE i.
+lcl=>stat( ).
+CALL METHOD lcl=>stat.
+lv = lcl=>sattr.
+lcl=>sattr = 1.`);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, data object with the name of the class, the class is used", () => {
+    const issues = runProgram(lcl + `DATA lcl TYPE REF TO lcl.
+lcl=>stat( ).`);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("error, data object with the name of the class, instance method", () => {
+    const issues = runProgram(lcl + `DATA lcl TYPE REF TO lcl.
+lcl=>inst( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(`Method "inst" not static`);
+  });
+});
