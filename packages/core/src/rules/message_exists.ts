@@ -9,7 +9,7 @@ import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
 import {IRegistry} from "../_iregistry";
 import {IMSAGReferences} from "../_imsag_references";
 import {ABAPObject} from "../objects/_abap_object";
-import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {buildMessageReferences} from "./_message_references";
 import {IObject} from "../objects/_iobject";
 import {MessageClass} from "../objects";
 
@@ -45,11 +45,7 @@ export class MessageExistsRule implements IRule {
     this.reg = reg;
 
     // the SyntaxLogic builds the references
-    for (const obj of reg.getObjects()) {
-      if (obj instanceof ABAPObject) {
-        new SyntaxLogic(reg, obj).run();
-      }
-    }
+    buildMessageReferences(reg);
 
     return this;
   }

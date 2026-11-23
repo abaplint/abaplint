@@ -6,8 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IMSAGReferences} from "../_imsag_references";
 import {Position} from "../position";
 import {MessageClass} from "../objects";
-import {SyntaxLogic} from "../abap/5_syntax/syntax";
-import {ABAPObject} from "../objects/_abap_object";
+import {buildMessageReferences} from "./_message_references";
 
 export class EasyToFindMessagesConf extends BasicRuleConfig {
 }
@@ -43,12 +42,20 @@ https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#make-messag
   public initialize(reg: IRegistry): IRule {
     this.msagReferences = reg.getMSAGReferences();
 
-    // the SyntaxLogic builds the references
-    for (const obj of reg.getObjects()) {
-      if (obj instanceof ABAPObject) {
-        new SyntaxLogic(reg, obj).run();
+    // only message classes outside dependencies are checked, so a dependency can only contribute
+    // references if its source mentions one of their names
+    const names: string[] = [];
+    for (const obj of reg.getObjectsByType("MSAG")) {
+      if (reg.isDependency(obj) === false) {
+        names.push(obj.getName().replace(/[.*+?^${}()|[\]\\/]/g, "\\$&"));
       }
     }
+    const mentions = names.length > 0 ? new RegExp(names.join("|"), "i") : undefined;
+
+    // the SyntaxLogic builds the references
+    buildMessageReferences(reg, mentions === undefined
+      ? undefined
+      : obj => obj.getABAPFiles().some(f => mentions.test(f.getRaw())));
 
     return this;
   }
