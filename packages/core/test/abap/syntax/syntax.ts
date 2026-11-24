@@ -18918,6 +18918,18 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("B13, DELETE body of TABLES formal STRUCTURE of a local data object", () => {
+    const abap = `
+DATA: BEGIN OF wakp,
+        foo TYPE c LENGTH 10,
+      END OF wakp.
+FORM get_wakh TABLES pt_wakp STRUCTURE wakp.
+  DELETE pt_wakp[].
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   //////////////////////////////////////////////////////////
   // C. non-STRUCTURE typing must not loosen
 

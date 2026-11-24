@@ -1,5 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
-import {StatementNode} from "../../nodes";
+import {ExpressionNode, StatementNode} from "../../nodes";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {ComponentCompare} from "../expressions/component_compare";
@@ -49,7 +49,8 @@ export class DeleteInternal implements StatementSyntax {
         }
         if (targetType instanceof TableType
             && targetType.isWithHeader() === false
-            && targetType.isGeneric() === false) {
+            && targetType.isGeneric() === false
+            && this.isBodyOfTableWithHeader(target, input) === false) {
           // short forms, "DELETE itab." deletes the current line inside a LOOP, otherwise both use the header line
           // generically typed tables are not checked statically
           const children = node.getChildren().length;
@@ -75,5 +76,15 @@ export class DeleteInternal implements StatementSyntax {
       ComponentCond.runSyntax(t, input, targetType);
     }
 
+  }
+
+  // "DELETE itab[]." where itab has a header line, eg. a FORM TABLES parameter
+  private isBodyOfTableWithHeader(target: ExpressionNode, input: SyntaxInput): boolean {
+    const children = target.getChildren();
+    if (children.length !== 2 || !(children[1].get() instanceof Expressions.TableBody)) {
+      return false;
+    }
+    const type = input.scope.findVariable(children[0].concatTokens())?.getType();
+    return type instanceof TableType && type.isWithHeader();
   }
 }
