@@ -13606,6 +13606,25 @@ WRITE / foo.`;
     expect(issues[0].getMessage()).to.contain("Source not character like");
   });
 
+  it("ok, WRITE utclong", () => {
+    const abap = `
+DATA u TYPE utclong.
+DATA c TYPE c LENGTH 40.
+WRITE u.
+WRITE: / u, 'x'.
+WRITE u TO c.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, data reference not clike", () => {
+    const abap = `
+DATA r TYPE REF TO i.
+WRITE r.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Source not character like");
+  });
+
   it("error, GET REFERENCE generic + inline", () => {
     const abap = `
 CLASS lcl DEFINITION.
