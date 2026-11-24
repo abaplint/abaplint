@@ -31,6 +31,9 @@ const tests: IRedundantTest[] = [
   {abap: inMethod("DATA lv_done TYPE abap_bool.\nWHILE lv_done = abap_false.\n  result = result + 1.\n  IF result > 3.\n    lv_done = abap_true.\n  ENDIF.\nENDWHILE."), cnt: 0},
   {abap: inMethod("DATA(lv_retry) = abap_true.\nWHILE lv_retry = abap_true.\n  lv_retry = abap_false.\n  IF get( ) = 1.\n    lv_retry = abap_true.\n  ENDIF.\nENDWHILE."), cnt: 0},
   {abap: inMethod("DATA lv_done TYPE abap_bool.\nWHILE lv_done = abap_false.\n  IF get( ) = 1.\n    CONTINUE.\n  ENDIF.\n  lv_done = abap_true.\nENDWHILE."), cnt: 0},
+  // the source reads a helper declared inline in the loop body, from the condition variable
+  {abap: inMethod("DATA(lv_total) = imp.\nDATA(lv_from) = 1.\nWHILE lv_from <= lv_total.\n  DATA(lv_to) = lv_from + 10 - 1.\n  lv_from = lv_to + 1.\nENDWHILE."), cnt: 0},
+  {abap: inMethod("DATA lv_i TYPE i.\nWHILE lv_i < 10.\n  DATA(lv_next) = lv_i + 1.\n  lv_i = lv_next.\nENDWHILE."), cnt: 0},
   // other data in the source, which the loop body may change
   {abap: inMethod("DATA(lo_x) = ref.\nWHILE lo_x IS BOUND.\n  put( ).\n  lo_x = ref->ref.\nENDWHILE."), cnt: 0},
   {abap: inMethod("DATA(lo_x) = ref.\nWHILE lo_x IS BOUND.\n  ref = iref.\n  lo_x = ref->ref.\nENDWHILE."), cnt: 0},

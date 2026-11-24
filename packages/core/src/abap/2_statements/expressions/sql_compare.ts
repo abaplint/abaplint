@@ -23,13 +23,17 @@ export class SQLCompare extends Expression {
 
     const source = new SQLSource();
 
-    const arith = ver(Release.v750, plusPrio(seq(altPrio("+", "-", "*", "/"), SQLFieldName)), {also: AlsoIn.OpenABAP});
-
     const paren = seq(tok(ParenLeftW), Source, tok(WParenRightW));
     const at = ver(Release.v740sp05, seq(tok(WAt), altPrio(SimpleSource3, paren)), {also: AlsoIn.OpenABAP});
 
-    const lhs = altPrio(SQLCase, SQLAggregation, SQLFunction, ConstantString,
-                        seq(altPrio(SQLPathForColumn, SQLAliasField, SQLFieldName), optPrio(arith)), at);
+    const arithmetic = seq(altPrio("+", "-", "*", "/"), SQLFieldName);
+    const arith = ver(Release.v750, plusPrio(arithmetic), {also: AlsoIn.OpenABAP});
+    // the left hand side can also concatenate with &&, the right hand side can not
+    const concat = seq("&&", altPrio(SQLFieldName, ConstantString, at));
+    const arithLeft = ver(Release.v750, plusPrio(altPrio(arithmetic, concat)), {also: AlsoIn.OpenABAP});
+
+    const lhs = altPrio(SQLCase, SQLAggregation, SQLFunction, seq(ConstantString, optPrio(arithLeft)),
+                        seq(altPrio(SQLPathForColumn, SQLAliasField, SQLFieldName), optPrio(arithLeft)), seq(at, optPrio(arithLeft)));
     const rhs = altPrio(seq(SQLCompareOperator, altPrio(sub, SQLCase, SQLAggregation, SQLFunction, seq(source, optPrio(arith)))),
                         seq(optPrio("NOT"), altPrio(SQLIn, like, between)),
                         SQLLikeRegexpr,

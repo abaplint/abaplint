@@ -1,5 +1,9 @@
+import {expect} from "chai";
 import {testRule} from "./_utils";
 import {ParserMissingSpace} from "../../src/rules/parser_missing_space";
+import {Registry} from "../../src/registry";
+import {MemoryFile} from "../../src/files/memory_file";
+import {IRegistry} from "../../src/_iregistry";
 
 const tests = [
   {abap: "ro_html->add('foo' && 'bar' ).", cnt: 1},
@@ -40,6 +44,67 @@ const tests = [
   {abap: "IF is_abc( )= abap_true. ENDIF.", cnt: 1},
   {abap: "DATA(lv)= ( 1 + 2 ).", cnt: 1},
   {abap: "DATA(lv)= 1 + 2.", cnt: 1},
+  // no space is allowed in dynamic parts, text symbols, offset and length
+  {abap: "ASSIGN ref->('NAME') TO <fs>.", cnt: 0},
+  {abap: "ASSIGN ref->(foo) TO <fs>.", cnt: 0},
+  {abap: "ASSIGN struc-('NAME') TO <fs>.", cnt: 0},
+  {abap: "CALL METHOD (foo)=>('BAR').", cnt: 0},
+  {abap: "SORT tab BY (foo).", cnt: 0},
+  {abap: "foo = 'abc'(001).", cnt: 0},
+  {abap: "IF foo = 'a'(002). ENDIF.", cnt: 0},
+  {abap: "foo = foo+1(2).", cnt: 0},
+  {abap: "foo = foo(2).", cnt: 0},
+  {abap: "ASSIGN struc-(foo) TO <fs>.", cnt: 0},
+  // identifiers before the closing parenthesis of constructor expressions and boolean functions
+  {abap: "foo = CONV string( foo).", cnt: 1},
+  {abap: "foo = COND #( WHEN lv = 1 THEN foo).", cnt: 1},
+  {abap: "foo = SWITCH #( lv WHEN 1 THEN foo).", cnt: 1},
+  {abap: "foo = xsdbool( lv = 1).", cnt: 1},
+  {abap: "foo = boolc( lv = 1).", cnt: 1},
 ];
 
 testRule(tests, ParserMissingSpace);
+
+describe("parser_missing_space, long statements", function () {
+  // note that timeout() only works inside function()
+  this.timeout(250);
+
+  // 500 operands stays below the depth where the parser exhausts the call stack in a fresh process
+  const concatenation = "result = " + Array.from({length: 500}, () => "`a`").join(" && ") + ".";
+
+  let reg: IRegistry;
+
+  before(function () {
+    // parsing is not what is measured, it gets its own time limit
+    this.timeout(5000);
+    const abap = Array.from({length: 10}, () => concatenation).join("\n");
+    reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
+  });
+
+  it("ten 500 operand string concatenations, checked within the time limit", () => {
+    const issues = new ParserMissingSpace().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equals(0);
+  });
+});
+
+describe("parser_missing_space, issue positions", () => {
+  const positions = [
+    {abap: "DATA(ls_foo) = VALUE foo( tknum = '0000000001').", col: 47},
+    {abap: "foo = CONV #('DEFAULT' ).", col: 14},
+    {abap: "moo( 'sdf').", col: 11},
+    {abap: "IF bar ='X'. ENDIF.", col: 9},
+    {abap: "IF ( foo = 'bar').", col: 17},
+    // several missing spaces, the leftmost is reported
+    {abap: "IF (foo = 'bar').", col: 5},
+  ];
+
+  for (const test of positions) {
+    it("\"" + test.abap + "\" reported at column " + test.col, () => {
+      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
+      const issues = new ParserMissingSpace().initialize(reg).run(reg.getFirstObject()!);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getStart().getRow()).to.equal(1);
+      expect(issues[0].getStart().getCol()).to.equal(test.col);
+    });
+  }
+});

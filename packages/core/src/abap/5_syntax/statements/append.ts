@@ -1,14 +1,14 @@
 import * as Expressions from "../../2_statements/expressions";
-import {StatementNode} from "../../nodes";
+import {StatementNode, TokenNode} from "../../nodes";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
-import {DataReference, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
+import {DataReference, DataType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {FSTarget} from "../expressions/fstarget";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
 import {TypeUtils} from "../_type_utils";
-import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 // todo: issue error for short APPEND if the source is without header line
 export class Append implements StatementSyntax {
@@ -80,8 +80,15 @@ export class Append implements StatementSyntax {
 
       if (node.findDirectTokenByText("LINES")) {
         // hmm, checking only the row types are compatible will not check the table type, e.g. sorted or hashed
+        // a generically typed dref->* is checked at runtime, except FROM idx1 TO idx2, which expect an index table
+        const genericLines = sourceType instanceof DataType
+          && source.concatTokens().replace(/\s/g, "").endsWith("->*")
+          && node.findDirectTokenByText("FROM") === undefined
+          && node.getChildren().filter(c => c instanceof TokenNode && c.getFirstToken().getStr().toUpperCase() === "TO").length === 1;
         if (sourceType instanceof TableType) {
           sourceType = sourceType.getRowType();
+        } else if (genericLines) {
+          sourceType = VoidType.get(CheckSyntaxKey);
         } else if (!(sourceType instanceof VoidType) && !(sourceType instanceof UnknownType)) {
           const message = "LINES OF must be a table type";
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));

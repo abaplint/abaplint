@@ -21,18 +21,14 @@ export class ManyParentheses extends ABAPRule {
       title: "Too many parentheses",
       shortDescription: `Searches for expressions where extra parentheses can safely be removed`,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
-      badExample: `
-IF ( destination IS INITIAL ).
+      badExample: `IF ( destination IS INITIAL ).
 ENDIF.
 IF foo = boo AND ( bar = lar AND moo = loo ).
-ENDIF.
-`,
-      goodExample: `
-IF destination IS INITIAL.
+ENDIF.`,
+      goodExample: `IF destination IS INITIAL.
 ENDIF.
 IF foo = boo AND bar = lar AND moo = loo.
-ENDIF.
-`,
+ENDIF.`,
     };
   }
 
