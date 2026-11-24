@@ -19484,6 +19484,13 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok below v756, target typed with data", () => {
+    const issues = runProgram(method(`    FIELD-SYMBOLS <row_data> TYPE data.
+    ASSIGN cs_any TO <row_data>.
+    <row_data> = CORRESPONDING #( is_row ).`), [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok below v756, MOVE-CORRESPONDING into the generic target", () => {
     const issues = runProgram(method(`    CLEAR <row_out>.
     MOVE-CORRESPONDING is_row TO <row_out>.`), [], Release.v750);
@@ -21862,6 +21869,21 @@ DATA: BEGIN OF result,
       END OF result.
 result = VALUE #( locals = '' ).`;
     const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CORRESPONDING # into generic field symbol from dereferenced data ref, 750, ok", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         bar TYPE i,
+       END OF ty.
+DATA c_table TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+DATA c_line LIKE LINE OF c_table.
+DATA lref TYPE REF TO data.
+CREATE DATA lref LIKE LINE OF c_table.
+ASSIGN lref->* TO FIELD-SYMBOL(<line>).
+<line> = CORRESPONDING #( c_line ).`;
+    const issues = runProgram(abap, [], Release.v750);
     expect(issues.length).to.equal(0);
   });
 });
