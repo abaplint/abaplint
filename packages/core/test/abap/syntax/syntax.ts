@@ -18513,6 +18513,14 @@ ENDIF.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, DELETE generic sorted table field symbol", () => {
+    const abap = `
+FIELD-SYMBOLS <table> TYPE SORTED TABLE.
+DELETE <table>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
 
 ////////////////////////////////////////////////////////////

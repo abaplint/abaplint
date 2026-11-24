@@ -47,8 +47,11 @@ export class DeleteInternal implements StatementSyntax {
           input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
           return;
         }
-        if (targetType instanceof TableType && targetType.isWithHeader() === false) {
+        if (targetType instanceof TableType
+            && targetType.isWithHeader() === false
+            && targetType.isGeneric() === false) {
           // short forms, "DELETE itab." deletes the current line inside a LOOP, otherwise both use the header line
+          // generically typed tables are not checked statically
           const children = node.getChildren().length;
           const short = children === 3 && input.inLoop !== true;
           const shortTable = children === 4 && node.findDirectTokenByText("TABLE") !== undefined;
