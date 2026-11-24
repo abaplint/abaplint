@@ -22111,3 +22111,55 @@ START-OF-SELECTION.
     });
   }
 });
+
+describe("syntax.ts, LINES OF and INSERT with a generically typed dref->*", () => {
+  const build = (body: string) => `
+DATA mr_tab TYPE REF TO data.
+DATA lt_copy TYPE string_table.
+${body}`;
+
+  it("INSERT LINES OF INTO TABLE dref->*", () => {
+    const issues = runProgram(build(`INSERT LINES OF lt_copy INTO TABLE mr_tab->*.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT wa INTO TABLE dref->*", () => {
+    const issues = runProgram(build(`INSERT \`a\` INTO TABLE mr_tab->*.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("APPEND LINES OF dref->*", () => {
+    const issues = runProgram(build(`APPEND LINES OF mr_tab->* TO lt_copy.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT LINES OF dref->* INTO TABLE", () => {
+    const issues = runProgram(build(`INSERT LINES OF mr_tab->* INTO TABLE lt_copy.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT INTO dref->* INDEX, an index table is expected", () => {
+    const issues = runProgram(build(`INSERT \`a\` INTO mr_tab->* INDEX 1.`));
+    expect(issues[0]?.getMessage()).to.equal("INSERT target must be a table");
+  });
+
+  it("generic parameter, not dereferenced, is not a table", () => {
+    const issues = runProgram(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING data TYPE data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lt_copy TYPE string_table.
+    APPEND LINES OF data TO lt_copy.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues[0]?.getMessage()).to.equal("LINES OF must be a table type");
+  });
+
+  it("APPEND LINES OF dref->* FROM, an index table is expected", () => {
+    const issues = runProgram(build(`APPEND LINES OF mr_tab->* FROM 2 TO lt_copy.`));
+    expect(issues[0]?.getMessage()).to.equal("LINES OF must be a table type");
+  });
+});
