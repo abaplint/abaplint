@@ -18901,6 +18901,23 @@ ENDFORM.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("B12, TABLES formal STRUCTURE of a local data object, actual has character-like rows", () => {
+    const abap = `
+DATA: BEGIN OF zvbeln,
+        field1 TYPE c LENGTH 10,
+      END OF zvbeln.
+
+DATA vbeln_in LIKE zvbeln-field1 OCCURS 0 WITH HEADER LINE.
+
+FORM foo TABLES t_vbeln STRUCTURE zvbeln.
+ENDFORM.
+
+START-OF-SELECTION.
+  PERFORM foo TABLES vbeln_in.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   //////////////////////////////////////////////////////////
   // C. non-STRUCTURE typing must not loosen
 
