@@ -1,6 +1,6 @@
 import {ExpressionNode} from "../../nodes";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {AnyType, CGenericType, CharacterType, HexType, NGenericType, NumericType, PackedType, PGenericType, UnknownType, XGenericType} from "../../types/basic";
+import {AnyType, CGenericType, CharacterType, HexType, NGenericType, NumericType, PackedType, PGenericType, TableType, UnknownType, XGenericType} from "../../types/basic";
 import {ConstantFieldLength, FormParamName, Length, SimpleFieldChain, TypeName} from "../../2_statements/expressions";
 import {BasicTypes} from "../basic_types";
 import {AbstractType} from "../../types/basic/_abstract_type";
@@ -25,6 +25,14 @@ export class FormParam {
       let type: AbstractType | TypedIdentifier | undefined;
       if (typeName) {
         type = input.scope.findType(typeName)?.getType();
+        if (type === undefined) {
+          // STRUCTURE can also refer to a program-local data object
+          type = input.scope.findVariable(typeName)?.getType();
+          if (type instanceof TableType && type.isWithHeader()) {
+            // a table with header line refers to its header line
+            type = type.getRowType();
+          }
+        }
         if (type === undefined) {
           type = input.scope.getDDIC().lookupTableOrView(typeName).type;
         }

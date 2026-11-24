@@ -795,9 +795,37 @@ export class TypeUtils {
       return true;
     } else if (source instanceof TableType && target instanceof TableType) {
       return this.isAssignableStructureTyping(source.getRowType(), target.getRowType());
+    } else if (source instanceof CharacterType && target instanceof StructureType) {
+      // an elementary actual must be character-like, the formal structure purely character-like
+      const length = this.characterLikeStructureLength(target);
+      return length !== undefined && source.getLength() >= length;
     }
 
     return this.isAssignableStrict(source, target, node);
+  }
+
+  // returns the total length if the structure is flat and purely character-like, otherwise undefined
+  private characterLikeStructureLength(type: StructureType): number | undefined {
+    let length = 0;
+    for (const component of type.getComponents()) {
+      const t = component.type;
+      if (t instanceof CharacterType || t instanceof NumericType) {
+        length += t.getLength();
+      } else if (t instanceof DateType) {
+        length += 8;
+      } else if (t instanceof TimeType) {
+        length += 6;
+      } else if (t instanceof StructureType) {
+        const sub = this.characterLikeStructureLength(t);
+        if (sub === undefined) {
+          return undefined;
+        }
+        length += sub;
+      } else {
+        return undefined;
+      }
+    }
+    return length;
   }
 
   public isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
