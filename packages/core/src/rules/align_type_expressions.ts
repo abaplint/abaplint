@@ -37,8 +37,7 @@ If BEGIN OF has an INCLUDE TYPE its ignored
 Also note that clean ABAP does not recommend aligning TYPE clauses:
 https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#dont-align-type-clauses`,
       tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Quickfix],
-      badExample: `
-TYPES: BEGIN OF foo,
+      badExample: `TYPES: BEGIN OF foo,
          bar TYPE i,
          foobar TYPE i,
        END OF foo.
@@ -49,8 +48,7 @@ INTERFACE lif.
       foo TYPE i
       foobar TYPE i.
 ENDINTERFACE.`,
-      goodExample: `
-TYPES: BEGIN OF foo,
+      goodExample: `TYPES: BEGIN OF foo,
          bar    TYPE i,
          foobar TYPE i,
        END OF foo.

@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as abaplint from "../../../packages/core/build/src";
 import {IRuleMetadata, RuleTag} from "../../../packages/core/build/src/rules/_irule";
-import {home, renderIcons, preamble, postamble, example} from "./common";
+import {home, renderIcons, preamble, postamble, example, escapeHtml} from "./common";
 
 const rawSchema = fs.readFileSync("../../packages/core/scripts/schema.json");
 
@@ -17,7 +17,7 @@ function escapeTemplateLiteral(str: string): string {
 
 function renderExtended(str: string) {
   const exp_match = /(\b(https?|):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-  return str.replace(exp_match, "<a href='$1'>$1</a>").trim().replace(/\n/g, "<br>");
+  return escapeHtml(str).replace(exp_match, "<a href='$1'>$1</a>").trim().replace(/\n/g, "<br>");
 }
 
 function findSchema(ruleKey: string): string {
@@ -105,7 +105,7 @@ export function buildRule(meta: IRuleMetadata) {
   }
   html += "</p>\n";
 
-  html = html + "<h2>Description</h2>\n<p>" + meta.shortDescription + "</p>";
+  html = html + "<h2>Description</h2>\n<p>" + escapeHtml(meta.shortDescription) + "</p>";
 
   if (meta.tags?.includes(RuleTag.Experimental)) {
     html += `<font color="red">EXPERIMENTAL</font>`;
