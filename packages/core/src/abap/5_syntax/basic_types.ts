@@ -629,7 +629,13 @@ export class BasicTypes {
         || text === "TYPE HASHED TABLE"
         || text === "TYPE INDEX TABLE"
         || text === "TYPE ANY TABLE") {
-      return new Types.TableType(Types.AnyType.get(), {withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE"), keyType: Types.TableKeyType.user});
+      // the table kind is kept, the key is left open
+      const access = text.split(" ")[1] as TableAccessType;
+      return new Types.TableType(Types.AnyType.get(), {
+        withHeader: node.concatTokens().toUpperCase().includes("WITH HEADER LINE"),
+        keyType: Types.TableKeyType.user,
+        primaryKey: {name: "primary_key", type: access, isUnique: false, keyFields: []},
+      });
     } else if (text.startsWith("LIKE ")) {
       let sub = node.findFirstExpression(Expressions.Type);
       if (sub === undefined) {
@@ -810,6 +816,9 @@ export class BasicTypes {
         if (token) {
           this.input.scope.addReference(token, foundId, ReferenceType.TypeReference, this.input.filename);
         }
+      } else if (className === "ME") {
+        // me is the reference to the instance, not a class or interface; "me->ty" names the type through it
+        return new Types.UnknownType("\"me\" is not a class or interface, \"" + chainText + "\" cannot be resolved");
       } else {
     // lookup in local and global scope
         const obj = this.input.scope.findObjectDefinition(className);
@@ -1073,6 +1082,9 @@ export class BasicTypes {
       return new Types.DataReference(found);
     } else if (chain.concatTokens().toUpperCase() === "DATA") {
       return new Types.DataReference(new Types.DataType());
+    } else if (found instanceof Types.UnknownType && name.toUpperCase() === "ME") {
+      // "REF TO me=>ty", me is not a class or interface whatever the error namespace
+      return found;
     }
 
     if (this.input.scope.isBadiDef(name) === true) {
