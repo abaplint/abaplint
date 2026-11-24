@@ -2,7 +2,7 @@ import {ExpressionNode} from "../../nodes";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import * as Expressions from "../../2_statements/expressions";
-import {Dash, DashW, InstanceArrow} from "../../1_lexer/tokens";
+import {Dash, DashW, InstanceArrow, ParenLeft} from "../../1_lexer/tokens";
 import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, UnknownType, GenericObjectReferenceType} from "../../types/basic";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
@@ -94,7 +94,10 @@ export class FieldChain {
         if (afterTableExpression && TableExpression.checkArrowAfter(input, current.getFirstToken())) {
           return VoidType.get(CheckSyntaxKey);
         }
-        if (!(context instanceof ObjectReferenceType)
+        if (context instanceof GenericObjectReferenceType && children[i + 1]?.get() instanceof ParenLeft) {
+          // dynamic attribute, oref->(name), the attribute is resolved at runtime
+          context = VoidType.get(CheckSyntaxKey);
+        } else if (!(context instanceof ObjectReferenceType)
             && !(context instanceof DataReference)
             && !(context instanceof VoidType)) {
           const message = "Not an object reference, field chain";
