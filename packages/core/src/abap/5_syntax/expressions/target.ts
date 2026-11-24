@@ -15,7 +15,7 @@ import {FieldLength} from "./field_length";
 import {Cast} from "./cast";
 import {checkMeInStaticMethod} from "./source_field";
 import {isFieldSymbolItself, substringType} from "./_substring";
-import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue, dataObjectBeforeStaticArrow} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 export class Target {
@@ -193,6 +193,8 @@ export class Target {
       if (found) {
         input.scope.addReference(token, found, ReferenceType.ObjectOrientedReference, input.filename);
         return new ObjectReferenceType(found);
+      } else if (dataObjectBeforeStaticArrow(input, token)) {
+        return VoidType.get(CheckSyntaxKey);
       } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, {ooName: name, ooType: "CLAS"});
         return VoidType.get(name);
