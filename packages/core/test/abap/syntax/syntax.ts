@@ -22009,3 +22009,38 @@ START-OF-SELECTION.
     });
   }
 });
+
+describe("syntax.ts, dynamic attribute of a generic object reference", () => {
+  const build = (body: string) => `
+DATA mo_app TYPE REF TO object.
+DATA lv_name TYPE string.
+${body}`;
+
+  it("write target", () => {
+    const issues = runProgram(build(`mo_app->('MV_FLAG') = abap_true.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("read, comparison", () => {
+    const issues = runProgram(build(`IF mo_app->('MV_FLAG') = abap_true.
+ENDIF.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("read, interface attribute", () => {
+    const issues = runProgram(build(`IF mo_app->('ZIF_DEMO~MV_VIEW') = abap_true.
+ENDIF.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("name in a variable", () => {
+    const issues = runProgram(build(`mo_app->(lv_name) = abap_true.
+DATA(lv_value) = mo_app->(lv_name).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("static attribute of a generic object reference is still an error", () => {
+    const issues = runProgram(build(`mo_app->mv_flag = abap_true.`));
+    expect(issues.length).to.be.greaterThan(0);
+  });
+});
