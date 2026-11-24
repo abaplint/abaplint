@@ -14,6 +14,8 @@ import {IParseResult} from "./_iobject";
 export type ParsedDataDefinition = {
   sqlViewName: string | undefined;
   definitionName: string | undefined;
+  /** SOURCE_TYPE from the abapGit XML, eg. "W" view entity, "P" projection view, "V" DDIC-based view */
+  sourceType: string | undefined;
   description: string | undefined;
   /** name is the name of the element, nameInSource the name in the source, if aliased via "as" */
   fields: {key: boolean, name: string, nameInSource?: string, prefix: string, annotations: string[]}[];
@@ -53,6 +55,12 @@ export class DataDefinition extends AbstractObject {
   public getDescription(): string | undefined {
     this.parse();
     return this.parsedData?.description;
+  }
+
+  /** SOURCE_TYPE from the abapGit XML, eg. "W" view entity, "P" projection view, "V" DDIC-based view */
+  public getSourceType(): string | undefined {
+    this.parse();
+    return this.parsedData?.sourceType;
   }
 
   public parseType(reg: IRegistry): AbstractType {
@@ -111,6 +119,7 @@ export class DataDefinition extends AbstractObject {
     this.parsedData = {
       sqlViewName: undefined,
       definitionName: undefined,
+      sourceType: this.findSourceType(),
       description: this.findDescription(),
       fields: [],
       sources: [],
@@ -173,6 +182,11 @@ export class DataDefinition extends AbstractObject {
       }
     }
   }
+  private findSourceType(): string | undefined {
+    const value = this.parseRaw2()?.abapGit?.["asx:abap"]?.["asx:values"]?.DDLS?.SOURCE_TYPE;
+    return typeof value === "string" ? value.trim() : undefined;
+  }
+
   private findDescription(): string | undefined {
     const match = this.findSourceFile()?.getRaw().match(/@EndUserText\.label: '([\w,.:-=#%&() ]+)'/);
     if (match) {
