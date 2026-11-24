@@ -1,5 +1,6 @@
 import {Issue} from "@abaplint/core";
 import {IFormatter} from "./_iformatter";
+import {escapeAttribute} from "./_xml";
 import {js2xml} from "xml-js";
 import * as fs from "fs";
 
@@ -33,15 +34,16 @@ export class Junit implements IFormatter {
 
     if (issues.length > 0) {
       for (const issue of issues) {
+        const filename = escapeAttribute(issue.getFilename());
         outputObj.testsuites.testsuite.testcase.push({
           _attributes: {
-            classname: issue.getFilename().split(".")[0],
-            file: issue.getFilename(),
-            name: `${issue.getFilename()}: [${issue.getStart().getRow()}, ${issue.getStart().getCol()}] - ${issue.getKey()}`,
+            classname: filename.split(".")[0],
+            file: filename,
+            name: `${filename}: [${issue.getStart().getRow()}, ${issue.getStart().getCol()}] - ${issue.getKey()}`,
           },
           failure: {
             _attributes: {
-              message: this.formatFailureMessage(issue.getMessage()),
+              message: escapeAttribute(issue.getMessage()),
               type: issue.getSeverity().toString(),
             },
             _cdata: `${this.renderIssue(issue)}`,
@@ -89,17 +91,6 @@ export class Junit implements IFormatter {
     }
 
     return code.map(str => str).join("\n");
-  }
-
-  private formatFailureMessage(message: string): string {
-    let ret = message;
-    while (ret.includes("<")) {
-      ret = ret.replace("<", "&lt;");
-    }
-    while (ret.includes(">")) {
-      ret = ret.replace(">", "&gt;");
-    }
-    return ret;
   }
 
 }
