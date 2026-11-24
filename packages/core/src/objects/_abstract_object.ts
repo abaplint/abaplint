@@ -11,6 +11,7 @@ import {IRegistry} from "../_iregistry";
 export abstract class AbstractObject implements IObject {
   protected old: readonly Issue[];
   protected dirty: boolean;
+  private revision: number;
   private files: IFile[];
   private readonly name: string;
 
@@ -22,6 +23,7 @@ export abstract class AbstractObject implements IObject {
     this.files = [];
     this.old = [];
     this.dirty = false;
+    this.revision = 0;
   }
 
   public getDescription(): string | undefined {
@@ -44,6 +46,11 @@ export abstract class AbstractObject implements IObject {
   public setDirty(): void {
     this.old = [];
     this.dirty = true;
+    this.revision++;
+  }
+
+  public getRevision(): number {
+    return this.revision;
   }
 
   public addFile(file: IFile) {

@@ -8,6 +8,9 @@ import {MemoryFile} from "../src/files/memory_file";
 import {Class, DataElement} from "../src/objects";
 import {AttributeLevel, Duration, RiskLevel} from "../src/abap/4_file_information/_abap_file_information";
 import {Visibility} from "../src/abap/4_file_information/visibility";
+import {IRegistry} from "../src/_iregistry";
+import {LSPUtils} from "../src/lsp/_lsp_utils";
+import {FindGlobalDefinitions} from "../src/abap/5_syntax/global_definitions/find_global_definitions";
 
 describe("Registry", () => {
 
@@ -750,6 +753,141 @@ ENDINTERFACE.`)).parse();
       .to.deep.equal([
         {name: "value", level: AttributeLevel.Instance, readOnly: false, visibility: Visibility.Public},
       ]);
+  });
+
+});
+
+describe("Registry, parse runs only after changes", () => {
+  const dtelXML = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DDTEXT>testing</DDTEXT>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000001</LENG>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  const ttypXML = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZTTYP</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>ZDTEL</ROWTYPE>
+    <ROWKIND>E</ROWKIND>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <DDTEXT>testing</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  const dtel = new MemoryFile("zdtel.dtel.xml", dtelXML);
+  const ttyp = new MemoryFile("zttyp.ttyp.xml", ttypXML);
+
+  // the table type does not cache its type, each parse pass sets its references again
+  function ttypReferences(reg: IRegistry): (string | undefined)[] {
+    return reg.getDDICReferences().listUsing(reg.getObject("TTYP", "ZTTYP")!).map(u => u.object?.getName());
+  }
+
+  function countPasses(callback: () => void): number {
+    const original = FindGlobalDefinitions.prototype.run;
+    let count = 0;
+    FindGlobalDefinitions.prototype.run = function (...args) {
+      count++;
+      return original.apply(this, args);
+    };
+    try {
+      callback();
+    } finally {
+      FindGlobalDefinitions.prototype.run = original;
+    }
+    return count;
+  }
+
+  it("parse() and findIssuesObject() without changes do not repeat the pass", () => {
+    const reg = new Registry().addFiles([dtel, ttyp, new MemoryFile("zfoo.prog.abap", "WRITE 'hello'.")]);
+    expect(countPasses(() => reg.parse())).to.equal(1);
+    expect(countPasses(() => {
+      reg.parse();
+      reg.findIssuesObject(reg.getObject("PROG", "ZFOO")!);
+      reg.findIssues();
+    })).to.equal(0);
+  });
+
+  it("updateFile, the next parse() runs the pass", () => {
+    const reg = new Registry().addFiles([dtel, ttyp]);
+    reg.parse();
+    reg.updateFile(new MemoryFile("zdtel.dtel.xml", dtelXML.replace("testing", "changed")));
+    expect(countPasses(() => reg.parse())).to.equal(1);
+  });
+
+  it("setConfig, the next parse() runs the pass", () => {
+    const reg = new Registry().addFiles([dtel, ttyp]);
+    reg.parse();
+    reg.setConfig(Config.getDefault());
+    expect(countPasses(() => reg.parse())).to.equal(1);
+  });
+
+  it("removed object, references to it are updated", () => {
+    const reg = new Registry().addFiles([dtel, ttyp]);
+    reg.parse();
+    expect(ttypReferences(reg)).to.deep.equal(["ZDTEL"]);
+
+    reg.removeFile(dtel);
+    reg.parse();
+    expect(ttypReferences(reg)).to.deep.equal([]);
+  });
+
+  it("added object, read before parse(), references to it are updated", () => {
+    const reg = new Registry().addFile(ttyp);
+    reg.parse();
+    expect(ttypReferences(reg)).to.deep.equal([]);
+
+    reg.addFile(dtel);
+    // reading the object parses it on demand, the registry pass is still due
+    expect((reg.getObject("DTEL", "ZDTEL") as DataElement).getDataType()).to.equal("CHAR");
+    reg.parse();
+    expect(ttypReferences(reg)).to.deep.equal(["ZDTEL"]);
+  });
+
+  it("updated class, parsed on demand before parse(), its definition is built again", () => {
+    const abap = `CLASS zcl_foo DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+CLASS zcl_foo IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const reg = new Registry().addFile(new MemoryFile("zcl_foo.clas.abap", abap));
+    reg.parse();
+    const clas = reg.getObject("CLAS", "ZCL_FOO") as Class;
+    expect(clas.getDefinition()).to.not.equal(undefined);
+
+    reg.updateFile(new MemoryFile("zcl_foo.clas.abap", abap.replace("bar", "baz")));
+    // the language server reads a file this way, it parses the object alone, without the registry pass
+    LSPUtils.getABAPFile(reg, "zcl_foo.clas.abap");
+    reg.parse();
+    expect(clas.getDefinition()?.getMethodDefinitions().getByName("BAZ")).to.not.equal(undefined);
+  });
+
+  it("objects set dirty directly, findIssues() parses them again", () => {
+    // like the CLI after applying quick fixes, it clears the syntax results this way
+    const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", "moo boo"));
+    const before = reg.findIssues().map(i => i.getKey());
+    expect(before).to.include("parser_error");
+    for (const obj of reg.getObjects()) {
+      obj.setDirty();
+    }
+    expect(reg.findIssues().map(i => i.getKey())).to.deep.equal(before);
   });
 
 });
