@@ -18513,6 +18513,14 @@ ENDIF.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, DELETE generic sorted table field symbol", () => {
+    const abap = `
+FIELD-SYMBOLS <table> TYPE SORTED TABLE.
+DELETE <table>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
 
 ////////////////////////////////////////////////////////////
@@ -18633,6 +18641,27 @@ ENDFORM.`;
   it("A6, actual is elementary", () => {
     const abap = `
 DATA wa TYPE i.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("A6b, actual is character-like and long enough, formal purely character-like", () => {
+    const abap = `
+DATA wa TYPE c LENGTH 20.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A6c, actual is character-like but shorter than the formal", () => {
+    const abap = `
+DATA wa TYPE c LENGTH 15.
 PERFORM foo USING wa.
 FORM foo USING p STRUCTURE zkey.
 ENDFORM.`;
@@ -18867,6 +18896,60 @@ DATA:   extra TYPE i,
       END OF gt.
 PERFORM foo TABLES gt USING wa.
 FORM foo TABLES p1 STRUCTURE zkey USING p2 STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B12, TABLES formal STRUCTURE of a local data object, actual has character-like rows", () => {
+    const abap = `
+DATA: BEGIN OF zvbeln,
+        field1 TYPE c LENGTH 10,
+      END OF zvbeln.
+
+DATA vbeln_in LIKE zvbeln-field1 OCCURS 0 WITH HEADER LINE.
+
+FORM foo TABLES t_vbeln STRUCTURE zvbeln.
+ENDFORM.
+
+START-OF-SELECTION.
+  PERFORM foo TABLES vbeln_in.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B13, DELETE body of TABLES formal STRUCTURE of a local data object", () => {
+    const abap = `
+DATA: BEGIN OF wakp,
+        foo TYPE c LENGTH 10,
+      END OF wakp.
+FORM get_wakh TABLES pt_wakp STRUCTURE wakp.
+  DELETE pt_wakp[].
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B14, TABLES formal STRUCTURE of a local table with header line", () => {
+    const abap = `
+DATA: BEGIN OF gt_orders OCCURS 0,
+        id  TYPE i,
+        qty TYPE i,
+      END OF gt_orders.
+
+START-OF-SELECTION.
+  gt_orders-id = 1.
+  gt_orders-qty = 5.
+  APPEND gt_orders.
+  gt_orders-id = 2.
+  gt_orders-qty = 7.
+  APPEND gt_orders.
+  PERFORM show TABLES gt_orders.
+
+FORM show TABLES pt_orders STRUCTURE gt_orders.
+  LOOP AT pt_orders.
+    WRITE: / pt_orders-id, pt_orders-qty.
+  ENDLOOP.
 ENDFORM.`;
     const issues = runFixtures(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
