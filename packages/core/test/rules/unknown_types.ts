@@ -2668,4 +2668,22 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("DDLS commented not found");
   });
 
+  it("PERFORM TABLES, LIKE structure component OCCURS WITH HEADER LINE", () => {
+    const abap = `
+DATA: BEGIN OF zvbeln,
+        field1 TYPE c LENGTH 10,
+      END OF zvbeln.
+
+DATA vbeln_in LIKE zvbeln-field1 OCCURS 0 WITH HEADER LINE.
+
+FORM foo TABLES t_vbeln STRUCTURE zvbeln.
+ENDFORM.
+
+START-OF-SELECTION.
+  PERFORM foo TABLES vbeln_in.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

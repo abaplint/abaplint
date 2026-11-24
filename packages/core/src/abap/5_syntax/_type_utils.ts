@@ -476,12 +476,18 @@ export class TypeUtils {
       }
     }
 
-    if (node && builtin === false && this.isFunctionalMethodResult(node)
-        && this.isFunctionalResultAssignable(source, target) === false) {
+    const functionalResult = node !== undefined && builtin === false && this.isFunctionalMethodResult(node);
+    if (functionalResult && this.isFunctionalResultAssignable(source, target) === false) {
       return false;
     }
 
-    if (calculated) {
+    // a structure, table or reference returned by a functional method follows the same rule as a variable
+    const strictResult = functionalResult && (source instanceof StructureType
+      || source instanceof TableType
+      || source instanceof DataReference
+      || source instanceof ObjectReferenceType
+      || source instanceof GenericObjectReferenceType);
+    if (calculated && strictResult === false) {
       return this.isAssignable(source, target);
     }
 
@@ -789,9 +795,37 @@ export class TypeUtils {
       return true;
     } else if (source instanceof TableType && target instanceof TableType) {
       return this.isAssignableStructureTyping(source.getRowType(), target.getRowType());
+    } else if (source instanceof CharacterType && target instanceof StructureType) {
+      // an elementary actual must be character-like, the formal structure purely character-like
+      const length = this.characterLikeStructureLength(target);
+      return length !== undefined && source.getLength() >= length;
     }
 
     return this.isAssignableStrict(source, target, node);
+  }
+
+  // returns the total length if the structure is flat and purely character-like, otherwise undefined
+  private characterLikeStructureLength(type: StructureType): number | undefined {
+    let length = 0;
+    for (const component of type.getComponents()) {
+      const t = component.type;
+      if (t instanceof CharacterType || t instanceof NumericType) {
+        length += t.getLength();
+      } else if (t instanceof DateType) {
+        length += 8;
+      } else if (t instanceof TimeType) {
+        length += 6;
+      } else if (t instanceof StructureType) {
+        const sub = this.characterLikeStructureLength(t);
+        if (sub === undefined) {
+          return undefined;
+        }
+        length += sub;
+      } else {
+        return undefined;
+      }
+    }
+    return length;
   }
 
   public isAssignable(source: AbstractType | undefined, target: AbstractType | undefined): boolean {

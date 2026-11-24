@@ -13606,6 +13606,25 @@ WRITE / foo.`;
     expect(issues[0].getMessage()).to.contain("Source not character like");
   });
 
+  it("ok, WRITE utclong", () => {
+    const abap = `
+DATA u TYPE utclong.
+DATA c TYPE c LENGTH 40.
+WRITE u.
+WRITE: / u, 'x'.
+WRITE u TO c.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, data reference not clike", () => {
+    const abap = `
+DATA r TYPE REF TO i.
+WRITE r.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Source not character like");
+  });
+
   it("error, GET REFERENCE generic + inline", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -18513,6 +18532,14 @@ ENDIF.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, DELETE generic sorted table field symbol", () => {
+    const abap = `
+FIELD-SYMBOLS <table> TYPE SORTED TABLE.
+DELETE <table>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
 
 ////////////////////////////////////////////////////////////
@@ -18633,6 +18660,27 @@ ENDFORM.`;
   it("A6, actual is elementary", () => {
     const abap = `
 DATA wa TYPE i.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("A6b, actual is character-like and long enough, formal purely character-like", () => {
+    const abap = `
+DATA wa TYPE c LENGTH 20.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A6c, actual is character-like but shorter than the formal", () => {
+    const abap = `
+DATA wa TYPE c LENGTH 15.
 PERFORM foo USING wa.
 FORM foo USING p STRUCTURE zkey.
 ENDFORM.`;
@@ -18867,6 +18915,60 @@ DATA:   extra TYPE i,
       END OF gt.
 PERFORM foo TABLES gt USING wa.
 FORM foo TABLES p1 STRUCTURE zkey USING p2 STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B12, TABLES formal STRUCTURE of a local data object, actual has character-like rows", () => {
+    const abap = `
+DATA: BEGIN OF zvbeln,
+        field1 TYPE c LENGTH 10,
+      END OF zvbeln.
+
+DATA vbeln_in LIKE zvbeln-field1 OCCURS 0 WITH HEADER LINE.
+
+FORM foo TABLES t_vbeln STRUCTURE zvbeln.
+ENDFORM.
+
+START-OF-SELECTION.
+  PERFORM foo TABLES vbeln_in.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B13, DELETE body of TABLES formal STRUCTURE of a local data object", () => {
+    const abap = `
+DATA: BEGIN OF wakp,
+        foo TYPE c LENGTH 10,
+      END OF wakp.
+FORM get_wakh TABLES pt_wakp STRUCTURE wakp.
+  DELETE pt_wakp[].
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B14, TABLES formal STRUCTURE of a local table with header line", () => {
+    const abap = `
+DATA: BEGIN OF gt_orders OCCURS 0,
+        id  TYPE i,
+        qty TYPE i,
+      END OF gt_orders.
+
+START-OF-SELECTION.
+  gt_orders-id = 1.
+  gt_orders-qty = 5.
+  APPEND gt_orders.
+  gt_orders-id = 2.
+  gt_orders-qty = 7.
+  APPEND gt_orders.
+  PERFORM show TABLES gt_orders.
+
+FORM show TABLES pt_orders STRUCTURE gt_orders.
+  LOOP AT pt_orders.
+    WRITE: / pt_orders-id, pt_orders-qty.
+  ENDLOOP.
 ENDFORM.`;
     const issues = runFixtures(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
@@ -19481,6 +19583,13 @@ ENDCLASS.`;
 
   it("ok below v756, typed target", () => {
     const issues = runProgram(method(`    ls_row = CORRESPONDING #( is_row ).`), [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok below v756, target typed with data", () => {
+    const issues = runProgram(method(`    FIELD-SYMBOLS <row_data> TYPE data.
+    ASSIGN cs_any TO <row_data>.
+    <row_data> = CORRESPONDING #( is_row ).`), [], Release.v750);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -21863,5 +21972,194 @@ DATA: BEGIN OF result,
 result = VALUE #( locals = '' ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(0);
+  });
+
+  it("CORRESPONDING # into generic field symbol from dereferenced data ref, 750, ok", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         bar TYPE i,
+       END OF ty.
+DATA c_table TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+DATA c_line LIKE LINE OF c_table.
+DATA lref TYPE REF TO data.
+CREATE DATA lref LIKE LINE OF c_table.
+ASSIGN lref->* TO FIELD-SYMBOL(<line>).
+<line> = CORRESPONDING #( c_line ).`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues.length).to.equal(0);
+  });
+});
+
+describe("syntax.ts, functional method result into a structure, table or reference parameter, #4675", () => {
+  function build(call: string): string {
+    return `INTERFACE lif.
+ENDINTERFACE.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    TYPES: BEGIN OF ty_s1, a TYPE c LENGTH 4, b TYPE i, END OF ty_s1.
+    TYPES: BEGIN OF ty_s2, a TYPE c LENGTH 4, b TYPE i, END OF ty_s2.
+    TYPES: BEGIN OF ty_s3, x TYPE c LENGTH 8, END OF ty_s3.
+    TYPES ty_c4 TYPE c LENGTH 4.
+    TYPES ty_c8 TYPE c LENGTH 8.
+    TYPES ty_tc4 TYPE STANDARD TABLE OF ty_c4 WITH DEFAULT KEY.
+    TYPES ty_tc4b TYPE STANDARD TABLE OF ty_c4 WITH DEFAULT KEY.
+    TYPES ty_tstr TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    TYPES ty_robj TYPE REF TO object.
+    TYPES ty_rlcl TYPE REF TO lcl.
+    TYPES ty_rlif TYPE REF TO lif.
+    TYPES ty_rdata TYPE REF TO data.
+    TYPES ty_ri TYPE REF TO i.
+    TYPES ty_rstr TYPE REF TO string.
+    METHODS get_s2 RETURNING VALUE(r) TYPE ty_s2.
+    METHODS get_s3 RETURNING VALUE(r) TYPE ty_s3.
+    METHODS get_tc4 RETURNING VALUE(r) TYPE ty_tc4.
+    METHODS get_obj RETURNING VALUE(r) TYPE ty_robj.
+    METHODS get_lcl RETURNING VALUE(r) TYPE ty_rlcl.
+    METHODS get_ri RETURNING VALUE(r) TYPE ty_ri.
+    METHODS imp_s1 IMPORTING foo TYPE ty_s1.
+    METHODS imp_c8 IMPORTING foo TYPE ty_c8.
+    METHODS imp_tc4 IMPORTING foo TYPE ty_tc4b.
+    METHODS imp_tstr IMPORTING foo TYPE ty_tstr.
+    METHODS imp_any_table IMPORTING foo TYPE ANY TABLE.
+    METHODS imp_any IMPORTING foo TYPE any.
+    METHODS imp_obj IMPORTING foo TYPE ty_robj.
+    METHODS imp_lcl IMPORTING foo TYPE ty_rlcl.
+    METHODS imp_lif IMPORTING foo TYPE ty_rlif.
+    METHODS imp_rdata IMPORTING foo TYPE ty_rdata.
+    METHODS imp_ri IMPORTING foo TYPE ty_ri.
+    METHODS imp_rstr IMPORTING foo TYPE ty_rstr.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get_s2.
+  ENDMETHOD.
+  METHOD get_s3.
+  ENDMETHOD.
+  METHOD get_tc4.
+  ENDMETHOD.
+  METHOD get_obj.
+  ENDMETHOD.
+  METHOD get_lcl.
+  ENDMETHOD.
+  METHOD get_ri.
+  ENDMETHOD.
+  METHOD imp_s1.
+  ENDMETHOD.
+  METHOD imp_c8.
+  ENDMETHOD.
+  METHOD imp_tc4.
+  ENDMETHOD.
+  METHOD imp_tstr.
+  ENDMETHOD.
+  METHOD imp_any_table.
+  ENDMETHOD.
+  METHOD imp_any.
+  ENDMETHOD.
+  METHOD imp_obj.
+  ENDMETHOD.
+  METHOD imp_lcl.
+  ENDMETHOD.
+  METHOD imp_lif.
+  ENDMETHOD.
+  METHOD imp_rdata.
+  ENDMETHOD.
+  METHOD imp_ri.
+  ENDMETHOD.
+  METHOD imp_rstr.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  ${call}`;
+  }
+
+  const errors = [
+    "lo->imp_s1( lo->get_s3( ) ).",
+    "lo->imp_s1( foo = lo->get_s3( ) ).",
+    "lo->imp_c8( lo->get_s3( ) ).",
+    "lo->imp_tstr( lo->get_tc4( ) ).",
+    "lo->imp_lcl( lo->get_obj( ) ).",
+    "lo->imp_lif( lo->get_obj( ) ).",
+    "lo->imp_rstr( lo->get_ri( ) ).",
+  ];
+
+  for (const call of errors) {
+    it("error, " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+    });
+  }
+
+  const ok = [
+    "lo->imp_s1( lo->get_s2( ) ).",
+    "lo->imp_tc4( lo->get_tc4( ) ).",
+    "lo->imp_any_table( lo->get_tc4( ) ).",
+    "lo->imp_any( lo->get_s3( ) ).",
+    "lo->imp_obj( lo->get_lcl( ) ).",
+    "lo->imp_obj( lo->get_obj( ) ).",
+    "lo->imp_lif( lo->get_lcl( ) ).",
+    "lo->imp_lcl( lo->get_lcl( ) ).",
+    "lo->imp_rdata( lo->get_ri( ) ).",
+    "lo->imp_ri( lo->get_ri( ) ).",
+  ];
+
+  for (const call of ok) {
+    it("ok, " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(0);
+    });
+  }
+});
+
+describe("syntax.ts, LINES OF and INSERT with a generically typed dref->*", () => {
+  const build = (body: string) => `
+DATA mr_tab TYPE REF TO data.
+DATA lt_copy TYPE string_table.
+${body}`;
+
+  it("INSERT LINES OF INTO TABLE dref->*", () => {
+    const issues = runProgram(build(`INSERT LINES OF lt_copy INTO TABLE mr_tab->*.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT wa INTO TABLE dref->*", () => {
+    const issues = runProgram(build(`INSERT \`a\` INTO TABLE mr_tab->*.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("APPEND LINES OF dref->*", () => {
+    const issues = runProgram(build(`APPEND LINES OF mr_tab->* TO lt_copy.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT LINES OF dref->* INTO TABLE", () => {
+    const issues = runProgram(build(`INSERT LINES OF mr_tab->* INTO TABLE lt_copy.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT INTO dref->* INDEX, an index table is expected", () => {
+    const issues = runProgram(build(`INSERT \`a\` INTO mr_tab->* INDEX 1.`));
+    expect(issues[0]?.getMessage()).to.equal("INSERT target must be a table");
+  });
+
+  it("generic parameter, not dereferenced, is not a table", () => {
+    const issues = runProgram(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING data TYPE data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lt_copy TYPE string_table.
+    APPEND LINES OF data TO lt_copy.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues[0]?.getMessage()).to.equal("LINES OF must be a table type");
+  });
+
+  it("APPEND LINES OF dref->* FROM, an index table is expected", () => {
+    const issues = runProgram(build(`APPEND LINES OF mr_tab->* FROM 2 TO lt_copy.`));
+    expect(issues[0]?.getMessage()).to.equal("LINES OF must be a table type");
   });
 });

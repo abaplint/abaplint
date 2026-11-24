@@ -261,11 +261,21 @@ ENDWHILE.`,
     }
     const reads = this.reads(procedure, move.source);
     if (reads === undefined
-        || reads.locals.some(l => l.writes().some(w => w.index > from && w.index < to))
+        || reads.locals.some(l => this.changedIn(procedure, l, from, to))
         || reads.others.some(o => this.writtenIn(procedure, o, from, to))) {
       return false;
     }
     return reads.others.length === 0 || this.mayChangeOtherData(procedure, from, to, reads.receivers) === false;
+  }
+
+  /** written in the loop body, or declared inline in it: the inline declaration is not one of the writes(),
+   * but sets the variable in every iteration, possibly from data the loop changes */
+  private changedIn(procedure: Procedure, local: Variable, from: number, to: number): boolean {
+    if (local.writes().some(w => w.index > from && w.index < to)) {
+      return true;
+    }
+    const index = local.inline && local.declaration !== undefined ? procedure.index(local.declaration) : -1;
+    return index > from && index < to;
   }
 
   private writtenIn(procedure: Procedure, identifier: Identifier, from: number, to: number): boolean {

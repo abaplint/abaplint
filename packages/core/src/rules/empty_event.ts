@@ -23,12 +23,10 @@ export class EmptyEvent extends ABAPRule {
       shortDescription: `Empty selection screen or list processing event block`,
       extendedInformation: ``,
       tags: [RuleTag.SingleFile],
-      badExample: `
-INITIALIZATION.
+      badExample: `INITIALIZATION.
   WRITE 'hello'.
 END-OF-SELECTION.`,
-      goodExample: `
-START-OF-SELECTION.
+      goodExample: `START-OF-SELECTION.
   PERFORM sdf.
   COMMIT WORK.`,
     };
