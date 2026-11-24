@@ -34,6 +34,7 @@ const tests = [
   "APPEND INITIAL LINE TO lt_tab ASSIGNING <fs> CASTING.",
   "append it_foo assigning <ls_foo>.",
   "APPEND ls_field->node TO <ls_data>-fields SORTED BY table_line.",
+  "APPEND ls_field->node TO <ls_data>-fields ASSIGNING <ls_node> SORTED BY table_line.",
   "APPEND CORRESPONDING #( BASE ( VALUE #( account = lv_account ) ) ls_ms04 ) TO lt_foo.",
   "APPEND LINES OF tab TO index TO target.",
   "APPEND LINES OF tab FROM index TO target.",

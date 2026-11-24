@@ -31,6 +31,7 @@ export class FunctionParameters {
         const t = param.findDirectExpression(Expressions.Target);
         if (t) {
           Target.runSyntax(t, input);
+          input.referenceMayChange?.(t, input.scope);
         }
 
         if (paramList === changingList && t !== undefined) {

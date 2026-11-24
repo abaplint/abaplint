@@ -11,6 +11,7 @@ export class GetReference implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const s = node.findDirectExpression(Expressions.Source);
     const type = Source.runSyntax(s, input);
+    input.referenceMayChange?.(s, input.scope);
 
     const target = node.findDirectExpression(Expressions.Target);
     const inline = target?.findDirectExpression(Expressions.InlineData);

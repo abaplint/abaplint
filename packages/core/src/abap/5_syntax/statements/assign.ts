@@ -1,5 +1,5 @@
 import * as Expressions from "../../2_statements/expressions";
-import {ExpressionNode, StatementNode} from "../../nodes";
+import {ExpressionNode, StatementNode, TokenNode} from "../../nodes";
 import {Source} from "../expressions/source";
 import {FSTarget} from "../expressions/fstarget";
 import {AnyType, CharacterType, DataReference, GenericObjectReferenceType, ObjectReferenceType, VoidType} from "../../types/basic";
@@ -13,12 +13,12 @@ import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const assignSource = node.findDirectExpression(Expressions.AssignSource);
-    const isComponent = assignSource?.getFirstChild()?.concatTokens().toUpperCase() === "COMPONENT";
+    const firstAssign = assignSource?.getFirstChild();
+    const isComponent = firstAssign instanceof TokenNode && firstAssign.get().getStr().toUpperCase() === "COMPONENT";
     const sources: ExpressionNode[] = assignSource?.findDirectExpressionsMulti([Expressions.Source, Expressions.SimpleSource3]) || [];
     const theSource = sources[sources.length - 1];
 
     let sourceType: AbstractType | undefined;
-    const firstAssign = assignSource?.getChildren()[0];
     const secondAssign = assignSource?.getChildren()[1];
     const thirdAssign = assignSource?.getChildren()[2];
     if (secondAssign?.concatTokens() === "=>" && firstAssign && thirdAssign?.get() instanceof Expressions.Dynamic) {
@@ -44,6 +44,18 @@ export class Assign implements StatementSyntax {
         const message = `"${theSource.concatTokens()}" is not a reference variable`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
+      }
+    }
+
+    if (firstAssign instanceof ExpressionNode && firstAssign.get() instanceof Expressions.Dynamic) {
+      input.referenceMayChange?.(firstAssign, input.scope);
+    } else if (isComponent === false) {
+      const address = node.getChildren()[1];
+      if (address !== assignSource && address instanceof ExpressionNode && address.get() instanceof Expressions.Target) {
+        // ASSIGN ... INCREMENT stores the address before AssignSource, which contains the increment.
+        input.referenceMayChange?.(address, input.scope);
+      } else if (secondAssign === undefined && sourceType instanceof DataReference) {
+        input.referenceMayChange?.(theSource, input.scope);
       }
     }
 

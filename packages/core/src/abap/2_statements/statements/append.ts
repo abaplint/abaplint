@@ -10,6 +10,9 @@ export class Append implements IStatement {
     const assigning = seq("ASSIGNING", FSTarget);
     const reference = seq("REFERENCE INTO", Target);
     const sorted = seq("SORTED BY", Field);
+    const result = altPrio(assigning, reference);
+    const additions = altPrio(seq(sorted, result, optPrio("CASTING")),
+                              seq(opt(result), optPrio("CASTING"), optPrio(sorted)));
 
     const fromIndex = seq("FROM", Source);
     const toIndex = seq("TO", Source);
@@ -21,9 +24,7 @@ export class Append implements IStatement {
                altPrio("INITIAL LINE", seq(optPrio("LINES OF"), src)),
                optPrio(fromIndex),
                opt(alt(seq(toIndex, toTarget), toTarget)),
-               opt(altPrio(assigning, reference)),
-               optPrio("CASTING"),
-               optPrio(sorted));
+               additions);
   }
 
 }

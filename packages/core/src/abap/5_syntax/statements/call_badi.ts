@@ -15,6 +15,7 @@ export class CallBadi implements StatementSyntax {
 
     for (const t of node.findAllExpressions(Expressions.Target)) {
       Target.runSyntax(t, input);
+      input.referenceMayChange?.(t, input.scope);
     }
 
     for (const d of node.findAllExpressions(Expressions.Dynamic)) {

@@ -33,6 +33,13 @@ export class Append implements StatementSyntax {
       return;
     }
 
+    if (targetType instanceof TableType && targetType.getAccessType() === TableAccessType.sorted) {
+      const sorted = node.findDirectTokenByText("SORTED");
+      if (sorted !== undefined) {
+        input.issues.push(syntaxIssue(input, sorted, "APPEND SORTED BY requires a standard table"));
+      }
+    }
+
     const fsTarget = node.findExpressionAfterToken("ASSIGNING");
     if (fsTarget && fsTarget.get() instanceof Expressions.FSTarget) {
       if (!(targetType instanceof TableType) && !(targetType instanceof VoidType) && !(targetType instanceof UnknownType)) {
@@ -45,14 +52,15 @@ export class Append implements StatementSyntax {
     }
 
     const dataTarget = node.findExpressionAfterToken("INTO");
-    if (dataTarget && node.concatTokens().toUpperCase().includes(" REFERENCE INTO DATA(")) {
+    const inline = dataTarget?.findDirectExpression(Expressions.InlineData);
+    if (inline) {
       if (!(targetType instanceof TableType) && !(targetType instanceof VoidType) && !(targetType instanceof UnknownType)) {
         const message = "APPEND to non table type, " + targetType?.constructor.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
       const rowType = targetType instanceof TableType ? targetType.getRowType() : targetType;
-      InlineData.runSyntax(dataTarget, input, new DataReference(rowType));
+      InlineData.runSyntax(inline, input, new DataReference(rowType));
     }
 
     let source = node.findDirectExpression(Expressions.SimpleSource4);

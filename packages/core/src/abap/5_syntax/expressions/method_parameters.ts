@@ -1,4 +1,5 @@
 import {DataReference, VoidType} from "../../types/basic";
+import {IdentifierMeta} from "../../types/_typed_identifier";
 import * as Expressions from "../../2_statements/expressions";
 import {IMethodDefinition} from "../../types/_method_definition";
 import {ExpressionNode} from "../../nodes";
@@ -114,6 +115,7 @@ export class MethodParameters {
   private checkImporting(node: INode, input: SyntaxInput, method: IMethodDefinition | VoidType) {
     for (const item of this.parameterListT(node, input)) {
       let parameterType: AbstractType | undefined;
+      let byValue = false;
       if (method instanceof VoidType) {
         parameterType = method;
       } else {
@@ -124,8 +126,8 @@ export class MethodParameters {
           return;
         }
         parameterType = parameter.getType();
+        byValue = parameter.getMeta().includes(IdentifierMeta.PassByValue);
       }
-
       const inline = item.target.findDirectExpression(Expressions.InlineData);
       if (inline) {
         InlineData.runSyntax(inline, input, parameterType);
@@ -138,6 +140,7 @@ export class MethodParameters {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
+      input.referenceMayChange?.(item.target, input.scope, !byValue);
     }
   }
 
@@ -150,6 +153,7 @@ export class MethodParameters {
       }
 
       let parameterType: AbstractType | undefined;
+      let byValue = false;
       if (method instanceof VoidType) {
         parameterType = method;
       } else {
@@ -160,7 +164,9 @@ export class MethodParameters {
           return;
         }
         parameterType = parameter.getType();
+        byValue = parameter.getMeta().includes(IdentifierMeta.PassByValue);
       }
+      input.referenceMayChange?.(item.target, input.scope, !byValue);
       // the parameter is supplied, even if its type is wrong
       this.requiredParameters?.delete(item.name);
 

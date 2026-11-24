@@ -3,8 +3,8 @@ import * as Statements from "../2_statements/statements";
 import * as Structures from "../3_structures/structures";
 import {ExpressionNode, StatementNode, StructureNode} from "../nodes";
 import {Dash, InstanceArrow} from "../1_lexer/tokens";
-import {TypedIdentifier} from "../types/_typed_identifier";
-import {ObjectReferenceType, StructureType, TableAccessType, TableKeyType, TableType, UnknownType, VoidType} from "../types/basic";
+import {IdentifierMeta, TypedIdentifier} from "../types/_typed_identifier";
+import {DataReference, ObjectReferenceType, StructureType, TableAccessType, TableKeyType, TableType, UnknownType, VoidType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {Position} from "../../position";
 import {ObjectOriented} from "./_object_oriented";
@@ -15,34 +15,61 @@ type Binding = {
   /** the primary key components, or "line" when the key is the whole line */
   key: string[] | "line",
   reference: boolean,
-  /** the LOOP statement that assigned it, the binding ends with the LOOP */
-  loop: StatementNode | undefined,
+  loop?: StatementNode,
+  block?: StructureNode,
+  iterationDepth?: number,
 };
+
+type Procedure = {
+  filename: string,
+  start: Position,
+  exposedReferences?: Set<TypedIdentifier>,
+  dynamicAddress?: boolean,
+};
+
+const repeatingStructures = new Set<object>([
+  Structures.Do, Structures.While, Structures.Loop, Structures.LoopAtScreen, Structures.LoopExtract,
+  Structures.Select, Structures.With, Structures.Provide, Structures.Try,
+]);
 
 /** The key components of the primary key of a sorted or hashed table line are write-protected,
  *  "write accesses to key fields using a field symbol or a data reference produce a syntax error if
  *  this is known statically, otherwise a runtime error", see the ABAP keyword documentation for LOOP AT itab
  *  and READ TABLE, result.
  *  Only conservative cases are handled: a field symbol or data reference local to the method, form or function
- *  module, bound by LOOP AT or READ TABLE ... ASSIGNING / REFERENCE INTO a table named by a plain chain of
- *  names, components and attributes, and written by an assignment or CLEAR. The binding of a LOOP ends with the LOOP,
- *  any other assignment of the field symbol or reference ends it as well. */
+ *  module, bound by LOOP AT, READ TABLE or APPEND ... ASSIGNING / REFERENCE INTO a table named by a plain chain of
+ *  names, components and attributes, and written by an assignment or CLEAR. LOOP bindings end with the LOOP.
+ *  APPEND bindings stay in their block. A write inside a loop needs a binding made in that iteration. */
 export class SortedKeyWrite {
   private readonly bindings = new Map<TypedIdentifier, Binding>();
-  private procedure: {filename: string, start: Position} | undefined = undefined;
+  private readonly appends = new Map<TypedIdentifier, Binding>();
+  private readonly appendBlocks = new Map<StructureNode, Set<TypedIdentifier>>();
+  private readonly resumableTries = new Set<StructureNode>();
+  private iterationDepth = 0;
+  private procedure: Procedure | undefined = undefined;
 
   public enter(node: StructureNode, filename: string): void {
     if (SortedKeyWrite.isProcedure(node)) {
       this.bindings.clear();
       this.procedure = {filename, start: node.getFirstToken().getStart()};
+    } else if (this.procedure && repeatingStructures.has(node.get().constructor)) {
+      this.iterationDepth++;
+      if (node.get() instanceof Structures.Try && node.findDirectStructures(Structures.Catch).some(handler =>
+        handler.findDirectStatement(Statements.Catch)?.findDirectTokenByText("BEFORE") !== undefined)) {
+        this.resumableTries.add(node);
+      }
     }
   }
 
   public leave(node: StructureNode): void {
     if (SortedKeyWrite.isProcedure(node)) {
       this.bindings.clear();
+      this.appends.clear();
+      this.appendBlocks.clear();
+      this.resumableTries.clear();
+      this.iterationDepth = 0;
       this.procedure = undefined;
-    } else if (node.get() instanceof Structures.Loop) {
+    } else if (this.bindings.size > 0 && node.get() instanceof Structures.Loop) {
       const loop = node.findDirectStatement(Statements.Loop);
       for (const [identifier, binding] of this.bindings) {
         if (binding.loop === loop) {
@@ -50,52 +77,108 @@ export class SortedKeyWrite {
         }
       }
     }
+    if (this.procedure && repeatingStructures.has(node.get().constructor)) {
+      this.iterationDepth--;
+      this.resumableTries.delete(node);
+    }
+    const appends = this.appendBlocks.get(node);
+    if (appends !== undefined) {
+      for (const identifier of appends) {
+        if (this.appends.get(identifier)?.block === node) {
+          this.appends.delete(identifier);
+        }
+      }
+      this.appendBlocks.delete(node);
+    }
   }
 
   /** call before the statement is checked */
   public check(node: StatementNode, input: SyntaxInput): void {
-    if (this.bindings.size === 0) {
-      return;
+    if (this.appends.size > 0 && node.get() instanceof Statements.AssignLocalCopy) {
+      const name = node.findDirectExpression(Expressions.TargetFieldSymbol)?.concatTokens();
+      const identifier = input.scope.findVariable(name);
+      if (identifier !== undefined) {
+        this.appends.delete(identifier);
+      }
     }
+    if (this.bindings.size > 0) {
+      this.checkWrites(node, input, this.bindings);
+    }
+  }
+
+  private checkWrites(node: StatementNode, input: SyntaxInput, bindings: ReadonlyMap<TypedIdentifier, Binding>): void {
     const s = node.get();
     if (!(s instanceof Statements.Move) && !(s instanceof Statements.Clear)) {
       return;
     }
 
-    for (const target of node.findDirectExpressions(Expressions.Target)) {
-      const message = this.checkTarget(target, input.scope);
+    const directTargets = node.findDirectExpressions(Expressions.Target);
+    const chained = bindings === this.appends && directTargets.length > 1;
+    // A chained assignment can replace the reference before a target to its left uses it.
+    const targets = chained ? [...directTargets].reverse() : directTargets;
+    for (const target of targets) {
+      const first = target.getChildren()[0];
+      if (!(first?.get() instanceof Expressions.TargetFieldSymbol) && !(first?.get() instanceof Expressions.TargetField)) {
+        continue;
+      }
+      const identifier = input.scope.findVariable(first.concatTokens());
+      const binding = identifier === undefined ? undefined : bindings.get(identifier);
+      if (identifier === undefined || binding === undefined
+          || (binding.iterationDepth !== undefined && binding.iterationDepth !== this.iterationDepth)) {
+        continue;
+      }
+      if (chained && binding.reference && target.getChildren().length === 1) {
+        this.appends.delete(identifier);
+        continue;
+      }
+      const message = this.checkTarget(target, binding);
       if (message !== undefined) {
-        input.issues.push(syntaxIssue(input, target.getFirstToken(), message));
+        const issue = syntaxIssue(input, target.getFirstToken(), message);
+        const procedure = this.procedure;
+        if (binding.reference && binding.iterationDepth !== undefined && binding.iterationDepth > 0 && procedure !== undefined) {
+          // An address taken later in the body can survive into the next iteration.
+          input.deferred.push(() => {
+            if (procedure.dynamicAddress !== true && procedure.exposedReferences?.has(identifier) !== true) {
+              input.issues.push(issue);
+            }
+          });
+        } else {
+          input.issues.push(issue);
+        }
         return;
       }
     }
   }
 
   /** call after the statement is checked, the inline declarations are then known */
-  public update(node: StatementNode, input: SyntaxInput): void {
-    if (this.procedure === undefined) {
+  public update(node: StatementNode, input: SyntaxInput, block: StructureNode, valid: boolean): void {
+    const procedure = this.procedure;
+    if (procedure === undefined) {
       return;
+    }
+    const s = node.get();
+    if (valid && this.appends.size > 0) {
+      this.checkWrites(node, input, this.appends);
     }
 
     // any assignment of a field symbol or reference ends its binding,
     // skipped when nothing is bound, this runs for every statement
-    if (this.bindings.size > 0) {
+    if (this.bindings.size > 0 || this.appends.size > 0) {
       for (const fs of node.findAllExpressions(Expressions.FSTarget)) {
         this.unbind(fs.findFirstExpression(Expressions.TargetFieldSymbol), input.scope);
       }
-      if (node.get() instanceof Statements.Unassign) {
+      if (s instanceof Statements.Unassign) {
         this.unbind(node.findDirectExpression(Expressions.TargetFieldSymbol), input.scope);
       }
       for (const target of node.findAllExpressions(Expressions.Target)) {
         if (target.getChildren().length === 1) {
-          this.unbind(target.findDirectExpression(Expressions.TargetField), input.scope);
+          this.unbind(target.findDirectExpression(Expressions.TargetField), input.scope, !(s instanceof Statements.Perform));
         }
       }
     }
 
-    const s = node.get();
     let table: ExpressionNode | undefined = undefined;
-    let result: ExpressionNode | undefined = undefined;
+    let result: ExpressionNode | StatementNode | undefined = undefined;
     if (s instanceof Statements.Loop && node.findDirectExpression(Expressions.LoopGroupBy) === undefined) {
       table = node.findDirectExpression(Expressions.LoopSource)?.findDirectExpression(Expressions.SimpleSource2)
         ?? node.findDirectExpression(Expressions.LoopSource)?.findDirectExpression(Expressions.Source);
@@ -103,6 +186,11 @@ export class SortedKeyWrite {
     } else if (s instanceof Statements.ReadTable) {
       table = node.findDirectExpression(Expressions.SimpleSource2) ?? node.findDirectExpression(Expressions.Source);
       result = node.findDirectExpression(Expressions.ReadTableTarget);
+    } else if (s instanceof Statements.Append && valid && this.resumableTries.size === 0
+        && node.findDirectTokenByText("TO") !== undefined
+        && node.findDirectTokenByText("LINES") === undefined) {
+      table = node.findDirectExpression(Expressions.Target);
+      result = node;
     }
     if (table === undefined || result === undefined
         || result.findDirectTokenByText("CASTING") !== undefined
@@ -115,7 +203,7 @@ export class SortedKeyWrite {
     if (result.findDirectTokenByText("ASSIGNING") !== undefined) {
       name = result.findDirectExpression(Expressions.FSTarget)?.findFirstExpression(Expressions.TargetFieldSymbol);
     } else if (result.findDirectTokenByText("REFERENCE") !== undefined) {
-      const target = result.findDirectExpression(Expressions.Target);
+      const target = result.findExpressionAfterToken("INTO");
       if (target?.getChildren().length === 1) {
         name = target.findDirectExpression(Expressions.TargetField)
           ?? target.findDirectExpression(Expressions.InlineData)?.findDirectExpression(Expressions.TargetField);
@@ -124,37 +212,87 @@ export class SortedKeyWrite {
     }
     const identifier = input.scope.findVariable(name?.concatTokens());
     if (identifier === undefined
-        || identifier.getFilename() !== this.procedure.filename
-        || identifier.getStart().isBefore(this.procedure.start)) {
+        || identifier.getFilename() !== procedure.filename
+        || identifier.getStart().isBefore(procedure.start)) {
       return;
     }
 
     const key = SortedKeyWrite.findKey(SortedKeyWrite.findType(table, input.scope));
-    if (key !== undefined) {
+    if (key === undefined) {
+      return;
+    }
+    if (s instanceof Statements.Append) {
+      const meta = identifier.getMeta();
+      if (reference && (!(identifier.getType() instanceof DataReference)
+          || procedure.dynamicAddress || procedure.exposedReferences?.has(identifier)
+          || (!meta.includes(IdentifierMeta.PassByValue) && (meta.includes(IdentifierMeta.FormParameter)
+            || meta.includes(IdentifierMeta.FunctionModuleExporting) || meta.includes(IdentifierMeta.FunctionModuleChanging)
+            || meta.includes(IdentifierMeta.MethodChanging) || meta.includes(IdentifierMeta.MethodExporting))))) {
+        return;
+      }
+      this.appends.set(identifier, {key, reference, block, iterationDepth: this.iterationDepth});
+      let appends = this.appendBlocks.get(block);
+      if (appends === undefined) {
+        appends = new Set();
+        this.appendBlocks.set(block, appends);
+      }
+      appends.add(identifier);
+    } else {
       this.bindings.set(identifier, {key, reference, loop: s instanceof Statements.Loop ? node : undefined});
     }
   }
 
 ////////////////
 
-  private unbind(node: ExpressionNode | undefined, scope: CurrentScope): void {
-    const found = node ? scope.findVariable(node.concatTokens()) : undefined;
-    if (found !== undefined) {
-      this.bindings.delete(found);
+  public readonly referenceMayChange = (operand: ExpressionNode | undefined, scope: CurrentScope, addressEscapes = true): void => {
+    const procedure = this.procedure;
+    if (procedure === undefined) {
+      return;
+    }
+    if (operand?.get() instanceof Expressions.Dynamic) {
+      procedure.dynamicAddress = true;
+      for (const [identifier, binding] of this.appends) {
+        if (binding.reference) {
+          this.appends.delete(identifier);
+        }
+      }
+      return;
+    }
+    if (operand?.getChildren().length !== 1) {
+      return;
+    }
+    const target = operand.findDirectExpression(Expressions.TargetField)
+      ?? operand.findDirectExpression(Expressions.InlineData)?.findDirectExpression(Expressions.TargetField);
+    const chain = operand.findDirectExpression(Expressions.FieldChain);
+    const name = target?.concatTokens()
+      ?? (chain?.getChildren().length === 1 ? chain.findDirectExpression(Expressions.SourceField)?.concatTokens() : undefined);
+    const identifier = scope.findVariable(name);
+    if (identifier?.getType() instanceof DataReference) {
+      if (addressEscapes) {
+        (procedure.exposedReferences ??= new Set()).add(identifier);
+      }
+      this.appends.delete(identifier);
+    }
+  };
+
+  public markStatic(identifier: TypedIdentifier | undefined): void {
+    if (this.procedure !== undefined && identifier?.getType() instanceof DataReference) {
+      (this.procedure.exposedReferences ??= new Set()).add(identifier);
     }
   }
 
-  private checkTarget(target: ExpressionNode, scope: CurrentScope): string | undefined {
+  private unbind(node: ExpressionNode | undefined, scope: CurrentScope, append = true): void {
+    const found = node ? scope.findVariable(node.concatTokens()) : undefined;
+    if (found !== undefined) {
+      this.bindings.delete(found);
+      if (append) {
+        this.appends.delete(found);
+      }
+    }
+  }
+
+  private checkTarget(target: ExpressionNode, binding: Binding): string | undefined {
     const children = target.getChildren();
-    const first = children[0];
-    if (!(first?.get() instanceof Expressions.TargetFieldSymbol) && !(first?.get() instanceof Expressions.TargetField)) {
-      return undefined;
-    }
-    const found = scope.findVariable(first.concatTokens());
-    const binding = found ? this.bindings.get(found) : undefined;
-    if (binding === undefined) {
-      return undefined;
-    }
 
     let i = 1;
     const path: string[] = [];
@@ -214,10 +352,12 @@ export class SortedKeyWrite {
 
   /** the type of a table given by a plain chain of names, components and attributes, else undefined */
   private static findType(node: ExpressionNode, scope: CurrentScope): AbstractType | undefined {
-    const chain = node.getChildren().length === 1 ? node.findDirectExpression(Expressions.FieldChain) : undefined;
+    const chain = node.get() instanceof Expressions.Target ? node
+      : node.getChildren().length === 1 ? node.findDirectExpression(Expressions.FieldChain) : undefined;
     const children = chain?.getChildren() || [];
     const first = children[0];
-    if (!(first?.get() instanceof Expressions.SourceField) && !(first?.get() instanceof Expressions.SourceFieldSymbol)) {
+    if (!(first?.get() instanceof Expressions.SourceField) && !(first?.get() instanceof Expressions.SourceFieldSymbol)
+        && !(first?.get() instanceof Expressions.TargetField) && !(first?.get() instanceof Expressions.TargetFieldSymbol)) {
       return undefined;
     }
 

@@ -162,7 +162,9 @@ export class Source {
         case "REF":
         {
           let foundType = this.determineType(node, input, targetType);
-          const s = Source.runSyntax(node.findDirectExpression(Expressions.Source), input);
+          const operand = node.findDirectExpression(Expressions.Source);
+          const s = Source.runSyntax(operand, input);
+          input.referenceMayChange?.(operand, input.scope);
           /*
           console.dir(node.concatTokens());
           console.dir(s);

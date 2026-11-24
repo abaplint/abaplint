@@ -3,6 +3,7 @@ import {Severity} from "../../severity";
 import {IEdit} from "../../edit_helper";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {CurrentScope} from "./_current_scope";
+import {ExpressionNode} from "../nodes";
 
 export const CheckSyntaxKey = "check_syntax";
 
@@ -17,6 +18,7 @@ export type SyntaxInput = {
   deferred: (() => void)[],
   /** the statement is inside a LOOP structure */
   inLoop?: boolean,
+  referenceMayChange?: (operand: ExpressionNode | undefined, scope: CurrentScope, addressEscapes?: boolean) => void,
 };
 
 export function syntaxIssue(input: SyntaxInput, token: AbstractToken, message: string, fix?: IEdit) {

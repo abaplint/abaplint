@@ -45,24 +45,38 @@ export class Perform implements StatementSyntax {
     ////////////////////////////
     // find FORM definition
 
-    if (node.findFirstExpression(Expressions.IncludeName)) {
+    const external = node.findFirstExpression(Expressions.IncludeName);
+    const dynamic = node.findFirstExpression(Expressions.Dynamic);
+    const expr = node.findFirstExpression(Expressions.FormName);
+    const name = expr?.concatTokens();
+    const found = external || dynamic || name === undefined ? undefined : input.scope.findFormDefinition(name);
+    const actuals = using.concat(changing);
+    if (input.referenceMayChange && actuals.length > 0) {
+      const local = node.findDirectTokenByText("PROGRAM") === undefined ? found : undefined;
+      const inputs = local?.getUsingParameters() ?? [];
+      const outputs = local?.getChangingParameters() ?? [];
+      for (const [index, actual] of actuals.entries()) {
+        // Only the formal parameter controls whether the value is copied back.
+        const inputOnly = index < inputs.length;
+        const formal = inputOnly ? inputs[index] : outputs[index - inputs.length];
+        const byValue = formal?.getMeta().includes(IdentifierMeta.PassByValue) === true;
+        if (!(inputOnly && byValue)) {
+          input.referenceMayChange(actual.node, input.scope, !byValue);
+        }
+      }
+    }
+    if (external) {
       return; // in external program, not checked, todo
     }
-
-    const dynamic = node.findFirstExpression(Expressions.Dynamic);
     if (dynamic) {
       Dynamic.runSyntax(dynamic, input);
       return; // todo, maybe some parts can be checked
     }
 
-    const expr = node.findFirstExpression(Expressions.FormName);
-    if (expr === undefined) {
+    if (expr === undefined || name === undefined) {
       return; // it might be a dynamic call
     }
 
-    const name = expr.concatTokens();
-
-    const found = input.scope.findFormDefinition(name);
     if (found === undefined) {
       const message = "FORM definition \"" + name + "\" not found";
       input.issues.push(syntaxIssue(input, expr.getFirstToken(), message));
@@ -84,7 +98,7 @@ export class Perform implements StatementSyntax {
       }
       // USING and CHANGING are interchangeable, the actual parameters form a single positional list
       const formal = def.getUsingParameters().concat(def.getChangingParameters());
-      this.checkParameters(node, using.concat(changing), formal, "USING/CHANGING", input);
+      this.checkParameters(node, actuals, formal, "USING/CHANGING", input);
     });
   }
 

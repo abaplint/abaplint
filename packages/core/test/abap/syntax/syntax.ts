@@ -20316,7 +20316,12 @@ APPEND ls TO ls_deep-map.`));
   it("ok, APPEND TO standard", () => {
     const issues = runProgram(program(`APPEND ls TO lt_std.
 APPEND INITIAL LINE TO lt_std ASSIGNING FIELD-SYMBOL(<ls>).
-APPEND LINES OF lt_map TO lt_std.`));
+APPEND LINES OF lt_map TO lt_std.
+DATA lt_rank TYPE STANDARD TABLE OF ty_s WITH EMPTY KEY INITIAL SIZE 3.
+APPEND ls TO lt_rank SORTED BY id REFERENCE INTO DATA(lr).
+lr->id = 1.
+APPEND ls TO lt_rank SORTED BY id REFERENCE INTO FINAL(lr_final).
+lr_final->id = 2.`));
     expect(issues.length).to.equal(0);
   });
 
