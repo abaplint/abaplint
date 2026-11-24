@@ -2719,6 +2719,29 @@ ENDIF.`;
     expect(issues[0].getMessage()).to.include("sdfsdsdf");
   });
 
+  for (const addition of ["KIND", "OCCURS"]) {
+    it(`DESCRIBE TABLE, undeclared ${addition} output`, () => {
+      const issues = runProgram(`DATA tab TYPE STANDARD TABLE OF i.
+DESCRIBE TABLE tab ${addition} missing_output.`);
+      expect(issues.map(i => i.getMessage())).to.deep.equal(['"missing_output" not found, Target']);
+    });
+  }
+
+  it("DESCRIBE TABLE, declared and inline KIND and OCCURS outputs", () => {
+    const filename = "zfoobar.prog.abap";
+    const abap = `DATA tab TYPE STANDARD TABLE OF i.
+DATA table_kind TYPE c LENGTH 1.
+DATA initial_size TYPE i.
+DESCRIBE TABLE tab KIND table_kind OCCURS initial_size.
+DESCRIBE TABLE tab OCCURS DATA(inline_size) KIND DATA(inline_kind).`;
+    const reg = new Registry().addFile(new MemoryFile(filename, abap)).parse();
+    const result = new SyntaxLogic(reg, getABAPObjects(reg)[0]).run();
+    expect(result.issues.map(i => i.getMessage())).to.deep.equal([]);
+    const definitions = result.spaghetti.listDefinitions(filename);
+    expect(definitions.find(d => d.name === "INLINE_KIND")?.identifier.getType().toABAP()).to.equal("c LENGTH 1");
+    expect(definitions.find(d => d.name === "INLINE_SIZE")?.identifier.getType().toABAP()).to.equal("i");
+  });
+
   it("APPEND, expect class not found", () => {
     const abap = `
 TYPES: BEGIN OF ty_tab,
