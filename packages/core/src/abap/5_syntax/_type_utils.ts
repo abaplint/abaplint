@@ -476,12 +476,18 @@ export class TypeUtils {
       }
     }
 
-    if (node && builtin === false && this.isFunctionalMethodResult(node)
-        && this.isFunctionalResultAssignable(source, target) === false) {
+    const functionalResult = node !== undefined && builtin === false && this.isFunctionalMethodResult(node);
+    if (functionalResult && this.isFunctionalResultAssignable(source, target) === false) {
       return false;
     }
 
-    if (calculated) {
+    // a structure, table or reference returned by a functional method follows the same rule as a variable
+    const strictResult = functionalResult && (source instanceof StructureType
+      || source instanceof TableType
+      || source instanceof DataReference
+      || source instanceof ObjectReferenceType
+      || source instanceof GenericObjectReferenceType);
+    if (calculated && strictResult === false) {
       return this.isAssignable(source, target);
     }
 
