@@ -26,6 +26,10 @@ export class FormParam {
       if (typeName) {
         type = input.scope.findType(typeName)?.getType();
         if (type === undefined) {
+          // STRUCTURE can also refer to a program-local data object
+          type = input.scope.findVariable(typeName)?.getType();
+        }
+        if (type === undefined) {
           type = input.scope.getDDIC().lookupTableOrView(typeName).type;
         }
       } else {

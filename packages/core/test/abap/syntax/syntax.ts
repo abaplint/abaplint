@@ -18649,6 +18649,27 @@ ENDFORM.`;
     expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
   });
 
+  it("A6b, actual is character-like and long enough, formal purely character-like", () => {
+    const abap = `
+DATA wa TYPE c LENGTH 20.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A6c, actual is character-like but shorter than the formal", () => {
+    const abap = `
+DATA wa TYPE c LENGTH 15.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
   it("A7, actual is an internal table", () => {
     const abap = `
 DATA wa TYPE STANDARD TABLE OF zkey WITH EMPTY KEY.
