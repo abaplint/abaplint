@@ -212,6 +212,43 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  describe("me=> is not a class or interface", () => {
+    function run(typing: string) {
+      const abap = `
+CLASS lcl_test DEFINITION.
+  PUBLIC SECTION.
+    METHODS m.
+  PRIVATE SECTION.
+    TYPES ty_i TYPE i.
+ENDCLASS.
+CLASS lcl_test IMPLEMENTATION.
+  METHOD m.
+    DATA lv ${typing}.
+    CLEAR lv.
+  ENDMETHOD.
+ENDCLASS.`;
+      return runMulti([{filename: "zfoobar.prog.abap", contents: abap}]).filter(i => i.getKey() === key);
+    }
+
+    it("TYPE me=>ty_i, error", () => {
+      const issues = run("TYPE me=>ty_i");
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.contain(`"me" is not a class or interface`);
+    });
+
+    it("TYPE STANDARD TABLE OF and TYPE REF TO me=>ty_i, error", () => {
+      expect(run("TYPE STANDARD TABLE OF me=>ty_i WITH EMPTY KEY").length).to.equal(1);
+      expect(run("TYPE REF TO me=>ty_i").length).to.equal(1);
+    });
+
+    it("me->ty_i and the class name, ok", () => {
+      expect(run("TYPE me->ty_i").length).to.equal(0);
+      expect(run("TYPE REF TO me->ty_i").length).to.equal(0);
+      expect(run("TYPE STANDARD TABLE OF me->ty_i WITH EMPTY KEY").length).to.equal(0);
+      expect(run("TYPE lcl_test=>ty_i").length).to.equal(0);
+    });
+  });
+
   it("protected and private attribute", () => {
     const abap = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PROTECTED.
   PROTECTED SECTION.
@@ -2629,6 +2666,24 @@ ENDCLASS.`;
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.contain("DDLS commented not found");
+  });
+
+  it("PERFORM TABLES, LIKE structure component OCCURS WITH HEADER LINE", () => {
+    const abap = `
+DATA: BEGIN OF zvbeln,
+        field1 TYPE c LENGTH 10,
+      END OF zvbeln.
+
+DATA vbeln_in LIKE zvbeln-field1 OCCURS 0 WITH HEADER LINE.
+
+FORM foo TABLES t_vbeln STRUCTURE zvbeln.
+ENDFORM.
+
+START-OF-SELECTION.
+  PERFORM foo TABLES vbeln_in.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
 });

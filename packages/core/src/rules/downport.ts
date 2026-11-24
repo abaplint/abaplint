@@ -832,14 +832,12 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
-    // UP TO after INTO is only valid behind WHERE when it follows an ORDER BY, else move it along in front of INTO
+    // UP TO after INTO is not valid behind WHERE or ORDER BY, move it along in front of INTO
     let move = into.concatTokens();
     const fixes: IEdit[] = [];
     const upTo = high.findFirstExpression(Expressions.SQLUpTo);
-    const orderBy = high.findFirstExpression(Expressions.SQLOrderBy);
     if (upTo !== undefined
-        && into.getLastToken().getEnd().isBefore(upTo.getFirstToken().getStart())
-        && (orderBy === undefined || upTo.getFirstToken().getStart().isBefore(orderBy.getFirstToken().getStart()))) {
+        && into.getLastToken().getEnd().isBefore(upTo.getFirstToken().getStart())) {
       move = upTo.concatTokens() + ` ` + move;
       fixes.push(EditHelper.deleteRange(lowFile, upTo.getFirstToken().getStart(), upTo.getLastToken().getEnd()));
     }
@@ -1680,7 +1678,7 @@ ${indentation}`);
         || !(targetType instanceof TableType)
         || sourceType.isWithHeader() === true
         || targetType.isWithHeader() === true
-        || (targetType.getAccessType() !== TableAccessType.standard && targetType.getAccessType() !== undefined)) {
+        || (this.concreteAccessType(targetType) !== TableAccessType.standard && this.concreteAccessType(targetType) !== undefined)) {
       return undefined;
     }
     for (const t of [sourceType, targetType]) {
@@ -1693,7 +1691,7 @@ ${indentation}`);
     const fsType = (name: string, type: TableType) => type.isGeneric() ? "TYPE any" : "LIKE LINE OF " + name;
     const sourceFS = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
     const targetFS = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
-    const addRow = targetType.getAccessType() === undefined
+    const addRow = this.concreteAccessType(targetType) === undefined
       ? `INSERT INITIAL LINE INTO TABLE ${targetName}`
       : `APPEND INITIAL LINE TO ${targetName}`;
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
@@ -3821,6 +3819,11 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     return undefined;
+  }
+
+  /** the table kind of a table with a known line type, undefined for generic tables such as TYPE STANDARD TABLE */
+  private concreteAccessType(type: TableType): TableAccessType | undefined {
+    return type.getRowType() instanceof AnyType ? undefined : type.getAccessType();
   }
 
   /** a FIELD-SYMBOLS declaration is known to the scope under its bracketed spelling, so

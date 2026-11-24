@@ -8,12 +8,19 @@ import {SyntaxInput} from "../_syntax_input";
 export class Multiply implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
+    // both operands are converted into numbers, a reference cannot be
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      Source.runSyntax(s, input);
+      const type = Source.runSyntax(s, input);
+      if (Source.reportReferenceOperand(type, s, input)) {
+        return;
+      }
     }
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {
-      Target.runSyntax(t, input);
+      const type = Target.runSyntax(t, input);
+      if (Source.reportReferenceOperand(type, t, input)) {
+        return;
+      }
     }
 
   }

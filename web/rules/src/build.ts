@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as abaplint from "../../../packages/core/build/src";
-import {renderIcons, preamble, postamble, experimentalIcon, upportIcon, whitespaceIcon, namingIcon, syntaxIcon, styleguideIcon, downportIcon, quickfixIcon, securityIcon, singleFileIcon, performanceIcon, example} from "./common";
+import {renderIcons, preamble, postamble, experimentalIcon, upportIcon, whitespaceIcon, namingIcon, syntaxIcon, styleguideIcon, downportIcon, quickfixIcon, securityIcon, singleFileIcon, performanceIcon, example, escapeHtml} from "./common";
 import {buildRule} from "./rule_page";
 import {RuleTag} from "../../../packages/core/build/src/rules/_irule";
 
@@ -110,7 +110,7 @@ ${buildChips(json)}
     if (r.hasExample) {
       html += example();
     }
-    html += `<br>${r.shortDescription}<br><br></div>\n`;
+    html += `<br>${escapeHtml(r.shortDescription)}<br><br></div>\n`;
   }
   html += `</div>
 <script type="text/javascript">

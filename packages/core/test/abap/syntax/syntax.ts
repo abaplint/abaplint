@@ -2719,6 +2719,29 @@ ENDIF.`;
     expect(issues[0].getMessage()).to.include("sdfsdsdf");
   });
 
+  for (const addition of ["KIND", "OCCURS"]) {
+    it(`DESCRIBE TABLE, undeclared ${addition} output`, () => {
+      const issues = runProgram(`DATA tab TYPE STANDARD TABLE OF i.
+DESCRIBE TABLE tab ${addition} missing_output.`);
+      expect(issues.map(i => i.getMessage())).to.deep.equal(['"missing_output" not found, Target']);
+    });
+  }
+
+  it("DESCRIBE TABLE, declared and inline KIND and OCCURS outputs", () => {
+    const filename = "zfoobar.prog.abap";
+    const abap = `DATA tab TYPE STANDARD TABLE OF i.
+DATA table_kind TYPE c LENGTH 1.
+DATA initial_size TYPE i.
+DESCRIBE TABLE tab KIND table_kind OCCURS initial_size.
+DESCRIBE TABLE tab OCCURS DATA(inline_size) KIND DATA(inline_kind).`;
+    const reg = new Registry().addFile(new MemoryFile(filename, abap)).parse();
+    const result = new SyntaxLogic(reg, getABAPObjects(reg)[0]).run();
+    expect(result.issues.map(i => i.getMessage())).to.deep.equal([]);
+    const definitions = result.spaghetti.listDefinitions(filename);
+    expect(definitions.find(d => d.name === "INLINE_KIND")?.identifier.getType().toABAP()).to.equal("c LENGTH 1");
+    expect(definitions.find(d => d.name === "INLINE_SIZE")?.identifier.getType().toABAP()).to.equal("i");
+  });
+
   it("APPEND, expect class not found", () => {
     const abap = `
 TYPES: BEGIN OF ty_tab,
@@ -7197,7 +7220,7 @@ DATA date1 TYPE d.
 DATA date2 TYPE d.
 result = xsdbool( date1 < date2 + 2 ).`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal("Date cannot be compared with arithmetic result of type Integer");
+    expect(issues[0]?.getMessage()).to.include("Arithmetic expression cannot be compared with non-numeric operand");
   });
 
   it("but this is okay, comparing date with constant", () => {
@@ -11885,6 +11908,133 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
   });
 
+  it("packed without LENGTH and without DECIMALS, only the DECIMALS error", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Specify DECIMALS");
+  });
+
+  const lengthMissing: {name: string, abap: string}[] = [
+    {name: "TYPE c in class definition", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ddlanguage TYPE c.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "TYPE n", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE n.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "TYPE x", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE x.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "TYPE p with DECIMALS", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty TYPE p DECIMALS 2.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "implicit type", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "structure component", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_s,
+             f TYPE c,
+           END OF ty_s.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "implicit structure component", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_s,
+             f,
+           END OF ty_s.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`},
+    {name: "in a method", abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS m.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    TYPES ty TYPE c.
+  ENDMETHOD.
+ENDCLASS.`},
+    {name: "in an interface", abap: `INTERFACE lif.
+  TYPES ty TYPE c.
+ENDINTERFACE.`},
+  ];
+
+  for (const t of lengthMissing) {
+    it("TYPES without LENGTH in OO context, " + t.name, () => {
+      const issues = runProgram(t.abap);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("Specify LENGTH");
+    });
+  }
+
+  it("TYPES with LENGTH in OO context, ok", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_c1(1) TYPE c.
+    TYPES ty_c2 TYPE c LENGTH 1.
+    TYPES ty_n(3) TYPE n.
+    TYPES ty_x TYPE x LENGTH 2.
+    TYPES ty_p TYPE p LENGTH 8 DECIMALS 2.
+    TYPES ty_impl(1).
+    TYPES ty_ref TYPE ty_c1.
+    TYPES ty_d TYPE d.
+    TYPES ty_t TYPE t.
+    TYPES ty_str TYPE string.
+    TYPES ty_f TYPE f.
+    TYPES ty_tab TYPE STANDARD TABLE OF c WITH EMPTY KEY.
+    TYPES ty_range TYPE RANGE OF c.
+    CONSTANTS c_a TYPE c VALUE 'A'.
+    DATA: BEGIN OF ms,
+            f TYPE c,
+          END OF ms.
+    DATA mv TYPE n.
+    METHODS m.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+    DATA lv TYPE c.
+    DATA lv_x TYPE x.
+    DATA lv_impl.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
+  it("TYPES without LENGTH outside OO context, ok", () => {
+    const abap = `
+TYPES ty_c TYPE c.
+TYPES ty_p TYPE p.
+TYPES ty_impl.
+FORM f.
+  TYPES ty_c2 TYPE c.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equals(undefined);
+  });
+
   it("INSERT INITIAL LINE, ok", () => {
     const abap = `
 TYPES: BEGIN OF ty_language,
@@ -13452,6 +13602,25 @@ CREATE OBJECT <data> TYPE ('sdfsdffsd').`;
     const abap = `
 DATA foo TYPE REF TO object.
 WRITE / foo.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Source not character like");
+  });
+
+  it("ok, WRITE utclong", () => {
+    const abap = `
+DATA u TYPE utclong.
+DATA c TYPE c LENGTH 40.
+WRITE u.
+WRITE: / u, 'x'.
+WRITE u TO c.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, data reference not clike", () => {
+    const abap = `
+DATA r TYPE REF TO i.
+WRITE r.`;
     const issues = runProgram(abap);
     expect(issues[0].getMessage()).to.contain("Source not character like");
   });
@@ -17210,17 +17379,69 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("not compatible");
   });
 
-  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, below 7.55", () => {
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, error, #1772", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, error at v750 too, #1772", () => {
     const abap = `
 SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
     const issues = runProgram(abap, [], Release.v750);
-    expect(issues[0]?.getMessage()).to.contain("requires 7.55");
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
   });
 
-  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, 7.55", () => {
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, error in Cloud, #1772", () => {
     const abap = `
 SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
-    const issues = runProgram(abap, [], Release.v755);
+    const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Cloud);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT field list INTO CORRESPONDING FIELDS OF TABLE @DATA, error, #1772", () => {
+    const abap = `
+SELECT msgnr, text FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT APPENDING CORRESPONDING FIELDS OF TABLE @DATA, error, #1772", () => {
+    const abap = `
+SELECT * FROM t100 APPENDING CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT SINGLE INTO CORRESPONDING FIELDS OF @DATA, error, #1772", () => {
+    const abap = `
+SELECT SINGLE * FROM t100 INTO CORRESPONDING FIELDS OF @DATA(ls_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @FINAL, error, #1772", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @FINAL(lt_t100).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.contain("INTO CORRESPONDING");
+  });
+
+  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, declared, no follow-up error, #1772", () => {
+    const abap = `
+SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).
+LOOP AT lt_t100 INTO DATA(ls_t100).
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("SELECT SINGLE INTO CORRESPONDING FIELDS OF declared structure, ok, #1772", () => {
+    const abap = `
+DATA ls_t100 TYPE t100.
+SELECT SINGLE * FROM t100 INTO CORRESPONDING FIELDS OF @ls_t100.`;
+    const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -17258,20 +17479,6 @@ DATA lv_big TYPE int8.`;
     const abap = `
 DATA lv_big TYPE int8.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, no version set", () => {
-    const abap = `
-SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
-    const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.equal(undefined);
-  });
-
-  it("SELECT INTO CORRESPONDING FIELDS OF TABLE @DATA, Cloud", () => {
-    const abap = `
-SELECT * FROM t100 INTO CORRESPONDING FIELDS OF TABLE @DATA(lt_t100).`;
-    const issues = runProgram(abap, [], undefined, undefined, LanguageVersion.Cloud);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -18325,6 +18532,14 @@ ENDIF.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, DELETE generic sorted table field symbol", () => {
+    const abap = `
+FIELD-SYMBOLS <table> TYPE SORTED TABLE.
+DELETE <table>.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });
 
 ////////////////////////////////////////////////////////////
@@ -18445,6 +18660,27 @@ ENDFORM.`;
   it("A6, actual is elementary", () => {
     const abap = `
 DATA wa TYPE i.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("PERFORM parameter type not compatible, p");
+  });
+
+  it("A6b, actual is character-like and long enough, formal purely character-like", () => {
+    const abap = `
+DATA wa TYPE c LENGTH 20.
+PERFORM foo USING wa.
+FORM foo USING p STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("A6c, actual is character-like but shorter than the formal", () => {
+    const abap = `
+DATA wa TYPE c LENGTH 15.
 PERFORM foo USING wa.
 FORM foo USING p STRUCTURE zkey.
 ENDFORM.`;
@@ -18679,6 +18915,60 @@ DATA:   extra TYPE i,
       END OF gt.
 PERFORM foo TABLES gt USING wa.
 FORM foo TABLES p1 STRUCTURE zkey USING p2 STRUCTURE zkey.
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B12, TABLES formal STRUCTURE of a local data object, actual has character-like rows", () => {
+    const abap = `
+DATA: BEGIN OF zvbeln,
+        field1 TYPE c LENGTH 10,
+      END OF zvbeln.
+
+DATA vbeln_in LIKE zvbeln-field1 OCCURS 0 WITH HEADER LINE.
+
+FORM foo TABLES t_vbeln STRUCTURE zvbeln.
+ENDFORM.
+
+START-OF-SELECTION.
+  PERFORM foo TABLES vbeln_in.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B13, DELETE body of TABLES formal STRUCTURE of a local data object", () => {
+    const abap = `
+DATA: BEGIN OF wakp,
+        foo TYPE c LENGTH 10,
+      END OF wakp.
+FORM get_wakh TABLES pt_wakp STRUCTURE wakp.
+  DELETE pt_wakp[].
+ENDFORM.`;
+    const issues = runFixtures(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("B14, TABLES formal STRUCTURE of a local table with header line", () => {
+    const abap = `
+DATA: BEGIN OF gt_orders OCCURS 0,
+        id  TYPE i,
+        qty TYPE i,
+      END OF gt_orders.
+
+START-OF-SELECTION.
+  gt_orders-id = 1.
+  gt_orders-qty = 5.
+  APPEND gt_orders.
+  gt_orders-id = 2.
+  gt_orders-qty = 7.
+  APPEND gt_orders.
+  PERFORM show TABLES gt_orders.
+
+FORM show TABLES pt_orders STRUCTURE gt_orders.
+  LOOP AT pt_orders.
+    WRITE: / pt_orders-id, pt_orders-qty.
+  ENDLOOP.
 ENDFORM.`;
     const issues = runFixtures(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
@@ -19293,6 +19583,13 @@ ENDCLASS.`;
 
   it("ok below v756, typed target", () => {
     const issues = runProgram(method(`    ls_row = CORRESPONDING #( is_row ).`), [], Release.v750);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok below v756, target typed with data", () => {
+    const issues = runProgram(method(`    FIELD-SYMBOLS <row_data> TYPE data.
+    ASSIGN cs_any TO <row_data>.
+    <row_data> = CORRESPONDING #( is_row ).`), [], Release.v750);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
@@ -20038,19 +20335,35 @@ INSERT LINES OF lt_std INTO TABLE lt_map.`));
 
   it("ok, APPEND TO generic tables", () => {
     const issues = runProgram(`
-FORM foo CHANGING ct_any TYPE ANY TABLE ct_index TYPE INDEX TABLE ct_hashed TYPE HASHED TABLE.
+FORM foo CHANGING ct_any TYPE ANY TABLE ct_index TYPE INDEX TABLE ct_sorted TYPE SORTED TABLE.
   DATA ls TYPE i.
   FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
   FIELD-SYMBOLS <lt_index> TYPE INDEX TABLE.
   APPEND INITIAL LINE TO ct_index ASSIGNING FIELD-SYMBOL(<lv_index>).
   APPEND INITIAL LINE TO ct_any ASSIGNING FIELD-SYMBOL(<lv_any>).
-  APPEND INITIAL LINE TO ct_hashed ASSIGNING FIELD-SYMBOL(<lv_hashed>).
+  APPEND INITIAL LINE TO ct_sorted ASSIGNING FIELD-SYMBOL(<lv_sorted>).
   ASSIGN ct_any TO <lt_any>.
   APPEND ls TO <lt_any>.
   ASSIGN ct_index TO <lt_index>.
   APPEND ls TO <lt_index>.
 ENDFORM.`);
     expect(issues.length).to.equal(0);
+  });
+
+  it("error, APPEND TO generic HASHED TABLE", () => {
+    const issues = runProgram(`
+FORM foo CHANGING ct_hashed TYPE HASHED TABLE.
+  APPEND INITIAL LINE TO ct_hashed ASSIGNING FIELD-SYMBOL(<lv_hashed>).
+ENDFORM.`);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("error, SORT generic SORTED TABLE", () => {
+    const issues = runProgram(`
+FORM foo CHANGING ct_sorted TYPE SORTED TABLE.
+  SORT ct_sorted.
+ENDFORM.`);
+    expect(issues.length).to.equal(1);
   });
 
   it("ok, APPEND TO a void type", () => {
@@ -21009,5 +21322,879 @@ CLASS lcl IMPLEMENTATION.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
+  });
+  const replaceNotCharLike: {name: string, abap: string}[] = [
+    {name: "WITH integer, inline declaration", abap: `DATA lv_uri TYPE string.
+lv_uri = '/repasdpulls/{pull_number}sdfds'.
+DATA(pull_number) = 1.
+REPLACE ALL OCCURRENCES OF '{pull_number}' IN lv_uri WITH pull_number.`},
+    {name: "WITH integer literal", abap: `DATA lv_uri TYPE string.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH 1.`},
+    {name: "WITH xstring", abap: `DATA lv_uri TYPE string.
+DATA lv_x TYPE xstring.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH lv_x.`},
+    {name: "pattern integer", abap: `DATA lv_uri TYPE string.
+DATA lv_i TYPE i.
+REPLACE ALL OCCURRENCES OF lv_i IN lv_uri WITH 'a'.`},
+    {name: "IN integer", abap: `DATA lv_i TYPE i.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_i WITH 'b'.`},
+    {name: "short form, WITH integer", abap: `DATA lv_uri TYPE string.
+DATA lv_i TYPE i.
+REPLACE 'a' WITH lv_i INTO lv_uri.`},
+    {name: "SECTION, WITH integer", abap: `DATA lv_uri TYPE string.
+DATA lv_i TYPE i.
+REPLACE SECTION OFFSET 1 LENGTH 1 OF lv_uri WITH lv_i.`},
+    {name: "BYTE MODE, WITH integer", abap: `DATA lv_x TYPE xstring.
+DATA lv_i TYPE i.
+REPLACE ALL OCCURRENCES OF lv_x IN lv_x WITH lv_i IN BYTE MODE.`},
+    {name: "IN TABLE, row type integer", abap: `DATA lt_tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+REPLACE ALL OCCURRENCES OF 'a' IN TABLE lt_tab WITH 'b'.`},
+  ];
+  for (const t of replaceNotCharLike) {
+    it("REPLACE, not character or byte like: " + t.name, () => {
+      const issues = runProgram(t.abap);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("REPLACE");
+    });
+  }
+
+  it("REPLACE, character like operands are fine", () => {
+    const abap = `TYPES: BEGIN OF ty, a TYPE c LENGTH 2, b TYPE n LENGTH 2, END OF ty.
+DATA ls TYPE ty.
+DATA lv_uri TYPE string.
+DATA lv_n TYPE n LENGTH 3.
+DATA lv_d TYPE d.
+DATA lv_c TYPE c LENGTH 3.
+DATA lv_i TYPE i.
+DATA lo_regex TYPE REF TO cl_abap_regex.
+DATA lt_tab TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA lv_x TYPE xstring.
+DATA lv_y TYPE x LENGTH 2.
+REPLACE ALL OCCURRENCES OF lv_n IN lv_uri WITH lv_d.
+REPLACE FIRST OCCURRENCE OF 'a' IN lv_uri WITH lv_c.
+REPLACE 'a' WITH lv_n INTO lv_uri.
+REPLACE SECTION OFFSET 1 LENGTH 1 OF lv_uri WITH lv_c.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH ls.
+REPLACE ALL OCCURRENCES OF 'a' IN ls WITH 'b'.
+REPLACE ALL OCCURRENCES OF REGEX lo_regex IN lv_uri WITH 'b'.
+REPLACE ALL OCCURRENCES OF 'a' IN TABLE lt_tab WITH 'b'.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH |{ 1 }|.
+REPLACE ALL OCCURRENCES OF 'a' IN lv_uri WITH 'b' REPLACEMENT COUNT lv_i REPLACEMENT OFFSET lv_i.
+REPLACE ALL OCCURRENCES OF lv_y IN lv_x WITH lv_y IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+});
+
+describe("syntax.ts, arithmetic with a reference, #3234", () => {
+  const ref = `DATA foo TYPE REF TO object.
+DATA dref TYPE REF TO i.
+DATA res TYPE i.
+`;
+
+  const errors: {name: string, code: string}[] = [
+    {name: "inline declaration, foo - 1", code: `DATA(inl) = foo - 1.`},
+    {name: "reference on the right, 1 + foo", code: `res = 1 + foo.`},
+    {name: "data reference", code: `res = dref * 2.`},
+    {name: "power", code: `res = dref ** 2.`},
+    {name: "MOD", code: `res = foo MOD 2.`},
+    {name: "DIV, in the middle", code: `res = 1 + foo DIV 2.`},
+    {name: "parentheses", code: `res = 1 + ( foo ) + 2.`},
+    {name: "sign", code: `res = - foo.`},
+    {name: "in a comparison", code: `IF foo + 1 > 2.\nENDIF.`},
+    {name: "functional method returning a reference", code: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(ref) TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  res = lcl=>get( ) + 1.`},
+    {name: "ADD source", code: `ADD foo TO res.`},
+    {name: "ADD target", code: `ADD 1 TO foo.`},
+    {name: "SUBTRACT", code: `SUBTRACT dref FROM res.`},
+    {name: "MULTIPLY", code: `MULTIPLY foo BY 2.`},
+    {name: "DIVIDE", code: `DIVIDE res BY dref.`},
+  ];
+
+  for (const e of errors) {
+    it("error, " + e.name, () => {
+      const issues = runProgram(ref + e.code);
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("is a reference, it cannot be used in a calculation");
+    });
+  }
+
+  it("ok, dereferenced", () => {
+    const issues = runProgram(ref + `res = dref->* - 1.
+res = 1 + dref->*.
+res = - dref->*.
+ADD dref->* TO res.`);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, attribute of a referenced object", () => {
+    const issues = runProgram(`CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA attr TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA ref TYPE REF TO lcl.
+  DATA res TYPE i.
+  res = ref->attr + 1.
+  res = 1 - ref->attr.`);
+    expect(issues.length).to.equals(0);
+  });
+});
+
+describe("syntax.ts, result of a functional method passed to a parameter, #3585", () => {
+  const types: {[name: string]: string} = {
+    c2: "c LENGTH 2", c4: "c LENGTH 4", c10: "c LENGTH 10", n2: "n LENGTH 2", n4: "n LENGTH 4",
+    x2: "x LENGTH 2", x4: "x LENGTH 4", i: "i", int8: "int8", p: "p LENGTH 8 DECIMALS 2",
+    p3: "p LENGTH 8 DECIMALS 3", f: "f", df: "decfloat34", df16: "decfloat16", d: "d", t: "t", str: "string",
+    xstr: "xstring", utc: "utclong",
+    gc: "c", gn: "n", gx: "x", gp: "p", num: "numeric", cs: "csequence", xs: "xsequence", cl: "clike",
+    simple: "simple", any: "any"};
+
+  function build(call: string): string {
+    let def = "";
+    let impl = "";
+    for (const name of Object.keys(types)) {
+      let type = types[name];
+      if (["gc", "gn", "gx", "gp", "num", "cs", "xs", "cl", "simple", "any"].includes(name) === false) {
+        def += `    TYPES ty_${name} TYPE ${type}.\n`;
+        type = "ty_" + name;
+        def += `    METHODS r_${name} RETURNING VALUE(r) TYPE ${type}.\n`;
+        impl += `  METHOD r_${name}.\n  ENDMETHOD.\n`;
+      }
+      def += `    METHODS i_${name} IMPORTING foo TYPE ${type}.\n`;
+      impl += `  METHOD i_${name}.\n  ENDMETHOD.\n`;
+    }
+    return `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+${def}    METHODS i_val IMPORTING VALUE(foo) TYPE ty_c4.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD i_val.
+  ENDMETHOD.
+${impl}ENDCLASS.
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  ${call}`;
+  }
+
+  const errors = [
+    "lo->i_c4( lo->r_str( ) ).",
+    "lo->i_c4( foo = lo->r_str( ) ).",
+    "lo->i_c4( EXPORTING foo = lo->r_str( ) ).",
+    "lo->i_val( lo->r_str( ) ).",
+    "lo->i_c4( lo->r_c10( ) ).",
+    "lo->i_c4( lo->r_i( ) ).",
+    "lo->i_c4( lo->r_n4( ) ).",
+    "lo->i_c4( lo->r_x2( ) ).",
+    "lo->i_n4( lo->r_c4( ) ).",
+    "lo->i_n4( lo->r_str( ) ).",
+    "lo->i_x2( lo->r_c4( ) ).",
+    "lo->i_x4( lo->r_xstr( ) ).",
+    "lo->i_i( lo->r_str( ) ).",
+    "lo->i_i( lo->r_c4( ) ).",
+    "lo->i_i( lo->r_n4( ) ).",
+    "lo->i_i( lo->r_d( ) ).",
+    "lo->i_str( lo->r_i( ) ).",
+    "lo->i_str( lo->r_n4( ) ).",
+    "lo->i_str( lo->r_d( ) ).",
+    "lo->i_str( lo->r_xstr( ) ).",
+    "lo->i_xstr( lo->r_str( ) ).",
+    "lo->i_d( lo->r_c4( ) ).",
+    "lo->i_d( lo->r_t( ) ).",
+    "lo->i_d( lo->r_i( ) ).",
+    "lo->i_d( lo->r_str( ) ).",
+    "lo->i_gc( lo->r_str( ) ).",
+    "lo->i_gc( lo->r_n4( ) ).",
+    "lo->i_gn( lo->r_c4( ) ).",
+    "lo->i_gn( lo->r_str( ) ).",
+    "lo->i_gx( lo->r_xstr( ) ).",
+    "lo->i_gp( lo->r_c4( ) ).",
+    "lo->i_num( lo->r_str( ) ).",
+    "lo->i_num( lo->r_n4( ) ).",
+    "lo->i_num( lo->r_d( ) ).",
+    "lo->i_cs( lo->r_n4( ) ).",
+    "lo->i_cs( lo->r_d( ) ).",
+    "lo->i_cs( lo->r_xstr( ) ).",
+    "lo->i_xs( lo->r_c4( ) ).",
+    "lo->i_xs( lo->r_str( ) ).",
+    "lo->i_cl( lo->r_i( ) ).",
+    "lo->i_cl( lo->r_x2( ) ).",
+    "lo->i_cl( lo->r_f( ) ).",
+    "lo->i_cl( lo->r_xstr( ) ).",
+    "lo->i_str( lo->r_t( ) ).",
+    "lo->i_cs( lo->r_x2( ) ).",
+    "lo->i_i( lo->r_xstr( ) ).",
+    "lo->i_gc( lo->r_d( ) ).",
+    "lo->i_gx( lo->r_i( ) ).",
+    "lo->i_x2( lo->r_n4( ) ).",
+    "lo->i_xstr( lo->r_i( ) ).",
+    "lo->i_xs( lo->r_d( ) ).",
+    "lo->i_utc( lo->r_str( ) ).",
+    "lo->i_utc( lo->r_c4( ) ).",
+    "lo->i_utc( lo->r_i( ) ).",
+    "lo->i_utc( lo->r_d( ) ).",
+    "lo->i_str( lo->r_utc( ) ).",
+    "lo->i_c4( lo->r_utc( ) ).",
+    "lo->i_i( lo->r_utc( ) ).",
+    "lo->i_cl( lo->r_utc( ) ).",
+    "lo->i_cs( lo->r_utc( ) ).",
+    "lo->i_num( lo->r_utc( ) ).",
+  ];
+
+  for (const call of errors) {
+    it("error, " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+    });
+  }
+
+  const ok = [
+    "lo->i_c4( lo->r_c2( ) ).",
+    "lo->i_c4( lo->r_c4( ) ).",
+    "lo->i_n4( lo->r_n2( ) ).",
+    "lo->i_x4( lo->r_x2( ) ).",
+    "lo->i_str( lo->r_c10( ) ).",
+    "lo->i_str( lo->r_str( ) ).",
+    "lo->i_xstr( lo->r_x2( ) ).",
+    "lo->i_int8( lo->r_i( ) ).",
+    "lo->i_i( lo->r_int8( ) ).",
+    "lo->i_i( lo->r_p( ) ).",
+    "lo->i_i( lo->r_f( ) ).",
+    "lo->i_p( lo->r_i( ) ).",
+    "lo->i_p3( lo->r_p( ) ).",
+    "lo->i_f( lo->r_i( ) ).",
+    "lo->i_df( lo->r_f( ) ).",
+    "lo->i_p( lo->r_df( ) ).",
+    "lo->i_d( lo->r_d( ) ).",
+    "lo->i_t( lo->r_t( ) ).",
+    "lo->i_gc( lo->r_c4( ) ).",
+    "lo->i_gn( lo->r_n4( ) ).",
+    "lo->i_gx( lo->r_x2( ) ).",
+    "lo->i_gp( lo->r_i( ) ).",
+    "lo->i_gp( lo->r_f( ) ).",
+    "lo->i_num( lo->r_i( ) ).",
+    "lo->i_cs( lo->r_str( ) ).",
+    "lo->i_cs( lo->r_c4( ) ).",
+    "lo->i_xs( lo->r_x2( ) ).",
+    "lo->i_cl( lo->r_str( ) ).",
+    "lo->i_cl( lo->r_n4( ) ).",
+    "lo->i_simple( lo->r_str( ) ).",
+    "lo->i_any( lo->r_str( ) ).",
+    "lo->i_cl( lo->r_d( ) ).",
+    "lo->i_cl( lo->r_t( ) ).",
+    "lo->i_xs( lo->r_xstr( ) ).",
+    "lo->i_p( lo->r_df16( ) ).",
+    "lo->i_df16( lo->r_i( ) ).",
+    "lo->i_utc( lo->r_utc( ) ).",
+    "lo->i_simple( lo->r_utc( ) ).",
+    "lo->i_c4( |abc| ).",
+    "lo->i_c4( `ab` && `cd` ).",
+    "lo->i_c4( to_upper( `ab` ) ).",
+  ];
+
+  for (const call of ok) {
+    it("ok, " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(0);
+    });
+  }
+
+  it("error, the example from the issue", () => {
+    const issues = runProgram(`CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_val TYPE c LENGTH 4.
+    METHODS ret RETURNING VALUE(sdf) TYPE string.
+    METHODS imp IMPORTING foo TYPE ty_val.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD ret.
+  ENDMETHOD.
+  METHOD imp.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  lo->imp( lo->ret( ) ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+  });
+});
+
+describe("syntax.ts, actual parameter compatible with a fully typed formal parameter, #4676", () => {
+  function build(call: string): string {
+    return `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_s1, a TYPE c LENGTH 4, b TYPE i, END OF ty_s1.
+    TYPES: BEGIN OF ty_s2, x TYPE c LENGTH 4, y TYPE i, END OF ty_s2.
+    TYPES: BEGIN OF ty_s3, x TYPE c LENGTH 8, END OF ty_s3.
+    TYPES ty_t1 TYPE STANDARD TABLE OF ty_s1 WITH DEFAULT KEY.
+    TYPES ty_t3 TYPE SORTED TABLE OF ty_s1 WITH UNIQUE KEY a.
+    TYPES ty_th TYPE HASHED TABLE OF ty_s1 WITH UNIQUE KEY a.
+    TYPES ty_rs1 TYPE REF TO ty_s1.
+    TYPES ty_ri TYPE REF TO i.
+    METHODS imp_s3 IMPORTING foo TYPE ty_s3.
+    METHODS imp_t1 IMPORTING foo TYPE ty_t1.
+    METHODS imp_t3 IMPORTING foo TYPE ty_t3.
+    METHODS imp_std IMPORTING foo TYPE STANDARD TABLE.
+    METHODS imp_srt IMPORTING foo TYPE SORTED TABLE.
+    METHODS imp_hsh IMPORTING foo TYPE HASHED TABLE.
+    METHODS imp_idx IMPORTING foo TYPE INDEX TABLE.
+    METHODS imp_any IMPORTING foo TYPE ANY TABLE.
+    METHODS imp_rs1 IMPORTING foo TYPE ty_rs1.
+    METHODS imp_ri IMPORTING foo TYPE ty_ri.
+    METHODS imp_rd IMPORTING foo TYPE REF TO data.
+    METHODS exp_rd EXPORTING foo TYPE REF TO data.
+    METHODS exp_t3 EXPORTING foo TYPE ty_t3.
+    METHODS chg_rd CHANGING foo TYPE REF TO data.
+    METHODS chg_rs1 CHANGING foo TYPE ty_rs1.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD imp_s3. ENDMETHOD.
+  METHOD imp_t1. ENDMETHOD.
+  METHOD imp_t3. ENDMETHOD.
+  METHOD imp_std. ENDMETHOD.
+  METHOD imp_srt. ENDMETHOD.
+  METHOD imp_hsh. ENDMETHOD.
+  METHOD imp_idx. ENDMETHOD.
+  METHOD imp_any. ENDMETHOD.
+  METHOD imp_rs1. ENDMETHOD.
+  METHOD imp_ri. ENDMETHOD.
+  METHOD imp_rd. ENDMETHOD.
+  METHOD exp_rd. ENDMETHOD.
+  METHOD exp_t3. ENDMETHOD.
+  METHOD chg_rd. ENDMETHOD.
+  METHOD chg_rs1. ENDMETHOD.
+ENDCLASS.
+FORM f_s3 USING foo TYPE lcl=>ty_s3.
+ENDFORM.
+FORM f_rs1 USING foo TYPE lcl=>ty_rs1.
+ENDFORM.
+FORM f_t1 USING foo TYPE lcl=>ty_t1.
+ENDFORM.
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  DATA c8 TYPE c LENGTH 8.
+  DATA c4 TYPE c LENGTH 4.
+  DATA str TYPE string.
+  DATA n8 TYPE n LENGTH 8.
+  DATA t1 TYPE lcl=>ty_t1.
+  DATA t3 TYPE lcl=>ty_t3.
+  DATA th TYPE lcl=>ty_th.
+  DATA rdata TYPE REF TO data.
+  DATA rstr TYPE REF TO string.
+  DATA rs1 TYPE REF TO lcl=>ty_s1.
+  DATA rs2 TYPE REF TO lcl=>ty_s2.
+  DATA rc4 LIKE REF TO c4.
+  DATA ri TYPE REF TO i.
+  CONSTANTS cc8 TYPE c LENGTH 8 VALUE 'abc'.
+  ${call}`;
+  }
+
+  const errors = [
+    "lo->imp_s3( c8 ).",
+    "lo->imp_s3( c4 ).",
+    "lo->imp_s3( str ).",
+    "lo->imp_s3( n8 ).",
+    "lo->imp_s3( cc8 ).",
+    "lo->imp_s3( 'abcdefgh' ).",
+    "lo->imp_s3( `abc` ).",
+    "lo->imp_t1( t3 ).",
+    "lo->imp_t1( th ).",
+    "lo->imp_t3( t1 ).",
+    "lo->imp_t3( th ).",
+    "lo->imp_std( t3 ).",
+    "lo->imp_std( th ).",
+    "lo->imp_srt( t1 ).",
+    "lo->imp_srt( th ).",
+    "lo->imp_hsh( t1 ).",
+    "lo->imp_hsh( t3 ).",
+    "lo->imp_idx( th ).",
+    "lo->imp_rs1( rdata ).",
+    "lo->imp_rs1( rs2 ).",
+    "lo->imp_ri( rstr ).",
+    "lo->imp_ri( rc4 ).",
+    "lo->exp_rd( IMPORTING foo = rs1 ).",
+    "lo->exp_t3( IMPORTING foo = t1 ).",
+    "lo->chg_rd( CHANGING foo = rs1 ).",
+    "lo->chg_rs1( CHANGING foo = rdata ).",
+    "PERFORM f_s3 USING c8.",
+    "PERFORM f_rs1 USING rdata.",
+    "PERFORM f_t1 USING t3.",
+  ];
+  for (const call of errors) {
+    it("error: " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(1, call);
+    });
+  }
+
+  const ok = [
+    "lo->imp_std( t1 ).",
+    "lo->imp_srt( t3 ).",
+    "lo->imp_hsh( th ).",
+    "lo->imp_idx( t1 ).",
+    "lo->imp_idx( t3 ).",
+    "lo->imp_any( th ).",
+    "lo->imp_rs1( rs1 ).",
+    "lo->imp_ri( ri ).",
+    "lo->imp_rd( rs1 ).",
+    "lo->imp_rd( rdata ).",
+    "lo->exp_rd( IMPORTING foo = rdata ).",
+  ];
+  for (const call of ok) {
+    it("ok: " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.map(i => i.getMessage())).to.deep.equal([], call);
+    });
+  }
+});
+
+describe("syntax.ts, arithmetic expression compared with a non-numeric operand, #2067", () => {
+  const prefix = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS str RETURNING VALUE(r) TYPE string.
+    CLASS-METHODS num RETURNING VALUE(r) TYPE i.
+    CLASS-METHODS run IMPORTING cl TYPE clike cs TYPE csequence xs TYPE xsequence sp TYPE simple nu TYPE numeric.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD str.
+  ENDMETHOD.
+  METHOD num.
+  ENDMETHOD.
+  METHOD run.
+    TYPES: BEGIN OF ty, a TYPE c LENGTH 1, END OF ty.
+    DATA lv_i TYPE i.
+    DATA lv_p TYPE p LENGTH 8 DECIMALS 2.
+    DATA lv_f TYPE f.
+    DATA lv_8 TYPE int8.
+    DATA lv_df TYPE decfloat34.
+    DATA lv_c TYPE c LENGTH 5.
+    DATA lv_s TYPE string.
+    DATA lv_n TYPE n LENGTH 5.
+    DATA lv_d TYPE d.
+    DATA lv_t TYPE t.
+    DATA lv_x TYPE x LENGTH 4.
+    DATA lv_xs TYPE xstring.
+    DATA ls TYPE ty.
+    CONSTANTS lc_c TYPE c LENGTH 1 VALUE '1'.
+    FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <c> TYPE c.`;
+  const suffix = `
+  ENDMETHOD.
+ENDCLASS.`;
+
+  const errors: {name: string, code: string}[] = [
+    {name: "string, from the issue", code: `IF lv_i * 2 > lv_s. ENDIF.`},
+    {name: "xstring, from the issue", code: `IF lv_xs = lv_xs + 1. ENDIF.`},
+    {name: "c", code: `IF lv_c = lv_i + 1. ENDIF.`},
+    {name: "n", code: `IF lv_n = lv_i + 1. ENDIF.`},
+    {name: "d", code: `IF lv_d = lv_i + 1. ENDIF.`},
+    {name: "t", code: `IF lv_t = lv_i + 1. ENDIF.`},
+    {name: "x", code: `IF lv_x = lv_i + 1. ENDIF.`},
+    {name: "text literal", code: `IF '5' = lv_i + 1. ENDIF.`},
+    {name: "string literal", code: `IF \`5\` = lv_i + 1. ENDIF.`},
+    {name: "constant", code: `IF lc_c = lv_i + 1. ENDIF.`},
+    {name: "field symbol TYPE c", code: `IF <c> = lv_i + 1. ENDIF.`},
+    {name: "clike", code: `IF cl = lv_i + 1. ENDIF.`},
+    {name: "csequence", code: `IF cs = lv_i + 1. ENDIF.`},
+    {name: "xsequence", code: `IF xs = lv_i + 1. ENDIF.`},
+    {name: "structure", code: `IF ls = lv_i + 1. ENDIF.`},
+    {name: "structure component", code: `IF ls-a = lv_i + 1. ENDIF.`},
+    {name: "offset and length", code: `IF lv_c+1(2) = lv_i + 1. ENDIF.`},
+    {name: "method result", code: `IF lcl=>str( ) = lv_i + 1. ENDIF.`},
+    {name: "CONV string", code: `IF CONV string( lv_i ) = lv_i + 1. ENDIF.`},
+    {name: "arithmetic on the left", code: `IF lv_i + 1 <> lv_c. ENDIF.`},
+    {name: "power", code: `IF lv_c = 2 ** lv_i. ENDIF.`},
+    {name: "MOD", code: `IF lv_c = lv_i MOD 2. ENDIF.`},
+    {name: "unary minus", code: `IF lv_c = - lv_i. ENDIF.`},
+    {name: "unary minus, integer", code: `IF lv_c = - 1. ENDIF.`},
+    {name: "unary plus", code: `IF + lv_i = lv_c. ENDIF.`},
+    {name: "in parentheses", code: `IF lv_c = ( lv_i + 1 ). ENDIF.`},
+    {name: "parentheses as operand", code: `IF lv_c = lv_i * ( 2 ). ENDIF.`},
+    {name: "built-in function as operand", code: `IF lv_c = strlen( lv_c ) + 1. ENDIF.`},
+    {name: "method call as operand", code: `IF lv_c = lcl=>num( ) + 1. ENDIF.`},
+    {name: "CONV as operand", code: `IF lv_c = CONV i( lv_c ) + 1. ENDIF.`},
+    {name: "BETWEEN, arithmetic first", code: `IF lv_i + 1 BETWEEN lv_c AND 5. ENDIF.`},
+    {name: "BETWEEN, arithmetic lower bound", code: `IF lv_c BETWEEN lv_i + 1 AND 5. ENDIF.`},
+    {name: "BETWEEN, arithmetic upper bound", code: `IF lv_c BETWEEN 1 AND lv_i + 1. ENDIF.`},
+    {name: "xsdbool", code: `DATA(lv_b) = xsdbool( lv_c = lv_i + 1 ).`},
+    {name: "WHILE", code: `WHILE lv_c = lv_i + 1. ENDWHILE.`},
+  ];
+
+  for (const e of errors) {
+    it("error, " + e.name, () => {
+      const issues = runProgram(prefix + "\n    " + e.code + suffix);
+      expect(issues[0]?.getMessage()).to.include("Arithmetic expression cannot be compared with non-numeric operand");
+    });
+  }
+
+  const okay: {name: string, code: string}[] = [
+    {name: "plus in front, from the issue", code: `IF + lv_xs = lv_xs + 1. ENDIF.`},
+    {name: "plus in front, string", code: `IF lv_i * 2 > + lv_s. ENDIF.`},
+    {name: "i", code: `IF lv_i = lv_i + 1. ENDIF.`},
+    {name: "p", code: `IF lv_p = lv_i + 1. ENDIF.`},
+    {name: "f", code: `IF lv_f = lv_i + 1. ENDIF.`},
+    {name: "int8", code: `IF lv_8 = lv_i + 1. ENDIF.`},
+    {name: "decfloat34", code: `IF lv_df = lv_i + 1. ENDIF.`},
+    {name: "integer literal", code: `IF 5 = lv_i + 1. ENDIF.`},
+    {name: "negative integer literal", code: `IF lv_c = -1. ENDIF.`},
+    {name: "field symbol TYPE any", code: `IF <any> = lv_i + 1. ENDIF.`},
+    {name: "simple", code: `IF sp = lv_i + 1. ENDIF.`},
+    {name: "numeric", code: `IF nu = lv_i + 1. ENDIF.`},
+    {name: "arithmetic on both sides", code: `IF lv_c + 1 = lv_i + 1. ENDIF.`},
+    {name: "character operand inside the arithmetic expression", code: `IF lv_i = lv_c + 1. ENDIF.`},
+    {name: "single operand in parentheses", code: `IF lv_c = ( lv_i ). ENDIF.`},
+    {name: "built-in function alone", code: `IF lv_c = abs( lv_i ). ENDIF.`},
+    {name: "method call alone", code: `IF lv_c = lcl=>num( ). ENDIF.`},
+    {name: "concatenation", code: `IF lv_c = lv_c && 'a'. ENDIF.`},
+    {name: "bit expression", code: `IF lv_xs = lv_xs BIT-AND lv_xs. ENDIF.`},
+  ];
+
+  for (const o of okay) {
+    it("okay, " + o.name, () => {
+      const issues = runProgram(prefix + "\n    " + o.code + suffix);
+      expect(issues.length).to.equal(0, issues.map(i => i.getMessage()).join(", "));
+    });
+  }
+});
+
+describe("syntax.ts, VALUE component of reference type, #3226", () => {
+  const errors: {name: string, abap: string}[] = [
+    {name: "character literal into REF TO object", abap: `
+DATA: BEGIN OF result,
+        locals TYPE REF TO object,
+      END OF result.
+result = VALUE #( locals = '' ).`},
+    {name: "integer literal into REF TO object", abap: `
+DATA: BEGIN OF result,
+        locals TYPE REF TO object,
+      END OF result.
+result = VALUE #( locals = 1 ).`},
+    {name: "string template into REF TO object", abap: `
+DATA: BEGIN OF result,
+        locals TYPE REF TO object,
+      END OF result.
+result = VALUE #( locals = |a| ).`},
+    {name: "character literal into REF TO data", abap: `
+DATA: BEGIN OF result,
+        locals TYPE REF TO data,
+      END OF result.
+result = VALUE #( locals = '' ).`},
+    {name: "object reference into REF TO data", abap: `
+DATA: BEGIN OF result,
+        locals TYPE REF TO data,
+      END OF result.
+DATA obj TYPE REF TO object.
+result = VALUE #( locals = obj ).`},
+    {name: "character literal into REF TO object, table row", abap: `
+TYPES: BEGIN OF ty_row,
+         locals TYPE REF TO object,
+       END OF ty_row.
+TYPES ty_tab TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+DATA(tab) = VALUE ty_tab( ( locals = '' ) ).`},
+    {name: "character literal into REF TO object, nested component", abap: `
+DATA: BEGIN OF result,
+        BEGIN OF sub,
+          locals TYPE REF TO object,
+        END OF sub,
+      END OF result.
+result = VALUE #( sub-locals = '' ).`},
+    {name: "functional method returning an object reference into REF TO data", abap: `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(r) TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA: BEGIN OF result,
+          dref TYPE REF TO data,
+        END OF result.
+  result = VALUE #( dref = lcl=>get( ) ).`},
+  ];
+
+  for (const e of errors) {
+    it(e.name + ", error", () => {
+      const issues = runProgram(e.abap);
+      expect(issues.length).to.equal(1);
+    });
+  }
+
+  it("references into reference components, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get RETURNING VALUE(r) TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA: BEGIN OF result,
+          locals TYPE REF TO object,
+          lref   TYPE REF TO lcl,
+          dref   TYPE REF TO data,
+          iref   TYPE REF TO i,
+        END OF result.
+  DATA int TYPE i.
+  DATA obj TYPE REF TO object.
+  result = VALUE #( locals = NEW lcl( ) lref = lcl=>get( ) dref = REF #( int ) iref = REF #( int ) ).
+  result = VALUE #( locals = VALUE #( ) dref = NEW i( ) iref = NEW #( ) lref = CAST #( obj ) ).
+  result = VALUE #( locals = lcl=>get( ) lref = NEW #( ) dref = result-iref ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("void reference component, ok", () => {
+    const abap = `
+DATA: BEGIN OF result,
+        locals TYPE REF TO cl_void_class,
+      END OF result.
+result = VALUE #( locals = '' ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CORRESPONDING # into generic field symbol from dereferenced data ref, 750, ok", () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         bar TYPE i,
+       END OF ty.
+DATA c_table TYPE STANDARD TABLE OF ty WITH EMPTY KEY.
+DATA c_line LIKE LINE OF c_table.
+DATA lref TYPE REF TO data.
+CREATE DATA lref LIKE LINE OF c_table.
+ASSIGN lref->* TO FIELD-SYMBOL(<line>).
+<line> = CORRESPONDING #( c_line ).`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues.length).to.equal(0);
+  });
+});
+
+describe("syntax.ts, functional method result into a structure, table or reference parameter, #4675", () => {
+  function build(call: string): string {
+    return `INTERFACE lif.
+ENDINTERFACE.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    TYPES: BEGIN OF ty_s1, a TYPE c LENGTH 4, b TYPE i, END OF ty_s1.
+    TYPES: BEGIN OF ty_s2, a TYPE c LENGTH 4, b TYPE i, END OF ty_s2.
+    TYPES: BEGIN OF ty_s3, x TYPE c LENGTH 8, END OF ty_s3.
+    TYPES ty_c4 TYPE c LENGTH 4.
+    TYPES ty_c8 TYPE c LENGTH 8.
+    TYPES ty_tc4 TYPE STANDARD TABLE OF ty_c4 WITH DEFAULT KEY.
+    TYPES ty_tc4b TYPE STANDARD TABLE OF ty_c4 WITH DEFAULT KEY.
+    TYPES ty_tstr TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    TYPES ty_robj TYPE REF TO object.
+    TYPES ty_rlcl TYPE REF TO lcl.
+    TYPES ty_rlif TYPE REF TO lif.
+    TYPES ty_rdata TYPE REF TO data.
+    TYPES ty_ri TYPE REF TO i.
+    TYPES ty_rstr TYPE REF TO string.
+    METHODS get_s2 RETURNING VALUE(r) TYPE ty_s2.
+    METHODS get_s3 RETURNING VALUE(r) TYPE ty_s3.
+    METHODS get_tc4 RETURNING VALUE(r) TYPE ty_tc4.
+    METHODS get_obj RETURNING VALUE(r) TYPE ty_robj.
+    METHODS get_lcl RETURNING VALUE(r) TYPE ty_rlcl.
+    METHODS get_ri RETURNING VALUE(r) TYPE ty_ri.
+    METHODS imp_s1 IMPORTING foo TYPE ty_s1.
+    METHODS imp_c8 IMPORTING foo TYPE ty_c8.
+    METHODS imp_tc4 IMPORTING foo TYPE ty_tc4b.
+    METHODS imp_tstr IMPORTING foo TYPE ty_tstr.
+    METHODS imp_any_table IMPORTING foo TYPE ANY TABLE.
+    METHODS imp_any IMPORTING foo TYPE any.
+    METHODS imp_obj IMPORTING foo TYPE ty_robj.
+    METHODS imp_lcl IMPORTING foo TYPE ty_rlcl.
+    METHODS imp_lif IMPORTING foo TYPE ty_rlif.
+    METHODS imp_rdata IMPORTING foo TYPE ty_rdata.
+    METHODS imp_ri IMPORTING foo TYPE ty_ri.
+    METHODS imp_rstr IMPORTING foo TYPE ty_rstr.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get_s2.
+  ENDMETHOD.
+  METHOD get_s3.
+  ENDMETHOD.
+  METHOD get_tc4.
+  ENDMETHOD.
+  METHOD get_obj.
+  ENDMETHOD.
+  METHOD get_lcl.
+  ENDMETHOD.
+  METHOD get_ri.
+  ENDMETHOD.
+  METHOD imp_s1.
+  ENDMETHOD.
+  METHOD imp_c8.
+  ENDMETHOD.
+  METHOD imp_tc4.
+  ENDMETHOD.
+  METHOD imp_tstr.
+  ENDMETHOD.
+  METHOD imp_any_table.
+  ENDMETHOD.
+  METHOD imp_any.
+  ENDMETHOD.
+  METHOD imp_obj.
+  ENDMETHOD.
+  METHOD imp_lcl.
+  ENDMETHOD.
+  METHOD imp_lif.
+  ENDMETHOD.
+  METHOD imp_rdata.
+  ENDMETHOD.
+  METHOD imp_ri.
+  ENDMETHOD.
+  METHOD imp_rstr.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  ${call}`;
+  }
+
+  const errors = [
+    "lo->imp_s1( lo->get_s3( ) ).",
+    "lo->imp_s1( foo = lo->get_s3( ) ).",
+    "lo->imp_c8( lo->get_s3( ) ).",
+    "lo->imp_tstr( lo->get_tc4( ) ).",
+    "lo->imp_lcl( lo->get_obj( ) ).",
+    "lo->imp_lif( lo->get_obj( ) ).",
+    "lo->imp_rstr( lo->get_ri( ) ).",
+  ];
+
+  for (const call of errors) {
+    it("error, " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+    });
+  }
+
+  const ok = [
+    "lo->imp_s1( lo->get_s2( ) ).",
+    "lo->imp_tc4( lo->get_tc4( ) ).",
+    "lo->imp_any_table( lo->get_tc4( ) ).",
+    "lo->imp_any( lo->get_s3( ) ).",
+    "lo->imp_obj( lo->get_lcl( ) ).",
+    "lo->imp_obj( lo->get_obj( ) ).",
+    "lo->imp_lif( lo->get_lcl( ) ).",
+    "lo->imp_lcl( lo->get_lcl( ) ).",
+    "lo->imp_rdata( lo->get_ri( ) ).",
+    "lo->imp_ri( lo->get_ri( ) ).",
+  ];
+
+  for (const call of ok) {
+    it("ok, " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(0);
+    });
+  }
+});
+
+describe("syntax.ts, dynamic attribute of a generic object reference", () => {
+  const build = (body: string) => `
+DATA mo_app TYPE REF TO object.
+DATA lv_name TYPE string.
+${body}`;
+
+  it("write target", () => {
+    const issues = runProgram(build(`mo_app->('MV_FLAG') = abap_true.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("read, comparison", () => {
+    const issues = runProgram(build(`IF mo_app->('MV_FLAG') = abap_true.
+ENDIF.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("read, interface attribute", () => {
+    const issues = runProgram(build(`IF mo_app->('ZIF_DEMO~MV_VIEW') = abap_true.
+ENDIF.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("name in a variable", () => {
+    const issues = runProgram(build(`mo_app->(lv_name) = abap_true.
+DATA(lv_value) = mo_app->(lv_name).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("static attribute of a generic object reference is still an error", () => {
+    const issues = runProgram(build(`mo_app->mv_flag = abap_true.`));
+    expect(issues.length).to.be.greaterThan(0);
+  });
+});
+
+describe("syntax.ts, LINES OF and INSERT with a generically typed dref->*", () => {
+  const build = (body: string) => `
+DATA mr_tab TYPE REF TO data.
+DATA lt_copy TYPE string_table.
+${body}`;
+
+  it("INSERT LINES OF INTO TABLE dref->*", () => {
+    const issues = runProgram(build(`INSERT LINES OF lt_copy INTO TABLE mr_tab->*.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT wa INTO TABLE dref->*", () => {
+    const issues = runProgram(build(`INSERT \`a\` INTO TABLE mr_tab->*.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("APPEND LINES OF dref->*", () => {
+    const issues = runProgram(build(`APPEND LINES OF mr_tab->* TO lt_copy.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT LINES OF dref->* INTO TABLE", () => {
+    const issues = runProgram(build(`INSERT LINES OF mr_tab->* INTO TABLE lt_copy.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT INTO dref->* INDEX, an index table is expected", () => {
+    const issues = runProgram(build(`INSERT \`a\` INTO mr_tab->* INDEX 1.`));
+    expect(issues[0]?.getMessage()).to.equal("INSERT target must be a table");
+  });
+
+  it("generic parameter, not dereferenced, is not a table", () => {
+    const issues = runProgram(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING data TYPE data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lt_copy TYPE string_table.
+    APPEND LINES OF data TO lt_copy.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues[0]?.getMessage()).to.equal("LINES OF must be a table type");
+  });
+
+  it("APPEND LINES OF dref->* FROM, an index table is expected", () => {
+    const issues = runProgram(build(`APPEND LINES OF mr_tab->* FROM 2 TO lt_copy.`));
+    expect(issues[0]?.getMessage()).to.equal("LINES OF must be a table type");
   });
 });
