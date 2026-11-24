@@ -9,6 +9,7 @@ import {FieldChain} from "../expressions/field_chain";
 import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {BuiltInCall} from "../_builtin_call";
+import {UTCLongType} from "../../types/basic";
 
 export class Write implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -33,7 +34,9 @@ export class Write implements StatementSyntax {
         return;
       }
 
+      // a utclong is written as a time stamp, although it is not character-like elsewhere
       if (s === second
+          && !(type instanceof UTCLongType)
           && new TypeUtils(input.scope).isCharLike(type) === false
           && new TypeUtils(input.scope).isHexLike(type) === false) {
         const message = "Source not character like";
