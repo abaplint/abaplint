@@ -1,6 +1,10 @@
 /* eslint-disable max-len */
 import {IRuleMetadata, RuleTag} from "../../../packages/core/build/src/rules/_irule";
 
+// rule metadata is plain text, a placeholder like <fs> must not be parsed as a HTML tag
+export function escapeHtml(str: string): string {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
 
 export function preamble() {
   return `<!DOCTYPE html>

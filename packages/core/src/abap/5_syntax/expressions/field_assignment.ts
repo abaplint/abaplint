@@ -1,9 +1,10 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
-import {StructureType, VoidType} from "../../types/basic";
+import {DataReference, GenericObjectReferenceType, ObjectReferenceType, StructureType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Source} from "./source";
+import {TypeUtils} from "../_type_utils";
 
 export class FieldAssignment {
 
@@ -45,7 +46,20 @@ export class FieldAssignment {
       type = targetType;
     }
 
-    Source.runSyntax(s, input, type);
+    const sourceType = Source.runSyntax(s, input, type);
+    if (this.isReference(type)
+        && !(type instanceof ObjectReferenceType && sourceType instanceof ObjectReferenceType)
+        && new TypeUtils(input.scope).isAssignable(sourceType, type) === false) {
+// a reference component only takes a reference, values like '' or 1 are not converted
+      const message = `Type of source cannot be converted to the type of ${fieldSub.concatTokens()}`;
+      input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+    }
+  }
+
+  private static isReference(type: AbstractType | undefined): boolean {
+    return type instanceof ObjectReferenceType
+      || type instanceof GenericObjectReferenceType
+      || type instanceof DataReference;
   }
 
 }
