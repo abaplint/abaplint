@@ -10,6 +10,11 @@ import {Identifier} from "../abap/4_file_information/_identifier";
 import {Identifier as IdentifierToken} from "../abap/1_lexer/tokens/identifier";
 import {Position} from "../position";
 
+function toNumber(value: string | undefined): number | undefined {
+  const parsed = parseInt(value ?? "", 10);
+  return isNaN(parsed) ? undefined : parsed;
+}
+
 export class DataElement extends AbstractObject {
   private parsedXML: {
     description?: string,
@@ -90,10 +95,33 @@ export class DataElement extends AbstractObject {
     if (this.parsedXML?.datatype) {
       return this.parsedXML.datatype;
     }
+    return this.findDomain(reg)?.getDataType();
+  }
+
+  /** DDIC length, eg. number of digits for DEC, which parseType() cannot give.
+   * Taken from the same place as getDataType(), ie. the data element or its domain. */
+  public getLength(reg?: IRegistry): number | undefined {
+    this.parse();
+    if (this.parsedXML?.datatype) {
+      return toNumber(this.parsedXML.leng);
+    }
+    return this.findDomain(reg)?.getLength();
+  }
+
+  /** DDIC decimals, taken from the same place as getDataType(), ie. the data element or its domain. */
+  public getDecimals(reg?: IRegistry): number | undefined {
+    this.parse();
+    if (this.parsedXML?.datatype) {
+      return toNumber(this.parsedXML.decimals);
+    }
+    return this.findDomain(reg)?.getDecimals();
+  }
+
+  private findDomain(reg?: IRegistry): Domain | undefined {
     if (reg && this.parsedXML?.refkind === "D" && this.parsedXML.domname) {
       const domain = reg.getObject("DOMA", this.parsedXML.domname);
       if (domain instanceof Domain) {
-        return domain.getDataType();
+        return domain;
       }
     }
     return undefined;
