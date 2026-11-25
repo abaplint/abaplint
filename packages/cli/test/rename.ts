@@ -122,8 +122,8 @@ ENDCLASS.`;
     const classNew = mockFS.readFileSync("zcl_handler_new.clas.abap").toString();
     expect(classNew).to.include("CLASS zcl_handler_new");
 
-    // sicf file renamed and content updated (ICF_NAME and ICFHANDLER)
-    const sicfNew = mockFS.readFileSync("z_new 9def6c78d0beedf8d5b04ba6c.sicf.xml").toString();
+    // sicf file renamed in the abapGit layout (name padded to 15, SHA1 of the new URL) and content updated
+    const sicfNew = mockFS.readFileSync("z_new          d527693c9f65bf9bdfa9c2675.sicf.xml").toString();
     expect(sicfNew).to.include("<URL>/sap/example/z_new/</URL>");
     expect(sicfNew).to.include("<ICF_NAME>Z_NEW</ICF_NAME>");
     expect(sicfNew).to.include("<ORIG_NAME>z_new</ORIG_NAME>");

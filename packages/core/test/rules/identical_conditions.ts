@@ -99,6 +99,7 @@ const selfComparison = [
   {abap: "IF foo >= foo OR foo LT foo.\nENDIF.", cnt: 2},
   {abap: "IF foo EQ FOO.\nENDIF.", cnt: 1},
   {abap: "IF NOT foo NE foo.\nENDIF.", cnt: 1},
+  {abap: "IF NOT NOT foo NE foo.\nENDIF.", cnt: 1},
   {abap: "IF bar = 1 AND foo = foo.\nENDIF.", cnt: 1},
   {abap: "WHILE foo <= foo.\nENDWHILE.", cnt: 1},
   {abap: "CHECK foo = foo.", cnt: 1},
