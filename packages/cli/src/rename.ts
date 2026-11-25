@@ -117,8 +117,7 @@ export class Rename {
         }
 
         const result = renamer.rename(o.getType(), o.getName(), newStr);
-        // the name without what follows a space, a SICF name carries the hash of its URL there
-        renamed.push({oldName: o.getName().split(" ")[0], newName: newStr.split(" ")[0]});
+        renamed.push({oldName: o.getName(), newName: newStr});
         result.updatedFiles.forEach(f => { this.updatedFiles.add(f); });
         result.deletedFiles.forEach(f => { this.deletedFiles.add(f); });
         result.addedFiles.forEach(f => { this.addedFiles.add(f); });
