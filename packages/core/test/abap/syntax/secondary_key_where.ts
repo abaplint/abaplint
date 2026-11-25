@@ -42,6 +42,8 @@ describe("syntax, LOOP USING KEY sorted secondary key, WHERE must compare the fi
     ENDLOOP.`, expected: message("BY_NAME", "NAME")},
     {abap: `LOOP AT lt INTO ls USING KEY by_name WHERE NOT name = 'A'.
     ENDLOOP.`, expected: message("BY_NAME", "NAME")},
+    {abap: `LOOP AT lt INTO ls USING KEY by_name WHERE NOT NOT NOT name = 'A'.
+    ENDLOOP.`, expected: message("BY_NAME", "NAME")},
     {abap: `LOOP AT lt INTO ls USING KEY by_name WHERE name IS NOT INITIAL.
     ENDLOOP.`, expected: message("BY_NAME", "NAME")},
     {abap: `LOOP AT lt INTO ls USING KEY by_name WHERE NOT ( name = 'A' AND flag = abap_true ).
@@ -76,6 +78,11 @@ describe("syntax, LOOP USING KEY sorted secondary key, WHERE must compare the fi
     ENDLOOP.`,
     // a key component also under OR, besides the top-level comparison
     `LOOP AT lt INTO ls USING KEY by_name WHERE name = 'A' AND ( val = 1 OR flag = abap_true ).
+    ENDLOOP.`,
+    // an even number of NOT cancels out
+    `LOOP AT lt INTO ls USING KEY by_name WHERE NOT NOT name = 'A'.
+    ENDLOOP.`,
+    `LOOP AT lt INTO ls USING KEY by_name WHERE NOT NOT ( name = 'A' AND flag = abap_true ).
     ENDLOOP.`,
     // only the first component is needed for a sorted key
     `LOOP AT lt INTO ls USING KEY by_name WHERE name = 'A' AND val > 2.
