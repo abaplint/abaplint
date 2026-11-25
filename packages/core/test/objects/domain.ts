@@ -44,6 +44,8 @@ describe("Domain, parse AFF json", () => {
     expect((type as BasicTypes.CharacterType).getLength()).to.equal(10);
     expect(doma.getDescription()).to.equal("Example domain");
     expect(doma.getDataType()).to.equal("CHAR");
+    expect(doma.getLength()).to.equal(10);
+    expect(doma.getDecimals()).to.equal(undefined);
     expect(doma.getConversionExit()).to.equal("ALPHA");
   });
 

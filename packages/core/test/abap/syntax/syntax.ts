@@ -21872,6 +21872,114 @@ ENDCLASS.`;
   }
 });
 
+describe("syntax.ts, => with a data object, #3561", () => {
+  const lcl = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS inst.
+    CLASS-METHODS stat.
+    CLASS-DATA sattr TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD inst.
+  ENDMETHOD.
+  METHOD stat.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+`;
+  const message = (name: string) => `"${name}" is not a class or interface, => cannot be used with a data object`;
+
+  it("error, reference to a void interface", () => {
+    const abap = `DATA mi_env TYPE REF TO if_function_test_environment.
+mi_env=>clear_doubles( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("mi_env"));
+  });
+
+  it("error, reference to a local class, instance method", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+lo=>inst( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, reference to a local class, static method", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+lo=>stat( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, CALL METHOD", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+CALL METHOD lo=>stat.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, integer variable", () => {
+    const issues = runProgram(`DATA lv TYPE i.
+lv=>foo( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lv"));
+  });
+
+  it("error, read of a static attribute", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+DATA lv TYPE i.
+lv = lo=>sattr.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, write to a static attribute", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+lo=>sattr = 1.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, me=>", () => {
+    const issues = runProgram(`CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS inst.
+    CLASS-METHODS stat.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD inst.
+    me=>stat( ).
+  ENDMETHOD.
+  METHOD stat.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("me"));
+  });
+
+  it("ok, class name", () => {
+    const issues = runProgram(lcl + `DATA lv TYPE i.
+lcl=>stat( ).
+CALL METHOD lcl=>stat.
+lv = lcl=>sattr.
+lcl=>sattr = 1.`);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, data object with the name of the class, the class is used", () => {
+    const issues = runProgram(lcl + `DATA lcl TYPE REF TO lcl.
+lcl=>stat( ).`);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("error, data object with the name of the class, instance method", () => {
+    const issues = runProgram(lcl + `DATA lcl TYPE REF TO lcl.
+lcl=>inst( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(`Method "inst" not static`);
+  });
+});
+
 describe("syntax.ts, VALUE component of reference type, #3226", () => {
   const errors: {name: string, abap: string}[] = [
     {name: "character literal into REF TO object", abap: `
@@ -22110,6 +22218,41 @@ START-OF-SELECTION.
       expect(issues.length).to.equals(0);
     });
   }
+});
+
+describe("syntax.ts, dynamic attribute of a generic object reference", () => {
+  const build = (body: string) => `
+DATA mo_app TYPE REF TO object.
+DATA lv_name TYPE string.
+${body}`;
+
+  it("write target", () => {
+    const issues = runProgram(build(`mo_app->('MV_FLAG') = abap_true.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("read, comparison", () => {
+    const issues = runProgram(build(`IF mo_app->('MV_FLAG') = abap_true.
+ENDIF.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("read, interface attribute", () => {
+    const issues = runProgram(build(`IF mo_app->('ZIF_DEMO~MV_VIEW') = abap_true.
+ENDIF.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("name in a variable", () => {
+    const issues = runProgram(build(`mo_app->(lv_name) = abap_true.
+DATA(lv_value) = mo_app->(lv_name).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("static attribute of a generic object reference is still an error", () => {
+    const issues = runProgram(build(`mo_app->mv_flag = abap_true.`));
+    expect(issues.length).to.be.greaterThan(0);
+  });
 });
 
 describe("syntax.ts, LINES OF and INSERT with a generically typed dref->*", () => {

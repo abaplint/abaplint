@@ -134,6 +134,10 @@ describe("Data element, parse main xml", () => {
     expect(type).to.be.instanceof(CharacterType);
     expect(type.getQualifiedName()).to.equal("ZDTEL");
     expect(type.getDDICName()).to.equal("ZDTEL");
+    expect(dtel.getDataType(reg)).to.equal("CHAR");
+    expect(dtel.getLength(reg)).to.equal(6);
+    expect(dtel.getDecimals(reg)).to.equal(undefined);
+    expect(dtel.getLength()).to.equal(undefined);
   });
 
   it("Reference to domain, outside namespace, expect void", async () => {
@@ -208,6 +212,8 @@ describe("Data element, parse main xml", () => {
     const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(PackedType);
+    expect(dtel.getLength(reg)).to.equal(5);
+    expect(dtel.getDecimals(reg)).to.equal(2);
   });
 
   it("FLTP", async () => {
@@ -257,10 +263,13 @@ describe("Data element, parse main xml", () => {
     const reg = new Registry().addFile(new MemoryFile("zref.dtel.json", json));
 
     await reg.parseAsync();
-    const type = (reg.getFirstObject() as DataElement).parseType(reg);
+    const dtel = reg.getFirstObject() as DataElement;
+    const type = dtel.parseType(reg);
 
     expect(type).to.be.instanceof(DataReference);
     expect((type as DataReference).getType()).to.be.instanceof(CharacterType);
+    expect(dtel.getLength(reg)).to.equal(3);
+    expect(dtel.getDecimals(reg)).to.equal(undefined);
   });
 
   it("AFF reference to Dictionary type", async () => {
