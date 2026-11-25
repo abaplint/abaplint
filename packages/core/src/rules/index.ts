@@ -66,6 +66,7 @@ export * from "./delete_index_in_loop";
 export * from "./description_empty";
 export * from "./double_space";
 export * from "./downport";
+export * from "./dynamic_where_empty";
 export * from "./dynpro_checks";
 export * from "./easy_to_find_messages";
 export * from "./empty_event";
