@@ -22,6 +22,7 @@ import {checkDatabaseFields} from "./_check_database_fields";
 import {Issue} from "../../../issue";
 import {FieldChain} from "./field_chain";
 import {WAt} from "../../1_lexer/tokens";
+import {Table} from "../../../objects/table";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 type DatabaseSourceInfo = {source: DatabaseTableSource, name: string, alias: string};
@@ -147,6 +148,10 @@ export class Select {
         const message = `ORDER BY must be before INTO, after WHERE`;
         input.issues.push(syntaxIssue(input, orderBy.getFirstToken(), message));
       }
+
+      if (fae) {
+        this.checkForAllEntriesOrderBy(orderBy, fields, dbSources, input);
+      }
     }
 
     if (this.isStrictMode(node, input)) {
@@ -155,6 +160,42 @@ export class Select {
 
     if (input.scope.getType() === ScopeType.OpenSQL) {
       input.scope.pop(node.getLastToken().getEnd());
+    }
+  }
+
+  /** with FOR ALL ENTRIES only ORDER BY PRIMARY KEY is allowed, and only when the field list holds the primary key */
+  private static checkForAllEntriesOrderBy(orderBy: ExpressionNode, fields: FieldList, dbSources: DatabaseTableSource[], input: SyntaxInput): void {
+    if (orderBy.concatTokens().toUpperCase().replace(/\s+/g, " ") !== "ORDER BY PRIMARY KEY") {
+      const message = `FOR ALL ENTRIES: only ORDER BY PRIMARY KEY is allowed`;
+      input.issues.push(syntaxIssue(input, orderBy.getFirstToken(), message));
+      return;
+    }
+
+    const source = dbSources.length === 1 ? dbSources[0] : undefined;
+    if (!(source instanceof Table)) {
+      return;
+    }
+    const selected = new Set<string>();
+    for (const f of fields) {
+      const code = f.code.includes("~") ? f.code.substring(f.code.indexOf("~") + 1) : f.code;
+      if (isSimple.test(code) === false) {
+        // "*", dynamic field lists, expressions
+        return;
+      }
+      selected.add(code.toUpperCase());
+    }
+
+    const ddic = source.getFields() || [];
+    const isClient = (name: string) => {
+      const field = ddic.find(d => d.FIELDNAME.toUpperCase() === name.toUpperCase());
+      return field?.DATATYPE === "CLNT" || field?.ROLLNAME?.toUpperCase() === "MANDT"
+        || ["MANDT", "CLIENT"].includes(name.toUpperCase());
+    };
+    const keys = source.listKeys(input.scope.getRegistry());
+    const missing = keys.filter((k, index) => !(index === 0 && isClient(k)) && selected.has(k.toUpperCase()) === false);
+    if (missing.length > 0) {
+      const message = `FOR ALL ENTRIES with ORDER BY PRIMARY KEY: the field list must contain the primary key, missing ${missing.join(", ").toLowerCase()}`;
+      input.issues.push(syntaxIssue(input, orderBy.getFirstToken(), message));
     }
   }
 
