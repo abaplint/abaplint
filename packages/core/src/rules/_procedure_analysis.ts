@@ -11,6 +11,7 @@ import {ISpaghettiScope, ISpaghettiScopeNode, ISyntaxResult} from "../abap/5_syn
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {getCachedRawRows} from "../files/raw_rows_cache";
 import {ExpressionNode, StatementNode, StructureNode, TokenNode} from "../abap/nodes";
+import {countLeadingNot} from "../abap/5_syntax/_key_compare";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {IdentifierMeta, TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
@@ -972,12 +973,8 @@ export function simplePredicate(statement: StatementNode): IPredicate | undefine
     return undefined;
   }
   const children = compare.getChildren();
-  let negated = false;
-  let i = 0;
-  if (children[0] instanceof TokenNode && children[0].getFirstToken().getStr().toUpperCase() === "NOT") {
-    negated = true;
-    i = 1;
-  }
+  const i = countLeadingNot(compare);
+  const negated = i % 2 === 1;
   const left = children[i];
   if (!(left instanceof ExpressionNode) || !(left.get() instanceof Expressions.Source)) {
     return undefined;
