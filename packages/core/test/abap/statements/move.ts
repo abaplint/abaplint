@@ -524,6 +524,19 @@ const v757dyn = [
 
 statementVersionOk(v757dyn, "MOVE dynamic component/ref access v757", Statements.Move);
 
+const v756dyn = [
+  {abap: "ref->(comp_name) = 5.", rel: Release.v756},
+  {abap: "result = ref->('comp').", rel: Release.v756},
+];
+
+statementVersionOk(v756dyn, "MOVE dynamic attribute access v756", Statements.Move);
+
+const v756dynFail = [
+  {abap: "ref->(comp_name) = 5.", rel: Release.v755},
+];
+
+statementVersionFail(v756dynFail, "MOVE dynamic attribute access before v756");
+
 const v757dynFail = [
   {abap: "result = ref->( comp ).", rel: Release.v757},
   {abap: "result = ref->( comp).", rel: Release.v757},

@@ -13,7 +13,7 @@ import {IReferenceExtras, ReferenceType} from "../_reference";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {TableExpression} from "./table_expression";
-import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue, dataObjectBeforeStaticArrow} from "../_syntax_input";
 
 export class MethodCallChain {
   public static runSyntax(
@@ -165,7 +165,9 @@ export class MethodCallChain {
       const token = first.getFirstToken();
       const className = token.getStr();
       const classDefinition = input.scope.findObjectDefinition(className);
-      if (classDefinition === undefined && input.scope.getDDIC().inErrorNamespace(className) === false) {
+      if (classDefinition === undefined && dataObjectBeforeStaticArrow(input, token)) {
+        return VoidType.get(CheckSyntaxKey);
+      } else if (classDefinition === undefined && input.scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
         return VoidType.get(className);

@@ -31,3 +31,16 @@ export type SyntaxInput = {
 export function syntaxIssue(input: SyntaxInput, token: AbstractToken, message: string, fix?: IEdit) {
   return Issue.atTokenFilename(input.filename, token, message, CheckSyntaxKey, Severity.Error, fix);
 }
+
+/** the name in front of "=>" is looked up as a class or interface only, data objects are not considered.
+ * Call when no class or interface of the name was found: if a data object of the name is visible,
+ * it is not an unknown global class, so report it. Returns true if an issue was added */
+export function dataObjectBeforeStaticArrow(input: SyntaxInput, token: AbstractToken): boolean {
+  const name = token.getStr();
+  if (input.scope.findVariable(name) === undefined) {
+    return false;
+  }
+  const message = `"${name}" is not a class or interface, => cannot be used with a data object`;
+  input.issues.push(syntaxIssue(input, token, message));
+  return true;
+}
