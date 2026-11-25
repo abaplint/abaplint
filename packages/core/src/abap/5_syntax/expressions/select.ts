@@ -164,7 +164,10 @@ export class Select {
   }
 
   /** with FOR ALL ENTRIES only ORDER BY PRIMARY KEY is allowed, and only when the field list holds the primary key */
-  private static checkForAllEntriesOrderBy(orderBy: ExpressionNode, fields: FieldList, dbSources: DatabaseTableSource[], input: SyntaxInput): void {
+  private static checkForAllEntriesOrderBy(orderBy: ExpressionNode,
+                                           fields: FieldList,
+                                           dbSources: DatabaseTableSource[],
+                                           input: SyntaxInput): void {
     if (orderBy.concatTokens().toUpperCase().replace(/\s+/g, " ") !== "ORDER BY PRIMARY KEY") {
       const message = `FOR ALL ENTRIES: only ORDER BY PRIMARY KEY is allowed`;
       input.issues.push(syntaxIssue(input, orderBy.getFirstToken(), message));

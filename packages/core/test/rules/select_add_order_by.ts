@@ -146,7 +146,8 @@ SELECT name value FROM ztab INTO CORRESPONDING FIELDS OF TABLE lt_res FOR ALL EN
   });
 
   it("ORDER BY PRIMARY KEY given, no issue", () => {
-    const issues = run(`SELECT name, value FROM ztab FOR ALL ENTRIES IN @lt_keys WHERE name = @lt_keys-name ORDER BY PRIMARY KEY INTO TABLE @DATA(lt_res).`);
+    const issues = run(`SELECT name, value FROM ztab FOR ALL ENTRIES IN @lt_keys WHERE name = @lt_keys-name
+  ORDER BY PRIMARY KEY INTO TABLE @DATA(lt_res).`);
     expect(issues.length).to.equals(0);
   });
 
