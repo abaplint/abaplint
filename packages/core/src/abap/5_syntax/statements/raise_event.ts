@@ -21,6 +21,7 @@ export class RaiseEvent implements StatementSyntax {
     for (const s of node.findAllExpressions(Expressions.Source)) {
       Source.runSyntax(s, input);
     }
+    input.referenceMayChange?.(undefined, input.scope, false, "routine");
 
   }
 }

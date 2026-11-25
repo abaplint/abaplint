@@ -7,31 +7,46 @@ import {FieldChain} from "./field_chain";
 import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {IdentifierMeta} from "../../types/_typed_identifier";
+import {DataReference} from "../../types/basic";
+import {FunctionModuleDefinition, FunctionModuleParameterDirection} from "../../types/function_module_definition";
 
 export class FunctionParameters {
-  public static runSyntax(node: ExpressionNode, input: SyntaxInput): void {
+  public static runSyntax(node: ExpressionNode, input: SyntaxInput, functionName?: string): void {
     this.checkDuplicates(node, input);
 
     // EXPORTING: process sources in each FunctionExportingParameter
     for (const param of node.findAllExpressions(Expressions.FunctionExportingParameter)) {
       const s = param.findDirectExpression(Expressions.Source);
-      if (s) {
-        Source.runSyntax(s, input);
-      }
       const s3 = param.findDirectExpression(Expressions.SimpleSource3);
-      if (s3) {
-        Source.runSyntax(s3, input);
+      for (const source of [s, s3]) {
+        if (source && Source.runSyntax(source, input) instanceof DataReference) {
+          input.referenceMayChange?.(source, input.scope, false, "referent");
+        }
       }
     }
 
     // IMPORTING / CHANGING / TABLES: process targets in each ParameterT
     const changingList = node.findExpressionAfterToken("CHANGING");
+    const tablesList = node.findExpressionAfterToken("TABLES");
+    const importingList = node.findExpressionAfterToken("IMPORTING");
+    let definition: FunctionModuleDefinition | null | undefined;
     for (const paramList of node.findDirectExpressions(Expressions.ParameterListT)) {
       for (const param of paramList.findDirectExpressions(Expressions.ParameterT)) {
         const t = param.findDirectExpression(Expressions.Target);
         if (t) {
-          Target.runSyntax(t, input);
-          input.referenceMayChange?.(t, input.scope);
+          const type = Target.runSyntax(t, input);
+          let effect: "tables" | "write" | "output" = paramList === tablesList ? "tables" : "write";
+          if (paramList === importingList && type instanceof DataReference && functionName !== undefined) {
+            if (definition === undefined) {
+              definition = input.scope.findFunctionModule(functionName) ?? null;
+            }
+            const name = param.findDirectExpression(Expressions.ParameterName)?.getFirstToken().getUpperStr().replace(/^!/, "");
+            if (definition?.getParameters().some(p => p.direction === FunctionModuleParameterDirection.exporting
+                && p.name.toUpperCase() === name && p.passByValue)) {
+              effect = "output";
+            }
+          }
+          input.referenceMayChange?.(t, input.scope, effect !== "output", effect);
         }
 
         if (paramList === changingList && t !== undefined) {

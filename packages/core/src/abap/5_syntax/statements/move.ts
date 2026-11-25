@@ -9,7 +9,7 @@ import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Dereference} from "../expressions/dereference";
 import {IdentifierMeta} from "../../types/_typed_identifier";
-import {AnyType, DataType, PackedType} from "../../types/basic";
+import {AnyType, DataReference, DataType, PackedType, TableType} from "../../types/basic";
 import {ExpressionNode, TokenNode} from "../../nodes";
 
 export class Move implements StatementSyntax {
@@ -85,6 +85,15 @@ export class Move implements StatementSyntax {
       const message = "Incompatible types";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
+    }
+
+    if (sourceType instanceof DataReference && source && targets.length === 1) {
+      const type = sourceType.getType();
+      const reference = source.findDirectTokenByText("REF") === undefined;
+      const operand = reference ? source : source.findDirectExpression(Expressions.Source);
+      if ((type instanceof TableType || type instanceof DataType || type instanceof AnyType) && operand) {
+        input.tableAlias = {source: operand, target: targets[0], fromReference: reference};
+      }
     }
 
   }

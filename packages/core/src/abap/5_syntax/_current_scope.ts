@@ -512,6 +512,10 @@ export class CurrentScope {
     return this.findTypePoolConstant(name);
   }
 
+  public findLocalVariable(name: string): TypedIdentifier | undefined {
+    return this.current?.getData().vars[name.replace(/^!/, "").toUpperCase()];
+  }
+
   public findReturningParameter(): TypedIdentifier | undefined {
     for (const v in this.current?.getData().vars || {}) {
       const variable = this.current!.getData().vars[v];

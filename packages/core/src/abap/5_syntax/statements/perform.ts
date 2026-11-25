@@ -11,6 +11,7 @@ import {Dynamic} from "../expressions/dynamic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TypeUtils} from "../_type_utils";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
+import {DataReference, TableType, UnknownType, VoidType} from "../../types/basic";
 
 type Parameter = {node: ExpressionNode, type: AbstractType | undefined};
 
@@ -51,7 +52,7 @@ export class Perform implements StatementSyntax {
     const name = expr?.concatTokens();
     const found = external || dynamic || name === undefined ? undefined : input.scope.findFormDefinition(name);
     const actuals = using.concat(changing);
-    if (input.referenceMayChange && actuals.length > 0) {
+    if (input.referenceMayChange) {
       const local = node.findDirectTokenByText("PROGRAM") === undefined ? found : undefined;
       const inputs = local?.getUsingParameters() ?? [];
       const outputs = local?.getChangingParameters() ?? [];
@@ -61,9 +62,19 @@ export class Perform implements StatementSyntax {
         const formal = inputOnly ? inputs[index] : outputs[index - inputs.length];
         const byValue = formal?.getMeta().includes(IdentifierMeta.PassByValue) === true;
         if (!(inputOnly && byValue)) {
-          input.referenceMayChange(actual.node, input.scope, !byValue);
+          const type = formal?.getType();
+          const tables = type instanceof TableType
+            || (actual.type instanceof TableType && (type === undefined || type instanceof UnknownType || type instanceof VoidType));
+          input.referenceMayChange(actual.node, input.scope, !byValue, tables ? "tables" : "write");
+        } else if (actual.type instanceof DataReference) {
+          input.referenceMayChange(actual.node, input.scope, false, "referent");
         }
       }
+      for (const actual of tables) {
+        input.referenceMayChange(actual.node, input.scope, false, "tables");
+      }
+      const scheduled = node.findDirectTokenByText("COMMIT") ? "onCommit" : node.findDirectTokenByText("ROLLBACK") ? "onRollback" : "routine";
+      input.referenceMayChange(undefined, input.scope, false, scheduled);
     }
     if (external) {
       return; // in external program, not checked, todo

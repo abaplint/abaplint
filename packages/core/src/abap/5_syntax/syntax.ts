@@ -451,7 +451,7 @@ export class SyntaxLogic {
       this.loopDepth++;
     }
     if (node instanceof StructureNode) {
-      this.sortedLines.enter(node, this.currentFile.getFilename());
+      this.sortedLines.enter(node, this.currentFile.getFilename(), parent);
     }
 
     for (const child of node.getChildren()) {

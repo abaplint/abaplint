@@ -1,4 +1,4 @@
-import {DataReference, VoidType} from "../../types/basic";
+import {DataReference, TableType, VoidType} from "../../types/basic";
 import {IdentifierMeta} from "../../types/_typed_identifier";
 import * as Expressions from "../../2_statements/expressions";
 import {IMethodDefinition} from "../../types/_method_definition";
@@ -109,6 +109,7 @@ export class MethodParameters {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
+      input.referenceMayChange?.(target, input.scope, false, type instanceof TableType ? "tables" : "output");
     }
   }
 
@@ -140,7 +141,8 @@ export class MethodParameters {
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       }
-      input.referenceMayChange?.(item.target, input.scope, !byValue);
+      const effect = parameterType instanceof TableType ? "tables" : byValue ? "output" : "write";
+      input.referenceMayChange?.(item.target, input.scope, !byValue, effect);
     }
   }
 
@@ -166,7 +168,7 @@ export class MethodParameters {
         parameterType = parameter.getType();
         byValue = parameter.getMeta().includes(IdentifierMeta.PassByValue);
       }
-      input.referenceMayChange?.(item.target, input.scope, !byValue);
+      input.referenceMayChange?.(item.target, input.scope, !byValue, parameterType instanceof TableType ? "tables" : "write");
       // the parameter is supplied, even if its type is wrong
       this.requiredParameters?.delete(item.name);
 
@@ -293,6 +295,9 @@ export class MethodParameters {
       }
 
       ret.push({name, source, sourceType});
+      if (sourceType instanceof DataReference && !(method instanceof BuiltInMethod)) {
+        input.referenceMayChange?.(source, input.scope, false, "referent");
+      }
     }
 
     return ret;

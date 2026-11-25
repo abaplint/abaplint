@@ -4,7 +4,7 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {Dynamic} from "../expressions/dynamic";
 import {ReferenceType} from "../_reference";
-import {AnyType, DataType, GenericObjectReferenceType, ObjectReferenceType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, DataReference, DataType, GenericObjectReferenceType, ObjectReferenceType, UnknownType, VoidType} from "../../types/basic";
 import {ClassDefinition, InterfaceDefinition} from "../../types";
 import {StatementSyntax} from "../_statement_syntax";
 import {IClassDefinition} from "../../types/_class_definition";
@@ -159,10 +159,13 @@ export class CreateObject implements StatementSyntax {
   }
 
   private validateParameters(cdef: IClassDefinition | undefined, node: StatementNode, input: SyntaxInput): void {
+    input.referenceMayChange?.(undefined, input.scope, false, "routine");
     if (cdef === undefined) {
       const sources = node.findDirectExpression(Expressions.ParameterListS)?.findAllExpressions(Expressions.Source);
       for (const s of sources || []) {
-        Source.runSyntax(s, input);
+        if (Source.runSyntax(s, input) instanceof DataReference) {
+          input.referenceMayChange?.(s, input.scope, false, "referent");
+        }
       }
       return;
     }
@@ -193,6 +196,9 @@ export class CreateObject implements StatementSyntax {
         return;
       }
 
+      if (sourceType instanceof DataReference) {
+        input.referenceMayChange?.(source, input.scope, false, "referent");
+      }
       requiredImporting.delete(name);
     }
 

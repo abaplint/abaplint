@@ -29,6 +29,7 @@ export class Call implements StatementSyntax {
       // todo, resolve the method definition above and pass, if possible, in case of dynamic pass void
       MethodCallBody.runSyntax(body, input, methodDef || VoidType.get("CallTODO"));
     }
+    input.referenceMayChange?.(undefined, input.scope, false, "routine");
 
   }
 }

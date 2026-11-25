@@ -1,5 +1,5 @@
 import {ExpressionNode} from "../../nodes";
-import {VoidType} from "../../types/basic";
+import {DataReference, VoidType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {IMethodDefinition} from "../../types/_method_definition";
 import {MethodParameters} from "./method_parameters";
@@ -94,6 +94,9 @@ export class MethodCallParam {
         const message = "Method parameter type not compatible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
+      }
+      if (sourceType instanceof DataReference && !(method instanceof BuiltInMethod)) {
+        input.referenceMayChange?.(child, input.scope, false, "referent");
       }
       return sourceType;
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.ParameterListS) {
