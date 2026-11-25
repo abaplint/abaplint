@@ -27,11 +27,11 @@ function dataElement(name: string, dataType: "QUAN" | "CURR"): MemoryFile {
   return new MemoryFile(`${name.toLowerCase()}.dtel.xml`, xml);
 }
 
-function transparentTable(name: string, fields: string[]): MemoryFile {
+function transparentTable(name: string, fields: string[], keyFields: string[] = []): MemoryFile {
   const columns = fields.map((field, index) => `    <DD03P>
      <TABNAME>${name.toUpperCase()}</TABNAME>
      <FIELDNAME>${field.toUpperCase()}</FIELDNAME>
-     <POSITION>000${index + 1}</POSITION>
+     <POSITION>000${index + 1}</POSITION>${keyFields.includes(field) ? "\n     <KEYFLAG>X</KEYFLAG>" : ""}
      <ADMINFIELD>0</ADMINFIELD>
      <INTTYPE>C</INTTYPE>
      <INTLEN>000020</INTLEN>
@@ -724,6 +724,58 @@ where _Space.SpaceTitle = 'A'`);
       expect(issues.length).to.equal(1);
     });
   });
+
+  describe("composition fields", () => {
+    const rootTable = transparentTable("zroot_tab", ["root_id"], ["root_id"]);
+    const child = new MemoryFile("zi_child.ddls.asddls", `define view entity ZI_Child as select from zchild_tab
+  association to parent ZTARGET as _Root on $projection.RootId = _Root.RootId
+{
+  key root_id   as RootId,
+  key child_id  as ChildId,
+      some_field as SomeField,
+      _Root
+}`);
+    const childTable = transparentTable("zchild_tab", ["root_id", "child_id", "some_field"], ["root_id", "child_id"]);
+
+    const root = (composition: string, elements: string) => `define root view entity ZTARGET as select from zroot_tab
+  ${composition}
+{
+  key root_id as RootId,
+${elements}
+}`;
+
+    for (const composition of ["composition [0..*] of ZI_Child as _Children", "composition of many ZI_Child as _Children"]) {
+      it(`accepts exposing a composition, ${composition}`, async () => {
+        const issues = await findIssues(root(composition, "      _Children"), false, [rootTable, child, childTable]);
+        expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+      });
+
+      it(`accepts a path expression via a composition, ${composition}`, async () => {
+        const issues = await findIssues(root(composition, `      _Children.SomeField as SomeField`), false, [rootTable, child, childTable]);
+        expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+      });
+    }
+
+    it("accepts exposing a composition with a namespaced target", async () => {
+      const issues = await findIssues(root("composition [0..*] of /ABC/I_CHILD as _Children", `      _Children`), false, [rootTable]);
+      expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+    });
+
+    it("accepts exposing a composition without alias", async () => {
+      const issues = await findIssues(root("composition [0..*] of ZI_Child", `      ZI_Child.SomeField as SomeField,
+      ZI_Child`), false, [rootTable, child, childTable]);
+      expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+    });
+
+    it("still reports an unknown field next to an exposed composition", async () => {
+      const issues = await findIssues(root("composition [0..*] of ZI_Child as _Children", `      nonexisting_field,
+      _Children.SomeField as SomeField,
+      _Children`), false, [rootTable, child, childTable]);
+      expect(issues.map(i => i.getMessage())).to.deep.equal(['CDS field "nonexisting_field" not found in "zroot_tab"']);
+      expect(issues[0].getStart().getRow()).to.equal(5);
+    });
+  });
+
   describe("SOURCE_TYPE in XML", () => {
     function ddlsXml(sourceType: string): string {
       return `<?xml version="1.0" encoding="utf-8"?>

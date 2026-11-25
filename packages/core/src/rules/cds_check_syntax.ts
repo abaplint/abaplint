@@ -611,6 +611,21 @@ SOURCE_TYPE in the abapGit XML is checked to match the DDL source, W view entity
         associationNames.add(association.as.toUpperCase());
       }
     }
+    for (const composition of tree.findAllExpressionsRecursive(CDSComposition)) {
+      const relation = composition.findDirectExpression(CDSRelation);
+      if (relation === undefined) {
+        continue;
+      }
+      // direct tokens exclude the alias and parameters, and include a namespace like /ABC/
+      const name = relation.getDirectTokens().map(t => t.getStr()).join("");
+      if (name !== "") {
+        associationNames.add(name.toUpperCase());
+      }
+      const alias = relation.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
+      if (alias) {
+        associationNames.add(this.name(alias).toUpperCase());
+      }
+    }
 
     for (const element of tree.findAllExpressionsRecursive(CDSElement)) {
       const prefixed = element.findDirectExpression(CDSPrefixedName);
