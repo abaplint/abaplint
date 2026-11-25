@@ -37,6 +37,7 @@ const tests: IRedundantTest[] = [
   {abap: ifElse("abap_true", "c EQ 'X'"), cnt: 1, fix: true},
   {abap: ifElse("abap_true", "abap_true = c"), cnt: 1, fix: true},
   {abap: ifElse("abap_true", "NOT c = abap_true"), cnt: 1, fix: true},
+  {abap: ifElse("abap_true", "NOT NOT c = abap_true"), cnt: 1, fix: true},
   {abap: ifElse("abap_false", "c IS INITIAL"), cnt: 1, fix: true},
   {abap: ifElse("abap_false", "c IS NOT INITIAL"), cnt: 1, fix: true},
   {abap: ifElse("space", "NOT c IS INITIAL"), cnt: 1, fix: true},
