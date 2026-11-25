@@ -130,6 +130,44 @@ ENDCLASS.`;
     expect(sicfNew).to.include("<ICFHANDLER>ZCL_HANDLER_NEW</ICFHANDLER>");
   });
 
+  it("renames an icf service into a namespace and writes the node of the namespace", async () => {
+    const sicf = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_SICF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <URL>/sap/example/z_svc/</URL>
+   <ICFSERVICE>
+    <ICF_NAME>Z_SVC</ICF_NAME>
+    <ORIG_NAME>z_svc</ORIG_NAME>
+   </ICFSERVICE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const fileSicf = new MemoryFile("z_svc 9def6c78d0beedf8d5b04ba6c.sicf.xml", sicf);
+    const reg = new Registry().addFiles([fileSicf]).parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[fileSicf.getFilename()] = fileSicf.getRaw();
+    const volume = memfs.Volume.fromJSON(jsonFiles);
+    const mockFS = memfs.createFsFromVolume(volume);
+
+    const config = reg.getConfig().get();
+    config.rename = {"patterns": [
+      {"type": "SICF", "oldName": "z_svc", "newName": "/ns/svc"},
+    ]};
+
+    new Rename(reg).run(config, "base", mockFS, true);
+
+    const leaf = mockFS.readFileSync("svc            d71182a42960257ab8a339e23.sicf.xml").toString();
+    expect(leaf).to.include("<URL>/sap/example/ns/svc/</URL>");
+    expect(leaf).to.include("<ICF_NAME>SVC</ICF_NAME>");
+
+    const parent = mockFS.readFileSync("ns             df82fa4386c4f47fd34f8cabb.sicf.xml").toString();
+    expect(parent).to.include("<URL>/sap/example/ns/</URL>");
+    expect(parent).to.include("<ICF_NAME>NS</ICF_NAME>");
+  });
+
   it("renames interface referenced in DEFAULT value", async () => {
     const intf = `INTERFACE zif_abapgit_definitions PUBLIC.
   TYPES ty TYPE i.
