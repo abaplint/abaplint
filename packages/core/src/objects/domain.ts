@@ -19,6 +19,11 @@ export interface DomainValueTranslation {
   description: string
 }
 
+function toNumber(value: string | undefined): number | undefined {
+  const parsed = parseInt(value ?? "", 10);
+  return isNaN(parsed) ? undefined : parsed;
+}
+
 export class Domain extends AbstractObject {
 
   private parsedXML: {
@@ -48,6 +53,16 @@ export class Domain extends AbstractObject {
   public getDataType(): string | undefined {
     this.parse();
     return this.parsedXML?.datatype;
+  }
+
+  public getLength(): number | undefined {
+    this.parse();
+    return toNumber(this.parsedXML?.length);
+  }
+
+  public getDecimals(): number | undefined {
+    this.parse();
+    return toNumber(this.parsedXML?.decimals);
   }
 
   public getAllowedNaming() {
