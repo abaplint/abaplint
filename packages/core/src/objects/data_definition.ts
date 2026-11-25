@@ -116,11 +116,12 @@ export class DataDefinition extends AbstractObject {
 
     const start = Date.now();
 
+    const ddls = this.parseRaw2()?.abapGit?.["asx:abap"]?.["asx:values"]?.DDLS;
     this.parsedData = {
       sqlViewName: undefined,
       definitionName: undefined,
-      sourceType: this.findSourceType(),
-      description: this.findDescription(),
+      sourceType: typeof ddls?.SOURCE_TYPE === "string" ? ddls.SOURCE_TYPE.trim() : undefined,
+      description: undefined,
       fields: [],
       sources: [],
       relations: [],
@@ -129,7 +130,9 @@ export class DataDefinition extends AbstractObject {
     };
 
     this.parsedData.tree = new CDSParser().parse(this.findSourceFile());
-    this.findSQLViewName(this.parsedData.tree);
+    const leadingAnnotations = this.findLeadingAnnotations(this.parsedData.tree);
+    this.findSQLViewName(leadingAnnotations);
+    this.parsedData.description = this.findDescription(leadingAnnotations, ddls?.DDTEXT);
     if (this.parsedData.tree) {
       for (const c of this.parsedData.tree?.getChildren() || []) {
         if (c.get() instanceof CDSAnnotation) {
@@ -156,43 +159,54 @@ export class DataDefinition extends AbstractObject {
 
 //////////
 
-  private findSQLViewName(tree: ExpressionNode | undefined): void {
-    let annotations = tree?.findDirectExpressions(CDSAnnotation);
-    if (annotations === undefined) {
-      const file = this.findSourceFile();
-      if (file === undefined) {
-        return;
-      }
-      // Keep SQL view lookup available even when the view body cannot be parsed.
-      const tokens = CDSLexer.run(file).filter(t => !(t instanceof Comment));
-      const leadingAnnotations = seq(starPrio(CDSAnnotation), starPrio(regex(/.*/)));
-      annotations = Combi.run(leadingAnnotations, tokens, defaultRelease)
-        ?.filter((n): n is ExpressionNode => n instanceof ExpressionNode && n.get() instanceof CDSAnnotation);
+  /** annotations before the entity definition, ie. not the ones on elements or parameters */
+  private findLeadingAnnotations(tree: ExpressionNode | undefined): readonly ExpressionNode[] {
+    if (tree !== undefined) {
+      return tree.findDirectExpressions(CDSAnnotation);
     }
-    for (const annotation of annotations || []) {
+    const file = this.findSourceFile();
+    if (file === undefined) {
+      return [];
+    }
+    // Keep header annotations available even when the definition body cannot be parsed.
+    const tokens = CDSLexer.run(file).filter(t => !(t instanceof Comment));
+    const leadingAnnotations = seq(starPrio(CDSAnnotation), starPrio(regex(/.*/)));
+    return Combi.run(leadingAnnotations, tokens, defaultRelease)
+      ?.filter((n): n is ExpressionNode => n instanceof ExpressionNode && n.get() instanceof CDSAnnotation) || [];
+  }
+
+  /** values of the leading annotations with the given name, as written in the source */
+  private findLeadingAnnotationValues(annotations: readonly ExpressionNode[], name: string): string[] {
+    const ret: string[] = [];
+    for (const annotation of annotations) {
       const tokens = annotation.getTokens().map(t => t.getStr());
       const colon = tokens.indexOf(":");
-      if (tokens.slice(0, colon).join("") !== "@AbapCatalog.sqlViewName") {
-        continue;
+      if (colon >= 0 && tokens.slice(0, colon).join("") === name) {
+        ret.push(tokens.slice(colon + 1).join(" "));
       }
-      const match = tokens.slice(colon + 1).join(" ").match(/^'([\w/]+)'$/);
+    }
+    return ret;
+  }
+
+  private findSQLViewName(annotations: readonly ExpressionNode[]): void {
+    for (const value of this.findLeadingAnnotationValues(annotations, "@AbapCatalog.sqlViewName")) {
+      const match = value.match(/^'([\w/]+)'$/);
       if (match) {
         this.parsedData!.sqlViewName = match[1].toUpperCase();
         return;
       }
     }
   }
-  private findSourceType(): string | undefined {
-    const value = this.parseRaw2()?.abapGit?.["asx:abap"]?.["asx:values"]?.DDLS?.SOURCE_TYPE;
-    return typeof value === "string" ? value.trim() : undefined;
-  }
 
-  private findDescription(): string | undefined {
-    const match = this.findSourceFile()?.getRaw().match(/@EndUserText\.label: '([\w,.:-=#%&() ]+)'/);
-    if (match) {
-      return match[1];
+  /** entity level EndUserText.label annotation, with fallback to DDTEXT from the abapGit XML */
+  private findDescription(annotations: readonly ExpressionNode[], ddtext: unknown): string | undefined {
+    for (const value of this.findLeadingAnnotationValues(annotations, "@EndUserText.label")) {
+      const match = value.match(/^'([\s\S]*)'$/);
+      if (match) {
+        return match[1].replace(/\\(['\\])/g, "$1");
+      }
     }
-    return undefined;
+    return typeof ddtext === "string" && ddtext !== "" ? ddtext : undefined;
   }
 
   private findFieldNames(tree: ExpressionNode) {
