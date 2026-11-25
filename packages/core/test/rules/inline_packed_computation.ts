@@ -43,6 +43,54 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`, cnt: 2},
 
+  // brackets around the right-hand side and constructor operands
+  {abap: `TYPES ty_quan TYPE p LENGTH 7 DECIMALS 3.
+DATA a TYPE ty_quan.
+DATA b TYPE ty_quan.
+DATA(sum) = ( a + b ).`, cnt: 1, fix: false},
+  {abap: `TYPES ty_quan TYPE p LENGTH 7 DECIMALS 3.
+DATA a TYPE ty_quan.
+DATA b TYPE ty_quan.
+DATA(sum) = ( ( a + b ) ).`, cnt: 1},
+  {abap: `TYPES ty_quan TYPE p LENGTH 7 DECIMALS 3.
+DATA a TYPE ty_quan.
+DATA(sum) = ( a + 1 ) * 2.`, cnt: 1},
+  {abap: `TYPES ty_quan TYPE p LENGTH 7 DECIMALS 3.
+TYPES: BEGIN OF ty_row,
+         quan TYPE ty_quan,
+       END OF ty_row.
+DATA lt_row TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+DATA lv_menge TYPE ty_quan.
+DATA(lv_tot3) = lv_menge + VALUE #( lt_row[ 1 ]-quan OPTIONAL ).`, cnt: 1},
+  {abap: `TYPES ty_quan TYPE p LENGTH 7 DECIMALS 3.
+TYPES: BEGIN OF ty_row,
+         quan TYPE ty_quan,
+       END OF ty_row.
+DATA lt_row TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+DATA(lv_tot3) = VALUE #( lt_row[ 1 ]-quan OPTIONAL ) - 1.`, cnt: 1},
+  {abap: `TYPES ty_quan TYPE p LENGTH 7 DECIMALS 3.
+DATA i TYPE i.
+DATA(c) = i * CONV ty_quan( i ).`, cnt: 1},
+  {abap: `TYPES ty_quan TYPE p LENGTH 7 DECIMALS 3.
+DATA(c) = VALUE ty_quan( ) * 2.`, cnt: 1},
+  {abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_quan TYPE p LENGTH 7 DECIMALS 3.
+    TYPES: BEGIN OF ty_row,
+             quan TYPE ty_quan,
+           END OF ty_row.
+    TYPES ty_rows TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+    CLASS-METHODS get_weight RETURNING VALUE(rv) TYPE ty_quan.
+    CLASS-METHODS run IMPORTING lt_row TYPE ty_rows.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get_weight.
+  ENDMETHOD.
+  METHOD run.
+    DATA(lv_total) = get_weight( ) + ( VALUE #( lt_row[ 1 ]-quan OPTIONAL ) ).
+  ENDMETHOD.
+ENDCLASS.`, cnt: 1},
+
   // not a computation, or not with calculation type p
   {abap: `DATA a TYPE p LENGTH 8 DECIMALS 3.
 DATA(b) = a.`, cnt: 0},
@@ -61,6 +109,31 @@ DATA(c) = a ** 2.`, cnt: 0},
 DATA a TYPE ty_ms.
 DATA b TYPE ty_ms.
 DATA(margin) = CONV ty_ms( a - b ).`, cnt: 0},
+  {abap: `TYPES ty_ms TYPE p LENGTH 8 DECIMALS 0.
+DATA a TYPE ty_ms.
+DATA b TYPE ty_ms.
+DATA(margin) = ( CONV ty_ms( a - b ) ).`, cnt: 0},
+  {abap: `DATA a TYPE p LENGTH 8 DECIMALS 3.
+DATA(b) = ( a ).`, cnt: 0},
+  {abap: `DATA a TYPE p LENGTH 8 DECIMALS 3.
+DATA(b) = ( ( a ) ).`, cnt: 0},
+  {abap: `DATA a TYPE i.
+DATA b TYPE i.
+DATA(c) = ( a + b ).`, cnt: 0},
+  {abap: `DATA a TYPE p LENGTH 8 DECIMALS 3.
+DATA d TYPE decfloat34.
+DATA(c) = ( a * d ).`, cnt: 0},
+  {abap: `DATA a TYPE p LENGTH 8 DECIMALS 3.
+DATA d TYPE decfloat34.
+DATA(c) = a + VALUE #( d ).`, cnt: 0},
+  {abap: `DATA a TYPE p LENGTH 8 DECIMALS 3.
+DATA(c) = a + CONV decfloat34( 1 ).`, cnt: 0},
+  {abap: `DATA a TYPE p LENGTH 8 DECIMALS 3.
+DATA(c) = a * CONV f( 2 ).`, cnt: 0},
+  {abap: `DATA a TYPE p LENGTH 8 DECIMALS 3.
+DATA(c) = 1 + COND #( WHEN a > 1 THEN a ELSE a * 2 ).`, cnt: 0},
+  {abap: `DATA a TYPE p LENGTH 8 DECIMALS 3.
+DATA(c) = a + CONV #( a ).`, cnt: 0},
   {abap: `DATA a TYPE p LENGTH 8 DECIMALS 3.
 DATA(c) = COND #( WHEN a > 1 THEN a ELSE a * 2 ).`, cnt: 0},
   {abap: `DATA a TYPE p LENGTH 8 DECIMALS 3.
