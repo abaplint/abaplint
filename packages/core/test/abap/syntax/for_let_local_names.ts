@@ -148,4 +148,61 @@ ENDCLASS.`);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+
+  // a FOR or LET name stays declared for the rest of the procedure,
+  // activation on a system 2026-11-25: "TOTAL was already declared"
+  it("FOR, then an inline DATA of the same name in the method", () => {
+    const issues = runProgram(header + `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS a.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD a.
+    DATA(r) = VALUE string_table( FOR total IN tab ( |{ total-k1 }| ) ).
+    DATA(total) = VALUE #( tab[ 1 ] OPTIONAL ).
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues[0]?.getMessage()).to.equal(`Variable name "total" already defined`);
+  });
+
+  it("FOR, then a DATA of the same name", () => {
+    const issues = runProgram(header + `
+DATA(r) = VALUE string_table( FOR row IN tab ( |{ row-k1 }| ) ).
+DATA row TYPE ty.`);
+    expect(issues[0]?.getMessage()).to.equal(`Variable name "row" already defined`);
+  });
+
+  it("LET, then an inline DATA of the same name", () => {
+    const issues = runProgram(header + `
+DATA(r) = VALUE string_table( LET y = 1 IN ( |{ y }| ) ).
+DATA(y) = 2.`);
+    expect(issues[0]?.getMessage()).to.equal(`Variable name "y" already defined`);
+  });
+
+  it("FOR in one method, inline DATA of the same name in another method, ok", () => {
+    const issues = runProgram(header + `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS a.
+    METHODS b.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD a.
+    DATA(r) = VALUE string_table( FOR total IN tab ( |{ total-k1 }| ) ).
+  ENDMETHOD.
+  METHOD b.
+    DATA(total) = VALUE #( tab[ 1 ] OPTIONAL ).
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR, then a name of a nested FOR in the method, same type, ok", () => {
+    const issues = runProgram(header + `
+DATA(r1) = VALUE string_table( FOR m IN tab ( |{ m-k1 }| ) ).
+DATA(r2) = VALUE string_table( FOR n IN tab ( LINES OF VALUE string_table( FOR m IN tab ( |{ m-k1 }{ n-k1 }| ) ) ) ).`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
 });

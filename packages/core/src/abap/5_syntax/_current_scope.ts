@@ -38,6 +38,8 @@ export class CurrentScope {
   private readonly localFriends: Map<string, string[]> = new Map();
   /** types of the FOR and LET names used in a procedure, key is the scope node of the procedure */
   private readonly localNameTypes: WeakMap<SpaghettiScopeNode, Map<string, AbstractType>> = new WeakMap();
+  /** the FOR and LET names used in a procedure, a later declaration of the same name in the procedure is an error */
+  private readonly localNamesUsed: WeakMap<SpaghettiScopeNode, Set<string>> = new WeakMap();
   /** row type of the members of a group, key is the identifier of the group variable,
    *  a LOOP AT ... GROUP BY binds the group until its ENDLOOP */
   private readonly groupMemberTypes: Map<string, AbstractType> = new Map();
@@ -194,6 +196,9 @@ export class CurrentScope {
       throw new Error(`Variable name "${name}" already defined`);
     } else if (this.isOO() && this.current.getData().types[upper] !== undefined) {
       throw new Error(`"${name}" already defined`);
+    } else if (this.localNamesUsed.get(this.current)?.has(upper) === true) {
+      // a FOR or LET name earlier in the procedure, the system reports it as already declared
+      throw new Error(`Variable name "${name}" already defined`);
     }
     this.current.setVariable(upper, identifier);
   }
@@ -641,6 +646,15 @@ export class CurrentScope {
         break;
       }
       procedure = procedure.getParent();
+    }
+
+    if (procedure !== undefined && EXPRESSION_SCOPES.has(procedure.getIdentifier().stype) === false) {
+      let used = this.localNamesUsed.get(procedure);
+      if (used === undefined) {
+        used = new Set();
+        this.localNamesUsed.set(procedure, used);
+      }
+      used.add(upper);
     }
 
     if (procedure === undefined || type === undefined || CurrentScope.isComparable(type) === false) {
