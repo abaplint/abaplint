@@ -5,7 +5,7 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {AnyType, CharacterType, DataReference, DecFloat16Type, DecFloat34Type, FloatType, Integer8Type, IntegerType, PackedType,
+import {AnyType, CharacterType, DataReference, DataType, DecFloat16Type, DecFloat34Type, FloatType, Integer8Type, IntegerType, PackedType,
   StringType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
@@ -20,10 +20,15 @@ export class InsertInternal implements StatementSyntax {
     if (t) {
       targetType = Target.runSyntax(t, input);
     }
+    // a generically typed dref->* is checked at runtime, except where an index table is expected
+    const genericByKey = targetType instanceof DataType
+      && t?.getLastChild()?.get() instanceof Expressions.Dereference
+      && node.findDirectTokenByText("TABLE") !== undefined;
     if (!(targetType instanceof TableType)
         && !(targetType instanceof VoidType)
         && !(targetType instanceof AnyType)
         && !(targetType instanceof UnknownType)
+        && genericByKey === false
         && targetType !== undefined) {
       const message = "INSERT target must be a table";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));

@@ -13606,6 +13606,25 @@ WRITE / foo.`;
     expect(issues[0].getMessage()).to.contain("Source not character like");
   });
 
+  it("ok, WRITE utclong", () => {
+    const abap = `
+DATA u TYPE utclong.
+DATA c TYPE c LENGTH 40.
+WRITE u.
+WRITE: / u, 'x'.
+WRITE u TO c.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("error, data reference not clike", () => {
+    const abap = `
+DATA r TYPE REF TO i.
+WRITE r.`;
+    const issues = runProgram(abap);
+    expect(issues[0].getMessage()).to.contain("Source not character like");
+  });
+
   it("error, GET REFERENCE generic + inline", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -21853,6 +21872,114 @@ ENDCLASS.`;
   }
 });
 
+describe("syntax.ts, => with a data object, #3561", () => {
+  const lcl = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS inst.
+    CLASS-METHODS stat.
+    CLASS-DATA sattr TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD inst.
+  ENDMETHOD.
+  METHOD stat.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+`;
+  const message = (name: string) => `"${name}" is not a class or interface, => cannot be used with a data object`;
+
+  it("error, reference to a void interface", () => {
+    const abap = `DATA mi_env TYPE REF TO if_function_test_environment.
+mi_env=>clear_doubles( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("mi_env"));
+  });
+
+  it("error, reference to a local class, instance method", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+lo=>inst( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, reference to a local class, static method", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+lo=>stat( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, CALL METHOD", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+CALL METHOD lo=>stat.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, integer variable", () => {
+    const issues = runProgram(`DATA lv TYPE i.
+lv=>foo( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lv"));
+  });
+
+  it("error, read of a static attribute", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+DATA lv TYPE i.
+lv = lo=>sattr.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, write to a static attribute", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+lo=>sattr = 1.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, me=>", () => {
+    const issues = runProgram(`CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS inst.
+    CLASS-METHODS stat.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD inst.
+    me=>stat( ).
+  ENDMETHOD.
+  METHOD stat.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("me"));
+  });
+
+  it("ok, class name", () => {
+    const issues = runProgram(lcl + `DATA lv TYPE i.
+lcl=>stat( ).
+CALL METHOD lcl=>stat.
+lv = lcl=>sattr.
+lcl=>sattr = 1.`);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, data object with the name of the class, the class is used", () => {
+    const issues = runProgram(lcl + `DATA lcl TYPE REF TO lcl.
+lcl=>stat( ).`);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("error, data object with the name of the class, instance method", () => {
+    const issues = runProgram(lcl + `DATA lcl TYPE REF TO lcl.
+lcl=>inst( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(`Method "inst" not static`);
+  });
+});
+
 describe("syntax.ts, VALUE component of reference type, #3226", () => {
   const errors: {name: string, abap: string}[] = [
     {name: "character literal into REF TO object", abap: `
@@ -22091,4 +22218,91 @@ START-OF-SELECTION.
       expect(issues.length).to.equals(0);
     });
   }
+});
+
+describe("syntax.ts, dynamic attribute of a generic object reference", () => {
+  const build = (body: string) => `
+DATA mo_app TYPE REF TO object.
+DATA lv_name TYPE string.
+${body}`;
+
+  it("write target", () => {
+    const issues = runProgram(build(`mo_app->('MV_FLAG') = abap_true.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("read, comparison", () => {
+    const issues = runProgram(build(`IF mo_app->('MV_FLAG') = abap_true.
+ENDIF.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("read, interface attribute", () => {
+    const issues = runProgram(build(`IF mo_app->('ZIF_DEMO~MV_VIEW') = abap_true.
+ENDIF.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("name in a variable", () => {
+    const issues = runProgram(build(`mo_app->(lv_name) = abap_true.
+DATA(lv_value) = mo_app->(lv_name).`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("static attribute of a generic object reference is still an error", () => {
+    const issues = runProgram(build(`mo_app->mv_flag = abap_true.`));
+    expect(issues.length).to.be.greaterThan(0);
+  });
+});
+
+describe("syntax.ts, LINES OF and INSERT with a generically typed dref->*", () => {
+  const build = (body: string) => `
+DATA mr_tab TYPE REF TO data.
+DATA lt_copy TYPE string_table.
+${body}`;
+
+  it("INSERT LINES OF INTO TABLE dref->*", () => {
+    const issues = runProgram(build(`INSERT LINES OF lt_copy INTO TABLE mr_tab->*.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT wa INTO TABLE dref->*", () => {
+    const issues = runProgram(build(`INSERT \`a\` INTO TABLE mr_tab->*.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("APPEND LINES OF dref->*", () => {
+    const issues = runProgram(build(`APPEND LINES OF mr_tab->* TO lt_copy.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT LINES OF dref->* INTO TABLE", () => {
+    const issues = runProgram(build(`INSERT LINES OF mr_tab->* INTO TABLE lt_copy.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("INSERT INTO dref->* INDEX, an index table is expected", () => {
+    const issues = runProgram(build(`INSERT \`a\` INTO mr_tab->* INDEX 1.`));
+    expect(issues[0]?.getMessage()).to.equal("INSERT target must be a table");
+  });
+
+  it("generic parameter, not dereferenced, is not a table", () => {
+    const issues = runProgram(`
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING data TYPE data.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lt_copy TYPE string_table.
+    APPEND LINES OF data TO lt_copy.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues[0]?.getMessage()).to.equal("LINES OF must be a table type");
+  });
+
+  it("APPEND LINES OF dref->* FROM, an index table is expected", () => {
+    const issues = runProgram(build(`APPEND LINES OF mr_tab->* FROM 2 TO lt_copy.`));
+    expect(issues[0]?.getMessage()).to.equal("LINES OF must be a table type");
+  });
 });
