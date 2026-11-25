@@ -11,6 +11,7 @@ import {RenameTableType} from "./rename_table_type";
 import {ObjectRenamer} from "./_object_renamer";
 import {RenameMessageClass} from "./rename_message_class";
 import {RenameICFService} from "./rename_icf_service";
+import {IRenamedName, RenameLiterals} from "./rename_literals";
 
 export interface IRenameResult {
   deletedFiles: Set<string>;
@@ -38,6 +39,15 @@ export class Renamer {
 
     const result = this.apply(edits);
     this.reg.findIssues(); // hmm, this builds the ddic references
+    return result;
+  }
+
+  /** Renames the old names in string literals and string templates of the ABAP sources,
+   *  typically after the objects are renamed, see RenameLiterals */
+  public renameLiterals(names: readonly IRenamedName[]): IRenameResult {
+    this.reg.parse();
+    const result = this.apply(new RenameLiterals(this.reg).buildEdits(names));
+    this.reg.parse();
     return result;
   }
 

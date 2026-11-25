@@ -24,7 +24,10 @@ export class Rename {
     }
 
     this.skip(rconfig);
-    this.rename(rconfig, quiet);
+    const renamed = this.rename(rconfig, quiet);
+    if (rconfig.literals === true) {
+      this.collect(new abaplint.Rename(this.reg).renameLiterals(renamed));
+    }
     if (rconfig.output === undefined || rconfig.output === "") {
       // write changes inline
       this.deletedFiles.forEach(f => {
@@ -81,7 +84,18 @@ export class Rename {
     }
   }
 
-  private rename(rconfig: abaplint.IRenameSettings, quiet?: boolean) {
+  private collect(result: ReturnType<abaplint.Rename["rename"]>) {
+    result.updatedFiles.forEach(f => {
+      if (this.addedFiles.has(f) === false) {
+        this.updatedFiles.add(f);
+      }
+    });
+    result.deletedFiles.forEach(f => { this.deletedFiles.add(f); });
+    result.addedFiles.forEach(f => { this.addedFiles.add(f); });
+  }
+
+  private rename(rconfig: abaplint.IRenameSettings, quiet?: boolean): {oldName: string, newName: string}[] {
+    const renamed: {oldName: string, newName: string}[] = [];
     const renamer = new abaplint.Rename(this.reg);
     for (const o of this.reg.getObjects()) {
       if (this.reg.isDependency(o) === true) {
@@ -103,12 +117,15 @@ export class Rename {
         }
 
         const result = renamer.rename(o.getType(), o.getName(), newStr);
+        // the name without what follows a space, a SICF name carries the hash of its URL there
+        renamed.push({oldName: o.getName().split(" ")[0], newName: newStr.split(" ")[0]});
         result.updatedFiles.forEach(f => { this.updatedFiles.add(f); });
         result.deletedFiles.forEach(f => { this.deletedFiles.add(f); });
         result.addedFiles.forEach(f => { this.addedFiles.add(f); });
         break;
       }
     }
+    return renamed;
   }
 
   private skip(rconfig: abaplint.IRenameSettings) {

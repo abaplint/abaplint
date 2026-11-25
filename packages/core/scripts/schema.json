@@ -7855,6 +7855,10 @@
     "IRenameSettings": {
       "additionalProperties": false,
       "properties": {
+        "literals": {
+          "description": "also rename the old object names in string literals and string templates of the ABAP sources, a name is matched as a whole word and keeps its case, disabled by default",
+          "type": "boolean"
+        },
         "output": {
           "description": "output folder, if value is empty or undefined the changes are written inline in the input folders",
           "type": "string"

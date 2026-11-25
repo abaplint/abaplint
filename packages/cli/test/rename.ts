@@ -130,6 +130,39 @@ ENDCLASS.`;
     expect(sicfNew).to.include("<ICFHANDLER>ZCL_HANDLER_NEW</ICFHANDLER>");
   });
 
+  it("renames names in literals, with the option", async () => {
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_foo IMPLEMENTATION.
+ENDCLASS.`;
+    const prog = `REPORT zprog.
+DATA ref TYPE REF TO object.
+CREATE OBJECT ref TYPE ('ZCL_FOO').`;
+
+    for (const literals of [true, false]) {
+      const fileClass = new MemoryFile("zcl_foo.clas.abap", clas);
+      const fileProg = new MemoryFile("zprog.prog.abap", prog);
+      const reg = new Registry().addFiles([fileClass, fileProg]).parse();
+
+      const jsonFiles: any = {};
+      jsonFiles[fileClass.getFilename()] = fileClass.getRaw();
+      jsonFiles[fileProg.getFilename()] = fileProg.getRaw();
+      const volume = memfs.Volume.fromJSON(jsonFiles);
+      const mockFS = memfs.createFsFromVolume(volume);
+
+      const config = reg.getConfig().get();
+      config.rename = {literals, "patterns": [
+        {"type": "CLAS", "oldName": "zcl_foo", "newName": "zcl_bar"},
+      ]};
+
+      new Rename(reg).run(config, "base", mockFS, true);
+
+      expect(mockFS.readFileSync("zcl_bar.clas.abap").toString()).to.include("CLASS zcl_bar");
+      const progNew = mockFS.readFileSync("zprog.prog.abap").toString();
+      expect(progNew).to.include(literals ? "TYPE ('ZCL_BAR')" : "TYPE ('ZCL_FOO')");
+    }
+  });
+
   it("renames interface referenced in DEFAULT value", async () => {
     const intf = `INTERFACE zif_abapgit_definitions PUBLIC.
   TYPES ty TYPE i.

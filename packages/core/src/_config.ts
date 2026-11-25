@@ -66,6 +66,9 @@ export interface IRenameSettings {
    * @uniqueItems true
   */
   skip?: string[];
+  /** also rename the old object names in string literals and string templates of the ABAP sources,
+   * a name is matched as a whole word and keeps its case, disabled by default */
+  literals?: boolean;
   /** List of rename patterns
    * @uniqueItems true
   */
