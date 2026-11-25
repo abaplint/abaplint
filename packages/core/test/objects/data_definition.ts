@@ -934,4 +934,98 @@ define view entity zi_test_person as select from ztest_person
       expect((type as VoidType).getVoided()).to.equal("DDLS:fieldname:ZI_TEST_PERSON");
     }
   });
+
+  describe("description", () => {
+    function ddlsXml(ddtext: string | undefined): string {
+      return `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DDLS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DDLS>
+    <DDLNAME>ZI_TEST</DDLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>${ddtext === undefined ? "" : `\n    <DDTEXT>${ddtext}</DDTEXT>`}
+    <SOURCE_TYPE>W</SOURCE_TYPE>
+   </DDLS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    }
+
+    async function getDescription(source: string, ddtext: string | undefined, parserError = false): Promise<string | undefined> {
+      const reg = new Registry().addFiles([
+        new MemoryFile("zi_test.ddls.xml", ddlsXml(ddtext)),
+        new MemoryFile("zi_test.ddls.asddls", source),
+      ]);
+      await reg.parseAsync();
+      const ddls = reg.getFirstObject()! as DataDefinition;
+      expect(ddls.hasParserError() === true).to.equal(parserError);
+      return ddls.getDescription();
+    }
+
+    it("no label in hierarchy source, DDTEXT in XML", async () => {
+      const source = `define hierarchy ZI_TEST
+  as parent child hierarchy (
+    source ZI_ORGUNIT
+    child to parent association _Parent
+    siblings order by OrgUnitName ascending
+  )
+{
+  key NodeID,
+  ParentNodeID
+}`;
+      expect(await getDescription(source, "XCO test hierarchy")).to.equal("XCO test hierarchy");
+    });
+
+    it("no label in view entity source, DDTEXT in XML", async () => {
+      const source = `define view entity ZI_TEST as select from tadir { key pgmid }`;
+      expect(await getDescription(source, "From XML")).to.equal("From XML");
+    });
+
+    it("label wins over DDTEXT", async () => {
+      const source = `@EndUserText.label: 'From source'
+define view entity ZI_TEST as select from tadir { key pgmid }`;
+      expect(await getDescription(source, "From XML")).to.equal("From source");
+    });
+
+    it("label with escaped apostrophe, slash and umlaut", async () => {
+      const source = `@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'Kunde\\'s Bestellung / Übersicht'
+define view entity ZI_TEST as select from tadir { key pgmid }`;
+      expect(await getDescription(source, "From XML")).to.equal("Kunde's Bestellung / Übersicht");
+    });
+
+    it("field label is not the entity description", async () => {
+      const source = `@AccessControl.authorizationCheck: #NOT_REQUIRED
+define view entity ZI_TEST as select from tadir {
+  key pgmid,
+  @EndUserText.label: 'Amount'
+  object
+}`;
+      expect(await getDescription(source, "From XML")).to.equal("From XML");
+    });
+
+    it("field label only and no DDTEXT", async () => {
+      const source = `define view entity ZI_TEST as select from tadir {
+  @EndUserText.label: 'Amount'
+  key pgmid
+}`;
+      expect(await getDescription(source, undefined)).to.equal(undefined);
+    });
+
+    it("no label and no DDTEXT", async () => {
+      const source = `define view entity ZI_TEST as select from tadir { key pgmid }`;
+      expect(await getDescription(source, undefined)).to.equal(undefined);
+    });
+
+    it("parser error, label in source", async () => {
+      const source = `@EndUserText.label: 'From source'
+define view entity ZI_TEST as select from tadir { key pgmid, this is not CDS }`;
+      expect(await getDescription(source, "From XML", true)).to.equal("From source");
+    });
+
+    it("parser error, no label, DDTEXT in XML", async () => {
+      const source = `define view entity ZI_TEST as select from tadir { key pgmid, this is not CDS }`;
+      expect(await getDescription(source, "From XML", true)).to.equal("From XML");
+    });
+  });
 });
