@@ -13,6 +13,8 @@ import {checkOffsetLength} from "./_check_offset_length";
 import {checkTextSymbol} from "./_check_text_symbol";
 import {checkHeaderLine} from "./_check_header_line";
 import {BuiltInMethod} from "../_builtin";
+import {TypedIdentifier} from "../../types/_typed_identifier";
+import {checkReferenceCompatible} from "./_check_reference_compatible";
 
 export class MethodCallParam {
   /** returns the type of the unnamed argument, if any */
@@ -56,6 +58,7 @@ export class MethodCallParam {
         }
       }
       let targetType: AbstractType | undefined = undefined;
+      let parameter: TypedIdentifier | undefined = undefined;
       if (!(method instanceof VoidType)) {
         const name = method.getParameters().getDefaultImporting();
         if (name === undefined) {
@@ -66,6 +69,7 @@ export class MethodCallParam {
         for (const i of method.getParameters().getImporting()) {
           if (i.getName().toUpperCase() === name) {
             targetType = i.getType();
+            parameter = i;
             break;
           }
         }
@@ -93,6 +97,8 @@ export class MethodCallParam {
       } else if (this.isAssignable(sourceType, targetType, child, method, input) === false) {
         const message = "Method parameter type not compatible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      } else if (checkReferenceCompatible(child, sourceType, parameter, method, input)) {
         return;
       }
       return sourceType;

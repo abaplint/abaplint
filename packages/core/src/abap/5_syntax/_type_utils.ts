@@ -762,6 +762,75 @@ export class TypeUtils {
     return true;
   }
 
+  /** a data object passed to a by-reference parameter with a complete elementary type must be compatible:
+   * the same built-in type, the same length and the same number of decimals. Returns false only for a known
+   * mismatch, true whenever this cannot be decided: generic, void or unknown types, structures, tables,
+   * references, enumerations, DDIC floating point types and literals */
+  public isReferenceCompatibleElementary(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
+    const sourceKind = this.elementaryKind(source);
+    const targetKind = this.elementaryKind(target);
+    if (sourceKind === undefined || targetKind === undefined || sourceKind === targetKind) {
+      return true;
+    }
+    // the DDIC types DF16_DEC, DF34_DEC, D16D, D34D, ... are read as packed and UTCL as c LENGTH 27,
+    // so a DDIC type of these two kinds is not compared to a decimal floating point or utclong type
+    const ddicPacked = (t: AbstractType | undefined) => t instanceof PackedType && this.isFromDDIC(t);
+    const ddicChar = (t: AbstractType | undefined) => t instanceof CharacterType && this.isFromDDIC(t);
+    const decfloat = (t: AbstractType | undefined) => t instanceof DecFloat16Type || t instanceof DecFloat34Type;
+    if ((ddicPacked(source) && decfloat(target))
+        || (ddicPacked(target) && decfloat(source))
+        || (ddicChar(source) && target instanceof UTCLongType)
+        || (ddicChar(target) && source instanceof UTCLongType)) {
+      return true;
+    }
+    return false;
+  }
+
+  private isFromDDIC(type: AbstractType): boolean {
+    return type.getDDICName() !== undefined
+      || type.getDescription() !== undefined
+      || type.getConversionExit() !== undefined;
+  }
+
+  /** the built-in type with its length and decimals, undefined if not a complete elementary type checked here */
+  private elementaryKind(type: AbstractType | undefined): string | undefined {
+    if (type === undefined
+        || type.isGeneric() === true
+        || type.getAbstractTypeData()?.derivedFromConstant === true) {
+      return undefined;
+    } else if (type instanceof CharacterType) {
+      return "c" + type.getLength();
+    } else if (type instanceof NumericType && !(type instanceof NGenericType)) {
+      return "n" + type.getLength();
+    } else if (type instanceof HexType) {
+      return "x" + type.getLength();
+    } else if (type instanceof PackedType) {
+      return "p" + type.getLength() + "," + type.getDecimals();
+    } else if (type instanceof StringType) {
+      return "string";
+    } else if (type instanceof XStringType) {
+      return "xstring";
+    } else if (type instanceof DateType) {
+      return "d";
+    } else if (type instanceof TimeType) {
+      return "t";
+    } else if (type instanceof IntegerType) {
+      // also INT1 and INT2, so i is not told apart from b and s
+      return "i";
+    } else if (type instanceof Integer8Type) {
+      return "int8";
+    } else if (type instanceof FloatType) {
+      return "f";
+    } else if (type instanceof DecFloat16Type) {
+      return "decfloat16";
+    } else if (type instanceof DecFloat34Type) {
+      return "decfloat34";
+    } else if (type instanceof UTCLongType) {
+      return "utclong";
+    }
+    return undefined;
+  }
+
   // character-like arguments of built-in functions must be elementary, flat character-like structures are not allowed
   public isAssignableBuiltin(source: AbstractType | undefined,
                              target: AbstractType | undefined,

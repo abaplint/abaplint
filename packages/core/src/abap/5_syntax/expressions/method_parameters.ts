@@ -16,6 +16,7 @@ import {checkOffsetLength} from "./_check_offset_length";
 import {checkTextSymbol} from "./_check_text_symbol";
 import {checkHeaderLine} from "./_check_header_line";
 import {BuiltInMethod} from "../_builtin";
+import {checkReferenceCompatible} from "./_check_reference_compatible";
 
 interface IListItemT {
   name: string;
@@ -209,6 +210,8 @@ export class MethodParameters {
       } else if (assignable(item.sourceType, parameter.getType(), item.source) === false) {
         const message = "Method parameter type not compatible, " + item.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      } else if (checkReferenceCompatible(item.source, item.sourceType, parameter, method, input)) {
         return;
       }
     }

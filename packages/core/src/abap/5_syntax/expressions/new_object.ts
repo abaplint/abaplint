@@ -13,6 +13,7 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {CreateObject} from "../statements/create_object";
+import {checkReferenceCompatible} from "./_check_reference_compatible";
 
 export class NewObject {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType {
@@ -137,8 +138,9 @@ export class NewObject {
     const parameters = node.findDirectExpression(Expressions.ParameterListS);
     if (source) {
       // single unnamed parameter
-      const type = this.defaultImportingType(method);
-      if (type === undefined) {
+      const parameter = this.defaultImporting(method);
+      const type = parameter?.getType();
+      if (type === undefined || method === undefined) {
         const message = "NewObject, no default importing parameter found for constructor, " + name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
@@ -147,6 +149,8 @@ export class NewObject {
       if (new TypeUtils(input.scope).isAssignableStrict(sourceType, type) === false) {
         const message = `NEW parameter type not compatible`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      } else if (checkReferenceCompatible(source, sourceType, parameter, method, input)) {
         return;
       }
     } else if (parameters) {
@@ -164,18 +168,18 @@ export class NewObject {
     }
   }
 
-  private static defaultImportingType(method: IMethodDefinition | undefined) {
-    let targetType: AbstractType | undefined = undefined;
+  private static defaultImporting(method: IMethodDefinition | undefined): TypedIdentifier | undefined {
+    let parameter: TypedIdentifier | undefined = undefined;
     if (method === undefined) {
       return undefined;
     }
     const name = method.getParameters().getDefaultImporting();
     for (const i of method.getParameters().getImporting()) {
       if (i.getName().toUpperCase() === name) {
-        targetType = i.getType();
+        parameter = i;
       }
     }
-    return targetType;
+    return parameter;
   }
 
 }
