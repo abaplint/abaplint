@@ -22,6 +22,7 @@ import {checkDatabaseFields} from "./_check_database_fields";
 import {Issue} from "../../../issue";
 import {FieldChain} from "./field_chain";
 import {WAt} from "../../1_lexer/tokens";
+import {AbstractToken} from "../../1_lexer/tokens/abstract_token";
 
 type FieldList = {code: string, as: string, expression: ExpressionNode}[];
 type DatabaseSourceInfo = {source: DatabaseTableSource, name: string, alias: string};
@@ -56,6 +57,7 @@ export class Select {
     }
 
     checkDatabaseFields(fields.map(field => field.code), dbSources, input, node.getFirstToken());
+    this.checkInternalTableColumns(node, from, fields, input);
 
     const intoExpression = this.handleInto(node, input, fields, dbSources, from);
 
@@ -155,6 +157,58 @@ export class Select {
 
     if (input.scope.getType() === ScopeType.OpenSQL) {
       input.scope.pop(node.getLastToken().getEnd());
+    }
+  }
+
+  /** SELECT FROM @itab, the columns of the field list, GROUP BY and ORDER BY must be components of the line type */
+  private static checkInternalTableColumns(node: ExpressionNode, from: ExpressionNode, fields: FieldList, input: SyntaxInput): void {
+    const sources = from.findAllExpressions(Expressions.SQLFromSource);
+    if (sources.length !== 1 || sources[0].getFirstToken().getStr() !== "@") {
+      return;
+    }
+    const chain = sources[0].findDirectExpression(Expressions.FieldChain);
+    if (chain === undefined || isSimple.test(chain.concatTokens()) === false) {
+      return;
+    }
+    const type = input.scope.findVariable(chain.concatTokens())?.getType();
+    if (!(type instanceof TableType)) {
+      return;
+    }
+    const row = type.getRowType();
+    if (!(row instanceof StructureType)) {
+      // a table of an elementary type has the column TABLE_LINE, voided or unknown types are not checked
+      return;
+    }
+
+    const alias = sources[0].findDirectExpression(Expressions.SQLAsName)?.concatTokens().toUpperCase();
+    const check = (code: string, token: AbstractToken) => {
+      let name = code.toUpperCase();
+      if (name.includes("~")) {
+        const prefix = name.substring(0, name.indexOf("~"));
+        if (prefix !== alias && prefix !== chain.concatTokens().toUpperCase()) {
+          return true;
+        }
+        name = name.substring(name.indexOf("~") + 1);
+      }
+      if (isSimple.test(name) && row.getComponentByName(name) === undefined) {
+        input.issues.push(syntaxIssue(input, token, `Unknown column name ${name.toLowerCase()}`));
+        return false;
+      }
+      return true;
+    };
+
+    for (const f of fields) {
+      if (check(f.code, f.expression.getFirstToken()) === false) {
+        return;
+      }
+    }
+    const lists = [node.findDirectExpression(Expressions.SQLGroupBy), node.findDirectExpression(Expressions.SQLOrderBy)];
+    for (const list of lists) {
+      for (const name of list?.findAllExpressions(Expressions.SQLFieldName) || []) {
+        if (name.getChildren().length === 1 && check(name.concatTokens(), name.getFirstToken()) === false) {
+          return;
+        }
+      }
     }
   }
 
