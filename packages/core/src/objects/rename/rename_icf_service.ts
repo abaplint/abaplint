@@ -1,4 +1,5 @@
 import {IRegistry} from "../../_iregistry";
+import * as crypto from "crypto";
 import {WorkspaceEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile} from "vscode-languageserver-types";
 import {ICFService} from "..";
 import {ObjectRenamer} from "./_object_renamer";
@@ -51,10 +52,40 @@ export class RenameICFService implements ObjectRenamer {
     changes = changes.concat(helper.buildURLFileEdits(obj, cleanOldName, cleanNewName));
     changes = changes.concat(helper.buildXMLFileEdits(obj, "ICF_NAME", cleanOldName, cleanNewName));
     changes = changes.concat(helper.buildXMLFileEdits(obj, "ORIG_NAME", cleanOldName, cleanNewName, true));
-    changes = changes.concat(helper.renameFiles(obj, oldName, fileNewName));
+    const abapGitFiles = this.renameAbapGitFiles(obj, cleanOldName, cleanNewName);
+    changes = changes.concat(abapGitFiles ?? helper.renameFiles(obj, oldName, fileNewName));
     return {
       documentChanges: changes,
     };
   }
 
+  /** abapGit names a SICF file "<ICF_NAME, lower case, padded to 15><first 25 hex chars of SHA1(URL)>.sicf.xml",
+   *  the URL is the one in the XML. Both parts change with the name, keeping the old ones gives an object name
+   *  abapGit does not derive from the node. Returns undefined if the files are not in this layout */
+  private renameAbapGitFiles(obj: ICFService, oldName: string, newName: string): RenameFile[] | undefined {
+    const url = obj.getURL();
+    if (url === undefined || newName.length > ICF_NAME_LENGTH) {
+      return undefined;
+    }
+    const newURL = url.replace(oldName.toLowerCase(), newName.toLowerCase());
+    const hash = crypto.createHash("sha1").update(newURL).digest("hex").substring(0, ICF_HASH_LENGTH);
+    const stem = newName.toLowerCase().padEnd(ICF_NAME_LENGTH, " ") + hash;
+
+    const list: RenameFile[] = [];
+    for (const f of obj.getFiles()) {
+      const filename = f.getFilename();
+      const slash = Math.max(filename.lastIndexOf("/"), filename.lastIndexOf("\\"));
+      const base = filename.substring(slash + 1);
+      const match = base.match(/^[^ ]+ +[0-9a-f]{25}(\..+)$/i);
+      if (match === null) {
+        return undefined;
+      }
+      list.push(RenameFile.create(filename, filename.substring(0, slash + 1) + stem + match[1]));
+    }
+    return list;
+  }
+
 }
+
+const ICF_NAME_LENGTH = 15;
+const ICF_HASH_LENGTH = 25;

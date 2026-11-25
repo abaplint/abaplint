@@ -42,10 +42,33 @@ describe("Rename SICF", () => {
     new Renamer(reg).rename("SICF", "z2ui5_local", "foo");
     expect(reg.getObjectCount().normal).to.equal(1);
     for (const f of reg.getFiles()) {
-      expect(f.getFilename()).to.equal("foo 9def6c78d0beedf8d5b04ba6c.sicf.xml");
+      // abapGit layout: name padded to 15, then the SHA1 of the new URL "/sap/bc/foo/"
+      expect(f.getFilename()).to.equal("foo            038033a7439955ca869c17ab2.sicf.xml");
       expect(f.getRaw().includes("<URL>/sap/bc/foo/</URL>")).to.equal(true);
       expect(f.getRaw().includes("<ICF_NAME>FOO</ICF_NAME>")).to.equal(true);
       expect(f.getRaw().includes("<ORIG_NAME>foo</ORIG_NAME>")).to.equal(true);
+    }
+  });
+
+  it("SICF, abapGit file name in a folder", () => {
+    const reg = new Registry().addFiles([
+      new MemoryFile("src/http/z2ui5_local    72b72fad1445b8e2c5cfeee10.sicf.xml", xml),
+    ]).parse();
+    new Renamer(reg).rename("SICF", "z2ui5_local", "zbar_local");
+    expect(reg.getObjectCount().normal).to.equal(1);
+    for (const f of reg.getFiles()) {
+      expect(f.getFilename()).to.equal("src/http/zbar_local     ced3c73ab88b991d8760e1d89.sicf.xml");
+      expect(f.getRaw().includes("<URL>/sap/bc/zbar_local/</URL>")).to.equal(true);
+    }
+  });
+
+  it("SICF, file name not in the abapGit layout", () => {
+    const reg = new Registry().addFiles([
+      new MemoryFile("z2ui5_local.sicf.xml", xml),
+    ]).parse();
+    new Renamer(reg).rename("SICF", "z2ui5_local", "foo");
+    for (const f of reg.getFiles()) {
+      expect(f.getFilename()).to.equal("foo.sicf.xml");
     }
   });
 });
