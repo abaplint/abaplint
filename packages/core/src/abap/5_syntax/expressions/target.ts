@@ -3,8 +3,8 @@ import {ExpressionNode} from "../../nodes";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {INode} from "../../nodes/_inode";
-import {Dash, InstanceArrow} from "../../1_lexer/tokens";
-import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, XStringType, StringType} from "../../types/basic";
+import {Dash, InstanceArrow, ParenLeft} from "../../1_lexer/tokens";
+import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, XStringType, StringType, GenericObjectReferenceType} from "../../types/basic";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {FieldOffset} from "./field_offset";
@@ -13,8 +13,9 @@ import {TableExpression} from "./table_expression";
 import {Dereference} from "../../2_statements/expressions";
 import {FieldLength} from "./field_length";
 import {Cast} from "./cast";
+import {checkMeInStaticMethod} from "./source_field";
 import {isFieldSymbolItself, substringType} from "./_substring";
-import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue, dataObjectBeforeStaticArrow} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 export class Target {
@@ -70,7 +71,10 @@ export class Target {
         if (afterTableExpression && TableExpression.checkArrowAfter(input, current.getFirstToken())) {
           return VoidType.get(CheckSyntaxKey);
         }
-        if (!(context instanceof ObjectReferenceType)
+        if (context instanceof GenericObjectReferenceType && children[currentIndex]?.get() instanceof ParenLeft) {
+          // dynamic attribute, oref->(name), the attribute is resolved at runtime
+          context = VoidType.get(CheckSyntaxKey);
+        } else if (!(context instanceof ObjectReferenceType)
             && !(context instanceof DataReference)
             && !(context instanceof VoidType)) {
           const message = "Not an object reference, target";
@@ -172,7 +176,9 @@ export class Target {
     if (node.get() instanceof Expressions.TargetField
         || node.get() instanceof Expressions.TargetFieldSymbol) {
       const found = input.scope.findVariable(name);
-      if (found) {
+      if (found && checkMeInStaticMethod(found, token, input) === true) {
+        return VoidType.get(CheckSyntaxKey);
+      } else if (found) {
         input.scope.addReference(token, found, ReferenceType.DataWriteReference, input.filename);
       }
       if (name.includes("~")) {
@@ -187,6 +193,8 @@ export class Target {
       if (found) {
         input.scope.addReference(token, found, ReferenceType.ObjectOrientedReference, input.filename);
         return new ObjectReferenceType(found);
+      } else if (dataObjectBeforeStaticArrow(input, token)) {
+        return VoidType.get(CheckSyntaxKey);
       } else if (input.scope.getDDIC().inErrorNamespace(name) === false) {
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, {ooName: name, ooType: "CLAS"});
         return VoidType.get(name);

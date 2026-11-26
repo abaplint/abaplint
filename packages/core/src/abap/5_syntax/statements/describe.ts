@@ -19,13 +19,15 @@ export class Describe implements StatementSyntax {
       FieldChain.runSyntax(s, input, ReferenceType.DataReadReference);
     }
 
-    const linesTarget = node.findExpressionAfterToken("LINES");
-    if (linesTarget?.get() instanceof Expressions.Target) {
-      const inline = linesTarget?.findDirectExpression(Expressions.InlineData);
-      if (inline) {
-        InlineData.runSyntax(inline, input, IntegerType.get());
-      } else {
-        Target.runSyntax(linesTarget, input);
+    for (const addition of ["LINES", "KIND", "OCCURS"]) {
+      const target = node.findExpressionAfterToken(addition);
+      if (target?.get() instanceof Expressions.Target) {
+        const inline = target.findDirectExpression(Expressions.InlineData);
+        if (inline) {
+          InlineData.runSyntax(inline, input, addition === "KIND" ? new CharacterType(1) : IntegerType.get());
+        } else {
+          Target.runSyntax(target, input);
+        }
       }
     }
 

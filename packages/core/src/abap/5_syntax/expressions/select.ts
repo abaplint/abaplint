@@ -239,6 +239,18 @@ export class Select {
     }
   }
 
+  /** an inline declaration cannot be the target of INTO or APPENDING CORRESPONDING FIELDS OF,
+   *  the declaration is still made, so later reads give no follow-up errors */
+  private static checkCorrespondingInline(into: ExpressionNode,
+                                          inline: ExpressionNode | undefined,
+                                          node: ExpressionNode,
+                                          input: SyntaxInput): void {
+    if (inline !== undefined && into.findDirectTokenByText("CORRESPONDING") !== undefined) {
+      const message = "Inline declarations cannot be used together with INTO CORRESPONDING FIELDS OF";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+    }
+  }
+
   private static handleInto(node: ExpressionNode,
                             input: SyntaxInput,
                             fields: FieldList,
@@ -247,13 +259,7 @@ export class Select {
     const intoTable = node.findDirectExpression(Expressions.SQLIntoTable);
     if (intoTable) {
       const inline = intoTable.findFirstExpression(Expressions.InlineData);
-      if (inline
-          && intoTable.findDirectTokenByText("INTO") !== undefined
-          && intoTable.findDirectTokenByText("CORRESPONDING") !== undefined
-          && !releaseAtLeast(input.scope.getRelease(), Release.v755)) {
-        const message = "INTO CORRESPONDING FIELDS OF TABLE with an inline declaration requires 7.55";
-        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
-      }
+      this.checkCorrespondingInline(intoTable, inline, node, input);
       if (inline) {
         InlineData.runSyntax(inline, input, this.buildTableType(fields, dbSources, input.scope, from));
       }
@@ -263,6 +269,7 @@ export class Select {
     const intoStructure = node.findDirectExpression(Expressions.SQLIntoStructure);
     if (intoStructure) {
       const inlineList = intoStructure.findAllExpressions(Expressions.InlineData);
+      this.checkCorrespondingInline(intoStructure, inlineList[0], node, input);
       if (inlineList.length === 1) {
         InlineData.runSyntax(inlineList[0], input, this.buildStructureType(fields, dbSources, input, from));
       } else {

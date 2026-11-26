@@ -2,7 +2,7 @@ import {ExpressionNode} from "../../nodes";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import * as Expressions from "../../2_statements/expressions";
-import {Dash, DashW, InstanceArrow} from "../../1_lexer/tokens";
+import {Dash, DashW, InstanceArrow, ParenLeft} from "../../1_lexer/tokens";
 import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, UnknownType, GenericObjectReferenceType} from "../../types/basic";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
@@ -15,7 +15,7 @@ import {Dereference} from "./dereference";
 import {SourceFieldSymbol} from "./source_field_symbol";
 import {SourceField} from "./source_field";
 import {isFieldSymbolItself, substringType} from "./_substring";
-import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue, dataObjectBeforeStaticArrow} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 export class FieldChain {
@@ -94,7 +94,10 @@ export class FieldChain {
         if (afterTableExpression && TableExpression.checkArrowAfter(input, current.getFirstToken())) {
           return VoidType.get(CheckSyntaxKey);
         }
-        if (!(context instanceof ObjectReferenceType)
+        if (context instanceof GenericObjectReferenceType && children[i + 1]?.get() instanceof ParenLeft) {
+          // dynamic attribute, oref->(name), the attribute is resolved at runtime
+          context = VoidType.get(CheckSyntaxKey);
+        } else if (!(context instanceof ObjectReferenceType)
             && !(context instanceof DataReference)
             && !(context instanceof VoidType)) {
           const message = "Not an object reference, field chain";
@@ -177,6 +180,8 @@ export class FieldChain {
       if (found?.id) {
         input.scope.addReference(classTok, found.id, ReferenceType.ObjectOrientedReference, input.filename);
         return new ObjectReferenceType(found.id);
+      } else if (dataObjectBeforeStaticArrow(input, classTok)) {
+        return VoidType.get(CheckSyntaxKey);
       } else if (input.scope.getDDIC().inErrorNamespace(classNam) === false) {
         input.scope.addReference(classTok, undefined,
                                  ReferenceType.ObjectOrientedVoidReference, input.filename, {ooName: classNam.toUpperCase()});

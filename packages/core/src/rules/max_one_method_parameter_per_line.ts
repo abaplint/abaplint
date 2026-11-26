@@ -22,12 +22,10 @@ export class MaxOneMethodParameterPerLine extends ABAPRule {
       title: "Max one method parameter definition per line",
       shortDescription: `Keep max one method parameter description per line`,
       tags: [RuleTag.SingleFile, RuleTag.Whitespace, RuleTag.Quickfix],
-      badExample: `
-METHODS apps_scope_token
+      badExample: `METHODS apps_scope_token
   IMPORTING
     body TYPE bodyapps_scope_token client_id TYPE str.`,
-      goodExample: `
-METHODS apps_scope_token
+      goodExample: `METHODS apps_scope_token
   IMPORTING
     body      TYPE bodyapps_scope_token
     client_id TYPE str.`,

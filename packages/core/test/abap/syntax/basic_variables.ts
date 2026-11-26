@@ -1102,7 +1102,7 @@ ENDTRY.`;
     expect(type).to.be.instanceof(Basic.VoidType);
   });
 
-  it("CATCH multiple classes into DATA infers their common superclass", () => {
+  it("CATCH multiple classes into DATA, unrelated classes give CX_ROOT", () => {
     const abap = `
 CLASS cx_root DEFINITION.
 ENDCLASS.
@@ -1126,7 +1126,7 @@ ENDTRY.`;
     expect((type as Basic.ObjectReferenceType).getIdentifierName().toLowerCase()).to.equal("cx_root");
   });
 
-  it("CATCH multiple classes into DATA uses first common superclass", () => {
+  it("CATCH multiple classes into DATA, siblings give CX_ROOT, not their common superclass", () => {
     const abap = `
 CLASS cx_root DEFINITION.
 ENDCLASS.
@@ -1151,7 +1151,178 @@ ENDTRY.`;
     expect(identifier).to.not.equal(undefined);
     const type = identifier?.getType();
     expect(type).to.be.instanceof(Basic.ObjectReferenceType);
+    expect((type as Basic.ObjectReferenceType).getIdentifierName().toLowerCase()).to.equal("cx_root");
+  });
+
+  it("CATCH into DATA, one class gives that class", () => {
+    const abap = `
+CLASS cx_root DEFINITION.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_middle DEFINITION INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_middle IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_first DEFINITION INHERITING FROM cx_middle.
+ENDCLASS.
+CLASS cx_first IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_second DEFINITION INHERITING FROM cx_middle.
+ENDCLASS.
+CLASS cx_second IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_child DEFINITION INHERITING FROM cx_first.
+ENDCLASS.
+CLASS cx_child IMPLEMENTATION.
+ENDCLASS.
+TRY.
+  CATCH cx_first INTO DATA(lx_error).
+ENDTRY.`;
+    const type = resolveVariable(abap, "lx_error")?.getType();
+    expect(type).to.be.instanceof(Basic.ObjectReferenceType);
+    expect((type as Basic.ObjectReferenceType).getIdentifierName().toLowerCase()).to.equal("cx_first");
+  });
+
+  it("CATCH into DATA, a class followed by its superclass gives the superclass", () => {
+    const abap = `
+CLASS cx_root DEFINITION.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_middle DEFINITION INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_middle IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_first DEFINITION INHERITING FROM cx_middle.
+ENDCLASS.
+CLASS cx_first IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_second DEFINITION INHERITING FROM cx_middle.
+ENDCLASS.
+CLASS cx_second IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_child DEFINITION INHERITING FROM cx_first.
+ENDCLASS.
+CLASS cx_child IMPLEMENTATION.
+ENDCLASS.
+TRY.
+  CATCH cx_first cx_middle INTO DATA(lx_error).
+ENDTRY.`;
+    const type = resolveVariable(abap, "lx_error")?.getType();
+    expect(type).to.be.instanceof(Basic.ObjectReferenceType);
     expect((type as Basic.ObjectReferenceType).getIdentifierName().toLowerCase()).to.equal("cx_middle");
+  });
+
+  it("CATCH into DATA, a chain of superclasses gives the last one", () => {
+    const abap = `
+CLASS cx_root DEFINITION.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_middle DEFINITION INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_middle IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_first DEFINITION INHERITING FROM cx_middle.
+ENDCLASS.
+CLASS cx_first IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_second DEFINITION INHERITING FROM cx_middle.
+ENDCLASS.
+CLASS cx_second IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_child DEFINITION INHERITING FROM cx_first.
+ENDCLASS.
+CLASS cx_child IMPLEMENTATION.
+ENDCLASS.
+TRY.
+  CATCH cx_child cx_first cx_middle INTO DATA(lx_error).
+ENDTRY.`;
+    const type = resolveVariable(abap, "lx_error")?.getType();
+    expect(type).to.be.instanceof(Basic.ObjectReferenceType);
+    expect((type as Basic.ObjectReferenceType).getIdentifierName().toLowerCase()).to.equal("cx_middle");
+  });
+
+  it("CATCH into DATA, siblings followed by their superclass give CX_ROOT", () => {
+    const abap = `
+CLASS cx_root DEFINITION.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_middle DEFINITION INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_middle IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_first DEFINITION INHERITING FROM cx_middle.
+ENDCLASS.
+CLASS cx_first IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_second DEFINITION INHERITING FROM cx_middle.
+ENDCLASS.
+CLASS cx_second IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_child DEFINITION INHERITING FROM cx_first.
+ENDCLASS.
+CLASS cx_child IMPLEMENTATION.
+ENDCLASS.
+TRY.
+  CATCH cx_first cx_second cx_middle INTO DATA(lx_error).
+ENDTRY.`;
+    const type = resolveVariable(abap, "lx_error")?.getType();
+    expect(type).to.be.instanceof(Basic.ObjectReferenceType);
+    expect((type as Basic.ObjectReferenceType).getIdentifierName().toLowerCase()).to.equal("cx_root");
+  });
+
+  it("CATCH into DATA, a class, its superclass, then an unrelated class give CX_ROOT", () => {
+    const abap = `
+CLASS cx_root DEFINITION.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_middle DEFINITION INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_middle IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_first DEFINITION INHERITING FROM cx_middle.
+ENDCLASS.
+CLASS cx_first IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_second DEFINITION INHERITING FROM cx_middle.
+ENDCLASS.
+CLASS cx_second IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_child DEFINITION INHERITING FROM cx_first.
+ENDCLASS.
+CLASS cx_child IMPLEMENTATION.
+ENDCLASS.
+TRY.
+  CATCH cx_child cx_first cx_second INTO DATA(lx_error).
+ENDTRY.`;
+    const type = resolveVariable(abap, "lx_error")?.getType();
+    expect(type).to.be.instanceof(Basic.ObjectReferenceType);
+    expect((type as Basic.ObjectReferenceType).getIdentifierName().toLowerCase()).to.equal("cx_root");
+  });
+
+  it("CATCH into DATA, siblings without a CX_ROOT definition give void", () => {
+    const abap = `
+CLASS lcx_base DEFINITION.
+ENDCLASS.
+CLASS lcx_base IMPLEMENTATION.
+ENDCLASS.
+CLASS lcx_a DEFINITION INHERITING FROM lcx_base.
+ENDCLASS.
+CLASS lcx_a IMPLEMENTATION.
+ENDCLASS.
+CLASS lcx_b DEFINITION INHERITING FROM lcx_base.
+ENDCLASS.
+CLASS lcx_b IMPLEMENTATION.
+ENDCLASS.
+TRY.
+  CATCH lcx_a lcx_b INTO DATA(lx_error).
+ENDTRY.`;
+    const type = resolveVariable(abap, "lx_error")?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
   });
 
   it("CATCH multiple classes into DATA is voided when a class is unknown", () => {
@@ -1565,6 +1736,88 @@ DATA d_string_table TYPE ty_string_table.`;
       expect(local!.getType().getQualifiedName(), name).to.equal("ty_" + name);
       expect(local!.getType().getDDICName(), name).to.equal(undefined);
     }
+  });
+
+  it("TYPES TYPE DDIC packed data element, new local type", () => {
+    const files = [
+      {filename: "zdec.doma.xml", contents: `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>ZDEC</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>DEC</DATATYPE>
+    <LENG>000015</LENG>
+    <DECIMALS>000002</DECIMALS>
+    <DDTEXT>domain</DDTEXT>
+   </DD01V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`},
+      {filename: "zdec.dtel.xml", contents: `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDEC</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DOMNAME>ZDEC</DOMNAME>
+    <DDTEXT>data element</DDTEXT>
+    <REFKIND>D</REFKIND>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`}];
+    const abap = `
+DATA d_dec TYPE zdec.
+TYPES ty_dec TYPE zdec.
+DATA l_dec TYPE ty_dec.`;
+    const all = [...files, {filename: "zfoobar.prog.abap", contents: abap}];
+
+    const direct = runMulti(all.slice(), "d_dec");
+    expect(direct!.getType()).to.be.instanceof(Basic.PackedType);
+    expect(direct!.getType().getQualifiedName()).to.equal("ZDEC");
+    expect(direct!.getType().getDDICName()).to.equal("ZDEC");
+
+    // TYPES creates a new type, it is no longer the DDIC type
+    const local = runMulti(all.slice(), "l_dec");
+    const type = local!.getType() as Basic.PackedType;
+    expect(type).to.be.instanceof(Basic.PackedType);
+    expect(type.getQualifiedName()).to.equal("ty_dec");
+    expect(type.getDDICName()).to.equal(undefined);
+    expect(type.getLength()).to.equal(8);
+    expect(type.getDecimals()).to.equal(2);
+    expect(type.getDescription()).to.equal("data element");
+  });
+
+  it("TYPES TYPE local packed, decfloat16, decfloat34 and utclong, new qualified name", () => {
+    const abap = `
+TYPES loc_p_base TYPE p LENGTH 8 DECIMALS 2.
+TYPES loc_df16_base TYPE decfloat16.
+TYPES loc_df34_base TYPE decfloat34.
+TYPES loc_utcl_base TYPE utclong.
+TYPES ty_loc_p TYPE loc_p_base.
+TYPES ty_loc_df16 TYPE loc_df16_base.
+TYPES ty_loc_df34 TYPE loc_df34_base.
+TYPES ty_loc_utcl TYPE loc_utcl_base.
+DATA d_loc_p TYPE ty_loc_p.
+DATA d_loc_df16 TYPE ty_loc_df16.
+DATA d_loc_df34 TYPE ty_loc_df34.
+DATA d_loc_utcl TYPE ty_loc_utcl.`;
+    const expected: [string, string, any][] = [
+      ["d_loc_p", "ty_loc_p", Basic.PackedType],
+      ["d_loc_df16", "ty_loc_df16", Basic.DecFloat16Type],
+      ["d_loc_df34", "ty_loc_df34", Basic.DecFloat34Type],
+      ["d_loc_utcl", "ty_loc_utcl", Basic.UTCLongType]];
+    for (const [name, qualifiedName, clas] of expected) {
+      const identifier = resolveVariable(abap, name);
+      expect(identifier!.getType(), name).to.be.instanceof(clas);
+      expect(identifier!.getType().getQualifiedName(), name).to.equal(qualifiedName);
+    }
+    const packed = resolveVariable(abap, "d_loc_p")!.getType() as Basic.PackedType;
+    expect(packed.getLength()).to.equal(8);
+    expect(packed.getDecimals()).to.equal(2);
   });
 
   it("SELECT substring columns into inline table", () => {

@@ -1,4 +1,4 @@
-import {VoidType} from "../../types/basic";
+import {DataReference, VoidType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {IMethodDefinition} from "../../types/_method_definition";
 import {ExpressionNode} from "../../nodes";
@@ -164,7 +164,11 @@ export class MethodParameters {
       // the parameter is supplied, even if its type is wrong
       this.requiredParameters?.delete(item.name);
 
-      if (item.targetType && new TypeUtils(input.scope).isAssignableStrict(parameterType, item.targetType) === false) {
+      const typeUtils = new TypeUtils(input.scope);
+      if (item.targetType && (typeUtils.isAssignableStrict(parameterType, item.targetType) === false
+          // a CHANGING parameter is read and written, so a data reference is checked in both directions
+          || (parameterType instanceof DataReference && item.targetType instanceof DataReference
+            && typeUtils.isAssignableStrict(item.targetType, parameterType) === false))) {
         const message = "Method parameter type not compatible, " + item.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
@@ -200,7 +204,7 @@ export class MethodParameters {
       this.requiredParameters.delete(item.name);
       if (checkTextSymbol(item.source, parameter.getType(), input)) {
         return;
-      } else if (checkHeaderLine(item.source, item.sourceType, parameter.getType(), input)) {
+      } else if (checkHeaderLine(item.source, item.sourceType, parameter.getType(), method, input)) {
         return;
       } else if (assignable(item.sourceType, parameter.getType(), item.source) === false) {
         const message = "Method parameter type not compatible, " + item.name;

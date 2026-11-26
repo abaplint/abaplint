@@ -17,6 +17,7 @@ const tests = [
   "DELETE ADJACENT DUPLICATES FROM <lt_data> COMPARING (foo) (bar).",
   "DELETE ADJACENT DUPLICATES FROM lt_tab COMPARING foo-moo boo-loo.",
   "DELETE lt_data USING KEY key_name WHERE bar = i_bar.",
+  "DELETE lt_data WHERE NOT NOT bar = i_bar.",
   "DELETE TABLE lt_tab WITH TABLE KEY key_sort COMPONENTS key = ls_node-key.",
   "DELETE lt_tab INDEX lv_tabix USING KEY ay.",
   "DELETE ct_data USING KEY (mv_key) WHERE (lv_where).",

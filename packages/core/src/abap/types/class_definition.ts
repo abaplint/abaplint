@@ -20,6 +20,8 @@ import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
 import {Alias} from "./alias";
 import {SpaghettiScopeNode} from "../5_syntax/spaghetti_scope";
+import {checkAliasNameConflicts} from "./_alias_conflicts";
+import {Class} from "../../objects/class";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly methodDefs: MethodDefinitions;
@@ -97,11 +99,13 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.checkInterfaceVisibility(input, node);
     this.checkMethodsFromSuperClasses(input);
     this.checkMethodNameConflicts(input);
+    checkAliasNameConflicts(input, this.aliases, this.methodDefs, this.attributes, this.types);
     this.checkEventNameConflicts(input);
     this.checkClassNameLength(input);
     this.checkMethodNameLength(input);
     this.checkClassConstructor(input);
     this.checkLocalTypesInPublicSections(input, node, scope.getTop());
+    this.checkTestMethodsInTestClass(input, node);
   }
 
   public getFriends() {
@@ -174,6 +178,41 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
   }
 
+  private checkTestMethodsInTestClass(input: SyntaxInput, node: StructureNode) {
+    if (this.isTestClass(input)) {
+      return;
+    }
+    for (const m of node.findAllStatements(Statements.MethodDef)) {
+      if (m.concatTokens().toUpperCase().includes(" FOR TESTING") === false) {
+        continue;
+      }
+      const name = m.findDirectExpression(Expressions.MethodName)?.getFirstToken();
+      const message = `Test method "${name?.getStr()}" can only be defined in a test class, FOR TESTING`;
+      input.issues.push(syntaxIssue(input, name ?? m.getFirstToken(), message));
+    }
+  }
+
+  /** the class or one of its super classes is defined FOR TESTING */
+  private isTestClass(input: SyntaxInput): boolean {
+    if (this.testing === true) {
+      return true;
+    }
+    const visited = new Set<string>();
+    let sup = this.superClass;
+    while (sup !== undefined && visited.has(sup.toUpperCase()) === false) {
+      visited.add(sup.toUpperCase());
+      const def = input.scope.findClassDefinition(sup);
+      if (def === undefined) {
+        // void or unknown super class, cannot tell
+        return true;
+      } else if (def.isForTesting()) {
+        return true;
+      }
+      sup = def.getSuperClass();
+    }
+    return false;
+  }
+
   // the local types, classes and interfaces of a class pool can only be used in the PRIVATE SECTION of the global class
   private checkLocalTypesInPublicSections(input: SyntaxInput, node: StructureNode, scope: SpaghettiScopeNode) {
     if (this.globalValue === false || input.filename.toLowerCase().endsWith(".clas.abap") === false) {
@@ -231,7 +270,47 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     const token = def?.findDirectExpression(SuperClassName)?.getFirstToken();
     this.addReference(token, input);
     const name = token?.getStr();
+    if (token === undefined || name === undefined) {
+      return undefined;
+    }
+
+    const cycle = this.findInheritanceCycle(name, input);
+    if (cycle !== undefined) {
+      input.issues.push(syntaxIssue(input, token, "Cyclic inheritance: " + cycle.join(" -> ")));
+      // the class is kept without super class, so nothing walking the super classes loops
+      return undefined;
+    }
+
     return name;
+  }
+
+  /** returns the class names of the cycle when the super class chain leads back to this class */
+  private findInheritanceCycle(superName: string, input: SyntaxInput): string[] | undefined {
+    const own = this.getName().toUpperCase();
+    const chain: string[] = [own];
+    let current: string | undefined = superName.toUpperCase();
+    while (current !== undefined) {
+      chain.push(current);
+      if (current === own) {
+        return chain;
+      } else if (chain.indexOf(current) < chain.length - 1) {
+        // a cycle not involving this class, reported for the classes in it
+        return undefined;
+      }
+      current = this.findSuperName(current, input)?.toUpperCase();
+    }
+    return undefined;
+  }
+
+  private findSuperName(name: string, input: SyntaxInput): string | undefined {
+    const found = input.scope.findClassDefinition(name);
+    if (found !== undefined && found.isGlobal() === false) {
+      return found.getSuperClass();
+    }
+    // global classes are followed via the file information, their definition is not
+    // available yet or has its super class removed when they are part of a cycle
+    const clas = input.scope.getRegistry().getObject("CLAS", name) as Class | undefined;
+    return clas?.getClassDefinition()?.superClassName ?? found?.getSuperClass();
   }
 
   private checkMethodNameLength(input: SyntaxInput) {

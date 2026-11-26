@@ -4,7 +4,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType, DateType, TimeType, NumericType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType, DateType, TimeType, NumericType, GenericObjectReferenceType, DataType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -64,14 +64,18 @@ export class Source {
 
     const children = node.getChildren().slice();
     let first = children.shift();
+    // a leading sign makes the operand part of a calculation, "- foo"
+    let signed = false;
 
     if (first instanceof TokenNode) {
       const token = first.getFirstToken();
       const tok = token.getStr().toUpperCase();
       switch (tok) {
-        case "(":
         case "-":
         case "+":
+          signed = true;
+          break;
+        case "(":
         case "BIT":
           break;
         case "BOOLC":
@@ -208,6 +212,7 @@ export class Source {
         {
           const foundType = this.determineType(node, input, targetType);
           if (foundType?.isGeneric() === true
+              && !(foundType instanceof DataType)
               && node.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens() === "#"
               && !releaseAtLeast(input.scope.getRelease(), Release.v756)
               && input.scope.getLanguageVersion() !== LanguageVersion.Cloud
@@ -260,9 +265,14 @@ export class Source {
     // an arithmetic operator has been seen, so the operands that follow
     // determine a calculation type rather than simply replacing the context
     let arithmetic = false;
+    // the expressions of the operand in front of the next arithmetic operator
+    let operand: ExpressionNode[] = [];
     while (children.length >= 0) {
       if (first instanceof ExpressionNode) {
         const get = first.get();
+        if (!(get instanceof Expressions.ArithOperator) && !(get instanceof Expressions.Source && arithmetic === true)) {
+          operand.push(first);
+        }
         if (get instanceof Expressions.MethodCallChain) {
           const predicate = this.predicateCall(node, first, input);
           if (predicate !== undefined) {
@@ -289,6 +299,9 @@ export class Source {
           context = StringTemplate.runSyntax(first, input);
         } else if (get instanceof Expressions.Source) {
           const found = Source.runSyntax(first, input);
+          if (arithmetic === true && this.reportReferenceOperand(found, first, input)) {
+            return VoidType.get(CheckSyntaxKey);
+          }
           context = this.infer(context, found, arithmetic);
         } else if (get instanceof Expressions.Constant) {
           const found = Constant.runSyntax(first);
@@ -303,11 +316,15 @@ export class Source {
         } else if (get instanceof Expressions.ComponentChain) {
           context = ComponentChain.runSyntax(context, first, input);
         } else if (get instanceof Expressions.ArithOperator) {
+          const operator = first.concatTokens().toUpperCase();
+          if (!operator.startsWith("BIT-") && this.reportReferenceOperand(context, operand, input)) {
+            return VoidType.get(CheckSyntaxKey);
+          }
+          operand = [];
           arithmetic = true;
-          if (first.concatTokens() === "**") {
+          if (operator === "**") {
             context = new FloatType();
           }
-          const operator = first.concatTokens().toUpperCase();
           if (operator === "BIT-OR" || operator === "BIT-AND" || operator === "BIT-XOR") {
             hexExpected = true;
             hexNext = true;
@@ -344,7 +361,31 @@ export class Source {
       return StringType.get();
     }
 
+    if (signed === true && arithmetic === false && this.reportReferenceOperand(context, operand, input)) {
+      return VoidType.get(CheckSyntaxKey);
+    }
+
     return context;
+  }
+
+  public static isReference(type: AbstractType | undefined): boolean {
+    return type instanceof ObjectReferenceType
+      || type instanceof GenericObjectReferenceType
+      || type instanceof DataReference;
+  }
+
+  /** an operand of an arithmetic calculation is converted into a number, which is not possible for a
+   * data or object reference, "foo - 1"; a dereferenced "foo->* - 1" is fine. Returns true if reported */
+  public static reportReferenceOperand(type: AbstractType | undefined, operand: ExpressionNode | ExpressionNode[],
+                                       input: SyntaxInput): boolean {
+    const nodes = Array.isArray(operand) ? operand : [operand];
+    if (nodes.length === 0 || this.isReference(type) === false) {
+      return false;
+    }
+    const name = nodes.map(n => n.concatTokens()).join("");
+    const message = `"${name}" is a reference, it cannot be used in a calculation`;
+    input.issues.push(syntaxIssue(input, nodes[0].getFirstToken(), message));
+    return true;
   }
 
 ////////////////////////////////
