@@ -176,6 +176,7 @@ Current rules:
 * Some occurrences of string template formatting option ALPHA changed to function module call
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
 * OPEN CURSOR/FETCH NEXT CURSOR/CLOSE CURSOR "@" in source/targets removed
+* the ABAP language version of an object, ABAP for Cloud Development or ABAP for Key Users, set to standard ABAP
 * PARTIALLY IMPLEMENTED removed, it can be quick fixed via rule implement_methods
 * RAISE EXCEPTION ... MESSAGE
 * Moving with +=, -=, /=, *=, &&= is expanded
@@ -205,6 +206,31 @@ Make sure to test the downported code, it might not always be completely correct
       this.initHighReg();
     }
     return this;
+  }
+
+  /** the ABAP language version of the object, which abapGit keeps in UNICODE (classes, interfaces) or
+   *  ABAP_LANGU_VERSION: 5 is ABAP for Cloud Development, 2 ABAP for Key Users. 7.02 has neither, and a
+   *  system that has them checks the downported code by their rules, eg. the downport's restore of
+   *  SY-TABIX is a write to a system field ABAP Cloud refuses. The downport is standard ABAP, X */
+  private downportLanguageVersion(obj: ABAPObject): Issue | undefined {
+    const xml = obj.getXMLFile();
+    if (xml === undefined) {
+      return undefined;
+    }
+    const rows = xml.getRawRows();
+    for (let i = 0; i < rows.length; i++) {
+      const match = rows[i].match(/<(UNICODE|ABAP_LANGU_VERSION)>([25])<\/\1>/);
+      if (match === null || match.index === undefined) {
+        continue;
+      }
+      const start = new Position(i + 1, match.index + match[1].length + 3);
+      const end = new Position(i + 1, start.getCol() + 1);
+      const fix = EditHelper.replaceRange(xml, start, end, "X");
+      const name = match[2] === "5" ? "ABAP for Cloud Development" : "ABAP for Key Users";
+      return Issue.atRowRange(xml, i + 1, start.getCol(), end.getCol(),
+                              "Language version " + name + ", standard ABAP", this.getMetadata().key, this.conf.severity, fix);
+    }
+    return undefined;
   }
 
   private listMainForInclude(filename: string | undefined) {
@@ -242,6 +268,13 @@ Make sure to test the downported code, it might not always be completely correct
       return ret;
     } else if (!(lowObj instanceof ABAPObject)) {
       return ret;
+    }
+
+    if (config.getRelease() === Release.v702) {
+      const languageVersion = this.downportLanguageVersion(lowObj);
+      if (languageVersion !== undefined) {
+        return [languageVersion];
+      }
     }
 
     const highObj = this.highReg.getObject(lowObj.getType(), lowObj.getName());
@@ -801,11 +834,18 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
-    // note: SQLCond is also used in JOIN(FROM) conditions
-    const where = high.findFirstExpression(Expressions.Select)?.findDirectExpression(Expressions.SQLCond);
-    if (where === undefined) {
+    // note: SQLCond is also used in JOIN(FROM) conditions. INTO after any of WHERE, GROUP BY,
+    // HAVING or ORDER BY is strict syntax, the first of them is where INTO has to be in front of
+    const clauses = [
+      high.findFirstExpression(Expressions.Select)?.findDirectExpression(Expressions.SQLCond),
+      high.findFirstExpression(Expressions.SQLGroupBy),
+      high.findFirstExpression(Expressions.SQLHaving),
+      high.findFirstExpression(Expressions.SQLOrderBy),
+    ].filter(c => c !== undefined);
+    if (clauses.length === 0) {
       return undefined;
     }
+    const first = clauses.reduce((a, b) => b.getFirstToken().getStart().isBefore(a.getFirstToken().getStart()) ? b : a);
 
     // the FIELDS list sits between FROM and WHERE, wait for it to be removed first
     if (high.findFirstExpression(Expressions.SQLFields) !== undefined) {
@@ -823,7 +863,7 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
-    if (where.getLastToken().getEnd().isBefore(into.getFirstToken().getStart()) === false) {
+    if (first.getFirstToken().getStart().isBefore(into.getFirstToken().getStart()) === false) {
       return undefined;
     }
 
@@ -832,14 +872,19 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
-    // UP TO after INTO is not valid behind WHERE or ORDER BY, move it along in front of INTO
+    // UP TO and BYPASSING BUFFER after INTO are not valid behind WHERE or ORDER BY, they belong to
+    // FROM in the old syntax: move them along in front of INTO, FROM ... BYPASSING BUFFER UP TO n ROWS INTO
     let move = into.concatTokens();
     const fixes: IEdit[] = [];
-    const upTo = high.findFirstExpression(Expressions.SQLUpTo);
-    if (upTo !== undefined
-        && into.getLastToken().getEnd().isBefore(upTo.getFirstToken().getStart())) {
-      move = upTo.concatTokens() + ` ` + move;
-      fixes.push(EditHelper.deleteRange(lowFile, upTo.getFirstToken().getStart(), upTo.getLastToken().getEnd()));
+    const along = [high.findFirstExpression(Expressions.SQLUpTo), high.findFirstExpression(Expressions.SQLBypassingBuffer)]
+      .filter(e => e !== undefined && into.getLastToken().getEnd().isBefore(e.getFirstToken().getStart()));
+    for (const e of along) {
+      move = e!.concatTokens() + ` ` + move;
+    }
+    // edits are applied in sequence, so delete the later one first
+    along.sort((a, b) => b!.getFirstToken().getStart().isBefore(a!.getFirstToken().getStart()) ? -1 : 1);
+    for (const e of along) {
+      fixes.push(EditHelper.deleteRange(lowFile, e!.getFirstToken().getStart(), e!.getLastToken().getEnd()));
     }
 
     // edits are applied in sequence, so work from the end of the statement towards the start
@@ -892,14 +937,11 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
-    let fix: IEdit | undefined = undefined;
+    // the edits of a fix are applied one after the other, a deletion moves what follows it in the
+    // same row: collect the tokens and delete from the end of the statement towards its start
+    const toDelete: AbstractToken[] = [];
     const addFix = (token: AbstractToken) => {
-      const add = EditHelper.deleteToken(lowFile, token);
-      if (fix === undefined) {
-        fix = add;
-      } else {
-        fix = EditHelper.merge(fix, add);
-      }
+      toDelete.push(token);
     };
 
     const candidates = [high.findAllExpressionsRecursive(Expressions.SQLTarget),
@@ -939,7 +981,8 @@ ${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
       }
     }
 
-    for (const fieldList of high.findAllExpressionsMulti([Expressions.SQLFieldList, Expressions.SQLFieldListLoop, Expressions.SQLOrderBy], true)) {
+    for (const fieldList of high.findAllExpressionsMulti([Expressions.SQLFieldList, Expressions.SQLFieldListLoop, Expressions.SQLOrderBy,
+      Expressions.SQLGroupBy], true)) {
       for (const token of fieldList.getDirectTokens()) {
         if (token.getStr() === ",") {
           addFix(token);
@@ -947,7 +990,9 @@ ${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
       }
     }
 
-    if (fix !== undefined) {
+    if (toDelete.length > 0) {
+      toDelete.sort((a, b) => b.getStart().isBefore(a.getStart()) ? -1 : 1);
+      const fix = EditHelper.mergeList(toDelete.map(t => EditHelper.deleteToken(lowFile, t)));
       return Issue.atToken(lowFile, low.getFirstToken(), "SQL, remove @ and ,", this.getMetadata().key, this.conf.severity, fix);
     }
 
@@ -966,7 +1011,7 @@ ${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
         const lastStart = last.getFirstToken().getStart();
         const startDelete = new Position(lastStart.getRow(), lastStart.getCol() - 1);
         const fix2 = EditHelper.deleteRange(lowFile, startDelete, lastStart);
-        fix = EditHelper.merge(fix2, fix1);
+        const fix = EditHelper.merge(fix2, fix1);
         return Issue.atToken(lowFile, low.getFirstToken(), "SQL, remove spaces", this.getMetadata().key, this.conf.severity, fix);
       }
     }
