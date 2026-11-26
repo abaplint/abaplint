@@ -72,6 +72,11 @@ export class InsertInternal implements StatementSyntax {
       let error = false;
       if (sourceType instanceof IntegerType && targetType instanceof Integer8Type) {
         error = true;
+      } else if (source?.getChildren().length === 1
+          && new TypeUtils(input.scope).isPackedConstant(sourceType)
+          && (targetType instanceof IntegerType || targetType instanceof Integer8Type)) {
+        // a literal of type p is not converted into an integer row
+        error = true;
       } else if (targetType instanceof TableType && targetType.isWithHeader() && sourceType instanceof TableType) {
         // LINES OF into a table with header line, compare the row types
         error = new TypeUtils(input.scope).isAssignable(sourceType.getRowType(), targetType.getRowType()) === false;

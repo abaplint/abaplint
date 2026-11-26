@@ -1,6 +1,7 @@
 import * as Expressions from "../abap/2_statements/expressions";
 import * as Statements from "../abap/2_statements/statements";
 import {ExpressionNode, TokenNode} from "../abap/nodes";
+import {countLeadingNot} from "../abap/5_syntax/_key_compare";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {CGenericType, CharacterType, StringType, StructureType} from "../abap/types/basic";
 import {Identifier} from "../abap/4_file_information/_identifier";
@@ -258,8 +259,9 @@ ENDIF.`,
   /** x = a, x <> a, a = x, NOT x = a etc, x character-like and a a known character value */
   private valueComparison(procedure: Procedure, compare: ExpressionNode): IValueComparison | undefined {
     const children = compare.getChildren();
-    const negated = children[0] instanceof TokenNode && children[0].getFirstToken().getStr().toUpperCase() === "NOT";
-    const rest = children.slice(negated ? 1 : 0);
+    const nots = countLeadingNot(compare);
+    const negated = nots % 2 === 1;
+    const rest = children.slice(nots);
     if (rest.length !== 3 || !(rest[0] instanceof ExpressionNode) || !(rest[2] instanceof ExpressionNode)
         || !(rest[1].get() instanceof Expressions.CompareOperator)) {
       return undefined;

@@ -13,7 +13,7 @@ import {Dash, InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
 import {AttributeName} from "./attribute_name";
 import {ComponentName} from "./component_name";
 import {LanguageVersion} from "../../../version";
-import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue, dataObjectBeforeStaticArrow} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 
 export class MethodSource {
@@ -163,7 +163,9 @@ export class MethodSource {
       const token = first.getFirstToken();
       const className = token.getStr();
       const classDefinition = input.scope.findObjectDefinition(className);
-      if (classDefinition === undefined && input.scope.getDDIC().inErrorNamespace(className) === false) {
+      if (classDefinition === undefined && dataObjectBeforeStaticArrow(input, token)) {
+        return VoidType.get(CheckSyntaxKey);
+      } else if (classDefinition === undefined && input.scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
         return VoidType.get(className);

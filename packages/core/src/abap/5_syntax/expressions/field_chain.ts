@@ -15,7 +15,7 @@ import {Dereference} from "./dereference";
 import {SourceFieldSymbol} from "./source_field_symbol";
 import {SourceField} from "./source_field";
 import {isFieldSymbolItself, substringType} from "./_substring";
-import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue, dataObjectBeforeStaticArrow} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 export class FieldChain {
@@ -135,12 +135,12 @@ export class FieldChain {
       } else if (current.get() instanceof Expressions.FieldOffset && current instanceof ExpressionNode) {
         const offset = FieldOffset.runSyntax(current, input);
         if (!isFieldSymbolItself(children, i)) {
-          context = substringType(context, offset, undefined, current, input);
+          context = substringType(context, offset, undefined, current, children, input);
         }
       } else if (current.get() instanceof Expressions.FieldLength && current instanceof ExpressionNode) {
         const length = FieldLength.runSyntax(current, input);
         if (!isFieldSymbolItself(children, i)) {
-          context = substringType(context, undefined, length, current, input);
+          context = substringType(context, undefined, length, current, children, input);
         }
       }
 
@@ -180,6 +180,8 @@ export class FieldChain {
       if (found?.id) {
         input.scope.addReference(classTok, found.id, ReferenceType.ObjectOrientedReference, input.filename);
         return new ObjectReferenceType(found.id);
+      } else if (dataObjectBeforeStaticArrow(input, classTok)) {
+        return VoidType.get(CheckSyntaxKey);
       } else if (input.scope.getDDIC().inErrorNamespace(classNam) === false) {
         input.scope.addReference(classTok, undefined,
                                  ReferenceType.ObjectOrientedVoidReference, input.filename, {ooName: classNam.toUpperCase()});

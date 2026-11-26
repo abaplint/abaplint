@@ -63,6 +63,8 @@ const fixes = [
     output: `IF destination IS INITIAL. ENDIF.`},
   {input: `IF ( ldate > ldate ) OR ( ldate = ldate AND ltime > ltime ). ENDIF.`,
     output: `IF ldate > ldate OR ( ldate = ldate AND ltime > ltime ). ENDIF.`},
+  {input: `IF NOT NOT ( destination IS INITIAL ). ENDIF.`,
+    output: `IF NOT NOT destination IS INITIAL. ENDIF.`},
   {input: `IF <field> IS INITIAL OR ( 1 = 2 ). ENDIF.`,
     output: `IF <field> IS INITIAL OR 1 = 2. ENDIF.`},
   {input: `DATA t552 TYPE i.

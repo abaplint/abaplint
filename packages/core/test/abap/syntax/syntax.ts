@@ -8653,7 +8653,11 @@ ENDCLASS.`;
 
   it("CATCH into subclass reference, syntax error", () => {
     const abap = `
-CLASS cx_static_check DEFINITION.
+CLASS cx_root DEFINITION ABSTRACT.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_static_check DEFINITION INHERITING FROM cx_root.
 ENDCLASS.
 CLASS cx_static_check IMPLEMENTATION.
 ENDCLASS.
@@ -8690,6 +8694,124 @@ ENDTRY.`;
     SPLIT str AT space INTO TABLE int_tab.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, byte like targets", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA sep TYPE x LENGTH 1.
+    DATA first TYPE xstring.
+    DATA second TYPE x LENGTH 4.
+    SPLIT data AT sep INTO first second IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, into table", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA tab TYPE STANDARD TABLE OF xstring WITH EMPTY KEY.
+    SPLIT data AT data INTO TABLE tab IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, inline targets are xstring", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA len TYPE i.
+    SPLIT data AT data INTO DATA(first) DATA(second) IN BYTE MODE.
+    len = xstrlen( first ).
+    len = xstrlen( second ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, inline table of xstring", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA len TYPE i.
+    DATA row TYPE xstring.
+    SPLIT data AT data INTO TABLE DATA(tab) IN BYTE MODE.
+    LOOP AT tab INTO DATA(inline).
+      len = xstrlen( inline ).
+    ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, generic parameters", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run
+      IMPORTING input TYPE xsequence
+      CHANGING
+        first  TYPE data
+        second TYPE any.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    SPLIT input AT input INTO first second IN BYTE MODE.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, error, character like target", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA first TYPE xstring.
+    DATA second TYPE string.
+    SPLIT data AT data INTO first second IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`target not byte like`);
+  });
+
+  it("split, byte mode, error, character like table row", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA tab TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    SPLIT data AT data INTO TABLE tab IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`target not byte like`);
+  });
+
+  it("split, byte mode, error, character like source", () => {
+    const abap = `
+    DATA text TYPE string.
+    DATA data TYPE xstring.
+    DATA first TYPE xstring.
+    DATA second TYPE xstring.
+    SPLIT text AT data INTO first second IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`source not byte like`);
+  });
+
+  it("split, byte mode, error, character like separator", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA first TYPE xstring.
+    DATA second TYPE xstring.
+    SPLIT data AT ',' INTO first second IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`source not byte like`);
+  });
+
+  it("split, character mode, error, byte like target", () => {
+    const abap = `
+    DATA text TYPE string.
+    DATA first TYPE xstring.
+    DATA second TYPE xstring.
+    SPLIT text AT ',' INTO first second IN CHARACTER MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`target not character like`);
   });
 
   it("double FOR loop, ok", () => {
@@ -21872,6 +21994,114 @@ ENDCLASS.`;
   }
 });
 
+describe("syntax.ts, => with a data object, #3561", () => {
+  const lcl = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS inst.
+    CLASS-METHODS stat.
+    CLASS-DATA sattr TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD inst.
+  ENDMETHOD.
+  METHOD stat.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+`;
+  const message = (name: string) => `"${name}" is not a class or interface, => cannot be used with a data object`;
+
+  it("error, reference to a void interface", () => {
+    const abap = `DATA mi_env TYPE REF TO if_function_test_environment.
+mi_env=>clear_doubles( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("mi_env"));
+  });
+
+  it("error, reference to a local class, instance method", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+lo=>inst( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, reference to a local class, static method", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+lo=>stat( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, CALL METHOD", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+CALL METHOD lo=>stat.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, integer variable", () => {
+    const issues = runProgram(`DATA lv TYPE i.
+lv=>foo( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lv"));
+  });
+
+  it("error, read of a static attribute", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+DATA lv TYPE i.
+lv = lo=>sattr.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, write to a static attribute", () => {
+    const issues = runProgram(lcl + `DATA lo TYPE REF TO lcl.
+lo=>sattr = 1.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("lo"));
+  });
+
+  it("error, me=>", () => {
+    const issues = runProgram(`CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS inst.
+    CLASS-METHODS stat.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD inst.
+    me=>stat( ).
+  ENDMETHOD.
+  METHOD stat.
+  ENDMETHOD.
+ENDCLASS.`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(message("me"));
+  });
+
+  it("ok, class name", () => {
+    const issues = runProgram(lcl + `DATA lv TYPE i.
+lcl=>stat( ).
+CALL METHOD lcl=>stat.
+lv = lcl=>sattr.
+lcl=>sattr = 1.`);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, data object with the name of the class, the class is used", () => {
+    const issues = runProgram(lcl + `DATA lcl TYPE REF TO lcl.
+lcl=>stat( ).`);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("error, data object with the name of the class, instance method", () => {
+    const issues = runProgram(lcl + `DATA lcl TYPE REF TO lcl.
+lcl=>inst( ).`);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal(`Method "inst" not static`);
+  });
+});
+
 describe("syntax.ts, VALUE component of reference type, #3226", () => {
   const errors: {name: string, abap: string}[] = [
     {name: "character literal into REF TO object", abap: `
@@ -22197,4 +22427,56 @@ ENDCLASS.`);
     const issues = runProgram(build(`APPEND LINES OF mr_tab->* FROM 2 TO lt_copy.`));
     expect(issues[0]?.getMessage()).to.equal("LINES OF must be a table type");
   });
+});
+
+describe("syntax.ts, date compared with a function or method result of type i, #4726", () => {
+  const prefix = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m RETURNING VALUE(r) TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+DATA d TYPE d.
+DATA i TYPE i.
+DATA s TYPE string.
+DATA t TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+
+START-OF-SELECTION.`;
+
+  const okay: {name: string, code: string}[] = [
+    {name: "strlen( )", code: `IF d = strlen( s ). ENDIF.`},
+    {name: "strlen( ) on the left, <>", code: `IF strlen( s ) <> d. ENDIF.`},
+    {name: "lines( ), <", code: `IF d < lines( t ). ENDIF.`},
+    {name: "abs( ) of the date", code: `IF d = abs( d ). ENDIF.`},
+    {name: "abs( ) on the left", code: `IF abs( d ) = d. ENDIF.`},
+    {name: "method result", code: `IF d = lcl=>m( ). ENDIF.`},
+    {name: "method result on the left", code: `IF lcl=>m( ) >= d. ENDIF.`},
+    {name: "data object of type i", code: `IF d = i. ENDIF.`},
+    {name: "BETWEEN", code: `IF d BETWEEN strlen( s ) AND strlen( s ). ENDIF.`},
+    {name: "xsdbool", code: `DATA(b) = xsdbool( d = strlen( s ) ).`},
+  ];
+
+  for (const o of okay) {
+    it("okay, " + o.name, () => {
+      const issues = runProgram(prefix + "\n  " + o.code);
+      expect(issues.length).to.equal(0, issues.map(i => i.getMessage()).join(", "));
+    });
+  }
+
+  const errors: {name: string, code: string}[] = [
+    {name: "data object in an arithmetic expression", code: `IF d = i + 1. ENDIF.`},
+    {name: "function in an arithmetic expression", code: `IF d = strlen( s ) + 1. ENDIF.`},
+    {name: "method result in an arithmetic expression", code: `IF lcl=>m( ) * 2 = d. ENDIF.`},
+  ];
+
+  for (const e of errors) {
+    it("error, " + e.name, () => {
+      const issues = runProgram(prefix + "\n  " + e.code);
+      expect(issues[0]?.getMessage()).to.include("Arithmetic expression cannot be compared with non-numeric operand");
+    });
+  }
 });
