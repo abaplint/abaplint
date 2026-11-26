@@ -12,6 +12,7 @@ import {ObjectRenamer} from "./_object_renamer";
 import {RenameMessageClass} from "./rename_message_class";
 import {RenameICFService} from "./rename_icf_service";
 import {IRenamedName, RenameLiterals} from "./rename_literals";
+import {RenameBSPApplication} from "./rename_bsp_application";
 
 export interface IRenameResult {
   deletedFiles: Set<string>;
@@ -95,6 +96,8 @@ export class Renamer {
         return new RenameMessageClass(this.reg);
       case "SICF":
         return new RenameICFService(this.reg);
+      case "WAPA":
+        return new RenameBSPApplication(this.reg);
       default:
         throw new Error("Renaming of " + type + " not yet supported");
     }

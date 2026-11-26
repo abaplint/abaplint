@@ -163,6 +163,52 @@ CREATE OBJECT ref TYPE ('ZCL_FOO').`;
     }
   });
 
+  it("renames a bsp application into a namespace, the pages keep their names", async () => {
+    const wapa = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_WAPA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <ATTRIBUTES>
+    <APPLNAME>ZFOO</APPLNAME>
+    <APPLEXT>ZFOO</APPLEXT>
+   </ATTRIBUTES>
+   <PAGES>
+    <item>
+     <ATTRIBUTES>
+      <APPLNAME>ZFOO</APPLNAME>
+      <PAGEKEY>ZFOO/LIB.JS</PAGEKEY>
+      <PAGENAME>zfoo/Lib.js</PAGENAME>
+     </ATTRIBUTES>
+    </item>
+   </PAGES>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const fileXml = new MemoryFile("zfoo.wapa.xml", wapa);
+    const filePage = new MemoryFile("zfoo.wapa.zfoo_-lib.js", "// lib");
+    const reg = new Registry().addFiles([fileXml, filePage]).parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[fileXml.getFilename()] = fileXml.getRaw();
+    jsonFiles[filePage.getFilename()] = filePage.getRaw();
+    const volume = memfs.Volume.fromJSON(jsonFiles);
+    const mockFS = memfs.createFsFromVolume(volume);
+
+    const config = reg.getConfig().get();
+    config.rename = {"patterns": [
+      {"type": "WAPA", "oldName": "zfoo", "newName": "/ns/bar"},
+    ]};
+
+    new Rename(reg).run(config, "base", mockFS, true);
+
+    const xmlNew = mockFS.readFileSync("#ns#bar.wapa.xml").toString();
+    expect(xmlNew).to.include("<APPLNAME>/NS/BAR</APPLNAME>");
+    expect(xmlNew).to.include("<PAGENAME>zfoo/Lib.js</PAGENAME>");
+    expect(mockFS.readFileSync("#ns#bar.wapa.zfoo_-lib.js").toString()).to.equal("// lib");
+    expect(mockFS.existsSync("zfoo.wapa.xml")).to.equal(false);
+  });
+
   it("renames interface referenced in DEFAULT value", async () => {
     const intf = `INTERFACE zif_abapgit_definitions PUBLIC.
   TYPES ty TYPE i.
