@@ -27,11 +27,11 @@ function dataElement(name: string, dataType: "QUAN" | "CURR"): MemoryFile {
   return new MemoryFile(`${name.toLowerCase()}.dtel.xml`, xml);
 }
 
-function transparentTable(name: string, fields: string[]): MemoryFile {
+function transparentTable(name: string, fields: string[], keyFields: string[] = []): MemoryFile {
   const columns = fields.map((field, index) => `    <DD03P>
      <TABNAME>${name.toUpperCase()}</TABNAME>
      <FIELDNAME>${field.toUpperCase()}</FIELDNAME>
-     <POSITION>000${index + 1}</POSITION>
+     <POSITION>000${index + 1}</POSITION>${keyFields.includes(field) ? "\n     <KEYFLAG>X</KEYFLAG>" : ""}
      <ADMINFIELD>0</ADMINFIELD>
      <INTTYPE>C</INTTYPE>
      <INTLEN>000020</INTLEN>
@@ -563,5 +563,299 @@ define root view entity ZR_BOM_CHG_TP
   key BillOfMaterialCategory
 }`, false, [projectedEntity]);
     expect(issues.length).to.equal(0);
+  });
+  describe("transactional projection on an entity which is not part of a business object", () => {
+    const role = `define view entity ZI_Role as select from zrole_tab
+  association [0..*] to ZI_RoleSpace as _SpaceAssignment on $projection.RoleName = _SpaceAssignment.RoleName
+{
+  key role_name as RoleName,
+      descr     as RoleDescription,
+      _SpaceAssignment
+}`;
+    const projection = (contract = "") => `define view entity ZC_Role${contract} as projection on ZI_Role
+{
+  key RoleName,
+      RoleDescription,
+      _SpaceAssignment : redirected to ZC_RoleSpace
+}`;
+
+    async function run(cds: string, dependencies: MemoryFile[]): Promise<readonly Issue[]> {
+      const files = [new MemoryFile("zc_role.ddls.asddls", cds), ...dependencies];
+      const reg = new Registry().addFiles(files);
+      await reg.parseAsync();
+      const target = reg.getObject("DDLS", "ZC_ROLE") as DataDefinition;
+      return new CDSCheckSyntax().initialize(reg).run(target).filter(i => i.getMessage().startsWith("Transactional projection"));
+    }
+
+    it("reports a projection without provider contract", async () => {
+      const issues = await run(projection(), [new MemoryFile("zi_role.ddls.asddls", role)]);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.equal(
+        "Transactional projection on ZI_Role not possible, ZI_Role is not a root entity or part of a composition");
+      expect(issues[0].getStart().getRow()).to.equal(1);
+    });
+
+    it("reports a projection with provider contract transactional_query", async () => {
+      const issues = await run(projection(" provider contract transactional_query"), [new MemoryFile("zi_role.ddls.asddls", role)]);
+      expect(issues.length).to.equal(1);
+    });
+
+    for (const contract of ["analytical_query", "transactional_interface"]) {
+      it(`accepts a projection with provider contract ${contract}`, async () => {
+        const issues = await run(projection(" provider contract " + contract), [new MemoryFile("zi_role.ddls.asddls", role)]);
+        expect(issues.length).to.equal(0);
+      });
+    }
+
+    it("accepts a projection on an entity which is not in the registry", async () => {
+      const issues = await run(projection(), []);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("accepts a projection on a root entity", async () => {
+      const issues = await run(projection(), [new MemoryFile("zi_role.ddls.asddls", role.replace("define view", "define root view"))]);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("accepts a projection on a composition child", async () => {
+      const root = new MemoryFile("zi_roleroot.ddls.asddls", `define root view entity ZI_RoleRoot as select from zroot_tab
+  composition [0..*] of ZI_Role as _Roles
+{
+  key root_id as RootId,
+      _Roles
+}`);
+      const child = new MemoryFile("zi_role.ddls.asddls", `define view entity ZI_Role as select from zrole_tab
+  association to parent ZI_RoleRoot as _Root on $projection.RootId = _Root.RootId
+{
+  key root_id   as RootId,
+  key role_name as RoleName,
+      _Root
+}`);
+      const issues = await run(projection(), [root, child]);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("accepts a projection on a composition child, child without to-parent association", async () => {
+      const root = new MemoryFile("zi_roleroot.ddls.asddls", `define root view entity ZI_RoleRoot as select from zroot_tab
+  composition of many ZI_Role as _Roles
+{
+  key root_id as RootId,
+      _Roles
+}`);
+      const issues = await run(projection(), [root, new MemoryFile("zi_role.ddls.asddls", role)]);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("accepts a projection on an entity which is the parent of a to-parent association", async () => {
+      const grandChild = new MemoryFile("zi_rolechild.ddls.asddls", `define view entity ZI_RoleChild as select from zchild_tab
+  association to parent ZI_Role as _Role on $projection.RoleName = _Role.RoleName
+{
+  key role_name as RoleName,
+      _Role
+}`);
+      const issues = await run(projection(), [grandChild, new MemoryFile("zi_role.ddls.asddls", role)]);
+      expect(issues.length).to.equal(0);
+    });
+  });
+
+  describe("path expression via association with calculated element in ON condition", () => {
+    const roleSpace = (elements: string) => `define view entity ZI_RoleSpace as select from zrole_space_tab as RS
+  association [1..1] to ZI_Role  as _Role  on $projection.RoleName = _Role.RoleName
+  association [0..1] to ZI_Space as _Space on $projection.SpaceId  = _Space.SpaceId
+{
+  key RS.role_name                         as RoleName,
+  key cast( RS.url as zspace_id )          as SpaceId,
+${elements}
+}`;
+
+    async function findPathIssues(cds: string): Promise<readonly Issue[]> {
+      return (await findIssues(cds)).filter(i => i.getMessage().startsWith("Path expression"));
+    }
+
+    it("reports a path expression via the association", async () => {
+      const issues = await findPathIssues(roleSpace(`      _Role.RoleDescription                as RoleDescription,
+      _Space.SpaceTitle                    as SpaceTitle,
+      _Role,
+      _Space`));
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.equal(
+        "Path expression via _Space not possible, its ON condition uses calculated element SpaceId");
+      expect(issues[0].getStart().getRow()).to.equal(8);
+    });
+
+    it("reports a path expression in WHERE", async () => {
+      const issues = await findPathIssues(roleSpace(`      _Space`) + `
+where _Space.SpaceTitle = 'A'`);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getStart().getRow()).to.equal(9);
+    });
+
+    it("accepts exposing the association", async () => {
+      const issues = await findPathIssues(roleSpace(`      _Role,
+      _Space`));
+      expect(issues.length).to.equal(0);
+    });
+
+    it("accepts a path expression via an association using a plain field", async () => {
+      const issues = await findPathIssues(roleSpace(`      _Role.RoleDescription                as RoleDescription,
+      _Role`));
+      expect(issues.length).to.equal(0);
+    });
+
+    it("accepts a path expression when the ON condition element is a plain field", async () => {
+      const issues = await findPathIssues(`define view entity ZI_RoleSpace as select from zrole_space_tab as RS
+  association [0..1] to ZI_Space as _Space on $projection.SpaceId  = _Space.SpaceId
+{
+  key RS.space_id                          as SpaceId,
+      _Space.SpaceTitle                    as SpaceTitle,
+      _Space
+}`);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("reports path expressions via an association with a case element", async () => {
+      const issues = await findPathIssues(`define view entity ZI_RoleSpace as select from zrole_space_tab as RS
+  association [0..1] to ZI_Space as _Space on $projection.SpaceId  = _Space.SpaceId
+{
+  key case RS.kind when 'A' then RS.a else RS.b end as SpaceId,
+      _Space.SpaceTitle as SpaceTitle,
+      _Space
+}`);
+      expect(issues.length).to.equal(1);
+    });
+  });
+
+  describe("composition fields", () => {
+    const rootTable = transparentTable("zroot_tab", ["root_id"], ["root_id"]);
+    const child = new MemoryFile("zi_child.ddls.asddls", `define view entity ZI_Child as select from zchild_tab
+  association to parent ZTARGET as _Root on $projection.RootId = _Root.RootId
+{
+  key root_id   as RootId,
+  key child_id  as ChildId,
+      some_field as SomeField,
+      _Root
+}`);
+    const childTable = transparentTable("zchild_tab", ["root_id", "child_id", "some_field"], ["root_id", "child_id"]);
+
+    const root = (composition: string, elements: string) => `define root view entity ZTARGET as select from zroot_tab
+  ${composition}
+{
+  key root_id as RootId,
+${elements}
+}`;
+
+    for (const composition of ["composition [0..*] of ZI_Child as _Children", "composition of many ZI_Child as _Children"]) {
+      it(`accepts exposing a composition, ${composition}`, async () => {
+        const issues = await findIssues(root(composition, "      _Children"), false, [rootTable, child, childTable]);
+        expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+      });
+
+      it(`accepts a path expression via a composition, ${composition}`, async () => {
+        const issues = await findIssues(root(composition, `      _Children.SomeField as SomeField`), false, [rootTable, child, childTable]);
+        expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+      });
+    }
+
+    it("accepts exposing a composition with a namespaced target", async () => {
+      const issues = await findIssues(root("composition [0..*] of /ABC/I_CHILD as _Children", `      _Children`), false, [rootTable]);
+      expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+    });
+
+    it("accepts exposing a composition without alias", async () => {
+      const issues = await findIssues(root("composition [0..*] of ZI_Child", `      ZI_Child.SomeField as SomeField,
+      ZI_Child`), false, [rootTable, child, childTable]);
+      expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+    });
+
+    it("still reports an unknown field next to an exposed composition", async () => {
+      const issues = await findIssues(root("composition [0..*] of ZI_Child as _Children", `      nonexisting_field,
+      _Children.SomeField as SomeField,
+      _Children`), false, [rootTable, child, childTable]);
+      expect(issues.map(i => i.getMessage())).to.deep.equal(['CDS field "nonexisting_field" not found in "zroot_tab"']);
+      expect(issues[0].getStart().getRow()).to.equal(5);
+    });
+  });
+
+  describe("SOURCE_TYPE in XML", () => {
+    function ddlsXml(sourceType: string): string {
+      return `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DDLS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DDLS>
+    <DDLNAME>ZI_ROLESPACE</DDLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DDTEXT>Role space</DDTEXT>
+    <SOURCE_TYPE>${sourceType}</SOURCE_TYPE>
+   </DDLS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    }
+
+    const ddicView = `@AbapCatalog.sqlViewName: 'ZIROLSPC'
+define view ZI_RoleSpace as select from zrole_space_tab {
+  key role_name as RoleName
+}`;
+    const viewEntity = `define view entity ZI_RoleSpace as select from zrole_space_tab {
+  key role_name as RoleName
+}`;
+    const rootViewEntity = `define root view entity ZI_RoleSpace as select from zrole_space_tab {
+  key role_name as RoleName
+}`;
+    const projection = `define view entity ZI_RoleSpace as projection on ZI_Other {
+  key RoleName
+}`;
+    const abstractEntity = `define abstract entity ZI_RoleSpace {
+  RoleName : abap.char(10);
+}`;
+
+    async function runDdls(cds: string, xml: string): Promise<readonly Issue[]> {
+      const reg = new Registry().addFiles([
+        new MemoryFile("zi_rolespace.ddls.asddls", cds),
+        new MemoryFile("zi_rolespace.ddls.xml", xml),
+      ]);
+      await reg.parseAsync();
+      const target = reg.getObject("DDLS", "ZI_ROLESPACE") as DataDefinition;
+      return new CDSCheckSyntax().initialize(reg).run(target).filter(i => i.getMessage().startsWith("SOURCE_TYPE"));
+    }
+
+    const ok: [string, string, string][] = [
+      ["DDIC-based view", ddicView, "V"],
+      ["view entity", viewEntity, "W"],
+      ["root view entity", rootViewEntity, "W"],
+      ["projection view", projection, "P"],
+      ["abstract entity, unconfirmed SOURCE_TYPE", abstractEntity, "A"],
+      ["abstract entity, W not checked", abstractEntity, "W"],
+      ["unknown SOURCE_TYPE", viewEntity, "X"],
+      ["parser error", "define view entity ZI_RoleSpace as hello world", "V"],
+    ];
+    for (const [title, cds, sourceType] of ok) {
+      it(`accepts ${title}, ${sourceType}`, async () => {
+        const issues = await runDdls(cds, ddlsXml(sourceType));
+        expect(issues.length).to.equal(0);
+      });
+    }
+
+    const mismatch: [string, string, string, string][] = [
+      ["DDIC-based view", ddicView, "W", "V"],
+      ["view entity", viewEntity, "V", "W"],
+      ["root view entity", rootViewEntity, "P", "W"],
+      ["projection view", projection, "W", "P"],
+    ];
+    for (const [title, cds, sourceType, expected] of mismatch) {
+      it(`reports ${title}, ${sourceType}`, async () => {
+        const issues = await runDdls(cds, ddlsXml(sourceType));
+        expect(issues.length).to.equal(1);
+        expect(issues[0].getMessage()).to.equal(`SOURCE_TYPE "${sourceType}" does not match DDL source, expected "${expected}"`);
+        expect(issues[0].getFilename()).to.equal("zi_rolespace.ddls.xml");
+        expect(issues[0].getStart().getRow()).to.equal(9);
+      });
+    }
+
+    it("accepts XML without SOURCE_TYPE", async () => {
+      const issues = await runDdls(ddicView, ddlsXml("W").replace("    <SOURCE_TYPE>W</SOURCE_TYPE>\n", ""));
+      expect(issues.length).to.equal(0);
+    });
   });
 });
