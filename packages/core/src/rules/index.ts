@@ -61,6 +61,7 @@ export * from "./cyclic_oo";
 export * from "./cyclomatic_complexity";
 export * from "./dangerous_statement";
 export * from "./db_operation_in_loop";
+export * from "./definitions_in_module";
 export * from "./definitions_top";
 export * from "./delete_index_in_loop";
 export * from "./description_empty";
