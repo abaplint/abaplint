@@ -1295,7 +1295,7 @@ ${indentation}`);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       const firstToken = high.getFirstToken();
       const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${uniqueName} LIKE LINE OF ${target?.concatTokens()}.
-${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
+${indentation}${uniqueName} = ${(source as ExpressionNode).concatTokensWithLinebreaks()}.\n${indentation}`);
       const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
 
@@ -1361,7 +1361,7 @@ ${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
       const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
       const firstToken = high.getFirstToken();
       const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `DATA ${uniqueName} LIKE LINE OF ${target?.concatTokens()}.
-${indentation}${uniqueName} = ${source.concatTokens()}.\n${indentation}`);
+${indentation}${uniqueName} = ${(source as ExpressionNode).concatTokensWithLinebreaks()}.\n${indentation}`);
       const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), uniqueName);
       const fix = EditHelper.merge(fix2, fix1);
 
@@ -3211,10 +3211,10 @@ ${indentation}    output = ${uniqueName}.\n`;
               body += indentation + structureName + "-" + (b as ExpressionNode).concatTokensWithLinebreaks() + ".\n";
             } else if (b.get() instanceof Expressions.Source) {
 // note: it wont work with APPEND for Hashed/Sorted Tables, so use INSERT,
-              body += indentation + "INSERT " + b.concatTokens() + ` INTO TABLE ${uniqueName}.\n`;
+              body += indentation + "INSERT " + (b as ExpressionNode).concatTokensWithLinebreaks() + ` INTO TABLE ${uniqueName}.\n`;
               skip = true;
             } else if (b.get() instanceof Expressions.ValueBodyLines) {
-              body += indentation + "INSERT " + b.concatTokens() + ` INTO TABLE ${uniqueName}.\n`;
+              body += indentation + "INSERT " + (b as ExpressionNode).concatTokensWithLinebreaks() + ` INTO TABLE ${uniqueName}.\n`;
               skip = true;
             } else if (b.concatTokens() === ")") {
               if (added === false && previous?.concatTokens() === "(") {

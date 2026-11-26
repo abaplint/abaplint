@@ -1721,9 +1721,45 @@ DATA(result) = VALUE ty_tab(
 TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA temp1 TYPE ty_tab.
 CLEAR temp1.
-INSERT COND string( LET current_count = 2 IN WHEN current_count = 1 THEN |{ current_count }| ELSE |{ current_count }| ) INTO TABLE temp1.
-INSERT COND string( LET current_count = 2 IN WHEN current_count = 2 THEN |{ current_count }| ELSE |{ current_count }| ) INTO TABLE temp1.
+INSERT COND string( LET current_count = 2 IN
+WHEN current_count = 1 THEN |{ current_count }|
+ELSE |{ current_count }| ) INTO TABLE temp1.
+INSERT COND string( LET current_count = 2 IN
+WHEN current_count = 2 THEN |{ current_count }|
+ELSE |{ current_count }| ) INTO TABLE temp1.
 DATA(result) = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE row spanning several lines, line breaks kept", async () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA tab TYPE ty_tab.
+tab = VALUE #( ( \`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\` &&
+                 \`bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\` ) ).`;
+// joined onto one line, the row would be over 255 characters, which a 702 system cuts on import
+    const expected = `
+TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA tab TYPE ty_tab.
+DATA temp1 TYPE ty_tab.
+CLEAR temp1.
+INSERT \`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\` &&
+\`bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\` INTO TABLE temp1.
+tab = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("INSERT source expression spanning several lines, line breaks kept", async () => {
+    const abap = `
+DATA tab TYPE string_table.
+INSERT \`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\` &&
+\`bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\` INTO TABLE tab.`;
+    const expected = `
+DATA tab TYPE string_table.
+DATA temp1 LIKE LINE OF tab.
+temp1 = \`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\` &&
+\`bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\`.
+INSERT temp1 INTO TABLE tab.`;
     testFix(abap, expected);
   });
 
