@@ -1,4 +1,4 @@
-import {RenameFile, TextDocumentEdit, WorkspaceEdit} from "vscode-languageserver-types";
+import {CreateFile, RenameFile, TextDocumentEdit, WorkspaceEdit} from "vscode-languageserver-types";
 import {MemoryFile} from "../../files/memory_file";
 import {IRegistry} from "../../_iregistry";
 import {RenameDataElement} from "./rename_data_element";
@@ -112,11 +112,20 @@ export class Renamer {
       updatedFiles: new Set<string>(),
     };
 
-    // assumption: only renames or text changes, no deletes or creates
+    // assumption: only renames, creates or text changes, no deletes. A created file starts empty,
+    // its content is a text edit after the create
     for (const dc of edits.documentChanges || []) {
       if (TextDocumentEdit.is(dc)) {
         this.applyEdit(dc);
-        result.updatedFiles.add(dc.textDocument.uri);
+        if (result.addedFiles.has(dc.textDocument.uri) === false) {
+          result.updatedFiles.add(dc.textDocument.uri);
+        }
+      } else if (CreateFile.is(dc)) {
+        if (this.reg.getFileByName(dc.uri) !== undefined) {
+          throw new Error("apply, file " + dc.uri + " already exists");
+        }
+        this.reg.addFile(new MemoryFile(dc.uri, ""));
+        result.addedFiles.add(dc.uri);
       } else if (RenameFile.is(dc)) {
         renames.push(dc);
       } else {
