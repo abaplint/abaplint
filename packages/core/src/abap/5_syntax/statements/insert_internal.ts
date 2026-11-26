@@ -2,6 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
 import {InlineFS} from "../expressions/inline_fs";
 import {Source} from "../expressions/source";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {AbstractType} from "../../types/basic/_abstract_type";
@@ -46,6 +47,7 @@ export class InsertInternal implements StatementSyntax {
         source = node.findDirectExpression(Expressions.Source);
       }
     }
+    checkParenthesizedOperand(source, input);
     const sourceType = source ? Source.runSyntax(source, input, targetType) : targetType;
 
     if (targetType === undefined

@@ -21,6 +21,7 @@ import {FilterBody} from "./filter_body";
 import {CorrespondingBody} from "./corresponding_body";
 import {BuiltIn} from "../_builtin";
 import {BuiltInCall} from "../_builtin_call";
+import {checkConcatenationParentheses, checkParenthesizedOperand} from "../_parenthesized_operand";
 import {AttributeChain} from "./attribute_chain";
 import {Dereference} from "./dereference";
 import {Cast} from "./cast";
@@ -62,6 +63,8 @@ export class Source {
     if (node === undefined) {
       return undefined;
     }
+
+    checkConcatenationParentheses(node, input);
 
     const children = node.getChildren().slice();
     let first = children.shift();
@@ -174,6 +177,7 @@ export class Source {
         case "REF":
         {
           let foundType = this.determineType(node, input, targetType);
+          checkParenthesizedOperand(node.findDirectExpression(Expressions.Source), input);
           const s = Source.runSyntax(node.findDirectExpression(Expressions.Source), input);
           /*
           console.dir(node.concatTokens());
@@ -240,6 +244,7 @@ export class Source {
         case "EXACT":
         {
           const foundType = this.determineType(node, input, targetType);
+          checkParenthesizedOperand(node.findDirectExpression(Expressions.Source), input);
           Source.runSyntax(node.findDirectExpression(Expressions.Source), input, foundType);
           this.addIfInferred(node, input, foundType);
           return foundType;

@@ -43,12 +43,15 @@ function isNonNumeric(type: AbstractType): boolean {
     || type instanceof AnyType;
 }
 
-// "( s )", also as a part of a string expression, "s && ( s )"
+// "( s )", parentheses in a string expression, "s && ( s )", are reported for every operand of "&&" by Source
 function hasParentheses(source: ExpressionNode): boolean {
   const children = source.getChildren();
+  if (children.some(c => c instanceof TokenNode && c.getFirstToken().getStr() === "&&")) {
+    return false;
+  }
   if (children[0] instanceof TokenNode && children[0].getFirstToken().getStr() === "(") {
     return true;
   }
-  return children.some(c => c instanceof TokenNode && ["&", "&&"].includes(c.getFirstToken().getStr()))
+  return children.some(c => c instanceof TokenNode && c.getFirstToken().getStr() === "&")
     && source.findDirectExpressions(Expressions.Source).some(s => hasParentheses(s));
 }

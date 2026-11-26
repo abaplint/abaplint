@@ -2,6 +2,7 @@ import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {ObjectOriented} from "../_object_oriented";
 import {Source} from "./source";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {Let} from "./let";
 import {Cond} from "./cond";
 import {AbstractType} from "../../types/basic/_abstract_type";
@@ -36,6 +37,15 @@ export class CondBody {
 
     for (const s of node.findDirectExpressions(Expressions.Cond)) {
       Cond.runSyntax(s, input);
+    }
+
+    // the results after THEN and ELSE
+    const children = node.getChildren();
+    for (let i = 1; i < children.length; i++) {
+      const before = children[i - 1].concatTokens().toUpperCase();
+      if (before === "THEN" || before === "ELSE") {
+        checkParenthesizedOperand(children[i], input);
+      }
     }
 
     let type: AbstractType | undefined = undefined;
