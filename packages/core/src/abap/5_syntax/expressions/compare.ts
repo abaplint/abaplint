@@ -5,7 +5,7 @@ import {MethodCallChain} from "./method_call_chain";
 import {SourceFieldSymbol} from "./source_field_symbol";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {CGenericType, CharacterType, CLikeType, CSequenceType, DateType, HexType, IntegerType, NGenericType, NumericType,
+import {CGenericType, CharacterType, CLikeType, CSequenceType, DateType, HexType, NGenericType, NumericType,
   StringType, StructureType, TimeType, XGenericType, XSequenceType, XStringType} from "../../types/basic";
 import {TypeUtils} from "../_type_utils";
 import {BuiltIn} from "../_builtin";
@@ -59,16 +59,7 @@ export class Compare {
     } else if (node.findDirectExpression(Expressions.CompareOperator)
         && typeUtils.isCompareable(sourceTypes[0], sourceTypes[1], sources[0], sources[1]) === false
         && sourceTypes.length === 2) {
-      let message = "Incompatible types for comparison";
-      if ((sourceTypes[0] instanceof DateType
-          && sourceTypes[1] instanceof IntegerType
-          && sources[1].findFirstExpression(Expressions.ArithOperator))
-          || (sourceTypes[1] instanceof DateType
-          && sourceTypes[0] instanceof IntegerType
-          && sources[0].findFirstExpression(Expressions.ArithOperator))) {
-        message = "Date cannot be compared with arithmetic result of type Integer";
-      }
-      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), "Incompatible types for comparison"));
     }
   }
 

@@ -270,13 +270,8 @@ export class TypeUtils {
       return false;
     }
 
-    if (source1 instanceof DateType && this.isCalculated(node2) && source2 instanceof IntegerType) {
-      return false;
-    }
-    if (source2 instanceof DateType && this.isCalculated(node1) && source1 instanceof IntegerType) {
-      return false;
-    }
-
+    // a date compared with an arithmetic expression is reported by Compare, a date compared with
+    // a function or method result of type i is compared like a date compared with a data object of type i
     return true;
   }
 
