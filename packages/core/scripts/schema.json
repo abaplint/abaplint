@@ -8653,6 +8653,7 @@
           "type": "array"
         },
         "numericParameters": {
+          "description": "parameters must be numbered",
           "type": "boolean"
         },
         "severity": {
@@ -11414,6 +11415,7 @@
       "additionalProperties": false,
       "properties": {
         "allowEmpty": {
+          "description": "Allow empty METHODs + FORMs + FUNCTION-MODULEs",
           "type": "boolean"
         },
         "exclude": {
