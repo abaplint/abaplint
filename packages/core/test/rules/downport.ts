@@ -9,6 +9,7 @@ import {IConfiguration} from "../../src/_config";
 import {Version} from "../../src/version";
 import {Issue} from "../../src/issue";
 import {IFile} from "../../src/files/_ifile";
+import {applyEditSingle} from "../../src/edit_helper";
 
 function buildConfig(version: Version): IConfiguration {
   const conf = Config.getDefault().get();
@@ -9326,4 +9327,76 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+});
+
+describe("Rule: downport, ABAP language version", () => {
+
+  const clas = `CLASS zcl_lang DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+ENDCLASS.
+CLASS zcl_lang IMPLEMENTATION.
+ENDCLASS.`;
+
+  function clasXML(unicode: string) {
+    return `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_LANG</CLSNAME>
+    <LANGU>E</LANGU>
+    <STATE>1</STATE>
+    <UNICODE>${unicode}</UNICODE>
+   </VSEOCLASS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  }
+
+  function run(files: MemoryFile[], version = Version.v702) {
+    const reg = new Registry(buildConfig(version)).addFiles(files);
+    reg.parse();
+    const issues = new Downport().initialize(reg).run(reg.getFirstObject()!);
+    return {reg, issues};
+  }
+
+  it("ABAP for Cloud Development becomes standard ABAP", () => {
+    const {reg, issues} = run([new MemoryFile("zcl_lang.clas.abap", clas), new MemoryFile("zcl_lang.clas.xml", clasXML("5"))]);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("ABAP for Cloud Development");
+    applyEditSingle(reg, issues[0].getDefaultFix()!);
+    const raw = reg.getFileByName("zcl_lang.clas.xml")!.getRaw();
+    expect(raw).to.include("<UNICODE>X</UNICODE>");
+    expect(raw).to.include("<CLSNAME>ZCL_LANG</CLSNAME>");
+  });
+
+  it("ABAP for Key Users in ABAP_LANGU_VERSION becomes standard ABAP", () => {
+    const intf = `INTERFACE zif_lang PUBLIC.
+ENDINTERFACE.`;
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOINTERF>
+    <CLSNAME>ZIF_LANG</CLSNAME>
+    <ABAP_LANGU_VERSION>2</ABAP_LANGU_VERSION>
+   </VSEOINTERF>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const {reg, issues} = run([new MemoryFile("zif_lang.intf.abap", intf), new MemoryFile("zif_lang.intf.xml", xml)]);
+    expect(issues.length).to.equal(1);
+    applyEditSingle(reg, issues[0].getDefaultFix()!);
+    expect(reg.getFileByName("zif_lang.intf.xml")!.getRaw()).to.include("<ABAP_LANGU_VERSION>X</ABAP_LANGU_VERSION>");
+  });
+
+  it("standard ABAP stays", () => {
+    const {issues} = run([new MemoryFile("zcl_lang.clas.abap", clas), new MemoryFile("zcl_lang.clas.xml", clasXML("X"))]);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("not when downporting to another release", () => {
+    const {issues} = run([new MemoryFile("zcl_lang.clas.abap", clas), new MemoryFile("zcl_lang.clas.xml", clasXML("5"))], Version.v750);
+    expect(issues.length).to.equal(0);
+  });
 });

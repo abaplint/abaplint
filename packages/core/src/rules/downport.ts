@@ -176,6 +176,7 @@ Current rules:
 * Some occurrences of string template formatting option ALPHA changed to function module call
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
 * OPEN CURSOR/FETCH NEXT CURSOR/CLOSE CURSOR "@" in source/targets removed
+* the ABAP language version of an object, ABAP for Cloud Development or ABAP for Key Users, set to standard ABAP
 * PARTIALLY IMPLEMENTED removed, it can be quick fixed via rule implement_methods
 * RAISE EXCEPTION ... MESSAGE
 * Moving with +=, -=, /=, *=, &&= is expanded
@@ -205,6 +206,31 @@ Make sure to test the downported code, it might not always be completely correct
       this.initHighReg();
     }
     return this;
+  }
+
+  /** the ABAP language version of the object, which abapGit keeps in UNICODE (classes, interfaces) or
+   *  ABAP_LANGU_VERSION: 5 is ABAP for Cloud Development, 2 ABAP for Key Users. 7.02 has neither, and a
+   *  system that has them checks the downported code by their rules, eg. the downport's restore of
+   *  SY-TABIX is a write to a system field ABAP Cloud refuses. The downport is standard ABAP, X */
+  private downportLanguageVersion(obj: ABAPObject): Issue | undefined {
+    const xml = obj.getXMLFile();
+    if (xml === undefined) {
+      return undefined;
+    }
+    const rows = xml.getRawRows();
+    for (let i = 0; i < rows.length; i++) {
+      const match = rows[i].match(/<(UNICODE|ABAP_LANGU_VERSION)>([25])<\/\1>/);
+      if (match === null || match.index === undefined) {
+        continue;
+      }
+      const start = new Position(i + 1, match.index + match[1].length + 3);
+      const end = new Position(i + 1, start.getCol() + 1);
+      const fix = EditHelper.replaceRange(xml, start, end, "X");
+      const name = match[2] === "5" ? "ABAP for Cloud Development" : "ABAP for Key Users";
+      return Issue.atRowRange(xml, i + 1, start.getCol(), end.getCol(),
+                              "Language version " + name + ", standard ABAP", this.getMetadata().key, this.conf.severity, fix);
+    }
+    return undefined;
   }
 
   private listMainForInclude(filename: string | undefined) {
@@ -242,6 +268,13 @@ Make sure to test the downported code, it might not always be completely correct
       return ret;
     } else if (!(lowObj instanceof ABAPObject)) {
       return ret;
+    }
+
+    if (config.getRelease() === Release.v702) {
+      const languageVersion = this.downportLanguageVersion(lowObj);
+      if (languageVersion !== undefined) {
+        return [languageVersion];
+      }
     }
 
     const highObj = this.highReg.getObject(lowObj.getType(), lowObj.getName());
