@@ -22306,3 +22306,55 @@ ENDCLASS.`);
     expect(issues[0]?.getMessage()).to.equal("LINES OF must be a table type");
   });
 });
+
+describe("syntax.ts, date compared with a function or method result of type i, #4726", () => {
+  const prefix = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS m RETURNING VALUE(r) TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD m.
+  ENDMETHOD.
+ENDCLASS.
+
+DATA d TYPE d.
+DATA i TYPE i.
+DATA s TYPE string.
+DATA t TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+
+START-OF-SELECTION.`;
+
+  const okay: {name: string, code: string}[] = [
+    {name: "strlen( )", code: `IF d = strlen( s ). ENDIF.`},
+    {name: "strlen( ) on the left, <>", code: `IF strlen( s ) <> d. ENDIF.`},
+    {name: "lines( ), <", code: `IF d < lines( t ). ENDIF.`},
+    {name: "abs( ) of the date", code: `IF d = abs( d ). ENDIF.`},
+    {name: "abs( ) on the left", code: `IF abs( d ) = d. ENDIF.`},
+    {name: "method result", code: `IF d = lcl=>m( ). ENDIF.`},
+    {name: "method result on the left", code: `IF lcl=>m( ) >= d. ENDIF.`},
+    {name: "data object of type i", code: `IF d = i. ENDIF.`},
+    {name: "BETWEEN", code: `IF d BETWEEN strlen( s ) AND strlen( s ). ENDIF.`},
+    {name: "xsdbool", code: `DATA(b) = xsdbool( d = strlen( s ) ).`},
+  ];
+
+  for (const o of okay) {
+    it("okay, " + o.name, () => {
+      const issues = runProgram(prefix + "\n  " + o.code);
+      expect(issues.length).to.equal(0, issues.map(i => i.getMessage()).join(", "));
+    });
+  }
+
+  const errors: {name: string, code: string}[] = [
+    {name: "data object in an arithmetic expression", code: `IF d = i + 1. ENDIF.`},
+    {name: "function in an arithmetic expression", code: `IF d = strlen( s ) + 1. ENDIF.`},
+    {name: "method result in an arithmetic expression", code: `IF lcl=>m( ) * 2 = d. ENDIF.`},
+  ];
+
+  for (const e of errors) {
+    it("error, " + e.name, () => {
+      const issues = runProgram(prefix + "\n  " + e.code);
+      expect(issues[0]?.getMessage()).to.include("Arithmetic expression cannot be compared with non-numeric operand");
+    });
+  }
+});
