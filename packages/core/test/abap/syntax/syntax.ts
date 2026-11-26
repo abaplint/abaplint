@@ -8696,6 +8696,124 @@ ENDTRY.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("split, byte mode, ok, byte like targets", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA sep TYPE x LENGTH 1.
+    DATA first TYPE xstring.
+    DATA second TYPE x LENGTH 4.
+    SPLIT data AT sep INTO first second IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, into table", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA tab TYPE STANDARD TABLE OF xstring WITH EMPTY KEY.
+    SPLIT data AT data INTO TABLE tab IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, inline targets are xstring", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA len TYPE i.
+    SPLIT data AT data INTO DATA(first) DATA(second) IN BYTE MODE.
+    len = xstrlen( first ).
+    len = xstrlen( second ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, inline table of xstring", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA len TYPE i.
+    DATA row TYPE xstring.
+    SPLIT data AT data INTO TABLE DATA(tab) IN BYTE MODE.
+    LOOP AT tab INTO DATA(inline).
+      len = xstrlen( inline ).
+    ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, generic parameters", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run
+      IMPORTING input TYPE xsequence
+      CHANGING
+        first  TYPE data
+        second TYPE any.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    SPLIT input AT input INTO first second IN BYTE MODE.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, error, character like target", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA first TYPE xstring.
+    DATA second TYPE string.
+    SPLIT data AT data INTO first second IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`target not byte like`);
+  });
+
+  it("split, byte mode, error, character like table row", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA tab TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    SPLIT data AT data INTO TABLE tab IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`target not byte like`);
+  });
+
+  it("split, byte mode, error, character like source", () => {
+    const abap = `
+    DATA text TYPE string.
+    DATA data TYPE xstring.
+    DATA first TYPE xstring.
+    DATA second TYPE xstring.
+    SPLIT text AT data INTO first second IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`source not byte like`);
+  });
+
+  it("split, byte mode, error, character like separator", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA first TYPE xstring.
+    DATA second TYPE xstring.
+    SPLIT data AT ',' INTO first second IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`source not byte like`);
+  });
+
+  it("split, character mode, error, byte like target", () => {
+    const abap = `
+    DATA text TYPE string.
+    DATA first TYPE xstring.
+    DATA second TYPE xstring.
+    SPLIT text AT ',' INTO first second IN CHARACTER MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`target not character like`);
+  });
+
   it("double FOR loop, ok", () => {
     const abap = `
   TYPES type TYPE STANDARD TABLE OF string WITH EMPTY KEY.
