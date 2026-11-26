@@ -119,7 +119,8 @@ export class RenameICFService implements ObjectRenamer {
     const name = namespace.toLowerCase();
     const hash = crypto.createHash("sha1").update(parentURL).digest("hex").substring(0, ICF_HASH_LENGTH);
     const uri = filename.substring(0, slash + 1) + name.padEnd(ICF_NAME_LENGTH, " ") + hash + ".sicf.xml";
-    const content = `<?xml version="1.0" encoding="utf-8"?>
+    // abapGit writes every XML file with a UTF-8 byte order mark, xml_bom checks it
+    const content = `\ufeff<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_SICF" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
