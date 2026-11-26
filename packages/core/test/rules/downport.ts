@@ -8061,6 +8061,47 @@ ENDFORM.`;
     testFixAll(abap, expected);
   });
 
+  it("table expression on a generically typed table, the field symbol is TYPE any", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  FIELD-SYMBOLS <cell> TYPE any.
+  <cell> = <tab>[ 1 ].
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    const fixed = issues[0].getDefaultFix();
+    expect(fixed).to.not.equal(undefined);
+    const text = JSON.stringify(fixed);
+    expect(text).to.include("TYPE any.");
+    expect(text).to.not.include("LIKE LINE OF <tab>");
+  });
+
+  it("table expression on a typed table, the field symbol stays LIKE LINE OF", async () => {
+    const abap = `FORM bar.
+  DATA lt_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA lv_cell TYPE i.
+  lv_cell = lt_tab[ 1 ].
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(JSON.stringify(issues[0].getDefaultFix())).to.include("LIKE LINE OF lt_tab.");
+  });
+
+  it("table expression as a target on a generically typed table, the field symbol is TYPE any", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  CLEAR <tab>[ 1 ].
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    const text = JSON.stringify(issues[0].getDefaultFix());
+    expect(text).to.include("TYPE any.");
+    expect(text).to.not.include("LIKE LINE OF <tab>");
+  });
+
   it("table expression, two outlines in one statement get distinct field symbols", async () => {
     const abap = `FORM bar.
   TYPES: BEGIN OF ty_row, name TYPE string, END OF ty_row.
