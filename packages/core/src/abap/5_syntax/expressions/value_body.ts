@@ -2,6 +2,7 @@ import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {For} from "./for";
 import {Source} from "./source";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
@@ -66,6 +67,24 @@ export class ValueBody {
 
     for (const s of node.findDirectExpressions(Expressions.FieldAssignment)) {
       FieldAssignment.runSyntax(s, input, targetType);
+    }
+
+    // a single value, its DEFAULT, the BASE and the rows, "VALUE #( ( i ) )", "VALUE #( BASE tab ( LINES OF tab ) )"
+    const operands = [
+      ...node.findDirectExpressions(Expressions.Source),
+      ...node.findDirectExpression(Expressions.ValueBase)?.findDirectExpressions(Expressions.Source) || [],
+    ];
+    for (const line of node.findDirectExpressions(Expressions.ValueBodyLine)) {
+      operands.push(...line.findDirectExpressions(Expressions.Source));
+      for (const lines of line.findDirectExpressions(Expressions.ValueBodyLines)) {
+        const tab = lines.findExpressionAfterToken("OF");
+        if (tab !== undefined) {
+          operands.push(tab);
+        }
+      }
+    }
+    for (const operand of operands) {
+      checkParenthesizedOperand(operand, input);
     }
 
     let type: AbstractType | undefined = undefined; // todo, this is only correct if there is a single source in the body
