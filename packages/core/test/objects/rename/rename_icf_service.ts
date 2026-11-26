@@ -2,6 +2,7 @@ import {MemoryFile} from "../../../src/files/memory_file";
 import {expect} from "chai";
 import {Renamer} from "../../../src/objects/rename/renamer";
 import {Registry} from "../../../src/registry";
+import {IRegistry} from "../../../src/_iregistry";
 import {namespacedURL} from "../../../src/objects/rename/rename_icf_service";
 
 describe("Rename SICF", () => {
@@ -93,19 +94,22 @@ describe("Rename SICF", () => {
 </abapGit>`;
   }
 
+  function fileOf(reg: IRegistry, name: string) {
+    return Array.from(reg.getFiles()).find(f => f.getFilename().endsWith(name));
+  }
+
   it("SICF, into a namespace", () => {
     const reg = new Registry().addFiles([
       new MemoryFile("zfoo           0e8aa5bbbb68f6118b9cd7023.sicf.xml", sicf("/sap/bc/zfoo/", "zfoo")),
     ]).parse();
     new Renamer(reg).rename("SICF", "zfoo", "/ns/foo");
-    expect(reg.getObjectCount().normal).to.equal(1);
-    for (const f of reg.getFiles()) {
-      expect(f.getFilename()).to.equal("foo            f0053e93956e7d6d0f315b74c.sicf.xml");
-      expect(f.getRaw().includes("<URL>/sap/bc/ns/foo/</URL>")).to.equal(true);
-      expect(f.getRaw().includes("<ICF_NAME>FOO</ICF_NAME>")).to.equal(true);
-      expect(f.getRaw().includes("<ORIG_NAME>foo</ORIG_NAME>")).to.equal(true);
-      expect(f.getRaw().includes("<ICF_NAME>ZFOO</ICF_NAME>")).to.equal(false);
-    }
+    expect(reg.getObjectCount().normal).to.equal(2);
+    const f = fileOf(reg, "foo            f0053e93956e7d6d0f315b74c.sicf.xml");
+    expect(f).to.not.equal(undefined);
+    expect(f!.getRaw().includes("<URL>/sap/bc/ns/foo/</URL>")).to.equal(true);
+    expect(f!.getRaw().includes("<ICF_NAME>FOO</ICF_NAME>")).to.equal(true);
+    expect(f!.getRaw().includes("<ORIG_NAME>foo</ORIG_NAME>")).to.equal(true);
+    expect(f!.getRaw().includes("<ICF_NAME>ZFOO</ICF_NAME>")).to.equal(false);
   });
 
   it("SICF, BSP node into a namespace", () => {
@@ -113,10 +117,45 @@ describe("Rename SICF", () => {
       new MemoryFile("zfoo           efe121c45a2e775419571ac3f.sicf.xml", sicf("/sap/bc/bsp/sap/zfoo/", "zfoo")),
     ]).parse();
     new Renamer(reg).rename("SICF", "zfoo", "/NS/FOO");
-    for (const f of reg.getFiles()) {
-      expect(f.getFilename()).to.equal("foo            4cf4929f5fad5e43f83f15088.sicf.xml");
-      expect(f.getRaw().includes("<URL>/sap/bc/bsp/ns/foo/</URL>")).to.equal(true);
-    }
+    const f = fileOf(reg, "foo            4cf4929f5fad5e43f83f15088.sicf.xml");
+    expect(f!.getRaw().includes("<URL>/sap/bc/bsp/ns/foo/</URL>")).to.equal(true);
+    const parent = fileOf(reg, "ns             b6d7f046fde2a34538f5372cc.sicf.xml");
+    expect(parent!.getRaw().includes("<URL>/sap/bc/bsp/ns/</URL>")).to.equal(true);
+  });
+
+  it("SICF, into a namespace, the node of the namespace is created", () => {
+    const reg = new Registry().addFiles([
+      new MemoryFile("src/zfoo           0e8aa5bbbb68f6118b9cd7023.sicf.xml", sicf("/sap/bc/zfoo/", "zfoo")),
+    ]).parse();
+    const result = new Renamer(reg).rename("SICF", "zfoo", "/ns/foo");
+    const name = "src/ns             cb988e6036206c8d542135ca1.sicf.xml";
+    expect(result.addedFiles.has(name)).to.equal(true);
+    expect(result.updatedFiles.has(name)).to.equal(false);
+    const parent = reg.getFileByName(name);
+    expect(parent!.getRaw().includes("<URL>/sap/bc/ns/</URL>")).to.equal(true);
+    expect(parent!.getRaw().includes("<ICF_NAME>NS</ICF_NAME>")).to.equal(true);
+    expect(parent!.getRaw().includes("<ORIG_NAME>ns</ORIG_NAME>")).to.equal(true);
+    expect(Array.from(reg.getObjects()).filter(o => o.getType() === "SICF").length).to.equal(2);
+  });
+
+  it("SICF, into a namespace, the node of the namespace once for two nodes", () => {
+    const reg = new Registry().addFiles([
+      new MemoryFile("zfoo           0e8aa5bbbb68f6118b9cd7023.sicf.xml", sicf("/sap/bc/zfoo/", "zfoo")),
+      new MemoryFile("zbar           f230f47a2ba3a3417f9d7bb59.sicf.xml", sicf("/sap/bc/zbar/", "zbar")),
+    ]).parse();
+    new Renamer(reg).rename("SICF", "zfoo", "/ns/foo");
+    new Renamer(reg).rename("SICF", "zbar", "/ns/bar");
+    expect(reg.getObjectCount().normal).to.equal(3);
+    expect(fileOf(reg, "bar            f73b2455d61f061f9d6bb1b22.sicf.xml")).to.not.equal(undefined);
+  });
+
+  it("SICF, into a namespace, the node of the namespace exists", () => {
+    const reg = new Registry().addFiles([
+      new MemoryFile("zfoo           0e8aa5bbbb68f6118b9cd7023.sicf.xml", sicf("/sap/bc/zfoo/", "zfoo")),
+      new MemoryFile("ns             cb988e6036206c8d542135ca1.sicf.xml", sicf("/sap/bc/ns/", "ns")),
+    ]).parse();
+    new Renamer(reg).rename("SICF", "zfoo", "/ns/foo");
+    expect(reg.getObjectCount().normal).to.equal(2);
   });
 
   it("SICF, into a namespace, name too long", () => {
