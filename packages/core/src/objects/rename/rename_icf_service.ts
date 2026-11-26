@@ -66,6 +66,9 @@ export class RenameICFService implements ObjectRenamer {
       changes = changes.concat(helper.buildXMLFileEdits(obj, "ORIG_NAME", cleanOldName, leaf, true));
       const files = newURL === undefined ? undefined : this.renameAbapGitFiles(obj, leaf, newURL);
       changes = changes.concat(files ?? helper.renameFiles(obj, cleanOldName, leaf));
+      if (newURL !== undefined && files !== undefined) {
+        changes = changes.concat(this.buildNamespaceNode(obj, namespaced[1], newURL));
+      }
     } else {
       changes = changes.concat(helper.buildURLFileEdits(obj, cleanOldName, cleanNewName));
       changes = changes.concat(helper.buildXMLFileEdits(obj, "ICF_NAME", cleanOldName, cleanNewName));
@@ -95,6 +98,49 @@ export class RenameICFService implements ObjectRenamer {
       }
     }
     return [];
+  }
+
+  /** The node of the namespace above the renamed one (/sap/bc/ns/ above /sap/bc/ns/leaf/). It does not exist
+   *  in a fresh system and abapGit does not create nodes in between, so it is added next to the renamed node,
+   *  unless the registry has a node with that URL already */
+  private buildNamespaceNode(obj: ICFService, namespace: string, newURL: string): (CreateFile | TextDocumentEdit)[] {
+    const parentURL = newURL.replace(/[^/]+\/?$/, "");
+    for (const o of this.reg.getObjects()) {
+      if (o instanceof ICFService && o.getURL()?.toLowerCase() === parentURL.toLowerCase()) {
+        return [];
+      }
+    }
+    const xml = obj.getXMLFile();
+    if (xml === undefined) {
+      return [];
+    }
+    const filename = xml.getFilename();
+    const slash = Math.max(filename.lastIndexOf("/"), filename.lastIndexOf("\\"));
+    const name = namespace.toLowerCase();
+    const hash = crypto.createHash("sha1").update(parentURL).digest("hex").substring(0, ICF_HASH_LENGTH);
+    const uri = filename.substring(0, slash + 1) + name.padEnd(ICF_NAME_LENGTH, " ") + hash + ".sicf.xml";
+    const content = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_SICF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <URL>${parentURL}</URL>
+   <ICFSERVICE>
+    <ICF_NAME>${name.toUpperCase()}</ICF_NAME>
+    <ORIG_NAME>${name}</ORIG_NAME>
+   </ICFSERVICE>
+   <ICFDOCU>
+    <ICF_NAME>${name.toUpperCase()}</ICF_NAME>
+    <ICF_LANGU>E</ICF_LANGU>
+    <ICF_DOCU>Namespace ${name}</ICF_DOCU>
+   </ICFDOCU>
+  </asx:values>
+ </asx:abap>
+</abapGit>
+`;
+    return [
+      CreateFile.create(uri),
+      TextDocumentEdit.create({uri, version: 1}, [TextEdit.insert({line: 0, character: 0}, content)]),
+    ];
   }
 
   /** abapGit names a SICF file "<ICF_NAME, lower case, padded to 15><first 25 hex chars of SHA1(URL)>.sicf.xml",
