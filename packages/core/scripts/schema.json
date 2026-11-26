@@ -7894,6 +7894,10 @@
           },
           "type": "array",
           "uniqueItems": true
+        },
+        "urls": {
+          "description": "also rename the URLs of renamed ICF nodes (SICF) in the pages of the BSP applications (WAPA), eg. a data source in a manifest.json, a URL is matched as a whole path, disabled by default",
+          "type": "boolean"
         }
       },
       "required": [
