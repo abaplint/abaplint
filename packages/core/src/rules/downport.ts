@@ -1480,7 +1480,7 @@ ENDIF.`;
 ${read.replace(/^/gm, "  ")}
 ENDIF.`;
       }
-      const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `FIELD-SYMBOLS ${uniqueName} LIKE LINE OF ${pre}.
+      const fix1 = EditHelper.insertAt(lowFile, firstToken.getStart(), `FIELD-SYMBOLS ${uniqueName} ${this.rowOf(pre, high, lowFile, highSyntax)}.
 ${indentation}DATA ${tabixBackup} LIKE sy-tabix.
 ${read.replace(/\n/g, "\n" + indentation).replace(/^/, indentation)}
 ${indentation}`);
@@ -2498,6 +2498,17 @@ CONSTANTS: BEGIN OF ${structureName},\n`;
 
   }
 
+  /** the type of a field symbol for a row of the table, LIKE LINE OF a generically typed table is
+   *  refused by the system, "<TAB> is a generic type" - the field symbol is then TYPE any */
+  private rowOf(table: string, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): string {
+    const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
+    const type = spag?.findVariable(table)?.getType();
+    if (type instanceof TableType && type.isGeneric() === true) {
+      return "TYPE any";
+    }
+    return "LIKE LINE OF " + table;
+  }
+
   private moveWithTableTarget(low: StatementNode, high: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
     if (!(low.get() instanceof Unknown)) {
       return undefined;
@@ -2535,7 +2546,7 @@ CONSTANTS: BEGIN OF ${structureName},\n`;
     const tabixBackup = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     // restore tabix before exeption
-    const code = `FIELD-SYMBOLS ${uniqueName} LIKE LINE OF ${tName}.
+    const code = `FIELD-SYMBOLS ${uniqueName} ${this.rowOf(tName, high, lowFile, highSyntax)}.
 ${indentation}DATA ${tabixBackup} LIKE sy-tabix.
 ${indentation}${tabixBackup} = sy-tabix.
 ${indentation}READ TABLE ${tName} ${condition}ASSIGNING ${uniqueName}.

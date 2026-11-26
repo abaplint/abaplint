@@ -163,6 +163,11 @@ export class TypeUtils {
     return false;
   }
 
+  /** a number literal beyond the range of i */
+  public isPackedConstant(type: AbstractType | undefined): boolean {
+    return type instanceof PackedType && type.getAbstractTypeData()?.derivedFromConstant === true;
+  }
+
   public isOOAssignable(source: ObjectReferenceType, target: ObjectReferenceType): boolean {
     let sid = source.getIdentifier();
     let tid = target.getIdentifier();
@@ -507,6 +512,22 @@ export class TypeUtils {
       || source instanceof GenericObjectReferenceType);
     if (calculated && strictResult === false) {
       return this.isAssignable(source, target);
+    }
+
+    // a number literal of type p fits a packed parameter of any length without decimals
+    if (this.isPackedConstant(source)) {
+      if (target instanceof PackedType) {
+        return target.getDecimals() === 0;
+      } else if (target instanceof StringType
+          || target instanceof DateType
+          || target instanceof CharacterType
+          || target instanceof CGenericType
+          || target instanceof CSequenceType
+          || target instanceof XStringType
+          || target instanceof XGenericType
+          || (target instanceof StructureType && target.containsVoid() === false)) {
+        return false;
+      }
     }
 
     // an elementary text field is not compatible with a structure, also not with a flat character-like one
