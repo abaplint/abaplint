@@ -14,5 +14,5 @@ export function dynComp(...inside: IStatementRunnable[]): IStatementRunnable {
 }
 
 export function dynAttr(): IStatementRunnable {
-  return ver(Release.v757, seq(tok(InstanceArrow), dynIdent, dynInside, dynClose));
+  return ver(Release.v756, seq(tok(InstanceArrow), dynIdent, dynInside, dynClose));
 }

@@ -1,4 +1,4 @@
-import {RenameFile, TextDocumentEdit, WorkspaceEdit} from "vscode-languageserver-types";
+import {CreateFile, RenameFile, TextDocumentEdit, WorkspaceEdit} from "vscode-languageserver-types";
 import {MemoryFile} from "../../files/memory_file";
 import {IRegistry} from "../../_iregistry";
 import {RenameDataElement} from "./rename_data_element";
@@ -11,6 +11,7 @@ import {RenameTableType} from "./rename_table_type";
 import {ObjectRenamer} from "./_object_renamer";
 import {RenameMessageClass} from "./rename_message_class";
 import {RenameICFService} from "./rename_icf_service";
+import {RenameBSPApplication} from "./rename_bsp_application";
 
 export interface IRenameResult {
   deletedFiles: Set<string>;
@@ -85,6 +86,8 @@ export class Renamer {
         return new RenameMessageClass(this.reg);
       case "SICF":
         return new RenameICFService(this.reg);
+      case "WAPA":
+        return new RenameBSPApplication(this.reg);
       default:
         throw new Error("Renaming of " + type + " not yet supported");
     }
@@ -99,11 +102,20 @@ export class Renamer {
       updatedFiles: new Set<string>(),
     };
 
-    // assumption: only renames or text changes, no deletes or creates
+    // assumption: only renames, creates or text changes, no deletes. A created file starts empty,
+    // its content is a text edit after the create
     for (const dc of edits.documentChanges || []) {
       if (TextDocumentEdit.is(dc)) {
         this.applyEdit(dc);
-        result.updatedFiles.add(dc.textDocument.uri);
+        if (result.addedFiles.has(dc.textDocument.uri) === false) {
+          result.updatedFiles.add(dc.textDocument.uri);
+        }
+      } else if (CreateFile.is(dc)) {
+        if (this.reg.getFileByName(dc.uri) !== undefined) {
+          throw new Error("apply, file " + dc.uri + " already exists");
+        }
+        this.reg.addFile(new MemoryFile(dc.uri, ""));
+        result.addedFiles.add(dc.uri);
       } else if (RenameFile.is(dc)) {
         renames.push(dc);
       } else {

@@ -25,7 +25,7 @@ export class PreferAbapBoolValues extends ABAPRule {
       title: "Prefer abap_true and abap_false",
       shortDescription: `Use abap_true and abap_false instead of 'X' and ' ' for abap_bool variables`,
       // eslint-disable-next-line max-len
-      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-abap_true-abap_false-and-abap_undefined-for-abap_bool-variables`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/main/clean-abap/CleanABAP.md#use-abap_true-and-abap_false-for-comparisons`,
       tags: [RuleTag.Styleguide, RuleTag.SingleFile, RuleTag.Quickfix],
       badExample: `DATA lv_flag TYPE abap_bool.\nlv_flag = 'X'.`,
       goodExample: `DATA lv_flag TYPE abap_bool.\nlv_flag = abap_true.`,

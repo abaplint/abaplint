@@ -1,5 +1,5 @@
 import {ExpressionNode, TokenNode} from "../../nodes";
-import {AnyType, CLikeType, CharacterType, NumericGenericType, NumericType, StringType, StructureType, UTCLongType, UnknownType, VoidType} from "../../types/basic";
+import {AnyType, CLikeType, CharacterType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatType, NumericGenericType, NumericType, StringType, StructureType, UTCLongType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Expressions from "../../2_statements/expressions";
 import {Source} from "./source";
@@ -49,6 +49,14 @@ export class StringTemplate {
           input.issues.push(syntaxIssue(input, format.getFirstToken(), message));
           return VoidType.get(CheckSyntaxKey);
         }
+
+        if (format) {
+          const message = this.checkStyleExponent(format, type);
+          if (message) {
+            input.issues.push(syntaxIssue(input, format.getFirstToken(), message));
+            return VoidType.get(CheckSyntaxKey);
+          }
+        }
       } else if (child instanceof TokenNode) {
         const token = child.get();
         if (token instanceof Tokens.StringTemplate
@@ -65,6 +73,41 @@ export class StringTemplate {
     }
 
     return ret;
+  }
+
+  private static checkStyleExponent(format: ExpressionNode, type: AbstractType): string | undefined {
+    // option name -> the node following "=", only keyword options are direct tokens
+    const children = format.getChildren();
+    const options: {[name: string]: ExpressionNode | TokenNode | undefined} = {};
+    for (let i = 0; i < children.length - 1; i++) {
+      const c = children[i];
+      if (c instanceof TokenNode && children[i + 1].concatTokens() === "=") {
+        options[c.concatTokens().toUpperCase()] = children[i + 2];
+      }
+    }
+
+    const style = options["STYLE"];
+    if (style !== undefined && options["SIGN"] !== undefined) {
+      return "STYLE cannot be combined with SIGN";
+    }
+
+    if (options["EXPONENT"] !== undefined) {
+      if (style instanceof TokenNode && style.concatTokens().toUpperCase() !== "SCIENTIFIC") {
+        return "EXPONENT can only be combined with STYLE = SCIENTIFIC";
+      }
+      if (!(type instanceof FloatType)
+          && !(type instanceof DecFloatType)
+          && !(type instanceof DecFloat16Type)
+          && !(type instanceof DecFloat34Type)
+          && !(type instanceof UnknownType)
+          && !(type instanceof VoidType)
+          && !(type instanceof AnyType)
+          && !(type instanceof NumericGenericType)) {
+        return `Cannot apply EXPONENT to this type (${type.constructor.name})`;
+      }
+    }
+
+    return undefined;
   }
 
   private static validateEscapeSequences(str: string, input: SyntaxInput, node: TokenNode) {

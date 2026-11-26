@@ -130,6 +130,13 @@ const tests = [
   `ls_struct-amount = - ( iv_amount1 / ls_struct2-amount2 ) * ls_struct2-amount3.`,
   `DATA(lt_tab) = VALUE lty_bar( FOR d IN tab INDEX INTO i ( id = lv_id number = i ) ).`,
   `et_errors = CORRESPONDING #( lt_errors MAPPING company_code = doc-bukrs fiscal_year = doc-gjahr ).`,
+  `d2 = CORRESPONDING #( d1 MAPPING ( sub2 = sub MAPPING x = a ) ).`,
+  `d2 = CORRESPONDING #( d1 MAPPING ( sub2 = sub ) ).`,
+  `d2 = CORRESPONDING #( d1 MAPPING ( sub2 = sub EXCEPT y ) ).`,
+  `d2 = CORRESPONDING #( d1 MAPPING ( sub2 = sub MAPPING x = a EXCEPT * ) ).`,
+  `d2 = CORRESPONDING #( d1 MAPPING k = l ( sub2 = sub MAPPING x = a y = b ) ( tab2 = tab MAPPING z = c ) EXCEPT m ).`,
+  `d2 = CORRESPONDING #( d1 MAPPING ( sub2 = sub MAPPING ( deep2 = deep MAPPING x = a ) ) ).`,
+  `d2 = CORRESPONDING #( DEEP d1 MAPPING ( tab2 = tab MAPPING x = a EXCEPT y ) ).`,
   `ri_entity_object = CAST #( LET collectors = get_collectors( ) IN collectors[ type = iv_type ]-collector ).`,
 /*
   `DATA(request_count) = REDUCE int2( INIT x = 0
@@ -516,6 +523,19 @@ const v757dyn = [
 ];
 
 statementVersionOk(v757dyn, "MOVE dynamic component/ref access v757", Statements.Move);
+
+const v756dyn = [
+  {abap: "ref->(comp_name) = 5.", rel: Release.v756},
+  {abap: "result = ref->('comp').", rel: Release.v756},
+];
+
+statementVersionOk(v756dyn, "MOVE dynamic attribute access v756", Statements.Move);
+
+const v756dynFail = [
+  {abap: "ref->(comp_name) = 5.", rel: Release.v755},
+];
+
+statementVersionFail(v756dynFail, "MOVE dynamic attribute access before v756");
 
 const v757dynFail = [
   {abap: "result = ref->( comp ).", rel: Release.v757},

@@ -7,6 +7,7 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {ExpressionNode, StatementNode, TokenNode} from "../abap/nodes";
 import {ABAPFile} from "../abap/abap_file";
 import {EditHelper} from "../edit_helper";
+import {countLeadingNot} from "../abap/5_syntax/_key_compare";
 
 export class ManyParenthesesConf extends BasicRuleConfig {
 }
@@ -21,18 +22,14 @@ export class ManyParentheses extends ABAPRule {
       title: "Too many parentheses",
       shortDescription: `Searches for expressions where extra parentheses can safely be removed`,
       tags: [RuleTag.SingleFile, RuleTag.Quickfix],
-      badExample: `
-IF ( destination IS INITIAL ).
+      badExample: `IF ( destination IS INITIAL ).
 ENDIF.
 IF foo = boo AND ( bar = lar AND moo = loo ).
-ENDIF.
-`,
-      goodExample: `
-IF destination IS INITIAL.
+ENDIF.`,
+      goodExample: `IF destination IS INITIAL.
 ENDIF.
 IF foo = boo AND bar = lar AND moo = loo.
-ENDIF.
-`,
+ENDIF.`,
     };
   }
 
@@ -69,13 +66,10 @@ ENDIF.
       if (cond[0].getChildren().length === 1) {
         const message = "Too many parentheses, simple";
         const children = sub.getChildren();
+        const nots = countLeadingNot(sub);
 
-        let startToken = sub.getFirstToken();
-        let fixText = sub.getChildren()[1].concatTokens();
-        if (startToken.getStr().toUpperCase() === "NOT") {
-          startToken = children[1].getFirstToken();
-          fixText = sub.getChildren()[2].concatTokens();
-        }
+        const startToken = children[nots].getFirstToken();
+        const fixText = children[nots + 1].concatTokens();
 
         const fix = EditHelper.replaceRange(file, startToken.getStart(), sub.getLastToken().getEnd(), fixText);
 
@@ -149,7 +143,7 @@ ENDIF.
         current = c.get().getStr().toUpperCase();
       } else if (c instanceof ExpressionNode
           && (c.get() instanceof Expressions.CondSub || c.get() instanceof Expressions.ComponentCondSub)) {
-        if (c.getFirstToken().getStr().toUpperCase() === "NOT") {
+        if (countLeadingNot(c) > 0) {
           return [];
         }
         let i = c.findDirectExpression(Expressions.Cond);

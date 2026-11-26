@@ -1,8 +1,9 @@
 import {ExpressionNode, TokenNode} from "../abap/nodes";
 import {StructureType, UnknownType, VoidType} from "../abap/types/basic";
 import {
-  CDSAnnotation, CDSAs, CDSDefineAbstract, CDSDefineProjection, CDSDefineView, CDSElement, CDSName, CDSPrefixedName,
-  CDSRelation, CDSSource, CDSType,
+  CDSAggregate, CDSAnnotation, CDSArithParen, CDSArithmetics, CDSAs, CDSAssociation, CDSCase, CDSCast, CDSComposition,
+  CDSCondition, CDSDefineAbstract, CDSDefineProjection, CDSDefineView, CDSElement, CDSFunction, CDSGroupBy, CDSHaving,
+  CDSInteger, CDSName, CDSPrefixedName, CDSProviderContract, CDSRelation, CDSSelect, CDSSource, CDSString, CDSType, CDSWhere,
 } from "../cds/expressions";
 import {DDIC} from "../ddic";
 import {IFile} from "../files/_ifile";
@@ -33,9 +34,13 @@ const MAX_LABEL_LENGTH = 40;
 // Annotations which are not supported in CDS view entities
 const VIEW_ENTITY_FORBIDDEN_ANNOTATIONS = ["Semantics.unitOfMeasure", "Semantics.currencyCode"];
 
+// Select list elements which are expressions, ie. not plain fields
+const CALCULATED_ELEMENT = [CDSCast, CDSCase, CDSArithmetics, CDSArithParen, CDSFunction, CDSAggregate, CDSString, CDSInteger];
+
 export class CDSCheckSyntax implements IRule {
   private reg: IRegistry;
   private conf = new CDSCheckSyntaxConf();
+  private businessObjectTargets: Set<string> | undefined;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -44,7 +49,9 @@ export class CDSCheckSyntax implements IRule {
       shortDescription: "Checks CDS source, field, type, and semantic annotation references",
       extendedInformation: `Performs semantic checks which require other DDIC objects to be available.
 
-Missing objects are only reported when their names match the configured errorNamespace.`,
+Missing objects are only reported when their names match the configured errorNamespace.
+
+SOURCE_TYPE in the abapGit XML is checked to match the DDL source, W view entity, P projection view, V DDIC-based view.`,
       tags: [RuleTag.Syntax],
     };
   }
@@ -59,6 +66,7 @@ Missing objects are only reported when their names match the configured errorNam
 
   public initialize(reg: IRegistry): IRule {
     this.reg = reg;
+    this.businessObjectTargets = undefined;
     return this;
   }
 
@@ -79,13 +87,17 @@ Missing objects are only reported when their names match the configured errorNam
 
     this.checkRelations(tree, ddic, issues, file);
     this.checkTypes(tree, ddic, issues, file);
-    this.checkRootProjection(tree, ddic, issues, file);
+    if (this.checkRootProjection(tree, ddic, issues, file) === false) {
+      this.checkTransactionalProjection(tree, ddic, issues, file);
+    }
+    this.checkCalculatedAssociationPaths(tree, issues, file);
     this.checkFieldAnnotations(tree, ddic, issues, file);
     this.checkLabels(tree, issues, file);
     this.checkViewEntityAnnotations(tree, issues, file);
     this.checkSearchable(tree, issues, file);
     this.checkReservedNames(tree, issues, file);
     this.checkFields(tree, sources, object, issues, file);
+    this.checkSourceType(tree, object, issues);
 
     return issues;
   }
@@ -153,17 +165,18 @@ Missing objects are only reported when their names match the configured errorNam
     }
   }
 
-  private checkRootProjection(tree: ExpressionNode, ddic: DDIC, issues: Issue[], file: IFile) {
+  /** returns true if an issue was reported */
+  private checkRootProjection(tree: ExpressionNode, ddic: DDIC, issues: Issue[], file: IFile): boolean {
     const projection = tree.findFirstExpression(CDSDefineProjection);
     const rootToken = projection?.findDirectTokenByText("ROOT");
     if (projection === undefined || rootToken === undefined) {
-      return;
+      return false;
     }
 
     const names = projection.findDirectExpressions(CDSName);
     const projectedEntityNode = names[1];
     if (projectedEntityNode === undefined) {
-      return;
+      return false;
     }
 
     const projectedEntityName = this.name(projectedEntityNode);
@@ -172,7 +185,176 @@ Missing objects are only reported when their names match the configured errorNam
         && projectedEntity.getTree()?.findDirectTokenByText("ROOT") === undefined) {
       const message = `ROOT keyword not valid since ${projectedEntityName} is not a root property`;
       issues.push(Issue.atToken(file, rootToken, message, this.getMetadata().key, this.conf.severity));
+      return true;
     }
+    return false;
+  }
+
+  /** a transactional projection(no provider contract or TRANSACTIONAL_QUERY) requires a business object entity */
+  private checkTransactionalProjection(tree: ExpressionNode, ddic: DDIC, issues: Issue[], file: IFile) {
+    const projection = tree.findFirstExpression(CDSDefineProjection);
+    if (projection === undefined || projection.findDirectTokenByText("TRANSIENT") !== undefined) {
+      return;
+    }
+
+    const contract = projection.findDirectExpression(CDSProviderContract);
+    if (contract !== undefined && contract.findDirectTokenByText("TRANSACTIONAL_QUERY") === undefined) {
+      return;
+    }
+
+    const projectedEntityNode = projection.findDirectExpressions(CDSName)[1];
+    if (projectedEntityNode === undefined) {
+      return;
+    }
+
+    const projectedEntityName = this.name(projectedEntityNode);
+    const projectedEntity = ddic.lookupTableOrView(projectedEntityName).object;
+    if (!(projectedEntity instanceof DataDefinition)) {
+      return;
+    }
+    const projectedTree = projectedEntity.getTree();
+    // only plain select based views are checked, ie. not projections, abstract or custom entities
+    if (projectedTree === undefined || !(projectedTree.get() instanceof CDSDefineView)) {
+      return;
+    }
+
+    if (projectedTree.findDirectTokenByText("ROOT") !== undefined
+        || projectedTree.findAllExpressionsRecursive(CDSComposition).length > 0
+        || projectedTree.findAllExpressionsRecursive(CDSAssociation).some(a => a.findDirectTokenByText("PARENT") !== undefined)) {
+      return;
+    }
+
+    const candidates = [projectedEntityName.toUpperCase(), projectedEntity.getName().toUpperCase()];
+    const definitionName = projectedEntity.getDefinitionName();
+    if (definitionName !== undefined) {
+      candidates.push(definitionName.toUpperCase());
+    }
+    const targets = this.findBusinessObjectTargets();
+    if (candidates.some(c => targets.has(c))) {
+      return;
+    }
+
+    const message = `Transactional projection on ${projectedEntityName} not possible, ` +
+      `${projectedEntityName} is not a root entity or part of a composition`;
+    issues.push(Issue.atToken(file, projectedEntityNode.getFirstToken(), message,
+                              this.getMetadata().key, this.conf.severity));
+  }
+
+  /** names of entities targeted by a composition or an association to parent in any DDLS in the registry */
+  private findBusinessObjectTargets(): Set<string> {
+    if (this.businessObjectTargets !== undefined) {
+      return this.businessObjectTargets;
+    }
+
+    const targets = new Set<string>();
+    for (const obj of this.reg.getObjectsByType("DDLS")) {
+      const tree = (obj as DataDefinition).getTree();
+      if (tree === undefined) {
+        continue;
+      }
+      const relations: ExpressionNode[] = [];
+      for (const composition of tree.findAllExpressionsRecursive(CDSComposition)) {
+        const relation = composition.findDirectExpression(CDSRelation);
+        if (relation) {
+          relations.push(relation);
+        }
+      }
+      for (const association of tree.findAllExpressionsRecursive(CDSAssociation)) {
+        const relation = association.findDirectExpression(CDSRelation);
+        if (relation && association.findDirectTokenByText("PARENT") !== undefined) {
+          relations.push(relation);
+        }
+      }
+      for (const relation of relations) {
+        const name = relation.getDirectTokens().map(t => t.getStr()).join("");
+        if (name !== "") {
+          targets.add(name.toUpperCase());
+        }
+      }
+    }
+
+    this.businessObjectTargets = targets;
+    return targets;
+  }
+
+  /** path expressions are not possible via an association whose ON condition uses a calculated element */
+  private checkCalculatedAssociationPaths(tree: ExpressionNode, issues: Issue[], file: IFile) {
+    for (const select of tree.findAllExpressionsRecursive(CDSSelect)) {
+      const elements = select.findDirectExpressions(CDSElement);
+
+      const calculated = new Map<string, string>();
+      for (const element of elements) {
+        const name = element.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
+        if (name !== undefined && element.findDirectExpressionsMulti(CALCULATED_ELEMENT).length > 0) {
+          calculated.set(this.name(name).toUpperCase(), this.name(name));
+        }
+      }
+      if (calculated.size === 0) {
+        continue;
+      }
+
+      const marked = new Map<string, string>();
+      for (const association of select.findDirectExpressions(CDSAssociation)) {
+        const relation = association.findDirectExpression(CDSRelation);
+        const condition = association.findDirectExpression(CDSCondition);
+        if (relation === undefined || condition === undefined) {
+          continue;
+        }
+        const aliasNode = relation.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
+        const alias = aliasNode ? this.name(aliasNode) : relation.getDirectTokens().map(t => t.getStr()).join("");
+
+        for (const prefixed of condition.findAllExpressionsRecursive(CDSPrefixedName)) {
+          const names = prefixed.findDirectExpressions(CDSName);
+          if (names.length !== 2 || this.name(names[0]).toUpperCase() !== "$PROJECTION") {
+            continue;
+          }
+          const element = calculated.get(this.name(names[1]).toUpperCase());
+          if (element !== undefined && marked.has(alias.toUpperCase()) === false) {
+            marked.set(alias.toUpperCase(), element);
+          }
+        }
+      }
+      if (marked.size === 0) {
+        continue;
+      }
+
+      const usages: ExpressionNode[] = [...elements];
+      for (const clause of select.findDirectExpressionsMulti([CDSWhere, CDSGroupBy, CDSHaving])) {
+        usages.push(clause);
+      }
+      for (const usage of usages) {
+        for (const prefixed of this.findPrefixedNames(usage)) {
+          const names = prefixed.findDirectExpressions(CDSName);
+          if (names.length < 2) {
+            continue;
+          }
+          const alias = this.name(names[0]);
+          const element = marked.get(alias.toUpperCase());
+          if (element === undefined) {
+            continue;
+          }
+          const message = `Path expression via ${alias} not possible, ` +
+            `its ON condition uses calculated element ${element}`;
+          issues.push(Issue.atToken(file, names[0].getFirstToken(), message,
+                                    this.getMetadata().key, this.conf.severity));
+        }
+      }
+    }
+  }
+
+  /** outermost prefixed names, skipping annotations */
+  private findPrefixedNames(node: ExpressionNode): ExpressionNode[] {
+    const ret: ExpressionNode[] = [];
+    for (const child of node.getChildren()) {
+      if (!(child instanceof ExpressionNode) || child.get() instanceof CDSAnnotation) {
+        continue;
+      } else if (child.get() instanceof CDSPrefixedName) {
+        ret.push(child);
+      } else {
+        ret.push(...this.findPrefixedNames(child));
+      }
+    }
+    return ret;
   }
 
   private checkFieldAnnotations(tree: ExpressionNode, ddic: DDIC, issues: Issue[], file: IFile) {
@@ -389,6 +571,37 @@ Missing objects are only reported when their names match the configured errorNam
     }
   }
 
+  /** SOURCE_TYPE in the XML must match the DDL source, only the confirmed W/P/V mappings are checked */
+  private checkSourceType(tree: ExpressionNode, object: DataDefinition, issues: Issue[]) {
+    const sourceType = object.getSourceType();
+    const xmlFile = object.getXMLFile();
+    if (sourceType === undefined || xmlFile === undefined || ["W", "P", "V"].includes(sourceType) === false) {
+      return;
+    }
+
+    // other definitions(abstract, custom, table functions, etc.) are skipped
+    let expected: string | undefined = undefined;
+    if (tree.get() instanceof CDSDefineView && tree.findDirectTokenByText("WRITABLE") === undefined) {
+      if (tree.findDirectTokenByText("ENTITY") !== undefined) {
+        expected = "W";
+      } else if (object.getSQLViewName() !== undefined) {
+        expected = "V";
+      }
+    } else if (tree.get() instanceof CDSDefineProjection && tree.findDirectTokenByText("ENTITY") !== undefined) {
+      expected = "P";
+    }
+
+    if (expected === undefined || expected === sourceType) {
+      return;
+    }
+
+    const xml = xmlFile.getRaw();
+    const index = xml.indexOf("<SOURCE_TYPE>");
+    const row = index < 0 ? 1 : xml.substring(0, index).split("\n").length;
+    const message = `SOURCE_TYPE "${sourceType}" does not match DDL source, expected "${expected}"`;
+    issues.push(Issue.atRow(xmlFile, row, message, this.getMetadata().key, this.conf.severity));
+  }
+
   private checkFields(tree: ExpressionNode, sources: Source[], object: DataDefinition,
                       issues: Issue[], file: IFile) {
     const associationNames = new Set<string>();
@@ -396,6 +609,21 @@ Missing objects are only reported when their names match the configured errorNam
       associationNames.add(association.name.toUpperCase());
       if (association.as) {
         associationNames.add(association.as.toUpperCase());
+      }
+    }
+    for (const composition of tree.findAllExpressionsRecursive(CDSComposition)) {
+      const relation = composition.findDirectExpression(CDSRelation);
+      if (relation === undefined) {
+        continue;
+      }
+      // direct tokens exclude the alias and parameters, and include a namespace like /ABC/
+      const name = relation.getDirectTokens().map(t => t.getStr()).join("");
+      if (name !== "") {
+        associationNames.add(name.toUpperCase());
+      }
+      const alias = relation.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
+      if (alias) {
+        associationNames.add(this.name(alias).toUpperCase());
       }
     }
 
