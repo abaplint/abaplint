@@ -7244,6 +7244,74 @@ ENDFORM.`;
     testFixAll(abap, expected);
   });
 
+  it("SELECT, ORDER BY then INTO then UP TO, no WHERE", async () => {
+    const abap = `FORM bar.
+  DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
+  SELECT * FROM voiddbtab ORDER BY PRIMARY KEY INTO TABLE @lt_rows UP TO 5 ROWS.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
+  SELECT * FROM voiddbtab UP TO 5 ROWS INTO TABLE lt_rows ORDER BY PRIMARY KEY  .
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("SELECT, dynamic, ORDER BY then INTO then BYPASSING BUFFER", async () => {
+    const abap = `FORM bar USING iv_tab TYPE string.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  SELECT *
+    FROM (iv_tab)
+    ORDER BY PRIMARY KEY
+    INTO CORRESPONDING FIELDS OF TABLE @<tab>
+    BYPASSING BUFFER.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_tab TYPE string.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  SELECT *
+    FROM (iv_tab) BYPASSING BUFFER INTO CORRESPONDING FIELDS OF TABLE <tab>
+    ORDER BY PRIMARY KEY
+    
+    .
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("SELECT, GROUP BY with commas then INTO", async () => {
+    const abap = `FORM bar USING iv_tab TYPE string.
+  TYPES: BEGIN OF ty_s_count,
+           arbgb TYPE c LENGTH 20,
+           msgnr TYPE c LENGTH 3,
+           cnt   TYPE i,
+         END OF ty_s_count.
+  DATA lt_count TYPE STANDARD TABLE OF ty_s_count WITH DEFAULT KEY.
+  SELECT arbgb, msgnr, COUNT( * ) AS cnt
+    FROM (iv_tab)
+    GROUP BY arbgb, msgnr
+    ORDER BY arbgb, msgnr
+    INTO CORRESPONDING FIELDS OF TABLE @lt_count.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_tab TYPE string.
+  TYPES: BEGIN OF ty_s_count,
+           arbgb TYPE c LENGTH 20,
+           msgnr TYPE c LENGTH 3,
+           cnt   TYPE i,
+         END OF ty_s_count.
+  DATA lt_count TYPE STANDARD TABLE OF ty_s_count WITH DEFAULT KEY.
+  SELECT arbgb msgnr COUNT( * ) AS cnt
+    FROM (iv_tab) INTO CORRESPONDING FIELDS OF TABLE lt_count
+    GROUP BY arbgb msgnr
+    ORDER BY arbgb msgnr
+    .
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
   it("SELECT, dynamic WHERE then INTO CORRESPONDING then UP TO", async () => {
     const abap = `FORM bar USING iv_tab TYPE string iv_where TYPE string.
   FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
