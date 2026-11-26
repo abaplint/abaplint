@@ -7,6 +7,7 @@ import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
 import {AnyType, CharacterType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatType, HexType, Integer8Type, IntegerType, StringType, TableAccessType, TableType, UnknownType, VoidType, XStringType} from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {TypeUtils} from "../_type_utils";
 
 export class ValueBody {
   public static runSyntax(
@@ -101,15 +102,16 @@ export class ValueBody {
       }
       for (const s of foo.findDirectExpressions(Expressions.Source)) {
         const sourceType = Source.runSyntax(s, input, rowType);
+        const sourceKind = new TypeUtils(input.scope).isPackedConstant(sourceType) ? "p" : this.numericKind(sourceType);
         if ((rowType instanceof StringType || rowType instanceof XStringType) && sourceType instanceof CharacterType) {
           const message = "VALUE, source type CharacterType not compatible with " + rowType.constructor.name;
           input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
         } else if (this.isDataObject(s)
             && this.numericKind(rowType) !== undefined
-            && this.numericKind(sourceType) !== undefined
-            && this.numericKind(rowType) !== this.numericKind(sourceType)) {
+            && sourceKind !== undefined
+            && this.numericKind(rowType) !== sourceKind) {
 // a data object given as a row must be compatible with the row type, it is not converted
-          const message = `VALUE, source type ${this.numericKind(sourceType)} not compatible with row type ${this.numericKind(rowType)}`;
+          const message = `VALUE, source type ${sourceKind} not compatible with row type ${this.numericKind(rowType)}`;
           input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
         } else if (this.insertsUsingTableKey(targetType)) {
 // only STANDARD tables append the rows, and thus allow padding of shorter c and x values
