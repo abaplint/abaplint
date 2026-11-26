@@ -42,12 +42,31 @@ export class Source extends Expression {
                      Cond,
                      ")");
 
+// the bool parameter of boolx( ) is a logical expression, the parameters can come in any order
+    const boolxBool = seq("BOOL", "=", Cond);
+    const boolxBit = seq("BIT", "=", Source);
+    const boolx = ver(Release.v702, seq(regex(/^BOOLX$/i),
+                                        tok(ParenLeftW),
+                                        altPrio(seq(boolxBool, optPrio(boolxBit)), seq(boolxBit, boolxBool)),
+                                        ")"));
+
+// "bit-set" is lexed as three tokens, without space around the dash
+    const bitSet = ver(Release.v702, seq(regex(/^BIT$/i),
+                                         tok(Dash),
+                                         regex(/^SET$/i),
+                                         tok(ParenLeftW),
+                                         optPrio(seq("VAL", "=")),
+                                         Source,
+                                         ")"));
+
     const prefix = altPrio(tok(WPlus), "BIT-NOT");
 
     const old = seq(optPrio(prefix), altPrio(Constant,
                                              StringTemplate,
                                              TextElement,
                                              bool,
+                                             boolx,
+                                             bitSet,
                                              castDeref,
                                              method,
                                              seq(FieldChain, deref),
