@@ -116,6 +116,95 @@ lv_result = lv_c5(0).`));
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("ok, source, offset beyond the field, variable length", () => {
+    const issues = runProgram(program(`lv_result = lv_c5+5(lv_off).
+lv_result = lv_c5+7(lv_off).
+ASSIGN lv_c5+5(lv_off) TO <lv_any>.`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+  });
+
+  it("ok, source, length beyond the field, variable offset", () => {
+    const issues = runProgram(program(`lv_result = lv_c5+lv_off(6).
+lv_result = lv_x4+lv_off(5).
+lv_result = ls_struc-comp+lv_off(6).
+lv_result = lr_c5->*+lv_off(6).
+lv_result = lv_c5+sy-index(6).
+ASSIGN lv_c5+lv_off(6) TO <lv_any>.`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+  });
+
+  it("ok, target, offset or length beyond the field, the other one variable", () => {
+    const issues = runProgram(program(`lv_c5+5(lv_off) = 'a'.
+lv_c5+lv_off(6) = 'a'.
+lv_x4+lv_off(5) = 'FF'.
+ls_struc-comp+lv_off(6) = 'a'.
+lr_c5->*+lv_off(6) = 'a'.
+CONCATENATE 'A' 'B' INTO lv_c5+lv_off(6).
+CLEAR lv_c5+7(lv_off).`));
+    expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+  });
+
+  it("ok, variable length given by a static attribute", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA len TYPE i.
+    CLASS-DATA ro TYPE i READ-ONLY.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+DATA lv_c5 TYPE c LENGTH 5.
+DATA lv_result TYPE string.
+lv_result = lv_c5+5(lcl=>len).
+lv_result = lv_c5+5(lcl=>ro).`;
+    const issues = runProgram(abap);
+    expect(issues.map(i => i.getMessage())).to.deep.equal([]);
+  });
+
+  it("error, offset beyond the field, length given by a constant", () => {
+    const issues = runProgram(program(`lv_result = lv_c5+5(lc_off).`));
+    expect(issues[0]?.getMessage()).to.equal("Offset 5 is outside the field of length 5");
+  });
+
+  it("error, length beyond the field, offset given by a constant", () => {
+    const issues = runProgram(program(`lv_c5+lc_off(6) = 'a'.`));
+    expect(issues[0]?.getMessage()).to.equal("Length 6 exceeds the remaining length 5 of the field");
+  });
+
+  it("error, length given by a component of a constant", () => {
+    const issues = runProgram(program(`CONSTANTS: BEGIN OF lc_struc,
+             len TYPE i VALUE 1,
+           END OF lc_struc.
+lv_result = lv_c5+5(lc_struc-len).`));
+    expect(issues[0]?.getMessage()).to.equal("Offset 5 is outside the field of length 5");
+  });
+
+  it("error, length given by a class or interface constant", () => {
+    const abap = `
+INTERFACE lif.
+  CONSTANTS len TYPE i VALUE 1.
+ENDINTERFACE.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS len TYPE i VALUE 1.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+
+DATA lv_c5 TYPE c LENGTH 5.
+DATA lv_result TYPE string.
+lv_result = lv_c5+5(lcl=>len).
+lv_result = lv_c5+5(lif=>len).`;
+    const issues = runProgram(abap);
+    expect(issues.map(i => i.getMessage())).to.deep.equal([
+      "Offset 5 is outside the field of length 5",
+      "Offset 5 is outside the field of length 5"]);
+  });
+
   it("ok, numeric text, date", () => {
     const issues = runProgram(program(`lv_n3+3 = '1'.
 lv_d+8 = '1'.

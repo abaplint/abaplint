@@ -140,7 +140,7 @@ export class Target {
       }
       const value = FieldOffset.runSyntax(offset, input);
       if (!isFieldSymbolItself(children, children.indexOf(offset))) {
-        substring = substringType(substring, value, undefined, offset, input);
+        substring = substringType(substring, value, undefined, offset, children, input);
       }
     }
 
@@ -153,7 +153,7 @@ export class Target {
       }
       const value = FieldLength.runSyntax(length, input);
       if (!isFieldSymbolItself(children, children.indexOf(length))) {
-        substring = substringType(substring, undefined, value, length, input);
+        substring = substringType(substring, undefined, value, length, children, input);
       }
     }
     if (substring instanceof VoidType && !(context instanceof VoidType)) {
