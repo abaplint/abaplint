@@ -17,6 +17,8 @@ export type SyntaxInput = {
   deferred: (() => void)[],
   /** the statement is inside a LOOP structure */
   inLoop?: boolean,
+  /** of the TRY, CATCH and CLEANUP blocks around the statement, the innermost one is a CATCH block */
+  inCatch?: boolean,
 };
 
 export function syntaxIssue(input: SyntaxInput, token: AbstractToken, message: string, fix?: IEdit) {
