@@ -11,6 +11,7 @@ import {Dynamic} from "../expressions/dynamic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {TypeUtils} from "../_type_utils";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
+import {DataReference, TableType, UnknownType, VoidType} from "../../types/basic";
 
 type Parameter = {node: ExpressionNode, type: AbstractType | undefined};
 
@@ -45,24 +46,48 @@ export class Perform implements StatementSyntax {
     ////////////////////////////
     // find FORM definition
 
-    if (node.findFirstExpression(Expressions.IncludeName)) {
+    const external = node.findFirstExpression(Expressions.IncludeName);
+    const dynamic = node.findFirstExpression(Expressions.Dynamic);
+    const expr = node.findFirstExpression(Expressions.FormName);
+    const name = expr?.concatTokens();
+    const found = external || dynamic || name === undefined ? undefined : input.scope.findFormDefinition(name);
+    const actuals = using.concat(changing);
+    if (input.referenceMayChange) {
+      const local = node.findDirectTokenByText("PROGRAM") === undefined ? found : undefined;
+      const inputs = local?.getUsingParameters() ?? [];
+      const outputs = local?.getChangingParameters() ?? [];
+      for (const [index, actual] of actuals.entries()) {
+        // Only the formal parameter controls whether the value is copied back.
+        const inputOnly = index < inputs.length;
+        const formal = inputOnly ? inputs[index] : outputs[index - inputs.length];
+        const byValue = formal?.getMeta().includes(IdentifierMeta.PassByValue) === true;
+        if (!(inputOnly && byValue)) {
+          const type = formal?.getType();
+          const tables = type instanceof TableType
+            || (actual.type instanceof TableType && (type === undefined || type instanceof UnknownType || type instanceof VoidType));
+          input.referenceMayChange(actual.node, input.scope, !byValue, tables ? "tables" : "write");
+        } else if (actual.type instanceof DataReference) {
+          input.referenceMayChange(actual.node, input.scope, false, "referent");
+        }
+      }
+      for (const actual of tables) {
+        input.referenceMayChange(actual.node, input.scope, false, "tables");
+      }
+      const scheduled = node.findDirectTokenByText("COMMIT") ? "onCommit" : node.findDirectTokenByText("ROLLBACK") ? "onRollback" : "routine";
+      input.referenceMayChange(undefined, input.scope, false, scheduled);
+    }
+    if (external) {
       return; // in external program, not checked, todo
     }
-
-    const dynamic = node.findFirstExpression(Expressions.Dynamic);
     if (dynamic) {
       Dynamic.runSyntax(dynamic, input);
       return; // todo, maybe some parts can be checked
     }
 
-    const expr = node.findFirstExpression(Expressions.FormName);
-    if (expr === undefined) {
+    if (expr === undefined || name === undefined) {
       return; // it might be a dynamic call
     }
 
-    const name = expr.concatTokens();
-
-    const found = input.scope.findFormDefinition(name);
     if (found === undefined) {
       const message = "FORM definition \"" + name + "\" not found";
       input.issues.push(syntaxIssue(input, expr.getFirstToken(), message));
@@ -84,7 +109,7 @@ export class Perform implements StatementSyntax {
       }
       // USING and CHANGING are interchangeable, the actual parameters form a single positional list
       const formal = def.getUsingParameters().concat(def.getChangingParameters());
-      this.checkParameters(node, using.concat(changing), formal, "USING/CHANGING", input);
+      this.checkParameters(node, actuals, formal, "USING/CHANGING", input);
     });
   }
 

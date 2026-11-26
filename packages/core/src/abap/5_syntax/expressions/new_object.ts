@@ -110,6 +110,7 @@ export class NewObject {
 
     if (ret instanceof ObjectReferenceType) {
       this.parameters(node, ret, input);
+      input.referenceMayChange?.(undefined, input.scope, false, "routine");
     } else {
       for (const s of node.findAllExpressions(Expressions.Source)) {
         Source.runSyntax(s, input, ret);
@@ -148,6 +149,9 @@ export class NewObject {
         const message = `NEW parameter type not compatible`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
+      }
+      if (sourceType instanceof DataReference) {
+        input.referenceMayChange?.(source, input.scope, false, "referent");
       }
     } else if (parameters) {
       // parameters with names

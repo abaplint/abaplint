@@ -441,7 +441,8 @@ export class SyntaxLogic {
     this.issues.push(issue);
   }
 
-  private traverse(node: StructureNode | StatementNode): void {
+  private traverse(node: StructureNode, parent: StructureNode = node): void {
+    const block = node.get() instanceof Structures.Normal || node.get() instanceof Structures.Any ? parent : node;
     const loop = node instanceof StructureNode
       && node.get() instanceof Structures.Loop
       && this.loopTables.push(node, this.scope);
@@ -450,7 +451,7 @@ export class SyntaxLogic {
       this.loopDepth++;
     }
     if (node instanceof StructureNode) {
-      this.sortedLines.enter(node, this.currentFile.getFilename());
+      this.sortedLines.enter(node, this.currentFile.getFilename(), parent);
     }
 
     for (const child of node.getChildren()) {
@@ -464,7 +465,7 @@ export class SyntaxLogic {
             continue;
           }
         } else if (isStatement) {
-          this.updateScopeStatement(child as StatementNode);
+          this.updateScopeStatement(child as StatementNode, block);
         }
       } catch (e) {
         this.newIssue(child.getFirstToken(), e.message);
@@ -482,7 +483,7 @@ export class SyntaxLogic {
           this.includeStack.push(old.getFilename());
           this.currentFile = file;
           try {
-            this.traverse(file.getStructure()!);
+            this.traverse(file.getStructure()!, block);
           } finally {
             this.currentFile = old;
             this.includeStack.pop();
@@ -492,7 +493,7 @@ export class SyntaxLogic {
 
       // statements only have expressions and tokens as children, nothing to traverse
       if (isStructure) {
-        this.traverse(child as StructureNode);
+        this.traverse(child as StructureNode, block);
       }
     }
 
@@ -572,7 +573,7 @@ export class SyntaxLogic {
     return false;
   }
 
-  private updateScopeStatement(node: StatementNode): void {
+  private updateScopeStatement(node: StatementNode, block: StructureNode): void {
     const filename = this.currentFile.getFilename();
     const s = node.get();
 
@@ -584,6 +585,7 @@ export class SyntaxLogic {
       issues: this.issues,
       deferred: this.deferred,
       inLoop: this.loopDepth > 0,
+      referenceMayChange: this.sortedLines.referenceMayChange,
     };
 
     // todo, refactor
@@ -594,20 +596,23 @@ export class SyntaxLogic {
       this.scope.addIdentifier(new Constant().runSyntax(node, input));
       return;
     } else if (s instanceof Statements.Static) {
-      this.scope.addIdentifier(new Static().runSyntax(node, input));
+      const variable = new Static().runSyntax(node, input);
+      this.scope.addIdentifier(variable);
+      this.sortedLines.markStatic(variable);
       return;
     } else if (s instanceof Statements.Data) {
       this.scope.addIdentifier(new DataStatement().runSyntax(node, input));
       return;
     }
 
+    const issueCount = input.issues.length;
     this.loopTables.check(node, input);
     this.sortedLines.check(node, input);
 
     const name = s.constructor.name;
     if (map[name]) {
       map[name].runSyntax(node, input);
-      this.sortedLines.update(node, input);
+      this.sortedLines.update(node, input, block, input.issues.length === issueCount);
       return;
     }
 

@@ -14,11 +14,11 @@ export class CallFunction implements StatementSyntax {
 
     const name = node.findFirstExpression(Expressions.FunctionName);
     const chain = name?.findFirstExpression(Expressions.FieldChain);
+    const destination = node.findDirectExpression(Expressions.Destination);
+    const functionName = !chain && !destination ? name?.concatTokens().replace(/'/g, "") : undefined;
     if (chain) {
       FieldChain.runSyntax(chain, input, ReferenceType.DataReadReference);
-    } else if (input.scope.getLanguageVersion() === LanguageVersion.Cloud
-        && node.findDirectExpression(Expressions.Destination) === undefined) {
-      const functionName = name?.concatTokens().replace(/'/g, "");
+    } else if (input.scope.getLanguageVersion() === LanguageVersion.Cloud && destination === undefined) {
       if (input.scope.findFunctionModule(functionName) === undefined) {
         const message = `Function module "${functionName}" not found/released`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -41,7 +41,10 @@ export class CallFunction implements StatementSyntax {
 
     const fp = node.findDirectExpression(Expressions.FunctionParameters);
     if (fp) {
-      FunctionParameters.runSyntax(fp, input);
+      FunctionParameters.runSyntax(fp, input, functionName);
+    }
+    if (destination === undefined && !node.findDirectTokenByText("TASK") && !node.findDirectTokenByText("BACKGROUND")) {
+      input.referenceMayChange?.(undefined, input.scope, false, "routine");
     }
   }
 }

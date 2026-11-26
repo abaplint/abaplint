@@ -4,13 +4,14 @@ import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
-import {AnyType, DataReference} from "../../types/basic";
+import {AnyType, DataReference, DataType, TableType} from "../../types/basic";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class GetReference implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
     const s = node.findDirectExpression(Expressions.Source);
     const type = Source.runSyntax(s, input);
+    input.referenceMayChange?.(s, input.scope);
 
     const target = node.findDirectExpression(Expressions.Target);
     const inline = target?.findDirectExpression(Expressions.InlineData);
@@ -24,6 +25,9 @@ export class GetReference implements StatementSyntax {
       InlineData.runSyntax(inline, input, type ? new DataReference(type) : undefined);
     } else if (target) {
       Target.runSyntax(target, input);
+    }
+    if ((type instanceof TableType || type instanceof AnyType || type instanceof DataType) && target && s) {
+      input.tableAlias = {source: s, target};
     }
   }
 }

@@ -1,7 +1,7 @@
 import {ExpressionNode} from "../../nodes";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {AnyType, CGenericType, CharacterType, HexType, NGenericType, NumericType, PackedType, PGenericType, TableType, UnknownType, XGenericType} from "../../types/basic";
-import {ConstantFieldLength, FormParamName, Length, SimpleFieldChain, TypeName} from "../../2_statements/expressions";
+import {ConstantFieldLength, FormParamName, Length, PassByValue, SimpleFieldChain, TypeName} from "../../2_statements/expressions";
 import {BasicTypes} from "../basic_types";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput} from "../_syntax_input";
@@ -17,6 +17,10 @@ export class FormParam {
     let nameToken = formParamName.getFirstToken();
     if (formParamName.getChildren().length > 1) {
       nameToken = new Identifier(nameToken.getStart(), formParamName.concatTokens());
+    }
+    const meta = [IdentifierMeta.FormParameter];
+    if (node.findDirectExpression(PassByValue) !== undefined) {
+      meta.push(IdentifierMeta.PassByValue);
     }
 
     if (node.findDirectTokenByText("STRUCTURE") && nameToken) {
@@ -40,14 +44,14 @@ export class FormParam {
         type = new UnknownType("todo, FORM STRUCTURES typing");
       }
       return new TypedIdentifier(nameToken, input.filename, type,
-                                 [IdentifierMeta.FormParameter, IdentifierMeta.FormParameterStructure]);
+                                 [...meta, IdentifierMeta.FormParameterStructure]);
     }
 
 
 
     if (node.getChildren().length === 1 && nameToken) {
       // untyped FORM parameter
-      return new TypedIdentifier(nameToken, input.filename, AnyType.get(), [IdentifierMeta.FormParameter]);
+      return new TypedIdentifier(nameToken, input.filename, AnyType.get(), meta);
     }
 
     let bfound = new BasicTypes(input).parseType(node);
@@ -68,11 +72,11 @@ export class FormParam {
     }
 
     if (nameToken && bfound) {
-      return new TypedIdentifier(nameToken, input.filename, bfound, [IdentifierMeta.FormParameter]);
+      return new TypedIdentifier(nameToken, input.filename, bfound, meta);
     }
 
     if (nameToken) {
-      return new TypedIdentifier(nameToken, input.filename, new UnknownType("FormParam, todo"), [IdentifierMeta.FormParameter]);
+      return new TypedIdentifier(nameToken, input.filename, new UnknownType("FormParam, todo"), meta);
     }
 
     throw new AssertError("FormParam, unexpected node");

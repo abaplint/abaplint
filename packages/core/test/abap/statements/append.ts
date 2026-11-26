@@ -34,6 +34,8 @@ const tests = [
   "APPEND INITIAL LINE TO lt_tab ASSIGNING <fs> CASTING.",
   "append it_foo assigning <ls_foo>.",
   "APPEND ls_field->node TO <ls_data>-fields SORTED BY table_line.",
+  "APPEND ls_field->node TO <ls_data>-fields SORTED BY table_line ASSIGNING <ls_node> CASTING.",
+  "APPEND ls_field->node TO <ls_data>-fields ASSIGNING <ls_node> SORTED BY table_line.",
   "APPEND CORRESPONDING #( BASE ( VALUE #( account = lv_account ) ) ls_ms04 ) TO lt_foo.",
   "APPEND LINES OF tab TO index TO target.",
   "APPEND LINES OF tab FROM index TO target.",
@@ -72,5 +74,8 @@ statementVersionFail(versionsFail, "APPEND");
 
 const fails = [
   "APPEND LINES OF tab1 FROM 1 TO 2.", // '2' is not a possible table target
+  "APPEND row TO tab SORTED BY id REFERENCE INTO ref CASTING.",
+  "APPEND INITIAL LINE TO tab SORTED BY id ASSIGNING <row>.",
+  "APPEND LINES OF other TO tab SORTED BY id ASSIGNING <row>.",
 ];
 statementExpectFail(fails, "APPEND");

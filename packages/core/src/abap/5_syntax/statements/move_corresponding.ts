@@ -20,6 +20,7 @@ export class MoveCorresponding implements StatementSyntax {
 
     const sourceType = Source.runSyntax(s, input);
     const targetType = Target.runSyntax(t, input);
+    input.corresponding = {source: sourceType, target: targetType, expanding: node.findDirectTokenByText("EXPANDING") !== undefined};
 
     if (!releaseAtLeast(input.scope.getRelease(), Release.v740sp05)
         && input.scope.getLanguageVersion() !== LanguageVersion.Cloud

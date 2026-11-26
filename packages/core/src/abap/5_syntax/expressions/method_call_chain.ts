@@ -132,6 +132,9 @@ export class MethodCallChain {
         } else if (param && context instanceof VoidType) {
           MethodCallParam.runSyntax(param, input, context);
         }
+        if (!(method instanceof BuiltInMethod)) {
+          input.referenceMayChange?.(undefined, input.scope, false, "routine");
+        }
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.ComponentName) {
         context = ComponentName.runSyntax(context, current, input);
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.AttributeName) {
