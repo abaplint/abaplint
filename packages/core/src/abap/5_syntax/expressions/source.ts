@@ -1,4 +1,5 @@
 import {ExpressionNode, TokenNode} from "../../nodes";
+import {AbstractToken} from "../../1_lexer/tokens/abstract_token";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
@@ -66,6 +67,8 @@ export class Source {
     let first = children.shift();
     // a leading sign makes the operand part of a calculation, "- foo"
     let signed = false;
+    // the type of a built-in function call that the grammar parses as part of the source, "bit-set( 1 )"
+    let called: AbstractType | undefined = undefined;
 
     if (first instanceof TokenNode) {
       const token = first.getFirstToken();
@@ -76,7 +79,16 @@ export class Source {
           signed = true;
           break;
         case "(":
+          break;
         case "BIT":
+          if (children[1]?.concatTokens().toUpperCase() === "SET") {
+            called = this.runBuiltinCall("BIT-SET", token, children, input);
+            first = children.shift();
+          }
+          break;
+        case "BOOLX":
+          called = this.runBuiltinCall(tok, token, children, input);
+          first = children.shift();
           break;
         case "BOOLC":
         {
@@ -250,7 +262,7 @@ export class Source {
       return undefined;
     }
 
-    let context: AbstractType | undefined = new UnknownType("todo, Source type");
+    let context: AbstractType | undefined = called !== undefined ? called : new UnknownType("todo, Source type");
 
     const type: ReferenceType[] = [];
     if (readReference) {
@@ -389,6 +401,25 @@ export class Source {
   }
 
 ////////////////////////////////
+
+  // checks the arguments of a built-in function call parsed as part of the source, bit-set( ) or boolx( ),
+  // removes the call from the children and returns its type
+  private static runBuiltinCall(name: string, token: AbstractToken, children: (ExpressionNode | TokenNode)[],
+                                input: SyntaxInput): AbstractType | undefined {
+    const method = BuiltIn.searchBuiltin(name);
+    input.scope.addReference(token, method, ReferenceType.BuiltinMethodReference, input.filename);
+    while (children.length > 0) {
+      const child = children.shift()!;
+      if (child instanceof ExpressionNode && child.get() instanceof Expressions.Cond) {
+        Cond.runSyntax(child, input);
+      } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.Source) {
+        Source.runSyntax(child, input, IntegerType.get());
+      } else if (child instanceof TokenNode && child.getFirstToken().getStr() === ")") {
+        break;
+      }
+    }
+    return method?.getParameters().getReturning()?.getType();
+  }
 
   private static traverseRemainingChildren(children: (ExpressionNode | TokenNode)[], input: SyntaxInput) {
     const last = children[children.length - 1];
