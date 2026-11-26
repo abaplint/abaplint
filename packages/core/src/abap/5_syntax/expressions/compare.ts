@@ -6,10 +6,17 @@ import {SourceFieldSymbol} from "./source_field_symbol";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {CGenericType, CharacterType, CLikeType, CSequenceType, DateType, HexType, NGenericType, NumericType,
-  StringType, StructureType, TimeType, XGenericType, XSequenceType, XStringType} from "../../types/basic";
+  StringType, StructureType, TimeType, UTCLongType, XGenericType, XSequenceType, XStringType} from "../../types/basic";
 import {TypeUtils} from "../_type_utils";
 import {BuiltIn} from "../_builtin";
 import {BuiltInCall} from "../_builtin_call";
+
+const COMPARISON_OPERATORS = ["=", "EQ", "<>", "NE", "><", "<", "LT", ">", "GT", "<=", "LE", "=<", ">=", "GE", "=>"];
+// built-in numeric functions of one argument, and those with further parameters
+const ONE_ARGUMENT_FUNCTIONS = ["abs", "sign", "ceil", "floor", "trunc", "frac", "acos", "asin", "atan", "cos",
+  "sin", "tan", "cosh", "sinh", "tanh", "exp", "log", "log10", "sqrt"];
+const SEVERAL_PARAMETER_FUNCTIONS = ["ipow", "nmax", "nmin", "round", "rescale"];
+const LENGTH_FUNCTIONS = ["strlen", "xstrlen", "numofchar"];
 
 export class Compare {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput): void {
@@ -42,7 +49,7 @@ export class Compare {
       return;
     }
 
-    const arithmeticMessage = this.checkArithmeticOperands(node, sources, sourceTypes);
+    const arithmeticMessage = this.checkArithmeticOperands(node, sources, sourceTypes, input);
     if (arithmeticMessage !== undefined) {
       input.issues.push(syntaxIssue(input, node.getFirstToken(), arithmeticMessage));
       return;
@@ -51,7 +58,9 @@ export class Compare {
     const typeUtils = new TypeUtils(input.scope);
     const compareOperator = node.findDirectExpression(Expressions.CompareOperator)?.concatTokens().toUpperCase();
 
-    if (compareOperator === "CS"
+    if (this.lacksComparisonType(node, sourceTypes, typeUtils)) {
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), "Incompatible types for comparison"));
+    } else if (compareOperator === "CS"
         && sourceTypes.length === 2
         && sourceTypes.some((type) => typeUtils.isCharLikeForCompare(type) === false)) {
       const message = "CS operands must be character-like (data type C, N, D, T, or STRING)";
@@ -110,33 +119,54 @@ export class Compare {
     return call === undefined ? undefined : BuiltInCall.callName(call);
   }
 
-  // an arithmetic expression can only be compared with a numeric operand or another arithmetic expression,
-  // a character-like, byte-like, date, time or structured operand is expected to be a syntax error,
-  // the operand can be made an arithmetic expression with a "+" in front, "+ lv_c"
-  private static checkArithmeticOperands(node: ExpressionNode, sources: readonly ExpressionNode[],
-                                         types: readonly (AbstractType | undefined)[]): string | undefined {
+  // two operands without a comparison type, eg. a date and a time, also as operand and bound of BETWEEN. The
+  // operators for character-like and byte-like operands, like CS or O, have their own rules
+  private static lacksComparisonType(node: ExpressionNode, types: readonly (AbstractType | undefined)[],
+                                     typeUtils: TypeUtils): boolean {
+    const operator = node.findDirectExpression(Expressions.CompareOperator)?.concatTokens().toUpperCase();
     let pairs: [number, number][] = [];
-    if (node.findDirectExpression(Expressions.CompareOperator) !== undefined && sources.length === 2) {
+    if (operator !== undefined && COMPARISON_OPERATORS.includes(operator) && types.length === 2) {
       pairs = [[0, 1]];
-    } else if (node.findDirectTokenByText("BETWEEN") !== undefined && sources.length === 3) {
+    } else if (node.findDirectTokenByText("BETWEEN") !== undefined && types.length === 3) {
       pairs = [[0, 1], [0, 2]];
     }
+    return pairs.some(([a, b]) => typeUtils.hasComparisonType(types[a], types[b]) === false);
+  }
 
-    for (const [a, b] of pairs) {
-      for (const [arith, other] of [[a, b], [b, a]]) {
-        if (this.isArithmetic(sources[arith]) === true
-            && this.isArithmetic(sources[other]) === false
-            && this.isNonNumeric(types[other]) === true) {
-          const operand = sources[other].concatTokens();
-          return `Arithmetic expression cannot be compared with non-numeric operand "${operand}", use "+ ${operand}"`;
-        }
+  // an arithmetic expression can only be compared with a numeric operand or another arithmetic expression,
+  // a character-like, byte-like, date, time or structured operand is expected to be a syntax error,
+  // the operand can be made an arithmetic expression with a "+" in front, "+ lv_c". The three operands of
+  // BETWEEN share one calculation, so an arithmetic expression among them applies to the two others
+  private static checkArithmeticOperands(node: ExpressionNode, sources: readonly ExpressionNode[],
+                                         types: readonly (AbstractType | undefined)[],
+                                         input: SyntaxInput): string | undefined {
+    const comparison = node.findDirectExpression(Expressions.CompareOperator) !== undefined && sources.length === 2;
+    const between = node.findDirectTokenByText("BETWEEN") !== undefined && sources.length === 3;
+    if (comparison === false && between === false) {
+      return undefined;
+    }
+
+    const arithmetic = sources.map(s => this.isArithmetic(s, input));
+    if (arithmetic.includes(true) === false) {
+      return undefined;
+    }
+
+    for (let i = 0; i < sources.length; i++) {
+      if (arithmetic[i] === true) {
+        continue;
+      } else if (types[i] instanceof UTCLongType) {
+        return `A time stamp of type utclong cannot be compared with an arithmetic expression`;
+      } else if (this.isNonNumeric(types[i]) === true) {
+        const operand = sources[i].concatTokens();
+        return `Arithmetic expression cannot be compared with non-numeric operand "${operand}", use "+ ${operand}"`;
       }
     }
     return undefined;
   }
 
-  // "a + b", "- a", "( a * b )", but not "( a )", "a && b" or "a BIT-AND b"
-  private static isArithmetic(source: ExpressionNode): boolean {
+  // "a + b", "- a", "( a * b )", "ipow( base = a exp = b )" or "abs( a + b )",
+  // but not "( a )", "abs( a )", "a && b" or "a BIT-AND b"
+  public static isArithmetic(source: ExpressionNode, input: SyntaxInput): boolean {
     const children = source.getChildren();
     const first = children[0];
     if (first instanceof TokenNode) {
@@ -144,7 +174,7 @@ export class Compare {
       if (str === "+" || str === "-") {
         return true;
       } else if (str === "(" && children.length === 3 && children[1] instanceof ExpressionNode) {
-        return this.isArithmetic(children[1]);
+        return this.isArithmetic(children[1], input);
       }
     }
     for (const child of children) {
@@ -154,7 +184,29 @@ export class Compare {
         return true;
       }
     }
-    return false;
+    return this.isArithmeticFunction(source, input);
+  }
+
+  // a built-in numeric function is part of a calculation when it has several parameters, or when its argument
+  // is calculated itself, "abs( a + b )" or "abs( strlen( s ) )". Of a data object it is a value of its own
+  private static isArithmeticFunction(source: ExpressionNode, input: SyntaxInput): boolean {
+    const call = BuiltInCall.fromSource(source, input);
+    const name = call === undefined ? undefined : BuiltInCall.callName(call)?.toLowerCase();
+    if (call === undefined || name === undefined) {
+      return false;
+    } else if (SEVERAL_PARAMETER_FUNCTIONS.includes(name)) {
+      return true;
+    } else if (ONE_ARGUMENT_FUNCTIONS.includes(name) === false) {
+      return false;
+    }
+
+    const argument = call.findDirectExpression(Expressions.MethodCallParam)?.findDirectExpression(Expressions.Source);
+    if (argument === undefined) {
+      return false;
+    }
+    const inner = this.builtinCallName(argument, input)?.toLowerCase();
+    return this.isArithmetic(argument, input)
+      || (inner !== undefined && (ONE_ARGUMENT_FUNCTIONS.includes(inner) || LENGTH_FUNCTIONS.includes(inner)));
   }
 
   private static isNonNumeric(type: AbstractType | undefined): boolean {

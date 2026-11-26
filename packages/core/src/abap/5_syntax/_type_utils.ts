@@ -19,6 +19,29 @@ export class TypeUtils {
     this.scope = scope;
   }
 
+  /** false for two elementary types which cannot be compared with each other: a date and a time, and a time stamp
+   * of type utclong with anything but another one or a text of type c or string */
+  public hasComparisonType(type1: AbstractType | undefined, type2: AbstractType | undefined): boolean {
+    if ((type1 instanceof DateType && type2 instanceof TimeType)
+        || (type1 instanceof TimeType && type2 instanceof DateType)) {
+      return false;
+    }
+    const other = type1 instanceof UTCLongType ? type2 : type2 instanceof UTCLongType ? type1 : undefined;
+    return !(other instanceof IntegerType
+      || other instanceof Integer8Type
+      || other instanceof PackedType
+      || other instanceof FloatType
+      || other instanceof FloatingPointType
+      || other instanceof DecFloat16Type
+      || other instanceof DecFloat34Type
+      || other instanceof DecFloatType
+      || (other instanceof NumericType && !(other instanceof NGenericType))
+      || other instanceof HexType
+      || other instanceof XStringType
+      || other instanceof DateType
+      || other instanceof TimeType);
+  }
+
   public isCharLikeStrict(type: AbstractType | undefined): boolean {
     if (type === undefined) {
       return false;

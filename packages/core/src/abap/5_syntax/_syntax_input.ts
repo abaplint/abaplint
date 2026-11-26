@@ -3,6 +3,7 @@ import {Severity} from "../../severity";
 import {IEdit} from "../../edit_helper";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {CurrentScope} from "./_current_scope";
+import {AbstractType} from "../types/basic/_abstract_type";
 
 export const CheckSyntaxKey = "check_syntax";
 
@@ -10,6 +11,9 @@ export const CheckSyntaxKey = "check_syntax";
 // so nothing to garbage collect
 export type SyntaxInput = {
   scope: CurrentScope,
+  /** of the innermost CASE around the statement, set by it: the type of its operand, which the values after WHEN
+   * are compared with. undefined for the result of an arithmetic expression */
+  caseOperand?: {type?: AbstractType},
   filename: string,
   issues: Issue[],
   /** checks which can only run once the full object has been traversed, eg. PERFORM parameters,

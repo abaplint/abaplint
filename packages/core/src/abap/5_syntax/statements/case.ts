@@ -1,6 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
 import {Source} from "../expressions/source";
+import {Compare} from "../expressions/compare";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {BuiltIn} from "../_builtin";
@@ -10,10 +11,13 @@ import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
 
 export class Case implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
-    // just recurse
     for (const s of node.findDirectExpressions(Expressions.Source)) {
-      Source.runSyntax(s, input);
+      const type = Source.runSyntax(s, input);
       checkCaseOperand(s, input);
+      // an arithmetic expression is calculated on its own, the values after WHEN are compared with its result
+      if (input.caseOperand && Compare.isArithmetic(s, input) === false) {
+        input.caseOperand.type = type;
+      }
     }
   }
 }
