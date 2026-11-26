@@ -24,7 +24,15 @@ export class Rename {
     }
 
     this.skip(rconfig);
-    this.rename(rconfig, quiet);
+    const renamer = this.rename(rconfig, quiet);
+    if (rconfig.urls === true) {
+      const result = renamer.renameURLs();
+      result.updatedFiles.forEach(f => {
+        if (this.addedFiles.has(f) === false) {
+          this.updatedFiles.add(f);
+        }
+      });
+    }
     if (rconfig.output === undefined || rconfig.output === "") {
       // write changes inline
       this.deletedFiles.forEach(f => {
@@ -81,7 +89,7 @@ export class Rename {
     }
   }
 
-  private rename(rconfig: abaplint.IRenameSettings, quiet?: boolean) {
+  private rename(rconfig: abaplint.IRenameSettings, quiet?: boolean): abaplint.Rename {
     const renamer = new abaplint.Rename(this.reg);
     for (const o of this.reg.getObjects()) {
       if (this.reg.isDependency(o) === true) {
@@ -109,6 +117,7 @@ export class Rename {
         break;
       }
     }
+    return renamer;
   }
 
   private skip(rconfig: abaplint.IRenameSettings) {
