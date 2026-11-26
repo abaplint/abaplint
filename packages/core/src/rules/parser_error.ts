@@ -1,5 +1,5 @@
 import {Issue} from "../issue";
-import {Unknown, UnknownTooDeep, MacroRecursion} from "../abap/2_statements/statements/_statement";
+import {Unknown, MacroRecursion} from "../abap/2_statements/statements/_statement";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {STATEMENT_MAX_TOKENS} from "../abap/2_statements/statement_parser";
 import {IRule, RuleTag} from "./_irule";
@@ -52,10 +52,6 @@ See recognized syntax at https://syntax.abaplint.org`,
             if (statement.getTokens().length > STATEMENT_MAX_TOKENS) {
               const message = "Statement too long, refactor statement";
               const issue = Issue.atToken(file, statement.getTokens()[0], message, this.getMetadata().key, this.conf.severity);
-              issues.push(issue);
-            } else if (statement.get() instanceof UnknownTooDeep) {
-              const message = "Statement too deep to parse, split it into smaller statements";
-              const issue = Issue.atToken(file, statement.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
               issues.push(issue);
             } else {
               const tok = statement.getFirstToken();

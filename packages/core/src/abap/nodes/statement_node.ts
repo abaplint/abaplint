@@ -1,7 +1,7 @@
 import {Position} from "../../position";
 import {VirtualPosition} from "../../virtual_position";
 import {AbstractNode} from "./_abstract_node";
-import {INode} from "./_inode";
+import {walkFindAll, walkFindAllMulti, walkFindFirst, walkFirstToken, walkLastToken, walkTokenNodes, walkTokens} from "./_walk";
 import {TokenNode} from "./token_node";
 import {ExpressionNode} from "./expression_node";
 import {Comment} from "../1_lexer/tokens/comment";
@@ -61,13 +61,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
   }
 
   public getTokens(): readonly AbstractToken[] {
-    const tokens: AbstractToken[] = [];
-
-    for (const c of this.getChildren()) {
-      tokens.push(...this.toTokens(c));
-    }
-
-    return tokens;
+    return walkTokens(this.getChildren());
   }
 
   public includesToken(search: AbstractToken): boolean {
@@ -80,13 +74,7 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
   }
 
   public getTokenNodes(): readonly TokenNode[] {
-    const tokens: TokenNode[] = [];
-
-    for (const c of this.getChildren()) {
-      tokens.push(...this.toTokenNodess(c));
-    }
-
-    return tokens;
+    return walkTokenNodes(this.getChildren());
   }
 
   public concatTokens(): string {
@@ -162,20 +150,19 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
   }
 
   public getFirstToken(): AbstractToken {
-    for (const child of this.getChildren()) {
-      return child.getFirstToken();
+    const first = this.getChildren()[0];
+    if (first === undefined) {
+      throw new Error("StatementNode, getFirstToken, no children, " + this.get().constructor.name);
     }
-    throw new Error("StatementNode, getFirstToken, no children, " + this.get().constructor.name);
+    return walkFirstToken(first, "ExpressionNode, getFirstToken, no children");
   }
 
   public getLastToken(): AbstractToken {
-    const child = this.getLastChild();
-
-    if (child !== undefined) {
-      return child.getLastToken();
+    const last = this.getLastChild();
+    if (last === undefined) {
+      throw new Error("StatementNode, getLastToken, no children");
     }
-
-    throw new Error("StatementNode, getLastToken, no children");
+    return walkLastToken(last, "ExpressionNode, getLastToken, no children");
   }
 
   public findDirectExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
@@ -218,65 +205,19 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
   }
 
   public findFirstExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
-    for (const child of this.getChildren()) {
-      if (child instanceof TokenNode) {
-        continue;
-      } else if (child.get() instanceof type) {
-        return child;
-      } else {
-        const res = child.findFirstExpression(type);
-        if (res) {
-          return res;
-        }
-      }
-    }
-    return undefined;
+    return walkFindFirst(this.getChildren(), type);
   }
 
   public findAllExpressions(type: new () => IStatementRunnable): readonly ExpressionNode[] {
-    const ret: ExpressionNode[] = [];
-    for (const child of this.getChildren()) {
-      if (child instanceof TokenNode) {
-        continue;
-      } else if (child.get() instanceof type) {
-        ret.push(child);
-      } else {
-        ret.push(...child.findAllExpressions(type));
-      }
-    }
-    return ret;
+    return walkFindAll(this.getChildren(), type, false);
   }
 
   public findAllExpressionsRecursive(type: new () => IStatementRunnable): readonly ExpressionNode[] {
-    const ret: ExpressionNode[] = [];
-    for (const child of this.getChildren()) {
-      if (child instanceof TokenNode) {
-        continue;
-      } else if (child.get() instanceof type) {
-        ret.push(child);
-      }
-      ret.push(...child.findAllExpressionsRecursive(type));
-    }
-    return ret;
+    return walkFindAll(this.getChildren(), type, true);
   }
 
   public findAllExpressionsMulti(type: (new () => IStatementRunnable)[], recursive = false): ExpressionNode[] {
-    const ret: ExpressionNode[] = [];
-    for (const child of this.getChildren()) {
-      if (child instanceof TokenNode) {
-        continue;
-      }
-      const before = ret.length;
-      for (const t of type) {
-        if (child.get() instanceof t) {
-          ret.push(child);
-        }
-      }
-      if (before === ret.length || recursive === true) {
-        ret.push(...child.findAllExpressionsMulti(type, recursive));
-      }
-    }
-    return ret;
+    return walkFindAllMulti(this.getChildren(), type, recursive);
   }
 
   /**
@@ -340,41 +281,5 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
 
 ////////////////////////////////
 
-  private toTokens(b: INode): readonly AbstractToken[] {
-    const tokens: AbstractToken[] = [];
 
-    if (b instanceof TokenNode) {
-      tokens.push(b.get());
-      return tokens;
-    }
-
-    for (const c of b.getChildren()) {
-      if (c instanceof TokenNode) {
-        tokens.push(c.get());
-      } else {
-        tokens.push(...this.toTokens(c));
-      }
-    }
-
-    return tokens;
-  }
-
-  private toTokenNodess(b: INode): readonly TokenNode[] {
-    const tokens: TokenNode[] = [];
-
-    if (b instanceof TokenNode) {
-      tokens.push(b);
-      return tokens;
-    }
-
-    for (const c of b.getChildren()) {
-      if (c instanceof TokenNode) {
-        tokens.push(c);
-      } else {
-        tokens.push(...this.toTokenNodess(c));
-      }
-    }
-
-    return tokens;
-  }
 }

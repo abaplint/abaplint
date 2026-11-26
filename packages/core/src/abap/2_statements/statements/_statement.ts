@@ -10,10 +10,6 @@ export class Unknown implements IStatement {
   }
 }
 
-/** a statement nested too deep for the parser, matching it exhausted the call stack */
-export class UnknownTooDeep extends Unknown {
-}
-
 export class Comment implements IStatement {
   public getMatcher(): IStatementRunnable {
     throw new Error("Comment Statement, get_matcher");
