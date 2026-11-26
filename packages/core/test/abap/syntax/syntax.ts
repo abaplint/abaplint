@@ -8653,7 +8653,11 @@ ENDCLASS.`;
 
   it("CATCH into subclass reference, syntax error", () => {
     const abap = `
-CLASS cx_static_check DEFINITION.
+CLASS cx_root DEFINITION ABSTRACT.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_static_check DEFINITION INHERITING FROM cx_root.
 ENDCLASS.
 CLASS cx_static_check IMPLEMENTATION.
 ENDCLASS.
