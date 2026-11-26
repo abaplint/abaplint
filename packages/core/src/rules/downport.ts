@@ -801,11 +801,18 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
-    // note: SQLCond is also used in JOIN(FROM) conditions
-    const where = high.findFirstExpression(Expressions.Select)?.findDirectExpression(Expressions.SQLCond);
-    if (where === undefined) {
+    // note: SQLCond is also used in JOIN(FROM) conditions. INTO after any of WHERE, GROUP BY,
+    // HAVING or ORDER BY is strict syntax, the first of them is where INTO has to be in front of
+    const clauses = [
+      high.findFirstExpression(Expressions.Select)?.findDirectExpression(Expressions.SQLCond),
+      high.findFirstExpression(Expressions.SQLGroupBy),
+      high.findFirstExpression(Expressions.SQLHaving),
+      high.findFirstExpression(Expressions.SQLOrderBy),
+    ].filter(c => c !== undefined);
+    if (clauses.length === 0) {
       return undefined;
     }
+    const first = clauses.reduce((a, b) => b.getFirstToken().getStart().isBefore(a.getFirstToken().getStart()) ? b : a);
 
     // the FIELDS list sits between FROM and WHERE, wait for it to be removed first
     if (high.findFirstExpression(Expressions.SQLFields) !== undefined) {
@@ -823,7 +830,7 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
-    if (where.getLastToken().getEnd().isBefore(into.getFirstToken().getStart()) === false) {
+    if (first.getFirstToken().getStart().isBefore(into.getFirstToken().getStart()) === false) {
       return undefined;
     }
 
@@ -832,14 +839,19 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
-    // UP TO after INTO is not valid behind WHERE or ORDER BY, move it along in front of INTO
+    // UP TO and BYPASSING BUFFER after INTO are not valid behind WHERE or ORDER BY, they belong to
+    // FROM in the old syntax: move them along in front of INTO, FROM ... BYPASSING BUFFER UP TO n ROWS INTO
     let move = into.concatTokens();
     const fixes: IEdit[] = [];
-    const upTo = high.findFirstExpression(Expressions.SQLUpTo);
-    if (upTo !== undefined
-        && into.getLastToken().getEnd().isBefore(upTo.getFirstToken().getStart())) {
-      move = upTo.concatTokens() + ` ` + move;
-      fixes.push(EditHelper.deleteRange(lowFile, upTo.getFirstToken().getStart(), upTo.getLastToken().getEnd()));
+    const along = [high.findFirstExpression(Expressions.SQLUpTo), high.findFirstExpression(Expressions.SQLBypassingBuffer)]
+      .filter(e => e !== undefined && into.getLastToken().getEnd().isBefore(e.getFirstToken().getStart()));
+    for (const e of along) {
+      move = e!.concatTokens() + ` ` + move;
+    }
+    // edits are applied in sequence, so delete the later one first
+    along.sort((a, b) => b!.getFirstToken().getStart().isBefore(a!.getFirstToken().getStart()) ? -1 : 1);
+    for (const e of along) {
+      fixes.push(EditHelper.deleteRange(lowFile, e!.getFirstToken().getStart(), e!.getLastToken().getEnd()));
     }
 
     // edits are applied in sequence, so work from the end of the statement towards the start
@@ -892,14 +904,11 @@ Make sure to test the downported code, it might not always be completely correct
       return undefined;
     }
 
-    let fix: IEdit | undefined = undefined;
+    // the edits of a fix are applied one after the other, a deletion moves what follows it in the
+    // same row: collect the tokens and delete from the end of the statement towards its start
+    const toDelete: AbstractToken[] = [];
     const addFix = (token: AbstractToken) => {
-      const add = EditHelper.deleteToken(lowFile, token);
-      if (fix === undefined) {
-        fix = add;
-      } else {
-        fix = EditHelper.merge(fix, add);
-      }
+      toDelete.push(token);
     };
 
     const candidates = [high.findAllExpressionsRecursive(Expressions.SQLTarget),
@@ -939,7 +948,8 @@ ${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
       }
     }
 
-    for (const fieldList of high.findAllExpressionsMulti([Expressions.SQLFieldList, Expressions.SQLFieldListLoop, Expressions.SQLOrderBy], true)) {
+    for (const fieldList of high.findAllExpressionsMulti([Expressions.SQLFieldList, Expressions.SQLFieldListLoop, Expressions.SQLOrderBy,
+      Expressions.SQLGroupBy], true)) {
       for (const token of fieldList.getDirectTokens()) {
         if (token.getStr() === ",") {
           addFix(token);
@@ -947,7 +957,9 @@ ${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
       }
     }
 
-    if (fix !== undefined) {
+    if (toDelete.length > 0) {
+      toDelete.sort((a, b) => b.getStart().isBefore(a.getStart()) ? -1 : 1);
+      const fix = EditHelper.mergeList(toDelete.map(t => EditHelper.deleteToken(lowFile, t)));
       return Issue.atToken(lowFile, low.getFirstToken(), "SQL, remove @ and ,", this.getMetadata().key, this.conf.severity, fix);
     }
 
@@ -966,7 +978,7 @@ ${indentation}${uniqueName} = ${source?.concatTokens()}.\n${indentation}`);
         const lastStart = last.getFirstToken().getStart();
         const startDelete = new Position(lastStart.getRow(), lastStart.getCol() - 1);
         const fix2 = EditHelper.deleteRange(lowFile, startDelete, lastStart);
-        fix = EditHelper.merge(fix2, fix1);
+        const fix = EditHelper.merge(fix2, fix1);
         return Issue.atToken(lowFile, low.getFirstToken(), "SQL, remove spaces", this.getMetadata().key, this.conf.severity, fix);
       }
     }
