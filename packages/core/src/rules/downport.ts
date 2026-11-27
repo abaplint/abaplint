@@ -884,15 +884,50 @@ Make sure to test the downported code, it might not always be completely correct
     // edits are applied in sequence, so delete the later one first
     along.sort((a, b) => b!.getFirstToken().getStart().isBefore(a!.getFirstToken().getStart()) ? -1 : 1);
     for (const e of along) {
-      fixes.push(EditHelper.deleteRange(lowFile, e!.getFirstToken().getStart(), e!.getLastToken().getEnd()));
+      fixes.push(this.deleteWithWhitespaceBefore(lowFile, high, e!));
     }
 
     // edits are applied in sequence, so work from the end of the statement towards the start
-    fixes.push(EditHelper.deleteRange(lowFile, into.getFirstToken().getStart(), into.getLastToken().getEnd()));
+    fixes.push(this.deleteWithWhitespaceBefore(lowFile, high, into));
     fixes.push(EditHelper.insertAt(lowFile, from.getLastToken().getEnd(), ` ` + move));
     const fix = EditHelper.mergeList(fixes);
 
     return Issue.atToken(lowFile, low.getFirstToken(), "SQL, move INTO", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  /**
+   * Deletes the expression together with the whitespace in front of it. A clause moved away
+   * otherwise leaves its row behind, holding only the indentation, or a gap in front of the period.
+   * Anything else in front of it, ie. a comment, and only the expression is deleted.
+   */
+  private deleteWithWhitespaceBefore(file: ABAPFile, statement: StatementNode, expression: ExpressionNode): IEdit {
+    const start = expression.getFirstToken().getStart();
+    const end = expression.getLastToken().getEnd();
+
+    let previous: Position | undefined = undefined;
+    for (const token of statement.getTokens()) {
+      if (token.getStart().isBefore(start) === false) {
+        break;
+      }
+      previous = token.getEnd();
+    }
+    if (previous === undefined) {
+      return EditHelper.deleteRange(file, start, end);
+    }
+
+    const rows = file.getRawRows();
+    let between = "";
+    for (let row = previous.getRow(); row <= start.getRow(); row++) {
+      const text = rows[row - 1] ?? "";
+      const from = row === previous.getRow() ? previous.getCol() - 1 : 0;
+      const to = row === start.getRow() ? start.getCol() - 1 : text.length;
+      between += text.substring(from, to);
+    }
+    if (between.trim() !== "") {
+      return EditHelper.deleteRange(file, start, end);
+    }
+
+    return EditHelper.deleteRange(file, previous, end);
   }
 
   /** the work area of INSERT/MODIFY/UPDATE/DELETE dbtab FROM @( ... ) takes its type from the

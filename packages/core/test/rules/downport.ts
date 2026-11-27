@@ -5925,8 +5925,7 @@ ENDFORM.`;
   DATA lv_name TYPE string.
   SELECT SINGLE * FROM zdownport_tab INTO ls_row
     
-    WHERE name = lv_name
-    .
+    WHERE name = lv_name.
 ENDFORM.`;
     testFixAll(abap, expected);
   });
@@ -7196,7 +7195,7 @@ ENDFORM.`;
           arbgb TYPE t100-arbgb,
           msgnr TYPE t100-msgnr,
         END OF ls_t100.
-  SELECT SINGLE arbgb, msgnr FROM t100 INTO @ls_t100 WHERE arbgb = '123' .
+  SELECT SINGLE arbgb, msgnr FROM t100 INTO @ls_t100 WHERE arbgb = '123'.
 ENDFORM.`;
 
     testFix(abap, expected);
@@ -7222,8 +7221,24 @@ ENDFORM.`;
          END OF ty_row.
   DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
   SELECT req_id, name FROM voiddbtab UP TO 10 ROWS INTO TABLE @lt_rows
-    WHERE name = @iv_text
-    
+    WHERE name = @iv_text.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT, a comment in front of the moved INTO stays, and so does the row", async () => {
+    const abap = `FORM bar USING iv_text TYPE string.
+  DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
+  SELECT * FROM voiddbtab
+    WHERE name = @iv_text " comment
+    INTO TABLE @lt_rows.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_text TYPE string.
+  DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
+  SELECT * FROM voiddbtab INTO TABLE @lt_rows
+    WHERE name = @iv_text " comment
     .
 ENDFORM.`;
 
@@ -7238,7 +7253,7 @@ ENDFORM.`;
 
     const expected = `FORM bar USING iv_text TYPE string.
   DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
-  SELECT req_id name FROM voiddbtab UP TO 10 ROWS INTO TABLE lt_rows WHERE name = iv_text  .
+  SELECT req_id name FROM voiddbtab UP TO 10 ROWS INTO TABLE lt_rows WHERE name = iv_text.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7252,7 +7267,7 @@ ENDFORM.`;
 
     const expected = `FORM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
-  SELECT * FROM voiddbtab UP TO 5 ROWS INTO TABLE lt_rows ORDER BY PRIMARY KEY  .
+  SELECT * FROM voiddbtab UP TO 5 ROWS INTO TABLE lt_rows ORDER BY PRIMARY KEY.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7272,9 +7287,7 @@ ENDFORM.`;
   FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
   SELECT *
     FROM (iv_tab) BYPASSING BUFFER INTO CORRESPONDING FIELDS OF TABLE <tab>
-    ORDER BY PRIMARY KEY
-    
-    .
+    ORDER BY PRIMARY KEY.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7305,8 +7318,7 @@ ENDFORM.`;
   SELECT arbgb msgnr COUNT( * ) AS cnt
     FROM (iv_tab) INTO CORRESPONDING FIELDS OF TABLE lt_count
     GROUP BY arbgb msgnr
-    ORDER BY arbgb msgnr
-    .
+    ORDER BY arbgb msgnr.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7320,7 +7332,7 @@ ENDFORM.`;
 
     const expected = `FORM bar USING iv_tab TYPE string iv_where TYPE string.
   FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
-  SELECT * FROM (iv_tab) UP TO 100 ROWS INTO CORRESPONDING FIELDS OF TABLE <tab> WHERE (iv_where)  .
+  SELECT * FROM (iv_tab) UP TO 100 ROWS INTO CORRESPONDING FIELDS OF TABLE <tab> WHERE (iv_where).
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7342,7 +7354,7 @@ ENDFORM.`;
            rollname  TYPE c LENGTH 30,
          END OF ty_row.
   DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
-  SELECT DISTINCT a~fieldname b~rollname FROM voida AS a INNER JOIN voidb AS b ON a~tabname = b~tabname UP TO 500 ROWS INTO TABLE lt_rows WHERE a~tabname = iv_name  .
+  SELECT DISTINCT a~fieldname b~rollname FROM voida AS a INNER JOIN voidb AS b ON a~tabname = b~tabname UP TO 500 ROWS INTO TABLE lt_rows WHERE a~tabname = iv_name.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7357,7 +7369,7 @@ ENDFORM.`;
 
     const expected = `FORM bar USING iv_text TYPE string.
   DATA ls_row TYPE voiddbtab.
-  SELECT * FROM voiddbtab UP TO 1 ROWS INTO ls_row WHERE NOT name = iv_text  .
+  SELECT * FROM voiddbtab UP TO 1 ROWS INTO ls_row WHERE NOT name = iv_text.
   ENDSELECT.
 ENDFORM.`;
 
@@ -7372,7 +7384,7 @@ ENDFORM.`;
 
     const expected = `FORM bar USING iv_text TYPE string.
   DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
-  SELECT * FROM voiddbtab UP TO 10 ROWS INTO TABLE lt_rows WHERE name = iv_text   ORDER BY name.
+  SELECT * FROM voiddbtab UP TO 10 ROWS INTO TABLE lt_rows WHERE name = iv_text ORDER BY name.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7386,7 +7398,7 @@ ENDFORM.`;
 
     const expected = `FORM bar USING iv_tab TYPE string iv_where TYPE string.
   FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
-  SELECT * FROM (iv_tab) UP TO 100 ROWS INTO CORRESPONDING FIELDS OF TABLE <tab> WHERE (iv_where) ORDER BY PRIMARY KEY  .
+  SELECT * FROM (iv_tab) UP TO 100 ROWS INTO CORRESPONDING FIELDS OF TABLE <tab> WHERE (iv_where) ORDER BY PRIMARY KEY.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7481,8 +7493,7 @@ SELECT FROM sdfsdfsdf
 DATA result TYPE voided.
 SELECT * FROM sdfsdfsdf INTO CORRESPONDING FIELDS OF TABLE result
   
-  WHERE uname IN tab
-  .`;
+  WHERE uname IN tab.`;
     testFixAll(abap, expected);
   });
 

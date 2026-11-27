@@ -681,6 +681,84 @@ ENDCLASS.`;
       expect(issues.length).to.equal(1);
       expect(issues[0].getMessage()).to.equal(`Implement method "has_remote_source" from interface "lif_repo"`);
     });
+
+    it("redefined under the interface name, implemented under the alias, ok", async () => {
+      const prog = interfaces + `
+CLASS lcl_online DEFINITION INHERITING FROM lcl_repo.
+  PUBLIC SECTION.
+    METHODS lif_repo~has_remote_source REDEFINITION.
+ENDCLASS.
+CLASS lcl_online IMPLEMENTATION.
+  METHOD has_remote_source.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+      const issues = await runMulti([{filename: "zfoobar.prog.abap", contents: prog}]);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("redefined under the interface name, alias two super classes up, ok", async () => {
+      const prog = interfaces + `
+CLASS lcl_middle DEFINITION ABSTRACT INHERITING FROM lcl_repo.
+ENDCLASS.
+CLASS lcl_middle IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_online DEFINITION INHERITING FROM lcl_middle.
+  PUBLIC SECTION.
+    METHODS lif_repo~has_remote_source REDEFINITION.
+ENDCLASS.
+CLASS lcl_online IMPLEMENTATION.
+  METHOD has_remote_source.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+      const issues = await runMulti([{filename: "zfoobar.prog.abap", contents: prog}]);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("redefined under the interface name, not implemented, error", async () => {
+      const prog = interfaces + `
+CLASS lcl_online DEFINITION INHERITING FROM lcl_repo.
+  PUBLIC SECTION.
+    METHODS lif_repo~has_remote_source REDEFINITION.
+ENDCLASS.
+CLASS lcl_online IMPLEMENTATION.
+ENDCLASS.`;
+      const issues = await runMulti([{filename: "zfoobar.prog.abap", contents: prog}]);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.equal(`Implement method "lif_repo~has_remote_source"`);
+    });
+
+    it("redefined under the interface name, global classes, ok", async () => {
+      const intf = `INTERFACE zif_kpi PUBLIC.
+  METHODS count RETURNING VALUE(result) TYPE i.
+ENDINTERFACE.`;
+      const base = `CLASS zcl_base DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_kpi.
+    ALIASES count FOR zif_kpi~count.
+ENDCLASS.
+CLASS zcl_base IMPLEMENTATION.
+  METHOD count.
+    result = 1.
+  ENDMETHOD.
+ENDCLASS.`;
+      const sub = `CLASS zcl_sub DEFINITION PUBLIC INHERITING FROM zcl_base FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+    METHODS zif_kpi~count REDEFINITION.
+ENDCLASS.
+CLASS zcl_sub IMPLEMENTATION.
+  METHOD count.
+    result = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+      const issues = await runMulti([
+        {filename: "zif_kpi.intf.abap", contents: intf},
+        {filename: "zcl_base.clas.abap", contents: base},
+        {filename: "zcl_sub.clas.abap", contents: sub}]);
+      expect(issues.length).to.equal(0);
+    });
   });
 
   it("ALIASes and super class", async () => {
