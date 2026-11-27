@@ -1,5 +1,7 @@
 import {NoDynamicStuff, NoDynamicStuffConf} from "../../src/rules";
 import {testRule} from "./_utils";
+import {Config, Issue, MemoryFile, Registry, Version} from "../../src";
+import {expect} from "chai";
 
 const tests = [
   {abap: "parser error", cnt: 0},
@@ -101,6 +103,63 @@ const tests = [
 ];
 
 testRule(tests, NoDynamicStuff);
+
+function findIssues(abap: string, version: Version, config?: NoDynamicStuffConf): readonly Issue[] {
+  const reg = new Registry(Config.getDefault(version)).addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
+  const rule = new NoDynamicStuff();
+  if (config) {
+    rule.setConfig(config);
+  }
+  return rule.initialize(reg).run(reg.getFirstObject()!);
+}
+
+const oldAssignVariantCloud = [
+  {abap: "ASSIGN ('MO_APP->ATTR') TO <fs>.", cnt: 1},
+  {abap: "ASSIGN ('LS_STRUC-COMP') TO <fs>.", cnt: 1},
+  {abap: "ASSIGN ('ZCL_FOO=>ATTR') TO <fs>.", cnt: 1},
+  {abap: "ASSIGN (`MO_APP->ATTR`) TO <fs>.", cnt: 1},
+  {abap: "CONSTANTS lc_path TYPE string VALUE 'MO_APP->ATTR'.\nASSIGN (lc_path) TO <fs>.", cnt: 1},
+  // no selector in the name
+  {abap: "ASSIGN ('LV_X') TO <fs>.", cnt: 0},
+  {abap: "CONSTANTS lc_name TYPE string VALUE 'LV_X'.\nASSIGN (lc_name) TO <fs>.", cnt: 0},
+  // content of a variable is not known
+  {abap: "DATA lv_path TYPE string VALUE 'MO_APP->ATTR'.\nASSIGN (lv_path) TO <fs>.", cnt: 0},
+  {abap: "ASSIGN (lv_name) TO <fs>.", cnt: 0},
+  // the forms accepted in ABAP for Cloud Development
+  {abap: "ASSIGN lo_ref->(lv_attr) TO <fs>.", cnt: 0},
+  {abap: "ASSIGN lo_ref->('ATTR') TO <fs>.", cnt: 0},
+  {abap: "ASSIGN ls_struc-(lv_comp) TO <fs>.", cnt: 0},
+  {abap: "ASSIGN zcl_foo=>(lv_attr) TO <fs>.", cnt: 0},
+  {abap: "ASSIGN (lv_class)=>(lv_attr) TO <fs>.", cnt: 0},
+  {abap: "ASSIGN COMPONENT lv_comp OF STRUCTURE ls_struc TO <fs>.", cnt: 0},
+  {abap: "ASSIGN lr_data->* TO <fs>.", cnt: 0},
+];
+
+describe("Rule: no_dynamic_stuff, assignOldVariantCloud", () => {
+  for (const test of oldAssignVariantCloud) {
+    it("Cloud, \"" + test.abap + "\" should have " + test.cnt + " issue(s)", () => {
+      const issues = findIssues(test.abap, Version.Cloud, conf("assignOldVariantCloud"));
+      expect(issues.length).to.equal(test.cnt);
+    });
+  }
+
+  it("not reported for other versions", () => {
+    const issues = findIssues("ASSIGN ('MO_APP->ATTR') TO <fs>.", Version.v757, conf("assignOldVariantCloud"));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("default config, Cloud, one issue naming the rewrite", () => {
+    const issues = findIssues("ASSIGN ('MO_APP->ATTR') TO <fs>.", Version.Cloud);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("oref->(attr)");
+  });
+
+  it("default config, v757, plain dynamic ASSIGN", () => {
+    const issues = findIssues("ASSIGN ('MO_APP->ATTR') TO <fs>.", Version.v757);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Dynamic ASSIGN");
+  });
+});
 
 function conf(enable: keyof NoDynamicStuffConf): NoDynamicStuffConf {
   const config = new NoDynamicStuffConf();
