@@ -4603,7 +4603,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
+              "description": "SORT without BY, DELETE ADJACENT DUPLICATES without COMPARING and\nREAD TABLE, DELETE TABLE and MODIFY TABLE ... FROM wa on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
             },
             "sort_required": {
               "anyOf": [
@@ -7309,7 +7309,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "SORT without BY and DELETE ADJACENT DUPLICATES without COMPARING on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
+              "description": "SORT without BY, DELETE ADJACENT DUPLICATES without COMPARING and\nREAD TABLE, DELETE TABLE and MODIFY TABLE ... FROM wa on a table with an empty primary key\nTags: SingleFile, Quickfix\nhttps://rules.abaplint.org/sort_empty_key"
             },
             "sort_required": {
               "anyOf": [
@@ -10933,8 +10933,15 @@
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        },
+        "tableKeyAccess": {
+          "description": "Also report READ TABLE, DELETE TABLE and MODIFY TABLE ... FROM wa, which address a row through the empty primary key",
+          "type": "boolean"
         }
       },
+      "required": [
+        "tableKeyAccess"
+      ],
       "type": "object"
     },
     "SortRequiredConf": {

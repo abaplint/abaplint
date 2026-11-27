@@ -56,6 +56,104 @@ CLASS lcl IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`, cnt: 2},
 
+  // access through the empty primary key, FROM wa always finds the first row
+  {abap: `DATA lt TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA ls TYPE string.
+READ TABLE lt FROM ls TRANSPORTING NO FIELDS.
+READ TABLE lt FROM ls INTO ls.
+DELETE TABLE lt FROM ls.
+MODIFY TABLE lt FROM ls.`, cnt: 4, fix: false},
+  {abap: `TYPES: BEGIN OF ty_s,
+         name TYPE string,
+         names TYPE STANDARD TABLE OF string WITH EMPTY KEY,
+       END OF ty_s.
+DATA lt TYPE STANDARD TABLE OF ty_s WITH EMPTY KEY.
+DATA ls TYPE ty_s.
+FIELD-SYMBOLS <lt> LIKE lt.
+ASSIGN lt TO <lt>.
+DELETE TABLE lt FROM ls.
+MODIFY TABLE lt FROM ls TRANSPORTING name.
+READ TABLE <lt> FROM ls TRANSPORTING NO FIELDS.
+READ TABLE ls-names FROM ls-name TRANSPORTING NO FIELDS.
+DELETE TABLE ls-names FROM ls-name.`, cnt: 5},
+  {abap: `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    DATA mt_names TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    CLASS-DATA gt_names TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    METHODS run IMPORTING iv_name TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    READ TABLE me->mt_names FROM iv_name TRANSPORTING NO FIELDS.
+    READ TABLE lcl=>gt_names FROM iv_name TRANSPORTING NO FIELDS.
+    DELETE TABLE mt_names FROM iv_name.
+  ENDMETHOD.
+ENDCLASS.`, cnt: 3},
+
+  // access by index, free key, WHERE or a secondary key
+  {abap: `DATA lt TYPE STANDARD TABLE OF string WITH EMPTY KEY WITH NON-UNIQUE SORTED KEY sec COMPONENTS table_line.
+DATA ls TYPE string.
+READ TABLE lt INDEX 1 INTO ls.
+READ TABLE lt INTO ls INDEX 1.
+READ TABLE lt WITH KEY table_line = ls TRANSPORTING NO FIELDS.
+READ TABLE lt FROM ls USING KEY sec TRANSPORTING NO FIELDS.
+DELETE TABLE lt FROM ls USING KEY sec.
+DELETE TABLE lt WITH TABLE KEY sec COMPONENTS table_line = ls.
+DELETE lt WHERE table_line = ls.
+DELETE lt INDEX 1.
+DELETE lt FROM 2.
+DELETE lt FROM 2 TO 3.
+MODIFY lt FROM ls INDEX 1.
+MODIFY lt INDEX 1 FROM ls.
+MODIFY lt FROM ls TRANSPORTING table_line WHERE table_line = ls.
+MODIFY TABLE lt FROM ls USING KEY sec.
+LOOP AT lt INTO ls.
+  MODIFY lt FROM ls.
+  DELETE lt.
+ENDLOOP.`, cnt: 0},
+
+  // access through a default or explicit key, sorted and hashed tables
+  {abap: `DATA lt TYPE TABLE OF string.
+DATA ls TYPE string.
+READ TABLE lt FROM ls TRANSPORTING NO FIELDS.
+DELETE TABLE lt FROM ls.
+MODIFY TABLE lt FROM ls.`, cnt: 0},
+  {abap: `DATA lt TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA ls TYPE string.
+READ TABLE lt FROM ls TRANSPORTING NO FIELDS.
+DELETE TABLE lt FROM ls.
+MODIFY TABLE lt FROM ls.`, cnt: 0},
+  {abap: `DATA lt TYPE STANDARD TABLE OF string WITH NON-UNIQUE KEY table_line.
+DATA ls TYPE string.
+READ TABLE lt FROM ls TRANSPORTING NO FIELDS.
+READ TABLE lt WITH TABLE KEY table_line = ls TRANSPORTING NO FIELDS.
+DELETE TABLE lt FROM ls.
+DELETE TABLE lt WITH TABLE KEY table_line = ls.
+MODIFY TABLE lt FROM ls.`, cnt: 0},
+  {abap: `DATA lt TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line.
+DATA lh TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
+DATA ls TYPE string.
+READ TABLE lt FROM ls TRANSPORTING NO FIELDS.
+DELETE TABLE lt FROM ls.
+READ TABLE lh FROM ls TRANSPORTING NO FIELDS.
+DELETE TABLE lh FROM ls.
+MODIFY TABLE lh FROM ls.`, cnt: 0},
+
+  // access through the key of an unknown, void or generic table
+  {abap: `DATA ls TYPE string.
+DATA lt_void TYPE void_table_type.
+READ TABLE unknown FROM ls TRANSPORTING NO FIELDS.
+DELETE TABLE unknown FROM ls.
+MODIFY TABLE unknown FROM ls.
+DELETE TABLE lt_void FROM ls.`, cnt: 0},
+  {abap: `FORM foo USING tab TYPE STANDARD TABLE row TYPE any.
+  FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+  READ TABLE tab FROM row TRANSPORTING NO FIELDS.
+  DELETE TABLE tab FROM row.
+  MODIFY TABLE tab FROM row.
+  DELETE TABLE <tab> FROM row.
+ENDFORM.`, cnt: 0},
+
   // BY and COMPARING
   {abap: `DATA result TYPE STANDARD TABLE OF string WITH EMPTY KEY.
 SORT result BY table_line.
@@ -96,6 +194,19 @@ SORT <tab>.`, cnt: 0},
 ];
 
 testRule(tests, SortEmptyKey);
+
+// the access through the table key switched off, SORT is still reported
+const config = new SortEmptyKey().getConfig();
+config.tableKeyAccess = false;
+testRule([
+  {abap: `DATA lt TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DATA ls TYPE string.
+READ TABLE lt FROM ls TRANSPORTING NO FIELDS.
+DELETE TABLE lt FROM ls.
+MODIFY TABLE lt FROM ls.`, cnt: 0},
+  {abap: `DATA lt TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+SORT lt.`, cnt: 1},
+], SortEmptyKey, config);
 
 const fixes = [
   {
