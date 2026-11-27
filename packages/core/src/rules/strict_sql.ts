@@ -8,6 +8,7 @@ import {RuleTag, IRuleMetadata} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ABAPObject} from "../objects/_abap_object";
 import {EditHelper} from "../edit_helper";
+import {ExpressionNode} from "../abap/nodes";
 
 export class StrictSQLConf extends BasicRuleConfig {
 }
@@ -25,6 +26,8 @@ export class StrictSQL extends ABAPRule {
 https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/ABENABAP_SQL_STRICT_MODES.html
 
 Also see separate rule sql_escape_host_variables
+
+When INTO/APPENDING is written last, the ABAP options BYPASSING BUFFER and CONNECTION must follow it
 
 Activates from v750 and up`,
       tags: [RuleTag.Upport, RuleTag.Quickfix],
@@ -64,9 +67,10 @@ Activates from v750 and up`,
         const into = expr?.findDirectExpression(Expressions.SQLIntoStructure)
           || expr?.findDirectExpression(Expressions.SQLIntoList)
           || expr?.findDirectExpression(Expressions.SQLIntoTable);
-        if (into === undefined || where === undefined) {
+        if (expr === undefined || into === undefined) {
           continue;
-        } else if (where.getFirstToken().getStart().isBefore(into.getFirstToken().getStart())) {
+        } else if (where === undefined || where.getFirstToken().getStart().isBefore(into.getFirstToken().getStart())) {
+          issues.push(...this.checkOptionsBeforeInto(file, expr, into));
           continue;
         }
 
@@ -83,6 +87,43 @@ Activates from v750 and up`,
       }
     }
 
+    return issues;
+  }
+
+  /** with INTO/APPENDING written last, BYPASSING BUFFER and CONNECTION go behind it */
+  private checkOptionsBeforeInto(file: ABAPFile, expr: ExpressionNode, into: ExpressionNode): Issue[] {
+    const issues: Issue[] = [];
+    const intoStart = into.getFirstToken().getStart();
+    // only a clause between the option and INTO makes the INTO a trailing one,
+    // "SELECT * FROM t BYPASSING BUFFER INTO TABLE @t" is the classic position of INTO
+    const clauses = expr.getChildren().filter(c => c instanceof ExpressionNode && (
+      c.get() instanceof Expressions.SQLCond
+      || c.get() instanceof Expressions.SQLOrderBy
+      || c.get() instanceof Expressions.SQLGroupBy
+      || c.get() instanceof Expressions.SQLHaving
+      || c.get() instanceof Expressions.SQLFields
+      || c.get() instanceof Expressions.SQLForAllEntries));
+    const options = [...expr.findDirectExpressions(Expressions.SQLBypassingBuffer),
+      ...expr.findDirectExpressions(Expressions.DatabaseConnection)];
+
+    for (const option of options) {
+      const optionEnd = option.getLastToken().getEnd();
+      if (!option.getFirstToken().getStart().isBefore(intoStart)) {
+        continue;
+      }
+      const between = clauses.some(c => !c.getFirstToken().getStart().isBefore(optionEnd)
+        && c.getFirstToken().getStart().isBefore(intoStart));
+      if (between === false) {
+        continue;
+      }
+      const fix1 = EditHelper.deleteRange(file, option.getFirstToken().getStart(), optionEnd);
+      const fix2 = EditHelper.insertAt(file, into.getLastToken().getEnd(), " " + option.concatTokens());
+      const fix = EditHelper.merge(fix2, fix1);
+      const message = option.concatTokens().toUpperCase().startsWith("CONNECTION")
+        ? "CONNECTION must follow INTO/APPENDING in strict SQL"
+        : "BYPASSING BUFFER must follow INTO/APPENDING in strict SQL";
+      issues.push(Issue.atToken(file, option.getFirstToken(), message, this.getMetadata().key, this.conf.severity, fix));
+    }
     return issues;
   }
 }
