@@ -2,8 +2,9 @@ import {ExpressionNode} from "../../nodes";
 import {INode} from "../../nodes/_inode";
 import {InstanceArrow} from "../../1_lexer/tokens";
 import * as Expressions from "../../2_statements/expressions";
-import {CharacterType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, HexType,
-  Integer8Type, IntegerType, NumericType, PackedType, TimeType, UTCLongType, VoidType} from "../../types/basic";
+import {CGenericType, CharacterType, CLikeType, CSequenceType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType,
+  FloatingPointType, FloatType, HexType, Integer8Type, IntegerType, NumericType, PackedType, SimpleType, StructureType,
+  TimeType, UTCLongType, VoidType, XGenericType, XSequenceType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ClassAttribute} from "../../types/class_attribute";
 import {IdentifierMeta} from "../../types/_typed_identifier";
@@ -13,7 +14,9 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 // The type of a substring with a static offset or length, used for reading and writing positions.
 // On a character or byte field of fixed length the substring must lie inside the field, else it is
 // a syntax error, unless the offset or length is a variable: then the bounds are left to the runtime.
-// Other types, a dynamic offset or length and "*" (undefined) are left alone, as is length 0.
+// Other types, a dynamic offset or length and "*" (undefined) are left alone.
+// A static length of 0 is a syntax error on a field of fixed length, also on a generically typed one,
+// while a string, an xstring and the types "any" and "data" take it. See also allowEmptySubstring.
 // The offset is applied first, so the length is compared to what remains after the offset.
 // "chain" holds the nodes of the surrounding chain, including both the offset and the length.
 // A substring of a date, time or numeric text field has type n; its bounds are not checked.
@@ -45,6 +48,12 @@ export function substringType(
       return context;
     }
     const message = `Field type "utclong" does not permit substrings to be accessed`;
+    input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+    return VoidType.get(CheckSyntaxKey);
+  }
+
+  if (length === 0 && input.emptySubstring !== node && excludesEmptySubstring(context)) {
+    const message = "Substring length must be greater than 0";
     input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
     return VoidType.get(CheckSyntaxKey);
   }
@@ -83,6 +92,22 @@ export function substringType(
   }
 
   return context;
+}
+
+// The source of ASSIGN and the target of WRITE TO can have a substring length of 0. Returns the input
+// to check such an operand with, an operand nested in it, eg. a method argument, is checked as usual
+export function allowEmptySubstring(input: SyntaxInput, operand: ExpressionNode): SyntaxInput {
+  const chain = operand.get() instanceof Expressions.Target ? operand
+    : operand.findDirectExpression(Expressions.FieldChain) || operand.findDirectExpression(Expressions.AttributeChain);
+  return {...input, emptySubstring: chain?.findDirectExpression(Expressions.FieldLength)};
+}
+
+function excludesEmptySubstring(context: AbstractType | undefined): boolean {
+  return context instanceof CharacterType || context instanceof NumericType
+    || context instanceof DateType || context instanceof TimeType || context instanceof HexType
+    || context instanceof StructureType || context instanceof CGenericType || context instanceof XGenericType
+    || context instanceof CLikeType || context instanceof CSequenceType || context instanceof XSequenceType
+    || context instanceof SimpleType;
 }
 
 // true if the offset or the length is given by a variable, a constant counts as static
@@ -186,7 +211,7 @@ function numericSubstringType(
 }
 
 // A field symbol typed "c" or "x" is generic, but its type is represented with length 1, so the
-// offset or length at "index" is not checked when it directly follows the field symbol.
+// bounds of the offset or length at "index" are not checked when it directly follows the field symbol.
 // No generic type is represented by utclong, so such a field symbol is checked
 export function isFieldSymbolItself(context: AbstractType | undefined, children: readonly INode[], index: number): boolean {
   if (context instanceof UTCLongType) {
