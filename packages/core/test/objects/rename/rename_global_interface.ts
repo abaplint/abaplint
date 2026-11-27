@@ -2,6 +2,7 @@ import {MemoryFile} from "../../../src/files/memory_file";
 import {expect} from "chai";
 import {Renamer} from "../../../src/objects/rename/renamer";
 import {Registry} from "../../../src/registry";
+import {dtelRefXML, refField, renameAll, tablXML, tagValues, ttypXML} from "./_ddic_xml";
 
 describe("Rename Global Interface", () => {
 
@@ -254,6 +255,22 @@ ENDCLASS.`;
     }
 
     expect(result.updatedFiles.has("zcl_clas.clas.abap")).to.equal(true);
+  });
+
+  it("INTF, REF TO in TABL, TTYP and DTEL", () => {
+    const intf = `INTERFACE if_foo PUBLIC.
+ENDINTERFACE.`;
+    const result = renameAll([
+      ["if_foo.intf.abap", intf],
+      ["s_foo.tabl.xml", tablXML("s_foo", [refField("R", "IF_FOO", "I")])],
+      ["tt_foo.ttyp.xml", ttypXML("tt_foo", "IF_FOO", "R")],
+      ["ref_foo.dtel.xml", dtelRefXML("ref_foo", "IF_FOO", "I")],
+    ], [["INTF", "if_foo", "zif_foo"]]);
+    expect(Object.keys(result).sort()).to.deep.equal(
+      ["ref_foo.dtel.xml", "s_foo.tabl.xml", "tt_foo.ttyp.xml", "zif_foo.intf.abap"]);
+    expect(tagValues(result["s_foo.tabl.xml"], "ROLLNAME")).to.deep.equal(["ZIF_FOO"]);
+    expect(tagValues(result["tt_foo.ttyp.xml"], "ROWTYPE")).to.deep.equal(["ZIF_FOO"]);
+    expect(tagValues(result["ref_foo.dtel.xml"], "DOMNAME")).to.deep.equal(["ZIF_FOO"]);
   });
 
 });
