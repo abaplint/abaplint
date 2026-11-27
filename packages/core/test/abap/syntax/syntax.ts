@@ -22532,3 +22532,70 @@ START-OF-SELECTION.`;
     });
   }
 });
+
+describe("syntax.ts, FIELD-SYMBOLS LIKE a generic type", () => {
+  const message = "FIELD-SYMBOLS cannot be LIKE a generic type";
+  const method = (body: string) => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run IMPORTING it TYPE STANDARD TABLE it_typed TYPE string_table.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error, LIKE LINE OF a field symbol TYPE STANDARD TABLE", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <row> LIKE LINE OF <tab>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, LIKE LINE OF a generic importing parameter", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <row> LIKE LINE OF it.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, LIKE a field symbol TYPE ANY TABLE", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+    FIELD-SYMBOLS <copy> LIKE <tab>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, LIKE a field symbol TYPE any", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <copy> LIKE <any>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("ok, TYPE a generic type", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <row> TYPE any.
+    ASSIGN it TO <tab>.
+    LOOP AT <tab> ASSIGNING <row>.
+    ENDLOOP.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, LIKE LINE OF a typed table", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <row> LIKE LINE OF it_typed.
+    LOOP AT it_typed ASSIGNING <row>.
+    ENDLOOP.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, LIKE a typed field symbol", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE string_table.
+    FIELD-SYMBOLS <copy> LIKE <tab>.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
