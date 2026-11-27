@@ -94,7 +94,8 @@ export class MethodParameters {
 
   private checkReceiving(node: INode, input: SyntaxInput, method: IMethodDefinition | VoidType) {
 
-    const type = method instanceof VoidType ? method : method.getParameters().getReturning()?.getType();
+    const returning = method instanceof VoidType ? undefined : method.getParameters().getReturning();
+    const type = method instanceof VoidType ? method : returning?.getType();
     if (type === undefined) {
       const message = "Method does not have a returning parameter";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -102,6 +103,14 @@ export class MethodParameters {
     } else if (!(node instanceof ExpressionNode)) {
       const message = "checkReceiving, not an expression node";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
+    }
+
+    const nameNode = node.findDirectExpression(Expressions.ParameterName);
+    const name = nameNode === undefined ? undefined : normalizeParameterName(nameNode.getFirstToken().getStr());
+    if (returning !== undefined && name !== undefined && returning.getName().toUpperCase() !== name) {
+      const message = "Method returning parameter \"" + name + "\" does not exist";
+      input.issues.push(syntaxIssue(input, nameNode!.getFirstToken(), message));
       return;
     }
 

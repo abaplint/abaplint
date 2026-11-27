@@ -25,9 +25,9 @@ export class EventDefinition extends Identifier implements IEventDefinition {
     super(found.getFirstToken(), input.filename);
 
     this.parameters = [];
-    this.parse(node, input);
-
     this.is_static = node.getFirstToken().getStr().toUpperCase() === "CLASS";
+
+    this.parse(node, input);
   }
 
   public getParameters(): readonly TypedIdentifier[] {
@@ -42,9 +42,13 @@ export class EventDefinition extends Identifier implements IEventDefinition {
 
   private parse(node: StatementNode, input: SyntaxInput) {
     for (const e of node.findAllExpressions(MethodParamExpression)) {
+      const name = e.findDirectExpression(Expressions.MethodParamName)?.concatTokens() ?? "";
       if (this.isPassByValue(e) === false) {
-        const name = e.findDirectExpression(Expressions.MethodParamName)?.concatTokens() ?? "";
         input.issues.push(syntaxIssue(input, e.getFirstToken(), "Event parameter " + name + " must be passed by VALUE"));
+      }
+      // instance events have an implicit output parameter SENDER
+      if (this.is_static === false && name.replace(/^!/, "").toUpperCase() === "SENDER") {
+        input.issues.push(syntaxIssue(input, e.getFirstToken(), "Event parameter " + name + " is implicitly declared"));
       }
       this.parameters.push(MethodParam.runSyntax(e, input, []));
     }

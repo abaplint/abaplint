@@ -9,6 +9,7 @@ import * as Expressions from "../2_statements/expressions";
 import {ExpressionNode, TokenNodeRegex} from "../nodes";
 import {NGenericType} from "../types/basic/ngeneric_type";
 import {BuiltIn, BuiltInMethod} from "./_builtin";
+import {characterStartLength} from "./_character_start";
 import {IMethodDefinition} from "../types/_method_definition";
 import {IdentifierMeta, TypedIdentifier} from "../types/_typed_identifier";
 import {SyntaxInput, syntaxIssue} from "./_syntax_input";
@@ -577,6 +578,10 @@ export class TypeUtils {
       if (target instanceof CharacterType || target instanceof StringType) {
         return false;
       }
+    } else if (source instanceof NumericType) {
+      if (target instanceof CharacterType || target instanceof StringType) {
+        return false;
+      }
     } else if (source instanceof StringType) {
       if (target instanceof StructureType && this.structureContainsString(target)) {
         return false;
@@ -929,6 +934,10 @@ export class TypeUtils {
       return this.isUTCLongAssignable(source, target);
     }
 
+    if (this.fitsCharacterStart(source, target) || this.fitsCharacterStart(target, source)) {
+      return true;
+    }
+
     if (target instanceof TableType) {
       if (target.isWithHeader()) {
         return this.isAssignable(source, target.getRowType());
@@ -1062,6 +1071,16 @@ export class TypeUtils {
     }
 
     return true;
+  }
+
+  // a field of type c can be assigned to and from a flat structure, if it is not longer than the
+  // character-like initial part of the structure
+  private fitsCharacterStart(field: AbstractType, structure: AbstractType): boolean {
+    if (!(field instanceof CharacterType) || !(structure instanceof StructureType)) {
+      return false;
+    }
+    const start = characterStartLength(structure);
+    return start !== undefined && field.getLength() <= start;
   }
 
   // utclong can only be converted to and from character like types

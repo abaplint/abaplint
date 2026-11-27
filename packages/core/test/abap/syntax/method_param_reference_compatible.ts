@@ -142,17 +142,17 @@ describe("syntax.ts, data object passed to a by-reference IMPORTING parameter", 
   });
 
   it("view builder, n LENGTH 6 component to string", () => {
-    expectReported(`view = NEW #( ).
+    expectReportedBefore(`view = NEW #( ).
 CREATE DATA dfies.
 view->a( n = \`maxLength\` v = dfies->leng ).`);
   });
 
   it("n LENGTH 6 to string, default parameter", () => {
-    expectReported(`lcl=>take_str( num6 ).`);
+    expectReportedBefore(`lcl=>take_str( num6 ).`);
   });
 
   it("named constant n LENGTH 6 to string", () => {
-    expectReported(`lcl=>take_str( c_num ).`);
+    expectReportedBefore(`lcl=>take_str( c_num ).`);
   });
 
   it("string to n LENGTH 6", () => {
