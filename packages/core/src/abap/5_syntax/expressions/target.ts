@@ -4,7 +4,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {INode} from "../../nodes/_inode";
 import {Dash, InstanceArrow, ParenLeft} from "../../1_lexer/tokens";
-import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, XStringType, StringType, GenericObjectReferenceType} from "../../types/basic";
+import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, XStringType, StringType, GenericObjectReferenceType, CharacterType} from "../../types/basic";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {FieldOffset} from "./field_offset";
@@ -157,6 +157,9 @@ export class Target {
       }
     }
     if (substring instanceof VoidType && !(context instanceof VoidType)) {
+      return substring;
+    } else if (context instanceof StructureType && substring instanceof CharacterType) {
+      // a substring of the character-like initial part of a structure is a character field
       return substring;
     }
 
