@@ -3120,4 +3120,10 @@ DATA(res) = cha && cha.`;
     expect((type as Basic.CharacterType).getLength()).to.equal(1);
   });
 
+  it("inline DATA, CONVERT UTCLONG with FRACTIONAL SECONDS", () => {
+    const type = resolveVariable(`DATA ts TYPE utclong.
+  CONVERT UTCLONG ts INTO DATE DATA(date) TIME DATA(time) FRACTIONAL SECONDS DATA(frac) DAYLIGHT SAVING TIME DATA(dst) TIME ZONE sy-zonlo.`, "frac")?.getType();
+    expect(type).to.be.instanceof(Basic.DecFloat34Type);
+  });
+
 });

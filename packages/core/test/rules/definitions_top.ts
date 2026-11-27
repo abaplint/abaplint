@@ -226,7 +226,6 @@ CLASS lcl_bar IMPLEMENTATION.
   METHOD bar.
     DATA foo TYPE c.
     WRITE 2.
-` + "    " + `
   ENDMETHOD.
 ENDCLASS.`;
     testFix(abap, expected);
@@ -244,7 +243,6 @@ FORM bar.
   TYPES ty_foo TYPE i.
   DATA moo TYPE ty_foo.
   WRITE 'hello'.
-` + "  " + `
 ENDFORM.`;
     testFix(abap, expected);
   });
@@ -287,7 +285,6 @@ FORM foo.
       END OF my_structure.
 DATA temp109 TYPE my_structure.
   WRITE 'moo'.
-
 ENDFORM.`;
     testFix(abap, expected, false);
   });
@@ -306,9 +303,60 @@ DATA BEGIN OF ls_foo.
 DATA bar TYPE i.
 DATA END OF ls_foo.
   WRITE 'moo'.
-` + "  " + `
 ENDFORM.`;
     testFix(abap, expected, false);
+  });
+
+  it("quick fix 6, the moved statement takes its row along, no whitespace-only row is left", async () => {
+    const abap = `
+FORM bar.
+  WRITE 'hello'.
+
+  DATA moo TYPE i.
+  moo = 2.
+ENDFORM.`;
+    const expected = `
+FORM bar.
+  DATA moo TYPE i.
+  WRITE 'hello'.
+
+  moo = 2.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("quick fix 7, statement over several rows", async () => {
+    const abap = `
+FORM bar.
+  WRITE 'hello'.
+  DATA moo
+    TYPE i.
+  moo = 2.
+ENDFORM.`;
+    const expected = `
+FORM bar.
+  DATA moo TYPE i.
+  WRITE 'hello'.
+  moo = 2.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("quick fix 8, something else on the row, only the statement goes", async () => {
+    const abap = `
+FORM bar.
+  WRITE 'hello'.
+  DATA moo TYPE i. " comment
+  moo = 2.
+ENDFORM.`;
+    const expected = `
+FORM bar.
+  DATA moo TYPE i.
+  WRITE 'hello'.
+   " comment
+  moo = 2.
+ENDFORM.`;
+    testFix(abap, expected);
   });
 
 });
