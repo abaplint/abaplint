@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import {Unknown, MacroRecursion} from "../abap/2_statements/statements/_statement";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {STATEMENT_MAX_TOKENS} from "../abap/2_statements/statement_parser";
+import {STATEMENT_MAX_TOKENS, STATEMENT_MAX_OPERATORS, countOperators} from "../abap/2_statements/statement_parser";
 import {IRule, RuleTag} from "./_irule";
 import {Release} from "../version";
 import {ABAPObject} from "../objects/_abap_object";
@@ -49,7 +49,8 @@ See recognized syntax at https://syntax.abaplint.org`,
 
         for (const statement of file.getStatements()) {
           if (statement.get() instanceof Unknown) {
-            if (statement.getTokens().length > STATEMENT_MAX_TOKENS) {
+            if (statement.getTokens().length > STATEMENT_MAX_TOKENS
+                || countOperators(statement.getTokens()) > STATEMENT_MAX_OPERATORS) {
               const message = "Statement too long, refactor statement";
               const issue = Issue.atToken(file, statement.getTokens()[0], message, this.getMetadata().key, this.conf.severity);
               issues.push(issue);
