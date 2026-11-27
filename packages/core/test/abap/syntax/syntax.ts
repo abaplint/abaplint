@@ -21770,7 +21770,7 @@ CLASS lcl IMPLEMENTATION.
     initial_keys = CORRESPONDING #( initial_data ).
   ENDMETHOD.
 ENDCLASS.`;
-    const issues = runProgram(abap);
+    const issues = runProgram(abap, [], Release.v750);
     expect(issues.length).to.equal(0, issues.map(i => i.getMessage()).join(", "));
   });
 
