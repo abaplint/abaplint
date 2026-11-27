@@ -6,6 +6,7 @@ import {ReferenceType} from "../_reference";
 import {StatementSyntax} from "../_statement_syntax";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Visibility} from "../../4_file_information/visibility";
+import {ClassDefinition} from "../../types/class_definition";
 
 export class MethodImplementation implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -22,7 +23,7 @@ export class MethodImplementation implements StatementSyntax {
       return;
     }
 
-    const {method: methodDefinition} = helper.searchMethodName(classDefinition, methodName);
+    const {method: methodDefinition, def: foundDef} = helper.searchMethodName(classDefinition, methodName);
 
     if (classDefinition.isForTesting()
         && methodDefinition?.getVisibility() !== Visibility.Private
@@ -45,6 +46,13 @@ export class MethodImplementation implements StatementSyntax {
       const message = "Method definition \"" + methodName + "\" not found";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
+    }
+
+    // a method declared in a super class can only be implemented if it is declared with REDEFINITION
+    if (foundDef instanceof ClassDefinition
+        && foundDef.getName().toUpperCase() !== classDefinition.getName().toUpperCase()) {
+      const message = "Method \"" + methodName + "\" is implemented in super class \"" + foundDef.getName() + "\", use REDEFINITION";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
     }
 
     input.scope.addReference(methodToken, methodDefinition, ReferenceType.MethodImplementationReference, input.filename);
