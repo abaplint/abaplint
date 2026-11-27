@@ -12,6 +12,8 @@ import {ObjectRenamer} from "./_object_renamer";
 import {RenameMessageClass} from "./rename_message_class";
 import {RenameICFService} from "./rename_icf_service";
 import {IRenamedName, RenameLiterals} from "./rename_literals";
+import {IRenamedURL, RenameURLs} from "./rename_urls";
+import {ICFService} from "../icf_service";
 import {RenameBSPApplication} from "./rename_bsp_application";
 
 export interface IRenameResult {
@@ -22,6 +24,7 @@ export interface IRenameResult {
 
 export class Renamer {
   private readonly reg: IRegistry;
+  private readonly renamedURLs: IRenamedURL[] = [];
 
   public constructor(reg: IRegistry) {
     this.reg = reg;
@@ -38,8 +41,25 @@ export class Renamer {
       throw new Error("only documentChanges expected");
     }
 
+    const before = type === "SICF" ? this.findObject(type, oldName) : undefined;
+    const oldURL = before instanceof ICFService ? before.getURL() : undefined;
+    const oldXML = before?.getXMLFile()?.getFilename();
+
     const result = this.apply(edits);
     this.reg.findIssues(); // hmm, this builds the ddic references
+
+    if (oldURL !== undefined && oldXML !== undefined) {
+      this.rememberURL(edits, oldURL, oldXML);
+    }
+    return result;
+  }
+
+  /** Renames the old URLs of the ICF nodes renamed by this renamer in the pages of the BSP
+   *  applications, see RenameURLs */
+  public renameURLs(): IRenameResult {
+    this.reg.parse();
+    const result = this.apply(new RenameURLs(this.reg).buildEdits(this.renamedURLs));
+    this.reg.parse();
     return result;
   }
 
@@ -56,12 +76,7 @@ export class Renamer {
   public buildEdits(type: string, oldName: string, newName: string): WorkspaceEdit | undefined {
     this.reg.parse(); // the registry must be parsed to dermine references
 
-    let obj = this.reg.getObject(type, oldName);
-
-    if (obj === undefined && type === "SICF") {
-      obj = Array.from(this.reg.getObjects()).find(o =>
-        o.getType() === "SICF" && o.getName().toUpperCase().startsWith(oldName.toUpperCase() + " "));
-    }
+    const obj = this.findObject(type, oldName);
 
     if (obj === undefined) {
       throw new Error("rename, object not found");
@@ -75,6 +90,27 @@ export class Renamer {
   }
 
 //////////////////
+
+  private findObject(type: string, name: string) {
+    let obj = this.reg.getObject(type, name);
+    if (obj === undefined && type === "SICF") {
+      obj = Array.from(this.reg.getObjects()).find(o =>
+        o.getType() === "SICF" && o.getName().toUpperCase().startsWith(name.toUpperCase() + " "));
+    }
+    return obj;
+  }
+
+  /** the new URL is the one in the XML file the old XML file was renamed to */
+  private rememberURL(edits: WorkspaceEdit, oldURL: string, oldXML: string) {
+    for (const dc of edits.documentChanges || []) {
+      if (RenameFile.is(dc) && dc.oldUri === oldXML) {
+        const newURL = this.reg.getFileByName(dc.newUri)?.getRaw().match(/<URL>([^<]*)<\/URL>/)?.[1];
+        if (newURL !== undefined && newURL.toLowerCase() !== oldURL.toLowerCase()) {
+          this.renamedURLs.push({oldURL, newURL});
+        }
+      }
+    }
+  }
 
   private factory(type: string): ObjectRenamer {
     switch (type) {

@@ -2,6 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
 import {InlineFS} from "../expressions/inline_fs";
 import {Source} from "../expressions/source";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {Target} from "../expressions/target";
 import {FSTarget} from "../expressions/fstarget";
 import {AbstractType} from "../../types/basic/_abstract_type";
@@ -46,6 +47,7 @@ export class InsertInternal implements StatementSyntax {
         source = node.findDirectExpression(Expressions.Source);
       }
     }
+    checkParenthesizedOperand(source, input);
     const sourceType = source ? Source.runSyntax(source, input, targetType) : targetType;
 
     if (targetType === undefined
@@ -71,6 +73,11 @@ export class InsertInternal implements StatementSyntax {
     if (initial === false) {
       let error = false;
       if (sourceType instanceof IntegerType && targetType instanceof Integer8Type) {
+        error = true;
+      } else if (source?.getChildren().length === 1
+          && new TypeUtils(input.scope).isPackedConstant(sourceType)
+          && (targetType instanceof IntegerType || targetType instanceof Integer8Type)) {
+        // a literal of type p is not converted into an integer row
         error = true;
       } else if (targetType instanceof TableType && targetType.isWithHeader() && sourceType instanceof TableType) {
         // LINES OF into a table with header line, compare the row types

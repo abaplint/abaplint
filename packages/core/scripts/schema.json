@@ -1668,6 +1668,63 @@
       },
       "type": "object"
     },
+    "DynamicWhereEmptyConf": {
+      "additionalProperties": false,
+      "properties": {
+        "deleteDatabase": {
+          "description": "Check DELETE FROM dbtab",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreTables": {
+          "description": "Database tables not checked, eg. customizing tables a full read of which is fine, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "modifyDatabase": {
+          "description": "Check MODIFY dbtab FROM ( SELECT ... )",
+          "type": "boolean"
+        },
+        "openCursor": {
+          "description": "Check OPEN CURSOR",
+          "type": "boolean"
+        },
+        "select": {
+          "description": "Check SELECT and SELECT loops",
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "skipUpTo": {
+          "description": "Skip statements with UP TO n ROWS, the read is bounded",
+          "type": "boolean"
+        },
+        "updateDatabase": {
+          "description": "Check UPDATE dbtab SET",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "select",
+        "openCursor",
+        "deleteDatabase",
+        "updateDatabase",
+        "modifyDatabase",
+        "ignoreTables",
+        "skipUpTo"
+      ],
+      "type": "object"
+    },
     "DynproChecksConf": {
       "additionalProperties": false,
       "properties": {
@@ -3113,6 +3170,17 @@
                 }
               ],
               "description": "Downport functionality\nTags: Downport, Quickfix\nhttps://rules.abaplint.org/downport"
+            },
+            "dynamic_where_empty": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DynamicWhereEmptyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a dynamic WHERE (lv) whose variable can reach the statement empty\nTags: SingleFile\nhttps://rules.abaplint.org/dynamic_where_empty"
             },
             "dynpro_checks": {
               "anyOf": [
@@ -5809,6 +5877,17 @@
               ],
               "description": "Downport functionality\nTags: Downport, Quickfix\nhttps://rules.abaplint.org/downport"
             },
+            "dynamic_where_empty": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DynamicWhereEmptyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a dynamic WHERE (lv) whose variable can reach the statement empty\nTags: SingleFile\nhttps://rules.abaplint.org/dynamic_where_empty"
+            },
             "dynpro_checks": {
               "anyOf": [
                 {
@@ -7898,6 +7977,10 @@
           },
           "type": "array",
           "uniqueItems": true
+        },
+        "urls": {
+          "description": "also rename the URLs of renamed ICF nodes (SICF) in the pages of the BSP applications (WAPA), eg. a data source in a manifest.json, a URL is matched as a whole path, disabled by default",
+          "type": "boolean"
         }
       },
       "required": [
@@ -8653,6 +8736,7 @@
           "type": "array"
         },
         "numericParameters": {
+          "description": "parameters must be numbered",
           "type": "boolean"
         },
         "severity": {
@@ -11414,6 +11498,7 @@
       "additionalProperties": false,
       "properties": {
         "allowEmpty": {
+          "description": "Allow empty METHODs + FORMs + FUNCTION-MODULEs",
           "type": "boolean"
         },
         "exclude": {

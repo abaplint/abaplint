@@ -24,9 +24,17 @@ export class Rename {
     }
 
     this.skip(rconfig);
-    const renamed = this.rename(rconfig, quiet);
+    const {renamer, renamed} = this.rename(rconfig, quiet);
     if (rconfig.literals === true) {
-      this.collect(new abaplint.Rename(this.reg).renameLiterals(renamed));
+      this.collect(renamer.renameLiterals(renamed));
+    }
+    if (rconfig.urls === true) {
+      const result = renamer.renameURLs();
+      result.updatedFiles.forEach(f => {
+        if (this.addedFiles.has(f) === false) {
+          this.updatedFiles.add(f);
+        }
+      });
     }
     if (rconfig.output === undefined || rconfig.output === "") {
       // write changes inline
@@ -68,15 +76,17 @@ export class Rename {
     console.log("Output folder: " + outputFolder);
     FileOperations.deleteFolderRecursive(outputFolder);
 
-    const myBase = FileOperations.toUnixPath(path.resolve(base));
+    const myBase = path.resolve(base);
 
     for (const o of this.reg.getObjects()) {
       if (this.reg.isDependency(o) === true) {
         continue;
       }
       for (const f of o.getFiles()) {
-        // strip the long-path prefix (Windows) then the drive-qualified base
-        const n = outputFolder + f.getFilename().replace("//?/", "").replace(myBase, "");
+        // strip the long-path prefix (Windows), then take the path relative to the base,
+        // path.relative ignores case on Windows, where the drive letter case can differ
+        const filename = f.getFilename().replace(/^[\\/]{2}\?[\\/]/, "");
+        const n = outputFolder + path.posix.sep + FileOperations.toUnixPath(path.relative(myBase, filename));
         console.log("Write " + n);
         fs.mkdirSync(path.dirname(n), {recursive: true});
         fs.writeFileSync(n, f.getRaw());
@@ -94,7 +104,8 @@ export class Rename {
     result.addedFiles.forEach(f => { this.addedFiles.add(f); });
   }
 
-  private rename(rconfig: abaplint.IRenameSettings, quiet?: boolean): {oldName: string, newName: string}[] {
+  private rename(rconfig: abaplint.IRenameSettings,
+                 quiet?: boolean): {renamer: abaplint.Rename, renamed: {oldName: string, newName: string}[]} {
     const renamed: {oldName: string, newName: string}[] = [];
     const renamer = new abaplint.Rename(this.reg);
     for (const o of this.reg.getObjects()) {
@@ -124,7 +135,7 @@ export class Rename {
         break;
       }
     }
-    return renamed;
+    return {renamer, renamed};
   }
 
   private skip(rconfig: abaplint.IRenameSettings) {
