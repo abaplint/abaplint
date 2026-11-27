@@ -6,7 +6,7 @@ import {ABAPFile} from "../abap/abap_file";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 import {IRuleMetadata, RuleTag} from "./_irule";
-import {Release, releaseAtLeast} from "../version";
+import {LanguageVersion, Release, releaseAtLeast} from "../version";
 import {EditHelper, IEdit} from "../edit_helper";
 import {IStatement} from "../abap/2_statements/statements/_statement";
 import {ExpressionNode, StatementNode} from "../abap/nodes";
@@ -80,6 +80,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public sortExtract: boolean = true;
   /** Checks for TRANSLATE statement */
   public translate: boolean = true;
+  /** Checks for GET REFERENCE, only with language version Cloud, where it is deprecated */
+  public getReference: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -136,7 +138,10 @@ OCCURENCES: check for OCCURENCES vs OCCURRENCES
 
 CLIENT SPECIFIED, from 754: https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/abapselect_client_obsolete.html
 
-TRANSLATE: https://help.sap.com/docs/abap-cloud/abap-keywords-standard-abap/translate`,
+TRANSLATE: https://help.sap.com/docs/abap-cloud/abap-keywords-standard-abap/translate
+
+GET REFERENCE: only with language version Cloud, where it is deprecated, use REF instead,
+https://github.com/SAP-samples/abap-cheat-sheets/blob/main/19_ABAP_for_Cloud_Development.md`,
       badExample: `REFRESH itab.
 
 COMPUTE foo = 2 + 2.
@@ -377,6 +382,13 @@ ENDIF.`,
       if (this.conf.translate && sta instanceof Statements.Translate) {
         const fix = this.getTranslateFix(file, staNode);
         const issue = Issue.atStatement(file, staNode, "TRANSLATE is obsolete", this.getMetadata().key, this.conf.severity, fix);
+        issues.push(issue);
+      }
+
+      // deprecated in ABAP for Cloud Development, it still compiles there
+      if (this.conf.getReference && sta instanceof Statements.GetReference
+          && this.reg.getConfig().getLanguageVersion() === LanguageVersion.Cloud) {
+        const issue = Issue.atStatement(file, staNode, "GET REFERENCE is deprecated, use REF", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 

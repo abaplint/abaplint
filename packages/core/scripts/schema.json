@@ -9704,6 +9704,10 @@
           "description": "FREE MEMORY, without ID",
           "type": "boolean"
         },
+        "getReference": {
+          "description": "Checks for GET REFERENCE, only with language version Cloud, where it is deprecated",
+          "type": "boolean"
+        },
         "load": {
           "description": "Checks for addition LOAD",
           "type": "boolean"
@@ -9825,7 +9829,8 @@
         "replaceInto",
         "loopExtract",
         "sortExtract",
-        "translate"
+        "translate",
+        "getReference"
       ],
       "type": "object"
     },
