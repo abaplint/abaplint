@@ -15383,6 +15383,135 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("mapped");
   });
 
+  // in a system this is a global class, it is not part of the registry here
+  const entityEventHandlerStub = `
+CLASS cl_abap_behavior_event_handler DEFINITION ABSTRACT.
+ENDCLASS.
+CLASS cl_abap_behavior_event_handler IMPLEMENTATION.
+ENDCLASS.`;
+
+  it("FOR ENTITY EVENT, without IMPORTING", () => {
+    const abap = entityEventHandlerStub + `
+CLASS lcl_handler DEFINITION INHERITING FROM cl_abap_behavior_event_handler.
+  PRIVATE SECTION.
+    METHODS consume_created FOR ENTITY EVENT changed_instances FOR InspectionLot~created.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD consume_created.
+    DATA(first) = changed_instances[ 1 ].
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR ENTITY EVENT, with IMPORTING", () => {
+    const abap = entityEventHandlerStub + `
+CLASS lcl_handler DEFINITION INHERITING FROM cl_abap_behavior_event_handler.
+  PRIVATE SECTION.
+    METHODS on_event FOR ENTITY EVENT IMPORTING events FOR root~raised.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_event.
+    LOOP AT events INTO DATA(event).
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR ENTITY EVENT, REFERENCE(name)", () => {
+    const abap = entityEventHandlerStub + `
+CLASS lcl_handler DEFINITION INHERITING FROM cl_abap_behavior_event_handler.
+  PRIVATE SECTION.
+    METHODS on_event FINAL FOR ENTITY EVENT IMPORTING REFERENCE(events) FOR root~raised.
+    METHODS on_event2 FOR ENTITY EVENT REFERENCE(events) FOR root~raised.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_event.
+    LOOP AT events INTO DATA(event).
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD on_event2.
+    LOOP AT events INTO DATA(event).
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR ENTITY EVENT, several events in one statement", () => {
+    const abap = entityEventHandlerStub + `
+CLASS lcl_handler DEFINITION INHERITING FROM cl_abap_behavior_event_handler.
+  PRIVATE SECTION.
+    METHODS on_events FOR ENTITY EVENT
+      created_events FOR root~created
+      changed_events FOR root~changed
+      REFERENCE(deleted_events) FOR root~deleted.
+    METHODS on_events_importing FOR ENTITY EVENT IMPORTING
+      created_events FOR root~created
+      REFERENCE(changed_events) FOR root~changed
+      deleted_events FOR root~deleted.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_events.
+    LOOP AT created_events INTO DATA(created).
+    ENDLOOP.
+    LOOP AT changed_events INTO DATA(changed).
+    ENDLOOP.
+    LOOP AT deleted_events INTO DATA(deleted).
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD on_events_importing.
+    LOOP AT created_events INTO DATA(created).
+    ENDLOOP.
+    LOOP AT changed_events INTO DATA(changed).
+    ENDLOOP.
+    LOOP AT deleted_events INTO DATA(deleted).
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR ENTITY EVENT, no failed, mapped or reported", () => {
+    // no superclass, so the lookup of "reported" does not end in the void superclass
+    const abap = `
+CLASS lcl_handler DEFINITION.
+  PRIVATE SECTION.
+    METHODS on_event FOR ENTITY EVENT IMPORTING events FOR root~raised.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_event.
+    CLEAR reported.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("reported");
+  });
+
+  it("FOR ENTITY EVENT, CLASS-METHODS is not allowed", () => {
+    const abap = `
+CLASS lcl_handler DEFINITION INHERITING FROM cl_abap_behavior_event_handler.
+  PRIVATE SECTION.
+    CLASS-METHODS on_event FOR ENTITY EVENT events FOR root~raised.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_event.
+    LOOP AT events INTO DATA(event).
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
+    const parserErrors = reg.findIssues().filter(i => i.getKey() === "parser_error");
+    expect(parserErrors.length).to.equal(1);
+    expect(parserErrors[0].getStart().getRow()).to.equal(4);
+  });
+
   it("basic WITH INDICATORS", () => {
     const abap = `
 TYPES: BEGIN OF ty,
@@ -16401,6 +16530,37 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("PUBLIC class with FRIENDS, must be GLOBAL FRIENDS", () => {
+    const clas1 = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PUBLIC FRIENDS zcl_friend.
+ENDCLASS.
+CLASS zcl_sdfsdf IMPLEMENTATION.
+ENDCLASS.`;
+    const clas2 = `
+CLASS zcl_friend DEFINITION PUBLIC CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_friend IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas1},
+      {filename: "zcl_friend.clas.abap", contents: clas2}]);
+    expect(issues[0]?.getMessage()).to.include("GLOBAL FRIENDS");
+  });
+
+  it("local class with GLOBAL FRIENDS, error", () => {
+    const abap = `
+CLASS lcl_friend DEFINITION.
+ENDCLASS.
+CLASS lcl_friend IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_bar DEFINITION GLOBAL FRIENDS lcl_friend.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("GLOBAL FRIENDS");
+  });
+
   it("private method, called from friend, local classes", () => {
     const abap = `
 CLASS lcl_friend DEFINITION DEFERRED.
@@ -16748,7 +16908,7 @@ ENDCLASS.`;
 
   it("error if friend class does not exist, CREATE PRIVATE", () => {
     const abap = `
-CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE FRIENDS ycsdf.
+CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE GLOBAL FRIENDS ycsdf.
 ENDCLASS.
 CLASS cl_http_entity IMPLEMENTATION.
 ENDCLASS.`;

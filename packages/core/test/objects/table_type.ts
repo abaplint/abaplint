@@ -1,6 +1,7 @@
 import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
+import {Config} from "../../src/config";
 import * as Objects from "../../src/objects";
 import * as Types from "../../src/abap/types/basic";
 import {DataReference, GenericObjectReferenceType, TableAccessType} from "../../src/abap/types/basic";
@@ -68,6 +69,41 @@ describe("Table Type, parse XML", () => {
     expect(type).to.be.instanceof(Types.TableType);
     const row = (type as Types.TableType).getRowType();
     expect(row).to.be.instanceof(Types.CharacterType);
+  });
+
+  it("ROWTYPE I without ROWKIND, unknown in error namespace", async () => {
+    const xml1 = `
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZGG_LVC_T_FIDX</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>I</ROWTYPE>
+    <ROWKIND></ROWKIND>
+    <DATATYPE>INT4</DATATYPE>
+    <LENG>000004</LENG>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <DDTEXT>Filtered Indexes</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry().addFile(new MemoryFile("zgg_lvc_t_fidx.ttyp.xml", xml1));
+    const config = reg.getConfig().get();
+    config.syntax.errorNamespace = ".";
+    reg.setConfig(new Config(JSON.stringify(config)));
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Objects.TableType;
+
+    const type = tabl.parseType(reg);
+    expect(type).to.be.instanceof(Types.TableType);
+    const row = (type as Types.TableType).getRowType();
+    expect(row).to.be.instanceof(Types.UnknownType);
   });
 
   it("Call parseType, no ROWTYPE, no length", async () => {
