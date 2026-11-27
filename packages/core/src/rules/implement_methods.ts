@@ -92,7 +92,14 @@ export class ImplementMethods extends ABAPRule {
     const ret: Issue[] = [];
 
     for (const md of def.methods) {
-      const found = impl?.methods.find(m => m.getName().toUpperCase() === md.name.toUpperCase());
+      let found = impl?.methods.find(m => m.getName().toUpperCase() === md.name.toUpperCase());
+      if (found === undefined && md.name.includes("~")) {
+        // "METHODS zif~m REDEFINITION" implemented as "METHOD alias", the alias declared in the class or a super class
+        const alias = this.findAlias(def, md.name);
+        if (alias !== undefined) {
+          found = impl?.methods.find(m => m.getName().toUpperCase() === alias.toUpperCase());
+        }
+      }
 
       if (md.isAbstract === true) {
         if (found !== undefined) {

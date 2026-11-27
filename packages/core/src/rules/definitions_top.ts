@@ -124,7 +124,7 @@ ENDFORM.`,
             if (start && end) {
               let concat = c.concatTokens();
               concat = concat.replace(/,/g, ".\n");
-              const fix1 = EditHelper.deleteRange(file, start, end);
+              const fix1 = this.deleteLines(file, start, end) ?? EditHelper.deleteRange(file, start, end);
               const fix2 = EditHelper.insertAt(file, this.moveTo, "\n" + concat);
               fix = EditHelper.merge(fix1, fix2);
             }
@@ -179,10 +179,31 @@ ENDFORM.`,
     let concat = statement.concatTokens();
     concat = concat.replace(/,$/, ".");
 
-    const fix1 = EditHelper.deleteStatement(file, statement);
+    const fix1 = (statement.getColon() === undefined
+      ? this.deleteLines(file, statement.getFirstToken().getStart(), statement.getLastToken().getEnd())
+      : undefined) ?? EditHelper.deleteStatement(file, statement);
     const indentation = " ".repeat(statement.getFirstToken().getCol() - 1);
     const fix2 = EditHelper.insertAt(file, at, "\n" + indentation + concat);
 
     return EditHelper.merge(fix1, fix2);
+  }
+
+  /**
+   * Code that has its rows to itself is removed with them: deleting only the code
+   * leaves a row holding nothing but its indentation, and that trailing whitespace
+   * is what the next lint run reports. Undefined when the rows hold anything else.
+   */
+  private deleteLines(file: ABAPFile, start: Position, end: Position): IEdit | undefined {
+    const rows = file.getRawRows();
+    const before = rows[start.getRow() - 1]?.substring(0, start.getCol() - 1) ?? "";
+    const after = rows[end.getRow() - 1]?.substring(end.getCol() - 1) ?? "";
+    if (before.trim() !== "" || after.trim() !== "") {
+      return undefined;
+    }
+
+    if (end.getRow() >= rows.length) {
+      return undefined;
+    }
+    return EditHelper.deleteRange(file, new Position(start.getRow(), 1), new Position(end.getRow() + 1, 1));
   }
 }

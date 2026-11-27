@@ -3457,6 +3457,58 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
+  it("ok, bit-set( ) and boolx( )", () => {
+    const abap = `
+    DATA i TYPE i.
+    DATA x TYPE xstring.
+    x = bit-set( 1 ).
+    x = bit-set( val = i ).
+    x = boolx( bool = i = 1 bit = 1 ).
+    x = boolx( bool = i = 1 ).
+    x = boolx( bool = i IS INITIAL ).
+    x = bit-set( i ) BIT-AND boolx( bool = i = 1 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("bit-set( ), the argument is checked", () => {
+    const abap = `
+    DATA x TYPE xstring.
+    x = bit-set( something ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("boolx( ), the logical expression is checked", () => {
+    const abap = `
+    DATA x TYPE xstring.
+    x = boolx( bool = something = 1 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("boolx( ), the bit is checked", () => {
+    const abap = `
+    DATA i TYPE i.
+    DATA x TYPE xstring.
+    x = boolx( bool = i = 1 bit = something ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("bit-set( ) followed by BIT-AND, hex operand expected", () => {
+    const abap = `
+    DATA s TYPE string.
+    DATA x TYPE xstring.
+    x = bit-set( 1 ) BIT-AND s.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal("Operator only valid for XSTRING or HEX");
+  });
+
   it("calculation, something", () => {
     const abap = `
     DATA lv_f TYPE f.

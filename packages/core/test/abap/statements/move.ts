@@ -10,6 +10,15 @@ const tests = [
   "lv_foo = 2.",
   "rs_data-raw = gv_out.",
   "rv_bool = boolc( sy-subrc = 0 ).",
+  "x = bit-set( 1 ).",
+  "x = BIT-SET( val = 1 ).",
+  "x = bit-set( lv_i + 1 ) BIT-AND y.",
+  "x = BIT-NOT bit-set( 1 ).",
+  "x = boolx( bool = i = 1 bit = 1 ).",
+  "x = boolx( bool = i = 1 ).",
+  "x = boolx( bool = i IS INITIAL ).",
+  "x = BOOLX( bit = 2 bool = i = 1 AND j < 3 ).",
+  "x = boolx( bool = line_exists( itab[ 1 ] ) ).",
   "rs_data-compressed_len = xstrlen( foo ).",
   "lo_repo ?= lcl_app=>repo_srv( )->get( <ls_list>-key ).",
   "foo ?= lo_obj->/iwbep/if_mgw_dp_int_facade~get_model( ).",
@@ -493,6 +502,8 @@ statementVersionOk(ok, "MOVE", Statements.Move);
 
 const versionsFail = [
   {abap: "lv_foo *= 2.", rel: Release.v702},
+  {abap: "x = bit-set( 1 ).", rel: Release.v700},
+  {abap: "x = boolx( bool = i = 1 ).", rel: Release.v700},
   {abap: `move 2 to lv_foo.`, rel: Release.Newest, langVer: LanguageVersion.Cloud},
 ];
 
