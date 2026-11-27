@@ -1,4 +1,6 @@
-import {statementType, statementVersionFail} from "../_utils";
+import {getStatements, statementType, statementVersionFail} from "../_utils";
+import {expect} from "chai";
+import {Source, Target} from "../../../src/abap/2_statements/expressions";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release, LanguageVersion} from "../../../src";
 
@@ -22,3 +24,9 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "GET PROPERTY");
+
+it("GET PROPERTY reads the property name and writes the result", () => {
+  const node = getStatements("GET PROPERTY OF ole property = result EXPORTING #1 = argument.")[0];
+  expect(node.findDirectExpressions(Source).map(s => s.concatTokens())).to.deep.equal(["property"]);
+  expect(node.findDirectExpressions(Target).map(t => t.concatTokens())).to.deep.equal(["result"]);
+});

@@ -18,7 +18,8 @@ export class AttributeName {
     node: INode,
     input: SyntaxInput,
     type?: ReferenceType | ReferenceType[] | undefined,
-    error = true): AbstractType | undefined {
+    error = true,
+    requireWritable = false): AbstractType | undefined {
 
     if (context instanceof VoidType) {
       return context;
@@ -53,6 +54,12 @@ export class AttributeName {
         const notVisible = helper.memberNotVisible(found.getVisibility(), def, owner, input.scope.getEnclosingClassName());
         if (notVisible !== undefined) {
           const message = `Attribute "${name}" is ${notVisible} and cannot be accessed`;
+          input.issues.push(syntaxIssue(input, token, message));
+          return VoidType.get(CheckSyntaxKey);
+        }
+        if ((requireWritable || type === ReferenceType.DataWriteReference) && found instanceof ClassAttribute
+            && helper.canWriteAttribute(def, found, owner) === false) {
+          const message = `Attribute "${name}" is read-only and cannot be modified`;
           input.issues.push(syntaxIssue(input, token, message));
           return VoidType.get(CheckSyntaxKey);
         }

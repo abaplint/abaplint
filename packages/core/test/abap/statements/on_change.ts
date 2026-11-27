@@ -1,4 +1,6 @@
-import {statementType, statementVersionFail} from "../_utils";
+import {getStatements, statementType, statementVersionFail} from "../_utils";
+import {expect} from "chai";
+import {Source, Target} from "../../../src/abap/2_statements/expressions";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release, LanguageVersion} from "../../../src";
 
@@ -14,3 +16,9 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "ON CHANGE");
+
+it("ON CHANGE reads every operand", () => {
+  const node = getStatements("ON CHANGE OF first OR second.")[0];
+  expect(node.findDirectExpressions(Source).map(s => s.concatTokens())).to.deep.equal(["first", "second"]);
+  expect(node.findDirectExpressions(Target)).to.have.length(0);
+});

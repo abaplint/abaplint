@@ -42,8 +42,8 @@ export class Import implements IStatement {
                         "IGNORING STRUCTURE BOUNDARIES",
                         "ACCEPTING TRUNCATION",
                         seq("REPLACEMENT CHARACTER", Source),
-                        seq("CODE PAGE INTO", Source),
-                        seq("ENDIAN INTO", Source));
+                        seq("CODE PAGE INTO", Target),
+                        seq("ENDIAN INTO", Target));
 
     const ret = seq("IMPORT", target, "FROM", source, opt(options));
 

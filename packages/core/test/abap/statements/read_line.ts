@@ -1,4 +1,6 @@
-import {statementType, statementVersionFail} from "../_utils";
+import {getStatements, statementType, statementVersionFail} from "../_utils";
+import {expect} from "chai";
+import {Source, Target} from "../../../src/abap/2_statements/expressions";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release, LanguageVersion} from "../../../src";
 
@@ -20,3 +22,9 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "READ LINE");
+
+it("READ LINE writes fields without INTO and reads field operands before INTO", () => {
+  const node = getStatements("READ CURRENT LINE FIELD VALUE first second INTO result third.")[0];
+  expect(node.findDirectExpressions(Source).map(s => s.concatTokens())).to.deep.equal(["second"]);
+  expect(node.findDirectExpressions(Target).map(t => t.concatTokens())).to.deep.equal(["first", "result", "third"]);
+});

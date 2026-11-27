@@ -7,20 +7,20 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Communication implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const length = seq("LENGTH", Target);
+    const length = seq("LENGTH", Source);
 
-    const returncode = seq("RETURNCODE", Source);
-    const buffer = seq("BUFFER", Target);
-    const init = seq("INIT ID", Source, "DESTINATION", Target);
+    const returncode = seq("RETURNCODE", Target);
+    const buffer = seq("BUFFER", Source);
+    const init = seq("INIT ID", Target, "DESTINATION", Source);
     const allocate = seq("ALLOCATE ID", Source, opt(returncode));
     const send = seq("SEND ID", Source, opt(per(buffer, length)), opt(returncode));
     const deallocate = seq("DEALLOCATE ID", Source, opt(returncode));
-    const accept = seq("ACCEPT ID", Source);
+    const accept = seq("ACCEPT ID", Target);
 
     const receive = seq("RECEIVE ID",
                         Source,
                         "BUFFER",
-                        Source,
+                        Target,
                         opt(length),
                         "DATAINFO",
                         Target,

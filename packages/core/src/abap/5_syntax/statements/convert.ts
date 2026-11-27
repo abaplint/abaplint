@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
-import {StatementNode} from "../../nodes";
+import {StatementNode, TokenNode} from "../../nodes";
 import {InlineData} from "../expressions/inline_data";
-import {TimeType, DateType, PackedType, CharacterType, UTCLongType} from "../../types/basic";
+import {TimeType, DateType, PackedType, CharacterType, UTCLongType, NumericType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
@@ -16,50 +16,24 @@ export class Convert implements StatementSyntax {
       Source.runSyntax(s, input);
     }
 
-    const timeTargets = node.findExpressionsAfterToken("TIME");
-    for (const timeTarget of timeTargets) {
-      const concat = node.concatTokens().toUpperCase();
-      if (timeTarget?.get() instanceof Expressions.Target) {
-        const inline = timeTarget?.findDirectExpression(Expressions.InlineData);
-        if (inline) {
-          let targetType = new TimeType();
-          if (concat.includes("DAYLIGHT SAVING TIME " + inline.concatTokens().toUpperCase())) {
-            targetType = new CharacterType(1);
-          }
-          InlineData.runSyntax(inline, input, targetType);
-        } else {
-          Target.runSyntax(timeTarget, input);
-        }
-      }
-    }
-
-    const dateTarget = node.findExpressionAfterToken("DATE");
-    if (dateTarget?.get() instanceof Expressions.Target) {
-      const inline = dateTarget?.findDirectExpression(Expressions.InlineData);
+    const children = node.getChildren();
+    for (const target of node.findDirectExpressions(Expressions.Target)) {
+      const inline = target.findDirectExpression(Expressions.InlineData);
       if (inline) {
-        InlineData.runSyntax(inline, input, new DateType());
+        const index = children.indexOf(target);
+        const keyword = children[index - 1]?.concatTokens().toUpperCase();
+        const daylight = keyword === "TIME" && children[index - 2] instanceof TokenNode
+          && children[index - 2].concatTokens().toUpperCase() === "SAVING";
+        const inverted = keyword === "DATE" && children[index - 3] instanceof TokenNode
+          && children[index - 3].concatTokens().toUpperCase() === "INVERTED";
+        const type = daylight ? new CharacterType(1)
+          : inverted ? new NumericType(8)
+            : keyword === "DATE" ? new DateType()
+              : keyword === "STAMP" ? new PackedType(8, 0)
+                : keyword === "UTCLONG" ? new UTCLongType() : new TimeType();
+        InlineData.runSyntax(inline, input, type);
       } else {
-        Target.runSyntax(dateTarget, input);
-      }
-    }
-
-    const stampTarget = node.findExpressionAfterToken("STAMP");
-    if (stampTarget?.get() instanceof Expressions.Target) {
-      const inline = stampTarget?.findDirectExpression(Expressions.InlineData);
-      if (inline) {
-        InlineData.runSyntax(inline, input, new PackedType(8, 0));
-      } else {
-        Target.runSyntax(stampTarget, input);
-      }
-    }
-
-    const utclongTarget = node.findExpressionAfterToken("UTCLONG");
-    if (utclongTarget?.get() instanceof Expressions.Target) {
-      const inline = utclongTarget?.findDirectExpression(Expressions.InlineData);
-      if (inline) {
-        InlineData.runSyntax(inline, input, new UTCLongType());
-      } else {
-        Target.runSyntax(utclongTarget, input);
+        Target.runSyntax(target, input);
       }
     }
 

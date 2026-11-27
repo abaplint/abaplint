@@ -171,15 +171,16 @@ import {LoopTableChange} from "./_loop_table_change";
 import {SortedKeyWrite} from "./_sorted_key_write";
 import {SuperConstructorCall} from "./_super_constructor_call";
 import {SpaghettiScope} from "./spaghetti_scope";
+import {SourceTarget} from "./statements/_source_target";
 
 // -----------------------------------
 
 const map: {[name: string]: StatementSyntax} = {};
-function addToMap(handler: StatementSyntax) {
-  if (map[handler.constructor.name] !== undefined) {
+function addToMap(handler: StatementSyntax, name = handler.constructor.name) {
+  if (map[name] !== undefined) {
     throw new AssertError("syntax.ts duplicate statement syntax handler");
   }
-  map[handler.constructor.name] = handler;
+  map[name] = handler;
 }
 if (Object.keys(map).length === 0) {
   addToMap(new InterfaceDeferred());
@@ -313,6 +314,15 @@ if (Object.keys(map).length === 0) {
   addToMap(new FieldGroup());
   addToMap(new EditorCall());
   addToMap(new DeleteMemory());
+  addToMap(new Move(), "Compute");
+  addToMap(new Tables(), "Nodes");
+  for (const statement of [Statements.CallOLE, Statements.Cleanup, Statements.Communication, Statements.CreateOLE,
+    Statements.ConvertText, Statements.Demand, Statements.FreeObject, Statements.GenerateDynpro, Statements.GenerateReport,
+    Statements.GenerateSubroutine, Statements.Get, Statements.GetDataset, Statements.GetProperty, Statements.ImportNametab,
+    Statements.LoadReport,
+    Statements.OnChange, Statements.Overlay, Statements.Provide, Statements.ReadLine, Statements.SetLocks]) {
+    addToMap(new SourceTarget(), statement.name);
+  }
 }
 
 // -----------------------------------

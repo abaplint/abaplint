@@ -1,4 +1,6 @@
-import {statementType, statementVersionOk, statementVersionFail} from "../_utils";
+import {getStatements, statementType, statementVersionOk, statementVersionFail} from "../_utils";
+import {expect} from "chai";
+import {Source, Target} from "../../../src/abap/2_statements/expressions";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release, LanguageVersion} from "../../../src";
 
@@ -55,3 +57,9 @@ const keyUserOk = [
 ];
 
 statementVersionOk(keyUserOk, "IMPORT KeyUser allowed", Statements.Import);
+
+it("IMPORT writes CODE PAGE and ENDIAN outputs", () => {
+  const node = getStatements("IMPORT text FROM MEMORY ID id ENDIAN INTO endian CODE PAGE INTO codepage.")[0];
+  expect(node.findDirectExpressions(Source).map(s => s.concatTokens())).to.deep.equal(["id"]);
+  expect(node.findDirectExpressions(Target).map(t => t.concatTokens())).to.deep.equal(["text", "endian", "codepage"]);
+});
