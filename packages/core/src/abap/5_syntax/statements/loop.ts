@@ -172,11 +172,11 @@ export class Loop implements StatementSyntax {
 
     const inlinefs = target?.findDirectExpression(Expressions.InlineFS);
     if (inlinefs) {
-      InlineFS.runSyntax(inlinefs, input, sourceType);
+      InlineFS.runSyntax(inlinefs, input, InlineFS.typeForTableRow(sourceType));
     } else {
       const fstarget = loopTarget?.findDirectExpression(Expressions.FSTarget);
       if (fstarget) {
-        FSTarget.runSyntax(fstarget, input, sourceType);
+        FSTarget.runSyntax(fstarget, input, InlineFS.typeForTableRow(sourceType));
       }
     }
 
