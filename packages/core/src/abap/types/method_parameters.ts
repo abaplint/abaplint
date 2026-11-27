@@ -188,6 +188,18 @@ export class MethodParameters implements IMethodParameters {
       return;
     }
 
+    if (node.findDirectTokenByText("ENTITY") && node.findDirectTokenByText("EVENT")) {
+      // RAP entity event handler: "FOR ENTITY EVENT [IMPORTING] {name | REFERENCE(name)} FOR entity~event ...",
+      // IMPORTING is optional, each name is an importing parameter, no failed/mapped/reported
+      for (const name of node.findDirectExpressions(Expressions.MethodParamName)) {
+        const id = new TypedIdentifier(name.getFirstToken(), input.filename, VoidType.get("RapMethodParameter"), [IdentifierMeta.MethodImporting]);
+        if (this.isDuplicateName(id, input) === false) {
+          this.importing.push(id);
+        }
+      }
+      return;
+    }
+
     const importing = node.findFirstExpression(Expressions.MethodDefImporting);
     if (importing) {
       this.add(this.importing, importing, input, [IdentifierMeta.MethodImporting], abstractMethod);

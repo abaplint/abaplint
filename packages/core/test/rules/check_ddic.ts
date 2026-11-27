@@ -347,4 +347,32 @@ ENDINTERFACE.`;
     expect(issues[0]?.getMessage()).to.not.equal(undefined);
   });
 
+  it("TTYP, ROWTYPE I without ROWKIND, error expected, full error namespace", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZGG_LVC_T_FIDX</TYPENAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <ROWTYPE>I</ROWTYPE>
+    <ROWKIND></ROWKIND>
+    <DATATYPE>INT4</DATATYPE>
+    <LENG>000004</LENG>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <DDTEXT>Filtered Indexes</DDTEXT>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const reg = new Registry().addFile(new MemoryFile("zgg_lvc_t_fidx.ttyp.xml", xml));
+    reg.setConfig(fullErrorNamespace());
+    await reg.parseAsync();
+
+    const issues = new CheckDDIC().initialize(reg).run(reg.getFirstObject()!);
+    expect(issues.length).to.equal(1);
+  });
+
 });
