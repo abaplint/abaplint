@@ -65,10 +65,16 @@ export class RenamerHelper {
     return changes;
   }
 
-  public renameDDICTABLReferences(obj: IObject, oldName: string, newName: string): TextDocumentEdit[] {
+  /** tags: the TABL XML tags that can contain the name of obj, ROLLNAME holds the type of a field,
+   *  a renamed table can also be in PRECFIELD (.INCLUDE) or CHECKTABLE */
+  public renameDDICTABLReferences(obj: IObject, oldName: string, newName: string, tags: string[] = ["ROLLNAME"]): TextDocumentEdit[] {
     const changes: TextDocumentEdit[] = [];
     const used = this.reg.getDDICReferences().listWhereUsed(obj);
     const handled: {[name: string]: boolean} = {};
+    if (obj.getType() === "TABL") {
+      // eg. its own check table, the renamer of the table edits its own XML
+      handled[obj.getName().toUpperCase()] = true;
+    }
 
     for (const u of used) {
       if (u.type !== "TABL" || handled[u.name.toUpperCase()] === true) {
@@ -80,7 +86,9 @@ export class RenamerHelper {
         continue;
       }
 
-      changes.push(...this.buildXMLFileEdits(tabl, "ROLLNAME", oldName, newName));
+      for (const tag of tags) {
+        changes.push(...this.buildXMLFileEdits(tabl, tag, oldName, newName));
+      }
       handled[u.name.toUpperCase()] = true;
     }
     return changes;
