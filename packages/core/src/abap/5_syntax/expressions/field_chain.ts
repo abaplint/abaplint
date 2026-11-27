@@ -139,7 +139,7 @@ export class FieldChain {
         }
       } else if (current.get() instanceof Expressions.FieldLength && current instanceof ExpressionNode) {
         const length = FieldLength.runSyntax(current, input);
-        if (!isFieldSymbolItself(context, children, i)) {
+        if (length === 0 || !isFieldSymbolItself(context, children, i)) {
           context = substringType(context, undefined, length, current, children, input);
         }
       }
