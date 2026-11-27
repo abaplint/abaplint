@@ -12,7 +12,8 @@ export class GetReference implements IStatement {
                     "INTO",
                     Target);
 
-    return verNotLang(LanguageVersion.KeyUser, ret);
+    // not released for ABAP Cloud, use "ref = REF #( source )" instead
+    return verNotLang(LanguageVersion.Cloud, ret);
   }
 
 }
