@@ -16530,6 +16530,37 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("PUBLIC class with FRIENDS, must be GLOBAL FRIENDS", () => {
+    const clas1 = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PUBLIC FRIENDS zcl_friend.
+ENDCLASS.
+CLASS zcl_sdfsdf IMPLEMENTATION.
+ENDCLASS.`;
+    const clas2 = `
+CLASS zcl_friend DEFINITION PUBLIC CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_friend IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas1},
+      {filename: "zcl_friend.clas.abap", contents: clas2}]);
+    expect(issues[0]?.getMessage()).to.include("GLOBAL FRIENDS");
+  });
+
+  it("local class with GLOBAL FRIENDS, error", () => {
+    const abap = `
+CLASS lcl_friend DEFINITION.
+ENDCLASS.
+CLASS lcl_friend IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_bar DEFINITION GLOBAL FRIENDS lcl_friend.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("GLOBAL FRIENDS");
+  });
+
   it("private method, called from friend, local classes", () => {
     const abap = `
 CLASS lcl_friend DEFINITION DEFERRED.
@@ -16877,7 +16908,7 @@ ENDCLASS.`;
 
   it("error if friend class does not exist, CREATE PRIVATE", () => {
     const abap = `
-CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE FRIENDS ycsdf.
+CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE GLOBAL FRIENDS ycsdf.
 ENDCLASS.
 CLASS cl_http_entity IMPLEMENTATION.
 ENDCLASS.`;
