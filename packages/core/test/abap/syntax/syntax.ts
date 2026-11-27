@@ -1561,6 +1561,116 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues.length).to.equals(1);
   });
 
+  it("CONSTANTS, literals joined with & longer than 255 characters", () => {
+    const abap = `CONSTANTS foo TYPE string VALUE
+      \`${"a".repeat(100)}\` &
+      \`${"b".repeat(100)}\` &
+      \`${"c".repeat(80)}\`.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("CONSTANTS, character literals joined with & longer than 255 characters", () => {
+    const abap = `CONSTANTS foo TYPE c LENGTH 280 VALUE
+      '${"a".repeat(100)}' &
+      '${"b".repeat(100)}' &
+      '${"c".repeat(80)}'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("CONSTANTS, literals joined with & of exactly 255 characters, ok", () => {
+    const abap = `CONSTANTS foo TYPE string VALUE
+      \`${"a".repeat(100)}\` &
+      \`${"b".repeat(100)}\` &
+      \`${"c".repeat(55)}\`.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CONSTANTS, literals joined with &, a doubled delimiter counts as one character, ok", () => {
+    const abap = `CONSTANTS foo TYPE c LENGTH 255 VALUE
+      '${"a".repeat(100)}' &
+      '${"b".repeat(100)}' &
+      '${"c".repeat(54)}'''.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("class CONSTANTS, literals joined with & longer than 255 characters", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS foo TYPE string VALUE
+      \`${"a".repeat(100)}\` &
+      \`${"b".repeat(100)}\` &
+      \`${"c".repeat(80)}\`.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("DATA VALUE, literals joined with & longer than 255 characters", () => {
+    const abap = `DATA foo TYPE string VALUE
+      \`${"a".repeat(100)}\` &
+      \`${"b".repeat(100)}\` &
+      \`${"c".repeat(80)}\`.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("assignment, literals joined with & longer than 255 characters", () => {
+    const abap = `DATA foo TYPE string.
+    foo = '${"a".repeat(100)}' &
+      '${"b".repeat(100)}' &
+      '${"c".repeat(80)}'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("method argument, literals joined with & longer than 255 characters", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar IMPORTING val TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>bar( \`${"a".repeat(100)}\` &
+    \`${"b".repeat(100)}\` &
+    \`${"c".repeat(80)}\` ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("assignment, literals joined with && longer than 255 characters, ok", () => {
+    const abap = `DATA foo TYPE string.
+    foo = \`${"a".repeat(100)}\` &&
+      \`${"b".repeat(100)}\` &&
+      \`${"c".repeat(80)}\`.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("assignment, string templates longer than 255 characters, ok", () => {
+    const abap = `DATA foo TYPE string.
+    foo = |${"a".repeat(100)}| &&
+      |${"b".repeat(100)}| &&
+      |${"c".repeat(80)}|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("DATA, negative LENGTH", () => {
     const abap = `DATA foo TYPE c LENGTH -5.`;
     const issues = runProgram(abap);
@@ -22707,4 +22817,71 @@ START-OF-SELECTION.`;
       expect(issues[0]?.getMessage()).to.include("Arithmetic expression cannot be compared with non-numeric operand");
     });
   }
+});
+
+describe("syntax.ts, FIELD-SYMBOLS LIKE a generic type", () => {
+  const message = "FIELD-SYMBOLS cannot be LIKE a generic type";
+  const method = (body: string) => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run IMPORTING it TYPE STANDARD TABLE it_typed TYPE string_table.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error, LIKE LINE OF a field symbol TYPE STANDARD TABLE", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <row> LIKE LINE OF <tab>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, LIKE LINE OF a generic importing parameter", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <row> LIKE LINE OF it.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, LIKE a field symbol TYPE ANY TABLE", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+    FIELD-SYMBOLS <copy> LIKE <tab>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, LIKE a field symbol TYPE any", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <copy> LIKE <any>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("ok, TYPE a generic type", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <row> TYPE any.
+    ASSIGN it TO <tab>.
+    LOOP AT <tab> ASSIGNING <row>.
+    ENDLOOP.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, LIKE LINE OF a typed table", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <row> LIKE LINE OF it_typed.
+    LOOP AT it_typed ASSIGNING <row>.
+    ENDLOOP.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, LIKE a typed field symbol", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE string_table.
+    FIELD-SYMBOLS <copy> LIKE <tab>.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
 });
