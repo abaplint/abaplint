@@ -6,6 +6,11 @@ import {Issue} from "../issue";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPFile} from "../abap/abap_file";
 import {ExpressionNode, StatementNode} from "../abap/nodes";
+import {ABAPObject} from "../objects/_abap_object";
+import {LanguageVersion} from "../version";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {ClassAttribute} from "../abap/types/class_attribute";
+import {IdentifierMeta} from "../abap/types/_typed_identifier";
 
 export class NoDynamicStuffConf extends BasicRuleConfig {
   /** Detects dynamic method calls, ie. CALL METHOD (name), SET HANDLER and CALL BADI */
@@ -34,6 +39,9 @@ export class NoDynamicStuffConf extends BasicRuleConfig {
   public internalTable: boolean = true;
   /** Detects dynamic EXPORT and IMPORT */
   public exportImport: boolean = true;
+  /** Only with syntax version Cloud: detects the old variant of the dynamic ASSIGN, ie. ASSIGN (name) where name is a
+   * literal or constant holding a path with a selector, eg. 'MO_APP->ATTR'. Reported also when "assign" is off */
+  public assignOldVariantCloud: boolean = true;
 }
 
 export class NoDynamicStuff extends ABAPRule {
@@ -76,10 +84,18 @@ SORT tab BY field.`,
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     const issues: Issue[] = [];
 
     for (const statementNode of file.getStatements()) {
+      const path = this.assignOldVariantPath(statementNode, file, obj);
+      if (path !== undefined) {
+        const message = `Old variant of dynamic ASSIGN, path ${path} given as text should not be used in ABAP for Cloud Development, ` +
+          `use oref->(attr), struc-(comp), class=>(attr) or dref->* instead`;
+        issues.push(Issue.atStatement(file, statementNode, message, this.getMetadata().key, this.conf.severity));
+        continue;
+      }
+
       const found = this.check(statementNode);
       if (found !== undefined) {
         issues.push(Issue.atStatement(file, statementNode, "Dynamic " + found,
@@ -165,6 +181,52 @@ SORT tab BY field.`,
     }
 
     return undefined;
+  }
+
+  /** ABAP for Cloud Development warns about the old variant of the dynamic data object, ie. ASSIGN (name) where the
+   * text in name is a whole operand including selectors. Only reported when the text is known: a literal or a constant.
+   * Returns the text, or undefined if not the old variant */
+  private assignOldVariantPath(node: StatementNode, file: ABAPFile, obj: ABAPObject): string | undefined {
+    if (this.conf.assignOldVariantCloud !== true
+        || this.reg.getConfig().getLanguageVersion() !== LanguageVersion.Cloud
+        || !(node.get() instanceof Statements.Assign)) {
+      return undefined;
+    }
+
+    // the old variant is a single Dynamic, forms like (class)=>(attr) have more children
+    const children = node.findDirectExpression(Expressions.AssignSource)?.getChildren() || [];
+    if (children.length !== 1 || !(children[0] instanceof ExpressionNode) || !(children[0].get() instanceof Expressions.Dynamic)) {
+      return undefined;
+    }
+
+    let text: string | undefined = undefined;
+    const literal = children[0].findDirectExpression(Expressions.Constant);
+    const name = children[0].findDirectExpression(Expressions.FieldChain);
+    if (literal) {
+      text = literal.concatTokens();
+    } else if (name?.getChildren().length === 1) {
+      text = this.constantValue(name, file, obj);
+    }
+
+    if (text === undefined || !(text.includes("->") || text.includes("=>") || text.includes("-"))) {
+      return undefined;
+    }
+    return text;
+  }
+
+  private constantValue(name: ExpressionNode, file: ABAPFile, obj: ABAPObject): string | undefined {
+    const token = name.getFirstToken();
+    const scope = new SyntaxLogic(this.reg, obj).run().spaghetti.lookupPosition(token.getStart(), file.getFilename());
+    const found = scope?.findVariable(token.getStr());
+    // class attributes can be READ-ONLY with a VALUE, but are not constants
+    if (found === undefined
+        || found instanceof ClassAttribute
+        || found.getMeta().includes(IdentifierMeta.ReadOnly) === false
+        || found.getMeta().includes(IdentifierMeta.Static) === false) {
+      return undefined;
+    }
+    const value = found.getValue();
+    return typeof value === "string" ? value : undefined;
   }
 
   private dynamicMethodSource(node: StatementNode): boolean {
