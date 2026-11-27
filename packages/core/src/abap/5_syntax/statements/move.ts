@@ -56,6 +56,12 @@ export class Move implements StatementSyntax {
       return;
     }
 
+    if (firstTarget && Move.isCalculationAssignment(node)
+        && (Source.reportNonNumericOperand(targetType, firstTarget, input)
+          || Source.reportNonNumericOperand(sourceType, source!, input))) {
+      return;
+    }
+
     if (node.findDirectExpression(Expressions.Dereference)) {
       sourceType = Dereference.runSyntax(node, sourceType, input);
     }
@@ -87,6 +93,12 @@ export class Move implements StatementSyntax {
       return;
     }
 
+  }
+
+  /** "+=", "-=", "*=" and "/=" calculate with the target and the source */
+  private static isCalculationAssignment(node: StatementNode): boolean {
+    const operator = node.getChildren().filter(c => c instanceof TokenNode).map(c => c.concatTokens()).join("");
+    return /^[-+*\/]=/.test(operator);
   }
 
   /** target = REF #( ... ), with the single target being a field symbol typed "any" or "data",

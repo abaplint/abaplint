@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {InlineData} from "../expressions/inline_data";
-import {TimeType, DateType, PackedType, CharacterType, UTCLongType} from "../../types/basic";
+import {TimeType, DateType, PackedType, CharacterType, UTCLongType, DecFloat34Type} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {StatementSyntax} from "../_statement_syntax";
@@ -50,6 +50,16 @@ export class Convert implements StatementSyntax {
         InlineData.runSyntax(inline, input, new PackedType(8, 0));
       } else {
         Target.runSyntax(stampTarget, input);
+      }
+    }
+
+    const fractionalTarget = node.findExpressionAfterToken("SECONDS");
+    if (fractionalTarget?.get() instanceof Expressions.Target) {
+      const inline = fractionalTarget?.findDirectExpression(Expressions.InlineData);
+      if (inline) {
+        InlineData.runSyntax(inline, input, new DecFloat34Type());
+      } else {
+        Target.runSyntax(fractionalTarget, input);
       }
     }
 
