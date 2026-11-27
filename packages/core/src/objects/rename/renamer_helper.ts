@@ -298,4 +298,13 @@ export class RenamerHelper {
     }
     return changes;
   }
+
+  /** the handler class of the HTTP services of ABAP Cloud */
+  public renameHttpServiceHandlerReferences(oldName: string, newName: string): TextDocumentEdit[] {
+    const changes: TextDocumentEdit[] = [];
+    for (const service of this.reg.getObjectsByType("HTTP")) {
+      changes.push(...this.buildXMLFileEdits(service as AbstractObject, "SERVICEHANDLER", oldName, newName));
+    }
+    return changes;
+  }
 }

@@ -14,6 +14,9 @@ import {RenameICFService} from "./rename_icf_service";
 import {IRenamedURL, RenameURLs} from "./rename_urls";
 import {ICFService} from "../icf_service";
 import {RenameBSPApplication} from "./rename_bsp_application";
+import {RenameHttpService} from "./rename_http_service";
+import {RenameInboundService} from "./rename_inbound_service";
+import {RenameIAMApp} from "./rename_iam_app";
 
 export interface IRenameResult {
   deletedFiles: Set<string>;
@@ -124,6 +127,12 @@ export class Renamer {
         return new RenameICFService(this.reg);
       case "WAPA":
         return new RenameBSPApplication(this.reg);
+      case "HTTP":
+        return new RenameHttpService(this.reg);
+      case "SCO2":
+        return new RenameInboundService(this.reg);
+      case "SIA6":
+        return new RenameIAMApp(this.reg);
       default:
         throw new Error("Renaming of " + type + " not yet supported");
     }
