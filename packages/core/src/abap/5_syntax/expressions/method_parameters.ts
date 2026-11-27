@@ -16,6 +16,7 @@ import {checkOffsetLength} from "./_check_offset_length";
 import {checkTextSymbol} from "./_check_text_symbol";
 import {checkHeaderLine} from "./_check_header_line";
 import {BuiltInMethod} from "../_builtin";
+import {UTCLongType} from "../../types/basic/utc_long_type";
 
 interface IListItemT {
   name: string;
@@ -31,6 +32,13 @@ interface IListItemS {
 
 function normalizeParameterName(name: string): string {
   return name.replace(/^!/, "").toUpperCase();
+}
+
+// nmax( ) and nmin( ) compare numbers, which a utclong cannot be converted into, but their parameters are typed "simple"
+function isTimeStampExtremum(method: IMethodDefinition, type: AbstractType | undefined): boolean {
+  return type instanceof UTCLongType
+    && method instanceof BuiltInMethod
+    && ["NMAX", "NMIN"].includes(method.getName().toUpperCase());
 }
 
 export class MethodParameters {
@@ -206,7 +214,8 @@ export class MethodParameters {
         return;
       } else if (checkHeaderLine(item.source, item.sourceType, parameter.getType(), method, input)) {
         return;
-      } else if (assignable(item.sourceType, parameter.getType(), item.source) === false) {
+      } else if (assignable(item.sourceType, parameter.getType(), item.source) === false
+          || isTimeStampExtremum(method, item.sourceType)) {
         const message = "Method parameter type not compatible, " + item.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
