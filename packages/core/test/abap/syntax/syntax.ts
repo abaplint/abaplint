@@ -23209,3 +23209,38 @@ ASSERT lines( <display_row> ) = 1.`;
     expect(issues[0]?.getMessage()).to.equal(`"<display_row>" is not an internal table`);
   });
 });
+
+describe("syntax.ts, APPEND VALUE with a data object named value", () => {
+  const program = (name: string) => `
+TYPES: BEGIN OF ty_column,
+         columnname TYPE string,
+         r_column   TYPE REF TO object,
+       END OF ty_column,
+       ty_columns TYPE STANDARD TABLE OF ty_column WITH DEFAULT KEY.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS get RETURNING VALUE(${name}) TYPE ty_columns.
+  PRIVATE SECTION.
+    DATA mt_columns TYPE ty_columns.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+    LOOP AT mt_columns INTO DATA(ls_column).
+      APPEND VALUE #( columnname = ls_column-columnname
+                      r_column   = ls_column-r_column ) TO ${name}.
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("returning parameter named value, error", () => {
+    const issues = runProgram(program("value"));
+    expect(issues[0]?.getMessage()).to.equal(`An explicit work area is necessary in the OO context. Use "APPEND wa TO VALUE [SORTED BY]".`);
+  });
+
+  it("returning parameter named result, ok", () => {
+    const issues = runProgram(program("result"));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
