@@ -1,4 +1,4 @@
-import {statementType, statementVersionOk} from "../_utils";
+import {statementExpectFail, statementType, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release} from "../../../src";
 
@@ -23,6 +23,12 @@ const tests = [
   "IF lines( lt_lines ) MOD 2 <> 0.",
 //  "IF NOT &1 IS INITIAL.",
   "IF foo = bar AND NOT ( foo = bar OR moo = boo ).",
+  "IF NOT NOT foo = bar.",
+  "IF NOT NOT NOT foo = bar.",
+  "IF NOT NOT foo = bar OR moo = boo.",
+  "IF foo = bar AND NOT NOT foo IS NOT INITIAL.",
+  "IF NOT NOT ( foo = bar ).",
+  "IF NOT NOT NOT ( foo = bar AND moo = boo ).",
   "IF lv_devclass NOT IN mt_devclass.",
   "IF lv_statement IN mt_range.",
   "IF iv_branch_name IS SUPPLIED.",
@@ -114,3 +120,10 @@ const versionsOk = [
 ];
 
 statementVersionOk(versionsOk, "IF", Statements.If);
+
+const fails = [
+  "IF foo IS NOT NOT INITIAL.",
+  "IF foo NOT NOT BETWEEN 1 AND 2.",
+];
+
+statementExpectFail(fails, "IF");

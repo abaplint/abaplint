@@ -94,10 +94,10 @@ export class AttributeChain {
         contextType = contextType.getRowType();
       } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.FieldOffset) {
         const offset = FieldOffset.runSyntax(child, input);
-        contextType = substringType(contextType, offset, undefined, child, input);
+        contextType = substringType(contextType, offset, undefined, child, children, input);
       } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.FieldLength) {
         const length = FieldLength.runSyntax(child, input);
-        contextType = substringType(contextType, undefined, length, child, input);
+        contextType = substringType(contextType, undefined, length, child, children, input);
       }
     }
 

@@ -2,6 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, StatementNode} from "../../nodes";
 import {InlineFieldDefinition} from "./inline_field_definition";
 import {Source} from "./source";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {InlineLoopDefinition} from "./inline_loop_definition";
 import {ScopeType} from "../_scope_type";
 import {ComponentCond} from "./component_cond";
@@ -49,6 +50,9 @@ export class For {
       }
       groupsSource = this.runGroups(node, groupsToken, input);
     }
+
+    // the iteration expression, FOR i = 0 THEN i + 1
+    checkParenthesizedOperand(node.findExpressionAfterToken("THEN"), input);
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       if (s === groupsSource) {

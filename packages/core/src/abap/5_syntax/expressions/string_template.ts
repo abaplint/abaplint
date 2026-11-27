@@ -6,6 +6,7 @@ import {Source} from "./source";
 import {TypeUtils} from "../_type_utils";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import * as Tokens from "../../1_lexer/tokens";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 
 export class StringTemplate {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput): AbstractType {
@@ -15,6 +16,7 @@ export class StringTemplate {
     for (const child of node.getChildren()) {
       if (child instanceof ExpressionNode && child.get() instanceof Expressions.StringTemplateSource) {
         const s = child.findDirectExpression(Expressions.Source);
+        checkParenthesizedOperand(s, input);
         const type = Source.runSyntax(s, input, ret);
         if (type === undefined) {
           const message = "No target type determined";

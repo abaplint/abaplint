@@ -12,7 +12,7 @@ import {Constant} from "./constant";
 import {checkOffsetLength} from "./_check_offset_length";
 import {checkTextSymbol} from "./_check_text_symbol";
 import {checkHeaderLine} from "./_check_header_line";
-import {BuiltInMethod} from "../_builtin";
+import {BuiltIn, BuiltInMethod} from "../_builtin";
 
 export class MethodCallParam {
   /** returns the type of the unnamed argument, if any */
@@ -96,6 +96,10 @@ export class MethodCallParam {
         return;
       }
       return sourceType;
+    } else if (this.takesOnlyUnnamedArgument(method)) {
+      const message = `Built-in function "${method.getName().toLowerCase()}" takes its argument without a parameter name`;
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.ParameterListS) {
       new MethodParameters().checkExporting(child, input, method);
     } else if (child.get() instanceof Expressions.MethodParameters) {
@@ -106,6 +110,14 @@ export class MethodCallParam {
       return;
     }
     return undefined;
+  }
+
+  // "abs( val = i )" is expected to be a syntax error. The argument of boolc( ) is a logical expression,
+  // where "a = b" is a comparison, which parses as a named argument before 7.02
+  private static takesOnlyUnnamedArgument(method: IMethodDefinition | VoidType): method is BuiltInMethod {
+    return method instanceof BuiltInMethod
+      && method.getName().toUpperCase() !== "BOOLC"
+      && BuiltIn.hasUnnamedArgument(method.getName());
   }
 
   private static isAssignable(sourceType: AbstractType, targetType: AbstractType | undefined, child: ExpressionNode,
