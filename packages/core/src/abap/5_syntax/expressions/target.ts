@@ -152,7 +152,7 @@ export class Target {
         return VoidType.get(CheckSyntaxKey);
       }
       const value = FieldLength.runSyntax(length, input);
-      if (!isFieldSymbolItself(substring, children, children.indexOf(length))) {
+      if (value === 0 || !isFieldSymbolItself(substring, children, children.indexOf(length))) {
         substring = substringType(substring, undefined, value, length, children, input);
       }
     }
