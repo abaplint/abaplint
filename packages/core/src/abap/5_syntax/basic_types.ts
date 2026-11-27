@@ -1078,6 +1078,8 @@ export class BasicTypes {
     const found = this.resolveTypeName(chain);
     if (found && found instanceof Types.VoidType) {
       return found;
+    } else if (found instanceof Types.AnyType) {
+      throw new Error(`A generic type cannot be specified after "REF TO"`);
     } else if (found && !(found instanceof Types.UnknownType)) {
       return new Types.DataReference(found);
     } else if (chain.concatTokens().toUpperCase() === "DATA") {

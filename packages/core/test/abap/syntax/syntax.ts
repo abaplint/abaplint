@@ -13614,10 +13614,16 @@ PARAMETERS p_view TYPE c AS LISTBOX VISIBLE LENGTH 18 USER-COMMAND view.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("DATA REF TO ANY is generic", () => {
-    const abap = `DATA foo TYPE REF TO any.`;
+  it("CLASS-DATA REF TO ANY is generic", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA foo TYPE REF TO any.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.contain("DATA definition cannot be generic");
+    expect(issues[0]?.getMessage()).to.equal(`A generic type cannot be specified after "REF TO"`);
   });
 
   it("ok changing type DATA", () => {
@@ -21517,6 +21523,28 @@ ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
     expect(issues[0]?.getMessage()).to.equal("Event parameter sender is implicitly declared");
+  });
+
+  it("METHODS, parameter TYPE REF TO any, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING foo TYPE REF TO any.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal(`A generic type cannot be specified after "REF TO"`);
+  });
+
+  it("DATA TYPE REF TO any, error", () => {
+    const abap = `DATA foo TYPE REF TO any.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal(`A generic type cannot be specified after "REF TO"`);
   });
 
   it("INTERFACE EVENTS, parameter not passed by VALUE, error", () => {
