@@ -4481,6 +4481,25 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("VALUE #, character literal in standard table of numc, error", () => {
+    const abap = `
+TYPES ty TYPE n LENGTH 4.
+DATA lt_screens TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+lt_screens = VALUE #( ( '0100' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with row type n LENGTH 4");
+  });
+
+  it("VALUE #, converted character literal in standard table of numc, ok", () => {
+    const abap = `
+TYPES ty TYPE n LENGTH 4.
+DATA lt_screens TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+lt_screens = VALUE #( ( CONV #( '0100' ) ) ).`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues.length).to.equals(0, issues.map(i => i.getMessage()).join(", "));
+  });
+
   it("VALUE #, too short hex in sorted table, error", () => {
     const abap = `
 CLASS lcl DEFINITION.

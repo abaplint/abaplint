@@ -6,7 +6,7 @@ import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
-import {AnyType, CharacterType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatType, HexType, Integer8Type, IntegerType, StringType, TableAccessType, TableType, UnknownType, VoidType, XStringType} from "../../types/basic";
+import {AnyType, CharacterType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatType, HexType, Integer8Type, IntegerType, NumericType, StringType, TableAccessType, TableType, UnknownType, VoidType, XStringType} from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {TypeUtils} from "../_type_utils";
 
@@ -132,6 +132,13 @@ export class ValueBody {
 // a data object given as a row must be compatible with the row type, it is not converted
           const message = `VALUE, source type ${sourceKind} not compatible with row type ${this.numericKind(rowType)}`;
           input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+        } else if (rowType instanceof NumericType
+            && sourceType instanceof CharacterType
+            && this.isConstant(s)) {
+// a text literal given as a row is not converted to a numeric text row type
+          const message = `VALUE, source type c LENGTH ${sourceType.getLength()} not compatible ` +
+            `with row type n LENGTH ${rowType.getLength()}`;
+          input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
         } else if (this.insertsUsingTableKey(targetType)) {
 // only STANDARD tables append the rows, and thus allow padding of shorter c and x values
           const row = this.characterOrHexLength(rowType);
@@ -179,6 +186,14 @@ export class ValueBody {
     return children.length === 1
       && children[0] instanceof ExpressionNode
       && (children[0].get() instanceof Expressions.Constant || children[0].get() instanceof Expressions.FieldChain);
+  }
+
+  /** true for a row given as a single literal */
+  private static isConstant(source: ExpressionNode): boolean {
+    const children = source.getChildren();
+    return children.length === 1
+      && children[0] instanceof ExpressionNode
+      && children[0].get() instanceof Expressions.Constant;
   }
 
   private static numericKind(type: AbstractType | undefined): string | undefined {
