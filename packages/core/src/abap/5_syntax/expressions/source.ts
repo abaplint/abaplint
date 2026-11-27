@@ -191,6 +191,9 @@ export class Source {
           } else if (foundType === undefined && s) {
             if (s instanceof AnyType) {
               foundType = new DataReference(VoidType.get("REF-ANY"));
+            } else if (s.isGeneric()) {
+              // eg. a generic parameter TYPE ANY TABLE, the result is REF TO data
+              foundType = new DataReference(new DataType());
             } else {
               foundType = new DataReference(s);
             }
