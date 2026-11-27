@@ -17,8 +17,8 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 // The offset is applied first, so the length is compared to what remains after the offset.
 // "chain" holds the nodes of the surrounding chain, including both the offset and the length.
 // A substring of a date, time or numeric text field has type n; its bounds are not checked.
-// An offset or length on a numeric field (i, int8, p, f, decfloat) is a syntax error, whatever its value,
-// except a length without offset covering the full packed field, eg. "lv_p(5)" for "lv_p(5) TYPE p".
+// An offset or length on a numeric field (i, int8, p, f, decfloat) is a syntax error, unless the access
+// takes the whole field: the offset 0, the length "*" and the length of the field in bytes are accepted.
 // A time stamp of type utclong has no substrings either, only the offset 0 and the length "*", which
 // take the whole field, are accepted.
 export function substringType(
@@ -30,17 +30,18 @@ export function substringType(
   input: SyntaxInput): AbstractType | undefined {
 
   const numericName = numericTypeName(context);
-  if (context instanceof PackedType && offset === undefined && length === context.getLength()) {
-    // the offset is checked in a separate call before the length, so this is a length without offset
-    return context;
-  } else if (numericName !== undefined) {
+  if (numericName !== undefined) {
+    // the offset and the length are checked in separate calls, so each has to take the whole field
+    if (offset === 0 || isFullLength(node) || (length !== undefined && length === numericByteLength(context))) {
+      return context;
+    }
     const message = `Field type "${numericName}" does not permit substrings to be accessed`;
     input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
     return VoidType.get(CheckSyntaxKey);
   }
 
   if (context instanceof UTCLongType) {
-    if (offset === 0 || (node instanceof ExpressionNode && node.concatTokens() === "(*)")) {
+    if (offset === 0 || isFullLength(node)) {
       return context;
     }
     const message = `Field type "utclong" does not permit substrings to be accessed`;
@@ -134,6 +135,28 @@ function numericTypeName(context: AbstractType | undefined): string | undefined 
     return "e";
   } else if (context instanceof DecFloatType) {
     return "DECFLOAT";
+  }
+  return undefined;
+}
+
+// true for the length "*", a variable length is also undefined as a number
+function isFullLength(node: INode): boolean {
+  return node instanceof ExpressionNode && node.concatTokens() === "(*)";
+}
+
+// undefined if not known, eg. for the generic type decfloat
+function numericByteLength(context: AbstractType | undefined): number | undefined {
+  if (context instanceof IntegerType) {
+    return 4;
+  } else if (context instanceof PackedType) {
+    return context.getLength();
+  } else if (context instanceof FloatingPointType) {
+    // dictionary types, a decfloat34 one has the length 34, "FLTP" and decfloat16 have 16
+    return context.getLength() === 34 ? 16 : 8;
+  } else if (context instanceof Integer8Type || context instanceof FloatType || context instanceof DecFloat16Type) {
+    return 8;
+  } else if (context instanceof DecFloat34Type) {
+    return 16;
   }
   return undefined;
 }
