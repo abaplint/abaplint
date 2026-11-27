@@ -9532,3 +9532,82 @@ ENDINTERFACE.`;
     expect(issues.length).to.equal(0);
   });
 });
+
+describe("Rule: downport, tableExpressionNotFound", () => {
+  // cx_sy_itab_line_not_found came with 7.40, a 7.02 system has to raise something else
+  function testFixNotFound(input: string, expected: string, tableExpressionNotFound: string | undefined) {
+    const rule = new Downport();
+    const conf = rule.getConfig();
+    conf.tableExpressionNotFound = tableExpressionNotFound;
+    rule.setConfig(conf);
+    testRuleFixCount(input, expected, rule, buildConfig(Version.v702), undefined, false, 1);
+  }
+
+  const types = `
+TYPES: BEGIN OF ty_type,
+         foo TYPE i,
+       END OF ty_type.
+DATA tab TYPE STANDARD TABLE OF ty_type WITH DEFAULT KEY.`;
+
+  it("source position", () => {
+    const abap = types + `
+WRITE tab[ foo = 2 ]-foo.`;
+    const expected = types + `
+FIELD-SYMBOLS <temp1> LIKE LINE OF tab.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE tab WITH KEY foo = 2 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  ASSERT 1 = 0.
+ENDIF.
+WRITE <temp1>-foo.`;
+    testFixNotFound(abap, expected, "ASSERT 1 = 0.");
+  });
+
+  it("target position", () => {
+    const abap = types + `
+tab[ foo = 2 ]-foo = 3.`;
+    const expected = types + `
+FIELD-SYMBOLS <temp1> LIKE LINE OF tab.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE tab WITH KEY foo = 2 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE zcx_line_not_found.
+ENDIF.
+<temp1>-foo = 3.`;
+    testFixNotFound(abap, expected, "RAISE EXCEPTION TYPE zcx_line_not_found.");
+  });
+
+  it("REF of a table expression", () => {
+    const abap = types + `
+DATA ref TYPE REF TO ty_type.
+ref = REF #( tab[ 1 ] ).`;
+    const expected = types + `
+DATA ref TYPE REF TO ty_type.
+ASSIGN tab[ 1 ] TO FIELD-SYMBOL(<temp1>).
+IF sy-subrc <> 0.
+  ASSERT 1 = 0.
+ENDIF.
+GET REFERENCE OF <temp1> INTO ref.`;
+    testFixNotFound(abap, expected, "ASSERT 1 = 0.");
+  });
+
+  it("not set in the configuration, the exception of the table expression", () => {
+    const abap = types + `
+WRITE tab[ foo = 2 ]-foo.`;
+    const expected = types + `
+FIELD-SYMBOLS <temp1> LIKE LINE OF tab.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE tab WITH KEY foo = 2 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+WRITE <temp1>-foo.`;
+    testFixNotFound(abap, expected, undefined);
+  });
+});
