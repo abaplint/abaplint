@@ -1,6 +1,7 @@
 import {ExpressionNode, StatementNode} from "../../nodes";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {Source} from "./source";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {BasicTypes} from "../basic_types";
@@ -25,6 +26,7 @@ export class InlineFieldDefinition {
 
     const source = node.findDirectExpression(Expressions.Source);
     if (source) {
+      checkParenthesizedOperand(source, input);
       type = Source.runSyntax(source, input);
     }
     const typeName = node.findDirectExpression(Expressions.TypeName);

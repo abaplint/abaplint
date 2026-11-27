@@ -1,4 +1,4 @@
-import {seq, opt, ver, tok, altPrio, plus, alt, Expression} from "../combi";
+import {seq, opt, star, ver, tok, altPrio, plus, alt, Expression} from "../combi";
 import {ComponentChainSimple, FieldSub, Constant, Source, CompareOperator} from ".";
 import {WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Release} from "../../../version";
@@ -28,7 +28,7 @@ export class ComponentCompare extends Expression {
 
     const rett = seq(ComponentChainSimple, altPrio(seq(CompareOperator, Source), inn, between, sopt));
 
-    const ret = seq(opt("NOT"), rett);
+    const ret = seq(star("NOT"), rett);
 
     return ret;
   }
