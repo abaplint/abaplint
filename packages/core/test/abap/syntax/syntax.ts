@@ -21554,6 +21554,69 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(`A generic type cannot be specified after "REF TO"`);
   });
 
+  it("method implemented in super class, not redefined, error", () => {
+    const abap = `
+CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS free.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD free.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD free.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("use REDEFINITION");
+  });
+
+  it("RECEIVING, parameter name does not exist, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS describe RETURNING VALUE(p_descr_ref) TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD describe.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_type TYPE i.
+  lcl=>describe(
+    RECEIVING
+      type = lo_type ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal(`Method returning parameter "TYPE" does not exist`);
+  });
+
+  it("RECEIVING, parameter name ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS describe RETURNING VALUE(p_descr_ref) TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD describe.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_type TYPE i.
+  lcl=>describe(
+    RECEIVING
+      p_descr_ref = lo_type ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("INTERFACE EVENTS, parameter not passed by VALUE, error", () => {
     const abap = `
 INTERFACE lif.
