@@ -5,7 +5,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType, DateType, TimeType, NumericType, GenericObjectReferenceType, DataType, UTCLongType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType, DateType, TimeType, NumericType, GenericObjectReferenceType, DataType, UTCLongType, TableType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -230,8 +230,10 @@ export class Source {
         case "CORRESPONDING":
         {
           const foundType = this.determineType(node, input, targetType);
+          // generic table types are allowed as the target, eg. "TYPE table"
           if (foundType?.isGeneric() === true
               && !(foundType instanceof DataType)
+              && !(foundType instanceof TableType)
               && node.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens() === "#"
               && !releaseAtLeast(input.scope.getRelease(), Release.v756)
               && input.scope.getLanguageVersion() !== LanguageVersion.Cloud
