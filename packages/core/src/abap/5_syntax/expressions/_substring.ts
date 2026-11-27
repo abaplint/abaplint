@@ -7,6 +7,7 @@ import {CharacterType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, F
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ClassAttribute} from "../../types/class_attribute";
 import {IdentifierMeta} from "../../types/_typed_identifier";
+import {characterStartSubstring, hasCharacterStart} from "../_character_start";
 import {ObjectOriented} from "../_object_oriented";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
@@ -28,6 +29,10 @@ export function substringType(
   node: INode,
   chain: readonly INode[],
   input: SyntaxInput): AbstractType | undefined {
+  const characterStart = characterStartSubstring(context, offset, length, node, chain, input);
+  if (characterStart !== undefined) {
+    return characterStart;
+  }
 
   const numericName = numericTypeName(context);
   if (context instanceof PackedType && offset === undefined && length === context.getLength()) {
@@ -166,7 +171,7 @@ function numericSubstringType(
 // offset or length at "index" is not checked when it directly follows the field symbol.
 // No generic type is represented by utclong, so such a field symbol is checked
 export function isFieldSymbolItself(context: AbstractType | undefined, children: readonly INode[], index: number): boolean {
-  if (context instanceof UTCLongType) {
+  if (context instanceof UTCLongType || hasCharacterStart(context)) {
     return false;
   }
   const first = children[0]?.get();
