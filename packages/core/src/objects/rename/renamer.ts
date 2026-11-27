@@ -1,4 +1,4 @@
-import {RenameFile, TextDocumentEdit, WorkspaceEdit} from "vscode-languageserver-types";
+import {CreateFile, RenameFile, TextDocumentEdit, WorkspaceEdit} from "vscode-languageserver-types";
 import {MemoryFile} from "../../files/memory_file";
 import {IRegistry} from "../../_iregistry";
 import {RenameDataElement} from "./rename_data_element";
@@ -11,6 +11,9 @@ import {RenameTableType} from "./rename_table_type";
 import {ObjectRenamer} from "./_object_renamer";
 import {RenameMessageClass} from "./rename_message_class";
 import {RenameICFService} from "./rename_icf_service";
+import {IRenamedURL, RenameURLs} from "./rename_urls";
+import {ICFService} from "../icf_service";
+import {RenameBSPApplication} from "./rename_bsp_application";
 
 export interface IRenameResult {
   deletedFiles: Set<string>;
@@ -20,6 +23,7 @@ export interface IRenameResult {
 
 export class Renamer {
   private readonly reg: IRegistry;
+  private readonly renamedURLs: IRenamedURL[] = [];
 
   public constructor(reg: IRegistry) {
     this.reg = reg;
@@ -36,8 +40,25 @@ export class Renamer {
       throw new Error("only documentChanges expected");
     }
 
+    const before = type === "SICF" ? this.findObject(type, oldName) : undefined;
+    const oldURL = before instanceof ICFService ? before.getURL() : undefined;
+    const oldXML = before?.getXMLFile()?.getFilename();
+
     const result = this.apply(edits);
     this.reg.findIssues(); // hmm, this builds the ddic references
+
+    if (oldURL !== undefined && oldXML !== undefined) {
+      this.rememberURL(edits, oldURL, oldXML);
+    }
+    return result;
+  }
+
+  /** Renames the old URLs of the ICF nodes renamed by this renamer in the pages of the BSP
+   *  applications, see RenameURLs */
+  public renameURLs(): IRenameResult {
+    this.reg.parse();
+    const result = this.apply(new RenameURLs(this.reg).buildEdits(this.renamedURLs));
+    this.reg.parse();
     return result;
   }
 
@@ -45,12 +66,7 @@ export class Renamer {
   public buildEdits(type: string, oldName: string, newName: string): WorkspaceEdit | undefined {
     this.reg.parse(); // the registry must be parsed to dermine references
 
-    let obj = this.reg.getObject(type, oldName);
-
-    if (obj === undefined && type === "SICF") {
-      obj = Array.from(this.reg.getObjects()).find(o =>
-        o.getType() === "SICF" && o.getName().toUpperCase().startsWith(oldName.toUpperCase() + " "));
-    }
+    const obj = this.findObject(type, oldName);
 
     if (obj === undefined) {
       throw new Error("rename, object not found");
@@ -64,6 +80,27 @@ export class Renamer {
   }
 
 //////////////////
+
+  private findObject(type: string, name: string) {
+    let obj = this.reg.getObject(type, name);
+    if (obj === undefined && type === "SICF") {
+      obj = Array.from(this.reg.getObjects()).find(o =>
+        o.getType() === "SICF" && o.getName().toUpperCase().startsWith(name.toUpperCase() + " "));
+    }
+    return obj;
+  }
+
+  /** the new URL is the one in the XML file the old XML file was renamed to */
+  private rememberURL(edits: WorkspaceEdit, oldURL: string, oldXML: string) {
+    for (const dc of edits.documentChanges || []) {
+      if (RenameFile.is(dc) && dc.oldUri === oldXML) {
+        const newURL = this.reg.getFileByName(dc.newUri)?.getRaw().match(/<URL>([^<]*)<\/URL>/)?.[1];
+        if (newURL !== undefined && newURL.toLowerCase() !== oldURL.toLowerCase()) {
+          this.renamedURLs.push({oldURL, newURL});
+        }
+      }
+    }
+  }
 
   private factory(type: string): ObjectRenamer {
     switch (type) {
@@ -85,6 +122,8 @@ export class Renamer {
         return new RenameMessageClass(this.reg);
       case "SICF":
         return new RenameICFService(this.reg);
+      case "WAPA":
+        return new RenameBSPApplication(this.reg);
       default:
         throw new Error("Renaming of " + type + " not yet supported");
     }
@@ -99,11 +138,20 @@ export class Renamer {
       updatedFiles: new Set<string>(),
     };
 
-    // assumption: only renames or text changes, no deletes or creates
+    // assumption: only renames, creates or text changes, no deletes. A created file starts empty,
+    // its content is a text edit after the create
     for (const dc of edits.documentChanges || []) {
       if (TextDocumentEdit.is(dc)) {
         this.applyEdit(dc);
-        result.updatedFiles.add(dc.textDocument.uri);
+        if (result.addedFiles.has(dc.textDocument.uri) === false) {
+          result.updatedFiles.add(dc.textDocument.uri);
+        }
+      } else if (CreateFile.is(dc)) {
+        if (this.reg.getFileByName(dc.uri) !== undefined) {
+          throw new Error("apply, file " + dc.uri + " already exists");
+        }
+        this.reg.addFile(new MemoryFile(dc.uri, ""));
+        result.addedFiles.add(dc.uri);
       } else if (RenameFile.is(dc)) {
         renames.push(dc);
       } else {

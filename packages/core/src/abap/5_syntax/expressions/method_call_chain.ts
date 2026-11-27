@@ -14,6 +14,7 @@ import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {TableExpression} from "./table_expression";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue, dataObjectBeforeStaticArrow} from "../_syntax_input";
+import {checkBuiltinParentheses} from "./_check_builtin_parentheses";
 
 export class MethodCallChain {
   public static runSyntax(
@@ -124,6 +125,9 @@ export class MethodCallChain {
         const param = current.findDirectExpression(Expressions.MethodCallParam);
         if (param && method) {
           const argumentType = MethodCallParam.runSyntax(param, input, method);
+          if (method instanceof BuiltInMethod) {
+            checkBuiltinParentheses(param, method, input);
+          }
           if (method instanceof BuiltInMethod
               && BuiltIn.returnsArgumentType(methodName)
               && this.isNumeric(argumentType)) {

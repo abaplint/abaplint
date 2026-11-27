@@ -2,6 +2,7 @@ import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {Source} from "./source";
 import {Let} from "./let";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {VoidType} from "../../types/basic";
@@ -20,6 +21,7 @@ export class ConvBody {
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return VoidType.get(CheckSyntaxKey);
     }
+    checkParenthesizedOperand(s, input);
     const sourceType = Source.runSyntax(s, input, targetType);
 
     if (scoped === true) {

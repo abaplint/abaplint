@@ -5,8 +5,9 @@ import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
 import {IRuleMetadata, RuleTag} from "./_irule";
-import {ExpressionNode, StructureNode, TokenNode} from "../abap/nodes";
+import {ExpressionNode, StructureNode} from "../abap/nodes";
 import {ABAPFile} from "../abap/abap_file";
+import {countLeadingNot} from "../abap/5_syntax/_key_compare";
 
 class Conditions {
   private readonly arr: string[] = [];
@@ -110,8 +111,9 @@ ENDIF.`,
       }
       for (const compare of statement.findAllExpressionsRecursive(Expressions.Compare)) {
         const children = compare.getChildren();
-        const negated = children[0] instanceof TokenNode && children[0].getFirstToken().getStr().toUpperCase() === "NOT";
-        const rest = children.slice(negated ? 1 : 0);
+        const nots = countLeadingNot(compare);
+        const negated = nots % 2 === 1;
+        const rest = children.slice(nots);
         if (rest.length !== 3
             || !(rest[0] instanceof ExpressionNode) || !(rest[0].get() instanceof Expressions.Source)
             || !(rest[1] instanceof ExpressionNode) || !(rest[1].get() instanceof Expressions.CompareOperator)
