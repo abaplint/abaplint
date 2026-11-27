@@ -66,6 +66,9 @@ export interface IRenameSettings {
    * @uniqueItems true
   */
   skip?: string[];
+  /** also rename the URLs of renamed ICF nodes (SICF) in the pages of the BSP applications (WAPA),
+   * eg. a data source in a manifest.json, a URL is matched as a whole path, disabled by default */
+  urls?: boolean;
   /** List of rename patterns
    * @uniqueItems true
   */

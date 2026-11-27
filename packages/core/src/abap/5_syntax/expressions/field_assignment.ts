@@ -4,6 +4,7 @@ import {DataReference, GenericObjectReferenceType, ObjectReferenceType, Structur
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Source} from "./source";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {TypeUtils} from "../_type_utils";
 
 export class FieldAssignment {
@@ -46,6 +47,7 @@ export class FieldAssignment {
       type = targetType;
     }
 
+    checkParenthesizedOperand(s, input);
     const sourceType = Source.runSyntax(s, input, type);
     if (this.isReference(type)
         && !(type instanceof ObjectReferenceType && sourceType instanceof ObjectReferenceType)
