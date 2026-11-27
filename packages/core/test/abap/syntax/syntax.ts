@@ -13724,10 +13724,16 @@ PARAMETERS p_view TYPE c AS LISTBOX VISIBLE LENGTH 18 USER-COMMAND view.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("DATA REF TO ANY is generic", () => {
-    const abap = `DATA foo TYPE REF TO any.`;
+  it("CLASS-DATA REF TO ANY is generic", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA foo TYPE REF TO any.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
     const issues = runProgram(abap);
-    expect(issues[0]?.getMessage()).to.contain("DATA definition cannot be generic");
+    expect(issues[0]?.getMessage()).to.equal(`A generic type cannot be specified after "REF TO"`);
   });
 
   it("ok changing type DATA", () => {
@@ -20795,19 +20801,33 @@ INSERT LINES OF lt_std INTO TABLE lt_map.`));
 
   it("ok, APPEND TO generic tables", () => {
     const issues = runProgram(`
-FORM foo CHANGING ct_any TYPE ANY TABLE ct_index TYPE INDEX TABLE ct_sorted TYPE SORTED TABLE.
+FORM foo CHANGING ct_index TYPE INDEX TABLE ct_sorted TYPE SORTED TABLE.
   DATA ls TYPE i.
-  FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
   FIELD-SYMBOLS <lt_index> TYPE INDEX TABLE.
   APPEND INITIAL LINE TO ct_index ASSIGNING FIELD-SYMBOL(<lv_index>).
-  APPEND INITIAL LINE TO ct_any ASSIGNING FIELD-SYMBOL(<lv_any>).
   APPEND INITIAL LINE TO ct_sorted ASSIGNING FIELD-SYMBOL(<lv_sorted>).
-  ASSIGN ct_any TO <lt_any>.
-  APPEND ls TO <lt_any>.
   ASSIGN ct_index TO <lt_index>.
   APPEND ls TO <lt_index>.
 ENDFORM.`);
     expect(issues.length).to.equal(0);
+  });
+
+  it("error, APPEND INITIAL LINE TO generic ANY TABLE parameter", () => {
+    const issues = runProgram(`
+FORM foo CHANGING ct_any TYPE ANY TABLE.
+  APPEND INITIAL LINE TO ct_any ASSIGNING FIELD-SYMBOL(<lv_any>).
+ENDFORM.`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("index operations cannot be used");
+  });
+
+  it("error, APPEND TO ANY TABLE field symbol", () => {
+    const issues = runProgram(`
+DATA ls TYPE i.
+FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
+APPEND ls TO <lt_any>.`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("index operations cannot be used");
   });
 
   it("error, APPEND TO generic HASHED TABLE", () => {
@@ -21612,6 +21632,166 @@ ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
     expect(issues[0]?.getMessage()).to.equal("Event parameter iv_other must be passed by VALUE");
+  });
+
+  it("EVENTS, parameter sender is implicitly declared, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS clicked
+      EXPORTING
+        VALUE(sender) TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal("Event parameter sender is implicitly declared");
+  });
+
+  it("METHODS, parameter TYPE REF TO any, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING foo TYPE REF TO any.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal(`A generic type cannot be specified after "REF TO"`);
+  });
+
+  it("DATA TYPE REF TO any, error", () => {
+    const abap = `DATA foo TYPE REF TO any.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal(`A generic type cannot be specified after "REF TO"`);
+  });
+
+  it("DATA TYPE REF TO clike, error", () => {
+    const abap = `DATA foo TYPE REF TO clike.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal(`A generic type cannot be specified after "REF TO"`);
+  });
+
+  it("method implemented in super class, not redefined, error", () => {
+    const abap = `
+CLASS sup DEFINITION.
+  PUBLIC SECTION.
+    METHODS free.
+ENDCLASS.
+CLASS sup IMPLEMENTATION.
+  METHOD free.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl DEFINITION INHERITING FROM sup.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD free.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("use REDEFINITION");
+  });
+
+  it("RECEIVING, parameter name does not exist, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS describe RETURNING VALUE(p_descr_ref) TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD describe.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_type TYPE i.
+  lcl=>describe(
+    RECEIVING
+      type = lo_type ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal(`Method returning parameter "TYPE" does not exist`);
+  });
+
+  it("APPEND INITIAL LINE to ANY TABLE, error", () => {
+    const abap = `
+FIELD-SYMBOLS <lt_ranges> TYPE ANY TABLE.
+FIELD-SYMBOLS <ls_group> TYPE any.
+APPEND INITIAL LINE TO <lt_ranges> ASSIGNING <ls_group>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("index operations cannot be used");
+  });
+
+  it("APPEND INITIAL LINE to INDEX TABLE, ok", () => {
+    const abap = `
+FIELD-SYMBOLS <lt_ranges> TYPE INDEX TABLE.
+FIELD-SYMBOLS <ls_group> TYPE any.
+APPEND INITIAL LINE TO <lt_ranges> ASSIGNING <ls_group>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("numc passed to string importing parameter, not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING foo TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA numc TYPE n LENGTH 4.
+    bar( numc ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("not compatible");
+  });
+
+  it("CORRESPONDING #( ) with generic table types, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS prepare
+      IMPORTING initial_data TYPE table
+      CHANGING  initial_keys TYPE table.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD prepare.
+    initial_keys = CORRESPONDING #( initial_data ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues.length).to.equal(0, issues.map(i => i.getMessage()).join(", "));
+  });
+
+  it("RECEIVING, parameter name ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS describe RETURNING VALUE(p_descr_ref) TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD describe.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lo_type TYPE i.
+  lcl=>describe(
+    RECEIVING
+      p_descr_ref = lo_type ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
   });
 
   it("INTERFACE EVENTS, parameter not passed by VALUE, error", () => {
@@ -22925,4 +23105,25 @@ ENDFORM.`;
       expect(issues[0]?.getMessage()).to.equal(undefined);
     });
   }
+});
+
+describe("syntax.ts, CORRESPONDING into row of generic table", () => {
+  it("APPEND INITIAL LINE ASSIGNING, then CORRESPONDING #( ), ok", () => {
+    const abap = `
+DATA msg_display TYPE string_table.
+FIELD-SYMBOLS <display_tab> TYPE table.
+APPEND INITIAL LINE TO <display_tab> ASSIGNING FIELD-SYMBOL(<display_row>).
+<display_row> = CORRESPONDING #( msg_display ).`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues.length).to.equal(0, issues.map(i => i.getMessage()).join(", "));
+  });
+
+  it("APPEND INITIAL LINE ASSIGNING, then lines( ) of the row, error", () => {
+    const abap = `
+FIELD-SYMBOLS <display_tab> TYPE table.
+APPEND INITIAL LINE TO <display_tab> ASSIGNING FIELD-SYMBOL(<display_row>).
+ASSERT lines( <display_row> ) = 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`"<display_row>" is not an internal table`);
+  });
 });

@@ -2531,13 +2531,13 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
-  it("loop at ANY should give ANY", () => {
+  it("loop at ANY TABLE, inline field symbol is typed data", () => {
     const abap = `
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
     LOOP AT <tab> ASSIGNING FIELD-SYMBOL(<sdf>).
     ENDLOOP.`;
     const identifier = resolveVariable(abap, "<sdf>");
-    expect(identifier?.getType()).to.be.instanceof(Basic.AnyType);
+    expect(identifier?.getType()).to.be.instanceof(Basic.DataType);
   });
 
   it("data reference via NEW", () => {
