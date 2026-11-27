@@ -25,6 +25,14 @@ const tests = [
     %_HINTS ORACLE 'INDEX(ZFOO~Y20)'
     INTO TABLE @lt_foo
     UP TO 100 ROWS ##SUBRC_OK.`, cnt: 0},
+  {abap: `SELECT * FROM (lv_table) BYPASSING BUFFER ORDER BY PRIMARY KEY INTO CORRESPONDING FIELDS OF TABLE @lt_any.`, cnt: 1},
+  {abap: `SELECT * FROM (lv_table) ORDER BY PRIMARY KEY INTO CORRESPONDING FIELDS OF TABLE @lt_any BYPASSING BUFFER.`, cnt: 0},
+  {abap: `SELECT * FROM ztab BYPASSING BUFFER WHERE a = @lv_a INTO TABLE @lt_any.`, cnt: 1},
+  {abap: `SELECT SINGLE * FROM ztab BYPASSING BUFFER WHERE a = @lv_a INTO @ls_any.`, cnt: 1},
+  {abap: `SELECT * FROM ztab CONNECTION (lv_con) WHERE a = @lv_a INTO TABLE @lt_any.`, cnt: 1},
+  {abap: `SELECT * FROM ztab WHERE a = @lv_a INTO TABLE @lt_any CONNECTION (lv_con).`, cnt: 0},
+  {abap: `SELECT * FROM ztab BYPASSING BUFFER INTO TABLE @lt_any.`, cnt: 0},
+  {abap: `SELECT * FROM ztab BYPASSING BUFFER INTO TABLE lt_any WHERE a = lv_a.`, cnt: 1},
 ];
 
 testRule(tests, StrictSQL);
@@ -46,6 +54,12 @@ describe("Rule: strict_sql, quick fixes", () => {
   it("quick fix 3", async () => {
     const abap = `SELECT * FROM (c_tabname) INTO TABLE @rt_content WHERE type = @iv_type ORDER BY PRIMARY KEY.`;
     const expected = `SELECT * FROM (c_tabname)  WHERE type = @iv_type ORDER BY PRIMARY KEY INTO TABLE @rt_content.`;
+    testFix(abap, expected);
+  });
+
+  it("quick fix, BYPASSING BUFFER behind INTO", async () => {
+    const abap = `SELECT * FROM (lv_table) BYPASSING BUFFER ORDER BY PRIMARY KEY INTO TABLE @lt_any.`;
+    const expected = `SELECT * FROM (lv_table)  ORDER BY PRIMARY KEY INTO TABLE @lt_any BYPASSING BUFFER.`;
     testFix(abap, expected);
   });
 
