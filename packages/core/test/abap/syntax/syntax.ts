@@ -23293,3 +23293,32 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, APPEND VALUE with a data object named value in scope, other target", () => {
+  it("value is a string or a table, target is another table, ok", () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         name TYPE string,
+       END OF ty_row,
+       ty_rows TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS value_is_string IMPORTING value TYPE string.
+    METHODS value_is_table IMPORTING value TYPE ty_rows.
+  PRIVATE SECTION.
+    DATA mt_rows TYPE ty_rows.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD value_is_string.
+    APPEND VALUE #( name = value ) TO mt_rows.
+  ENDMETHOD.
+  METHOD value_is_table.
+    APPEND VALUE #( name = 'A' ) TO mt_rows.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});

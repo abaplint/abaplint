@@ -70,8 +70,8 @@ export class Append implements StatementSyntax {
       if (source.getFirstToken().getStr().toUpperCase() === "VALUE"
           && source.findDirectExpression(Expressions.TypeNameOrInfer) !== undefined
           && node.findDirectTokenByText("LINES") === undefined
-          && input.scope.findVariable("value") !== undefined) {
-// with a data object named VALUE in scope, the VALUE operator is read as the short form without work area
+          && target?.concatTokens().toUpperCase() === "VALUE") {
+// when appending to a table named VALUE, the VALUE operator is read as the short form without work area
         const message = `An explicit work area is necessary in the OO context. Use "APPEND wa TO VALUE [SORTED BY]".`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
