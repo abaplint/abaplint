@@ -28,6 +28,14 @@ export class FieldSymbol implements StatementSyntax {
 
     const bfound = new BasicTypes(input).parseType(node);
     if (bfound) {
+      // the row of a generically typed table has no type, "LIKE LINE OF" it is refused: the field
+      // specified under LIKE has a generic type
+      if (/ LIKE LINE OF /i.test(node.concatTokens())
+          && bfound.isGeneric() === true
+          && bfound.containsVoid() === false) {
+        const message = "FIELD-SYMBOLS LIKE LINE OF a generically typed table, " + fs.concatTokens();
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      }
       input.scope.addIdentifier(new TypedIdentifier(fsname, input.filename, bfound));
       return;
     }
