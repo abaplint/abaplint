@@ -17,6 +17,7 @@ import {Field, FieldSub, TypeTableKey} from "../2_statements/expressions";
 import {BuiltIn} from "./_builtin";
 import {Position} from "../../position";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "./_syntax_input";
+import {Constant} from "./expressions/constant";
 import {IObjectAndToken} from "../../_iddic_references";
 import {Release, releaseAtLeast} from "../../version";
 
@@ -1119,6 +1120,7 @@ export class BasicTypes {
     if (constant) {
       const conc = val.findFirstExpression(Expressions.ConcatenatedConstant);
       if (conc) {
+        Constant.checkConcatenatedLength(conc, this.input);
         const first = conc.getFirstToken().getStr().substring(0, 1);
         let result = "";
         for (const token of conc.getAllTokens()) {

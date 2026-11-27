@@ -2,6 +2,7 @@ import {ExpressionNode} from "../../nodes";
 import {CharacterType, IntegerType, PackedType, StringType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Integer} from "../../2_statements/expressions";
+import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class Constant {
   public static runSyntax(node: ExpressionNode): AbstractType {
@@ -22,6 +23,25 @@ export class Constant {
       return StringType.get({derivedFromConstant: true});
     } else {
       return StringType.get();
+    }
+  }
+
+  // literals joined with the literal operator "&" form one literal at compile time,
+  // and a literal holds at most 255 characters, counted without the delimiters
+  public static checkConcatenatedLength(node: ExpressionNode, input: SyntaxInput): void {
+    let length = 0;
+    for (const token of node.getAllTokens()) {
+      const str = token.getStr();
+      if (str === "&") {
+        continue;
+      }
+      const delimiter = str.substring(0, 1);
+      // a doubled delimiter inside the literal is one character
+      length += str.substring(1, str.length - 1).split(delimiter + delimiter).join(delimiter).length;
+    }
+    if (length > 255) {
+      const message = "The text literal \"" + node.getFirstToken().getStr().substring(0, 25) + "...\" is longer than 255 characters";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
     }
   }
 
