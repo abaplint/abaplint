@@ -205,6 +205,7 @@ import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables
 import {SQLValueConversionConf} from "../src/rules/sql_value_conversion";
 import {StaleSubrcConf} from "../src/rules/stale_subrc";
 import {StartAtTabConf} from "../src/rules/start_at_tab";
+import {StatementLengthConf} from "../src/rules/statement_length";
 import {StaticCallViaInstanceConf} from "../src/rules/static_call_via_instance";
 import {StrictSQLConf} from "../src/rules/strict_sql";
 import {SubrcAfterAssignConf} from "../src/rules/subrc_after_assign";
@@ -464,6 +465,7 @@ export interface IConfig {
     "sql_value_conversion"?: SQLValueConversionConf | boolean,
     "stale_subrc"?: StaleSubrcConf | boolean,
     "start_at_tab"?: StartAtTabConf | boolean,
+    "statement_length"?: StatementLengthConf | boolean,
     "static_call_via_instance"?: StaticCallViaInstanceConf | boolean,
     "strict_sql"?: StrictSQLConf | boolean,
     "subrc_after_assign"?: SubrcAfterAssignConf | boolean,
@@ -712,6 +714,7 @@ export interface IConfig {
     "sql_value_conversion"?: SQLValueConversionConf | boolean,
     "stale_subrc"?: StaleSubrcConf | boolean,
     "start_at_tab"?: StartAtTabConf | boolean,
+    "statement_length"?: StatementLengthConf | boolean,
     "static_call_via_instance"?: StaticCallViaInstanceConf | boolean,
     "strict_sql"?: StrictSQLConf | boolean,
     "subrc_after_assign"?: SubrcAfterAssignConf | boolean,
