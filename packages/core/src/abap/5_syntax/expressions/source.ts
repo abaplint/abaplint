@@ -324,6 +324,10 @@ export class Source {
           }
           context = this.infer(context, found, arithmetic);
         } else if (get instanceof Expressions.Constant) {
+          const concatenated = first.findDirectExpression(Expressions.ConcatenatedConstant);
+          if (concatenated) {
+            Constant.checkConcatenatedLength(concatenated, input);
+          }
           const found = Constant.runSyntax(first);
           context = this.infer(context, found, arithmetic);
         } else if (get instanceof Expressions.Dereference) {
