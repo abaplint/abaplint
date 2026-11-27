@@ -2,6 +2,7 @@ import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {ObjectOriented} from "../_object_oriented";
 import {Source} from "./source";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {RaiseMessage} from "../_raise_message";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AbstractType} from "../../types/basic/_abstract_type";
@@ -31,6 +32,9 @@ export class SwitchBody {
       const message = "SwitchBody, unexpected";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return VoidType.get(CheckSyntaxKey);
+    }
+    for (const s of node.findDirectExpressions(Expressions.Source)) {
+      checkParenthesizedOperand(s, input);
     }
     const type = Source.runSyntax(thenSource, input, targetType);
 

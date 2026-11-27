@@ -1,6 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {Source} from "./source";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {IntegerType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {AbstractType} from "../../types/basic/_abstract_type";
@@ -21,6 +22,7 @@ export class InlineLoopDefinition {
     const source = node.findDirectExpression(Expressions.Source);
 
     if (source && target) {
+      checkParenthesizedOperand(source, input);
       const sourceType = Source.runSyntax(source, input);
       const inGroup = node.concatTokens().toUpperCase().includes(" IN GROUP ");
       let rowType: AbstractType | undefined = inGroup ? LoopGroupBy.findMemberType(source, input) : undefined;

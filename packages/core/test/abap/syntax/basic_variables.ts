@@ -2368,6 +2368,20 @@ ENDCASE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
   });
 
+  it("bit-set inline", () => {
+    const abap = `DATA(foo) = bit-set( 3 ).`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.XStringType);
+  });
+
+  it("boolx inline", () => {
+    const abap = `DATA(foo) = boolx( bool = 1 = 2 bit = 3 ).`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.XStringType);
+  });
+
   it("FIND RESULTS inline", () => {
     const abap = `
     DATA lv_string TYPE string.

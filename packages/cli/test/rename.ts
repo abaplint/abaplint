@@ -130,6 +130,44 @@ ENDCLASS.`;
     expect(sicfNew).to.include("<ICFHANDLER>ZCL_HANDLER_NEW</ICFHANDLER>");
   });
 
+  it("renames an icf service into a namespace and writes the node of the namespace", async () => {
+    const sicf = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_SICF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <URL>/sap/example/z_svc/</URL>
+   <ICFSERVICE>
+    <ICF_NAME>Z_SVC</ICF_NAME>
+    <ORIG_NAME>z_svc</ORIG_NAME>
+   </ICFSERVICE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const fileSicf = new MemoryFile("z_svc 9def6c78d0beedf8d5b04ba6c.sicf.xml", sicf);
+    const reg = new Registry().addFiles([fileSicf]).parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[fileSicf.getFilename()] = fileSicf.getRaw();
+    const volume = memfs.Volume.fromJSON(jsonFiles);
+    const mockFS = memfs.createFsFromVolume(volume);
+
+    const config = reg.getConfig().get();
+    config.rename = {"patterns": [
+      {"type": "SICF", "oldName": "z_svc", "newName": "/ns/svc"},
+    ]};
+
+    new Rename(reg).run(config, "base", mockFS, true);
+
+    const leaf = mockFS.readFileSync("svc            d71182a42960257ab8a339e23.sicf.xml").toString();
+    expect(leaf).to.include("<URL>/sap/example/ns/svc/</URL>");
+    expect(leaf).to.include("<ICF_NAME>SVC</ICF_NAME>");
+
+    const parent = mockFS.readFileSync("ns             df82fa4386c4f47fd34f8cabb.sicf.xml").toString();
+    expect(parent).to.include("<URL>/sap/example/ns/</URL>");
+    expect(parent).to.include("<ICF_NAME>NS</ICF_NAME>");
+  });
+
   it("renames a bsp application into a namespace, the pages keep their names", async () => {
     const wapa = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_WAPA" serializer_version="v1.0.0">
@@ -174,6 +212,57 @@ ENDCLASS.`;
     expect(xmlNew).to.include("<PAGENAME>zfoo/Lib.js</PAGENAME>");
     expect(mockFS.readFileSync("#ns#bar.wapa.zfoo_-lib.js").toString()).to.equal("// lib");
     expect(mockFS.existsSync("zfoo.wapa.xml")).to.equal(false);
+  });
+
+  it("renames the url of an icf service in the pages of a bsp, with the option", async () => {
+    const sicf = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_SICF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <URL>/sap/example/z_svc/</URL>
+   <ICFSERVICE>
+    <ICF_NAME>Z_SVC</ICF_NAME>
+    <ORIG_NAME>z_svc</ORIG_NAME>
+   </ICFSERVICE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const wapa = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_WAPA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <ATTRIBUTES>
+    <APPLNAME>ZAPP</APPLNAME>
+    <APPLEXT>ZAPP</APPLEXT>
+   </ATTRIBUTES>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const manifest = `{"uri": "/sap/example/z_svc"}`;
+
+    for (const urls of [true, false]) {
+      const fileSicf = new MemoryFile("z_svc 9def6c78d0beedf8d5b04ba6c.sicf.xml", sicf);
+      const fileWapa = new MemoryFile("zapp.wapa.xml", wapa);
+      const filePage = new MemoryFile("zapp.wapa.manifest.json", manifest);
+      const reg = new Registry().addFiles([fileSicf, fileWapa, filePage]).parse();
+
+      const jsonFiles: any = {};
+      for (const f of [fileSicf, fileWapa, filePage]) {
+        jsonFiles[f.getFilename()] = f.getRaw();
+      }
+      const volume = memfs.Volume.fromJSON(jsonFiles);
+      const mockFS = memfs.createFsFromVolume(volume);
+
+      const config = reg.getConfig().get();
+      config.rename = {urls, "patterns": [
+        {"type": "SICF", "oldName": "z_svc", "newName": "/ns/svc"},
+      ]};
+
+      new Rename(reg).run(config, "base", mockFS, true);
+
+      const pageNew = mockFS.readFileSync("zapp.wapa.manifest.json").toString();
+      expect(pageNew).to.equal(urls ? `{"uri": "/sap/example/ns/svc"}` : manifest);
+    }
   });
 
   it("renames interface referenced in DEFAULT value", async () => {
@@ -269,6 +358,36 @@ ENDCLASS.`;
     // class references updated
     const clasNew = mockFS.readFileSync(file3.getFilename()).toString();
     expect(clasNew).to.include("METHOD zif_aa~do_something");
+  });
+
+  it("output folder, the drive letter of the base differs in case from the filenames", async () => {
+    const intf = `INTERFACE zif_intf PUBLIC.
+ENDINTERFACE.`;
+    // on Windows, path.resolve(base) and the loaded filenames can differ in the case of the drive letter
+    const windows = process.platform === "win32";
+    const root = windows ? "C:/abaplint_rename_output_test" : "/abaplint_rename_output_test";
+    const base = windows ? "c:/abaplint_rename_output_test" : root;
+
+    const file1 = new MemoryFile(root + "/src/zif_intf.intf.abap", intf);
+    const reg = new Registry().addFiles([file1]).parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[file1.getFilename()] = file1.getRaw();
+    const volume = memfs.Volume.fromJSON(jsonFiles);
+    const mockFS = memfs.createFsFromVolume(volume);
+
+    const config = reg.getConfig().get();
+    config.rename = {"output": "out", "patterns": [{"type": "INTF", "oldName": "zif_intf", "newName": "yif_intf"}]};
+
+    new Rename(reg).run(config, base, mockFS, true);
+
+    // memfs drops the drive letter
+    const normalize = (f: string) => f.replace(/\\/g, "/").replace(/^[A-Za-z]:/, "").toLowerCase();
+    const written = Object.keys(volume.toJSON()).map(normalize).sort();
+    expect(written).to.deep.equal([
+      normalize(root + "/out/src/yif_intf.intf.abap"),
+      normalize(root + "/src/zif_intf.intf.abap"),
+    ]);
   });
 
 });

@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.120.120",
+    "version": "2.120.122",
     "description": "abaplint - Core API",
     "main": "build/src/index.js",
     "typings": "build/abaplint.d.ts",
@@ -62,7 +62,7 @@
         "mocha": "^12.0.3",
         "rimraf": "^6.1.4",
         "source-map-support": "^0.5.21",
-        "ts-json-schema-generator": "^2.9.0",
+        "ts-json-schema-generator": "^2.10.0",
         "typescript": "^7.0.2"
     },
     "dependencies": {
