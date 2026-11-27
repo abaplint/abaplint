@@ -23254,3 +23254,42 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, protected attribute via reference typed with a subclass", () => {
+  const program = (refType: string) => `
+CLASS lcl_container DEFINITION DEFERRED.
+
+CLASS lcl_control DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run IMPORTING parent TYPE REF TO ${refType}.
+  PROTECTED SECTION.
+    DATA control_id TYPE string.
+  PRIVATE SECTION.
+    CLASS-METHODS initialize IMPORTING parent TYPE REF TO ${refType}.
+ENDCLASS.
+
+CLASS lcl_container DEFINITION INHERITING FROM lcl_control.
+ENDCLASS.
+
+CLASS lcl_control IMPLEMENTATION.
+  METHOD run.
+    initialize( parent ).
+  ENDMETHOD.
+  METHOD initialize.
+    DATA(lv_id) = parent->control_id.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_container IMPLEMENTATION.
+ENDCLASS.`;
+
+  it("accessed in the declaring class via a subclass reference, error", () => {
+    const issues = runProgram(program("lcl_container"));
+    expect(issues[0]?.getMessage()).to.equal(`Attribute "control_id" is protected and cannot be accessed`);
+  });
+
+  it("accessed in the declaring class via a reference of its own type, ok", () => {
+    const issues = runProgram(program("lcl_control"));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
