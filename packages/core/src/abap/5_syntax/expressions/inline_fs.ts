@@ -1,12 +1,18 @@
 import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {UnknownType} from "../../types/basic";
+import {AnyType, DataType, UnknownType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 export class InlineFS {
+  /** the row of a generic table is typed "any", a field symbol declared inline for it is typed "data",
+   *  eg. "APPEND INITIAL LINE TO <generic_tab> ASSIGNING FIELD-SYMBOL(<row>)" */
+  public static typeForTableRow(rowType: AbstractType | undefined): AbstractType | undefined {
+    return rowType instanceof AnyType ? new DataType() : rowType;
+  }
+
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, type: AbstractType | undefined): void {
     const token = node.findFirstExpression(Expressions.TargetFieldSymbol)?.getFirstToken();
 
