@@ -32,6 +32,25 @@ export type SecondaryIndex = {
   fields: string[],
 };
 
+type TableField = {
+  FIELDNAME: string,
+  ROLLNAME?: string,
+  COMPTYPE?: string,
+  PRECFIELD?: string,
+  LENG?: string,
+  INTLEN?: string,
+  INTTYPE?: string,
+  DATATYPE?: string,
+  DECIMALS?: string,
+  KEYFLAG?: string,
+  GROUPNAME?: string,
+  CHECKTABLE?: string,
+  REFTABLE?: string,
+  REFFIELD?: string,
+  REFTYPE?: string,
+  DDTEXT?: string,
+};
+
 export class Table extends AbstractObject {
   private parsedData: {
     tableCategory?: TableCategory | undefined,
@@ -41,24 +60,7 @@ export class Table extends AbstractObject {
     enhancementCategory?: EnhancementCategory,
     description?: string,
     secondaryIndexes?: SecondaryIndex[],
-    fields: {
-      FIELDNAME: string,
-      ROLLNAME?: string,
-      COMPTYPE?: string,
-      PRECFIELD?: string,
-      LENG?: string,
-      INTLEN?: string,
-      INTTYPE?: string,
-      DATATYPE?: string,
-      DECIMALS?: string,
-      KEYFLAG?: string,
-      GROUPNAME?: string,
-      CHECKTABLE?: string,
-      REFTABLE?: string,
-      REFFIELD?: string,
-      REFTYPE?: string,
-      DDTEXT?: string,
-    }[]} | undefined;
+    fields: TableField[]} | undefined;
   private parsedType: AbstractType | undefined = undefined;
 
   public getType(): string {
@@ -147,27 +149,42 @@ export class Table extends AbstractObject {
       }
     }
 
+    let invalid: AbstractType | undefined;
     if (reg.getConfig().getLanguageVersion() === LanguageVersion.Cloud
         && this.parsedData.dataClass === "USER3") {
-      return new Types.UnknownType("Data class = USER3 not allowed in cloud");
-    }
-
-    if (this.getTableCategory() === TableCategory.Transparent) {
+      invalid = new Types.UnknownType("Data class = USER3 not allowed in cloud");
+    } else if (this.getTableCategory() === TableCategory.Transparent) {
       if (this.listKeys(reg).length === 0) {
-        return new Types.UnknownType("Table " + this.getName() + " has no key fields");
+        invalid = new Types.UnknownType("Table " + this.getName() + " has no key fields");
       } else if (this.keyFieldsNotFirst()) {
-        return new Types.UnknownType("Table " + this.getName() + " key fields must be first");
+        invalid = new Types.UnknownType("Table " + this.getName() + " key fields must be first");
       }
     }
 
-    if (this.parsedType) {
+    if (invalid === undefined && this.parsedType) {
       return this.parsedType;
     }
 
+    // the references are set on every path, also for an invalid table, renaming relies on them
     const references: IObjectAndToken[] = [];
+    const type = this.buildType(reg, this.parsedData.fields, references);
+    reg.getDDICReferences().setUsing(this, references);
+
+    if (invalid !== undefined) {
+      return invalid;
+    } else if (type instanceof Types.StructureType) {
+      this.parsedType = type;
+    }
+    return type;
+  }
+
+  private buildType(reg: IRegistry, fields: TableField[], references: IObjectAndToken[]): AbstractType {
     const components: Types.IStructureComponent[] = [];
     const ddic = new DDIC(reg);
-    for (const field of this.parsedData.fields) {
+    // an .INCLUDE that cannot be resolved makes the full structure unknown or void,
+    // the fields after it are still looked at, to collect their references
+    let failed: AbstractType | undefined;
+    for (const field of fields) {
       const comptype = field.COMPTYPE ? field.COMPTYPE : "";
       if (comptype === "E") { // data element
         const lookup = ddic.lookupDataElement(field.ROLLNAME);
@@ -178,7 +195,8 @@ export class Table extends AbstractObject {
       } else if (field.FIELDNAME === ".INCLUDE"
           || field.FIELDNAME.startsWith(".INCLU-")) {
         if (field.PRECFIELD === undefined) {
-          return new Types.UnknownType("Table, parser error, PRECFIELD undefined, " + this.getName());
+          failed = failed ?? new Types.UnknownType("Table, parser error, PRECFIELD undefined, " + this.getName());
+          continue;
         }
         const lookup = ddic.lookupTableOrView(field.PRECFIELD);
         let found = lookup.type;
@@ -207,11 +225,10 @@ export class Table extends AbstractObject {
         } else if ((field.PRECFIELD?.startsWith("CI_") || field.PRECFIELD?.startsWith("SI_"))
             && found instanceof Types.UnknownType) {
           continue;
-        } else if (found instanceof Types.UnknownType) {
-          return found;
-        } else if (found instanceof Types.VoidType) {
-          // set the full structure to void
-          return found;
+        } else if (found instanceof Types.UnknownType || found instanceof Types.VoidType) {
+          // void sets the full structure to void
+          failed = failed ?? found;
+          continue;
         } else {
           components.push({name: field.FIELDNAME, type: found});
         }
@@ -265,6 +282,13 @@ export class Table extends AbstractObject {
           references.push({object: lookup.object});
         }
       } else if (comptype === "") { // built in
+        if (field.ROLLNAME) {
+          // typed with a data element, but its built-in type is given directly, still a reference
+          const dtel = reg.getObject("DTEL", field.ROLLNAME);
+          if (dtel) {
+            references.push({object: dtel});
+          }
+        }
         const datatype = field.DATATYPE;
         if (datatype === undefined) {
           throw new Error("Expected DATATYPE, while parsing TABL " + this.getName());
@@ -293,13 +317,13 @@ export class Table extends AbstractObject {
       }
     }
 
-    if (components.length === 0) {
+    if (failed !== undefined) {
+      return failed;
+    } else if (components.length === 0) {
       return new Types.UnknownType("Table/Structure " + this.getName() + " does not contain any components");
     }
 
-    reg.getDDICReferences().setUsing(this, references);
-    this.parsedType = new Types.StructureType(components, this.getName(), this.getName(), this.getDescription());
-    return this.parsedType;
+    return new Types.StructureType(components, this.getName(), this.getName(), this.getDescription());
   }
 
   public getTableCategory(): TableCategory | undefined {

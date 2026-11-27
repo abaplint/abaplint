@@ -2,6 +2,7 @@ import {MemoryFile} from "../../../src/files/memory_file";
 import {expect} from "chai";
 import {Renamer} from "../../../src/objects/rename/renamer";
 import {Registry} from "../../../src/registry";
+import {dtelRefXML, renameAll, tagValues, ttypXML} from "./_ddic_xml";
 
 describe("Rename Global Class", () => {
 
@@ -237,6 +238,21 @@ ENDCLASS.`;
         expect(1).to.equal(f.getFilename(), "unexpected file");
       }
     }
+  });
+
+  it("CLAS, row type of TTYP and REF TO in DTEL", () => {
+    const clas = `CLASS cl_foo DEFINITION PUBLIC CREATE PUBLIC.
+ENDCLASS.
+CLASS cl_foo IMPLEMENTATION.
+ENDCLASS.`;
+    const result = renameAll([
+      ["cl_foo.clas.abap", clas],
+      ["tt_foo.ttyp.xml", ttypXML("tt_foo", "CL_FOO", "R")],
+      ["ref_foo.dtel.xml", dtelRefXML("ref_foo", "CL_FOO", "C")],
+    ], [["CLAS", "cl_foo", "zcl_foo"]]);
+    expect(Object.keys(result).sort()).to.deep.equal(["ref_foo.dtel.xml", "tt_foo.ttyp.xml", "zcl_foo.clas.abap"]);
+    expect(tagValues(result["tt_foo.ttyp.xml"], "ROWTYPE")).to.deep.equal(["ZCL_FOO"]);
+    expect(tagValues(result["ref_foo.dtel.xml"], "DOMNAME")).to.deep.equal(["ZCL_FOO"]);
   });
 
 });
