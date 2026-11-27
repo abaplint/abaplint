@@ -154,6 +154,13 @@ export class TableType extends AbstractObject {
       if (lookup.object) {
         references.push({object: lookup.object});
       }
+    } else if (this.parsedXML.rowkind === "" && this.parsedXML.rowtype !== undefined && this.parsedXML.rowtype !== "") {
+      // ROWTYPE given without ROWKIND, it must refer to a DDIC object, predefined ABAP types like "I" are not allowed
+      const lookup = ddic.lookup(this.parsedXML.rowtype);
+      type = new Types.TableType(lookup.type, tableOptions, this.getName(), this.getDescription(), this.getName());
+      if (lookup.object) {
+        references.push({object: lookup.object});
+      }
     } else if (this.parsedXML.rowkind === "") {
       if (this.parsedXML.datatype === undefined) {
         type = new Types.UnknownType("Table Type, empty DATATYPE" + this.getName(), this.getName());
