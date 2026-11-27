@@ -73,15 +73,17 @@ export class Rename {
     console.log("Output folder: " + outputFolder);
     FileOperations.deleteFolderRecursive(outputFolder);
 
-    const myBase = FileOperations.toUnixPath(path.resolve(base));
+    const myBase = path.resolve(base);
 
     for (const o of this.reg.getObjects()) {
       if (this.reg.isDependency(o) === true) {
         continue;
       }
       for (const f of o.getFiles()) {
-        // strip the long-path prefix (Windows) then the drive-qualified base
-        const n = outputFolder + f.getFilename().replace("//?/", "").replace(myBase, "");
+        // strip the long-path prefix (Windows), then take the path relative to the base,
+        // path.relative ignores case on Windows, where the drive letter case can differ
+        const filename = f.getFilename().replace(/^[\\/]{2}\?[\\/]/, "");
+        const n = outputFolder + path.posix.sep + FileOperations.toUnixPath(path.relative(myBase, filename));
         console.log("Write " + n);
         fs.mkdirSync(path.dirname(n), {recursive: true});
         fs.writeFileSync(n, f.getRaw());

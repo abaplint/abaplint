@@ -2,6 +2,7 @@ import {MemoryFile} from "../../../src/files/memory_file";
 import {expect} from "chai";
 import {Renamer} from "../../../src/objects/rename/renamer";
 import {Registry} from "../../../src/registry";
+import {dtelField, dtelFieldNoComptype, dtelXML, includeField, renameAll, tablXML, tagValues} from "./_ddic_xml";
 
 describe("Rename Data Element", () => {
 
@@ -486,6 +487,32 @@ ENDINTERFACE.`);
         expect(1).to.equal(f.getFilename(), "unexpected file");
       }
     }
+  });
+
+  it("DTEL, referenced from TABL field without COMPTYPE", () => {
+    const result = renameAll([
+      ["mydtel.dtel.xml", dtelXML("mydtel")],
+      ["s1.tabl.xml", tablXML("s1", [dtelFieldNoComptype("F", "MYDTEL")])],
+    ], [["DTEL", "mydtel", "zmydtel"]]);
+    expect(tagValues(result["s1.tabl.xml"], "ROLLNAME")).to.deep.equal(["ZMYDTEL"]);
+  });
+
+  it("DTEL, referenced from TABL after an .INCLUDE that is unknown or void", () => {
+    const result = renameAll([
+      ["mydtel.dtel.xml", dtelXML("mydtel")],
+      ["unknown.tabl.xml", tablXML("unknown", [includeField("ZNOT_FOUND"), dtelField("F", "MYDTEL")])],
+      ["void.tabl.xml", tablXML("void", [includeField("SAP_STRUCTURE"), dtelField("F", "MYDTEL")])],
+    ], [["DTEL", "mydtel", "zmydtel"]]);
+    expect(tagValues(result["unknown.tabl.xml"], "ROLLNAME")).to.deep.equal(["ZMYDTEL"]);
+    expect(tagValues(result["void.tabl.xml"], "ROLLNAME")).to.deep.equal(["ZMYDTEL"]);
+  });
+
+  it("DTEL, referenced from transparent TABL without key fields", () => {
+    const result = renameAll([
+      ["mydtel.dtel.xml", dtelXML("mydtel")],
+      ["nokey.tabl.xml", tablXML("nokey", [dtelField("F", "MYDTEL")], "TRANSP")],
+    ], [["DTEL", "mydtel", "zmydtel"]]);
+    expect(tagValues(result["nokey.tabl.xml"], "ROLLNAME")).to.deep.equal(["ZMYDTEL"]);
   });
 
 });
