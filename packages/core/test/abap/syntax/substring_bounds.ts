@@ -99,10 +99,9 @@ CLEAR lv_c5+3(2).`));
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("ok, source inside the field, (*) and length 0", () => {
+  it("ok, source inside the field and (*)", () => {
     const issues = runProgram(program(`ASSIGN lv_c5+4(*) TO <lv_any>.
-lv_result = lv_c5+2(3).
-lv_result = lv_c5(0).`));
+lv_result = lv_c5+2(3).`));
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 

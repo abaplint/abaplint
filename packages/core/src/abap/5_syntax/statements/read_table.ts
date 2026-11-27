@@ -8,6 +8,7 @@ import {FSTarget} from "../expressions/fstarget";
 import {ComponentCompareSimple} from "../expressions/component_compare_simple";
 import {StatementSyntax} from "../_statement_syntax";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {InlineFS} from "../expressions/inline_fs";
 import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {BuiltIn} from "../_builtin";
@@ -102,7 +103,7 @@ export class ReadTable implements StatementSyntax {
       if (inline) {
         InlineData.runSyntax(inline, input, rowType);
       } else if (fst) {
-        FSTarget.runSyntax(fst, input, rowType);
+        FSTarget.runSyntax(fst, input, InlineFS.typeForTableRow(rowType));
       } else if (t) {
         const targetType = Target.runSyntax(t, input);
         if (new TypeUtils(input.scope).isAssignable(rowType, targetType) === false) {

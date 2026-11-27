@@ -1,5 +1,5 @@
 import {ExpressionNode} from "../../nodes";
-import {VoidType} from "../../types/basic";
+import {DataType, TableType, VoidType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {IMethodDefinition} from "../../types/_method_definition";
 import {MethodParameters} from "./method_parameters";
@@ -89,6 +89,13 @@ export class MethodCallParam {
       } else if (checkTextSymbol(child, targetType, input)) {
         return;
       } else if (checkHeaderLine(child, sourceType, targetType, method, input)) {
+        return;
+      } else if (method instanceof BuiltInMethod
+          && targetType instanceof TableType
+          && sourceType instanceof DataType) {
+        // "data" is generic, but not generic enough to be an internal table, eg. "lines( <fs> )"
+        const message = `"${child.concatTokens()}" is not an internal table`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
       } else if (this.isAssignable(sourceType, targetType, child, method, input) === false) {
         const message = "Method parameter type not compatible";
