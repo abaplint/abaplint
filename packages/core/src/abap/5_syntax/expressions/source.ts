@@ -5,7 +5,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType, DateType, TimeType, NumericType, GenericObjectReferenceType, DataType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType, DateType, TimeType, NumericType, GenericObjectReferenceType, DataType, UTCLongType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -319,7 +319,7 @@ export class Source {
           context = StringTemplate.runSyntax(first, input);
         } else if (get instanceof Expressions.Source) {
           const found = Source.runSyntax(first, input);
-          if (arithmetic === true && this.reportReferenceOperand(found, first, input)) {
+          if (arithmetic === true && this.reportNonNumericOperand(found, first, input)) {
             return VoidType.get(CheckSyntaxKey);
           }
           context = this.infer(context, found, arithmetic);
@@ -337,7 +337,7 @@ export class Source {
           context = ComponentChain.runSyntax(context, first, input);
         } else if (get instanceof Expressions.ArithOperator) {
           const operator = first.concatTokens().toUpperCase();
-          if (!operator.startsWith("BIT-") && this.reportReferenceOperand(context, operand, input)) {
+          if (!operator.startsWith("BIT-") && this.reportNonNumericOperand(context, operand, input)) {
             return VoidType.get(CheckSyntaxKey);
           }
           operand = [];
@@ -381,7 +381,7 @@ export class Source {
       return StringType.get();
     }
 
-    if (signed === true && arithmetic === false && this.reportReferenceOperand(context, operand, input)) {
+    if (signed === true && arithmetic === false && this.reportNonNumericOperand(context, operand, input)) {
       return VoidType.get(CheckSyntaxKey);
     }
 
@@ -395,15 +395,18 @@ export class Source {
   }
 
   /** an operand of an arithmetic calculation is converted into a number, which is not possible for a
-   * data or object reference, "foo - 1"; a dereferenced "foo->* - 1" is fine. Returns true if reported */
-  public static reportReferenceOperand(type: AbstractType | undefined, operand: ExpressionNode | ExpressionNode[],
-                                       input: SyntaxInput): boolean {
+   * data or object reference, "foo - 1", or for a time stamp of type utclong; a dereferenced "foo->* - 1"
+   * is fine. Returns true if reported */
+  public static reportNonNumericOperand(type: AbstractType | undefined, operand: ExpressionNode | ExpressionNode[],
+                                        input: SyntaxInput): boolean {
     const nodes = Array.isArray(operand) ? operand : [operand];
-    if (nodes.length === 0 || this.isReference(type) === false) {
+    const timeStamp = type instanceof UTCLongType;
+    if (nodes.length === 0 || (this.isReference(type) === false && timeStamp === false)) {
       return false;
     }
     const name = nodes.map(n => n.concatTokens()).join("");
-    const message = `"${name}" is a reference, it cannot be used in a calculation`;
+    const kind = timeStamp ? "a time stamp of type utclong" : "a reference";
+    const message = `"${name}" is ${kind}, it cannot be used in a calculation`;
     input.issues.push(syntaxIssue(input, nodes[0].getFirstToken(), message));
     return true;
   }

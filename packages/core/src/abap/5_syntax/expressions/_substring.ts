@@ -3,7 +3,7 @@ import {INode} from "../../nodes/_inode";
 import {InstanceArrow} from "../../1_lexer/tokens";
 import * as Expressions from "../../2_statements/expressions";
 import {CharacterType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, HexType,
-  Integer8Type, IntegerType, NumericType, PackedType, TimeType, VoidType} from "../../types/basic";
+  Integer8Type, IntegerType, NumericType, PackedType, TimeType, UTCLongType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ClassAttribute} from "../../types/class_attribute";
 import {IdentifierMeta} from "../../types/_typed_identifier";
@@ -19,6 +19,8 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 // A substring of a date, time or numeric text field has type n; its bounds are not checked.
 // An offset or length on a numeric field (i, int8, p, f, decfloat) is a syntax error, whatever its value,
 // except a length without offset covering the full packed field, eg. "lv_p(5)" for "lv_p(5) TYPE p".
+// A time stamp of type utclong has no substrings either, only the offset 0 and the length "*", which
+// take the whole field, are accepted.
 export function substringType(
   context: AbstractType | undefined,
   offset: number | undefined,
@@ -33,6 +35,15 @@ export function substringType(
     return context;
   } else if (numericName !== undefined) {
     const message = `Field type "${numericName}" does not permit substrings to be accessed`;
+    input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+    return VoidType.get(CheckSyntaxKey);
+  }
+
+  if (context instanceof UTCLongType) {
+    if (offset === 0 || (node instanceof ExpressionNode && node.concatTokens() === "(*)")) {
+      return context;
+    }
+    const message = `Field type "utclong" does not permit substrings to be accessed`;
     input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
     return VoidType.get(CheckSyntaxKey);
   }
@@ -152,8 +163,12 @@ function numericSubstringType(
 }
 
 // A field symbol typed "c" or "x" is generic, but its type is represented with length 1, so the
-// offset or length at "index" is not checked when it directly follows the field symbol
-export function isFieldSymbolItself(children: readonly INode[], index: number): boolean {
+// offset or length at "index" is not checked when it directly follows the field symbol.
+// No generic type is represented by utclong, so such a field symbol is checked
+export function isFieldSymbolItself(context: AbstractType | undefined, children: readonly INode[], index: number): boolean {
+  if (context instanceof UTCLongType) {
+    return false;
+  }
   const first = children[0]?.get();
   if (!(first instanceof Expressions.SourceFieldSymbol) && !(first instanceof Expressions.TargetFieldSymbol)) {
     return false;

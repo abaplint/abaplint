@@ -430,6 +430,18 @@ Make sure to test the downported code, it might not always be completely correct
         }
       }
 
+      // CASE with a 702 built-in function as the operand parses in the low version, but before
+      // 740sp02 the operand takes only the functions called with one unnamed argument, like strlen( )
+      if (ret.length === 0) {
+        for (let i = 0; i < lowStatements.length; i++) {
+          const issue = this.outlineCaseBuiltin(lowStatements[i], highStatements[i], lowFile, highSyntax);
+          if (issue) {
+            ret.push(issue);
+            break;
+          }
+        }
+      }
+
       // MOVE-CORRESPONDING between tables parses in the low version, but is only allowed from
       // v740sp05, "MOVE-CORRESPONDING with tables possible from v740sp05"
       if (ret.length === 0) {
@@ -1753,6 +1765,60 @@ ${indentation}`);
     const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, source.getFirstToken(), "Outline built-in function in INSERT",
+                         this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  /** CASE to_upper( val ), the operand is outlined into a variable in front of the CASE.
+   * A WHEN operand stays, in front of the CASE it would be evaluated even if an earlier WHEN matches */
+  private outlineCaseBuiltin(low: StatementNode, high: StatementNode, lowFile: ABAPFile,
+                             highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.Case)) {
+      return undefined;
+    } else if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    } else if (low.getFirstToken().getStart() instanceof VirtualPosition) {
+      return undefined;
+    }
+
+    // the whole operand is the call, same condition as the syntax check in checkCaseOperand()
+    const source = high.findDirectExpression(Expressions.Source);
+    const chain = source?.findDirectExpression(Expressions.MethodCallChain);
+    if (source === undefined || chain === undefined
+        || source.getChildren().length !== 1 || chain.getChildren().length !== 1) {
+      return undefined;
+    }
+
+    // functions older than 702 with one unnamed argument are allowed, functions newer than 702
+    // are not valid in the assignment either, and a predicate function returns no value
+    const name = source.getFirstToken().getStr().toUpperCase();
+    if (BuiltIn.hasUnnamedArgument(name)
+        || BuiltIn.methods[name]?.release !== Release.v702
+        || BuiltIn.isPredicate(name) === true) {
+      return undefined;
+    }
+
+    // the result of these has the type of the arguments, which is not known here
+    if (["NMAX", "NMIN", "ROUND", "RESCALE"].includes(name)) {
+      return undefined;
+    }
+
+    // undefined if the name is not a built-in function here, eg. a method of the class with the same name
+    const type = this.builtinReturnType(source, lowFile, highSyntax);
+    if (type === undefined) {
+      return undefined;
+    }
+
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const code = `DATA ${uniqueName} TYPE ${type}.\n` +
+      indentation + `${uniqueName} = ${source.concatTokens()}.\n` +
+      indentation;
+
+    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, source.getFirstToken(), "Outline built-in function in CASE",
                          this.getMetadata().key, this.conf.severity, fix);
   }
 
