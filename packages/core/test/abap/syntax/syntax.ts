@@ -6361,6 +6361,69 @@ START-OF-SELECTION.
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("subclass inherits CREATE PROTECTED from superclass, error", () => {
+    const abap = `
+CLASS lcl_parent DEFINITION CREATE PROTECTED.
+ENDCLASS.
+CLASS lcl_parent IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_child DEFINITION INHERITING FROM lcl_parent.
+ENDCLASS.
+CLASS lcl_child IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_user DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl_user IMPLEMENTATION.
+  METHOD run.
+    DATA(lo_child) = NEW lcl_child( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("lcl_child cannot be instantiated, class is defined as protected");
+  });
+
+  it("subclass inherits CREATE PROTECTED from superclass, instantiated in itself, ok", () => {
+    const abap = `
+CLASS lcl_parent DEFINITION CREATE PROTECTED.
+ENDCLASS.
+CLASS lcl_parent IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_child DEFINITION INHERITING FROM lcl_parent.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl_child IMPLEMENTATION.
+  METHOD run.
+    DATA(lo_child) = NEW lcl_child( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("subclass overrides inherited CREATE PROTECTED with CREATE PUBLIC, ok", () => {
+    const abap = `
+CLASS lcl_parent DEFINITION CREATE PROTECTED.
+ENDCLASS.
+CLASS lcl_parent IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_child DEFINITION INHERITING FROM lcl_parent CREATE PUBLIC.
+ENDCLASS.
+CLASS lcl_child IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA(lo_child) = NEW lcl_child( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("FORM, untyped USING parameter, ok", () => {
     const abap = `
     FORM sdfsd USING p_sdfsd.
