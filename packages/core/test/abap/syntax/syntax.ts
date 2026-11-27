@@ -20691,19 +20691,33 @@ INSERT LINES OF lt_std INTO TABLE lt_map.`));
 
   it("ok, APPEND TO generic tables", () => {
     const issues = runProgram(`
-FORM foo CHANGING ct_any TYPE ANY TABLE ct_index TYPE INDEX TABLE ct_sorted TYPE SORTED TABLE.
+FORM foo CHANGING ct_index TYPE INDEX TABLE ct_sorted TYPE SORTED TABLE.
   DATA ls TYPE i.
-  FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
   FIELD-SYMBOLS <lt_index> TYPE INDEX TABLE.
   APPEND INITIAL LINE TO ct_index ASSIGNING FIELD-SYMBOL(<lv_index>).
-  APPEND INITIAL LINE TO ct_any ASSIGNING FIELD-SYMBOL(<lv_any>).
   APPEND INITIAL LINE TO ct_sorted ASSIGNING FIELD-SYMBOL(<lv_sorted>).
-  ASSIGN ct_any TO <lt_any>.
-  APPEND ls TO <lt_any>.
   ASSIGN ct_index TO <lt_index>.
   APPEND ls TO <lt_index>.
 ENDFORM.`);
     expect(issues.length).to.equal(0);
+  });
+
+  it("error, APPEND INITIAL LINE TO generic ANY TABLE parameter", () => {
+    const issues = runProgram(`
+FORM foo CHANGING ct_any TYPE ANY TABLE.
+  APPEND INITIAL LINE TO ct_any ASSIGNING FIELD-SYMBOL(<lv_any>).
+ENDFORM.`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("index operations cannot be used");
+  });
+
+  it("error, APPEND TO ANY TABLE field symbol", () => {
+    const issues = runProgram(`
+DATA ls TYPE i.
+FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
+APPEND ls TO <lt_any>.`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("index operations cannot be used");
   });
 
   it("error, APPEND TO generic HASHED TABLE", () => {
@@ -21595,6 +21609,25 @@ START-OF-SELECTION.
     const issues = runProgram(abap);
     expect(issues.length).to.equal(1);
     expect(issues[0]?.getMessage()).to.equal(`Method returning parameter "TYPE" does not exist`);
+  });
+
+  it("APPEND INITIAL LINE to ANY TABLE, error", () => {
+    const abap = `
+FIELD-SYMBOLS <lt_ranges> TYPE ANY TABLE.
+FIELD-SYMBOLS <ls_group> TYPE any.
+APPEND INITIAL LINE TO <lt_ranges> ASSIGNING <ls_group>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("index operations cannot be used");
+  });
+
+  it("APPEND INITIAL LINE to INDEX TABLE, ok", () => {
+    const abap = `
+FIELD-SYMBOLS <lt_ranges> TYPE INDEX TABLE.
+FIELD-SYMBOLS <ls_group> TYPE any.
+APPEND INITIAL LINE TO <lt_ranges> ASSIGNING <ls_group>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0);
   });
 
   it("RECEIVING, parameter name ok", () => {

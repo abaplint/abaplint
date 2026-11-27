@@ -27,9 +27,13 @@ export class Append implements StatementSyntax {
       targetType = Target.runSyntax(target, input);
     }
 
-    // a hashed table has no index, APPEND adds at the end
+    // a hashed table has no index, APPEND adds at the end, and ANY TABLE might be hashed
     if (targetType instanceof TableType && targetType.getAccessType() === TableAccessType.hashed) {
       const message = "Implicit or explicit index operation on hashed table is not possible";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
+    } else if (targetType instanceof TableType && targetType.getAccessType() === TableAccessType.any) {
+      const message = "Explicit or implicit index operations cannot be used on tables with types \"HASHED TABLE\" or \"ANY TABLE\"";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
     }
