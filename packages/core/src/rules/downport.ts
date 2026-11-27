@@ -756,6 +756,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.outlineReferenceIntoGenericTable(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.outlineReadTableVoidTarget(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -3581,6 +3586,55 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     return undefined;
+  }
+
+  /** READ TABLE, APPEND and INSERT ... REFERENCE INTO DATA( ) on a generically typed table: the row has no type to
+   * name and LIKE LINE OF the table does not compile, the reference is generic like the row it points to */
+  private outlineReferenceIntoGenericTable(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    }
+
+    let table: ExpressionNode | undefined = undefined;
+    let inline: ExpressionNode | undefined = undefined;
+    if (node.get() instanceof Statements.ReadTable) {
+      const target = node.findDirectExpression(Expressions.ReadTableTarget);
+      if (target?.findDirectTokenByText("REFERENCE") === undefined) {
+        return undefined;
+      }
+      table = node.findDirectExpression(Expressions.SimpleSource2);
+      inline = target.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    } else if (node.get() instanceof Statements.Append || node.get() instanceof Statements.InsertInternal) {
+      if (node.findDirectTokenByText("REFERENCE") === undefined) {
+        return undefined;
+      }
+      for (const target of node.findDirectExpressions(Expressions.Target)) {
+        const found = target.findDirectExpression(Expressions.InlineData);
+        if (found !== undefined) {
+          inline = found;
+        } else if (table === undefined) {
+          table = target;
+        }
+      }
+    }
+    const nameToken = inline?.findDirectExpression(Expressions.TargetField)?.getFirstToken();
+    if (table === undefined || inline === undefined || nameToken === undefined) {
+      return undefined;
+    }
+
+    const spag = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename());
+    const type = spag?.findVariable(table.concatTokens())?.getType();
+    if (!(type instanceof TableType) || type.isGeneric() === false) {
+      return undefined;
+    }
+
+    const name = nameToken.getStr();
+    const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+    const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), `DATA ${name} TYPE REF TO data.\n${indentation}`);
+    const fix2 = EditHelper.replaceRange(lowFile, inline.getFirstToken().getStart(), inline.getLastToken().getEnd(), name);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, inline.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
   /** READ TABLE [REFERENCE] INTO DATA( ) where the row type is void, no TYPE can be written, use LIKE LINE OF like LOOP does */
