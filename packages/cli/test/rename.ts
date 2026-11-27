@@ -360,4 +360,34 @@ ENDCLASS.`;
     expect(clasNew).to.include("METHOD zif_aa~do_something");
   });
 
+  it("output folder, the drive letter of the base differs in case from the filenames", async () => {
+    const intf = `INTERFACE zif_intf PUBLIC.
+ENDINTERFACE.`;
+    // on Windows, path.resolve(base) and the loaded filenames can differ in the case of the drive letter
+    const windows = process.platform === "win32";
+    const root = windows ? "C:/abaplint_rename_output_test" : "/abaplint_rename_output_test";
+    const base = windows ? "c:/abaplint_rename_output_test" : root;
+
+    const file1 = new MemoryFile(root + "/src/zif_intf.intf.abap", intf);
+    const reg = new Registry().addFiles([file1]).parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[file1.getFilename()] = file1.getRaw();
+    const volume = memfs.Volume.fromJSON(jsonFiles);
+    const mockFS = memfs.createFsFromVolume(volume);
+
+    const config = reg.getConfig().get();
+    config.rename = {"output": "out", "patterns": [{"type": "INTF", "oldName": "zif_intf", "newName": "yif_intf"}]};
+
+    new Rename(reg).run(config, base, mockFS, true);
+
+    // memfs drops the drive letter
+    const normalize = (f: string) => f.replace(/\\/g, "/").replace(/^[A-Za-z]:/, "").toLowerCase();
+    const written = Object.keys(volume.toJSON()).map(normalize).sort();
+    expect(written).to.deep.equal([
+      normalize(root + "/out/src/yif_intf.intf.abap"),
+      normalize(root + "/src/zif_intf.intf.abap"),
+    ]);
+  });
+
 });
