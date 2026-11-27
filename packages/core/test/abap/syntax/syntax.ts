@@ -23106,3 +23106,24 @@ ENDFORM.`;
     });
   }
 });
+
+describe("syntax.ts, CORRESPONDING into row of generic table", () => {
+  it("APPEND INITIAL LINE ASSIGNING, then CORRESPONDING #( ), ok", () => {
+    const abap = `
+DATA msg_display TYPE string_table.
+FIELD-SYMBOLS <display_tab> TYPE table.
+APPEND INITIAL LINE TO <display_tab> ASSIGNING FIELD-SYMBOL(<display_row>).
+<display_row> = CORRESPONDING #( msg_display ).`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues.length).to.equal(0, issues.map(i => i.getMessage()).join(", "));
+  });
+
+  it("APPEND INITIAL LINE ASSIGNING, then lines( ) of the row, error", () => {
+    const abap = `
+FIELD-SYMBOLS <display_tab> TYPE table.
+APPEND INITIAL LINE TO <display_tab> ASSIGNING FIELD-SYMBOL(<display_row>).
+ASSERT lines( <display_row> ) = 1.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(`"<display_row>" is not an internal table`);
+  });
+});

@@ -5,6 +5,7 @@ import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {Target} from "../expressions/target";
 import {DataReference, DataType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {InlineFS} from "../expressions/inline_fs";
 import {FSTarget} from "../expressions/fstarget";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
@@ -46,7 +47,7 @@ export class Append implements StatementSyntax {
         return;
       }
       const rowType = targetType instanceof TableType ? targetType.getRowType() : targetType;
-      FSTarget.runSyntax(fsTarget, input, rowType);
+      FSTarget.runSyntax(fsTarget, input, InlineFS.typeForTableRow(rowType));
     }
 
     const dataTarget = node.findExpressionAfterToken("INTO");
