@@ -14,7 +14,6 @@ import {checkTextSymbol} from "./_check_text_symbol";
 import {checkHeaderLine} from "./_check_header_line";
 import {BuiltIn, BuiltInMethod} from "../_builtin";
 import {TypedIdentifier} from "../../types/_typed_identifier";
-import {checkReferenceCompatible} from "./_check_reference_compatible";
 
 export class MethodCallParam {
   /** returns the type of the unnamed argument, if any */
@@ -98,7 +97,7 @@ export class MethodCallParam {
         const message = "Method parameter type not compatible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
-      } else if (checkReferenceCompatible(child, sourceType, parameter, method, input)) {
+      } else if (new TypeUtils(input.scope).checkReferenceCompatible(child, sourceType, parameter, method, input)) {
         return;
       }
       return sourceType;

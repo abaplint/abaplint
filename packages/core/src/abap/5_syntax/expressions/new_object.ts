@@ -13,7 +13,6 @@ import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {CreateObject} from "../statements/create_object";
-import {checkReferenceCompatible} from "./_check_reference_compatible";
 
 export class NewObject {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput, targetType: AbstractType | undefined): AbstractType {
@@ -150,7 +149,7 @@ export class NewObject {
         const message = `NEW parameter type not compatible`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
-      } else if (checkReferenceCompatible(source, sourceType, parameter, method, input)) {
+      } else if (new TypeUtils(input.scope).checkReferenceCompatible(source, sourceType, parameter, method, input)) {
         return;
       }
     } else if (parameters) {

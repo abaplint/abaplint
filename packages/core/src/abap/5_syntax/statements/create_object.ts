@@ -12,7 +12,6 @@ import {ObjectOriented} from "../_object_oriented";
 import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {Visibility} from "../../4_file_information/visibility";
-import {checkReferenceCompatible} from "../expressions/_check_reference_compatible";
 
 export class CreateObject implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -192,7 +191,8 @@ export class CreateObject implements StatementSyntax {
         const message = `constructor parameter "${name}" type not compatible`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
-      } else if (source && methodDef.method && checkReferenceCompatible(source, sourceType, found, methodDef.method, input)) {
+      } else if (source && methodDef.method
+          && new TypeUtils(input.scope).checkReferenceCompatible(source, sourceType, found, methodDef.method, input)) {
         return;
       }
 
