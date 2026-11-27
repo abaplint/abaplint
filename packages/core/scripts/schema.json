@@ -1664,6 +1664,10 @@
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        },
+        "tableExpressionNotFound": {
+          "description": "The statement a downported table expression runs when the row is not found, including the period.\n\nCX_SY_ITAB_LINE_NOT_FOUND is what a table expression raises, but the class came with the table expressions in 7.40, so the default does not compile on a 7.02 system. Set this to something that exists there, eg. \"RAISE EXCEPTION TYPE zcx_my_line_not_found.\" or \"ASSERT 1 = 0.\"",
+          "type": "string"
         }
       },
       "type": "object"

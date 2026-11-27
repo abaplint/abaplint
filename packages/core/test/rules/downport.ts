@@ -778,6 +778,58 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("READ TABLE REFERENCE INTO DATA(), generically typed table", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  READ TABLE <tab> INDEX 1 REFERENCE INTO DATA(row).
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  DATA row TYPE REF TO data.
+  READ TABLE <tab> INDEX 1 REFERENCE INTO row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("APPEND INITIAL LINE REFERENCE INTO DATA(), generically typed table", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  APPEND INITIAL LINE TO <tab> REFERENCE INTO DATA(row).
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  DATA row TYPE REF TO data.
+  APPEND INITIAL LINE TO <tab> REFERENCE INTO row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("INSERT INITIAL LINE REFERENCE INTO DATA(), generically typed table", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+  INSERT INITIAL LINE INTO TABLE <tab> REFERENCE INTO DATA(row).
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+  DATA row TYPE REF TO data.
+  INSERT INITIAL LINE INTO TABLE <tab> REFERENCE INTO row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("READ TABLE REFERENCE INTO DATA(), table with a row type, the reference is typed as before", async () => {
+    const abap = `FORM bar.
+  DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  READ TABLE tab INDEX 1 REFERENCE INTO DATA(row).
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA row TYPE REF TO i.
+  READ TABLE tab INDEX 1 REFERENCE INTO row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
   it("LOOP REFERENCE INTO DATA(), generically typed table, no LIKE LINE OF", async () => {
     const abap = `FORM bar.
   FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
@@ -7866,6 +7918,144 @@ ENDFORM.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("CASE, outline 702 built-in operand", async () => {
+    const abap = `FORM bar.
+  DATA val TYPE string.
+  CASE to_upper( val ).
+    WHEN \`X\` OR \`TRUE\`.
+      WRITE / 'yes'.
+  ENDCASE.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA val TYPE string.
+  DATA temp1 TYPE string.
+  temp1 = to_upper( val ).
+  CASE temp1.
+    WHEN \`X\` OR \`TRUE\`.
+      WRITE / 'yes'.
+  ENDCASE.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("CASE, outline 702 built-in operand, nested call and integer result", async () => {
+    const abap = `FORM bar.
+  DATA val TYPE string.
+  CASE to_upper( condense( val ) ).
+    WHEN \`X\`.
+      CASE find( val = val sub = \`A\` ).
+        WHEN 2.
+          WRITE / 'yes'.
+      ENDCASE.
+  ENDCASE.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA val TYPE string.
+  DATA temp1 TYPE string.
+  temp1 = to_upper( condense( val ) ).
+  CASE temp1.
+    WHEN \`X\`.
+      DATA temp2 TYPE i.
+      temp2 = find( val = val sub = \`A\` ).
+      CASE temp2.
+        WHEN 2.
+          WRITE / 'yes'.
+      ENDCASE.
+  ENDCASE.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("CASE, built-in with an unnamed argument stays, 702 takes it", async () => {
+    const abap = `FORM bar.
+  DATA val TYPE string.
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  CASE strlen( val ).
+    WHEN 2.
+      WRITE / 'two'.
+  ENDCASE.
+  CASE lines( tab ).
+    WHEN 2.
+      WRITE / 'two'.
+  ENDCASE.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CASE, functional method call stays, 702 takes it", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get IMPORTING val TYPE string RETURNING VALUE(ret) TYPE string.
+    CLASS-METHODS to_upper IMPORTING val TYPE string RETURNING VALUE(ret) TYPE string.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD to_upper.
+  ENDMETHOD.
+  METHOD run.
+    CASE lcl=>get( \`a\` ).
+      WHEN \`X\`.
+        WRITE / 'yes'.
+    ENDCASE.
+    CASE to_upper( val = \`a\` ).
+      WHEN \`X\`.
+        WRITE / 'yes'.
+    ENDCASE.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CASE, built-in in WHEN operand and in the body of the branch stays", async () => {
+    const abap = `FORM bar.
+  DATA val TYPE string.
+  DATA res TYPE string.
+  CASE val.
+    WHEN to_upper( val ).
+      res = to_lower( val ).
+  ENDCASE.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CASE, built-in typed by its arguments stays", async () => {
+    const abap = `FORM bar.
+  DATA val TYPE p LENGTH 10 DECIMALS 2.
+  CASE nmax( val1 = val val2 = 1 ).
+    WHEN 2.
+      WRITE / 'two'.
+  ENDCASE.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CASE, 702 built-in on open-abap stays", async () => {
+    const abap = `FORM bar.
+  DATA val TYPE string.
+  CASE to_upper( val ).
+    WHEN \`X\`.
+      WRITE / 'yes'.
+  ENDCASE.
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
   it("MOVE-CORRESPONDING, tables", async () => {
     const abap = `FORM bar.
   TYPES: BEGIN OF ty_a,
@@ -9478,5 +9668,84 @@ ENDINTERFACE.`;
   it("not when downporting to another release", () => {
     const {issues} = run([new MemoryFile("zcl_lang.clas.abap", clas), new MemoryFile("zcl_lang.clas.xml", clasXML("5"))], Version.v750);
     expect(issues.length).to.equal(0);
+  });
+});
+
+describe("Rule: downport, tableExpressionNotFound", () => {
+  // cx_sy_itab_line_not_found came with 7.40, a 7.02 system has to raise something else
+  function testFixNotFound(input: string, expected: string, tableExpressionNotFound: string | undefined) {
+    const rule = new Downport();
+    const conf = rule.getConfig();
+    conf.tableExpressionNotFound = tableExpressionNotFound;
+    rule.setConfig(conf);
+    testRuleFixCount(input, expected, rule, buildConfig(Version.v702), undefined, false, 1);
+  }
+
+  const types = `
+TYPES: BEGIN OF ty_type,
+         foo TYPE i,
+       END OF ty_type.
+DATA tab TYPE STANDARD TABLE OF ty_type WITH DEFAULT KEY.`;
+
+  it("source position", () => {
+    const abap = types + `
+WRITE tab[ foo = 2 ]-foo.`;
+    const expected = types + `
+FIELD-SYMBOLS <temp1> LIKE LINE OF tab.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE tab WITH KEY foo = 2 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  ASSERT 1 = 0.
+ENDIF.
+WRITE <temp1>-foo.`;
+    testFixNotFound(abap, expected, "ASSERT 1 = 0.");
+  });
+
+  it("target position", () => {
+    const abap = types + `
+tab[ foo = 2 ]-foo = 3.`;
+    const expected = types + `
+FIELD-SYMBOLS <temp1> LIKE LINE OF tab.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE tab WITH KEY foo = 2 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE zcx_line_not_found.
+ENDIF.
+<temp1>-foo = 3.`;
+    testFixNotFound(abap, expected, "RAISE EXCEPTION TYPE zcx_line_not_found.");
+  });
+
+  it("REF of a table expression", () => {
+    const abap = types + `
+DATA ref TYPE REF TO ty_type.
+ref = REF #( tab[ 1 ] ).`;
+    const expected = types + `
+DATA ref TYPE REF TO ty_type.
+ASSIGN tab[ 1 ] TO FIELD-SYMBOL(<temp1>).
+IF sy-subrc <> 0.
+  ASSERT 1 = 0.
+ENDIF.
+GET REFERENCE OF <temp1> INTO ref.`;
+    testFixNotFound(abap, expected, "ASSERT 1 = 0.");
+  });
+
+  it("not set in the configuration, the exception of the table expression", () => {
+    const abap = types + `
+WRITE tab[ foo = 2 ]-foo.`;
+    const expected = types + `
+FIELD-SYMBOLS <temp1> LIKE LINE OF tab.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE tab WITH KEY foo = 2 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+WRITE <temp1>-foo.`;
+    testFixNotFound(abap, expected, undefined);
   });
 });

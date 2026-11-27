@@ -139,7 +139,7 @@ export class Target {
         return VoidType.get(CheckSyntaxKey);
       }
       const value = FieldOffset.runSyntax(offset, input);
-      if (!isFieldSymbolItself(children, children.indexOf(offset))) {
+      if (!isFieldSymbolItself(substring, children, children.indexOf(offset))) {
         substring = substringType(substring, value, undefined, offset, children, input);
       }
     }
@@ -152,7 +152,7 @@ export class Target {
         return VoidType.get(CheckSyntaxKey);
       }
       const value = FieldLength.runSyntax(length, input);
-      if (!isFieldSymbolItself(children, children.indexOf(length))) {
+      if (!isFieldSymbolItself(substring, children, children.indexOf(length))) {
         substring = substringType(substring, undefined, value, length, children, input);
       }
     }
