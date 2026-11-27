@@ -19499,6 +19499,22 @@ ASSIGN lr_data TO <val>.
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
+
+  it("ok, inline declaration from a generic CHANGING parameter TYPE ANY TABLE", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo
+      CHANGING data_table TYPE ANY TABLE.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA(lt_data) = REF #( data_table ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0, issues.map(i => i.getMessage()).join(", "));
+  });
 });
 
 describe("syntax.ts, DATA LIKE REF TO a generic table", () => {
