@@ -778,6 +778,58 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("READ TABLE REFERENCE INTO DATA(), generically typed table", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  READ TABLE <tab> INDEX 1 REFERENCE INTO DATA(row).
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  DATA row TYPE REF TO data.
+  READ TABLE <tab> INDEX 1 REFERENCE INTO row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("APPEND INITIAL LINE REFERENCE INTO DATA(), generically typed table", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  APPEND INITIAL LINE TO <tab> REFERENCE INTO DATA(row).
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  DATA row TYPE REF TO data.
+  APPEND INITIAL LINE TO <tab> REFERENCE INTO row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("INSERT INITIAL LINE REFERENCE INTO DATA(), generically typed table", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+  INSERT INITIAL LINE INTO TABLE <tab> REFERENCE INTO DATA(row).
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+  DATA row TYPE REF TO data.
+  INSERT INITIAL LINE INTO TABLE <tab> REFERENCE INTO row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("READ TABLE REFERENCE INTO DATA(), table with a row type, the reference is typed as before", async () => {
+    const abap = `FORM bar.
+  DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  READ TABLE tab INDEX 1 REFERENCE INTO DATA(row).
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA row TYPE REF TO i.
+  READ TABLE tab INDEX 1 REFERENCE INTO row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
   it("LOOP REFERENCE INTO DATA(), generically typed table, no LIKE LINE OF", async () => {
     const abap = `FORM bar.
   FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
