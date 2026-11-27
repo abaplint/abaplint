@@ -134,12 +134,12 @@ export class FieldChain {
         context = AttributeName.runSyntax(context, current, input, refType);
       } else if (current.get() instanceof Expressions.FieldOffset && current instanceof ExpressionNode) {
         const offset = FieldOffset.runSyntax(current, input);
-        if (!isFieldSymbolItself(children, i)) {
+        if (!isFieldSymbolItself(context, children, i)) {
           context = substringType(context, offset, undefined, current, children, input);
         }
       } else if (current.get() instanceof Expressions.FieldLength && current instanceof ExpressionNode) {
         const length = FieldLength.runSyntax(current, input);
-        if (!isFieldSymbolItself(children, i)) {
+        if (!isFieldSymbolItself(context, children, i)) {
           context = substringType(context, undefined, length, current, children, input);
         }
       }
