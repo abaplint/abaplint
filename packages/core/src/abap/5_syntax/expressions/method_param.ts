@@ -1,11 +1,11 @@
 import {ExpressionNode} from "../../nodes";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {NGenericType, PGenericType, UnknownType, XGenericType} from "../../types/basic";
+import {NGenericType, PGenericType, UnknownType, VoidType, XGenericType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import * as Expressions from "../../2_statements/expressions";
 import {Default} from "./default";
 import {CGenericType} from "../../types/basic/cgeneric_type";
-import {SyntaxInput} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {AssertError} from "../assert_error";
 
 export class MethodParam {
@@ -40,7 +40,13 @@ export class MethodParam {
       return new TypedIdentifier(name.getFirstToken(), input.filename, NGenericType.get(), meta);
     }
 
-    const found = new BasicTypes(input).parseType(type);
+    let found;
+    try {
+      found = new BasicTypes(input).parseType(type);
+    } catch (e) {
+      input.issues.push(syntaxIssue(input, type.getFirstToken(), e instanceof Error ? e.message : String(e)));
+      return new TypedIdentifier(name.getFirstToken(), input.filename, VoidType.get(CheckSyntaxKey), meta);
+    }
     if (found) {
       return new TypedIdentifier(name.getFirstToken(), input.filename, found, meta);
     } else {

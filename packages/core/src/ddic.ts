@@ -399,7 +399,7 @@ export class DDIC {
         return new Types.CharacterType(3, extra);
       case "UTCL":
       case "UTCLONG":
-        return new Types.CharacterType(27, extra);
+        return new Types.UTCLongType(extra);
       case "NUMC": // 1 <= len <= 255
         if (input.length === undefined) {
           return new Types.UnknownType(input.text + " unknown length", input.infoText);
