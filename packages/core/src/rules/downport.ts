@@ -4079,14 +4079,21 @@ ${indentation}    output = ${uniqueName}.\n`;
             break;
           }
         }
+        // the call is the first four children: xsdbool, "(", Cond and ")",
+        // when it is the first operand of a longer expression, the operator and the rest follow, "xsdbool( a = 1 ) && b"
         const children = source?.getChildren();
-        if (source === undefined || children?.length !== 4) {
+        if (source === undefined
+            || children === undefined
+            || children.length < 4
+            || !(children[2].get() instanceof Expressions.Cond)
+            || children[3].concatTokens() !== ")") {
           continue;
         }
 
         // make sure to convert to the correct type, RTTI might be used on the result of XSDBOOL
+        // only the call itself is replaced, the rest of the expression stays as it is
         const code = "CONV xsdboolean( boolc( " + children[2].concatTokens() + " ) )";
-        const fix = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), code);
+        const fix = EditHelper.replaceRange(lowFile, children[0].getFirstToken().getStart(), children[3].getLastToken().getEnd(), code);
         return Issue.atToken(lowFile, token, "Use BOOLC", this.getMetadata().key, this.conf.severity, fix);
       }
     }
