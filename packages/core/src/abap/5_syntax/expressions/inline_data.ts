@@ -1,7 +1,7 @@
 import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
-import {CGenericType, CharacterType, CLikeType, CSequenceType, IntegerType, StringType, UnknownType, VoidType, XSequenceType} from "../../types/basic";
+import {CGenericType, CharacterType, CLikeType, CSequenceType, IntegerType, PackedType, StringType, UnknownType, VoidType, XSequenceType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
@@ -58,6 +58,8 @@ export class InlineData {
       return IntegerType.get(rest);
     } else if (type instanceof StringType) {
       return StringType.get(rest);
+    } else if (type instanceof PackedType) {
+      return new PackedType(type.getLength(), type.getDecimals(), rest);
     }
     return type;
   }

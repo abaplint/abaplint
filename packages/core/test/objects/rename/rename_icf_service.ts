@@ -3,6 +3,7 @@ import {expect} from "chai";
 import {Renamer} from "../../../src/objects/rename/renamer";
 import {Registry} from "../../../src/registry";
 import {IRegistry} from "../../../src/_iregistry";
+import {XMLBOM} from "../../../src/rules/xml_bom";
 import {namespacedURL} from "../../../src/objects/rename/rename_icf_service";
 
 describe("Rename SICF", () => {
@@ -135,6 +136,9 @@ describe("Rename SICF", () => {
     expect(parent!.getRaw().includes("<URL>/sap/bc/ns/</URL>")).to.equal(true);
     expect(parent!.getRaw().includes("<ICF_NAME>NS</ICF_NAME>")).to.equal(true);
     expect(parent!.getRaw().includes("<ORIG_NAME>ns</ORIG_NAME>")).to.equal(true);
+    // like every abapGit XML file, with a byte order mark
+    expect(parent!.getRaw().startsWith("\ufeff<?xml")).to.equal(true);
+    expect(new XMLBOM().initialize(reg).run(reg.getObject("SICF", "NS             CB988E6036206C8D542135CA1")!).length).to.equal(0);
     expect(Array.from(reg.getObjects()).filter(o => o.getType() === "SICF").length).to.equal(2);
   });
 

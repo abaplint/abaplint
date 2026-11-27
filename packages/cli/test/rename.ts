@@ -214,6 +214,57 @@ ENDCLASS.`;
     expect(mockFS.existsSync("zfoo.wapa.xml")).to.equal(false);
   });
 
+  it("renames the url of an icf service in the pages of a bsp, with the option", async () => {
+    const sicf = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_SICF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <URL>/sap/example/z_svc/</URL>
+   <ICFSERVICE>
+    <ICF_NAME>Z_SVC</ICF_NAME>
+    <ORIG_NAME>z_svc</ORIG_NAME>
+   </ICFSERVICE>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const wapa = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_WAPA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <ATTRIBUTES>
+    <APPLNAME>ZAPP</APPLNAME>
+    <APPLEXT>ZAPP</APPLEXT>
+   </ATTRIBUTES>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const manifest = `{"uri": "/sap/example/z_svc"}`;
+
+    for (const urls of [true, false]) {
+      const fileSicf = new MemoryFile("z_svc 9def6c78d0beedf8d5b04ba6c.sicf.xml", sicf);
+      const fileWapa = new MemoryFile("zapp.wapa.xml", wapa);
+      const filePage = new MemoryFile("zapp.wapa.manifest.json", manifest);
+      const reg = new Registry().addFiles([fileSicf, fileWapa, filePage]).parse();
+
+      const jsonFiles: any = {};
+      for (const f of [fileSicf, fileWapa, filePage]) {
+        jsonFiles[f.getFilename()] = f.getRaw();
+      }
+      const volume = memfs.Volume.fromJSON(jsonFiles);
+      const mockFS = memfs.createFsFromVolume(volume);
+
+      const config = reg.getConfig().get();
+      config.rename = {urls, "patterns": [
+        {"type": "SICF", "oldName": "z_svc", "newName": "/ns/svc"},
+      ]};
+
+      new Rename(reg).run(config, "base", mockFS, true);
+
+      const pageNew = mockFS.readFileSync("zapp.wapa.manifest.json").toString();
+      expect(pageNew).to.equal(urls ? `{"uri": "/sap/example/ns/svc"}` : manifest);
+    }
+  });
+
   it("renames interface referenced in DEFAULT value", async () => {
     const intf = `INTERFACE zif_abapgit_definitions PUBLIC.
   TYPES ty TYPE i.
