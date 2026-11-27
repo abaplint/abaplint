@@ -21630,6 +21630,23 @@ APPEND INITIAL LINE TO <lt_ranges> ASSIGNING <ls_group>.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("numc passed to string importing parameter, not compatible", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS bar IMPORTING foo TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+    DATA numc TYPE n LENGTH 4.
+    bar( numc ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.include("not compatible");
+  });
+
   it("RECEIVING, parameter name ok", () => {
     const abap = `
 CLASS lcl DEFINITION.
