@@ -63,6 +63,7 @@ import {CyclicOOConf} from "../src/rules/cyclic_oo";
 import {CyclomaticComplexityConf} from "../src/rules/cyclomatic_complexity";
 import {DangerousStatementConf} from "../src/rules/dangerous_statement";
 import {DbOperationInLoopConf} from "../src/rules/db_operation_in_loop";
+import {DefinitionsInModuleConf} from "../src/rules/definitions_in_module";
 import {DefinitionsTopConf} from "../src/rules/definitions_top";
 import {DeleteIndexInLoopConf} from "../src/rules/delete_index_in_loop";
 import {DescriptionEmptyConf} from "../src/rules/description_empty";
@@ -321,6 +322,7 @@ export interface IConfig {
     "cyclomatic_complexity"?: CyclomaticComplexityConf | boolean,
     "dangerous_statement"?: DangerousStatementConf | boolean,
     "db_operation_in_loop"?: DbOperationInLoopConf | boolean,
+    "definitions_in_module"?: DefinitionsInModuleConf | boolean,
     "definitions_top"?: DefinitionsTopConf | boolean,
     "delete_index_in_loop"?: DeleteIndexInLoopConf | boolean,
     "description_empty"?: DescriptionEmptyConf | boolean,
@@ -568,6 +570,7 @@ export interface IConfig {
     "cyclomatic_complexity"?: CyclomaticComplexityConf | boolean,
     "dangerous_statement"?: DangerousStatementConf | boolean,
     "db_operation_in_loop"?: DbOperationInLoopConf | boolean,
+    "definitions_in_module"?: DefinitionsInModuleConf | boolean,
     "definitions_top"?: DefinitionsTopConf | boolean,
     "delete_index_in_loop"?: DeleteIndexInLoopConf | boolean,
     "description_empty"?: DescriptionEmptyConf | boolean,

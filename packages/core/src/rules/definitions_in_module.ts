@@ -17,7 +17,7 @@ export class DefinitionsInModule extends ABAPRule {
     return {
       key: "definitions_in_module",
       title: "Definitions inside MODULE",
-      shortDescription: `Checks that DATA, TYPES and CONSTANTS are not defined inside MODULE ... ENDMODULE, the definitions are global to the program`,
+      shortDescription: `Checks that DATA, TYPES and CONSTANTS are not defined inside MODULE ... ENDMODULE`,
       extendedInformation: `Definitions inside MODULE blocks are part of the global program scope, not local to the module.`,
       tags: [RuleTag.SingleFile],
       badExample: `MODULE init_2000 OUTPUT.
