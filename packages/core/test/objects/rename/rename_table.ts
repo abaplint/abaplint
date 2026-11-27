@@ -2,6 +2,7 @@ import {MemoryFile} from "../../../src/files/memory_file";
 import {expect} from "chai";
 import {Renamer} from "../../../src/objects/rename/renamer";
 import {Registry} from "../../../src/registry";
+import {dtelField, dtelXML, includeField, renameAll, tablXML, tagValues} from "./_ddic_xml";
 
 describe("Rename TABL", () => {
 
@@ -311,6 +312,77 @@ DATA bar2 TYPE foo-name.`);
       expect(f.getFilename()).to.equal("yecb_s_converter_fcat.tabl.xml");
       expect(f.getRaw()).to.include("<FORTABLE>YECB_S_CONVERTER_FCAT</FORTABLE>");
     }
+  });
+
+  it("TABL, .INCLUDE and .INCLU- of the renamed structure", () => {
+    const result = renameAll([
+      ["inc.tabl.xml", tablXML("inc", [dtelField("F", "CHAR10_X")])],
+      ["char10_x.dtel.xml", dtelXML("char10_x")],
+      ["outer.tabl.xml", tablXML("outer", [includeField("INC"), includeField("INC", ".INCLU-_X")])],
+    ], [["TABL", "inc", "zinc"]]);
+    expect(Object.keys(result).sort()).to.deep.equal(["char10_x.dtel.xml", "outer.tabl.xml", "zinc.tabl.xml"]);
+    expect(tagValues(result["outer.tabl.xml"], "PRECFIELD")).to.deep.equal(["ZINC", "ZINC"]);
+  });
+
+  it("TABL, used as check table", () => {
+    const foreignKey = `
+   <DD05M_TABLE>
+    <DD05M>
+     <FIELDNAME>KEY</FIELDNAME>
+     <FORTABLE>USER</FORTABLE>
+     <FORKEY>KEY</FORKEY>
+     <CHECKTABLE>CHK</CHECKTABLE>
+     <CHECKFIELD>KEY</CHECKFIELD>
+     <PRIMPOS>0001</PRIMPOS>
+    </DD05M>
+   </DD05M_TABLE>
+   <DD08V_TABLE>
+    <DD08V>
+     <FIELDNAME>KEY</FIELDNAME>
+     <CHECKTABLE>CHK</CHECKTABLE>
+    </DD08V>
+   </DD08V_TABLE>`;
+    const result = renameAll([
+      ["mydtel.dtel.xml", dtelXML("mydtel")],
+      ["chk.tabl.xml", tablXML("chk", [dtelField("KEY", "MYDTEL", "<KEYFLAG>X</KEYFLAG>")], "TRANSP")],
+      ["user.tabl.xml", tablXML("user", [dtelField("KEY", "MYDTEL", "<CHECKTABLE>CHK</CHECKTABLE>")], "INTTAB", foreignKey)],
+    ], [["TABL", "chk", "zchk"]]);
+    expect(Object.keys(result).sort()).to.deep.equal(["mydtel.dtel.xml", "user.tabl.xml", "zchk.tabl.xml"]);
+    expect(tagValues(result["user.tabl.xml"], "CHECKTABLE")).to.deep.equal(["ZCHK", "ZCHK", "ZCHK"]);
+    expect(tagValues(result["user.tabl.xml"], "FORTABLE")).to.deep.equal(["USER"]);
+  });
+
+  it("TABL, its own check table", () => {
+    const result = renameAll([
+      ["mydtel.dtel.xml", dtelXML("mydtel")],
+      ["chk.tabl.xml", tablXML("chk", [
+        dtelField("KEY", "MYDTEL", "<KEYFLAG>X</KEYFLAG>"),
+        dtelField("PARENT", "MYDTEL", "<CHECKTABLE>CHK</CHECKTABLE>")], "TRANSP")],
+    ], [["TABL", "chk", "zchk"]]);
+    expect(tagValues(result["zchk.tabl.xml"], "CHECKTABLE")).to.deep.equal(["ZCHK"]);
+  });
+
+  it("TABL, renaming tables first keeps the where-used of data elements in an including structure", () => {
+    const files: [string, string][] = [
+      ["mydtel.dtel.xml", dtelXML("mydtel")],
+      ["otherdtel.dtel.xml", dtelXML("otherdtel")],
+      ["inc.tabl.xml", tablXML("inc", [dtelField("F", "MYDTEL")])],
+      ["outer.tabl.xml", tablXML("outer", [includeField("INC"), dtelField("G", "OTHERDTEL")])],
+      ["side.tabl.xml", tablXML("side", [dtelField("H", "MYDTEL")])],
+    ];
+    const result = renameAll(files, [
+      ["TABL", "inc", "zinc"],
+      ["TABL", "outer", "zouter"],
+      ["TABL", "side", "zside"],
+      ["DTEL", "mydtel", "zmydtel"],
+      ["DTEL", "otherdtel", "zotherdtel"],
+    ]);
+    expect(Object.keys(result).sort()).to.deep.equal(
+      ["zinc.tabl.xml", "zmydtel.dtel.xml", "zotherdtel.dtel.xml", "zouter.tabl.xml", "zside.tabl.xml"]);
+    expect(tagValues(result["zouter.tabl.xml"], "PRECFIELD")).to.deep.equal(["ZINC"]);
+    expect(tagValues(result["zouter.tabl.xml"], "ROLLNAME")).to.deep.equal(["ZOTHERDTEL"]);
+    expect(tagValues(result["zinc.tabl.xml"], "ROLLNAME")).to.deep.equal(["ZMYDTEL"]);
+    expect(tagValues(result["zside.tabl.xml"], "ROLLNAME")).to.deep.equal(["ZMYDTEL"]);
   });
 
 });

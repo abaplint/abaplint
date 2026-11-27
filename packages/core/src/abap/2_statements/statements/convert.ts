@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {seq, alt, per, ver, AlsoIn, verNotLang} from "../combi";
+import {seq, alt, per, ver, opt, AlsoIn, verNotLang} from "../combi";
 import {Target, Source} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Release, LanguageVersion} from "../../../version";
@@ -31,7 +31,9 @@ export class Convert implements IStatement {
 
     const inv = verNotLang(LanguageVersion.Cloud, seq("INVERTED-DATE", Source, "INTO DATE", Target));
 
-    const utclong = ver(Release.v754, seq("UTCLONG", Source, per(zone, into, daylightTarget)), {also: AlsoIn.OpenABAP});
+    const intoTimeFractional = seq("TIME", Target, opt(seq("FRACTIONAL SECONDS", Target)));
+    const intoUtclong = seq("INTO", per(intoTimeFractional, intoDate));
+    const utclong = ver(Release.v754, seq("UTCLONG", Source, per(zone, intoUtclong, daylightTarget)), {also: AlsoIn.OpenABAP});
 
     return seq("CONVERT", alt(time, date, inv, utclong));
   }
