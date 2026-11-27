@@ -33,8 +33,10 @@ that a declaration could take over, so DATA( ) or FINAL( ) gets the type p LENGT
 syntax check warns "For the result of a computation with type P, the type P(8,0) is used here implicitly".
 Decimals of the operands are lost, and so are digits beyond the length.
 
-Reported when at least one operand is packed and all other operands are of type i, int8 or p. Operands
-of other types, generic or unknown types, and the operator ** are not reported.
+Reported when at least one operand is packed and all other operands are of type i, int8 or p, also with
+brackets around the whole expression. VALUE, CONV and EXACT operands count with their type, VALUE # only with
+a single operand, "VALUE #( itab[ 1 ]-comp OPTIONAL )". Operands of other types, generic or unknown types,
+other constructor expressions like COND and SWITCH, and the operator ** are not reported.
 
 Declare the variable with the operands' type, or name the type with CONV.`,
       tags: [],
@@ -79,7 +81,7 @@ diff = a - b.`,
         }
         const inline = statement.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
         const name = inline?.findDirectExpression(Expressions.TargetField)?.getFirstToken();
-        const source = statement.findDirectExpression(Expressions.Source);
+        const source = this.unwrapBrackets(statement.findDirectExpression(Expressions.Source));
         if (name === undefined
             || source === undefined
             || source.findDirectExpression(Expressions.ArithOperator) === undefined) {
@@ -105,12 +107,41 @@ diff = a - b.`,
     return issues;
   }
 
+  /** "( a + b )" around the whole right-hand side, the brackets do not change the calculation */
+  private unwrapBrackets(source: ExpressionNode | undefined): ExpressionNode | undefined {
+    while (source !== undefined) {
+      const children = source.getChildren();
+      if (children.length !== 3
+          || children[0].getFirstToken().getStr() !== "("
+          || !(children[1] instanceof ExpressionNode)
+          || !(children[1].get() instanceof Expressions.Source)
+          || children[2].getFirstToken().getStr() !== ")") {
+        break;
+      }
+      source = children[1];
+    }
+    return source;
+  }
+
   /** The types of the operands of an arithmetic expression, undefined when an operand is not of type
    *  i, int8 or p, or is not known */
   private operandTypes(source: ExpressionNode, scope: ISpaghettiScopeNode): AbstractType[] | undefined {
     const ret: AbstractType[] = [];
 
-    for (const child of source.getChildren()) {
+    let children = source.getChildren();
+    const first = children[0];
+    if (first instanceof TokenNode && ["VALUE", "CONV", "EXACT"].includes(first.getFirstToken().getStr().toUpperCase())) {
+      // a constructor operand, followed by the rest of the chain after its closing parenthesis
+      const close = children.findIndex((child, index) => index > 2 && child instanceof TokenNode);
+      const found = this.constructorType(source, scope);
+      if (close < 0 || found === undefined || this.isCalculationOperand(found) === false) {
+        return undefined;
+      }
+      ret.push(found);
+      children = children.slice(close + 1);
+    }
+
+    for (const child of children) {
       let found: AbstractType | undefined = undefined;
       if (child instanceof TokenNode) {
         // parentheses and a sign, anything else is a constructor expression or a string operator
@@ -138,15 +169,47 @@ diff = a - b.`,
         found = ConstantSyntax.runSyntax(child);
       }
 
-      if (found === undefined
-          || found.isGeneric()
-          || !(found instanceof PackedType || found instanceof IntegerType || found instanceof Integer8Type)) {
+      if (found === undefined || this.isCalculationOperand(found) === false) {
         return undefined;
       }
       ret.push(found);
     }
 
     return ret;
+  }
+
+  private isCalculationOperand(type: AbstractType): boolean {
+    return type.isGeneric() === false
+      && (type instanceof PackedType || type instanceof IntegerType || type instanceof Integer8Type);
+  }
+
+  /** The type of VALUE, CONV or EXACT as the syntax check inferred it, with # only VALUE with a single
+   *  operand in the body, "VALUE #( itab[ 1 ]-comp OPTIONAL )" */
+  private constructorType(source: ExpressionNode, scope: ISpaghettiScopeNode): AbstractType | undefined {
+    const typeName = source.findDirectExpression(Expressions.TypeNameOrInfer);
+    if (typeName === undefined) {
+      return undefined;
+    }
+
+    if (typeName.concatTokens() === "#") {
+      // with DEFAULT the syntax check takes the type of the default value
+      const body = source.findDirectExpression(Expressions.ValueBody);
+      const children = body?.getChildren() || [];
+      if (children.length === 0
+          || children.length > 2
+          || !(children[0].get() instanceof Expressions.Source)
+          || (children.length === 2 && children[1].concatTokens().toUpperCase() !== "OPTIONAL")) {
+        return undefined;
+      }
+    }
+
+    const inferred = scope.getData().references.find(reference =>
+      reference.referenceType === ReferenceType.InferredType
+      && reference.position.getStart().equals(typeName.getFirstToken().getStart()))?.resolved;
+    if (!(inferred instanceof TypedIdentifier)) {
+      return undefined;
+    }
+    return inferred.getType();
   }
 
   private methodCallType(chain: ExpressionNode, scope: ISpaghettiScopeNode): AbstractType | undefined {

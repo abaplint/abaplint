@@ -896,15 +896,50 @@ Make sure to test the downported code, it might not always be completely correct
     // edits are applied in sequence, so delete the later one first
     along.sort((a, b) => b!.getFirstToken().getStart().isBefore(a!.getFirstToken().getStart()) ? -1 : 1);
     for (const e of along) {
-      fixes.push(EditHelper.deleteRange(lowFile, e!.getFirstToken().getStart(), e!.getLastToken().getEnd()));
+      fixes.push(this.deleteWithWhitespaceBefore(lowFile, high, e!));
     }
 
     // edits are applied in sequence, so work from the end of the statement towards the start
-    fixes.push(EditHelper.deleteRange(lowFile, into.getFirstToken().getStart(), into.getLastToken().getEnd()));
+    fixes.push(this.deleteWithWhitespaceBefore(lowFile, high, into));
     fixes.push(EditHelper.insertAt(lowFile, from.getLastToken().getEnd(), ` ` + move));
     const fix = EditHelper.mergeList(fixes);
 
     return Issue.atToken(lowFile, low.getFirstToken(), "SQL, move INTO", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  /**
+   * Deletes the expression together with the whitespace in front of it. A clause moved away
+   * otherwise leaves its row behind, holding only the indentation, or a gap in front of the period.
+   * Anything else in front of it, ie. a comment, and only the expression is deleted.
+   */
+  private deleteWithWhitespaceBefore(file: ABAPFile, statement: StatementNode, expression: ExpressionNode): IEdit {
+    const start = expression.getFirstToken().getStart();
+    const end = expression.getLastToken().getEnd();
+
+    let previous: Position | undefined = undefined;
+    for (const token of statement.getTokens()) {
+      if (token.getStart().isBefore(start) === false) {
+        break;
+      }
+      previous = token.getEnd();
+    }
+    if (previous === undefined) {
+      return EditHelper.deleteRange(file, start, end);
+    }
+
+    const rows = file.getRawRows();
+    let between = "";
+    for (let row = previous.getRow(); row <= start.getRow(); row++) {
+      const text = rows[row - 1] ?? "";
+      const from = row === previous.getRow() ? previous.getCol() - 1 : 0;
+      const to = row === start.getRow() ? start.getCol() - 1 : text.length;
+      between += text.substring(from, to);
+    }
+    if (between.trim() !== "") {
+      return EditHelper.deleteRange(file, start, end);
+    }
+
+    return EditHelper.deleteRange(file, previous, end);
   }
 
   /** the work area of INSERT/MODIFY/UPDATE/DELETE dbtab FROM @( ... ) takes its type from the
@@ -2736,7 +2771,11 @@ ${indentation}    output = ${uniqueName}.\n`;
     if (dataTarget) {
       const targetName = dataTarget.findDirectExpression(Expressions.TargetField)?.concatTokens() || "DOWNPORT_ERROR";
       let code = `DATA ${targetName} LIKE LINE OF ${sourceName}.\n${indentation}`;
-      if (isReference) {
+      const sourceType = foundType?.getType();
+      if (isReference && sourceType instanceof TableType && sourceType.isGeneric() === true) {
+        // LIKE LINE OF a generically typed table does not compile, and the reference to its row is generic too
+        code = `DATA ${targetName} TYPE REF TO data.\n${indentation}`;
+      } else if (isReference) {
         const likeName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
         code = `DATA ${likeName} LIKE LINE OF ${sourceName}.\n${indentation}DATA ${targetName} LIKE REF TO ${likeName}.\n${indentation}`;
       }
@@ -3516,7 +3555,7 @@ ${indentation}    output = ${uniqueName}.\n`;
 
       let type: string;
       if (high.concatTokens().toUpperCase().startsWith("APPEND INITIAL LINE TO ")) {
-        type = "LIKE LINE OF " + high.findFirstExpression(Expressions.Target)?.concatTokens();
+        type = this.rowOf(high.findFirstExpression(Expressions.Target)?.concatTokens() ?? "", high, lowFile, highSyntax);
       } else {
         const spag = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename());
         if (spag === undefined) {
