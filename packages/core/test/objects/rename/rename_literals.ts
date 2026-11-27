@@ -1,6 +1,6 @@
 import {MemoryFile} from "../../../src/files/memory_file";
 import {expect} from "chai";
-import {TextDocumentEdit} from "vscode-languageserver-types";
+import {TextDocumentEdit, TextEdit} from "vscode-languageserver-types";
 import {Renamer} from "../../../src/objects/rename/renamer";
 import {RenameLiterals} from "../../../src/objects/rename/rename_literals";
 import {Registry} from "../../../src/registry";
@@ -68,7 +68,7 @@ DATA(c) = 'XZCL_FOO'.`;
     const edits = new RenameLiterals(reg).buildEdits([{oldName: "/ns/cl_foo", newName: "zcl_foo"}]);
     const changes = edits.documentChanges as TextDocumentEdit[];
     expect(changes.length).to.equal(1);
-    expect(changes[0].edits.map(e => e.newText)).to.deep.equal(["'ZCL_FOO'"]);
+    expect(changes[0].edits.map(e => (e as TextEdit).newText)).to.deep.equal(["'ZCL_FOO'"]);
   });
 
   it("a new name which is the old name of another object is renamed once", () => {
