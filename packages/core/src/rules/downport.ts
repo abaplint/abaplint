@@ -1617,27 +1617,49 @@ ${indentation}`);
     return [];
   }
 
+  /** The READ TABLE addition that finds the row of a table expression, with a trailing space:
+   *
+   *    tab[ 1 ], tab[ INDEX 1 ]                    INDEX 1
+   *    tab[ KEY sec INDEX 1 ]                      INDEX 1 USING KEY sec
+   *    tab[ comp = 1 ]                             WITH KEY comp = 1
+   *    tab[ KEY sec [COMPONENTS] comp = 1 ]        WITH KEY sec COMPONENTS comp = 1
+   *    tab[ KEY primary_key [COMPONENTS] k = 1 ]   WITH KEY k = 1
+   *
+   * "WITH KEY sec COMPONENTS", not "WITH TABLE KEY sec COMPONENTS": like the table expression
+   * it takes the leading part of a sorted key, WITH TABLE KEY wants every component of the key.
+   *
+   * The primary key is read with the free key "WITH KEY k = 1", which is valid for every table
+   * category and every set of components. It finds the same row: a sorted or hashed table is
+   * still searched through its primary key when the components cover it, and a standard table
+   * is searched linearly either way. */
   private tableCondition(tableExpression: ExpressionNode) {
     let condition = "";
     let keyName = "";
     for (const c of tableExpression.getChildren() || []) {
+      const keyword = c instanceof TokenNode ? c.getFirstToken().getStr().toUpperCase() : "";
       if (c.getFirstToken().getStr() === "[" || c.getFirstToken().getStr() === "]") {
         continue;
-      } else if (c.get() instanceof Expressions.ComponentChainSimple && condition === "") {
+      } else if (keyword === "KEY" || keyword === "COMPONENTS" || keyword === "INDEX") {
+        continue;
+      } else if (c.get() instanceof Expressions.SimpleName) {
+        if (c.concatTokens().toUpperCase() !== "PRIMARY_KEY") {
+          keyName = c.concatTokens();
+        }
+        continue;
+      } else if ((c.get() instanceof Expressions.ComponentChainSimple || c.get() instanceof Expressions.Dynamic)
+          && condition === "") {
         if (keyName === "") {
           condition = "WITH KEY ";
         } else {
-          condition = "WITH TABLE KEY " + keyName + " COMPONENTS ";
+          condition = "WITH KEY " + keyName + " COMPONENTS ";
         }
       } else if (c.get() instanceof Expressions.Source && condition === "") {
         condition = "INDEX ";
-      } else if (c instanceof TokenNode && c.getFirstToken().getStr().toUpperCase() === "KEY") {
-        continue;
-      } else if (c.get() instanceof Expressions.SimpleName) {
-        keyName = c.concatTokens();
-        continue;
       }
       condition += c.concatTokens() + " ";
+    }
+    if (keyName !== "" && condition.startsWith("INDEX ")) {
+      condition += "USING KEY " + keyName + " ";
     }
     return condition;
   }
@@ -2400,19 +2422,7 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
       return undefined;
     }
 
-    let condition: string;
-    if (tableExpression.getChildren().length === 3) {
-      const index = tableExpression.findDirectExpression(Expressions.Source);
-      if (index === undefined) {
-        return undefined;
-      }
-      condition = `INDEX ${index.concatTokens()}`;
-    } else {
-      let concat = tableExpression.concatTokens();
-      concat = concat.substring(2);
-      concat = concat.substring(0, concat.length - 2);
-      condition = `WITH KEY ${concat}`;
-    }
+    const condition = this.tableCondition(tableExpression);
 
     let pre = "";
     for (const c of fieldChain!.getChildren()) {
@@ -2423,7 +2433,7 @@ LOOP AT ${groupTargetName}tab ${groupTarget}.`;
     }
 
     const fsTarget = high.findDirectExpression(Expressions.FSTarget);
-    const code = `READ TABLE ${pre} ${condition} ASSIGNING ${fsTarget?.concatTokens()}.`;
+    const code = `READ TABLE ${pre} ${condition}ASSIGNING ${fsTarget?.concatTokens()}.`;
 
     const fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), code);
 
@@ -3359,12 +3369,7 @@ ${indentation}    output = ${uniqueName}.\n`;
           }
         }
 
-        let condition: string;
-        if (tableExpression?.getChildren().length === 3) {
-          condition = "INDEX " + tableExpression?.findDirectExpression(Expressions.Source)?.concatTokens();
-        } else {
-          condition = "WITH KEY " + tableExpression?.concatTokens().replace("[ ", "").replace(" ]", "");
-        }
+        const condition = tableExpression === undefined ? "" : this.tableCondition(tableExpression).trim();
 
         body +=
           indentation + `READ TABLE ${tabName} INTO DATA(${rowName}) ${condition}.\n` +
@@ -4231,17 +4236,8 @@ ${indentation}    output = ${uniqueName}.\n`;
           continue;
         }
 
-        let condition = "";
-        for (const c of expression?.findFirstExpression(Expressions.TableExpression)?.getChildren() || []) {
-          if (c.getFirstToken().getStr() === "[" || c.getFirstToken().getStr() === "]") {
-            continue;
-          } else if (c.get() instanceof Expressions.ComponentChainSimple && condition === "") {
-            condition = "WITH KEY ";
-          } else if (c.get() instanceof Expressions.Source && condition === "") {
-            condition = "INDEX ";
-          }
-          condition += c.concatTokens() + " ";
-        }
+        const tableExpression = expression.findFirstExpression(Expressions.TableExpression);
+        const condition = tableExpression === undefined ? "" : this.tableCondition(tableExpression);
 
         const tableName = expression.findFirstExpression(Expressions.Source)?.concatTokens().split("[")[0];
 
