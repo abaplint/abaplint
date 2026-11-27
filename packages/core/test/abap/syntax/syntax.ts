@@ -21504,6 +21504,21 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal("Event parameter iv_other must be passed by VALUE");
   });
 
+  it("EVENTS, parameter sender is implicitly declared, error", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    EVENTS clicked
+      EXPORTING
+        VALUE(sender) TYPE REF TO lcl.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal("Event parameter sender is implicitly declared");
+  });
+
   it("INTERFACE EVENTS, parameter not passed by VALUE, error", () => {
     const abap = `
 INTERFACE lif.
