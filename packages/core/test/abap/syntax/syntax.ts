@@ -4491,6 +4491,16 @@ lt_screens = VALUE #( ( '0100' ) ).`;
     expect(issues[0].getMessage()).to.contain("not compatible with row type n LENGTH 4");
   });
 
+  it("VALUE #, string literal in standard table of c, error", () => {
+    const abap = `
+TYPES ty TYPE c LENGTH 20.
+DATA active_ucomm TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+active_ucomm = VALUE #( ( \`BACK\` ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with row type c LENGTH 20");
+  });
+
   it("VALUE #, converted character literal in standard table of numc, ok", () => {
     const abap = `
 TYPES ty TYPE n LENGTH 4.

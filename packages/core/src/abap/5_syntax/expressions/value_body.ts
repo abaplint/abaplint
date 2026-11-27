@@ -139,6 +139,12 @@ export class ValueBody {
           const message = `VALUE, source type c LENGTH ${sourceType.getLength()} not compatible ` +
             `with row type n LENGTH ${rowType.getLength()}`;
           input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
+        } else if (rowType instanceof CharacterType
+            && sourceType instanceof StringType
+            && this.isConstant(s)) {
+// a string literal given as a row is not converted to a character row type
+          const message = `VALUE, source type string not compatible with row type c LENGTH ${rowType.getLength()}`;
+          input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
         } else if (this.insertsUsingTableKey(targetType)) {
 // only STANDARD tables append the rows, and thus allow padding of shorter c and x values
           const row = this.characterOrHexLength(rowType);
