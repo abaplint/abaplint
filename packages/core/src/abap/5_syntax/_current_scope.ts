@@ -41,6 +41,9 @@ export class CurrentScope {
   /** row type of the members of a group, key is the identifier of the group variable,
    *  a LOOP AT ... GROUP BY binds the group until its ENDLOOP */
   private readonly groupMemberTypes: Map<string, AbstractType> = new Map();
+  /** set while a statement of a class or interface definition is checked that only sees
+   *  the types defined above it, the types of that scope node defined later are skipped */
+  private typesDefinedBefore: {node: SpaghettiScopeNode, filename: string, position: Position} | undefined;
 
   public static buildDefault(reg: IRegistry, obj: IObject): CurrentScope {
     const s = new CurrentScope(reg, obj);
@@ -486,11 +489,38 @@ export class CurrentScope {
     return this.current?.findFormDefinition(name);
   }
 
+  /** only the types of the current class or interface definition defined before the position are visible,
+   *  undefined makes all of them visible again */
+  public setTypesDefinedBefore(position: Position | undefined, filename: string): void {
+    if (position === undefined || this.current === undefined) {
+      this.typesDefinedBefore = undefined;
+    } else {
+      this.typesDefinedBefore = {node: this.current, filename, position};
+    }
+  }
+
   public findType(name: string | undefined): TypedIdentifier | undefined {
     if (name === undefined) {
       return undefined;
     }
-    return this.current?.findType(name);
+    const before = this.typesDefinedBefore;
+    if (before === undefined) {
+      return this.current?.findType(name);
+    }
+
+    const upper = name.toUpperCase();
+    let search: SpaghettiScopeNode | undefined = this.current;
+    while (search !== undefined) {
+      const found = search.getData().types[upper];
+      if (found !== undefined
+          && !(search === before.node
+            && found.getFilename() === before.filename
+            && found.getStart().isAfter(before.position))) {
+        return found;
+      }
+      search = search.getParent();
+    }
+    return undefined;
   }
 
   public findExtraLikeType(name: string | undefined): TypedIdentifier | undefined {
