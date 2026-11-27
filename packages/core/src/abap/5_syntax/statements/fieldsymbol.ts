@@ -4,7 +4,7 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {BasicTypes} from "../basic_types";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {StatementSyntax} from "../_statement_syntax";
-import {SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {VoidType} from "../../types/basic";
 
 export class FieldSymbol implements StatementSyntax {
@@ -28,13 +28,15 @@ export class FieldSymbol implements StatementSyntax {
 
     const bfound = new BasicTypes(input).parseType(node);
     if (bfound) {
-      // the row of a generically typed table has no type, "LIKE LINE OF" it is refused: the field
-      // specified under LIKE has a generic type
-      if (/ LIKE LINE OF /i.test(node.concatTokens())
+      // TYPE may name a generic type, LIKE may not: "FIELD-SYMBOLS <row> LIKE LINE OF <tab>" with
+      // <tab> TYPE STANDARD TABLE does not activate, the same as "DATA ... LIKE" on it
+      if (node.findDirectExpression(Expressions.Type)?.getFirstToken().getStr().toUpperCase() === "LIKE"
           && bfound.isGeneric() === true
           && bfound.containsVoid() === false) {
-        const message = "FIELD-SYMBOLS LIKE LINE OF a generically typed table, " + fs.concatTokens();
+        const message = "FIELD-SYMBOLS cannot be LIKE a generic type, " + fs.concatTokens();
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        input.scope.addIdentifier(new TypedIdentifier(fsname, input.filename, VoidType.get(CheckSyntaxKey)));
+        return;
       }
       input.scope.addIdentifier(new TypedIdentifier(fsname, input.filename, bfound));
       return;
