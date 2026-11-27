@@ -5,7 +5,7 @@ import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
 import {StructureNode, StatementNode} from "../nodes";
 import {Visibility} from "../4_file_information/visibility";
-import {TypedIdentifier} from "./_typed_identifier";
+import {IdentifierMeta, TypedIdentifier} from "./_typed_identifier";
 import {ClassData as ClassDataStatement} from "../5_syntax/statements/class_data";
 import {ClassData as ClassDataStructure} from "../5_syntax/structures/class_data";
 import {Data as DataStatement} from "../5_syntax/statements/data";
@@ -172,14 +172,14 @@ export class Attributes implements IAttributes {
         if (ctyp instanceof Structures.Data) {
           const found = DataStructure.runSyntax(c, input);
           if (found !== undefined) {
-            const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
+            const attr = new ClassAttribute(found, visibility, this.readOnlyMeta(found, c.getFirstStatement()), found.getValue());
             this.instance.push(attr);
             input.scope.addIdentifier(attr);
           }
         } else if (ctyp instanceof Structures.ClassData) {
           const found = new ClassDataStructure().runSyntax(c, input);
           if (found !== undefined) {
-            const attr = new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
+            const attr = new ClassAttribute(found, visibility, this.readOnlyMeta(found, c.getFirstStatement()), found.getValue());
             this.static.push(attr);
             input.scope.addIdentifier(attr);
           }
@@ -329,7 +329,22 @@ export class Attributes implements IAttributes {
 
     input.scope.addIdentifier(found);
 
-    return new ClassAttribute(found, visibility, found.getMeta(), found.getValue());
+    return new ClassAttribute(found, visibility, this.readOnlyMeta(found, node), found.getValue());
+  }
+
+  /** the meta of the attribute, plus ReadOnlyAttribute for the READ-ONLY addition */
+  private readOnlyMeta(found: TypedIdentifier, statement: StatementNode | undefined): IdentifierMeta[] {
+    const meta = [...found.getMeta()];
+    if (statement === undefined) {
+      return meta;
+    }
+    const definition = statement.findDirectExpression(Expressions.DataDefinition);
+    const nodes = definition ? [definition, ...definition.findAllExpressions(Expressions.TypeTableKey)] : [statement];
+    // in these nodes, a direct READ token only occurs in the READ-ONLY addition
+    if (nodes.some(n => n.findDirectTokenByText("READ") !== undefined)) {
+      meta.push(IdentifierMeta.ReadOnlyAttribute);
+    }
+    return meta;
   }
 
 }
