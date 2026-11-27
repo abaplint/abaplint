@@ -3342,7 +3342,9 @@ ${indentation}    output = ${uniqueName}.\n`;
         }
       }
 
-      if (body === "" && valueBody?.getLastChild()?.getFirstToken().getStr().toUpperCase() === "OPTIONAL") {
+      // "VALUE #( itab[ ... ] OPTIONAL )" or "VALUE #( itab[ ... ] DEFAULT source )", the addition follows the Source
+      const addition = valueBody?.getChildren()[1]?.concatTokens().toUpperCase();
+      if (body === "" && valueBody !== undefined && (addition === "OPTIONAL" || addition === "DEFAULT")) {
         const fieldChain = valueBody.findFirstExpression(Expressions.FieldChain);
         const rowName = this.uniqueName(firstToken.getStart(), lowFile.getFilename(), highSyntax);
 
@@ -3369,8 +3371,14 @@ ${indentation}    output = ${uniqueName}.\n`;
         body +=
           indentation + `READ TABLE ${tabName} INTO DATA(${rowName}) ${condition}.\n` +
           indentation + `IF sy-subrc = 0.\n` +
-          indentation + `  ${uniqueName} = ${rowName}${after}.\n` +
-          indentation + `ENDIF.\n`;
+          indentation + `  ${uniqueName} = ${rowName}${after}.\n`;
+        if (addition === "DEFAULT") {
+          // the default is only evaluated when the row is not found
+          body +=
+            indentation + `ELSE.\n` +
+            indentation + `  ${uniqueName} = ${valueBody.getLastChild()?.concatTokens()}.\n`;
+        }
+        body += indentation + `ENDIF.\n`;
 
         if (type.includes("LIKE DATA(")) {
           type = `LIKE LINE OF ${tabName}`;
