@@ -9208,6 +9208,10 @@
           "description": "Detects dynamic ASSIGN, including ASSIGN COMPONENT",
           "type": "boolean"
         },
+        "assignOldVariantCloud": {
+          "description": "Only with syntax version Cloud: detects the old variant of the dynamic ASSIGN, ie. ASSIGN (name) where name is a literal or constant holding a path with a selector, eg. 'MO_APP->ATTR'. Reported also when \"assign\" is off",
+          "type": "boolean"
+        },
         "callDatabaseProcedure": {
           "description": "Detects CALL DATABASE PROCEDURE, the procedure name is always dynamic",
           "type": "boolean"
@@ -9281,7 +9285,8 @@
         "getBadi",
         "assign",
         "internalTable",
-        "exportImport"
+        "exportImport",
+        "assignOldVariantCloud"
       ],
       "type": "object"
     },
