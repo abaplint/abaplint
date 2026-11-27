@@ -83,7 +83,10 @@ export class Rename {
         // strip the long-path prefix (Windows), then take the path relative to the base,
         // path.relative ignores case on Windows, where the drive letter case can differ
         const filename = f.getFilename().replace(/^[\\/]{2}\?[\\/]/, "");
-        const n = outputFolder + path.posix.sep + FileOperations.toUnixPath(path.relative(myBase, filename));
+        // a file above the base, eg. files = "/../../src/**", is relative "../../src/..",
+        // the leading ".." are dropped, so it is written below the output folder
+        const relative = FileOperations.toUnixPath(path.relative(myBase, filename)).replace(/^(\.\.\/)+/, "");
+        const n = outputFolder + path.posix.sep + relative;
         console.log("Write " + n);
         fs.mkdirSync(path.dirname(n), {recursive: true});
         fs.writeFileSync(n, f.getRaw());
