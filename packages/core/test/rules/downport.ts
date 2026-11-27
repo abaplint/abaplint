@@ -1023,6 +1023,200 @@ result = CONV xsdboolean( boolc( 'a' = cl_abap_typedescr=>typekind_int OR 'a' = 
     testFix(abap, expected);
   });
 
+  it("xsdbool, first operand of &&, only the call is replaced", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = xsdbool( lv_a = 1 ) && \`x\`.`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = CONV xsdboolean( boolc( lv_a = 1 ) ) && \`x\`.`;
+
+    testFix(abap, expected);
+  });
+
+  it("xsdbool, first operand of &&, typed helper variable", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = xsdbool( lv_a = 1 ) && \`x\`.`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+DATA temp1 TYPE xsdboolean.
+temp1 = boolc( lv_a = 1 ).
+lv_s = temp1 && \`x\`.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, both operands of +", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_cnt TYPE i.
+lv_cnt = xsdbool( lv_a = 1 ) + xsdbool( lv_a = 2 ).`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_cnt TYPE i.
+DATA temp1 TYPE xsdboolean.
+temp1 = boolc( lv_a = 1 ).
+DATA temp2 TYPE xsdboolean.
+temp2 = boolc( lv_a = 2 ).
+lv_cnt = temp1 + temp2.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, first, middle and last operand of &&", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = xsdbool( lv_a = 1 ) && xsdbool( lv_a = 2 ) && xsdbool( lv_a = 3 ).`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+DATA temp1 TYPE xsdboolean.
+temp1 = boolc( lv_a = 1 ).
+DATA temp2 TYPE xsdboolean.
+temp2 = boolc( lv_a = 2 ).
+DATA temp3 TYPE xsdboolean.
+temp3 = boolc( lv_a = 3 ).
+lv_s = temp1 && temp2 && temp3.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, first operand in IF, string template and actual parameter", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take
+      IMPORTING val        TYPE clike
+      RETURNING VALUE(ret) TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_a TYPE i.
+  DATA lv_s TYPE string.
+  IF xsdbool( lv_a = 1 ) && \`x\` = \`Xx\`.
+  ENDIF.
+  lv_s = |{ xsdbool( lv_a = 1 ) && \`x\` }|.
+  lv_s = lcl=>take( xsdbool( lv_a = 1 ) && \`x\` ).`;
+
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take
+      IMPORTING val        TYPE clike
+      RETURNING VALUE(ret) TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_a TYPE i.
+  DATA lv_s TYPE string.
+  DATA temp1 TYPE xsdboolean.
+  temp1 = boolc( lv_a = 1 ).
+  IF temp1 && \`x\` = \`Xx\`.
+  ENDIF.
+  DATA temp2 TYPE xsdboolean.
+  temp2 = boolc( lv_a = 1 ).
+  lv_s = |{ temp2 && \`x\` }|.
+  DATA temp3 TYPE xsdboolean.
+  temp3 = boolc( lv_a = 1 ).
+  lv_s = lcl=>take( temp3 && \`x\` ).`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, nested in the condition of a first operand", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = xsdbool( xsdbool( lv_a = 1 ) && \`x\` = \`Xx\` ) && \`y\`.`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+DATA temp1 TYPE xsdboolean.
+DATA temp2 TYPE xsdboolean.
+temp2 = boolc( lv_a = 1 ).
+temp1 = boolc( temp2 && \`x\` = \`Xx\` ).
+lv_s = temp1 && \`y\`.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, second operand, unchanged behaviour", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = \`a\` && xsdbool( lv_a = 1 ).`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = \`a\` && CONV xsdboolean( boolc( lv_a = 1 ) ).`;
+
+    testFix(abap, expected);
+  });
+
+  it("xsdbool, comparison in IF and string template, unchanged behaviour", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+IF xsdbool( lv_a = 1 ) = abap_true.
+ENDIF.
+lv_s = |{ xsdbool( lv_a = 1 ) }|.`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+IF CONV xsdboolean( boolc( lv_a = 1 ) ) = abap_true.
+ENDIF.
+lv_s = |{ CONV xsdboolean( boolc( lv_a = 1 ) ) }|.`;
+
+    testFix(abap, expected, undefined, 2);
+  });
+
+  it("xsdbool, method of the class named xsdbool as first operand, no downport", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS xsdbool
+      IMPORTING val        TYPE i
+      RETURNING VALUE(ret) TYPE string.
+    CLASS-METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD xsdbool.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv_s TYPE string.
+    lv_s = xsdbool( 2 ) && \`x\`.
+    lv_s = lcl=>xsdbool( 2 ) && \`x\`.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("VALUE appending to table", async () => {
     const abap = `
 TYPES: BEGIN OF ty_hash,
