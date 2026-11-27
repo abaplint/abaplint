@@ -410,7 +410,18 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
   private findFriends(def: StatementNode | undefined, input: SyntaxInput): string[] {
     const result: string[] = [];
-    for (const n of def?.findDirectExpression(Expressions.ClassFriends)?.findDirectExpressions(Expressions.ClassName) || []) {
+    const friends = def?.findDirectExpression(Expressions.ClassFriends);
+    if (friends) {
+      const isGlobalFriends = friends.getFirstToken().getStr().toUpperCase() === "GLOBAL";
+      if (this.globalValue === true && isGlobalFriends === false) {
+        const message = "Only the addition \"GLOBAL FRIENDS\" exists for PUBLIC classes, not the addition \"FRIENDS\"";
+        input.issues.push(syntaxIssue(input, friends.getFirstToken(), message));
+      } else if (this.globalValue === false && isGlobalFriends === true) {
+        const message = "The addition \"GLOBAL FRIENDS\" is only allowed for PUBLIC classes";
+        input.issues.push(syntaxIssue(input, friends.getFirstToken(), message));
+      }
+    }
+    for (const n of friends?.findDirectExpressions(Expressions.ClassName) || []) {
       const token = n.getFirstToken();
       const name = token.getStr();
       const s = input.scope.findClassDefinition(name);
