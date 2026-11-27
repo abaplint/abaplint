@@ -1,6 +1,8 @@
 import {MemoryFile} from "../../../src/files/memory_file";
 import {expect} from "chai";
+import {TextDocumentEdit} from "vscode-languageserver-types";
 import {Renamer} from "../../../src/objects/rename/renamer";
+import {RenameLiterals} from "../../../src/objects/rename/rename_literals";
 import {Registry} from "../../../src/registry";
 
 describe("Rename literals", () => {
@@ -19,7 +21,7 @@ ENDCLASS.`;
     const renamer = new Renamer(reg);
     renamer.rename("CLAS", "zcl_foo", newName);
     if (literals === true) {
-      renamer.renameLiterals([{oldName: "zcl_foo", newName}]);
+      renamer.renameLiterals();
     }
     return reg.getFileByName("zprog.prog.abap")!.getRaw();
   }
@@ -63,16 +65,28 @@ DATA(c) = 'XZCL_FOO'.`;
 
   it("an old namespaced name", () => {
     const reg = new Registry().addFiles([prog(`DATA(a) = '/NS/CL_FOO'.\nDATA(b) = \`x/ns/cl_foo\`.`)]).parse();
-    const result = new Renamer(reg).renameLiterals([{oldName: "/ns/cl_foo", newName: "zcl_foo"}]);
-    const raw = reg.getFileByName("zprog.prog.abap")!.getRaw();
-    expect(raw).to.include("DATA(a) = 'ZCL_FOO'.");
-    expect(raw).to.include("DATA(b) = `x/ns/cl_foo`.");
-    expect(result.updatedFiles.has("zprog.prog.abap")).to.equal(true);
+    const edits = new RenameLiterals(reg).buildEdits([{oldName: "/ns/cl_foo", newName: "zcl_foo"}]);
+    const changes = edits.documentChanges as TextDocumentEdit[];
+    expect(changes.length).to.equal(1);
+    expect(changes[0].edits.map(e => e.newText)).to.deep.equal(["'ZCL_FOO'"]);
   });
 
-  it("nothing to rename", () => {
+  it("a new name which is the old name of another object is renamed once", () => {
+    const reg = new Registry().addFiles([
+      new MemoryFile("zcl_foo.clas.abap", foo),
+      new MemoryFile("zcl_tmp.clas.abap", foo.replace(/zcl_foo/g, "zcl_tmp")),
+      prog(`DATA(a) = 'ZCL_FOO' && 'ZCL_TMP'.`),
+    ]).parse();
+    const renamer = new Renamer(reg);
+    renamer.rename("CLAS", "zcl_tmp", "zcl_bar");
+    renamer.rename("CLAS", "zcl_foo", "zcl_tmp");
+    renamer.renameLiterals();
+    expect(reg.getFileByName("zprog.prog.abap")!.getRaw()).to.include("DATA(a) = 'ZCL_TMP' && 'ZCL_BAR'.");
+  });
+
+  it("nothing renamed", () => {
     const reg = new Registry().addFiles([prog(`DATA(a) = 'ZCL_FOO'.`)]).parse();
-    const result = new Renamer(reg).renameLiterals([]);
+    const result = new Renamer(reg).renameLiterals();
     expect(result.updatedFiles.size).to.equal(0);
   });
 });

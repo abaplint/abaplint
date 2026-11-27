@@ -25,6 +25,7 @@ export interface IRenameResult {
 export class Renamer {
   private readonly reg: IRegistry;
   private readonly renamedURLs: IRenamedURL[] = [];
+  private readonly renamedNames: IRenamedName[] = [];
 
   public constructor(reg: IRegistry) {
     this.reg = reg;
@@ -47,6 +48,7 @@ export class Renamer {
 
     const result = this.apply(edits);
     this.reg.findIssues(); // hmm, this builds the ddic references
+    this.renamedNames.push({oldName, newName});
 
     if (oldURL !== undefined && oldXML !== undefined) {
       this.rememberURL(edits, oldURL, oldXML);
@@ -63,11 +65,11 @@ export class Renamer {
     return result;
   }
 
-  /** Renames the old names in string literals and string templates of the ABAP sources,
-   *  typically after the objects are renamed, see RenameLiterals */
-  public renameLiterals(names: readonly IRenamedName[]): IRenameResult {
+  /** Renames the old names of the objects renamed by this renamer in the string literals and
+   *  string templates of the ABAP sources, see RenameLiterals */
+  public renameLiterals(): IRenameResult {
     this.reg.parse();
-    const result = this.apply(new RenameLiterals(this.reg).buildEdits(names));
+    const result = this.apply(new RenameLiterals(this.reg).buildEdits(this.renamedNames));
     this.reg.parse();
     return result;
   }

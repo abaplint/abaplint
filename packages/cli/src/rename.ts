@@ -24,17 +24,12 @@ export class Rename {
     }
 
     this.skip(rconfig);
-    const {renamer, renamed} = this.rename(rconfig, quiet);
+    const renamer = this.rename(rconfig, quiet);
     if (rconfig.literals === true) {
-      this.collect(renamer.renameLiterals(renamed));
+      this.addUpdated(renamer.renameLiterals());
     }
     if (rconfig.urls === true) {
-      const result = renamer.renameURLs();
-      result.updatedFiles.forEach(f => {
-        if (this.addedFiles.has(f) === false) {
-          this.updatedFiles.add(f);
-        }
-      });
+      this.addUpdated(renamer.renameURLs());
     }
     if (rconfig.output === undefined || rconfig.output === "") {
       // write changes inline
@@ -94,19 +89,16 @@ export class Rename {
     }
   }
 
-  private collect(result: ReturnType<abaplint.Rename["rename"]>) {
+  /** the files changed by a step after the renaming, a file added by the renaming is written anyhow */
+  private addUpdated(result: ReturnType<abaplint.Rename["rename"]>) {
     result.updatedFiles.forEach(f => {
       if (this.addedFiles.has(f) === false) {
         this.updatedFiles.add(f);
       }
     });
-    result.deletedFiles.forEach(f => { this.deletedFiles.add(f); });
-    result.addedFiles.forEach(f => { this.addedFiles.add(f); });
   }
 
-  private rename(rconfig: abaplint.IRenameSettings,
-                 quiet?: boolean): {renamer: abaplint.Rename, renamed: {oldName: string, newName: string}[]} {
-    const renamed: {oldName: string, newName: string}[] = [];
+  private rename(rconfig: abaplint.IRenameSettings, quiet?: boolean): abaplint.Rename {
     const renamer = new abaplint.Rename(this.reg);
     for (const o of this.reg.getObjects()) {
       if (this.reg.isDependency(o) === true) {
@@ -128,14 +120,13 @@ export class Rename {
         }
 
         const result = renamer.rename(o.getType(), o.getName(), newStr);
-        renamed.push({oldName: o.getName(), newName: newStr});
         result.updatedFiles.forEach(f => { this.updatedFiles.add(f); });
         result.deletedFiles.forEach(f => { this.deletedFiles.add(f); });
         result.addedFiles.forEach(f => { this.addedFiles.add(f); });
         break;
       }
     }
-    return {renamer, renamed};
+    return renamer;
   }
 
   private skip(rconfig: abaplint.IRenameSettings) {
