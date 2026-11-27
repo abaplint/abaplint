@@ -37,8 +37,16 @@ import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 // todo: refactor each sub-rule to new classes?
 // todo: add configuration
 
+const DEFAULT_NOT_FOUND = "RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.";
 
 export class DownportConf extends BasicRuleConfig {
+  /** The statement a downported table expression runs when the row is not found, including the period.
+   *
+   * CX_SY_ITAB_LINE_NOT_FOUND is what a table expression raises, but the class came with the table
+   * expressions in 7.40, so the default does not compile on a 7.02 system. Set this to something that
+   * exists there, eg. "RAISE EXCEPTION TYPE zcx_my_line_not_found." or "ASSERT 1 = 0."
+   */
+  public tableExpressionNotFound?: string = DEFAULT_NOT_FOUND;
 }
 
 class SkipToNextFile extends Error {
@@ -171,7 +179,7 @@ Current rules:
 * LOOP AT method_call( ) is outlined
 * VALUE # with structure fields
 * VALUE # with internal table lines
-* Table Expressions are outlined
+* Table Expressions are outlined, what happens when the row is not found is set with tableExpressionNotFound
 * SELECT INTO @DATA definitions are outlined
 * Some occurrences of string template formatting option ALPHA changed to function module call
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
@@ -197,6 +205,10 @@ Make sure to test the downported code, it might not always be completely correct
 
   public setConfig(conf: DownportConf): void {
     this.conf = conf;
+  }
+
+  private tableExpressionNotFound(): string {
+    return this.conf.tableExpressionNotFound ?? DEFAULT_NOT_FOUND;
   }
 
   public initialize(reg: IRegistry) {
@@ -1471,7 +1483,7 @@ ${indentation}${uniqueName} = ${(source as ExpressionNode).concatTokensWithLineb
 READ TABLE ${pre} ${condition}ASSIGNING ${uniqueName}.
 sy-tabix = ${tabixBackup}.
 IF sy-subrc <> 0.
-  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ${this.tableExpressionNotFound()}
 ENDIF.`;
       if (guard.length > 0) {
         // the operands in front of the table expression are evaluated first and can stop the
@@ -2148,7 +2160,7 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       code = `ASSIGN ${sourceRef.concatTokens()} TO FIELD-SYMBOL(<${uniqueName}>).
 IF sy-subrc <> 0.
-  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ${this.tableExpressionNotFound()}
 ENDIF.
 GET REFERENCE OF <${uniqueName}> INTO ${target.concatTokens()}`;
     } else {
@@ -2552,7 +2564,7 @@ ${indentation}${tabixBackup} = sy-tabix.
 ${indentation}READ TABLE ${tName} ${condition}ASSIGNING ${uniqueName}.
 ${indentation}sy-tabix = ${tabixBackup}.
 ${indentation}IF sy-subrc <> 0.
-${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+${indentation}  ${this.tableExpressionNotFound()}
 ${indentation}ENDIF.
 ${indentation}`;
 
