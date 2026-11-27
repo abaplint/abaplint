@@ -2,11 +2,13 @@ import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {For} from "./for";
 import {Source} from "./source";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {Let} from "./let";
 import {FieldAssignment} from "./field_assignment";
 import {AnyType, CharacterType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatType, HexType, Integer8Type, IntegerType, StringType, TableAccessType, TableType, UnknownType, VoidType, XStringType} from "../../types/basic";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
+import {TypeUtils} from "../_type_utils";
 
 export class ValueBody {
   public static runSyntax(
@@ -67,6 +69,24 @@ export class ValueBody {
       FieldAssignment.runSyntax(s, input, targetType);
     }
 
+    // a single value, its DEFAULT, the BASE and the rows, "VALUE #( ( i ) )", "VALUE #( BASE tab ( LINES OF tab ) )"
+    const operands = [
+      ...node.findDirectExpressions(Expressions.Source),
+      ...node.findDirectExpression(Expressions.ValueBase)?.findDirectExpressions(Expressions.Source) || [],
+    ];
+    for (const line of node.findDirectExpressions(Expressions.ValueBodyLine)) {
+      operands.push(...line.findDirectExpressions(Expressions.Source));
+      for (const lines of line.findDirectExpressions(Expressions.ValueBodyLines)) {
+        const tab = lines.findExpressionAfterToken("OF");
+        if (tab !== undefined) {
+          operands.push(tab);
+        }
+      }
+    }
+    for (const operand of operands) {
+      checkParenthesizedOperand(operand, input);
+    }
+
     let type: AbstractType | undefined = undefined; // todo, this is only correct if there is a single source in the body
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       type = Source.runSyntax(s, input, type);
@@ -101,15 +121,16 @@ export class ValueBody {
       }
       for (const s of foo.findDirectExpressions(Expressions.Source)) {
         const sourceType = Source.runSyntax(s, input, rowType);
+        const sourceKind = new TypeUtils(input.scope).isPackedConstant(sourceType) ? "p" : this.numericKind(sourceType);
         if ((rowType instanceof StringType || rowType instanceof XStringType) && sourceType instanceof CharacterType) {
           const message = "VALUE, source type CharacterType not compatible with " + rowType.constructor.name;
           input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
         } else if (this.isDataObject(s)
             && this.numericKind(rowType) !== undefined
-            && this.numericKind(sourceType) !== undefined
-            && this.numericKind(rowType) !== this.numericKind(sourceType)) {
+            && sourceKind !== undefined
+            && this.numericKind(rowType) !== sourceKind) {
 // a data object given as a row must be compatible with the row type, it is not converted
-          const message = `VALUE, source type ${this.numericKind(sourceType)} not compatible with row type ${this.numericKind(rowType)}`;
+          const message = `VALUE, source type ${sourceKind} not compatible with row type ${this.numericKind(rowType)}`;
           input.issues.push(syntaxIssue(input, s.getFirstToken(), message));
         } else if (this.insertsUsingTableKey(targetType)) {
 // only STANDARD tables append the rows, and thus allow padding of shorter c and x values
