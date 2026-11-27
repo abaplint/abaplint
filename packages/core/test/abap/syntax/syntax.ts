@@ -1561,6 +1561,116 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues.length).to.equals(1);
   });
 
+  it("CONSTANTS, literals joined with & longer than 255 characters", () => {
+    const abap = `CONSTANTS foo TYPE string VALUE
+      \`${"a".repeat(100)}\` &
+      \`${"b".repeat(100)}\` &
+      \`${"c".repeat(80)}\`.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("CONSTANTS, character literals joined with & longer than 255 characters", () => {
+    const abap = `CONSTANTS foo TYPE c LENGTH 280 VALUE
+      '${"a".repeat(100)}' &
+      '${"b".repeat(100)}' &
+      '${"c".repeat(80)}'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("CONSTANTS, literals joined with & of exactly 255 characters, ok", () => {
+    const abap = `CONSTANTS foo TYPE string VALUE
+      \`${"a".repeat(100)}\` &
+      \`${"b".repeat(100)}\` &
+      \`${"c".repeat(55)}\`.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CONSTANTS, literals joined with &, a doubled delimiter counts as one character, ok", () => {
+    const abap = `CONSTANTS foo TYPE c LENGTH 255 VALUE
+      '${"a".repeat(100)}' &
+      '${"b".repeat(100)}' &
+      '${"c".repeat(54)}'''.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("class CONSTANTS, literals joined with & longer than 255 characters", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS foo TYPE string VALUE
+      \`${"a".repeat(100)}\` &
+      \`${"b".repeat(100)}\` &
+      \`${"c".repeat(80)}\`.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("DATA VALUE, literals joined with & longer than 255 characters", () => {
+    const abap = `DATA foo TYPE string VALUE
+      \`${"a".repeat(100)}\` &
+      \`${"b".repeat(100)}\` &
+      \`${"c".repeat(80)}\`.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("assignment, literals joined with & longer than 255 characters", () => {
+    const abap = `DATA foo TYPE string.
+    foo = '${"a".repeat(100)}' &
+      '${"b".repeat(100)}' &
+      '${"c".repeat(80)}'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("method argument, literals joined with & longer than 255 characters", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar IMPORTING val TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>bar( \`${"a".repeat(100)}\` &
+    \`${"b".repeat(100)}\` &
+    \`${"c".repeat(80)}\` ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("assignment, literals joined with && longer than 255 characters, ok", () => {
+    const abap = `DATA foo TYPE string.
+    foo = \`${"a".repeat(100)}\` &&
+      \`${"b".repeat(100)}\` &&
+      \`${"c".repeat(80)}\`.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("assignment, string templates longer than 255 characters, ok", () => {
+    const abap = `DATA foo TYPE string.
+    foo = |${"a".repeat(100)}| &&
+      |${"b".repeat(100)}| &&
+      |${"c".repeat(80)}|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("DATA, negative LENGTH", () => {
     const abap = `DATA foo TYPE c LENGTH -5.`;
     const issues = runProgram(abap);
