@@ -209,6 +209,256 @@ CREATE DATA result-ref.`;
     testFix(abap, expected);
   });
 
+  it("NEW type( ) into a typed data reference, CREATE DATA", async () => {
+    const abap = `TYPES: BEGIN OF ty_s, a TYPE i, END OF ty_s.
+DATA lrs TYPE REF TO ty_s.
+lrs = NEW ty_s( ).`;
+    const expected = `TYPES: BEGIN OF ty_s, a TYPE i, END OF ty_s.
+DATA lrs TYPE REF TO ty_s.
+CREATE DATA lrs TYPE ty_s.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW type( components ) into a data reference, CREATE DATA and VALUE", async () => {
+    const abap = `TYPES: BEGIN OF ty_s, a TYPE i, b TYPE string, END OF ty_s.
+DATA lrs TYPE REF TO ty_s.
+lrs = NEW ty_s( a = 1 b = \`x\` ).`;
+    const expected = `TYPES: BEGIN OF ty_s, a TYPE i, b TYPE string, END OF ty_s.
+DATA lrs TYPE REF TO ty_s.
+CREATE DATA lrs TYPE ty_s.
+lrs->* = VALUE ty_s( a = 1 b = \`x\` ).`;
+    testFix(abap, expected);
+  });
+
+  it("NEW type( rows ) into a data reference, CREATE DATA and VALUE", async () => {
+    const abap = `TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lr TYPE REF TO ty_t.
+lr = NEW ty_t( ( \`a\` ) ( \`b\` ) ).`;
+    const expected = `TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lr TYPE REF TO ty_t.
+CREATE DATA lr TYPE ty_t.
+lr->* = VALUE ty_t( ( \`a\` ) ( \`b\` ) ).`;
+    testFix(abap, expected);
+  });
+
+  it("NEW type( rows ) into a data reference, all the way down", async () => {
+    const abap = `TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lr TYPE REF TO ty_t.
+lr = NEW ty_t( ( \`a\` ) ( \`b\` ) ).`;
+    const expected = `TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lr TYPE REF TO ty_t.
+CREATE DATA lr TYPE ty_t.
+DATA temp1 TYPE ty_t.
+CLEAR temp1.
+INSERT \`a\` INTO TABLE temp1.
+INSERT \`b\` INTO TABLE temp1.
+lr->* = temp1.`;
+    testFixAll(abap, expected);
+  });
+
+  it("NEW type( one row ) into a data reference, a row and not a value", async () => {
+    const abap = `TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lr TYPE REF TO ty_t.
+lr = NEW ty_t( ( \`a\` ) ).`;
+    const expected = `TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lr TYPE REF TO ty_t.
+CREATE DATA lr TYPE ty_t.
+lr->* = VALUE ty_t( ( \`a\` ) ).`;
+    testFix(abap, expected);
+  });
+
+  it("NEW type( table ) into a data reference, the value as it is", async () => {
+    const abap = `TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt TYPE ty_t.
+DATA lr TYPE REF TO ty_t.
+lr = NEW ty_t( lt ).`;
+    const expected = `TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt TYPE ty_t.
+DATA lr TYPE REF TO ty_t.
+CREATE DATA lr TYPE ty_t.
+lr->* = lt.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW #( rows ) into a typed data reference, CREATE DATA and VALUE", async () => {
+    const abap = `TYPES: BEGIN OF ty_s, a TYPE i, END OF ty_s.
+TYPES ty_t TYPE STANDARD TABLE OF ty_s WITH DEFAULT KEY.
+DATA lr TYPE REF TO ty_t.
+lr = NEW #( ( a = 1 ) ( a = 2 ) ).`;
+    const expected = `TYPES: BEGIN OF ty_s, a TYPE i, END OF ty_s.
+TYPES ty_t TYPE STANDARD TABLE OF ty_s WITH DEFAULT KEY.
+DATA lr TYPE REF TO ty_t.
+CREATE DATA lr.
+lr->* = VALUE #( ( a = 1 ) ( a = 2 ) ).`;
+    testFix(abap, expected);
+  });
+
+  it("NEW #( components ) into a data reference component, all the way down", async () => {
+    const abap = `TYPES: BEGIN OF ty_s, a TYPE i, END OF ty_s.
+TYPES: BEGIN OF ty, ref TYPE REF TO ty_s, END OF ty.
+DATA result TYPE ty.
+result-ref = NEW #( a = 1 ).`;
+    const expected = `TYPES: BEGIN OF ty_s, a TYPE i, END OF ty_s.
+TYPES: BEGIN OF ty, ref TYPE REF TO ty_s, END OF ty.
+DATA result TYPE ty.
+CREATE DATA result-ref.
+CLEAR result-ref->*.
+result-ref->*-a = 1.`;
+    testFixAll(abap, expected);
+  });
+
+  it("NEW type( components ) into a generic data reference, VALUE through a field symbol", async () => {
+    const abap = `TYPES: BEGIN OF ty_s, a TYPE i, END OF ty_s.
+DATA md TYPE REF TO data.
+md = NEW ty_s( a = 1 ).`;
+    const expected = `TYPES: BEGIN OF ty_s, a TYPE i, END OF ty_s.
+DATA md TYPE REF TO data.
+FIELD-SYMBOLS <temp1> TYPE any.
+CREATE DATA md TYPE ty_s.
+ASSIGN md->* TO <temp1>.
+<temp1> = VALUE ty_s( a = 1 ).`;
+    testFix(abap, expected);
+  });
+
+  it("NEW type( ) of a table type into an inline declaration, CREATE DATA", async () => {
+    const abap = `TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA(lr) = NEW ty_t( ).`;
+    const expected = `TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lr TYPE REF TO ty_t.
+CREATE DATA lr TYPE ty_t.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW type( rows ) into an inline declaration, indented", async () => {
+    const abap = `TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+IF 1 = 2.
+  DATA(lr) = NEW ty_t( ( \`a\` ) ( \`b\` ) ).
+ENDIF.`;
+    const expected = `TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+IF 1 = 2.
+  DATA lr TYPE REF TO ty_t.
+  CREATE DATA lr TYPE ty_t.
+  lr->* = VALUE ty_t( ( \`a\` ) ( \`b\` ) ).
+ENDIF.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW type( components ) into an inline declaration, all the way down", async () => {
+    const abap = `TYPES: BEGIN OF ty_s, a TYPE i, END OF ty_s.
+DATA(lrs) = NEW ty_s( a = 1 ).`;
+    const expected = `TYPES: BEGIN OF ty_s, a TYPE i, END OF ty_s.
+DATA lrs TYPE REF TO ty_s.
+CREATE DATA lrs TYPE ty_s.
+DATA temp1 TYPE ty_s.
+CLEAR temp1.
+temp1-a = 1.
+lrs->* = temp1.`;
+    testFixAll(abap, expected);
+  });
+
+  it("NEW of a type of a class into an inline declaration, all the way down", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA(lr) = NEW lcl=>ty_t( ).`;
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_t TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA lr TYPE REF TO lcl=>ty_t.
+  CREATE DATA lr TYPE lcl=>ty_t.`;
+    testFixAll(abap, expected);
+  });
+
+  it("NEW of a type of an interface with rows, CREATE DATA and VALUE", async () => {
+    const abap = `INTERFACE lif.
+  TYPES ty TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+ENDINTERFACE.
+DATA lr TYPE REF TO lif=>ty.
+lr = NEW lif=>ty( ( \`a\` ) ( \`b\` ) ).`;
+    const expected = `INTERFACE lif.
+  TYPES ty TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+ENDINTERFACE.
+DATA lr TYPE REF TO lif=>ty.
+CREATE DATA lr TYPE lif=>ty.
+lr->* = VALUE lif=>ty( ( \`a\` ) ( \`b\` ) ).`;
+    testFix(abap, expected);
+  });
+
+  it("NEW of a class into an inline declaration stays CREATE OBJECT", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING a TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA(lo) = NEW lcl( a = 1 ).`;
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING a TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  CREATE OBJECT lo TYPE lcl EXPORTING a = 1.`;
+    testFixAll(abap, expected);
+  });
+
+  it("NEW of a class with parameters into a declared object reference stays CREATE OBJECT", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING a TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  lo = NEW #( a = 1 ).`;
+    const expected = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor IMPORTING a TYPE i.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD constructor.
+  ENDMETHOD.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA lo TYPE REF TO lcl.
+  CREATE OBJECT lo EXPORTING a = 1.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW of a void type with parameters stays CREATE OBJECT", async () => {
+    const abap = `DATA lv TYPE REF TO cl_voided.
+lv = NEW cl_voided( a = 1 ).`;
+    const expected = `DATA lv TYPE REF TO cl_voided.
+CREATE OBJECT lv TYPE cl_voided EXPORTING a = 1.`;
+    testFix(abap, expected);
+  });
+
+  it("NEW of a void type into an inline declaration, outlined as before", async () => {
+    const abap = `DATA(lv) = NEW cl_voided( a = 1 ).`;
+    const expected = `DATA temp1 TYPE REF TO cl_voided.
+CREATE OBJECT temp1 TYPE cl_voided EXPORTING a = 1.
+DATA(lv) = temp1.`;
+    testFix(abap, expected);
+  });
+
   it("NEW into an object reference stays CREATE OBJECT", async () => {
     const abap = `DATA mo TYPE REF TO object.
 mo = NEW #( ).`;
