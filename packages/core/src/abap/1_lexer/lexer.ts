@@ -59,11 +59,22 @@ export class Lexer {
   private m: number;
   private stream: LexerStream;
   private buffer: LexerBuffer;
+  // inside EXEC SQL ... ENDEXEC or an AMDP method body the text is native SQL,
+  // where "|" and "}" are operators or comment text and do not start a string
+  // template; a template there would run past ENDEXEC / ENDMETHOD, #4329
+  private native: boolean;
+  // upper case words of the statement read so far, used to find where a
+  // native region starts and ends; comments and pragmas are left out
+  private words: string[];
+  private colon: boolean;
 
   public run(file: IFile, virtual?: Position): IABAPLexerResult {
     this.virtual = virtual;
     this.tokens = [];
     this.m = ModeNormal;
+    this.native = false;
+    this.words = [];
+    this.colon = false;
 
     this.process(file.getRaw());
     return {file, tokens: this.tokens};
@@ -229,8 +240,44 @@ export class Lexer {
         tok = new Identifier(pos, s);
       }
       this.tokens.push(tok);
+      this.trackNative(tok, s);
     }
     this.buffer.clear();
+  }
+
+  /** follows the statements to know whether the next text is native SQL,
+   * mirrors the region handling of the statement parser */
+  private trackNative(tok: AbstractToken, s: string) {
+    if (tok instanceof Comment || tok instanceof Pragma) {
+      return;
+    } else if (tok instanceof Punctuation && s === ".") {
+      this.native = this.nativeAfter();
+      this.words = [];
+      this.colon = false;
+    } else if (s === ":" && this.native === false && tok instanceof Identifier) {
+      this.colon = true;
+    } else {
+      this.words.push(s.toUpperCase());
+    }
+  }
+
+  private nativeAfter(): boolean {
+    const words = this.words;
+    const last = words[words.length - 1];
+    if (last === "ENDEXEC" || last === "ENDMETHOD") {
+      return false;
+    } else if (this.colon === true) {
+      // a fragment of a chain does not open a region
+      return this.native;
+    } else if (words[0] === "EXEC" && words[1] === "SQL") {
+      return true;
+    } else if (words[0] === "METHOD"
+        && words.includes("BY")
+        && words.includes("DATABASE")
+        && words.includes("LANGUAGE")) {
+      return true;
+    }
+    return this.native;
   }
 
   private process(raw: string) {
@@ -251,7 +298,7 @@ export class Lexer {
 // start string
           this.add();
           this.m = ModeStr;
-        } else if (ahead === CH_PIPE || ahead === CH_RBRACE) {
+        } else if ((ahead === CH_PIPE || ahead === CH_RBRACE) && this.native === false) {
 // start template
           this.add();
           this.m = ModeTemplate;
