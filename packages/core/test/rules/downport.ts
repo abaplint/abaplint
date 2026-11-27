@@ -1023,6 +1023,200 @@ result = CONV xsdboolean( boolc( 'a' = cl_abap_typedescr=>typekind_int OR 'a' = 
     testFix(abap, expected);
   });
 
+  it("xsdbool, first operand of &&, only the call is replaced", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = xsdbool( lv_a = 1 ) && \`x\`.`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = CONV xsdboolean( boolc( lv_a = 1 ) ) && \`x\`.`;
+
+    testFix(abap, expected);
+  });
+
+  it("xsdbool, first operand of &&, typed helper variable", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = xsdbool( lv_a = 1 ) && \`x\`.`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+DATA temp1 TYPE xsdboolean.
+temp1 = boolc( lv_a = 1 ).
+lv_s = temp1 && \`x\`.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, both operands of +", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_cnt TYPE i.
+lv_cnt = xsdbool( lv_a = 1 ) + xsdbool( lv_a = 2 ).`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_cnt TYPE i.
+DATA temp1 TYPE xsdboolean.
+temp1 = boolc( lv_a = 1 ).
+DATA temp2 TYPE xsdboolean.
+temp2 = boolc( lv_a = 2 ).
+lv_cnt = temp1 + temp2.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, first, middle and last operand of &&", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = xsdbool( lv_a = 1 ) && xsdbool( lv_a = 2 ) && xsdbool( lv_a = 3 ).`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+DATA temp1 TYPE xsdboolean.
+temp1 = boolc( lv_a = 1 ).
+DATA temp2 TYPE xsdboolean.
+temp2 = boolc( lv_a = 2 ).
+DATA temp3 TYPE xsdboolean.
+temp3 = boolc( lv_a = 3 ).
+lv_s = temp1 && temp2 && temp3.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, first operand in IF, string template and actual parameter", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take
+      IMPORTING val        TYPE clike
+      RETURNING VALUE(ret) TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_a TYPE i.
+  DATA lv_s TYPE string.
+  IF xsdbool( lv_a = 1 ) && \`x\` = \`Xx\`.
+  ENDIF.
+  lv_s = |{ xsdbool( lv_a = 1 ) && \`x\` }|.
+  lv_s = lcl=>take( xsdbool( lv_a = 1 ) && \`x\` ).`;
+
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take
+      IMPORTING val        TYPE clike
+      RETURNING VALUE(ret) TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_a TYPE i.
+  DATA lv_s TYPE string.
+  DATA temp1 TYPE xsdboolean.
+  temp1 = boolc( lv_a = 1 ).
+  IF temp1 && \`x\` = \`Xx\`.
+  ENDIF.
+  DATA temp2 TYPE xsdboolean.
+  temp2 = boolc( lv_a = 1 ).
+  lv_s = |{ temp2 && \`x\` }|.
+  DATA temp3 TYPE xsdboolean.
+  temp3 = boolc( lv_a = 1 ).
+  lv_s = lcl=>take( temp3 && \`x\` ).`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, nested in the condition of a first operand", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = xsdbool( xsdbool( lv_a = 1 ) && \`x\` = \`Xx\` ) && \`y\`.`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+DATA temp1 TYPE xsdboolean.
+DATA temp2 TYPE xsdboolean.
+temp2 = boolc( lv_a = 1 ).
+temp1 = boolc( temp2 && \`x\` = \`Xx\` ).
+lv_s = temp1 && \`y\`.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, second operand, unchanged behaviour", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = \`a\` && xsdbool( lv_a = 1 ).`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = \`a\` && CONV xsdboolean( boolc( lv_a = 1 ) ).`;
+
+    testFix(abap, expected);
+  });
+
+  it("xsdbool, comparison in IF and string template, unchanged behaviour", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+IF xsdbool( lv_a = 1 ) = abap_true.
+ENDIF.
+lv_s = |{ xsdbool( lv_a = 1 ) }|.`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+IF CONV xsdboolean( boolc( lv_a = 1 ) ) = abap_true.
+ENDIF.
+lv_s = |{ CONV xsdboolean( boolc( lv_a = 1 ) ) }|.`;
+
+    testFix(abap, expected, undefined, 2);
+  });
+
+  it("xsdbool, method of the class named xsdbool as first operand, no downport", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS xsdbool
+      IMPORTING val        TYPE i
+      RETURNING VALUE(ret) TYPE string.
+    CLASS-METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD xsdbool.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv_s TYPE string.
+    lv_s = xsdbool( 2 ) && \`x\`.
+    lv_s = lcl=>xsdbool( 2 ) && \`x\`.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("VALUE appending to table", async () => {
     const abap = `
 TYPES: BEGIN OF ty_hash,
@@ -1995,7 +2189,11 @@ ENDFORM.`;
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
   DATA temp1 LIKE sy-subrc.
   READ TABLE lt_list WITH KEY table_line = 123 TRANSPORTING NO FIELDS.
-  temp1 = sy-tabix.
+  IF sy-subrc = 0.
+    temp1 = sy-tabix.
+  ELSE.
+    temp1 = 0.
+  ENDIF.
   IF temp1 = 2.
     WRITE / 'hello'.
   ENDIF.
@@ -4892,6 +5090,162 @@ GET REFERENCE OF <temp2> INTO temp1.`;
     testFix(abap, expected);
   });
 
+  it("REF table expression OPTIONAL, initial when the row is not found", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO ty.
+ref = REF #( aggregated_data[ group = 0 ] OPTIONAL ).`;
+    const step = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO ty.
+ASSIGN aggregated_data[ group = 0 ] TO FIELD-SYMBOL(<temp1>).
+IF sy-subrc = 0.
+  GET REFERENCE OF <temp1> INTO ref.
+ELSE.
+  CLEAR ref.
+ENDIF.`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO ty.
+FIELD-SYMBOLS <temp1> TYPE ty.
+READ TABLE aggregated_data WITH KEY group = 0 ASSIGNING <temp1>.
+IF sy-subrc = 0.
+  GET REFERENCE OF <temp1> INTO ref.
+ELSE.
+  CLEAR ref.
+ENDIF.`;
+    testFix(abap, step);
+    testFixAll(abap, expected);
+  });
+
+  it("REF table expression OPTIONAL, inline declaration in a loop", async () => {
+    const abap = `
+FORM run.
+  TYPES: BEGIN OF ty,
+           group TYPE i,
+         END OF ty.
+  DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+  DO 2 TIMES.
+    DATA(ref) = REF #( aggregated_data[ sy-index ] OPTIONAL ).
+  ENDDO.
+ENDFORM.`;
+    const expected = `
+FORM run.
+  TYPES: BEGIN OF ty,
+           group TYPE i,
+         END OF ty.
+  DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+  DO 2 TIMES.
+    FIELD-SYMBOLS <temp1> TYPE ty.
+    READ TABLE aggregated_data INDEX sy-index ASSIGNING <temp1>.
+    IF sy-subrc = 0.
+      DATA ref LIKE REF TO <temp1>.
+      GET REFERENCE OF <temp1> INTO ref.
+    ELSE.
+      CLEAR ref.
+    ENDIF.
+  ENDDO.
+ENDFORM.`;
+    testFixAll(abap, expected);
+  });
+
+  it("REF table expression OPTIONAL, component of the row", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO i.
+ref = REF #( aggregated_data[ group = 0 ]-group OPTIONAL ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO i.
+FIELD-SYMBOLS <temp1> TYPE ty.
+READ TABLE aggregated_data WITH KEY group = 0 ASSIGNING <temp1>.
+IF sy-subrc = 0.
+  GET REFERENCE OF <temp1>-group INTO ref.
+ELSE.
+  CLEAR ref.
+ENDIF.`;
+    testFixAll(abap, expected);
+  });
+
+  it("REF table expression OPTIONAL, chained table expressions", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_sub,
+         name TYPE string,
+       END OF ty_sub.
+TYPES: BEGIN OF ty,
+         group TYPE i,
+         subs  TYPE STANDARD TABLE OF ty_sub WITH DEFAULT KEY,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO ty_sub.
+ref = REF #( aggregated_data[ group = 0 ]-subs[ 1 ] OPTIONAL ).`;
+    const expected = `
+TYPES: BEGIN OF ty_sub,
+         name TYPE string,
+       END OF ty_sub.
+TYPES: BEGIN OF ty,
+         group TYPE i,
+         subs  TYPE STANDARD TABLE OF ty_sub WITH DEFAULT KEY,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO ty_sub.
+FIELD-SYMBOLS <temp1> TYPE ty.
+READ TABLE aggregated_data WITH KEY group = 0 ASSIGNING <temp1>.
+IF sy-subrc = 0.
+  FIELD-SYMBOLS <temp2> TYPE ty_sub.
+  READ TABLE <temp1>-subs INDEX 1 ASSIGNING <temp2>.
+  IF sy-subrc = 0.
+    GET REFERENCE OF <temp2> INTO ref.
+  ELSE.
+    CLEAR ref.
+  ENDIF.
+ELSE.
+  CLEAR ref.
+ENDIF.`;
+    testFixAll(abap, expected);
+  });
+
+  it("REF table expression OPTIONAL, not a simple move", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+IF REF #( aggregated_data[ group = 0 ] OPTIONAL ) IS INITIAL.
+ENDIF.`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+FIELD-SYMBOLS <temp1> TYPE ty.
+READ TABLE aggregated_data WITH KEY group = 0 ASSIGNING <temp1>.
+IF sy-subrc = 0.
+  DATA temp1 LIKE REF TO <temp1>.
+  GET REFERENCE OF <temp1> INTO temp1.
+ELSE.
+  CLEAR temp1.
+ENDIF.
+IF temp1 IS INITIAL.
+ENDIF.`;
+    testFixAll(abap, expected);
+  });
+
   it("REDUCE, sequencing", async () => {
     const abap = `
 TYPES: BEGIN OF ty,
@@ -5692,13 +6046,83 @@ FORM run.
   temp2 = sy-subrc.
   temp3 = sy-tabix.
   READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
-  temp1 = sy-tabix.
+  IF sy-subrc = 0.
+    temp1 = sy-tabix.
+  ELSE.
+    temp1 = 0.
+  ENDIF.
   sy-subrc = temp2.
   sy-tabix = temp3.
   idx = temp1.
   WRITE / sy-subrc.
   WRITE / sy-tabix.
 ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("line_index(), zero when the row is not found", async () => {
+    const abap = `
+DATA tab TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line.
+DATA idx TYPE i.
+idx = line_index( tab[ table_line = 'moo' ] ).`;
+    const expected = `
+DATA tab TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line.
+DATA idx TYPE i.
+DATA temp1 LIKE sy-subrc.
+READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+IF sy-subrc = 0.
+  temp1 = sy-tabix.
+ELSE.
+  temp1 = 0.
+ENDIF.
+idx = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("line_index() in a larger expression", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA idx TYPE i.
+idx = line_index( tab[ table_line = 'moo' ] ) + line_index( tab[ table_line = 'boo' ] ) * 2.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA idx TYPE i.
+DATA temp1 LIKE sy-subrc.
+READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+IF sy-subrc = 0.
+  temp1 = sy-tabix.
+ELSE.
+  temp1 = 0.
+ENDIF.
+DATA temp2 LIKE sy-subrc.
+READ TABLE tab WITH KEY table_line = 'boo' TRANSPORTING NO FIELDS.
+IF sy-subrc = 0.
+  temp2 = sy-tabix.
+ELSE.
+  temp2 = 0.
+ENDIF.
+idx = temp1 + temp2 * 2.`;
+    testFixAll(abap, expected);
+  });
+
+  it("line_index() in ELSEIF", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+IF 1 = 2.
+ELSEIF line_index( tab[ table_line = 'boo' ] ) > 0.
+ENDIF.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA temp1 LIKE sy-subrc.
+READ TABLE tab WITH KEY table_line = 'boo' TRANSPORTING NO FIELDS.
+IF sy-subrc = 0.
+  temp1 = sy-tabix.
+ELSE.
+  temp1 = 0.
+ENDIF.
+IF 1 = 2.
+ELSEIF temp1 > 0.
+ENDIF.`;
     testFix(abap, expected);
   });
 
@@ -9730,6 +10154,21 @@ IF sy-subrc <> 0.
   ASSERT 1 = 0.
 ENDIF.
 GET REFERENCE OF <temp1> INTO ref.`;
+    testFixNotFound(abap, expected, "ASSERT 1 = 0.");
+  });
+
+  it("REF of a table expression OPTIONAL, nothing is raised", () => {
+    const abap = types + `
+DATA ref TYPE REF TO ty_type.
+ref = REF #( tab[ 1 ] OPTIONAL ).`;
+    const expected = types + `
+DATA ref TYPE REF TO ty_type.
+ASSIGN tab[ 1 ] TO FIELD-SYMBOL(<temp1>).
+IF sy-subrc = 0.
+  GET REFERENCE OF <temp1> INTO ref.
+ELSE.
+  CLEAR ref.
+ENDIF.`;
     testFixNotFound(abap, expected, "ASSERT 1 = 0.");
   });
 
