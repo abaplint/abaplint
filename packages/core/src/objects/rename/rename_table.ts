@@ -21,9 +21,11 @@ export class RenameTable implements ObjectRenamer {
     const helper = new RenamerHelper(this.reg);
     changes = changes.concat(helper.buildXMLFileEdits(obj, "TABNAME", oldName, newName));
     changes = changes.concat(helper.buildXMLFileEdits(obj, "FORTABLE", oldName, newName));
+    changes = changes.concat(helper.buildXMLFileEdits(obj, "CHECKTABLE", oldName, newName));
     changes = changes.concat(helper.renameFiles(obj, oldName, newName));
     changes = changes.concat(helper.renameDDICCodeReferences(obj, oldName, newName));
-    changes = changes.concat(helper.renameDDICTABLReferences(obj, oldName, newName));
+    // FORTABLE in other tables is the table with the foreign key, ie. that other table, not this one
+    changes = changes.concat(helper.renameDDICTABLReferences(obj, oldName, newName, ["ROLLNAME", "PRECFIELD", "CHECKTABLE"]));
     changes = changes.concat(helper.renameDDICTTYPReferences(obj, oldName, newName));
 
     return {

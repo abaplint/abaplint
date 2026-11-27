@@ -46,6 +46,9 @@ export class RenameGlobalInterface implements ObjectRenamer {
     changes = changes.concat(helper.buildXMLFileEdits(obj, "CLSNAME", oldName, newName));
     changes = changes.concat(helper.renameFiles(obj, oldName, newName));
     changes = changes.concat(helper.renameReferences(obj.getIdentifier(), oldName, newName));
+    changes = changes.concat(helper.renameDDICTABLReferences(obj, oldName, newName));
+    changes = changes.concat(helper.renameDDICTTYPReferences(obj, oldName, newName));
+    changes = changes.concat(helper.renameDDICDTELReferences(obj, oldName, newName));
 
     return {
       documentChanges: changes,

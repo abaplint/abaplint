@@ -3457,6 +3457,58 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
+  it("ok, bit-set( ) and boolx( )", () => {
+    const abap = `
+    DATA i TYPE i.
+    DATA x TYPE xstring.
+    x = bit-set( 1 ).
+    x = bit-set( val = i ).
+    x = boolx( bool = i = 1 bit = 1 ).
+    x = boolx( bool = i = 1 ).
+    x = boolx( bool = i IS INITIAL ).
+    x = bit-set( i ) BIT-AND boolx( bool = i = 1 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("bit-set( ), the argument is checked", () => {
+    const abap = `
+    DATA x TYPE xstring.
+    x = bit-set( something ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("boolx( ), the logical expression is checked", () => {
+    const abap = `
+    DATA x TYPE xstring.
+    x = boolx( bool = something = 1 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("boolx( ), the bit is checked", () => {
+    const abap = `
+    DATA i TYPE i.
+    DATA x TYPE xstring.
+    x = boolx( bool = i = 1 bit = something ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("bit-set( ) followed by BIT-AND, hex operand expected", () => {
+    const abap = `
+    DATA s TYPE string.
+    DATA x TYPE xstring.
+    x = bit-set( 1 ) BIT-AND s.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.equal("Operator only valid for XSTRING or HEX");
+  });
+
   it("calculation, something", () => {
     const abap = `
     DATA lv_f TYPE f.
@@ -8653,7 +8705,11 @@ ENDCLASS.`;
 
   it("CATCH into subclass reference, syntax error", () => {
     const abap = `
-CLASS cx_static_check DEFINITION.
+CLASS cx_root DEFINITION ABSTRACT.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.
+CLASS cx_static_check DEFINITION INHERITING FROM cx_root.
 ENDCLASS.
 CLASS cx_static_check IMPLEMENTATION.
 ENDCLASS.
@@ -8690,6 +8746,124 @@ ENDTRY.`;
     SPLIT str AT space INTO TABLE int_tab.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, byte like targets", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA sep TYPE x LENGTH 1.
+    DATA first TYPE xstring.
+    DATA second TYPE x LENGTH 4.
+    SPLIT data AT sep INTO first second IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, into table", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA tab TYPE STANDARD TABLE OF xstring WITH EMPTY KEY.
+    SPLIT data AT data INTO TABLE tab IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, inline targets are xstring", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA len TYPE i.
+    SPLIT data AT data INTO DATA(first) DATA(second) IN BYTE MODE.
+    len = xstrlen( first ).
+    len = xstrlen( second ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, inline table of xstring", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA len TYPE i.
+    DATA row TYPE xstring.
+    SPLIT data AT data INTO TABLE DATA(tab) IN BYTE MODE.
+    LOOP AT tab INTO DATA(inline).
+      len = xstrlen( inline ).
+    ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, ok, generic parameters", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run
+      IMPORTING input TYPE xsequence
+      CHANGING
+        first  TYPE data
+        second TYPE any.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+    SPLIT input AT input INTO first second IN BYTE MODE.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("split, byte mode, error, character like target", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA first TYPE xstring.
+    DATA second TYPE string.
+    SPLIT data AT data INTO first second IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`target not byte like`);
+  });
+
+  it("split, byte mode, error, character like table row", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA tab TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+    SPLIT data AT data INTO TABLE tab IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`target not byte like`);
+  });
+
+  it("split, byte mode, error, character like source", () => {
+    const abap = `
+    DATA text TYPE string.
+    DATA data TYPE xstring.
+    DATA first TYPE xstring.
+    DATA second TYPE xstring.
+    SPLIT text AT data INTO first second IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`source not byte like`);
+  });
+
+  it("split, byte mode, error, character like separator", () => {
+    const abap = `
+    DATA data TYPE xstring.
+    DATA first TYPE xstring.
+    DATA second TYPE xstring.
+    SPLIT data AT ',' INTO first second IN BYTE MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`source not byte like`);
+  });
+
+  it("split, character mode, error, byte like target", () => {
+    const abap = `
+    DATA text TYPE string.
+    DATA first TYPE xstring.
+    DATA second TYPE xstring.
+    SPLIT text AT ',' INTO first second IN CHARACTER MODE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain(`target not character like`);
   });
 
   it("double FOR loop, ok", () => {
