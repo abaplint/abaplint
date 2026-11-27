@@ -21757,6 +21757,23 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.include("not compatible");
   });
 
+  it("CORRESPONDING #( ) with generic table types, ok", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS prepare
+      IMPORTING initial_data TYPE table
+      CHANGING  initial_keys TYPE table.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD prepare.
+    initial_keys = CORRESPONDING #( initial_data ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0, issues.map(i => i.getMessage()).join(", "));
+  });
+
   it("RECEIVING, parameter name ok", () => {
     const abap = `
 CLASS lcl DEFINITION.
