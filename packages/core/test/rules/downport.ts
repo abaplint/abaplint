@@ -778,6 +778,86 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("READ TABLE REFERENCE INTO DATA(), generically typed table", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  READ TABLE <tab> INDEX 1 REFERENCE INTO DATA(row).
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  DATA row TYPE REF TO data.
+  READ TABLE <tab> INDEX 1 REFERENCE INTO row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("APPEND INITIAL LINE REFERENCE INTO DATA(), generically typed table", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  APPEND INITIAL LINE TO <tab> REFERENCE INTO DATA(row).
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  DATA row TYPE REF TO data.
+  APPEND INITIAL LINE TO <tab> REFERENCE INTO row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("INSERT INITIAL LINE REFERENCE INTO DATA(), generically typed table", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+  INSERT INITIAL LINE INTO TABLE <tab> REFERENCE INTO DATA(row).
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+  DATA row TYPE REF TO data.
+  INSERT INITIAL LINE INTO TABLE <tab> REFERENCE INTO row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("READ TABLE REFERENCE INTO DATA(), table with a row type, the reference is typed as before", async () => {
+    const abap = `FORM bar.
+  DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  READ TABLE tab INDEX 1 REFERENCE INTO DATA(row).
+ENDFORM.`;
+    const expected = `FORM bar.
+  DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA row TYPE REF TO i.
+  READ TABLE tab INDEX 1 REFERENCE INTO row.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("LOOP REFERENCE INTO DATA(), generically typed table, no LIKE LINE OF", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  LOOP AT <tab> REFERENCE INTO DATA(row).
+  ENDLOOP.
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  DATA row TYPE REF TO data.
+  LOOP AT <tab> REFERENCE INTO row.
+  ENDLOOP.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("APPEND INITIAL LINE ASSIGNING FIELD-SYMBOL(), generically typed table, no LIKE LINE OF", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  APPEND INITIAL LINE TO <tab> ASSIGNING FIELD-SYMBOL(<row>).
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  FIELD-SYMBOLS <row> TYPE any.
+  APPEND INITIAL LINE TO <tab> ASSIGNING <row>.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
   it("LOOP REFERENCE INTO DATA()", async () => {
     const abap = `
     DATA table TYPE STANDARD TABLE OF string.
@@ -941,6 +1021,200 @@ DATA result TYPE abap_bool.
 result = CONV xsdboolean( boolc( 'a' = cl_abap_typedescr=>typekind_int OR 'a' = cl_abap_typedescr=>typekind_int1 OR 'a' = cl_abap_typedescr=>typekind_int2 OR 'a' = cl_abap_typedescr=>typekind_int8 ) ).`;
 
     testFix(abap, expected);
+  });
+
+  it("xsdbool, first operand of &&, only the call is replaced", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = xsdbool( lv_a = 1 ) && \`x\`.`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = CONV xsdboolean( boolc( lv_a = 1 ) ) && \`x\`.`;
+
+    testFix(abap, expected);
+  });
+
+  it("xsdbool, first operand of &&, typed helper variable", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = xsdbool( lv_a = 1 ) && \`x\`.`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+DATA temp1 TYPE xsdboolean.
+temp1 = boolc( lv_a = 1 ).
+lv_s = temp1 && \`x\`.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, both operands of +", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_cnt TYPE i.
+lv_cnt = xsdbool( lv_a = 1 ) + xsdbool( lv_a = 2 ).`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_cnt TYPE i.
+DATA temp1 TYPE xsdboolean.
+temp1 = boolc( lv_a = 1 ).
+DATA temp2 TYPE xsdboolean.
+temp2 = boolc( lv_a = 2 ).
+lv_cnt = temp1 + temp2.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, first, middle and last operand of &&", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = xsdbool( lv_a = 1 ) && xsdbool( lv_a = 2 ) && xsdbool( lv_a = 3 ).`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+DATA temp1 TYPE xsdboolean.
+temp1 = boolc( lv_a = 1 ).
+DATA temp2 TYPE xsdboolean.
+temp2 = boolc( lv_a = 2 ).
+DATA temp3 TYPE xsdboolean.
+temp3 = boolc( lv_a = 3 ).
+lv_s = temp1 && temp2 && temp3.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, first operand in IF, string template and actual parameter", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take
+      IMPORTING val        TYPE clike
+      RETURNING VALUE(ret) TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_a TYPE i.
+  DATA lv_s TYPE string.
+  IF xsdbool( lv_a = 1 ) && \`x\` = \`Xx\`.
+  ENDIF.
+  lv_s = |{ xsdbool( lv_a = 1 ) && \`x\` }|.
+  lv_s = lcl=>take( xsdbool( lv_a = 1 ) && \`x\` ).`;
+
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS take
+      IMPORTING val        TYPE clike
+      RETURNING VALUE(ret) TYPE string.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD take.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA lv_a TYPE i.
+  DATA lv_s TYPE string.
+  DATA temp1 TYPE xsdboolean.
+  temp1 = boolc( lv_a = 1 ).
+  IF temp1 && \`x\` = \`Xx\`.
+  ENDIF.
+  DATA temp2 TYPE xsdboolean.
+  temp2 = boolc( lv_a = 1 ).
+  lv_s = |{ temp2 && \`x\` }|.
+  DATA temp3 TYPE xsdboolean.
+  temp3 = boolc( lv_a = 1 ).
+  lv_s = lcl=>take( temp3 && \`x\` ).`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, nested in the condition of a first operand", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = xsdbool( xsdbool( lv_a = 1 ) && \`x\` = \`Xx\` ) && \`y\`.`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+DATA temp1 TYPE xsdboolean.
+DATA temp2 TYPE xsdboolean.
+temp2 = boolc( lv_a = 1 ).
+temp1 = boolc( temp2 && \`x\` = \`Xx\` ).
+lv_s = temp1 && \`y\`.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("xsdbool, second operand, unchanged behaviour", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = \`a\` && xsdbool( lv_a = 1 ).`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+lv_s = \`a\` && CONV xsdboolean( boolc( lv_a = 1 ) ).`;
+
+    testFix(abap, expected);
+  });
+
+  it("xsdbool, comparison in IF and string template, unchanged behaviour", async () => {
+    const abap = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+IF xsdbool( lv_a = 1 ) = abap_true.
+ENDIF.
+lv_s = |{ xsdbool( lv_a = 1 ) }|.`;
+
+    const expected = `
+DATA lv_a TYPE i.
+DATA lv_s TYPE string.
+IF CONV xsdboolean( boolc( lv_a = 1 ) ) = abap_true.
+ENDIF.
+lv_s = |{ CONV xsdboolean( boolc( lv_a = 1 ) ) }|.`;
+
+    testFix(abap, expected, undefined, 2);
+  });
+
+  it("xsdbool, method of the class named xsdbool as first operand, no downport", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS xsdbool
+      IMPORTING val        TYPE i
+      RETURNING VALUE(ret) TYPE string.
+    CLASS-METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD xsdbool.
+  ENDMETHOD.
+  METHOD run.
+    DATA lv_s TYPE string.
+    lv_s = xsdbool( 2 ) && \`x\`.
+    lv_s = lcl=>xsdbool( 2 ) && \`x\`.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
   });
 
   it("VALUE appending to table", async () => {
@@ -1915,7 +2189,11 @@ ENDFORM.`;
   DATA lt_list TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
   DATA temp1 LIKE sy-subrc.
   READ TABLE lt_list WITH KEY table_line = 123 TRANSPORTING NO FIELDS.
-  temp1 = sy-tabix.
+  IF sy-subrc = 0.
+    temp1 = sy-tabix.
+  ELSE.
+    temp1 = 0.
+  ENDIF.
   IF temp1 = 2.
     WRITE / 'hello'.
   ENDIF.
@@ -4812,6 +5090,162 @@ GET REFERENCE OF <temp2> INTO temp1.`;
     testFix(abap, expected);
   });
 
+  it("REF table expression OPTIONAL, initial when the row is not found", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO ty.
+ref = REF #( aggregated_data[ group = 0 ] OPTIONAL ).`;
+    const step = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO ty.
+ASSIGN aggregated_data[ group = 0 ] TO FIELD-SYMBOL(<temp1>).
+IF sy-subrc = 0.
+  GET REFERENCE OF <temp1> INTO ref.
+ELSE.
+  CLEAR ref.
+ENDIF.`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO ty.
+FIELD-SYMBOLS <temp1> TYPE ty.
+READ TABLE aggregated_data WITH KEY group = 0 ASSIGNING <temp1>.
+IF sy-subrc = 0.
+  GET REFERENCE OF <temp1> INTO ref.
+ELSE.
+  CLEAR ref.
+ENDIF.`;
+    testFix(abap, step);
+    testFixAll(abap, expected);
+  });
+
+  it("REF table expression OPTIONAL, inline declaration in a loop", async () => {
+    const abap = `
+FORM run.
+  TYPES: BEGIN OF ty,
+           group TYPE i,
+         END OF ty.
+  DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+  DO 2 TIMES.
+    DATA(ref) = REF #( aggregated_data[ sy-index ] OPTIONAL ).
+  ENDDO.
+ENDFORM.`;
+    const expected = `
+FORM run.
+  TYPES: BEGIN OF ty,
+           group TYPE i,
+         END OF ty.
+  DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+  DO 2 TIMES.
+    FIELD-SYMBOLS <temp1> TYPE ty.
+    READ TABLE aggregated_data INDEX sy-index ASSIGNING <temp1>.
+    IF sy-subrc = 0.
+      DATA ref LIKE REF TO <temp1>.
+      GET REFERENCE OF <temp1> INTO ref.
+    ELSE.
+      CLEAR ref.
+    ENDIF.
+  ENDDO.
+ENDFORM.`;
+    testFixAll(abap, expected);
+  });
+
+  it("REF table expression OPTIONAL, component of the row", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO i.
+ref = REF #( aggregated_data[ group = 0 ]-group OPTIONAL ).`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO i.
+FIELD-SYMBOLS <temp1> TYPE ty.
+READ TABLE aggregated_data WITH KEY group = 0 ASSIGNING <temp1>.
+IF sy-subrc = 0.
+  GET REFERENCE OF <temp1>-group INTO ref.
+ELSE.
+  CLEAR ref.
+ENDIF.`;
+    testFixAll(abap, expected);
+  });
+
+  it("REF table expression OPTIONAL, chained table expressions", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_sub,
+         name TYPE string,
+       END OF ty_sub.
+TYPES: BEGIN OF ty,
+         group TYPE i,
+         subs  TYPE STANDARD TABLE OF ty_sub WITH DEFAULT KEY,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO ty_sub.
+ref = REF #( aggregated_data[ group = 0 ]-subs[ 1 ] OPTIONAL ).`;
+    const expected = `
+TYPES: BEGIN OF ty_sub,
+         name TYPE string,
+       END OF ty_sub.
+TYPES: BEGIN OF ty,
+         group TYPE i,
+         subs  TYPE STANDARD TABLE OF ty_sub WITH DEFAULT KEY,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+DATA ref TYPE REF TO ty_sub.
+FIELD-SYMBOLS <temp1> TYPE ty.
+READ TABLE aggregated_data WITH KEY group = 0 ASSIGNING <temp1>.
+IF sy-subrc = 0.
+  FIELD-SYMBOLS <temp2> TYPE ty_sub.
+  READ TABLE <temp1>-subs INDEX 1 ASSIGNING <temp2>.
+  IF sy-subrc = 0.
+    GET REFERENCE OF <temp2> INTO ref.
+  ELSE.
+    CLEAR ref.
+  ENDIF.
+ELSE.
+  CLEAR ref.
+ENDIF.`;
+    testFixAll(abap, expected);
+  });
+
+  it("REF table expression OPTIONAL, not a simple move", async () => {
+    const abap = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+IF REF #( aggregated_data[ group = 0 ] OPTIONAL ) IS INITIAL.
+ENDIF.`;
+    const expected = `
+TYPES: BEGIN OF ty,
+         group TYPE i,
+       END OF ty.
+DATA aggregated_data TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+FIELD-SYMBOLS <temp1> TYPE ty.
+READ TABLE aggregated_data WITH KEY group = 0 ASSIGNING <temp1>.
+IF sy-subrc = 0.
+  DATA temp1 LIKE REF TO <temp1>.
+  GET REFERENCE OF <temp1> INTO temp1.
+ELSE.
+  CLEAR temp1.
+ENDIF.
+IF temp1 IS INITIAL.
+ENDIF.`;
+    testFixAll(abap, expected);
+  });
+
   it("REDUCE, sequencing", async () => {
     const abap = `
 TYPES: BEGIN OF ty,
@@ -5612,13 +6046,83 @@ FORM run.
   temp2 = sy-subrc.
   temp3 = sy-tabix.
   READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
-  temp1 = sy-tabix.
+  IF sy-subrc = 0.
+    temp1 = sy-tabix.
+  ELSE.
+    temp1 = 0.
+  ENDIF.
   sy-subrc = temp2.
   sy-tabix = temp3.
   idx = temp1.
   WRITE / sy-subrc.
   WRITE / sy-tabix.
 ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("line_index(), zero when the row is not found", async () => {
+    const abap = `
+DATA tab TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line.
+DATA idx TYPE i.
+idx = line_index( tab[ table_line = 'moo' ] ).`;
+    const expected = `
+DATA tab TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line.
+DATA idx TYPE i.
+DATA temp1 LIKE sy-subrc.
+READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+IF sy-subrc = 0.
+  temp1 = sy-tabix.
+ELSE.
+  temp1 = 0.
+ENDIF.
+idx = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("line_index() in a larger expression", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA idx TYPE i.
+idx = line_index( tab[ table_line = 'moo' ] ) + line_index( tab[ table_line = 'boo' ] ) * 2.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA idx TYPE i.
+DATA temp1 LIKE sy-subrc.
+READ TABLE tab WITH KEY table_line = 'moo' TRANSPORTING NO FIELDS.
+IF sy-subrc = 0.
+  temp1 = sy-tabix.
+ELSE.
+  temp1 = 0.
+ENDIF.
+DATA temp2 LIKE sy-subrc.
+READ TABLE tab WITH KEY table_line = 'boo' TRANSPORTING NO FIELDS.
+IF sy-subrc = 0.
+  temp2 = sy-tabix.
+ELSE.
+  temp2 = 0.
+ENDIF.
+idx = temp1 + temp2 * 2.`;
+    testFixAll(abap, expected);
+  });
+
+  it("line_index() in ELSEIF", async () => {
+    const abap = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+IF 1 = 2.
+ELSEIF line_index( tab[ table_line = 'boo' ] ) > 0.
+ENDIF.`;
+    const expected = `
+DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA temp1 LIKE sy-subrc.
+READ TABLE tab WITH KEY table_line = 'boo' TRANSPORTING NO FIELDS.
+IF sy-subrc = 0.
+  temp1 = sy-tabix.
+ELSE.
+  temp1 = 0.
+ENDIF.
+IF 1 = 2.
+ELSEIF temp1 > 0.
+ENDIF.`;
     testFix(abap, expected);
   });
 
@@ -5925,8 +6429,7 @@ ENDFORM.`;
   DATA lv_name TYPE string.
   SELECT SINGLE * FROM zdownport_tab INTO ls_row
     
-    WHERE name = lv_name
-    .
+    WHERE name = lv_name.
 ENDFORM.`;
     testFixAll(abap, expected);
   });
@@ -7196,7 +7699,7 @@ ENDFORM.`;
           arbgb TYPE t100-arbgb,
           msgnr TYPE t100-msgnr,
         END OF ls_t100.
-  SELECT SINGLE arbgb, msgnr FROM t100 INTO @ls_t100 WHERE arbgb = '123' .
+  SELECT SINGLE arbgb, msgnr FROM t100 INTO @ls_t100 WHERE arbgb = '123'.
 ENDFORM.`;
 
     testFix(abap, expected);
@@ -7222,8 +7725,24 @@ ENDFORM.`;
          END OF ty_row.
   DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
   SELECT req_id, name FROM voiddbtab UP TO 10 ROWS INTO TABLE @lt_rows
-    WHERE name = @iv_text
-    
+    WHERE name = @iv_text.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("SELECT, a comment in front of the moved INTO stays, and so does the row", async () => {
+    const abap = `FORM bar USING iv_text TYPE string.
+  DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
+  SELECT * FROM voiddbtab
+    WHERE name = @iv_text " comment
+    INTO TABLE @lt_rows.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_text TYPE string.
+  DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
+  SELECT * FROM voiddbtab INTO TABLE @lt_rows
+    WHERE name = @iv_text " comment
     .
 ENDFORM.`;
 
@@ -7238,7 +7757,7 @@ ENDFORM.`;
 
     const expected = `FORM bar USING iv_text TYPE string.
   DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
-  SELECT req_id name FROM voiddbtab UP TO 10 ROWS INTO TABLE lt_rows WHERE name = iv_text  .
+  SELECT req_id name FROM voiddbtab UP TO 10 ROWS INTO TABLE lt_rows WHERE name = iv_text.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7252,7 +7771,7 @@ ENDFORM.`;
 
     const expected = `FORM bar.
   DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
-  SELECT * FROM voiddbtab UP TO 5 ROWS INTO TABLE lt_rows ORDER BY PRIMARY KEY  .
+  SELECT * FROM voiddbtab UP TO 5 ROWS INTO TABLE lt_rows ORDER BY PRIMARY KEY.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7272,9 +7791,7 @@ ENDFORM.`;
   FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
   SELECT *
     FROM (iv_tab) BYPASSING BUFFER INTO CORRESPONDING FIELDS OF TABLE <tab>
-    ORDER BY PRIMARY KEY
-    
-    .
+    ORDER BY PRIMARY KEY.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7305,8 +7822,7 @@ ENDFORM.`;
   SELECT arbgb msgnr COUNT( * ) AS cnt
     FROM (iv_tab) INTO CORRESPONDING FIELDS OF TABLE lt_count
     GROUP BY arbgb msgnr
-    ORDER BY arbgb msgnr
-    .
+    ORDER BY arbgb msgnr.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7320,7 +7836,7 @@ ENDFORM.`;
 
     const expected = `FORM bar USING iv_tab TYPE string iv_where TYPE string.
   FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
-  SELECT * FROM (iv_tab) UP TO 100 ROWS INTO CORRESPONDING FIELDS OF TABLE <tab> WHERE (iv_where)  .
+  SELECT * FROM (iv_tab) UP TO 100 ROWS INTO CORRESPONDING FIELDS OF TABLE <tab> WHERE (iv_where).
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7342,7 +7858,7 @@ ENDFORM.`;
            rollname  TYPE c LENGTH 30,
          END OF ty_row.
   DATA lt_rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
-  SELECT DISTINCT a~fieldname b~rollname FROM voida AS a INNER JOIN voidb AS b ON a~tabname = b~tabname UP TO 500 ROWS INTO TABLE lt_rows WHERE a~tabname = iv_name  .
+  SELECT DISTINCT a~fieldname b~rollname FROM voida AS a INNER JOIN voidb AS b ON a~tabname = b~tabname UP TO 500 ROWS INTO TABLE lt_rows WHERE a~tabname = iv_name.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7357,7 +7873,7 @@ ENDFORM.`;
 
     const expected = `FORM bar USING iv_text TYPE string.
   DATA ls_row TYPE voiddbtab.
-  SELECT * FROM voiddbtab UP TO 1 ROWS INTO ls_row WHERE NOT name = iv_text  .
+  SELECT * FROM voiddbtab UP TO 1 ROWS INTO ls_row WHERE NOT name = iv_text.
   ENDSELECT.
 ENDFORM.`;
 
@@ -7372,7 +7888,7 @@ ENDFORM.`;
 
     const expected = `FORM bar USING iv_text TYPE string.
   DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
-  SELECT * FROM voiddbtab UP TO 10 ROWS INTO TABLE lt_rows WHERE name = iv_text   ORDER BY name.
+  SELECT * FROM voiddbtab UP TO 10 ROWS INTO TABLE lt_rows WHERE name = iv_text ORDER BY name.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7386,7 +7902,7 @@ ENDFORM.`;
 
     const expected = `FORM bar USING iv_tab TYPE string iv_where TYPE string.
   FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
-  SELECT * FROM (iv_tab) UP TO 100 ROWS INTO CORRESPONDING FIELDS OF TABLE <tab> WHERE (iv_where) ORDER BY PRIMARY KEY  .
+  SELECT * FROM (iv_tab) UP TO 100 ROWS INTO CORRESPONDING FIELDS OF TABLE <tab> WHERE (iv_where) ORDER BY PRIMARY KEY.
 ENDFORM.`;
 
     testFixAll(abap, expected);
@@ -7481,8 +7997,7 @@ SELECT FROM sdfsdfsdf
 DATA result TYPE voided.
 SELECT * FROM sdfsdfsdf INTO CORRESPONDING FIELDS OF TABLE result
   
-  WHERE uname IN tab
-  .`;
+  WHERE uname IN tab.`;
     testFixAll(abap, expected);
   });
 
@@ -7821,6 +8336,144 @@ ENDFORM.`;
   DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   DATA lv_val TYPE string.
   INSERT to_upper( lv_val ) INTO TABLE result.
+ENDFORM.`;
+
+    const issues = await findIssues(abap, Version.OpenABAP);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CASE, outline 702 built-in operand", async () => {
+    const abap = `FORM bar.
+  DATA val TYPE string.
+  CASE to_upper( val ).
+    WHEN \`X\` OR \`TRUE\`.
+      WRITE / 'yes'.
+  ENDCASE.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA val TYPE string.
+  DATA temp1 TYPE string.
+  temp1 = to_upper( val ).
+  CASE temp1.
+    WHEN \`X\` OR \`TRUE\`.
+      WRITE / 'yes'.
+  ENDCASE.
+ENDFORM.`;
+
+    testFix(abap, expected);
+  });
+
+  it("CASE, outline 702 built-in operand, nested call and integer result", async () => {
+    const abap = `FORM bar.
+  DATA val TYPE string.
+  CASE to_upper( condense( val ) ).
+    WHEN \`X\`.
+      CASE find( val = val sub = \`A\` ).
+        WHEN 2.
+          WRITE / 'yes'.
+      ENDCASE.
+  ENDCASE.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA val TYPE string.
+  DATA temp1 TYPE string.
+  temp1 = to_upper( condense( val ) ).
+  CASE temp1.
+    WHEN \`X\`.
+      DATA temp2 TYPE i.
+      temp2 = find( val = val sub = \`A\` ).
+      CASE temp2.
+        WHEN 2.
+          WRITE / 'yes'.
+      ENDCASE.
+  ENDCASE.
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("CASE, built-in with an unnamed argument stays, 702 takes it", async () => {
+    const abap = `FORM bar.
+  DATA val TYPE string.
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  CASE strlen( val ).
+    WHEN 2.
+      WRITE / 'two'.
+  ENDCASE.
+  CASE lines( tab ).
+    WHEN 2.
+      WRITE / 'two'.
+  ENDCASE.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CASE, functional method call stays, 702 takes it", async () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS get IMPORTING val TYPE string RETURNING VALUE(ret) TYPE string.
+    CLASS-METHODS to_upper IMPORTING val TYPE string RETURNING VALUE(ret) TYPE string.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+  ENDMETHOD.
+  METHOD to_upper.
+  ENDMETHOD.
+  METHOD run.
+    CASE lcl=>get( \`a\` ).
+      WHEN \`X\`.
+        WRITE / 'yes'.
+    ENDCASE.
+    CASE to_upper( val = \`a\` ).
+      WHEN \`X\`.
+        WRITE / 'yes'.
+    ENDCASE.
+  ENDMETHOD.
+ENDCLASS.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CASE, built-in in WHEN operand and in the body of the branch stays", async () => {
+    const abap = `FORM bar.
+  DATA val TYPE string.
+  DATA res TYPE string.
+  CASE val.
+    WHEN to_upper( val ).
+      res = to_lower( val ).
+  ENDCASE.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CASE, built-in typed by its arguments stays", async () => {
+    const abap = `FORM bar.
+  DATA val TYPE p LENGTH 10 DECIMALS 2.
+  CASE nmax( val1 = val val2 = 1 ).
+    WHEN 2.
+      WRITE / 'two'.
+  ENDCASE.
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("CASE, 702 built-in on open-abap stays", async () => {
+    const abap = `FORM bar.
+  DATA val TYPE string.
+  CASE to_upper( val ).
+    WHEN \`X\`.
+      WRITE / 'yes'.
+  ENDCASE.
 ENDFORM.`;
 
     const issues = await findIssues(abap, Version.OpenABAP);
@@ -9439,5 +10092,99 @@ ENDINTERFACE.`;
   it("not when downporting to another release", () => {
     const {issues} = run([new MemoryFile("zcl_lang.clas.abap", clas), new MemoryFile("zcl_lang.clas.xml", clasXML("5"))], Version.v750);
     expect(issues.length).to.equal(0);
+  });
+});
+
+describe("Rule: downport, tableExpressionNotFound", () => {
+  // cx_sy_itab_line_not_found came with 7.40, a 7.02 system has to raise something else
+  function testFixNotFound(input: string, expected: string, tableExpressionNotFound: string | undefined) {
+    const rule = new Downport();
+    const conf = rule.getConfig();
+    conf.tableExpressionNotFound = tableExpressionNotFound;
+    rule.setConfig(conf);
+    testRuleFixCount(input, expected, rule, buildConfig(Version.v702), undefined, false, 1);
+  }
+
+  const types = `
+TYPES: BEGIN OF ty_type,
+         foo TYPE i,
+       END OF ty_type.
+DATA tab TYPE STANDARD TABLE OF ty_type WITH DEFAULT KEY.`;
+
+  it("source position", () => {
+    const abap = types + `
+WRITE tab[ foo = 2 ]-foo.`;
+    const expected = types + `
+FIELD-SYMBOLS <temp1> LIKE LINE OF tab.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE tab WITH KEY foo = 2 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  ASSERT 1 = 0.
+ENDIF.
+WRITE <temp1>-foo.`;
+    testFixNotFound(abap, expected, "ASSERT 1 = 0.");
+  });
+
+  it("target position", () => {
+    const abap = types + `
+tab[ foo = 2 ]-foo = 3.`;
+    const expected = types + `
+FIELD-SYMBOLS <temp1> LIKE LINE OF tab.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE tab WITH KEY foo = 2 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE zcx_line_not_found.
+ENDIF.
+<temp1>-foo = 3.`;
+    testFixNotFound(abap, expected, "RAISE EXCEPTION TYPE zcx_line_not_found.");
+  });
+
+  it("REF of a table expression", () => {
+    const abap = types + `
+DATA ref TYPE REF TO ty_type.
+ref = REF #( tab[ 1 ] ).`;
+    const expected = types + `
+DATA ref TYPE REF TO ty_type.
+ASSIGN tab[ 1 ] TO FIELD-SYMBOL(<temp1>).
+IF sy-subrc <> 0.
+  ASSERT 1 = 0.
+ENDIF.
+GET REFERENCE OF <temp1> INTO ref.`;
+    testFixNotFound(abap, expected, "ASSERT 1 = 0.");
+  });
+
+  it("REF of a table expression OPTIONAL, nothing is raised", () => {
+    const abap = types + `
+DATA ref TYPE REF TO ty_type.
+ref = REF #( tab[ 1 ] OPTIONAL ).`;
+    const expected = types + `
+DATA ref TYPE REF TO ty_type.
+ASSIGN tab[ 1 ] TO FIELD-SYMBOL(<temp1>).
+IF sy-subrc = 0.
+  GET REFERENCE OF <temp1> INTO ref.
+ELSE.
+  CLEAR ref.
+ENDIF.`;
+    testFixNotFound(abap, expected, "ASSERT 1 = 0.");
+  });
+
+  it("not set in the configuration, the exception of the table expression", () => {
+    const abap = types + `
+WRITE tab[ foo = 2 ]-foo.`;
+    const expected = types + `
+FIELD-SYMBOLS <temp1> LIKE LINE OF tab.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE tab WITH KEY foo = 2 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+WRITE <temp1>-foo.`;
+    testFixNotFound(abap, expected, undefined);
   });
 });

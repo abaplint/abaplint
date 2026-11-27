@@ -1561,6 +1561,116 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues.length).to.equals(1);
   });
 
+  it("CONSTANTS, literals joined with & longer than 255 characters", () => {
+    const abap = `CONSTANTS foo TYPE string VALUE
+      \`${"a".repeat(100)}\` &
+      \`${"b".repeat(100)}\` &
+      \`${"c".repeat(80)}\`.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("CONSTANTS, character literals joined with & longer than 255 characters", () => {
+    const abap = `CONSTANTS foo TYPE c LENGTH 280 VALUE
+      '${"a".repeat(100)}' &
+      '${"b".repeat(100)}' &
+      '${"c".repeat(80)}'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("CONSTANTS, literals joined with & of exactly 255 characters, ok", () => {
+    const abap = `CONSTANTS foo TYPE string VALUE
+      \`${"a".repeat(100)}\` &
+      \`${"b".repeat(100)}\` &
+      \`${"c".repeat(55)}\`.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CONSTANTS, literals joined with &, a doubled delimiter counts as one character, ok", () => {
+    const abap = `CONSTANTS foo TYPE c LENGTH 255 VALUE
+      '${"a".repeat(100)}' &
+      '${"b".repeat(100)}' &
+      '${"c".repeat(54)}'''.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("class CONSTANTS, literals joined with & longer than 255 characters", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS foo TYPE string VALUE
+      \`${"a".repeat(100)}\` &
+      \`${"b".repeat(100)}\` &
+      \`${"c".repeat(80)}\`.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("DATA VALUE, literals joined with & longer than 255 characters", () => {
+    const abap = `DATA foo TYPE string VALUE
+      \`${"a".repeat(100)}\` &
+      \`${"b".repeat(100)}\` &
+      \`${"c".repeat(80)}\`.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("assignment, literals joined with & longer than 255 characters", () => {
+    const abap = `DATA foo TYPE string.
+    foo = '${"a".repeat(100)}' &
+      '${"b".repeat(100)}' &
+      '${"c".repeat(80)}'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("method argument, literals joined with & longer than 255 characters", () => {
+    const abap = `CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar IMPORTING val TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl=>bar( \`${"a".repeat(100)}\` &
+    \`${"b".repeat(100)}\` &
+    \`${"c".repeat(80)}\` ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("is longer than 255 characters");
+  });
+
+  it("assignment, literals joined with && longer than 255 characters, ok", () => {
+    const abap = `DATA foo TYPE string.
+    foo = \`${"a".repeat(100)}\` &&
+      \`${"b".repeat(100)}\` &&
+      \`${"c".repeat(80)}\`.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("assignment, string templates longer than 255 characters, ok", () => {
+    const abap = `DATA foo TYPE string.
+    foo = |${"a".repeat(100)}| &&
+      |${"b".repeat(100)}| &&
+      |${"c".repeat(80)}|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("DATA, negative LENGTH", () => {
     const abap = `DATA foo TYPE c LENGTH -5.`;
     const issues = runProgram(abap);
@@ -15383,6 +15493,135 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("mapped");
   });
 
+  // in a system this is a global class, it is not part of the registry here
+  const entityEventHandlerStub = `
+CLASS cl_abap_behavior_event_handler DEFINITION ABSTRACT.
+ENDCLASS.
+CLASS cl_abap_behavior_event_handler IMPLEMENTATION.
+ENDCLASS.`;
+
+  it("FOR ENTITY EVENT, without IMPORTING", () => {
+    const abap = entityEventHandlerStub + `
+CLASS lcl_handler DEFINITION INHERITING FROM cl_abap_behavior_event_handler.
+  PRIVATE SECTION.
+    METHODS consume_created FOR ENTITY EVENT changed_instances FOR InspectionLot~created.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD consume_created.
+    DATA(first) = changed_instances[ 1 ].
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR ENTITY EVENT, with IMPORTING", () => {
+    const abap = entityEventHandlerStub + `
+CLASS lcl_handler DEFINITION INHERITING FROM cl_abap_behavior_event_handler.
+  PRIVATE SECTION.
+    METHODS on_event FOR ENTITY EVENT IMPORTING events FOR root~raised.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_event.
+    LOOP AT events INTO DATA(event).
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR ENTITY EVENT, REFERENCE(name)", () => {
+    const abap = entityEventHandlerStub + `
+CLASS lcl_handler DEFINITION INHERITING FROM cl_abap_behavior_event_handler.
+  PRIVATE SECTION.
+    METHODS on_event FINAL FOR ENTITY EVENT IMPORTING REFERENCE(events) FOR root~raised.
+    METHODS on_event2 FOR ENTITY EVENT REFERENCE(events) FOR root~raised.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_event.
+    LOOP AT events INTO DATA(event).
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD on_event2.
+    LOOP AT events INTO DATA(event).
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR ENTITY EVENT, several events in one statement", () => {
+    const abap = entityEventHandlerStub + `
+CLASS lcl_handler DEFINITION INHERITING FROM cl_abap_behavior_event_handler.
+  PRIVATE SECTION.
+    METHODS on_events FOR ENTITY EVENT
+      created_events FOR root~created
+      changed_events FOR root~changed
+      REFERENCE(deleted_events) FOR root~deleted.
+    METHODS on_events_importing FOR ENTITY EVENT IMPORTING
+      created_events FOR root~created
+      REFERENCE(changed_events) FOR root~changed
+      deleted_events FOR root~deleted.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_events.
+    LOOP AT created_events INTO DATA(created).
+    ENDLOOP.
+    LOOP AT changed_events INTO DATA(changed).
+    ENDLOOP.
+    LOOP AT deleted_events INTO DATA(deleted).
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD on_events_importing.
+    LOOP AT created_events INTO DATA(created).
+    ENDLOOP.
+    LOOP AT changed_events INTO DATA(changed).
+    ENDLOOP.
+    LOOP AT deleted_events INTO DATA(deleted).
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("FOR ENTITY EVENT, no failed, mapped or reported", () => {
+    // no superclass, so the lookup of "reported" does not end in the void superclass
+    const abap = `
+CLASS lcl_handler DEFINITION.
+  PRIVATE SECTION.
+    METHODS on_event FOR ENTITY EVENT IMPORTING events FOR root~raised.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_event.
+    CLEAR reported.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("reported");
+  });
+
+  it("FOR ENTITY EVENT, CLASS-METHODS is not allowed", () => {
+    const abap = `
+CLASS lcl_handler DEFINITION INHERITING FROM cl_abap_behavior_event_handler.
+  PRIVATE SECTION.
+    CLASS-METHODS on_event FOR ENTITY EVENT events FOR root~raised.
+ENDCLASS.
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_event.
+    LOOP AT events INTO DATA(event).
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
+    const parserErrors = reg.findIssues().filter(i => i.getKey() === "parser_error");
+    expect(parserErrors.length).to.equal(1);
+    expect(parserErrors[0].getStart().getRow()).to.equal(4);
+  });
+
   it("basic WITH INDICATORS", () => {
     const abap = `
 TYPES: BEGIN OF ty,
@@ -16401,6 +16640,37 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equals(undefined);
   });
 
+  it("PUBLIC class with FRIENDS, must be GLOBAL FRIENDS", () => {
+    const clas1 = `
+CLASS zcl_sdfsdf DEFINITION PUBLIC CREATE PUBLIC FRIENDS zcl_friend.
+ENDCLASS.
+CLASS zcl_sdfsdf IMPLEMENTATION.
+ENDCLASS.`;
+    const clas2 = `
+CLASS zcl_friend DEFINITION PUBLIC CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_friend IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.abap", contents: clas1},
+      {filename: "zcl_friend.clas.abap", contents: clas2}]);
+    expect(issues[0]?.getMessage()).to.include("GLOBAL FRIENDS");
+  });
+
+  it("local class with GLOBAL FRIENDS, error", () => {
+    const abap = `
+CLASS lcl_friend DEFINITION.
+ENDCLASS.
+CLASS lcl_friend IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_bar DEFINITION GLOBAL FRIENDS lcl_friend.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.include("GLOBAL FRIENDS");
+  });
+
   it("private method, called from friend, local classes", () => {
     const abap = `
 CLASS lcl_friend DEFINITION DEFERRED.
@@ -16748,7 +17018,7 @@ ENDCLASS.`;
 
   it("error if friend class does not exist, CREATE PRIVATE", () => {
     const abap = `
-CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE FRIENDS ycsdf.
+CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE GLOBAL FRIENDS ycsdf.
 ENDCLASS.
 CLASS cl_http_entity IMPLEMENTATION.
 ENDCLASS.`;
@@ -19498,6 +19768,22 @@ ASSIGN lr_data TO <val>.
 <val> = COND #( WHEN 1 = 1 THEN REF data( lv_source ) ).`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, inline declaration from a generic CHANGING parameter TYPE ANY TABLE", () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo
+      CHANGING data_table TYPE ANY TABLE.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA(lt_data) = REF #( data_table ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(0, issues.map(i => i.getMessage()).join(", "));
   });
 });
 
@@ -22529,6 +22815,114 @@ START-OF-SELECTION.`;
     it("error, " + e.name, () => {
       const issues = runProgram(prefix + "\n  " + e.code);
       expect(issues[0]?.getMessage()).to.include("Arithmetic expression cannot be compared with non-numeric operand");
+    });
+  }
+});
+
+describe("syntax.ts, FIELD-SYMBOLS LIKE a generic type", () => {
+  const message = "FIELD-SYMBOLS cannot be LIKE a generic type";
+  const method = (body: string) => `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS run IMPORTING it TYPE STANDARD TABLE it_typed TYPE string_table.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD run.
+${body}
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("error, LIKE LINE OF a field symbol TYPE STANDARD TABLE", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <row> LIKE LINE OF <tab>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, LIKE LINE OF a generic importing parameter", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <row> LIKE LINE OF it.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, LIKE a field symbol TYPE ANY TABLE", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+    FIELD-SYMBOLS <copy> LIKE <tab>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("error, LIKE a field symbol TYPE any", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <copy> LIKE <any>.`));
+    expect(issues[0]?.getMessage()).to.contain(message);
+  });
+
+  it("ok, TYPE a generic type", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <row> TYPE any.
+    ASSIGN it TO <tab>.
+    LOOP AT <tab> ASSIGNING <row>.
+    ENDLOOP.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, LIKE LINE OF a typed table", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <row> LIKE LINE OF it_typed.
+    LOOP AT it_typed ASSIGNING <row>.
+    ENDLOOP.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("ok, LIKE a typed field symbol", () => {
+    const issues = runProgram(method(`
+    FIELD-SYMBOLS <tab> TYPE string_table.
+    FIELD-SYMBOLS <copy> LIKE <tab>.`));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
+
+describe("syntax.ts, LIKE a generically typed data object, STATICS", () => {
+  const form = (body: string) => `FORM bar USING it TYPE ANY TABLE.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  FIELD-SYMBOLS <any> TYPE any.
+  DATA typed TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA refs TYPE STANDARD TABLE OF REF TO data WITH DEFAULT KEY.
+  DATA objs TYPE STANDARD TABLE OF REF TO object WITH DEFAULT KEY.
+  ${body}
+ENDFORM.`;
+
+  const errors = [
+    {code: `STATICS row LIKE LINE OF <tab>.`, message: "STATICS definition cannot be generic"},
+    {code: `STATICS row LIKE <any>.`, message: "STATICS definition cannot be generic"},
+    {code: `STATICS row TYPE STANDARD TABLE.`, message: "STATICS definition cannot be generic"},
+  ];
+  for (const e of errors) {
+    it("error, " + e.code, () => {
+      const issues = runProgram(form(e.code));
+      expect(issues[0]?.getMessage()).to.include(e.message);
+    });
+  }
+
+  const fine = [
+    `FIELD-SYMBOLS <row> LIKE LINE OF typed.`,
+    // a row that is a generic reference is a complete type
+    `FIELD-SYMBOLS <row> LIKE LINE OF refs.`,
+    `FIELD-SYMBOLS <row> LIKE LINE OF objs.`,
+    `FIELD-SYMBOLS <row> TYPE any.`,
+    `STATICS row LIKE LINE OF typed.`,
+    `STATICS row LIKE LINE OF refs.`,
+    `STATICS row TYPE REF TO data.`,
+    `STATICS row TYPE STANDARD TABLE OF i WITH DEFAULT KEY.`,
+  ];
+  for (const code of fine) {
+    it("ok, " + code, () => {
+      const issues = runProgram(form(code));
+      expect(issues[0]?.getMessage()).to.equal(undefined);
     });
   }
 });

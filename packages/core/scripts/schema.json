@@ -1664,8 +1664,69 @@
         "severity": {
           "$ref": "#/definitions/Severity",
           "description": "Problem severity"
+        },
+        "tableExpressionNotFound": {
+          "description": "The statement a downported table expression runs when the row is not found, including the period.\n\nCX_SY_ITAB_LINE_NOT_FOUND is what a table expression raises, but the class came with the table expressions in 7.40, so the default does not compile on a 7.02 system. Set this to something that exists there, eg. \"RAISE EXCEPTION TYPE zcx_my_line_not_found.\" or \"ASSERT 1 = 0.\"",
+          "type": "string"
         }
       },
+      "type": "object"
+    },
+    "DynamicWhereEmptyConf": {
+      "additionalProperties": false,
+      "properties": {
+        "deleteDatabase": {
+          "description": "Check DELETE FROM dbtab",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreTables": {
+          "description": "Database tables not checked, eg. customizing tables a full read of which is fine, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "modifyDatabase": {
+          "description": "Check MODIFY dbtab FROM ( SELECT ... )",
+          "type": "boolean"
+        },
+        "openCursor": {
+          "description": "Check OPEN CURSOR",
+          "type": "boolean"
+        },
+        "select": {
+          "description": "Check SELECT and SELECT loops",
+          "type": "boolean"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        },
+        "skipUpTo": {
+          "description": "Skip statements with UP TO n ROWS, the read is bounded",
+          "type": "boolean"
+        },
+        "updateDatabase": {
+          "description": "Check UPDATE dbtab SET",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "select",
+        "openCursor",
+        "deleteDatabase",
+        "updateDatabase",
+        "modifyDatabase",
+        "ignoreTables",
+        "skipUpTo"
+      ],
       "type": "object"
     },
     "DynproChecksConf": {
@@ -3113,6 +3174,17 @@
                 }
               ],
               "description": "Downport functionality\nTags: Downport, Quickfix\nhttps://rules.abaplint.org/downport"
+            },
+            "dynamic_where_empty": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DynamicWhereEmptyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a dynamic WHERE (lv) whose variable can reach the statement empty\nTags: SingleFile\nhttps://rules.abaplint.org/dynamic_where_empty"
             },
             "dynpro_checks": {
               "anyOf": [
@@ -5808,6 +5880,17 @@
                 }
               ],
               "description": "Downport functionality\nTags: Downport, Quickfix\nhttps://rules.abaplint.org/downport"
+            },
+            "dynamic_where_empty": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DynamicWhereEmptyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports a dynamic WHERE (lv) whose variable can reach the statement empty\nTags: SingleFile\nhttps://rules.abaplint.org/dynamic_where_empty"
             },
             "dynpro_checks": {
               "anyOf": [

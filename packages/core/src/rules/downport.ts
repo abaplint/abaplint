@@ -37,8 +37,16 @@ import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 // todo: refactor each sub-rule to new classes?
 // todo: add configuration
 
+const DEFAULT_NOT_FOUND = "RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.";
 
 export class DownportConf extends BasicRuleConfig {
+  /** The statement a downported table expression runs when the row is not found, including the period.
+   *
+   * CX_SY_ITAB_LINE_NOT_FOUND is what a table expression raises, but the class came with the table
+   * expressions in 7.40, so the default does not compile on a 7.02 system. Set this to something that
+   * exists there, eg. "RAISE EXCEPTION TYPE zcx_my_line_not_found." or "ASSERT 1 = 0."
+   */
+  public tableExpressionNotFound?: string = DEFAULT_NOT_FOUND;
 }
 
 class SkipToNextFile extends Error {
@@ -171,7 +179,7 @@ Current rules:
 * LOOP AT method_call( ) is outlined
 * VALUE # with structure fields
 * VALUE # with internal table lines
-* Table Expressions are outlined
+* Table Expressions are outlined, what happens when the row is not found is set with tableExpressionNotFound
 * SELECT INTO @DATA definitions are outlined
 * Some occurrences of string template formatting option ALPHA changed to function module call
 * SELECT/INSERT/MODIFY/DELETE/UPDATE "," in field list removed, "@" in source/targets removed
@@ -197,6 +205,10 @@ Make sure to test the downported code, it might not always be completely correct
 
   public setConfig(conf: DownportConf): void {
     this.conf = conf;
+  }
+
+  private tableExpressionNotFound(): string {
+    return this.conf.tableExpressionNotFound ?? DEFAULT_NOT_FOUND;
   }
 
   public initialize(reg: IRegistry) {
@@ -411,6 +423,18 @@ Make sure to test the downported code, it might not always be completely correct
       if (ret.length === 0) {
         for (let i = 0; i < lowStatements.length; i++) {
           const issue = this.outlineInsertBuiltin(lowStatements[i], highStatements[i], lowFile, highSyntax);
+          if (issue) {
+            ret.push(issue);
+            break;
+          }
+        }
+      }
+
+      // CASE with a 702 built-in function as the operand parses in the low version, but before
+      // 740sp02 the operand takes only the functions called with one unnamed argument, like strlen( )
+      if (ret.length === 0) {
+        for (let i = 0; i < lowStatements.length; i++) {
+          const issue = this.outlineCaseBuiltin(lowStatements[i], highStatements[i], lowFile, highSyntax);
           if (issue) {
             ret.push(issue);
             break;
@@ -744,6 +768,11 @@ Make sure to test the downported code, it might not always be completely correct
       return found;
     }
 
+    found = this.outlineReferenceIntoGenericTable(high, lowFile, highSyntax);
+    if (found) {
+      return found;
+    }
+
     found = this.outlineReadTableVoidTarget(high, lowFile, highSyntax);
     if (found) {
       return found;
@@ -884,15 +913,50 @@ Make sure to test the downported code, it might not always be completely correct
     // edits are applied in sequence, so delete the later one first
     along.sort((a, b) => b!.getFirstToken().getStart().isBefore(a!.getFirstToken().getStart()) ? -1 : 1);
     for (const e of along) {
-      fixes.push(EditHelper.deleteRange(lowFile, e!.getFirstToken().getStart(), e!.getLastToken().getEnd()));
+      fixes.push(this.deleteWithWhitespaceBefore(lowFile, high, e!));
     }
 
     // edits are applied in sequence, so work from the end of the statement towards the start
-    fixes.push(EditHelper.deleteRange(lowFile, into.getFirstToken().getStart(), into.getLastToken().getEnd()));
+    fixes.push(this.deleteWithWhitespaceBefore(lowFile, high, into));
     fixes.push(EditHelper.insertAt(lowFile, from.getLastToken().getEnd(), ` ` + move));
     const fix = EditHelper.mergeList(fixes);
 
     return Issue.atToken(lowFile, low.getFirstToken(), "SQL, move INTO", this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  /**
+   * Deletes the expression together with the whitespace in front of it. A clause moved away
+   * otherwise leaves its row behind, holding only the indentation, or a gap in front of the period.
+   * Anything else in front of it, ie. a comment, and only the expression is deleted.
+   */
+  private deleteWithWhitespaceBefore(file: ABAPFile, statement: StatementNode, expression: ExpressionNode): IEdit {
+    const start = expression.getFirstToken().getStart();
+    const end = expression.getLastToken().getEnd();
+
+    let previous: Position | undefined = undefined;
+    for (const token of statement.getTokens()) {
+      if (token.getStart().isBefore(start) === false) {
+        break;
+      }
+      previous = token.getEnd();
+    }
+    if (previous === undefined) {
+      return EditHelper.deleteRange(file, start, end);
+    }
+
+    const rows = file.getRawRows();
+    let between = "";
+    for (let row = previous.getRow(); row <= start.getRow(); row++) {
+      const text = rows[row - 1] ?? "";
+      const from = row === previous.getRow() ? previous.getCol() - 1 : 0;
+      const to = row === start.getRow() ? start.getCol() - 1 : text.length;
+      between += text.substring(from, to);
+    }
+    if (between.trim() !== "") {
+      return EditHelper.deleteRange(file, start, end);
+    }
+
+    return EditHelper.deleteRange(file, previous, end);
   }
 
   /** the work area of INSERT/MODIFY/UPDATE/DELETE dbtab FROM @( ... ) takes its type from the
@@ -1471,7 +1535,7 @@ ${indentation}${uniqueName} = ${(source as ExpressionNode).concatTokensWithLineb
 READ TABLE ${pre} ${condition}ASSIGNING ${uniqueName}.
 sy-tabix = ${tabixBackup}.
 IF sy-subrc <> 0.
-  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ${this.tableExpressionNotFound()}
 ENDIF.`;
       if (guard.length > 0) {
         // the operands in front of the table expression are evaluated first and can stop the
@@ -1679,6 +1743,60 @@ ${indentation}`);
     const fix = EditHelper.merge(fix2, fix1);
 
     return Issue.atToken(lowFile, source.getFirstToken(), "Outline built-in function in INSERT",
+                         this.getMetadata().key, this.conf.severity, fix);
+  }
+
+  /** CASE to_upper( val ), the operand is outlined into a variable in front of the CASE.
+   * A WHEN operand stays, in front of the CASE it would be evaluated even if an earlier WHEN matches */
+  private outlineCaseBuiltin(low: StatementNode, high: StatementNode, lowFile: ABAPFile,
+                             highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.Case)) {
+      return undefined;
+    } else if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    } else if (low.getFirstToken().getStart() instanceof VirtualPosition) {
+      return undefined;
+    }
+
+    // the whole operand is the call, same condition as the syntax check in checkCaseOperand()
+    const source = high.findDirectExpression(Expressions.Source);
+    const chain = source?.findDirectExpression(Expressions.MethodCallChain);
+    if (source === undefined || chain === undefined
+        || source.getChildren().length !== 1 || chain.getChildren().length !== 1) {
+      return undefined;
+    }
+
+    // functions older than 702 with one unnamed argument are allowed, functions newer than 702
+    // are not valid in the assignment either, and a predicate function returns no value
+    const name = source.getFirstToken().getStr().toUpperCase();
+    if (BuiltIn.hasUnnamedArgument(name)
+        || BuiltIn.methods[name]?.release !== Release.v702
+        || BuiltIn.isPredicate(name) === true) {
+      return undefined;
+    }
+
+    // the result of these has the type of the arguments, which is not known here
+    if (["NMAX", "NMIN", "ROUND", "RESCALE"].includes(name)) {
+      return undefined;
+    }
+
+    // undefined if the name is not a built-in function here, eg. a method of the class with the same name
+    const type = this.builtinReturnType(source, lowFile, highSyntax);
+    if (type === undefined) {
+      return undefined;
+    }
+
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const code = `DATA ${uniqueName} TYPE ${type}.\n` +
+      indentation + `${uniqueName} = ${source.concatTokens()}.\n` +
+      indentation;
+
+    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, source.getFirstToken(), "Outline built-in function in CASE",
                          this.getMetadata().key, this.conf.severity, fix);
   }
 
@@ -2144,11 +2262,47 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
     }
 
     let code: string;
-    if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
+    const optional = high.findDirectExpression(Expressions.Source)?.findDirectTokenByText("OPTIONAL") !== undefined;
+    const fieldChain = sourceRef.findDirectExpression(Expressions.FieldChain);
+    const tableExpression = fieldChain?.findDirectExpression(Expressions.TableExpression);
+    if (optional === true && fieldChain !== undefined && tableExpression !== undefined) {
+      // REF #( tab[ ... ] OPTIONAL ) is an initial reference when the row is not found, nothing is raised
+      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
+      const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+
+      // "tab[ ... ]" is assigned, what follows the table expression is read from the assigned row
+      let row = "";
+      let after = "";
+      let seen = false;
+      for (const c of fieldChain.getChildren()) {
+        if (seen === false) {
+          row += c.concatTokens();
+          seen = c === tableExpression;
+        } else {
+          after += c.concatTokens();
+        }
+      }
+
+      const targetCode = target.concatTokens();
+      // "DATA(ref)" is declared by the statement that sets it, and cleared by its name
+      const targetName = target.findDirectExpression(Expressions.InlineData)
+        ?.findDirectExpression(Expressions.TargetField)?.concatTokens() || targetCode;
+      // a further table expression is again OPTIONAL, and downported by the next run of this method
+      const found = fieldChain.findDirectExpressions(Expressions.TableExpression).length > 1
+        ? `${targetCode} = REF #( ${uniqueName}${after} OPTIONAL ).`
+        : `GET REFERENCE OF ${uniqueName}${after} INTO ${targetCode}.`;
+
+      code = `ASSIGN ${row} TO FIELD-SYMBOL(${uniqueName}).
+${indentation}IF sy-subrc = 0.
+${indentation}  ${found}
+${indentation}ELSE.
+${indentation}  CLEAR ${targetName}.
+${indentation}ENDIF`;
+    } else if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       code = `ASSIGN ${sourceRef.concatTokens()} TO FIELD-SYMBOL(<${uniqueName}>).
 IF sy-subrc <> 0.
-  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ${this.tableExpressionNotFound()}
 ENDIF.
 GET REFERENCE OF <${uniqueName}> INTO ${target.concatTokens()}`;
     } else {
@@ -2552,7 +2706,7 @@ ${indentation}${tabixBackup} = sy-tabix.
 ${indentation}READ TABLE ${tName} ${condition}ASSIGNING ${uniqueName}.
 ${indentation}sy-tabix = ${tabixBackup}.
 ${indentation}IF sy-subrc <> 0.
-${indentation}  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+${indentation}  ${this.tableExpressionNotFound()}
 ${indentation}ENDIF.
 ${indentation}`;
 
@@ -2724,7 +2878,11 @@ ${indentation}    output = ${uniqueName}.\n`;
     if (dataTarget) {
       const targetName = dataTarget.findDirectExpression(Expressions.TargetField)?.concatTokens() || "DOWNPORT_ERROR";
       let code = `DATA ${targetName} LIKE LINE OF ${sourceName}.\n${indentation}`;
-      if (isReference) {
+      const sourceType = foundType?.getType();
+      if (isReference && sourceType instanceof TableType && sourceType.isGeneric() === true) {
+        // LIKE LINE OF a generically typed table does not compile, and the reference to its row is generic too
+        code = `DATA ${targetName} TYPE REF TO data.\n${indentation}`;
+      } else if (isReference) {
         const likeName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
         code = `DATA ${likeName} LIKE LINE OF ${sourceName}.\n${indentation}DATA ${targetName} LIKE REF TO ${likeName}.\n${indentation}`;
       }
@@ -3504,7 +3662,7 @@ ${indentation}    output = ${uniqueName}.\n`;
 
       let type: string;
       if (high.concatTokens().toUpperCase().startsWith("APPEND INITIAL LINE TO ")) {
-        type = "LIKE LINE OF " + high.findFirstExpression(Expressions.Target)?.concatTokens();
+        type = this.rowOf(high.findFirstExpression(Expressions.Target)?.concatTokens() ?? "", high, lowFile, highSyntax);
       } else {
         const spag = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename());
         if (spag === undefined) {
@@ -3530,6 +3688,55 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     return undefined;
+  }
+
+  /** READ TABLE, APPEND and INSERT ... REFERENCE INTO DATA( ) on a generically typed table: the row has no type to
+   * name and LIKE LINE OF the table does not compile, the reference is generic like the row it points to */
+  private outlineReferenceIntoGenericTable(node: StatementNode, lowFile: ABAPFile, highSyntax: ISyntaxResult): Issue | undefined {
+    if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    }
+
+    let table: ExpressionNode | undefined = undefined;
+    let inline: ExpressionNode | undefined = undefined;
+    if (node.get() instanceof Statements.ReadTable) {
+      const target = node.findDirectExpression(Expressions.ReadTableTarget);
+      if (target?.findDirectTokenByText("REFERENCE") === undefined) {
+        return undefined;
+      }
+      table = node.findDirectExpression(Expressions.SimpleSource2);
+      inline = target.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    } else if (node.get() instanceof Statements.Append || node.get() instanceof Statements.InsertInternal) {
+      if (node.findDirectTokenByText("REFERENCE") === undefined) {
+        return undefined;
+      }
+      for (const target of node.findDirectExpressions(Expressions.Target)) {
+        const found = target.findDirectExpression(Expressions.InlineData);
+        if (found !== undefined) {
+          inline = found;
+        } else if (table === undefined) {
+          table = target;
+        }
+      }
+    }
+    const nameToken = inline?.findDirectExpression(Expressions.TargetField)?.getFirstToken();
+    if (table === undefined || inline === undefined || nameToken === undefined) {
+      return undefined;
+    }
+
+    const spag = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename());
+    const type = spag?.findVariable(table.concatTokens())?.getType();
+    if (!(type instanceof TableType) || type.isGeneric() === false) {
+      return undefined;
+    }
+
+    const name = nameToken.getStr();
+    const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
+    const fix1 = EditHelper.insertAt(lowFile, node.getFirstToken().getStart(), `DATA ${name} TYPE REF TO data.\n${indentation}`);
+    const fix2 = EditHelper.replaceRange(lowFile, inline.getFirstToken().getStart(), inline.getLastToken().getEnd(), name);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, inline.getFirstToken(), "Outline DATA", this.getMetadata().key, this.conf.severity, fix);
   }
 
   /** READ TABLE [REFERENCE] INTO DATA( ) where the row type is void, no TYPE can be written, use LIKE LINE OF like LOOP does */
@@ -3974,14 +4181,21 @@ ${indentation}    output = ${uniqueName}.\n`;
             break;
           }
         }
+        // the call is the first four children: xsdbool, "(", Cond and ")",
+        // when it is the first operand of a longer expression, the operator and the rest follow, "xsdbool( a = 1 ) && b"
         const children = source?.getChildren();
-        if (source === undefined || children?.length !== 4) {
+        if (source === undefined
+            || children === undefined
+            || children.length < 4
+            || !(children[2].get() instanceof Expressions.Cond)
+            || children[3].concatTokens() !== ")") {
           continue;
         }
 
         // make sure to convert to the correct type, RTTI might be used on the result of XSDBOOL
+        // only the call itself is replaced, the rest of the expression stays as it is
         const code = "CONV xsdboolean( boolc( " + children[2].concatTokens() + " ) )";
-        const fix = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), code);
+        const fix = EditHelper.replaceRange(lowFile, children[0].getFirstToken().getStart(), children[3].getLastToken().getEnd(), code);
         return Issue.atToken(lowFile, token, "Use BOOLC", this.getMetadata().key, this.conf.severity, fix);
       }
     }
@@ -4143,8 +4357,6 @@ ${indentation}    output = ${uniqueName}.\n`;
         const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
         const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
-        const sy = func === "LINE_EXISTS" ? "sy-subrc" : "sy-tabix";
-
         let insertAt: Position | undefined = node.getFirstToken().getStart();
         if (node.get() instanceof ElseIf) {
           // assumption: no side effects in IF conditions, except the READ itself, see below
@@ -4168,7 +4380,14 @@ ${indentation}    output = ${uniqueName}.\n`;
           keep.map(k => indentation + `DATA ${k.name} LIKE ${k.field}.\n`).join("") +
           keep.map(k => indentation + `${k.name} = ${k.field}.\n`).join("") +
           indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
-          indentation + uniqueName + ` = ${sy}.\n` +
+          (func === "LINE_EXISTS"
+            ? indentation + `${uniqueName} = sy-subrc.\n`
+            // line_index( ) is zero when the row is not found, sy-tabix is not, eg. after a binary search
+            : indentation + `IF sy-subrc = 0.\n` +
+              indentation + `  ${uniqueName} = sy-tabix.\n` +
+              indentation + `ELSE.\n` +
+              indentation + `  ${uniqueName} = 0.\n` +
+              indentation + `ENDIF.\n`) +
           keep.map(k => indentation + `${k.field} = ${k.name}.\n`).join("") +
           indentation ;
         const fix1 = EditHelper.insertAt(lowFile, insertAt, code);
