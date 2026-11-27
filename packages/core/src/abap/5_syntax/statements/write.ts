@@ -10,6 +10,7 @@ import {ReferenceType} from "../_reference";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {BuiltInCall} from "../_builtin_call";
 import {UTCLongType} from "../../types/basic";
+import {allowEmptySubstring} from "../expressions/_substring";
 
 export class Write implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -55,7 +56,7 @@ export class Write implements StatementSyntax {
 
     const target = node.findDirectExpression(Expressions.Target);
     if (target) {
-      const targetType = Target.runSyntax(target, input);
+      const targetType = Target.runSyntax(target, allowEmptySubstring(input, target));
       if (new TypeUtils(input.scope).isCharLikeField(targetType) === false) {
         const message = `"${target.concatTokens()}" must be a character-like field (data type C, N, D, or T, got "${
           targetType?.constructor.name}")`;

@@ -40,6 +40,7 @@ const repos = [
   "Marc-Bernard-Tools/MBT-Listcube",
   "Marc-Bernard-Tools/MBT-Logical-Object-Lister",
   "Marc-Bernard-Tools/MBT-Transport-Request",
+  "Kaszub09/abapEasyDev",
   "oisee/zork-abap",
   "oisee/zvdb",
   "open-abap/express-icf-shim",

@@ -2284,7 +2284,43 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
     }
 
     let code: string;
-    if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
+    const optional = high.findDirectExpression(Expressions.Source)?.findDirectTokenByText("OPTIONAL") !== undefined;
+    const fieldChain = sourceRef.findDirectExpression(Expressions.FieldChain);
+    const tableExpression = fieldChain?.findDirectExpression(Expressions.TableExpression);
+    if (optional === true && fieldChain !== undefined && tableExpression !== undefined) {
+      // REF #( tab[ ... ] OPTIONAL ) is an initial reference when the row is not found, nothing is raised
+      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
+      const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+
+      // "tab[ ... ]" is assigned, what follows the table expression is read from the assigned row
+      let row = "";
+      let after = "";
+      let seen = false;
+      for (const c of fieldChain.getChildren()) {
+        if (seen === false) {
+          row += c.concatTokens();
+          seen = c === tableExpression;
+        } else {
+          after += c.concatTokens();
+        }
+      }
+
+      const targetCode = target.concatTokens();
+      // "DATA(ref)" is declared by the statement that sets it, and cleared by its name
+      const targetName = target.findDirectExpression(Expressions.InlineData)
+        ?.findDirectExpression(Expressions.TargetField)?.concatTokens() || targetCode;
+      // a further table expression is again OPTIONAL, and downported by the next run of this method
+      const found = fieldChain.findDirectExpressions(Expressions.TableExpression).length > 1
+        ? `${targetCode} = REF #( ${uniqueName}${after} OPTIONAL ).`
+        : `GET REFERENCE OF ${uniqueName}${after} INTO ${targetCode}.`;
+
+      code = `ASSIGN ${row} TO FIELD-SYMBOL(${uniqueName}).
+${indentation}IF sy-subrc = 0.
+${indentation}  ${found}
+${indentation}ELSE.
+${indentation}  CLEAR ${targetName}.
+${indentation}ENDIF`;
+    } else if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       code = `ASSIGN ${sourceRef.concatTokens()} TO FIELD-SYMBOL(<${uniqueName}>).
 IF sy-subrc <> 0.
@@ -4317,8 +4353,6 @@ ${indentation}    output = ${uniqueName}.\n`;
         const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
         const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
-        const sy = func === "LINE_EXISTS" ? "sy-subrc" : "sy-tabix";
-
         let insertAt: Position | undefined = node.getFirstToken().getStart();
         if (node.get() instanceof ElseIf) {
           // assumption: no side effects in IF conditions, except the READ itself, see below
@@ -4342,7 +4376,14 @@ ${indentation}    output = ${uniqueName}.\n`;
           keep.map(k => indentation + `DATA ${k.name} LIKE ${k.field}.\n`).join("") +
           keep.map(k => indentation + `${k.name} = ${k.field}.\n`).join("") +
           indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
-          indentation + uniqueName + ` = ${sy}.\n` +
+          (func === "LINE_EXISTS"
+            ? indentation + `${uniqueName} = sy-subrc.\n`
+            // line_index( ) is zero when the row is not found, sy-tabix is not, eg. after a binary search
+            : indentation + `IF sy-subrc = 0.\n` +
+              indentation + `  ${uniqueName} = sy-tabix.\n` +
+              indentation + `ELSE.\n` +
+              indentation + `  ${uniqueName} = 0.\n` +
+              indentation + `ENDIF.\n`) +
           keep.map(k => indentation + `${k.field} = ${k.name}.\n`).join("") +
           indentation ;
         const fix1 = EditHelper.insertAt(lowFile, insertAt, code);
