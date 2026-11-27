@@ -21547,6 +21547,13 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(`A generic type cannot be specified after "REF TO"`);
   });
 
+  it("DATA TYPE REF TO clike, error", () => {
+    const abap = `DATA foo TYPE REF TO clike.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.equal(`A generic type cannot be specified after "REF TO"`);
+  });
+
   it("INTERFACE EVENTS, parameter not passed by VALUE, error", () => {
     const abap = `
 INTERFACE lif.

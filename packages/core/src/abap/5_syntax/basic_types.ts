@@ -1078,7 +1078,11 @@ export class BasicTypes {
     const found = this.resolveTypeName(chain);
     if (found && found instanceof Types.VoidType) {
       return found;
-    } else if (found instanceof Types.AnyType) {
+    } else if (found
+        && found.isGeneric() === true
+        && !(found instanceof Types.DataType)
+        && !(found instanceof Types.TableType)) {
+      // "REF TO data" is the only generic type allowed, generic tables are handled elsewhere
       throw new Error(`A generic type cannot be specified after "REF TO"`);
     } else if (found && !(found instanceof Types.UnknownType)) {
       return new Types.DataReference(found);
