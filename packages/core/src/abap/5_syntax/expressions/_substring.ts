@@ -1,14 +1,21 @@
+import {ExpressionNode} from "../../nodes";
 import {INode} from "../../nodes/_inode";
+import {InstanceArrow} from "../../1_lexer/tokens";
 import * as Expressions from "../../2_statements/expressions";
 import {CharacterType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType, FloatingPointType, FloatType, HexType,
   Integer8Type, IntegerType, NumericType, PackedType, TimeType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {ClassAttribute} from "../../types/class_attribute";
+import {IdentifierMeta} from "../../types/_typed_identifier";
+import {ObjectOriented} from "../_object_oriented";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 // The type of a substring with a static offset or length, used for reading and writing positions.
 // On a character or byte field of fixed length the substring must lie inside the field, else it is
-// a syntax error. Other types, a dynamic offset or length and "*" (undefined) are left alone, as is
-// length 0. The offset is applied first, so the length is compared to what remains after the offset.
+// a syntax error, unless the offset or length is a variable: then the bounds are left to the runtime.
+// Other types, a dynamic offset or length and "*" (undefined) are left alone, as is length 0.
+// The offset is applied first, so the length is compared to what remains after the offset.
+// "chain" holds the nodes of the surrounding chain, including both the offset and the length.
 // A substring of a date, time or numeric text field has type n; its bounds are not checked.
 // An offset or length on a numeric field (i, int8, p, f, decfloat) is a syntax error, whatever its value,
 // except a length without offset covering the full packed field, eg. "lv_p(5)" for "lv_p(5) TYPE p".
@@ -17,6 +24,7 @@ export function substringType(
   offset: number | undefined,
   length: number | undefined,
   node: INode,
+  chain: readonly INode[],
   input: SyntaxInput): AbstractType | undefined {
 
   const numericName = numericTypeName(context);
@@ -40,6 +48,9 @@ export function substringType(
 
   if (offset !== undefined && offset > 0) {
     if (offset >= fieldLength) {
+      if (hasVariablePart(chain, input)) {
+        return context;
+      }
       const message = `Offset ${offset} is outside the field of length ${fieldLength}`;
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return VoidType.get(CheckSyntaxKey);
@@ -49,6 +60,9 @@ export function substringType(
 
   if (length !== undefined && length > 0) {
     if (length > fieldLength) {
+      if (hasVariablePart(chain, input)) {
+        return context;
+      }
       const message = `Length ${length} exceeds the remaining length ${fieldLength} of the field`;
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return VoidType.get(CheckSyntaxKey);
@@ -57,6 +71,40 @@ export function substringType(
   }
 
   return context;
+}
+
+// true if the offset or the length is given by a variable, a constant counts as static
+function hasVariablePart(chain: readonly INode[], input: SyntaxInput): boolean {
+  return chain.some(node => {
+    if (!(node instanceof ExpressionNode)
+        || !(node.get() instanceof Expressions.FieldOffset || node.get() instanceof Expressions.FieldLength)) {
+      return false;
+    }
+    const field = node.findDirectExpression(Expressions.SimpleFieldChain2);
+    return field !== undefined && isConstant(field, input) === false;
+  });
+}
+
+// a constant or a component of one, an attribute behind "->" is not resolved here
+function isConstant(field: ExpressionNode, input: SyntaxInput): boolean {
+  const children = field.getChildren();
+  if (children.some(c => c.get() instanceof InstanceArrow)) {
+    return false;
+  }
+
+  const name = children[0].getFirstToken().getStr();
+  if (children[0].get() instanceof Expressions.ClassName) {
+    const def = input.scope.findObjectDefinition(name);
+    const attribute = children[2]?.getFirstToken().getStr();
+    return new ObjectOriented(input.scope).searchConstantName(def, attribute) !== undefined;
+  }
+
+  const found = input.scope.findVariable(name);
+  if (found === undefined || found instanceof ClassAttribute) {
+    return false;
+  }
+  const meta = found.getMeta();
+  return meta.includes(IdentifierMeta.ReadOnly) && meta.includes(IdentifierMeta.Static);
 }
 
 // the internal type code the ABAP syntax check names: I, 8, P, F, a (decfloat16), e (decfloat34)

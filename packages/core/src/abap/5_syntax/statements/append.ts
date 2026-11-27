@@ -1,6 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode, TokenNode} from "../../nodes";
 import {Source} from "../expressions/source";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {Target} from "../expressions/target";
 import {DataReference, DataType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
@@ -60,6 +61,7 @@ export class Append implements StatementSyntax {
       source = node.findDirectExpression(Expressions.Source);
     }
     if (source) {
+      checkParenthesizedOperand(source, input);
       if (targetType !== undefined
           && !(targetType instanceof TableType)
           && !(targetType instanceof UnknownType)

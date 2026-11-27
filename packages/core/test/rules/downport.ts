@@ -9,6 +9,7 @@ import {IConfiguration} from "../../src/_config";
 import {Version} from "../../src/version";
 import {Issue} from "../../src/issue";
 import {IFile} from "../../src/files/_ifile";
+import {applyEditSingle} from "../../src/edit_helper";
 
 function buildConfig(version: Version): IConfiguration {
   const conf = Config.getDefault().get();
@@ -1721,9 +1722,45 @@ DATA(result) = VALUE ty_tab(
 TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA temp1 TYPE ty_tab.
 CLEAR temp1.
-INSERT COND string( LET current_count = 2 IN WHEN current_count = 1 THEN |{ current_count }| ELSE |{ current_count }| ) INTO TABLE temp1.
-INSERT COND string( LET current_count = 2 IN WHEN current_count = 2 THEN |{ current_count }| ELSE |{ current_count }| ) INTO TABLE temp1.
+INSERT COND string( LET current_count = 2 IN
+WHEN current_count = 1 THEN |{ current_count }|
+ELSE |{ current_count }| ) INTO TABLE temp1.
+INSERT COND string( LET current_count = 2 IN
+WHEN current_count = 2 THEN |{ current_count }|
+ELSE |{ current_count }| ) INTO TABLE temp1.
 DATA(result) = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE row spanning several lines, line breaks kept", async () => {
+    const abap = `
+TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA tab TYPE ty_tab.
+tab = VALUE #( ( \`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\` &&
+                 \`bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\` ) ).`;
+// joined onto one line, the row would be over 255 characters, which a 702 system cuts on import
+    const expected = `
+TYPES ty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA tab TYPE ty_tab.
+DATA temp1 TYPE ty_tab.
+CLEAR temp1.
+INSERT \`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\` &&
+\`bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\` INTO TABLE temp1.
+tab = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("INSERT source expression spanning several lines, line breaks kept", async () => {
+    const abap = `
+DATA tab TYPE string_table.
+INSERT \`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\` &&
+\`bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\` INTO TABLE tab.`;
+    const expected = `
+DATA tab TYPE string_table.
+DATA temp1 LIKE LINE OF tab.
+temp1 = \`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\` &&
+\`bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\`.
+INSERT temp1 INTO TABLE tab.`;
     testFix(abap, expected);
   });
 
@@ -7207,6 +7244,74 @@ ENDFORM.`;
     testFixAll(abap, expected);
   });
 
+  it("SELECT, ORDER BY then INTO then UP TO, no WHERE", async () => {
+    const abap = `FORM bar.
+  DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
+  SELECT * FROM voiddbtab ORDER BY PRIMARY KEY INTO TABLE @lt_rows UP TO 5 ROWS.
+ENDFORM.`;
+
+    const expected = `FORM bar.
+  DATA lt_rows TYPE STANDARD TABLE OF voiddbtab WITH DEFAULT KEY.
+  SELECT * FROM voiddbtab UP TO 5 ROWS INTO TABLE lt_rows ORDER BY PRIMARY KEY  .
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("SELECT, dynamic, ORDER BY then INTO then BYPASSING BUFFER", async () => {
+    const abap = `FORM bar USING iv_tab TYPE string.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  SELECT *
+    FROM (iv_tab)
+    ORDER BY PRIMARY KEY
+    INTO CORRESPONDING FIELDS OF TABLE @<tab>
+    BYPASSING BUFFER.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_tab TYPE string.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  SELECT *
+    FROM (iv_tab) BYPASSING BUFFER INTO CORRESPONDING FIELDS OF TABLE <tab>
+    ORDER BY PRIMARY KEY
+    
+    .
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
+  it("SELECT, GROUP BY with commas then INTO", async () => {
+    const abap = `FORM bar USING iv_tab TYPE string.
+  TYPES: BEGIN OF ty_s_count,
+           arbgb TYPE c LENGTH 20,
+           msgnr TYPE c LENGTH 3,
+           cnt   TYPE i,
+         END OF ty_s_count.
+  DATA lt_count TYPE STANDARD TABLE OF ty_s_count WITH DEFAULT KEY.
+  SELECT arbgb, msgnr, COUNT( * ) AS cnt
+    FROM (iv_tab)
+    GROUP BY arbgb, msgnr
+    ORDER BY arbgb, msgnr
+    INTO CORRESPONDING FIELDS OF TABLE @lt_count.
+ENDFORM.`;
+
+    const expected = `FORM bar USING iv_tab TYPE string.
+  TYPES: BEGIN OF ty_s_count,
+           arbgb TYPE c LENGTH 20,
+           msgnr TYPE c LENGTH 3,
+           cnt   TYPE i,
+         END OF ty_s_count.
+  DATA lt_count TYPE STANDARD TABLE OF ty_s_count WITH DEFAULT KEY.
+  SELECT arbgb msgnr COUNT( * ) AS cnt
+    FROM (iv_tab) INTO CORRESPONDING FIELDS OF TABLE lt_count
+    GROUP BY arbgb msgnr
+    ORDER BY arbgb msgnr
+    .
+ENDFORM.`;
+
+    testFixAll(abap, expected);
+  });
+
   it("SELECT, dynamic WHERE then INTO CORRESPONDING then UP TO", async () => {
     const abap = `FORM bar USING iv_tab TYPE string iv_where TYPE string.
   FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
@@ -8023,6 +8128,47 @@ GET REFERENCE OF <temp1> INTO lr_ref.
 ENDFORM.`;
 
     testFixAll(abap, expected);
+  });
+
+  it("table expression on a generically typed table, the field symbol is TYPE any", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  FIELD-SYMBOLS <cell> TYPE any.
+  <cell> = <tab>[ 1 ].
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    const fixed = issues[0].getDefaultFix();
+    expect(fixed).to.not.equal(undefined);
+    const text = JSON.stringify(fixed);
+    expect(text).to.include("TYPE any.");
+    expect(text).to.not.include("LIKE LINE OF <tab>");
+  });
+
+  it("table expression on a typed table, the field symbol stays LIKE LINE OF", async () => {
+    const abap = `FORM bar.
+  DATA lt_tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA lv_cell TYPE i.
+  lv_cell = lt_tab[ 1 ].
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(JSON.stringify(issues[0].getDefaultFix())).to.include("LIKE LINE OF lt_tab.");
+  });
+
+  it("table expression as a target on a generically typed table, the field symbol is TYPE any", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  CLEAR <tab>[ 1 ].
+ENDFORM.`;
+
+    const issues = await findIssues(abap);
+    expect(issues.length).to.equal(1);
+    const text = JSON.stringify(issues[0].getDefaultFix());
+    expect(text).to.include("TYPE any.");
+    expect(text).to.not.include("LIKE LINE OF <tab>");
   });
 
   it("table expression, two outlines in one statement get distinct field symbols", async () => {
@@ -9222,4 +9368,76 @@ ENDCLASS.`;
     testFix(abap, expected);
   });
 
+});
+
+describe("Rule: downport, ABAP language version", () => {
+
+  const clas = `CLASS zcl_lang DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PUBLIC SECTION.
+ENDCLASS.
+CLASS zcl_lang IMPLEMENTATION.
+ENDCLASS.`;
+
+  function clasXML(unicode: string) {
+    return `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_LANG</CLSNAME>
+    <LANGU>E</LANGU>
+    <STATE>1</STATE>
+    <UNICODE>${unicode}</UNICODE>
+   </VSEOCLASS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+  }
+
+  function run(files: MemoryFile[], version = Version.v702) {
+    const reg = new Registry(buildConfig(version)).addFiles(files);
+    reg.parse();
+    const issues = new Downport().initialize(reg).run(reg.getFirstObject()!);
+    return {reg, issues};
+  }
+
+  it("ABAP for Cloud Development becomes standard ABAP", () => {
+    const {reg, issues} = run([new MemoryFile("zcl_lang.clas.abap", clas), new MemoryFile("zcl_lang.clas.xml", clasXML("5"))]);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("ABAP for Cloud Development");
+    applyEditSingle(reg, issues[0].getDefaultFix()!);
+    const raw = reg.getFileByName("zcl_lang.clas.xml")!.getRaw();
+    expect(raw).to.include("<UNICODE>X</UNICODE>");
+    expect(raw).to.include("<CLSNAME>ZCL_LANG</CLSNAME>");
+  });
+
+  it("ABAP for Key Users in ABAP_LANGU_VERSION becomes standard ABAP", () => {
+    const intf = `INTERFACE zif_lang PUBLIC.
+ENDINTERFACE.`;
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOINTERF>
+    <CLSNAME>ZIF_LANG</CLSNAME>
+    <ABAP_LANGU_VERSION>2</ABAP_LANGU_VERSION>
+   </VSEOINTERF>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const {reg, issues} = run([new MemoryFile("zif_lang.intf.abap", intf), new MemoryFile("zif_lang.intf.xml", xml)]);
+    expect(issues.length).to.equal(1);
+    applyEditSingle(reg, issues[0].getDefaultFix()!);
+    expect(reg.getFileByName("zif_lang.intf.xml")!.getRaw()).to.include("<ABAP_LANGU_VERSION>X</ABAP_LANGU_VERSION>");
+  });
+
+  it("standard ABAP stays", () => {
+    const {issues} = run([new MemoryFile("zcl_lang.clas.abap", clas), new MemoryFile("zcl_lang.clas.xml", clasXML("X"))]);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("not when downporting to another release", () => {
+    const {issues} = run([new MemoryFile("zcl_lang.clas.abap", clas), new MemoryFile("zcl_lang.clas.xml", clasXML("5"))], Version.v750);
+    expect(issues.length).to.equal(0);
+  });
 });

@@ -26,6 +26,10 @@ export class Catch implements StatementSyntax {
       const found = input.scope.existsObject(className);
       if (found?.id) {
         input.scope.addReference(token, found.id, ReferenceType.ObjectOrientedReference, input.filename);
+        const message = this.checkExceptionClass(className, input);
+        if (message !== undefined) {
+          input.issues.push(syntaxIssue(input, token, message));
+        }
       } else if (input.scope.getDDIC().inErrorNamespace(className) === false) {
         const extra: IReferenceExtras = {ooName: className, ooType: "Void"};
         input.scope.addReference(token, undefined, ReferenceType.ObjectOrientedVoidReference, input.filename, extra);
@@ -73,6 +77,29 @@ export class Catch implements StatementSyntax {
       }
     }
 
+  }
+
+  // the classes of a CATCH are exception classes, that is CX_ROOT or a subclass of it. A class is only
+  // reported when its superclasses are known up to the last one, a chain ending in a void class is skipped
+  private checkExceptionClass(name: string, input: SyntaxInput): string | undefined {
+    const visited = new Set<string>();
+    let current = input.scope.findClassDefinition(name);
+    if (current === undefined) {
+      return input.scope.findInterfaceDefinition(name)
+        ? `CATCH, ${name} is an interface, not an exception class`
+        : undefined;
+    }
+    while (current !== undefined && visited.has(current.getName().toUpperCase()) === false) {
+      visited.add(current.getName().toUpperCase());
+      const superclass = current.getSuperClass()?.toUpperCase();
+      if (current.getName().toUpperCase() === "CX_ROOT" || superclass === "CX_ROOT") {
+        return undefined;
+      } else if (superclass === undefined) {
+        return `CATCH, ${name} is not an exception class, it is not derived from CX_ROOT`;
+      }
+      current = input.scope.findClassDefinition(superclass);
+    }
+    return undefined;
   }
 
   // static type of an inline target: the first class, replaced by each following class that is one of its

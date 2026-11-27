@@ -1,6 +1,7 @@
 import {ExpressionNode} from "../../nodes";
 import * as Expressions from "../../2_statements/expressions";
 import {Source} from "./source";
+import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {SyntaxInput} from "../_syntax_input";
 
@@ -16,11 +17,13 @@ export class CorrespondingBody {
 
     const base = node.findDirectExpression(Expressions.CorrespondingBodyBase)?.findDirectExpression(Expressions.Source);
     if (base) {
+      checkParenthesizedOperand(base, input);
       Source.runSyntax(base, input, targetType);
     }
 
     let type: AbstractType | undefined = undefined;
     for (const s of node.findDirectExpressions(Expressions.Source)) {
+      checkParenthesizedOperand(s, input);
       if (type === undefined) {
         type = Source.runSyntax(s, input);
       } else {
