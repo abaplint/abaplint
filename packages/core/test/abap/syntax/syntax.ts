@@ -22885,3 +22885,44 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
+
+describe("syntax.ts, LIKE a generically typed data object, STATICS", () => {
+  const form = (body: string) => `FORM bar USING it TYPE ANY TABLE.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  FIELD-SYMBOLS <any> TYPE any.
+  DATA typed TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA refs TYPE STANDARD TABLE OF REF TO data WITH DEFAULT KEY.
+  DATA objs TYPE STANDARD TABLE OF REF TO object WITH DEFAULT KEY.
+  ${body}
+ENDFORM.`;
+
+  const errors = [
+    {code: `STATICS row LIKE LINE OF <tab>.`, message: "STATICS definition cannot be generic"},
+    {code: `STATICS row LIKE <any>.`, message: "STATICS definition cannot be generic"},
+    {code: `STATICS row TYPE STANDARD TABLE.`, message: "STATICS definition cannot be generic"},
+  ];
+  for (const e of errors) {
+    it("error, " + e.code, () => {
+      const issues = runProgram(form(e.code));
+      expect(issues[0]?.getMessage()).to.include(e.message);
+    });
+  }
+
+  const fine = [
+    `FIELD-SYMBOLS <row> LIKE LINE OF typed.`,
+    // a row that is a generic reference is a complete type
+    `FIELD-SYMBOLS <row> LIKE LINE OF refs.`,
+    `FIELD-SYMBOLS <row> LIKE LINE OF objs.`,
+    `FIELD-SYMBOLS <row> TYPE any.`,
+    `STATICS row LIKE LINE OF typed.`,
+    `STATICS row LIKE LINE OF refs.`,
+    `STATICS row TYPE REF TO data.`,
+    `STATICS row TYPE STANDARD TABLE OF i WITH DEFAULT KEY.`,
+  ];
+  for (const code of fine) {
+    it("ok, " + code, () => {
+      const issues = runProgram(form(code));
+      expect(issues[0]?.getMessage()).to.equal(undefined);
+    });
+  }
+});
