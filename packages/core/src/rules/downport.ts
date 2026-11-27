@@ -2759,7 +2759,11 @@ ${indentation}    output = ${uniqueName}.\n`;
     if (dataTarget) {
       const targetName = dataTarget.findDirectExpression(Expressions.TargetField)?.concatTokens() || "DOWNPORT_ERROR";
       let code = `DATA ${targetName} LIKE LINE OF ${sourceName}.\n${indentation}`;
-      if (isReference) {
+      const sourceType = foundType?.getType();
+      if (isReference && sourceType instanceof TableType && sourceType.isGeneric() === true) {
+        // LIKE LINE OF a generically typed table does not compile, and the reference to its row is generic too
+        code = `DATA ${targetName} TYPE REF TO data.\n${indentation}`;
+      } else if (isReference) {
         const likeName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
         code = `DATA ${likeName} LIKE LINE OF ${sourceName}.\n${indentation}DATA ${targetName} LIKE REF TO ${likeName}.\n${indentation}`;
       }
@@ -3539,7 +3543,7 @@ ${indentation}    output = ${uniqueName}.\n`;
 
       let type: string;
       if (high.concatTokens().toUpperCase().startsWith("APPEND INITIAL LINE TO ")) {
-        type = "LIKE LINE OF " + high.findFirstExpression(Expressions.Target)?.concatTokens();
+        type = this.rowOf(high.findFirstExpression(Expressions.Target)?.concatTokens() ?? "", high, lowFile, highSyntax);
       } else {
         const spag = highSyntax.spaghetti.lookupPosition(nameToken.getStart(), lowFile.getFilename());
         if (spag === undefined) {

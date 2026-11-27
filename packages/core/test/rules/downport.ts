@@ -778,6 +778,34 @@ ENDFORM.`;
     testFix(abap, expected);
   });
 
+  it("LOOP REFERENCE INTO DATA(), generically typed table, no LIKE LINE OF", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  LOOP AT <tab> REFERENCE INTO DATA(row).
+  ENDLOOP.
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  DATA row TYPE REF TO data.
+  LOOP AT <tab> REFERENCE INTO row.
+  ENDLOOP.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
+  it("APPEND INITIAL LINE ASSIGNING FIELD-SYMBOL(), generically typed table, no LIKE LINE OF", async () => {
+    const abap = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  APPEND INITIAL LINE TO <tab> ASSIGNING FIELD-SYMBOL(<row>).
+ENDFORM.`;
+    const expected = `FORM bar.
+  FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+  FIELD-SYMBOLS <row> TYPE any.
+  APPEND INITIAL LINE TO <tab> ASSIGNING <row>.
+ENDFORM.`;
+    testFix(abap, expected);
+  });
+
   it("LOOP REFERENCE INTO DATA()", async () => {
     const abap = `
     DATA table TYPE STANDARD TABLE OF string.
