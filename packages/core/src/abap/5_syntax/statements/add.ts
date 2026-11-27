@@ -8,17 +8,17 @@ import {SyntaxInput} from "../_syntax_input";
 export class Add implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
 
-    // both operands are converted into numbers, a reference cannot be
+    // both operands are converted into numbers, a reference or a utclong cannot be
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       const type = Source.runSyntax(s, input);
-      if (Source.reportReferenceOperand(type, s, input)) {
+      if (Source.reportNonNumericOperand(type, s, input)) {
         return;
       }
     }
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {
       const type = Target.runSyntax(t, input);
-      if (Source.reportReferenceOperand(type, t, input)) {
+      if (Source.reportNonNumericOperand(type, t, input)) {
         return;
       }
     }
