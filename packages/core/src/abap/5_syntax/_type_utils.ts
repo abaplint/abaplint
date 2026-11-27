@@ -9,6 +9,7 @@ import * as Expressions from "../2_statements/expressions";
 import {ExpressionNode, TokenNodeRegex} from "../nodes";
 import {NGenericType} from "../types/basic/ngeneric_type";
 import {BuiltIn} from "./_builtin";
+import {characterStartLength} from "./_character_start";
 
 // todo: refactor to static? for performance
 export class TypeUtils {
@@ -861,6 +862,10 @@ export class TypeUtils {
       return this.isUTCLongAssignable(source, target);
     }
 
+    if (this.fitsCharacterStart(source, target) || this.fitsCharacterStart(target, source)) {
+      return true;
+    }
+
     if (target instanceof TableType) {
       if (target.isWithHeader()) {
         return this.isAssignable(source, target.getRowType());
@@ -994,6 +999,16 @@ export class TypeUtils {
     }
 
     return true;
+  }
+
+  // a field of type c can be assigned to and from a flat structure, if it is not longer than the
+  // character-like initial part of the structure
+  private fitsCharacterStart(field: AbstractType, structure: AbstractType): boolean {
+    if (!(field instanceof CharacterType) || !(structure instanceof StructureType)) {
+      return false;
+    }
+    const start = characterStartLength(structure);
+    return start !== undefined && field.getLength() <= start;
   }
 
   // utclong can only be converted to and from character like types
