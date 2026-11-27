@@ -68,6 +68,7 @@ import {DeleteIndexInLoopConf} from "../src/rules/delete_index_in_loop";
 import {DescriptionEmptyConf} from "../src/rules/description_empty";
 import {DoubleSpaceConf} from "../src/rules/double_space";
 import {DownportConf} from "../src/rules/downport";
+import {DynamicWhereEmptyConf} from "../src/rules/dynamic_where_empty";
 import {DynproChecksConf} from "../src/rules/dynpro_checks";
 import {EasyToFindMessagesConf} from "../src/rules/easy_to_find_messages";
 import {ElseAfterAllReturnsConf} from "../src/rules/else_after_all_returns";
@@ -326,6 +327,7 @@ export interface IConfig {
     "description_empty"?: DescriptionEmptyConf | boolean,
     "double_space"?: DoubleSpaceConf | boolean,
     "downport"?: DownportConf | boolean,
+    "dynamic_where_empty"?: DynamicWhereEmptyConf | boolean,
     "dynpro_checks"?: DynproChecksConf | boolean,
     "easy_to_find_messages"?: EasyToFindMessagesConf | boolean,
     "else_after_all_returns"?: ElseAfterAllReturnsConf | boolean,
@@ -573,6 +575,7 @@ export interface IConfig {
     "description_empty"?: DescriptionEmptyConf | boolean,
     "double_space"?: DoubleSpaceConf | boolean,
     "downport"?: DownportConf | boolean,
+    "dynamic_where_empty"?: DynamicWhereEmptyConf | boolean,
     "dynpro_checks"?: DynproChecksConf | boolean,
     "easy_to_find_messages"?: EasyToFindMessagesConf | boolean,
     "else_after_all_returns"?: ElseAfterAllReturnsConf | boolean,
