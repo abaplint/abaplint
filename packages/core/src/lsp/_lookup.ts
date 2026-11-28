@@ -204,8 +204,10 @@ export class LSPLookup {
 
   private static dumpType(variable: TypedIdentifier): string {
     let value = variable.toText() + "\n\nType: " + variable.getType().toText(0);
-    if (variable.getValue()) {
-      value += "\n\nValue: ```" + variable.getValue() + "```";
+    const constantValue = variable.getValue();
+    // a structured constant has a value per component, which is not shown
+    if (typeof constantValue === "string" && constantValue !== "") {
+      value += "\n\nValue: ```" + constantValue + "```";
     }
     if (variable.getMeta().length > 0) {
       value += "\n\nMeta: " + variable.getMeta().join(", ");

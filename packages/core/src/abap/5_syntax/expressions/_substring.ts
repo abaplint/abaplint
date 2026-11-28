@@ -1,15 +1,12 @@
 import {ExpressionNode} from "../../nodes";
 import {INode} from "../../nodes/_inode";
-import {InstanceArrow} from "../../1_lexer/tokens";
 import * as Expressions from "../../2_statements/expressions";
 import {CGenericType, CharacterType, CLikeType, CSequenceType, DateType, DecFloat16Type, DecFloat34Type, DecFloatType,
   FloatingPointType, FloatType, HexType, Integer8Type, IntegerType, NumericType, PackedType, SimpleType, StructureType,
   TimeType, UTCLongType, VoidType, XGenericType, XSequenceType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {ClassAttribute} from "../../types/class_attribute";
-import {IdentifierMeta} from "../../types/_typed_identifier";
 import {characterStartSubstring, hasCharacterStart} from "../_character_start";
-import {ObjectOriented} from "../_object_oriented";
+import {findConstant} from "../_constant_operand";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "../_syntax_input";
 
 // The type of a substring with a static offset or length, used for reading and writing positions.
@@ -123,30 +120,8 @@ function hasVariablePart(chain: readonly INode[], input: SyntaxInput): boolean {
       return false;
     }
     const field = node.findDirectExpression(Expressions.SimpleFieldChain2);
-    return field !== undefined && isConstant(field, input) === false;
+    return field !== undefined && findConstant(field, input) === undefined;
   });
-}
-
-// a constant or a component of one, an attribute behind "->" is not resolved here
-function isConstant(field: ExpressionNode, input: SyntaxInput): boolean {
-  const children = field.getChildren();
-  if (children.some(c => c.get() instanceof InstanceArrow)) {
-    return false;
-  }
-
-  const name = children[0].getFirstToken().getStr();
-  if (children[0].get() instanceof Expressions.ClassName) {
-    const def = input.scope.findObjectDefinition(name);
-    const attribute = children[2]?.getFirstToken().getStr();
-    return new ObjectOriented(input.scope).searchConstantName(def, attribute) !== undefined;
-  }
-
-  const found = input.scope.findVariable(name);
-  if (found === undefined || found instanceof ClassAttribute) {
-    return false;
-  }
-  const meta = found.getMeta();
-  return meta.includes(IdentifierMeta.ReadOnly) && meta.includes(IdentifierMeta.Static);
 }
 
 // the internal type code the ABAP syntax check names: I, 8, P, F, a (decfloat16), e (decfloat34)

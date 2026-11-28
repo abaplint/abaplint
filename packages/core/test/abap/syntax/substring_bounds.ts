@@ -22,6 +22,7 @@ FIELD-SYMBOLS <lv_x> TYPE x.
 FIELD-SYMBOLS <lv_any> TYPE any.
 FIELD-SYMBOLS <ls_struc> TYPE ty_struc.
 CONSTANTS lc_off TYPE i VALUE 6.
+CONSTANTS lc_one TYPE i VALUE 1.
 ${code}`;
 
   it("error, target, offset and length beyond the field", () => {
@@ -110,9 +111,9 @@ lv_result = lv_c5+2(3).`));
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
-  it("ok, offset given by a constant", () => {
+  it("error, offset given by a constant", () => {
     const issues = runProgram(program(`lv_c5+lc_off = 'A'.`));
-    expect(issues[0]?.getMessage()).to.equal(undefined);
+    expect(issues[0]?.getMessage()).to.equal("Offset 6 is outside the field of length 5");
   });
 
   it("ok, source, offset beyond the field, variable length", () => {
@@ -168,8 +169,8 @@ lv_result = lv_c5+5(lcl=>ro).`;
   });
 
   it("error, length beyond the field, offset given by a constant", () => {
-    const issues = runProgram(program(`lv_c5+lc_off(6) = 'a'.`));
-    expect(issues[0]?.getMessage()).to.equal("Length 6 exceeds the remaining length 5 of the field");
+    const issues = runProgram(program(`lv_c5+lc_one(6) = 'a'.`));
+    expect(issues[0]?.getMessage()).to.equal("Length 6 exceeds the remaining length 4 of the field");
   });
 
   it("error, length given by a component of a constant", () => {
