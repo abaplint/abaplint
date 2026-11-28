@@ -22537,6 +22537,64 @@ START-OF-SELECTION.
   });
 });
 
+describe("syntax.ts, component of a functional method result passed to a parameter", () => {
+  function build(call: string): string {
+    return `REPORT zraising_repro.
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_s,
+             screen TYPE n LENGTH 4,
+             text   TYPE c LENGTH 4,
+           END OF ty_s.
+    TYPES ty TYPE c LENGTH 4.
+    TYPES ty_n TYPE n LENGTH 4.
+    METHODS target IMPORTING dynnr TYPE ty.
+    METHODS target_n IMPORTING dynnr TYPE ty_n.
+    METHODS get RETURNING VALUE(rs) TYPE ty_s.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD target.
+  ENDMETHOD.
+  METHOD target_n.
+  ENDMETHOD.
+  METHOD get.
+  ENDMETHOD.
+  METHOD run.
+    DATA ls TYPE ty_s.
+    ${call}
+  ENDMETHOD.
+ENDCLASS.`;
+  }
+
+  const errors = [
+    "target( get( )-screen ).",
+    "target( dynnr = get( )-screen ).",
+    "target_n( get( )-text ).",
+    "target( ls-screen ).",
+  ];
+  for (const call of errors) {
+    it("error, " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(1);
+      expect(issues[0].getMessage()).to.contain("Method parameter type not compatible");
+    });
+  }
+
+  const ok = [
+    "target( get( )-text ).",
+    "target_n( get( )-screen ).",
+    "target( ls-text ).",
+  ];
+  for (const call of ok) {
+    it("ok, " + call, () => {
+      const issues = runProgram(build(call));
+      expect(issues.length).to.equals(0);
+    });
+  }
+});
+
 describe("syntax.ts, actual parameter compatible with a fully typed formal parameter, #4676", () => {
   function build(call: string): string {
     return `CLASS lcl DEFINITION.
