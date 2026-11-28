@@ -7,6 +7,7 @@ import {Identifier} from "../4_file_information/_identifier";
 import {IMethodDefinition} from "./_method_definition";
 import {ReferenceType} from "../5_syntax/_reference";
 import {SyntaxInput, syntaxIssue} from "../5_syntax/_syntax_input";
+import {findListedSuperclass} from "../5_syntax/_exception_order";
 
 export class MethodDefinition extends Identifier implements IMethodDefinition {
   private readonly visibility: Visibility;
@@ -70,10 +71,19 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
 
     this.raising = [];
     this.checkRaisingParameter(node, input);
+    const listed = new Set<string>();
     for (const r of node.findDirectExpression(Expressions.MethodDefRaising)?.findAllExpressions(Expressions.ClassName) || []) {
       const token = r.getFirstToken();
       const name = token.getStr();
       this.raising.push(name);
+      // a subclass must be listed before its super classes, like the classes of the CATCH statements of a TRY
+      const superclass = findListedSuperclass(name, listed, input.scope);
+      if (superclass !== undefined) {
+        const message = `The exception class ${name.toUpperCase()} cannot be declared after its superclass ${superclass}`
+          + " in the RAISING clause";
+        input.issues.push(syntaxIssue(input, token, message));
+      }
+      listed.add(name.toUpperCase());
       const clas = input.scope.findClassDefinition(name);
       if (clas) {
         input.scope.addReference(token, clas, ReferenceType.ObjectOrientedReference, input.filename, {ooName: name.toUpperCase(), ooType: "CLAS"});

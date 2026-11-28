@@ -203,3 +203,91 @@ describe("syntax.ts, CATCH of a subclass after the CATCH of its superclass", () 
   });
 
 });
+
+describe("syntax.ts, RAISING order, subclass before superclass", () => {
+
+  const exceptions = `
+CLASS cx_root DEFINITION.
+ENDCLASS.
+CLASS cx_root IMPLEMENTATION.
+ENDCLASS.
+
+CLASS cx_static_check DEFINITION INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_static_check IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcx_error DEFINITION INHERITING FROM cx_static_check.
+ENDCLASS.
+
+CLASS lcx_error IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcx_msg DEFINITION INHERITING FROM lcx_error.
+ENDCLASS.
+
+CLASS lcx_msg IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcx_other DEFINITION INHERITING FROM cx_static_check.
+ENDCLASS.
+
+CLASS lcx_other IMPLEMENTATION.
+ENDCLASS.
+`;
+
+  it("error, subclass after its superclass", () => {
+    const abap = `${exceptions}
+CLASS lcl_test DEFINITION.
+  PUBLIC SECTION.
+* subclass before superclass: expected OK
+    METHODS ok
+      RAISING
+        lcx_msg
+        lcx_error.
+* subclass after its superclass: expected syntax error
+    METHODS bad
+      RAISING
+        lcx_error
+        lcx_msg.
+ENDCLASS.
+
+CLASS lcl_test IMPLEMENTATION.
+  METHOD ok.
+  ENDMETHOD.
+
+  METHOD bad.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  TRY.
+      NEW lcl_test( )->bad( ).
+    CATCH lcx_error.
+  ENDTRY.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal(
+      "The exception class LCX_MSG cannot be declared after its superclass LCX_ERROR in the RAISING clause");
+    const expectedRow = abap.split("\n").lastIndexOf("        lcx_msg.") + 1;
+    expect(issues[0].getStart().getRow()).to.equal(expectedRow);
+  });
+
+  it("error, interface method, RESUMABLE", () => {
+    const issues = runProgram(`${exceptions}
+INTERFACE lif.
+  METHODS bad RAISING RESUMABLE(lcx_error) lcx_msg.
+ENDINTERFACE.`);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("LCX_MSG cannot be declared after its superclass LCX_ERROR");
+  });
+
+  it("ok, unrelated and void classes", () => {
+    const issues = runProgram(`${exceptions}
+INTERFACE lif.
+  METHODS run RAISING lcx_other lcx_error cx_sy_arithmetic_error cx_sy_zerodivide.
+ENDINTERFACE.`);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+});
