@@ -19,6 +19,12 @@ const tests = [
 
   `CONVERT UTCLONG val INTO DATE DATA(dat) TIME DATA(tim) DAYLIGHT SAVING TIME DATA(dst) TIME ZONE 'EST'.`,
   `CONVERT DATE dat TIME tim DAYLIGHT SAVING TIME 'X' TIME ZONE 'EST' INTO UTCLONG DATA(time_stamp).`,
+  `CONVERT UTCLONG ls_foo-ref->stamp
+    INTO DATE <ls_bar>-date
+    TIME <ls_bar>-time
+    FRACTIONAL SECONDS DATA(frac)
+    DAYLIGHT SAVING TIME DATA(dst)
+    TIME ZONE sy-zonlo.`,
 ];
 
 statementType(tests, "CONVERT", Statements.Convert);

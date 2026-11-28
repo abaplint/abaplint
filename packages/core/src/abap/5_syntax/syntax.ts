@@ -18,6 +18,7 @@ import {Types} from "./structures/types";
 import {Statics} from "./structures/statics";
 import {Constants} from "./structures/constants";
 import {Cleanup} from "./structures/cleanup";
+import {Case as CaseStructure} from "./structures/case";
 import {Try} from "./structures/try";
 import {LoopGroupBy} from "./expressions/loop_group_by";
 import {ClassDefinition} from "../types/class_definition";
@@ -577,6 +578,8 @@ export class SyntaxLogic {
       Cleanup.runSyntax(node, input);
     } else if (stru instanceof Structures.Try) {
       Try.runSyntax(node, input);
+    } else if (stru instanceof Structures.Case) {
+      CaseStructure.runSyntax(node, input);
     } else if (stru instanceof Structures.Method) {
       this.currentMethod = node;
     }
