@@ -1199,6 +1199,66 @@ DATA(result) = lines( FILTER #( cells USING KEY key_alive WHERE alive = abap_tru
     expect(issues.length).to.equals(0);
   });
 
+  it("RAISE EVENT, EXPORTING parameter not type-compatible", () => {
+    const abap = `
+TYPES ty_value TYPE c LENGTH 128.
+
+CLASS lcl_sender DEFINITION.
+  PUBLIC SECTION.
+    EVENTS onf4
+      EXPORTING
+        VALUE(e_fieldvalue) TYPE ty_value OPTIONAL.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_sender IMPLEMENTATION.
+  METHOD run.
+    DATA lv_text TYPE string.
+    lv_text = \`hello\`.
+    RAISE EVENT onf4 EXPORTING e_fieldvalue = lv_text.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  NEW lcl_sender( )->run( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("E_FIELDVALUE");
+    expect(issues[0].getStart().getRow()).to.equal(16);
+  });
+
+  it("RAISE EVENT, EXPORTING parameters, ok", () => {
+    const abap = `
+TYPES ty_value TYPE c LENGTH 128.
+
+INTERFACE lif.
+  EVENTS changed EXPORTING VALUE(iv_count) TYPE i.
+ENDINTERFACE.
+
+CLASS lcl_sender DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    EVENTS onf4
+      EXPORTING
+        VALUE(e_fieldvalue) TYPE ty_value OPTIONAL.
+    CLASS-EVENTS static_event EXPORTING VALUE(iv_text) TYPE string.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_sender IMPLEMENTATION.
+  METHOD run.
+    DATA lv_value TYPE ty_value.
+    RAISE EVENT onf4 EXPORTING e_fieldvalue = lv_value.
+    RAISE EVENT onf4 EXPORTING e_fieldvalue = 'literal'.
+    RAISE EVENT onf4.
+    RAISE EVENT static_event EXPORTING iv_text = |hello { lv_value }|.
+    RAISE EVENT lif~changed EXPORTING iv_count = 2.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("event handler parameter", () => {
     const abap = "CLASS zcl_moo DEFINITION CREATE PUBLIC.\n" +
       "  PUBLIC SECTION.\n" +
