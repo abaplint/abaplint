@@ -3,7 +3,7 @@ import {DDIC} from "../../src/ddic";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {DataDefinition} from "../../src/objects";
-import {CharacterType, IntegerType, PackedType, StructureType, UnknownType, VoidType} from "../../src/abap/types/basic";
+import {CharacterType, DateType, IntegerType, PackedType, StructureType, UnknownType, VoidType} from "../../src/abap/types/basic";
 
 describe("Object: DDLS - Data Definition", () => {
 
@@ -933,6 +933,129 @@ define view entity zi_test_person as select from ztest_person
       expect(type).to.be.instanceof(VoidType);
       expect((type as VoidType).getVoided()).to.equal("DDLS:fieldname:ZI_TEST_PERSON");
     }
+  });
+
+  it("$parameters, type is determined from the parameter definition", async () => {
+    const source = `
+define view entity zi_test_person
+  with parameters
+    @EndUserText.label: 'Code'
+    p_code   : abap.char( 4 ),
+    p_amount : abap.dec(15,2),
+    p_count  : abap.int4,
+    p_id     : zperson_id,
+    p_weird  : abap.nonsense
+  as select from ztest_person
+{
+    key id as PersonId,
+    $parameters.p_code   as Code,
+    $parameters.p_amount as Amount,
+    $parameters.P_COUNT  as Count,
+    $parameters.p_id     as ParamId,
+    $parameters.p_weird  as Weird,
+    $parameters.p_nope   as Nope
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", source),
+      personDtel,
+      personTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON") as DataDefinition;
+    expect(ddls.hasParserError()).to.equal(undefined);
+    expect(ddls.getParsedData()!.parameters.map(p => p.name)).to.deep.equal(["p_code", "p_amount", "p_count", "p_id", "p_weird"]);
+
+    const parsed = ddls.parseType(reg) as StructureType;
+    expect(parsed.getComponents().length).to.equal(7);
+
+    const code = parsed.getComponentByName("Code");
+    expect(code).to.be.instanceof(CharacterType);
+    expect((code as CharacterType).getLength()).to.equal(4);
+
+    const amount = parsed.getComponentByName("Amount");
+    expect(amount).to.be.instanceof(PackedType);
+    expect((amount as PackedType).getDecimals()).to.equal(2);
+
+    expect(parsed.getComponentByName("Count")).to.be.instanceof(IntegerType);
+
+    const paramId = parsed.getComponentByName("ParamId");
+    expect(paramId).to.be.instanceof(IntegerType);
+    expect(paramId?.getQualifiedName()).to.equal("ZPERSON_ID");
+
+    for (const name of ["Weird", "Nope"]) {
+      const type = parsed.getComponentByName(name);
+      expect(type).to.be.instanceof(VoidType);
+      expect((type as VoidType).getVoided()).to.equal("DDLS:parameter:ZI_TEST_PERSON");
+    }
+  });
+
+  it("$session, type is determined from the session variable", async () => {
+    const source = `
+define view entity zi_test_person as select from ztest_person
+{
+    key id as PersonId,
+    $session.system_date     as Today,
+    $session.user            as UserName,
+    $session.client          as Client,
+    $session.system_language as Language,
+    $session.something_else  as SomethingElse
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", source),
+      personDtel,
+      personTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON") as DataDefinition;
+    expect(ddls.hasParserError()).to.equal(undefined);
+    const parsed = ddls.parseType(reg) as StructureType;
+
+    expect(parsed.getComponentByName("Today")).to.be.instanceof(DateType);
+    const user = parsed.getComponentByName("UserName");
+    expect(user).to.be.instanceof(CharacterType);
+    expect((user as CharacterType).getLength()).to.equal(12);
+    expect((parsed.getComponentByName("Client") as CharacterType).getLength()).to.equal(3);
+    expect((parsed.getComponentByName("Language") as CharacterType).getLength()).to.equal(1);
+
+    const other = parsed.getComponentByName("SomethingElse");
+    expect(other).to.be.instanceof(VoidType);
+    expect((other as VoidType).getVoided()).to.equal("DDLS:session:ZI_TEST_PERSON");
+  });
+
+  it("path via association exposed by the source, name without underscore", async () => {
+    const base = `
+define view entity zi_test_person as select from ztest_person
+  association [0..1] to ztest_address as address on address.person_id = $projection.PersonId
+{
+    key id as PersonId,
+    name   as Name,
+    address
+}`;
+    const consumer = `
+define view entity zi_test_person_city as select from zi_test_person
+{
+    key PersonId,
+    Name,
+    address.city as City
+}`;
+    const reg = new Registry().addFiles([
+      new MemoryFile("zi_test_person.ddls.asddls", base),
+      new MemoryFile("zi_test_person_city.ddls.asddls", consumer),
+      personDtel,
+      personTabl,
+      addressTabl,
+    ]);
+    await reg.parseAsync();
+    const ddls = reg.getObject("DDLS", "ZI_TEST_PERSON_CITY") as DataDefinition;
+    expect(ddls.hasParserError()).to.equal(undefined);
+    const parsed = ddls.parseType(reg) as StructureType;
+    expect(parsed.getComponents().length).to.equal(3);
+
+    expect(parsed.getComponentByName("PersonId")).to.be.instanceof(IntegerType);
+    expect(parsed.getComponentByName("Name")).to.be.instanceof(CharacterType);
+    const city = parsed.getComponentByName("City");
+    expect(city).to.be.instanceof(VoidType);
+    expect((city as VoidType).getVoided()).to.equal("DDLS:association");
   });
 
   describe("description", () => {

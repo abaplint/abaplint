@@ -6,7 +6,7 @@ import {CDSDetermineTypes} from "../cds/cds_determine_types";
 import {CDSLexer} from "../cds/cds_lexer";
 import {defaultRelease} from "../version";
 import {CDSParser} from "../cds/cds_parser";
-import {CDSAnnotate, CDSAnnotation, CDSAs, CDSAssociation, CDSDefineProjection, CDSElement, CDSName, CDSPrefixedName, CDSRelation, CDSSelect, CDSSource} from "../cds/expressions";
+import {CDSAnnotate, CDSAnnotation, CDSAs, CDSAssociation, CDSDefineProjection, CDSElement, CDSName, CDSPrefixedName, CDSRelation, CDSSelect, CDSSource, CDSType, CDSWithParameters} from "../cds/expressions";
 import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 import {IParseResult} from "./_iobject";
@@ -21,6 +21,8 @@ export type ParsedDataDefinition = {
   fields: {key: boolean, name: string, nameInSource?: string, prefix: string, annotations: string[]}[];
   sources: {name: string, as: string | undefined}[];
   associations: {name: string, as: string | undefined}[],
+  /** parameters from "WITH PARAMETERS", type is the type as written, eg. "abap.char(4)" or a data element name */
+  parameters: {name: string, type: string}[];
   relations: {name: string, as: string | undefined}[];
   tree: ExpressionNode | undefined;
 };
@@ -126,6 +128,7 @@ export class DataDefinition extends AbstractObject {
       sources: [],
       relations: [],
       associations: [],
+      parameters: [],
       tree: undefined,
     };
 
@@ -144,6 +147,7 @@ export class DataDefinition extends AbstractObject {
         }
       }
       this.findSourcesAndRelations(this.parsedData.tree);
+      this.findParameters(this.parsedData.tree);
       this.findFieldNames(this.parsedData.tree);
     } else {
       this.parserError = true;
@@ -207,6 +211,18 @@ export class DataDefinition extends AbstractObject {
       }
     }
     return typeof ddtext === "string" && ddtext !== "" ? ddtext : undefined;
+  }
+
+  private findParameters(tree: ExpressionNode) {
+    let name: string | undefined = undefined;
+    for (const c of tree.findFirstExpression(CDSWithParameters)?.getChildren() || []) {
+      if (c.get() instanceof CDSName) {
+        name = c.concatTokens();
+      } else if (c.get() instanceof CDSType && name !== undefined) {
+        this.parsedData!.parameters.push({name, type: c.concatTokens()});
+        name = undefined;
+      }
+    }
   }
 
   private findFieldNames(tree: ExpressionNode) {

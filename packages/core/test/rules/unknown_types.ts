@@ -2668,6 +2668,38 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("DDLS commented not found");
   });
 
+  it("DDLS with $parameters, $session and path via association exposed by the source", () => {
+    const ddlsBase = `
+define view entity zi_flight_base as select from sflight
+  association [1] to scarr as carrier on carrier.carrid = $projection.carrid
+{
+  key carrid,
+  key connid,
+  carrier
+}`;
+    const ddlsFlight = `
+define view entity zi_flight
+  with parameters p_code : abap.char( 4 )
+  as select from zi_flight_base
+{
+  key carrid,
+  key connid,
+  $parameters.p_code   as Code,
+  $session.system_date as Today,
+  carrier.carrname     as CarrierName
+}`;
+    const abap = `
+DATA ls_flight TYPE zi_flight.
+ls_flight-code = 'ABCD'.`;
+    let issues = runMulti([
+      {filename: "zi_flight_base.ddls.asddls", contents: ddlsBase},
+      {filename: "zi_flight.ddls.asddls", contents: ddlsFlight},
+      {filename: "zfoobar.prog.abap", contents: abap},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("PERFORM TABLES, LIKE structure component OCCURS WITH HEADER LINE", () => {
     const abap = `
 DATA: BEGIN OF zvbeln,
