@@ -16,8 +16,10 @@ export class FormParamType extends Expression {
     const tableKey = seq("WITH", failCombinator());
     const lengthDecimals = seq(alt("LENGTH", "DECIMALS"), Integer, failCombinator());
 
+    // "TYPE STANDARD TABLE OF i" is not a typing, the table is generic and "OF" and "i" are
+    // read as two more untyped parameters, but OF REF TO and a table key are syntax errors
     const tabseq = seq(table,
-                       optPrio(seq("OF", altPrio(seq("REF TO", failCombinator()), TypeName))),
+                       optPrio(seq("OF", altPrio(seq("REF TO", failCombinator()), seq(TypeName, tableKey)))),
                        optPrio(tableKey));
 
     const ret = seq(optPrio(alt("REF TO", "LINE OF")),

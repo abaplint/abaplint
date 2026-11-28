@@ -22595,6 +22595,29 @@ ENDCLASS.`;
   }
 });
 
+describe("syntax.ts, FORM parameter TYPE SORTED TABLE OF", () => {
+  it("ok, OF and the type name are two more untyped parameters", () => {
+    const issues = runProgram(`REPORT zraising_repro.
+
+FORM show USING it_sorted TYPE SORTED TABLE of ty_order.
+  CLEAR of.
+  CLEAR ty_order.
+ENDFORM.`);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("ok, the name after OF is a parameter, also when it is a built-in type", () => {
+    const issues = runProgram(`REPORT zraising_repro.
+
+FORM show USING it_sorted TYPE SORTED TABLE of i.
+  DATA lv_int TYPE i.
+  READ TABLE it_sorted INDEX 1 INTO lv_int.
+  lv_int = i.
+ENDFORM.`);
+    expect(issues.length).to.equals(0);
+  });
+});
+
 describe("syntax.ts, actual parameter compatible with a fully typed formal parameter, #4676", () => {
   function build(call: string): string {
     return `CLASS lcl DEFINITION.
