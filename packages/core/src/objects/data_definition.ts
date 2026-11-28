@@ -7,6 +7,7 @@ import {CDSLexer} from "../cds/cds_lexer";
 import {defaultRelease} from "../version";
 import {CDSParser} from "../cds/cds_parser";
 import {CDSAnnotate, CDSAnnotation, CDSAs, CDSAssociation, CDSDefineProjection, CDSElement, CDSName, CDSPrefixedName, CDSRelation, CDSSelect, CDSSource} from "../cds/expressions";
+import {readSourceEntity} from "../cds/_cds_nodes";
 import {IRegistry} from "../_iregistry";
 import {AbstractObject} from "./_abstract_object";
 import {IParseResult} from "./_iobject";
@@ -268,9 +269,18 @@ export class DataDefinition extends AbstractObject {
     }
   }
 
+  /** the name of the entity, a path expression as written, eg. "I_FOO._ASSOC", as its target is not resolved */
+  private sourceName(source: ExpressionNode): string {
+    const entity = readSourceEntity(source);
+    if (entity !== undefined && entity.kind !== "path") {
+      return entity.name.toUpperCase();
+    }
+    return source.getFirstChild()?.concatTokens().toUpperCase().replace(/ /g, "") || "ERROR";
+  }
+
   private findSourcesAndRelations(tree: ExpressionNode) {
     for (const e of tree.findAllExpressions(CDSSource)) {
-      const name = e.getFirstChild()?.concatTokens().toUpperCase().replace(/ /g, "") || "ERROR";
+      const name = this.sourceName(e);
       const as = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName)?.concatTokens().toUpperCase();
       this.parsedData!.sources.push({name, as});
     }

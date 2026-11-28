@@ -3,6 +3,7 @@ import {CDSLexer} from "../../src/cds/cds_lexer";
 import {CDSParser} from "../../src/cds/cds_parser";
 import {ExpressionNode} from "../../src/abap/nodes";
 import {MemoryFile} from "../../src/files/memory_file";
+import {CDSFunction, CDSParametersSelect, CDSPrefixedName, CDSSource} from "../../src/cds/expressions";
 
 describe("CDS Parser", () => {
 
@@ -3975,4 +3976,35 @@ describe("CDS Parser — post-annotations on elements", () => {
     const parsed = parseView(`extend view entity ztab1 with composition of exact one to many ztab2 as _assoc1 { _assoc1 }`);
     expect(parsed).to.be.instanceof(ExpressionNode);
   });
+});
+
+describe("CDS Parser — data sources", () => {
+  // [source, parsed as an entity path, parameters directly after the first name]
+  const cases: [string, boolean, boolean][] = [
+    ["zsource", true, false],
+    ["zsource( p_key : 'A' )", true, true],
+    ["zi_source( p_key : 'A' )", true, true],
+    ["zi_source( p_key => 'A' )", true, true],
+    ["/abc/i_foo( p_key : $session.user )", true, true],
+    ["series_generate_date( step: 30, from_value: abap.datn'20200101', to_value: abap.datn'20220102' )", true, true],
+    ["zi_source( p_key : 'A' )[ field = 'B' ]", true, true],
+    ["zsource( p_key : 'A' )[1: field = 'B']", true, true],
+    ["zi_source( p_key : 'A' )[1: field = 'B']", true, true],
+    ["zsource( p_key : 'A' )._assoc", true, true],
+    ["zi_source( p_key : 'A' )._assoc", true, true],
+    ["zsource._assoc", true, false],
+    ["zsource._assoc( p_key : 'A' )", true, false],
+    ["zi_source( p_key => interval 1 day )", false, false],
+    ["series_generate_date( date_start => :p_from, increment => interval 1 day )", false, false],
+  ];
+  for (const [source, isEntity, hasParameters] of cases) {
+    it(source, () => {
+      const cds = `define view entity zi_bar as select from ${source} as s { key s.field }`;
+      const parsed = new CDSParser().parse(new MemoryFile("zi_bar.ddls.asddls", cds));
+      expect(parsed).to.be.instanceof(ExpressionNode);
+      const first = parsed!.findFirstExpression(CDSSource)!.getFirstChild()!;
+      expect(first.get()).to.be.instanceof(isEntity ? CDSPrefixedName : CDSFunction);
+      expect(first.getChildren()[1]?.get() instanceof CDSParametersSelect).to.equal(hasParameters);
+    });
+  }
 });

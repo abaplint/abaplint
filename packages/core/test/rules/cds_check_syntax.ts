@@ -858,4 +858,40 @@ define view ZI_RoleSpace as select from zrole_space_tab {
       expect(issues.length).to.equal(0);
     });
   });
+  describe("sources with parameters", () => {
+    const parameterSource = new MemoryFile("zi_source.ddls.asddls", `define view entity zi_source
+  with parameters p_key : abap.char(4)
+  as select from mara { key matnr }`);
+
+    it("reports a field not found in a source with parameters and a bare alias", async () => {
+      const issues = await findIssues(`define view entity ZTARGET as select from zi_source( p_key : 'A' ) o {
+  key o.matnr,
+  o.missing_field
+}`, false, [parameterSource]);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.equal('CDS field "missing_field" not found in "zi_source"');
+    });
+
+    it("arguments which are not parameter passing are not checked", async () => {
+      const issues = await findIssues(`define view entity ZTARGET as select from zi_source( p_other => interval 1 day ) {
+  key matnr
+}`, false, [parameterSource]);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("a call which is not parameter passing is not looked up as a source", async () => {
+      const issues = await findIssues(`define view entity ZTARGET as select from zi_missing( p_other => interval 1 day ) {
+  key matnr
+}`);
+      expect(issues.length).to.equal(0);
+    });
+
+    it("reports a source with parameters which does not exist", async () => {
+      const issues = await findIssues(`define view entity ZTARGET as select from zi_missing( p_key : 'A' ) {
+  key matnr
+}`);
+      expect(issues.length).to.equal(1);
+      expect(issues[0].getMessage()).to.equal('CDS source "zi_missing" not found');
+    });
+  });
 });

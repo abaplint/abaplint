@@ -1028,4 +1028,39 @@ define view entity ZI_TEST as select from tadir { key pgmid, this is not CDS }`;
       expect(await getDescription(source, "From XML", true)).to.equal("From XML");
     });
   });
+  describe("sources", () => {
+    async function parse(source: string, extra: MemoryFile[] = []) {
+      const reg = new Registry().addFiles([new MemoryFile("zi_params.ddls.asddls", source), ...extra]);
+      await reg.parseAsync();
+      const ddls = reg.getObject("DDLS", "ZI_PARAMS") as DataDefinition;
+      return {ddls, reg};
+    }
+
+    it("source name of a path expression is written out, its target is not resolved", async () => {
+      const {ddls} = await parse(`define view entity zi_params as select from zi_head._assoc as o { key o.matnr }`);
+      expect(ddls.listSources()).to.deep.equal([{name: "ZI_HEAD._ASSOC", as: "O"}]);
+    });
+
+    it("source name of a function call", async () => {
+      const {ddls} = await parse(`define view entity zi_params with parameters p_from : abap.dats
+  as select from series_generate_date( date_start => :p_from, increment => interval 1 day ) as s { key s.element as date_val }`);
+      expect(ddls.listSources()).to.deep.equal([{name: "SERIES_GENERATE_DATE", as: "S"}]);
+    });
+
+    for (const source of ["zi_other( p_key : $parameters.p_key )", "zother( p_key : $parameters.p_key )"]) {
+      it("source name without its parameters: " + source, async () => {
+        const name = source.substring(0, source.indexOf("(")).trim();
+        const other = new MemoryFile(name + ".ddls.asddls", `define view entity ${name}
+  with parameters p_key : abap.char(4)
+  as select from ztest_person { key name as key_field }`);
+        const {ddls, reg} = await parse(`define view entity zi_params
+  with parameters p_key : abap.char(4)
+  as select from ${source} as o { key o.key_field }`, [other, personTabl, personDtel]);
+        expect(ddls.listSources()).to.deep.equal([{name: name.toUpperCase(), as: "O"}]);
+        const type = ddls.parseType(reg) as StructureType;
+        expect(type.getComponentByName("key_field")).to.be.instanceOf(CharacterType);
+        expect((type.getComponentByName("key_field") as CharacterType).getLength()).to.equal(40);
+      });
+    }
+  });
 });
