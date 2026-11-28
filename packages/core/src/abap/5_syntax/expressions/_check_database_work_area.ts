@@ -9,7 +9,7 @@ import {DatabaseTableSource} from "./database_table";
 type Bounds = {min: number, max: number, align: number};
 
 // byte length of a flat type in a unicode system, as a lower and an upper bound:
-// IntegerType also stands for INT1 and INT2, and padding is left out of the lower bound
+// padding is left out of the lower bound
 function bounds(type: AbstractType): Bounds | undefined {
   if (type instanceof Basic.CharacterType || type instanceof Basic.NumericType) {
     return {min: type.getLength() * 2, max: type.getLength() * 2, align: 2};
@@ -18,7 +18,8 @@ function bounds(type: AbstractType): Bounds | undefined {
   } else if (type instanceof Basic.TimeType) {
     return {min: 12, max: 12, align: 2};
   } else if (type instanceof Basic.IntegerType) {
-    return {min: 1, max: 4, align: 4};
+    const bytes = type.getBytes();
+    return {min: bytes, max: bytes, align: bytes};
   } else if (type instanceof Basic.Integer8Type || type instanceof Basic.FloatType
       || type instanceof Basic.DecFloat16Type || type instanceof Basic.UTCLongType) {
     return {min: 8, max: 8, align: 8};

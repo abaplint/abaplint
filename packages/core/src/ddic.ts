@@ -435,7 +435,9 @@ export class DDIC {
       case "DATS":
         return new Types.DateType(extra); //YYYYMMDD
       case "INT1":
+        return Types.IntegerType.get(extra, 1);
       case "INT2":
+        return Types.IntegerType.get(extra, 2);
       case "INT4":
         return Types.IntegerType.get(extra);
       case "INT8":
