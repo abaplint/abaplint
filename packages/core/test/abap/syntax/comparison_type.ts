@@ -1,5 +1,6 @@
 import {expect} from "chai";
 import {runProgram} from "./syntax";
+import {Release} from "../../../src/version";
 
 const program = (body: string): string => `
 REPORT zcompare.
@@ -20,7 +21,7 @@ DATA u2 TYPE utclong.
 START-OF-SELECTION.
 ${body}`;
 
-const issuesOf = (body: string) => runProgram(program(body)).map(i => i.getMessage());
+const issuesOf = (body: string) => runProgram(program(body), undefined, Release.v758).map(i => i.getMessage());
 
 describe("syntax.ts, comparison of types without a comparison type", () => {
   const message = "Incompatible types for comparison";
