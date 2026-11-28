@@ -1,4 +1,4 @@
-import {statementType, statementVersionFail} from "../_utils";
+import {statementExpectFail, statementType, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Release, LanguageVersion} from "../../../src";
 
@@ -123,3 +123,11 @@ const versionsFail = [
 ];
 
 statementVersionFail(versionsFail, "SUBMIT");
+
+const fails = [
+  `SUBMIT zgg_ex_020
+    USING SELECTION-SET 'STANDARD'
+    WITH s_carr IN VALUE #( ( sign = 'I' option = 'EQ' low = 'LH' ) )
+    AND RETURN.`,
+];
+statementExpectFail(fails, "SUBMIT");

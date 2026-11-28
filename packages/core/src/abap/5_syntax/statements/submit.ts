@@ -13,6 +13,10 @@ export class Submit implements StatementSyntax {
       Source.runSyntax(s, input);
     }
 
+    for (const s of node.findDirectExpressions(Expressions.SimpleSource4)) {
+      Source.runSyntax(s, input);
+    }
+
     for (const t of node.findDirectExpressions(Expressions.Target)) {
       Target.runSyntax(t, input);
     }
