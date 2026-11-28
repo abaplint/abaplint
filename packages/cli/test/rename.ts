@@ -390,4 +390,34 @@ ENDINTERFACE.`;
     ]);
   });
 
+  it("output folder, configuration in a sub folder, the files are above it", async () => {
+    const intf = `INTERFACE zif_intf PUBLIC.
+ENDINTERFACE.`;
+    // like abaplint.json in cfg/lint with global.files = "/../../src/**/*.*"
+    const root = process.platform === "win32" ? "C:/abaplint_rename_above_test" : "/abaplint_rename_above_test";
+    const base = root + "/cfg/lint";
+
+    const file1 = new MemoryFile(root + "/src/sub/zif_intf.intf.abap", intf);
+    const reg = new Registry().addFiles([file1]).parse();
+
+    const jsonFiles: any = {};
+    jsonFiles[file1.getFilename()] = file1.getRaw();
+    const volume = memfs.Volume.fromJSON(jsonFiles);
+    const mockFS = memfs.createFsFromVolume(volume);
+
+    const config = reg.getConfig().get();
+    config.rename = {"output": "out", "patterns": [{"type": "INTF", "oldName": "zif_intf", "newName": "yif_intf"}]};
+
+    new Rename(reg).run(config, base, mockFS, true);
+
+    // memfs drops the drive letter
+    const normalize = (f: string) => f.replace(/\\/g, "/").replace(/^[A-Za-z]:/, "").toLowerCase();
+    const written = Object.keys(volume.toJSON()).map(normalize).sort();
+    // not root + "/src/sub/yif_intf.intf.abap", which is outside the output folder
+    expect(written).to.deep.equal([
+      normalize(root + "/cfg/lint/out/src/sub/yif_intf.intf.abap"),
+      normalize(root + "/src/sub/zif_intf.intf.abap"),
+    ]);
+  });
+
 });
