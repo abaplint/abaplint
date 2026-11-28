@@ -1,5 +1,6 @@
 import {Issue} from "@abaplint/core";
 import {IFormatter} from "./_iformatter";
+import {escapeAttribute} from "./_xml";
 import {js2xml} from "xml-js";
 
 export class Checkstyle implements IFormatter {
@@ -24,14 +25,14 @@ export class Checkstyle implements IFormatter {
       for (const issue of issues) {
         outputObj.checkstyle.file.push({
           _attributes: {
-            name: issue.getFilename(),
+            name: escapeAttribute(issue.getFilename()),
           },
           error: {
             _attributes: {
               line: issue.getStart().getRow(),
               column: issue.getStart().getCol(),
               severity: issue.getSeverity().toString(),
-              message: issue.getMessage(),
+              message: escapeAttribute(issue.getMessage()),
               source: "abaplint",
             },
           },
