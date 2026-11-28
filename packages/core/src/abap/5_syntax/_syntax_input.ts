@@ -22,6 +22,8 @@ export type SyntaxInput = {
   inLoop?: boolean,
   /** the statement is inside any loop structure, LOOP, DO, WHILE, SELECT etc. */
   inAnyLoop?: boolean,
+  /** of the TRY, CATCH and CLEANUP blocks around the statement, the innermost one is a CATCH block */
+  inCatch?: boolean,
 };
 
 export function syntaxIssue(input: SyntaxInput, token: AbstractToken, message: string, fix?: IEdit) {
