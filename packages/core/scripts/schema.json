@@ -1528,6 +1528,23 @@
       },
       "type": "object"
     },
+    "DefinitionsInModuleConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "DefinitionsTopConf": {
       "additionalProperties": false,
       "properties": {
@@ -3119,6 +3136,17 @@
                 }
               ],
               "description": "Database operation in LOOP/DO/WHILE\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/db_operation_in_loop"
+            },
+            "definitions_in_module": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DefinitionsInModuleConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that DATA, TYPES and CONSTANTS are not defined inside MODULE ... ENDMODULE\nTags: SingleFile\nhttps://rules.abaplint.org/definitions_in_module"
             },
             "definitions_top": {
               "anyOf": [
@@ -5825,6 +5853,17 @@
                 }
               ],
               "description": "Database operation in LOOP/DO/WHILE\nTags: SingleFile, Performance\nhttps://rules.abaplint.org/db_operation_in_loop"
+            },
+            "definitions_in_module": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DefinitionsInModuleConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks that DATA, TYPES and CONSTANTS are not defined inside MODULE ... ENDMODULE\nTags: SingleFile\nhttps://rules.abaplint.org/definitions_in_module"
             },
             "definitions_top": {
               "anyOf": [
