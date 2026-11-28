@@ -4682,6 +4682,17 @@
               ],
               "description": "Checks that statements start at tabstops.\nTags: Whitespace, Styleguide, SingleFile\nhttps://rules.abaplint.org/start_at_tab"
             },
+            "statement_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StatementLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects statements exceeding the provided maximum length.\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/statement_length"
+            },
             "static_call_via_instance": {
               "anyOf": [
                 {
@@ -7387,6 +7398,17 @@
                 }
               ],
               "description": "Checks that statements start at tabstops.\nTags: Whitespace, Styleguide, SingleFile\nhttps://rules.abaplint.org/start_at_tab"
+            },
+            "statement_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StatementLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Detects statements exceeding the provided maximum length.\nTags: Syntax, SingleFile\nhttps://rules.abaplint.org/statement_length"
             },
             "static_call_via_instance": {
               "anyOf": [
@@ -11047,6 +11069,30 @@
           "description": "Problem severity"
         }
       },
+      "type": "object"
+    },
+    "StatementLengthConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "maxLength": {
+          "description": "Maximum length of a statement in characters, measured on the condensed statement",
+          "type": "number"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "required": [
+        "maxLength"
+      ],
       "type": "object"
     },
     "StaticCallViaInstanceConf": {

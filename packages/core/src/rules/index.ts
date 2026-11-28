@@ -202,6 +202,7 @@ export * from "./sql_escape_host_variables";
 export * from "./sql_value_conversion";
 export * from "./stale_subrc";
 export * from "./start_at_tab";
+export * from "./statement_length";
 export * from "./static_call_via_instance";
 export * from "./strict_sql";
 export * from "./subrc_after_assign";
