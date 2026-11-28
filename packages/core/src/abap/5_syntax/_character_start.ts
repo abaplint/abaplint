@@ -6,6 +6,7 @@ import {CharacterType, DataReference, DateType, DecFloat16Type, DecFloat34Type, 
   TableType, TimeType, UTCLongType, VoidType, XStringType} from "../types/basic";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "./_syntax_input";
+import {constantNumber} from "./_constant_operand";
 
 /** The length of the character-like initial part of a flat structure which also has other components:
  * the fields of type c, n, d and t in front of the first other one. A single field of type c, and an
@@ -52,9 +53,9 @@ export function characterStartSubstring(
     const lengthNode = chain.find(c => c.get() instanceof Expressions.FieldLength);
     if (offset === undefined) {
       // the offset is a variable, a static length still has to fit
-      const staticLength = lengthNode instanceof ExpressionNode ? lengthNode.concatTokens().match(/^\((\d+)\)$/) : null;
-      if (staticLength && Number(staticLength[1]) > start) {
-        return error("Length " + staticLength[1]);
+      const fixed = lengthNode instanceof ExpressionNode ? staticLength(lengthNode, input) : undefined;
+      if (fixed !== undefined && fixed > start) {
+        return error("Length " + fixed);
       }
       return new CharacterType(start);
     } else if (offset >= start || (offset > 0 && lengthNode === undefined)) {
@@ -70,6 +71,16 @@ export function characterStartSubstring(
     return new CharacterType(start);
   }
   return length <= start ? new CharacterType(length) : error("Length " + length);
+}
+
+// the value of a length given by a number or a constant
+function staticLength(node: ExpressionNode, input: SyntaxInput): number | undefined {
+  const field = node.findDirectExpression(Expressions.SimpleFieldChain2);
+  if (field) {
+    return constantNumber(field, input);
+  }
+  const number = node.concatTokens().match(/^\((\d+)\)$/)?.[1];
+  return number === undefined ? undefined : Number(number);
 }
 
 function initialPart(structure: StructureType): {length: number, complete: boolean} {
