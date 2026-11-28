@@ -301,6 +301,18 @@ define view entity I_foo1 as projection on I_foo2
     ddls.parseType(reg);
   });
 
+  it("redirected association without blank before redirected", async () => {
+    const source = `define view entity I_foo1 as projection on I_foo2
+{
+  key Field1,
+  _Foo:redirected to I_sdfsd
+}`;
+    const reg = new Registry().addFiles([new MemoryFile("i_foo1.ddls.asddls", source)]);
+    await reg.parseAsync();
+    const ddls = reg.getFirstObject()! as DataDefinition;
+    expect(ddls.getParsedData()?.fields.map(f => [f.name, f.nameInSource])).to.deep.equal([["Field1", "Field1"], ["_Foo", undefined]]);
+  });
+
   it("parse type, union", async () => {
     const source = `
 @Metadata.ignorePropagatedAnnotations: true

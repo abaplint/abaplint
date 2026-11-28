@@ -224,7 +224,8 @@ export class DataDefinition extends AbstractObject {
       let found = e.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
       const list = e.findDirectExpression(CDSPrefixedName)?.findAllExpressions(CDSName);
       if (list !== undefined) {
-        const redirected = e.concatTokens().toUpperCase().includes(" REDIRECTED TO ");
+        const tokens = e.getAllTokens().map(t => t.getStr().toUpperCase());
+        const redirected = tokens.some((t, i) => t === "REDIRECTED" && tokens[i + 1] === "TO");
         if (list.length > 1 && redirected === false) {
           // "prefix.field" is looked up as "field" in "prefix", also when aliased via "as"
           prefix = list[0].concatTokens();

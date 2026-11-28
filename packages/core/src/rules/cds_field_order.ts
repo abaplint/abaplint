@@ -4,7 +4,7 @@ import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {DataDefinition} from "../objects";
-import {CDSSelect, CDSElement, CDSAssociation, CDSComposition, CDSAs, CDSName, CDSRelation} from "../cds/expressions";
+import {CDSSelect, CDSElement, CDSAssociation, CDSComposition, CDSAs, CDSName, CDSPrefixedName, CDSRelation} from "../cds/expressions";
 import {ExpressionNode} from "../abap/nodes/expression_node";
 
 export class CDSFieldOrderConf extends BasicRuleConfig {
@@ -123,10 +123,10 @@ export class CDSFieldOrder implements IRule {
     return names;
   }
 
+  /** the element names an association, also when annotated, with path filter, parameters or a field of the target */
   private isAssociationElement(element: ExpressionNode, associationNames: Set<string>): boolean {
-    const tokens = element.concatTokens().replace(/^(KEY|VIRTUAL)\s+/i, "").trim();
-    const name = tokens.split(/[\s.,:(]+/)[0];
-    return associationNames.has(name.toUpperCase());
+    const name = element.findDirectExpression(CDSPrefixedName)?.findDirectExpression(CDSName);
+    return name !== undefined && associationNames.has(name.concatTokens().replace(/ /g, "").toUpperCase());
   }
 
 }

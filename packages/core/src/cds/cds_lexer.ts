@@ -40,11 +40,12 @@ enum Mode {
 class Result {
   private readonly result: AbstractToken[] = [];
 
+  /** row and col are the position of the first character of the text */
   public add(text: string, row: number, col: number, mode: Mode): string {
     if (text.length > 0) {
       if (mode === Mode.SingleLineComment
           && (text.startsWith("--") || text.startsWith("//"))) {
-        this.result.push(new Comment(new Position(row, col - text.length), text));
+        this.result.push(new Comment(new Position(row, col), text));
       } else {
         this.result.push(new Identifier(new Position(row, col), text));
       }
@@ -61,9 +62,23 @@ export class CDSLexer {
   public static run(file: IFile): AbstractToken[] {
     const result = new Result();
     let mode = Mode.Default;
+    // position of the character "next", 1-based
     let row = 1;
-    let col = 1;
+    let col = 0;
     let build = "";
+    // position of the first character in build
+    let startRow = 1;
+    let startCol = 1;
+    const append = (text: string) => {
+      if (build === "") {
+        startRow = row;
+        startCol = col;
+      }
+      build += text;
+    };
+    const flush = () => {
+      build = result.add(build, startRow, startCol, mode);
+    };
 
     const stream = new Stream(file.getRaw().replace(/\r/g, "").replace(/\u00a0/g, " ").replace(/\u000b/g, " "));
 
@@ -76,8 +91,11 @@ export class CDSLexer {
 
 // string handling
       if (mode === Mode.String) {
-        build += next;
-        if (next === "'" && nextNext === "'") {
+        append(next);
+        if (next === "\n") {
+          row++;
+          col = 0;
+        } else if (next === "'" && nextNext === "'") {
           // escaped single quote (doubled), continue string
           build += stream.takeNext();
           col++;
@@ -90,7 +108,7 @@ export class CDSLexer {
           build += stream.takeNext();
           col++;
         } else if (next === "'") {
-          build = result.add(build, row, col, mode);
+          flush();
           mode = Mode.Default;
         }
         continue;
@@ -98,15 +116,18 @@ export class CDSLexer {
 
 // double-quote string handling
       if (mode === Mode.DoubleQuoteString) {
-        build += next;
-        if (next === "\\" && nextNext === "\"") {
+        append(next);
+        if (next === "\n") {
+          row++;
+          col = 0;
+        } else if (next === "\\" && nextNext === "\"") {
           build += stream.takeNext();
           col++;
         } else if (next === "\"" && nextNext === "\"") {
           build += stream.takeNext();
           col++;
         } else if (next === "\"") {
-          build = result.add(build, row, col, mode);
+          flush();
           mode = Mode.Default;
         }
         continue;
@@ -115,21 +136,21 @@ export class CDSLexer {
 // single line comment handling
       if (mode === Mode.SingleLineComment) {
         if (next === "\n") {
-          build = result.add(build, row, col, mode);
+          flush();
           mode = Mode.Default;
         } else {
-          build += next;
+          append(next);
           continue;
         }
       } else if (mode === Mode.Default && next === "/" && nextNext === "/") {
         mode = Mode.SingleLineComment;
-        build = result.add(build, row, col, mode);
-        build += next;
+        flush();
+        append(next);
         continue;
       } else if (mode === Mode.Default && next === "-" && nextNext === "-") {
         mode = Mode.SingleLineComment;
-        build = result.add(build, row, col, mode);
-        build += next;
+        flush();
+        append(next);
         continue;
       }
 
@@ -137,13 +158,14 @@ export class CDSLexer {
       if (mode === Mode.MultiLineComment) {
         if (next === "\n") {
           row++;
+          col = 0;
         } else if (prev === "*" && next === "/") {
           mode = Mode.Default;
         }
         continue;
       } else if (mode === Mode.Default && next === "/" && nextNext === "*") {
         mode = Mode.MultiLineComment;
-        build = result.add(build, row, col, mode);
+        flush();
         stream.takeNext(); // consume the '*' so it doesn't become prev for '*/' detection
         col++;
         continue;
@@ -151,21 +173,21 @@ export class CDSLexer {
 
       switch (next) {
         case "'":
-          build = result.add(build, row, col, mode);
+          flush();
           mode = Mode.String;
-          build += next;
+          append(next);
           break;
         case "\"":
-          build = result.add(build, row, col, mode);
+          flush();
           mode = Mode.DoubleQuoteString;
-          build += next;
+          append(next);
           break;
         case " ":
         case "\t":
-          build = result.add(build, row, col, mode);
+          flush();
           break;
         case "\n":
-          build = result.add(build, row, col, mode);
+          flush();
           row++;
           col = 0;
           break;
@@ -187,21 +209,21 @@ export class CDSLexer {
         case "-":
         case "*":
         case "/":
-          build = result.add(build, row, col, mode);
+          flush();
           result.add(next, row, col, mode);
           break;
         case "@":
           // @ starts a new annotation; flush current token and start building with @
-          result.add(build, row, col, mode);
-          build = "@";
+          flush();
+          append(next);
           break;
         default:
-          build += next;
+          append(next);
           break;
       }
     }
 
-    result.add(build, row, col, mode);
+    flush();
     return result.get();
   }
 }

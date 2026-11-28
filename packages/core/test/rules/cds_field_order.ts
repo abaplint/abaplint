@@ -117,4 +117,47 @@ describe("Rule: cds_field_order", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("no issues, annotated association", async () => {
+    const cds = `define view entity test as select from source
+  association [1..1] to target1 as _Assoc1 on _Assoc1.id = source.id
+  association [0..*] to target2 as _Assoc2 on _Assoc2.id = source.id
+{
+  key id,
+  field1,
+  _Assoc1,
+  @ObjectModel.association.type: [#TO_COMPOSITION_PARENT]
+  _Assoc2
+}`;
+    const issues = await findIssues(cds);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("no issues, fields of associations with path filters", async () => {
+    const cds = `define view entity test as select from source
+  association [1..1] to target1 as _Assoc1 on _Assoc1.id = source.id
+  association [0..*] to target2 as _Assoc2 on _Assoc2.id = source.id
+{
+  key id,
+  _Assoc1,
+  _Assoc1[left outer where $projection.id = 'A'].url as url,
+  _Assoc2[1:$projection.id = id].name as name
+}`;
+    const issues = await findIssues(cds);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("error, annotated field after association", async () => {
+    const cds = `define view entity test as select from source
+  association [1..1] to target1 as _Assoc1 on _Assoc1.id = source.id
+{
+  key id,
+  _Assoc1,
+  @EndUserText.label: 'Field'
+  field1
+}`;
+    const issues = await findIssues(cds);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getStart().getRow()).to.equal(6);
+  });
+
 });
