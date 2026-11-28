@@ -5,6 +5,7 @@ import {
   CDSCondition, CDSDefineAbstract, CDSDefineProjection, CDSDefineView, CDSElement, CDSFunction, CDSGroupBy, CDSHaving,
   CDSInteger, CDSName, CDSPrefixedName, CDSProviderContract, CDSRelation, CDSSelect, CDSSource, CDSString, CDSType, CDSWhere,
 } from "../cds/expressions";
+import {readSourceEntity} from "../cds/_cds_nodes";
 import {DDIC} from "../ddic";
 import {IFile} from "../files/_ifile";
 import {Issue} from "../issue";
@@ -106,20 +107,19 @@ SOURCE_TYPE in the abapGit XML is checked to match the DDL source, W view entity
     const sources: Source[] = [];
 
     for (const node of tree.findAllExpressionsRecursive(CDSSource)) {
-      const prefixed = node.findDirectExpression(CDSPrefixedName);
-      const entityNode = prefixed?.findDirectExpression(CDSName);
-      if (entityNode === undefined) {
+      const found = readSourceEntity(node);
+      if (found === undefined || found.kind === "function") {
         continue;
       }
 
-      const entity = this.name(entityNode);
+      const entity = found.name;
       const asName = node.findDirectExpression(CDSAs)?.findDirectExpression(CDSName);
       const bareAlias = node.findDirectExpression(CDSName);
       const alias = asName === undefined ? bareAlias : asName;
       const lookup = ddic.lookupTableOrView(entity);
 
       if (lookup.type instanceof UnknownType && lookup.object === undefined && this.reg.inErrorNamespace(entity)) {
-        issues.push(Issue.atToken(file, entityNode.getFirstToken(), `CDS source "${entity}" not found`,
+        issues.push(Issue.atToken(file, found.token, `CDS source "${entity}" not found`,
                                   this.getMetadata().key, this.conf.severity));
       }
 
