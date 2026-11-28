@@ -44,6 +44,7 @@ import {Call} from "./statements/call";
 import {ClassImplementation} from "./statements/class_implementation";
 import {MethodImplementation} from "./statements/method_implementation";
 import {Move} from "./statements/move";
+import {Compute} from "./statements/compute";
 import {MoveCorresponding} from "./statements/move_corresponding";
 import {Catch} from "./statements/catch";
 import {Loop} from "./statements/loop";
@@ -192,6 +193,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new ClassImplementation());
   addToMap(new MethodImplementation());
   addToMap(new Move());
+  addToMap(new Compute());
   addToMap(new GetBadi());
   addToMap(new CallBadi());
   addToMap(new GetCursor());
