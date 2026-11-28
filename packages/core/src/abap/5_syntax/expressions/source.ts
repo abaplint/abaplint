@@ -5,7 +5,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType, DateType, TimeType, NumericType, GenericObjectReferenceType, DataType, UTCLongType, TableType} from "../../types/basic";
+import {VoidType, StringType, CharacterType, DataReference, ObjectReferenceType, FloatType, IntegerType, Integer8Type, PackedType, DecFloat16Type, DecFloat34Type, XSequenceType, XStringType, HexType, XGenericType, AnyType, CLikeType, CSequenceType, NumericGenericType, DecFloatType, DateType, TimeType, NumericType, GenericObjectReferenceType, DataType, UTCLongType, TableType, TableKeyType, TableAccessType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
@@ -257,6 +257,12 @@ export class Source {
         case "VALUE":
         {
           const foundType = this.determineType(node, input, targetType);
+          const inferred = node.findDirectExpression(Expressions.TypeNameOrInfer)?.concatTokens();
+          if (inferred !== "#" && this.isTableTypeWithoutKey(foundType)) {
+            const message = `A value of the generic type "${inferred?.toUpperCase()}" cannot be constructed`;
+            input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+            return VoidType.get(CheckSyntaxKey);
+          }
           const bodyType = ValueBody.runSyntax(node.findDirectExpression(Expressions.ValueBody), input, foundType);
           if (foundType === undefined || foundType.isGeneric()) {
             this.addIfInferred(node, input, bodyType);
@@ -576,6 +582,20 @@ export class Source {
       return input.scope.getDDIC().lookupBuiltinType("DECFLOAT34", undefined, undefined, "DECFLOAT34");
     }
     return undefined;
+  }
+
+  /** "TYPES ty TYPE [STANDARD] TABLE OF row." without any key is generic with respect to the
+   * primary key, the same shape for DATA gets the standard key, so this is only checked where
+   * the type is given by name */
+  private static isTableTypeWithoutKey(type: AbstractType | undefined): boolean {
+    if (!(type instanceof TableType) || type.getDDICName() !== undefined) {
+      return false;
+    }
+    const options = type.getOptions();
+    return options.keyType === TableKeyType.user
+      && options.primaryKey?.type === TableAccessType.standard
+      && options.primaryKey.keyFields.length === 0
+      && (options.secondary === undefined || options.secondary.length === 0);
   }
 
   private static determineType(

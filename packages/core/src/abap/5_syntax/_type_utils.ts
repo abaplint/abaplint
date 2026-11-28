@@ -327,9 +327,19 @@ export class TypeUtils {
     return calculated;
   }
 
-  /** the source is only a call of a functional method, not a built-in function */
+  /** the source is only a call of a functional method, not a built-in function,
+   * optionally followed by a component of the returned structure, like get( )-comp */
   private isFunctionalMethodResult(node: ExpressionNode): boolean {
-    if (!(node.get() instanceof Expressions.Source) || node.getChildren().length !== 1) {
+    if (!(node.get() instanceof Expressions.Source)) {
+      return false;
+    }
+    const sourceChildren = node.getChildren();
+    if (sourceChildren.length === 3) {
+      if (sourceChildren[1].concatTokens() !== "-"
+          || !(sourceChildren[2].get() instanceof Expressions.ComponentChain)) {
+        return false;
+      }
+    } else if (sourceChildren.length !== 1) {
       return false;
     }
     const chain = node.getFirstChild();

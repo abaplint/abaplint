@@ -501,6 +501,8 @@ export class BasicTypes {
         {name: "high", type: found},
       ]);
       options.primaryKey!.type = TableAccessType.standard;
+      // ranges tables always have the standard key
+      options.keyType = Types.TableKeyType.default;
       return new Types.TableType(structure, options, name);
     } else if (text.startsWith("LIKE RANGE OF ")) {
       const sub = node.findFirstExpression(Expressions.FieldChain);
@@ -515,6 +517,8 @@ export class BasicTypes {
         {name: "high", type: found},
       ], name);
       options.primaryKey!.type = TableAccessType.standard;
+      // ranges tables always have the standard key
+      options.keyType = Types.TableKeyType.default;
       return new Types.TableType(structure, options);
     } else if (typename && this.isRAPTableFor(text)) {
       return this.rapTableFor(typename.concatTokens(), options);

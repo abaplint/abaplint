@@ -78,6 +78,7 @@ import {Clear} from "./statements/clear";
 import {Refresh} from "./statements/refresh";
 import {Return} from "./statements/return";
 import {Retry} from "./statements/retry";
+import {Hide} from "./statements/hide";
 import {Free} from "./statements/free";
 import {Replace} from "./statements/replace";
 import {GetBit} from "./statements/get_bit";
@@ -318,6 +319,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new EditorCall());
   addToMap(new DeleteMemory());
   addToMap(new Retry());
+  addToMap(new Hide());
 }
 
 // -----------------------------------

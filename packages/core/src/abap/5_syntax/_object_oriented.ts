@@ -203,16 +203,12 @@ export class ObjectOriented {
       return undefined;
     }
 
-    // friendship with the class used at the call site also gives access to inherited members
-    const visited: string[] = [];
-    let current: IClassDefinition | undefined = def instanceof ClassDefinition ? def : foundDef;
-    while (current !== undefined && visited.includes(current.getName().toUpperCase()) === false) {
-      visited.push(current.getName().toUpperCase());
-      if (this.hasFriendship(current, enclosing)) {
-        return undefined;
-      }
-      const sup: string | undefined = current.getSuperClass();
-      current = sup === undefined ? undefined : this.scope.findClassDefinition(sup);
+    // only the friendship granted by the static type used at the call site counts, it also gives
+    // access to inherited members, while friendship granted by a super class does not apply
+    // when the member is reached via a reference typed with a subclass
+    const staticType: IClassDefinition = def instanceof ClassDefinition ? def : foundDef;
+    if (this.hasFriendship(staticType, enclosing)) {
+      return undefined;
     }
 
     if (visibility === Visibility.Protected) {

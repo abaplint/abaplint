@@ -113,7 +113,7 @@ function alignment(type: AbstractType): number {
   return 1;
 }
 
-function isDeep(type: AbstractType): boolean {
+export function isDeep(type: AbstractType): boolean {
   if (type instanceof StructureType) {
     return type.getComponents().some(c => isDeep(c.type));
   }

@@ -4,11 +4,19 @@ export type DynproField = {
   name: string,
   type: string,
   contType: string,
+  contName: string | undefined,
   length: number,
   vislength: number,
   line: number,
   column: number,
   height: number,
+  /** REF_FIELD, for tabstrip pushbuttons the name of the assigned subscreen area */
+  refField: string | undefined,
+};
+export type DynproContainer = {
+  type: string,
+  name: string,
+  elementOf: string | undefined,
 };
 export type DynproHeader = {
   number: string,
@@ -16,6 +24,9 @@ export type DynproHeader = {
   nextScreen: string,
   type: string,
   fields: DynproField[],
+  containers: DynproContainer[],
+  /** true if the flow logic is stored inline in the XML, as opposed to a separate screen file */
+  hasFlowLogic: boolean,
 };
 export type DynproList = DynproHeader[];
 
@@ -25,6 +36,13 @@ function parseNumber(value: string | undefined): number {
   }
 
   return parseInt(value, 10);
+}
+
+function parseText(value: any): string | undefined {
+  if (typeof value !== "string" || value.trim() === "") {
+    return undefined;
+  }
+  return value;
 }
 
 export function parseDynpros(parsed: any): DynproList {
@@ -41,11 +59,21 @@ export function parseDynpros(parsed: any): DynproList {
           name: f.NAME,
           type: f.TYPE,
           contType: f.CONT_TYPE,
+          contName: parseText(f.CONT_NAME),
           length: parseNumber(f.LENGTH),
           vislength: parseNumber(f.VISLENGTH),
           line: parseNumber(f.LINE),
           column: parseNumber(f.COLUMN),
           height: parseNumber(f.HEIGHT),
+          refField: parseText(f.REF_FIELD),
+        });
+      }
+      const containers: DynproContainer[] = [];
+      for (const c of xmlToArray(d.CONTAINERS?.RPY_DYCATT)) {
+        containers.push({
+          type: c.TYPE,
+          name: c.NAME,
+          elementOf: parseText(c.ELEMENT_OF),
         });
       }
       dynpros.push({
@@ -54,6 +82,8 @@ export function parseDynpros(parsed: any): DynproList {
         nextScreen: d.HEADER?.NEXTSCREEN,
         type: d.HEADER?.TYPE,
         fields: fields,
+        containers: containers,
+        hasFlowLogic: xmlToArray(d.FLOW_LOGIC?.RPY_DYFLOW).length > 0,
       });
     }
   }

@@ -1,16 +1,16 @@
 import {IStatement} from "./_statement";
 import {verNotLang, str, seq, opt, alt, optPrio, altPrio, per, plusPrio} from "../combi";
-import {Source, Dynamic, AndReturn, FieldSub, IncludeName} from "../expressions";
+import {Source, Dynamic, AndReturn, FieldSub, IncludeName, SimpleSource4} from "../expressions";
 import {LanguageVersion} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Submit implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const sign = seq("SIGN", Source);
+    const sign = seq("SIGN", SimpleSource4);
     const eq = alt("=", "EQ", "IN", "NE", "CP", "GE", "LE", "INCL", "GT", "LT");
-    const compare = seq(eq, Source);
-    const between = seq("BETWEEN", Source, "AND", Source);
+    const compare = seq(eq, SimpleSource4);
+    const between = seq("BETWEEN", SimpleSource4, "AND", SimpleSource4);
     const selectionTable = seq("WITH SELECTION-TABLE", Source);
     const awith = seq("WITH", FieldSub, alt(compare, between), optPrio(sign));
     const prog = altPrio(IncludeName, Dynamic);
