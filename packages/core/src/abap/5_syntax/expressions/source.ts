@@ -250,9 +250,11 @@ export class Source {
         {
           const foundType = this.determineType(node, input, targetType);
           checkParenthesizedOperand(node.findDirectExpression(Expressions.Source), input);
-          Source.runSyntax(node.findDirectExpression(Expressions.Source), input, foundType);
-          this.addIfInferred(node, input, foundType);
-          return foundType;
+          const argumentType = Source.runSyntax(node.findDirectExpression(Expressions.Source), input, foundType);
+          // without a target type, "EXACT #( foo )" takes the type of its argument
+          const exactType = foundType ? foundType : argumentType;
+          this.addIfInferred(node, input, exactType);
+          return exactType;
         }
         case "VALUE":
         {
