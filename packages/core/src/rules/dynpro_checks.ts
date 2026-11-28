@@ -5,7 +5,7 @@ import {IObject} from "../objects/_iobject";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
-import {Program} from "../objects";
+import {FunctionGroup, Program} from "../objects";
 import {Position} from "../position";
 
 export class DynproChecksConf extends BasicRuleConfig {
@@ -19,7 +19,10 @@ export class DynproChecks implements IRule {
       key: "dynpro_checks",
       title: "Dynpro Checks",
       shortDescription: `Various Dynpro checks`,
-      extendedInformation: `* Check length of PUSH elements less than 132\n* Check for overlapping screen elements`,
+      extendedInformation: `* Check length of PUSH elements less than 132
+* Check for overlapping screen elements
+* Check that each screen has flow logic, either inline in the XML or in a separate screen file, eg. zfoo.prog.screen_0100.abap
+* Check that each screen file has a matching screen in the XML`,
       tags: [RuleTag.Syntax],
     };
   }
@@ -39,7 +42,7 @@ export class DynproChecks implements IRule {
   public run(obj: IObject): Issue[] {
     const ret: Issue[] = [];
 
-    if (!(obj instanceof Program)) {
+    if (!(obj instanceof Program) && !(obj instanceof FunctionGroup)) {
       return [];
     }
 
@@ -48,7 +51,8 @@ export class DynproChecks implements IRule {
       return [];
     }
 
-    for (const dynpro of obj.getDynpros()) {
+    const dynpros = obj.getDynpros();
+    for (const dynpro of dynpros) {
       for (const field of dynpro.fields) {
         if (field.type === "PUSH" && field.length > 132) {
           const message = `Screen ${dynpro.number}, field ${field.name} LENGTH longer than 132`;
@@ -59,7 +63,48 @@ export class DynproChecks implements IRule {
       ret.push(...this.findOverlappingFields(dynpro, file));
     }
 
+    ret.push(...this.checkFlowLogic(obj, dynpros, file));
+
     return ret;
+  }
+
+  private checkFlowLogic(obj: Program | FunctionGroup, dynpros: readonly DynproHeader[], file: IFile): Issue[] {
+    const ret: Issue[] = [];
+    const type = obj.getType().toLowerCase();
+    const pattern = new RegExp("\\." + type + "\\.screen_(\\d+)\\.abap$", "i");
+
+    const screenFiles = new Map<string, IFile>();
+    for (const f of obj.getFiles()) {
+      const match = f.getFilename().match(pattern);
+      if (match) {
+        screenFiles.set(this.padNumber(match[1]), f);
+      }
+    }
+
+    const numbers = new Set<string>();
+    for (const dynpro of dynpros) {
+      const number = this.padNumber(dynpro.number);
+      numbers.add(number);
+      if (dynpro.hasFlowLogic === true || screenFiles.has(number)) {
+        continue;
+      }
+      const expected = obj.getName().toLowerCase().replace(/\//g, "#") + "." + type + ".screen_" + number + ".abap";
+      const message = `Screen ${number}, flow logic missing, expected file ${expected}`;
+      ret.push(Issue.atPosition(file, new Position(1, 1), message, this.getMetadata().key, this.getConfig().severity));
+    }
+
+    for (const [number, screenFile] of screenFiles) {
+      if (numbers.has(number) === false) {
+        const message = `Screen file ${screenFile.getFilename()} has no dynpro ${number} in the XML`;
+        ret.push(Issue.atPosition(screenFile, new Position(1, 1), message, this.getMetadata().key, this.getConfig().severity));
+      }
+    }
+
+    return ret;
+  }
+
+  private padNumber(value: string | undefined): string {
+    return (value ?? "").toString().trim().padStart(4, "0");
   }
 
   private findOverlappingFields(dynpro: DynproHeader, file: IFile): Issue[] {

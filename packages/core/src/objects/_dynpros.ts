@@ -16,6 +16,8 @@ export type DynproHeader = {
   nextScreen: string,
   type: string,
   fields: DynproField[],
+  /** true if the flow logic is stored inline in the XML, as opposed to a separate screen file */
+  hasFlowLogic: boolean,
 };
 export type DynproList = DynproHeader[];
 
@@ -54,6 +56,7 @@ export function parseDynpros(parsed: any): DynproList {
         nextScreen: d.HEADER?.NEXTSCREEN,
         type: d.HEADER?.TYPE,
         fields: fields,
+        hasFlowLogic: xmlToArray(d.FLOW_LOGIC?.RPY_DYFLOW).length > 0,
       });
     }
   }
