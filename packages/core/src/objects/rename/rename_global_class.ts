@@ -56,6 +56,7 @@ export class RenameGlobalClass implements ObjectRenamer {
     changes = changes.concat(helper.renameDDICTTYPReferences(obj, oldName, newName));
     changes = changes.concat(helper.renameDDICDTELReferences(obj, oldName, newName));
     changes = changes.concat(helper.renameICFServiceHandlerReferences(oldName, newName));
+    changes = changes.concat(helper.renameHttpServiceHandlerReferences(oldName, newName));
 
     return {
       documentChanges: changes,
