@@ -336,6 +336,8 @@ export class SyntaxLogic {
   private inCatch: boolean;
   private currentMethod: StructureNode | undefined;
   private sortedLines: SortedKeyWrite;
+  // the operands of the CASE structures around the statement being traversed, innermost last
+  private readonly caseOperands: NonNullable<SyntaxInput["caseOperand"]>[] = [];
 
   private helpers: {
     oooc: ObjectOriented,
@@ -447,6 +449,10 @@ export class SyntaxLogic {
   }
 
   private traverse(node: StructureNode | StatementNode): void {
+    const isCase = node instanceof StructureNode && node.get() instanceof Structures.Case;
+    if (isCase) {
+      this.caseOperands.push({});
+    }
     const loop = node instanceof StructureNode
       && node.get() instanceof Structures.Loop
       && this.loopTables.push(node, this.scope);
@@ -523,6 +529,9 @@ export class SyntaxLogic {
     if (node instanceof StructureNode) {
       this.sortedLines.leave(node);
     }
+    if (isCase) {
+      this.caseOperands.pop();
+    }
   }
 
   /**
@@ -594,6 +603,7 @@ export class SyntaxLogic {
 
     const input: SyntaxInput = {
       scope: this.scope,
+      caseOperand: this.caseOperands[this.caseOperands.length - 1],
       filename,
       issues: this.issues,
       deferred: this.deferred,
