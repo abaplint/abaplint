@@ -13,11 +13,6 @@ import {BuiltIn} from "../_builtin";
 import {BuiltInCall} from "../_builtin_call";
 
 const COMPARISON_OPERATORS = ["=", "EQ", "<>", "NE", "><", "<", "LT", ">", "GT", "<=", "LE", "=<", ">=", "GE", "=>"];
-// built-in numeric functions of one argument, and those with further parameters
-const ONE_ARGUMENT_FUNCTIONS = ["abs", "sign", "ceil", "floor", "trunc", "frac", "acos", "asin", "atan", "cos",
-  "sin", "tan", "cosh", "sinh", "tanh", "exp", "log", "log10", "sqrt"];
-const SEVERAL_PARAMETER_FUNCTIONS = ["ipow", "nmax", "nmin", "round", "rescale"];
-const LENGTH_FUNCTIONS = ["strlen", "xstrlen", "numofchar"];
 
 export class Compare {
   public static runSyntax(node: ExpressionNode, input: SyntaxInput): void {
@@ -181,12 +176,14 @@ export class Compare {
   // is calculated itself, "abs( a + b )" or "abs( strlen( s ) )". Of a data object it is a value of its own
   private static isArithmeticFunction(source: ExpressionNode, input: SyntaxInput): boolean {
     const call = BuiltInCall.fromSource(source, input);
-    const name = call === undefined ? undefined : BuiltInCall.callName(call)?.toLowerCase();
-    if (call === undefined || name === undefined) {
+    if (call === undefined) {
       return false;
-    } else if (SEVERAL_PARAMETER_FUNCTIONS.includes(name)) {
+    }
+    const release = input.scope.getRelease();
+    const kind = BuiltIn.numericKind(BuiltInCall.callName(call), release);
+    if (kind === "calculation") {
       return true;
-    } else if (ONE_ARGUMENT_FUNCTIONS.includes(name) === false) {
+    } else if (kind !== "unary") {
       return false;
     }
 
@@ -194,9 +191,8 @@ export class Compare {
     if (argument === undefined) {
       return false;
     }
-    const inner = this.builtinCallName(argument, input)?.toLowerCase();
-    return this.isArithmetic(argument, input)
-      || (inner !== undefined && (ONE_ARGUMENT_FUNCTIONS.includes(inner) || LENGTH_FUNCTIONS.includes(inner)));
+    const inner = BuiltIn.numericKind(this.builtinCallName(argument, input), release);
+    return this.isArithmetic(argument, input) || inner === "unary" || inner === "length";
   }
 
   private static isNonNumeric(type: AbstractType | undefined): boolean {

@@ -8,7 +8,7 @@ import {Visibility} from "../4_file_information/visibility";
 import {Identifier} from "../4_file_information/_identifier";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
 import {IMethodParameters} from "../types/_method_parameters";
-import {ABAPRelease, Release} from "../../version";
+import {ABAPRelease, Release, releaseAtLeast} from "../../version";
 
 interface IBuiltinMethod {
   counter: number,
@@ -16,9 +16,14 @@ interface IBuiltinMethod {
   optional?: {[key: string]: AbstractType},
   release?: ABAPRelease,
   predicate?: boolean,
+  numeric?: BuiltinNumericKind,
   return: AbstractType;
   cache?: BuiltInMethod | undefined;
 }
+
+// numeric functions of one argument like "abs", those with further parameters like "ipow", and the
+// length functions like "strlen"
+export type BuiltinNumericKind = "unary" | "calculation" | "length";
 
 export class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodParameters {
   private readonly method: IBuiltinMethod;
@@ -142,6 +147,7 @@ export class BuiltIn {
   public static readonly methods: {[name: string]: IBuiltinMethod} = {
     "ABS": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -150,6 +156,7 @@ export class BuiltIn {
 
     "ACOS": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -158,6 +165,7 @@ export class BuiltIn {
 
     "ASIN": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -166,6 +174,7 @@ export class BuiltIn {
 
     "ATAN": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -204,6 +213,7 @@ export class BuiltIn {
 
     "CEIL": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -351,6 +361,7 @@ export class BuiltIn {
 
     "COS": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -359,6 +370,7 @@ export class BuiltIn {
 
     "COSH": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -446,6 +458,7 @@ export class BuiltIn {
 
     "EXP": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -520,6 +533,7 @@ export class BuiltIn {
 
     "FLOOR": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -528,6 +542,7 @@ export class BuiltIn {
 
     "FRAC": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -562,6 +577,7 @@ export class BuiltIn {
 
     "IPOW": {
       counter: BuiltIn.counter++,
+      numeric: "calculation",
       mandatory: {
         "base": new NumericGenericType(),
         "exp": new NumericGenericType(),
@@ -599,6 +615,7 @@ export class BuiltIn {
 
     "LOG": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -607,6 +624,7 @@ export class BuiltIn {
 
     "LOG10": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -646,6 +664,7 @@ export class BuiltIn {
 
     "NMAX": {
       counter: BuiltIn.counter++,
+      numeric: "calculation",
       mandatory: {
         "val1": SimpleType.get(),
         "val2": SimpleType.get(),
@@ -665,6 +684,7 @@ export class BuiltIn {
 
     "NMIN": {
       counter: BuiltIn.counter++,
+      numeric: "calculation",
       mandatory: {
         "val1": SimpleType.get(),
         "val2": SimpleType.get(),
@@ -684,6 +704,7 @@ export class BuiltIn {
 
     "NUMOFCHAR": {
       counter: BuiltIn.counter++,
+      numeric: "length",
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -721,6 +742,7 @@ export class BuiltIn {
 
     "RESCALE": {
       counter: BuiltIn.counter++,
+      numeric: "calculation",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -744,6 +766,7 @@ export class BuiltIn {
 
     "ROUND": {
       counter: BuiltIn.counter++,
+      numeric: "calculation",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -801,6 +824,7 @@ export class BuiltIn {
 
     "SIGN": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -809,6 +833,7 @@ export class BuiltIn {
 
     "SIN": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -817,6 +842,7 @@ export class BuiltIn {
 
     "SINH": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -825,6 +851,7 @@ export class BuiltIn {
 
     "SQRT": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -833,6 +860,7 @@ export class BuiltIn {
 
     "STRLEN": {
       counter: BuiltIn.counter++,
+      numeric: "length",
       mandatory: {
         "val": CLikeType.get(),
       },
@@ -922,6 +950,7 @@ export class BuiltIn {
 
     "TAN": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -930,6 +959,7 @@ export class BuiltIn {
 
     "TANH": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -980,6 +1010,7 @@ export class BuiltIn {
 
     "TRUNC": {
       counter: BuiltIn.counter++,
+      numeric: "unary",
       mandatory: {
         "val": new NumericGenericType(),
       },
@@ -1028,6 +1059,7 @@ export class BuiltIn {
 
     "XSTRLEN": {
       counter: BuiltIn.counter++,
+      numeric: "length",
       mandatory: {
         "val": new XSequenceType(),
       },
@@ -1095,6 +1127,20 @@ export class BuiltIn {
     }
 
     return def.predicate;
+  }
+
+  // the kind of numeric function, undefined for other functions and for functions not available in the release
+  public static numericKind(name: string | undefined, release: ABAPRelease): BuiltinNumericKind | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+
+    const def = BuiltIn.methods[name.toUpperCase()];
+    if (def === undefined || (def.release !== undefined && releaseAtLeast(release, def.release) === false)) {
+      return undefined;
+    }
+
+    return def.numeric;
   }
 
   public getTypes(): TypedIdentifier[] {
