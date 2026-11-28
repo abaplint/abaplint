@@ -22,7 +22,8 @@ export class DynproChecks implements IRule {
       extendedInformation: `* Check length of PUSH elements less than 132
 * Check for overlapping screen elements
 * Check that each screen has flow logic, either inline in the XML or in a separate screen file, eg. zfoo.prog.screen_0100.abap
-* Check that each screen file has a matching screen in the XML`,
+* Check that each screen file has a matching screen in the XML
+* Check that each tabstrip tab title has a subscreen area of the tabstrip assigned`,
       tags: [RuleTag.Syntax],
     };
   }
@@ -61,6 +62,7 @@ export class DynproChecks implements IRule {
       }
 
       ret.push(...this.findOverlappingFields(dynpro, file));
+      ret.push(...this.checkTabstripSubscreens(dynpro, file));
     }
 
     ret.push(...this.checkFlowLogic(obj, dynpros, file));
@@ -105,6 +107,38 @@ export class DynproChecks implements IRule {
 
   private padNumber(value: string | undefined): string {
     return (value ?? "").toString().trim().padStart(4, "0");
+  }
+
+  // each tab title (PUSH in a STRIP_CTRL) must reference a SUBSCREEN area of the same tabstrip via REF_FIELD,
+  // several tabs may share one subscreen area
+  private checkTabstripSubscreens(dynpro: DynproHeader, file: IFile): Issue[] {
+    const ret: Issue[] = [];
+
+    for (const field of dynpro.fields) {
+      if (field.type !== "PUSH" || field.contType !== "STRIP_CTRL") {
+        continue;
+      }
+
+      let message: string | undefined = undefined;
+      if (field.refField === undefined) {
+        message = `Screen ${dynpro.number}, no subscreen is assigned to tabstrip pushbutton ${field.name}`;
+      } else {
+        const ref = field.refField.toUpperCase();
+        const area = dynpro.containers.find(c => c.type === "SUBSCREEN"
+          && c.name?.toUpperCase() === ref
+          && (field.contName === undefined || c.elementOf?.toUpperCase() === field.contName.toUpperCase()));
+        if (area === undefined) {
+          message = `Screen ${dynpro.number}, tabstrip pushbutton ${field.name} references ${field.refField}, ` +
+            `which is not a subscreen area of tabstrip ${field.contName}`;
+        }
+      }
+
+      if (message !== undefined) {
+        ret.push(Issue.atPosition(file, new Position(1, 1), message, this.getMetadata().key, this.getConfig().severity));
+      }
+    }
+
+    return ret;
   }
 
   private findOverlappingFields(dynpro: DynproHeader, file: IFile): Issue[] {

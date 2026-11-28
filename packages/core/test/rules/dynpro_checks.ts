@@ -79,6 +79,49 @@ function buildXML(dynpros: {screen: string, flowLogic: boolean}[]): string {
 </abapGit>`;
 }
 
+type TabstripContainer = {type: string, name: string, elementOf: string};
+type TabstripTab = {name: string, refField?: string};
+
+function buildTabstripXML(containers: TabstripContainer[], tabs: TabstripTab[]): string {
+  const cont = containers.map(c => `
+      <RPY_DYCATT>
+       <TYPE>${c.type}</TYPE>
+       <NAME>${c.name}</NAME>
+       <ELEMENT_OF>${c.elementOf}</ELEMENT_OF>
+       <LINE>001</LINE>
+       <COLUMN>002</COLUMN>
+       <LENGTH>080</LENGTH>
+       <HEIGHT>010</HEIGHT>
+      </RPY_DYCATT>`).join("");
+  const fields = tabs.map(t => `
+      <RPY_DYFATC>
+       <CONT_TYPE>STRIP_CTRL</CONT_TYPE>
+       <CONT_NAME>TS_FLIGHT</CONT_NAME>
+       <TYPE>PUSH</TYPE>
+       <NAME>${t.name}</NAME>
+       <TEXT>${t.name}</TEXT>
+       <LINE>001</LINE>
+       <COLUMN>001</COLUMN>
+       <LENGTH>010</LENGTH>
+       <VISLENGTH>010</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <PUSH_FCODE>${t.name}</PUSH_FCODE>
+       <PUSH_FTYPE>P</PUSH_FTYPE>
+       <FORMAT>CHAR</FORMAT>${t.refField === undefined ? "" : `
+       <REF_FIELD>${t.refField}</REF_FIELD>`}
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>`).join("");
+
+  return buildXML([{screen: "0100", flowLogic: true}])
+    .replace(/<CONTAINERS>[\s\S]*<\/CONTAINERS>/, `<CONTAINERS>
+      <RPY_DYCATT>
+       <TYPE>SCREEN</TYPE>
+       <NAME>SCREEN</NAME>
+      </RPY_DYCATT>${cont}
+     </CONTAINERS>`)
+    .replace("<FIELDS>", "<FIELDS>" + fields);
+}
+
 describe("Rule: dynpro_checks", () => {
 
   it("Element SDFSDF length longer than 132", async () => {
@@ -468,6 +511,45 @@ PROCESS AFTER INPUT.
     const issues = await findIssuesMulti([{filename: "#foo#bar.prog.xml", contents: xml}], "/FOO/BAR");
     expect(issues.length).to.equal(1);
     expect(issues[0].getMessage()).to.equal("Screen 0100, flow logic missing, expected file #foo#bar.prog.screen_0100.abap");
+  });
+
+  const TS_FLIGHT = {type: "STRIP_CTRL", name: "TS_FLIGHT", elementOf: "SCREEN"};
+  const SUB_TAB = {type: "SUBSCREEN", name: "SUB_TAB", elementOf: "TS_FLIGHT"};
+
+  it("tabstrip pushbuttons without REF_FIELD", async () => {
+    const issues = await findIssues(buildTabstripXML([TS_FLIGHT, SUB_TAB], [{name: "TAB_ROUTE"}, {name: "TAB_PLANE"}]));
+    expect(issues.map(i => i.getMessage())).to.have.members([
+      "Screen 0100, no subscreen is assigned to tabstrip pushbutton TAB_ROUTE",
+      "Screen 0100, no subscreen is assigned to tabstrip pushbutton TAB_PLANE",
+    ]);
+  });
+
+  it("tabstrip pushbuttons sharing one subscreen area, ok", async () => {
+    const issues = await findIssues(buildTabstripXML([TS_FLIGHT, SUB_TAB],
+                                                     [{name: "TAB_ROUTE", refField: "SUB_TAB"}, {name: "TAB_PLANE", refField: "SUB_TAB"}]));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("tabstrip pushbuttons with one subscreen area each, ok", async () => {
+    const issues = await findIssues(buildTabstripXML([
+      TS_FLIGHT,
+      {type: "SUBSCREEN", name: "%#AUTOTEXT001_REF1", elementOf: "TS_FLIGHT"},
+      {type: "SUBSCREEN", name: "%#AUTOTEXT002_REF1", elementOf: "TS_FLIGHT"},
+    ], [{name: "%#AUTOTEXT001", refField: "%#AUTOTEXT001_REF1"}, {name: "%#AUTOTEXT002", refField: "%#AUTOTEXT002_REF1"}]));
+    expect(issues.length).to.equal(0);
+  });
+
+  it("tabstrip pushbutton REF_FIELD names an unknown area", async () => {
+    const issues = await findIssues(buildTabstripXML([TS_FLIGHT, SUB_TAB], [{name: "TAB_ROUTE", refField: "SUB_OTHER"}]));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Screen 0100, tabstrip pushbutton TAB_ROUTE references SUB_OTHER, which is not a subscreen area of tabstrip TS_FLIGHT");
+  });
+
+  it("tabstrip pushbutton REF_FIELD names a subscreen area outside the tabstrip", async () => {
+    const issues = await findIssues(buildTabstripXML([TS_FLIGHT, {type: "SUBSCREEN", name: "SUB_TAB", elementOf: "SCREEN"}],
+                                                     [{name: "TAB_ROUTE", refField: "SUB_TAB"}]));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("not a subscreen area of tabstrip TS_FLIGHT");
   });
 
 });
