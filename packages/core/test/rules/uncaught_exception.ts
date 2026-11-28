@@ -416,6 +416,204 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("Uncaught exception CX_SALV_ERROR");
   });
 
+  it("raise exception variable, static type cx_root", async () => {
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar RAISING cx_salv_error.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    TRY.
+        bar( ).
+      CATCH cx_root INTO DATA(lx).
+        RAISE EXCEPTION lx.
+    ENDTRY.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "reraise.prog.abap");
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("Uncaught exception CX_ROOT");
+  });
+
+  it("raise exception variable, static type cx_root, RAISING cx_root", async () => {
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo RAISING cx_root.
+    METHODS bar RAISING cx_salv_error.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    TRY.
+        bar( ).
+      CATCH cx_root INTO DATA(lx).
+        RAISE EXCEPTION lx.
+    ENDTRY.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "reraise.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("raise exception variable, static type cx_root, outer CATCH cx_root", async () => {
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar RAISING cx_salv_error.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    TRY.
+        TRY.
+            bar( ).
+          CATCH cx_root INTO DATA(lx).
+            RAISE EXCEPTION lx.
+        ENDTRY.
+      CATCH cx_root.
+    ENDTRY.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "reraise.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("raise exception variable, static type cx_static_check", async () => {
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar RAISING cx_salv_error.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lx TYPE REF TO cx_static_check.
+    RAISE EXCEPTION lx.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "reraise.prog.abap");
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("Uncaught exception CX_STATIC_CHECK");
+  });
+
+  it("raise exception variable, static type cx_static_check, RAISING cx_static_check", async () => {
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo RAISING cx_static_check.
+    METHODS bar RAISING cx_salv_error.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lx TYPE REF TO cx_static_check.
+    RAISE EXCEPTION lx.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "reraise.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("raise exception variable, static type inherits from cx_static_check", async () => {
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar RAISING cx_salv_error.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    TRY.
+        bar( ).
+      CATCH cx_salv_error INTO DATA(lx).
+        RAISE EXCEPTION lx.
+    ENDTRY.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "reraise.prog.abap");
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("Uncaught exception CX_SALV_ERROR");
+  });
+
+  it("raise exception variable, static type cx_no_check", async () => {
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar RAISING cx_salv_error.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lx TYPE REF TO cx_no_check.
+    RAISE EXCEPTION lx.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "reraise.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("raise exception variable, static type cx_dynamic_check", async () => {
+    const cx_dynamic_check = `CLASS cx_dynamic_check DEFINITION PUBLIC INHERITING FROM cx_root.
+ENDCLASS.
+CLASS cx_dynamic_check IMPLEMENTATION.
+ENDCLASS.`;
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar RAISING cx_salv_error.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lx TYPE REF TO cx_dynamic_check.
+    RAISE EXCEPTION lx.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "reraise.prog.abap", [new MemoryFile("cx_dynamic_check.clas.abap", cx_dynamic_check)]);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("raise exception variable in CLEANUP, same as RAISE EXCEPTION TYPE", async () => {
+    const progabap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo.
+    METHODS bar RAISING cx_salv_error.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD foo.
+    DATA lx TYPE REF TO cx_root.
+    TRY.
+        RETURN.
+      CLEANUP.
+        RAISE EXCEPTION lx.
+    ENDTRY.
+  ENDMETHOD.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await findIssues(progabap, "reraise.prog.abap");
+    expect(issues.length).to.equal(1);
+    expect(issues[0]?.getMessage()).to.contain("Uncaught exception CX_ROOT");
+  });
+
   it("constructor exception, CREATE OBJECT", async () => {
     const progabap = `
 CLASS lcl DEFINITION.

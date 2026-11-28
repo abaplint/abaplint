@@ -16,6 +16,7 @@ import {ISpaghettiScopeNode, ISyntaxResult} from "../abap/5_syntax/_spaghetti_sc
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {ClassDefinition, MethodDefinition} from "../abap/types";
 import {IClassDefinition} from "../abap/types/_class_definition";
+import {ObjectReferenceType, VoidType} from "../abap/types/basic";
 
 export class UncaughtExceptionConf extends BasicRuleConfig {
   public reportDynamic = false;
@@ -135,7 +136,8 @@ export class UncaughtException extends ABAPRule {
         } else if (concat.startsWith("RAISE EXCEPTION NEW ")) {
           name = n.findFirstExpression(Expressions.NewObject)?.findFirstExpression(
             Expressions.TypeNameOrInfer)?.getFirstToken().getStr().toUpperCase();
-// todo: else its a normal Source, infer the type from it
+        } else if (concat.startsWith("RAISE EXCEPTION ")) {
+          name = this.findVariableClassName(n, file);
         }
 
         this.check(name, n, file);
@@ -181,6 +183,24 @@ export class UncaughtException extends ABAPRule {
         }
       }
     }
+  }
+
+  /** RAISE EXCEPTION lx, the static type of the variable decides, like RAISE EXCEPTION TYPE */
+  private findVariableClassName(n: StatementNode, file: ABAPFile): string | undefined {
+    const source = n.findDirectExpression(Expressions.Source) || n.findDirectExpression(Expressions.SimpleSource2);
+    if (source === undefined || source.getFirstToken() !== source.getLastToken()) {
+      return undefined; // todo: other sources, eg. method calls or attributes via ->
+    }
+
+    const token = source.getFirstToken();
+    const scope = this.syntax.spaghetti.lookupPosition(token.getStart(), file.getFilename());
+    const type = scope?.findVariable(token.getStr())?.getType();
+    if (type instanceof ObjectReferenceType) {
+      return type.getIdentifierName().toUpperCase();
+    } else if (type instanceof VoidType) {
+      return type.getVoided()?.toUpperCase();
+    }
+    return undefined;
   }
 
   private findConstructor(def: IClassDefinition, scope: ISpaghettiScopeNode | undefined): MethodDefinition | undefined {
@@ -236,6 +256,14 @@ export class UncaughtException extends ABAPRule {
 
   private isSinked(name: string | undefined): boolean {
     if (this.sinked === undefined || name === undefined) {
+      return true;
+    }
+
+    // the two base classes themselves, eg. RAISE EXCEPTION lx where lx is TYPE REF TO cx_no_check
+    if (name.toUpperCase() === "CX_DYNAMIC_CHECK" && this.getConfig().reportDynamic !== true) {
+      return true;
+    }
+    if (name.toUpperCase() === "CX_NO_CHECK" && this.getConfig().reportNoCheck !== true) {
       return true;
     }
 
