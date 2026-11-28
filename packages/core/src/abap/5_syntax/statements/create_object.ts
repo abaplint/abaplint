@@ -191,6 +191,9 @@ export class CreateObject implements StatementSyntax {
         const message = `constructor parameter "${name}" type not compatible`;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
+      } else if (source && methodDef.method
+          && new TypeUtils(input.scope).checkReferenceCompatible(source, sourceType, found, methodDef.method, input)) {
+        return;
       }
 
       requiredImporting.delete(name);

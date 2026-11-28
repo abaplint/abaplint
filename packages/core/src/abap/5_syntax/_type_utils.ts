@@ -8,8 +8,11 @@ import {CurrentScope} from "./_current_scope";
 import * as Expressions from "../2_statements/expressions";
 import {ExpressionNode, TokenNodeRegex} from "../nodes";
 import {NGenericType} from "../types/basic/ngeneric_type";
-import {BuiltIn} from "./_builtin";
+import {BuiltIn, BuiltInMethod} from "./_builtin";
 import {characterStartLength} from "./_character_start";
+import {IMethodDefinition} from "../types/_method_definition";
+import {IdentifierMeta, TypedIdentifier} from "../types/_typed_identifier";
+import {SyntaxInput, syntaxIssue} from "./_syntax_input";
 
 // todo: refactor to static? for performance
 export class TypeUtils {
@@ -783,6 +786,75 @@ export class TypeUtils {
     return true;
   }
 
+  /** a data object passed to a by-reference parameter with a complete elementary type must be compatible:
+   * the same built-in type, the same length and the same number of decimals. Returns false only for a known
+   * mismatch, true whenever this cannot be decided: generic, void or unknown types, structures, tables,
+   * references, enumerations, DDIC floating point types and literals */
+  public isReferenceCompatibleElementary(source: AbstractType | undefined, target: AbstractType | undefined): boolean {
+    const sourceKind = this.elementaryKind(source);
+    const targetKind = this.elementaryKind(target);
+    if (sourceKind === undefined || targetKind === undefined || sourceKind === targetKind) {
+      return true;
+    }
+    // the DDIC types DF16_DEC, DF34_DEC, D16D, D34D, ... are read as packed and UTCL as c LENGTH 27,
+    // so a DDIC type of these two kinds is not compared to a decimal floating point or utclong type
+    const ddicPacked = (t: AbstractType | undefined) => t instanceof PackedType && this.isFromDDIC(t);
+    const ddicChar = (t: AbstractType | undefined) => t instanceof CharacterType && this.isFromDDIC(t);
+    const decfloat = (t: AbstractType | undefined) => t instanceof DecFloat16Type || t instanceof DecFloat34Type;
+    if ((ddicPacked(source) && decfloat(target))
+        || (ddicPacked(target) && decfloat(source))
+        || (ddicChar(source) && target instanceof UTCLongType)
+        || (ddicChar(target) && source instanceof UTCLongType)) {
+      return true;
+    }
+    return false;
+  }
+
+  private isFromDDIC(type: AbstractType): boolean {
+    return type.getDDICName() !== undefined
+      || type.getDescription() !== undefined
+      || type.getConversionExit() !== undefined;
+  }
+
+  /** the built-in type with its length and decimals, undefined if not a complete elementary type checked here */
+  private elementaryKind(type: AbstractType | undefined): string | undefined {
+    if (type === undefined
+        || type.isGeneric() === true
+        || type.getAbstractTypeData()?.derivedFromConstant === true) {
+      return undefined;
+    } else if (type instanceof CharacterType) {
+      return "c" + type.getLength();
+    } else if (type instanceof NumericType && !(type instanceof NGenericType)) {
+      return "n" + type.getLength();
+    } else if (type instanceof HexType) {
+      return "x" + type.getLength();
+    } else if (type instanceof PackedType) {
+      return "p" + type.getLength() + "," + type.getDecimals();
+    } else if (type instanceof StringType) {
+      return "string";
+    } else if (type instanceof XStringType) {
+      return "xstring";
+    } else if (type instanceof DateType) {
+      return "d";
+    } else if (type instanceof TimeType) {
+      return "t";
+    } else if (type instanceof IntegerType) {
+      // also INT1 and INT2, so i is not told apart from b and s
+      return "i";
+    } else if (type instanceof Integer8Type) {
+      return "int8";
+    } else if (type instanceof FloatType) {
+      return "f";
+    } else if (type instanceof DecFloat16Type) {
+      return "decfloat16";
+    } else if (type instanceof DecFloat34Type) {
+      return "decfloat34";
+    } else if (type instanceof UTCLongType) {
+      return "utclong";
+    }
+    return undefined;
+  }
+
   // character-like arguments of built-in functions must be elementary, flat character-like structures are not allowed
   public isAssignableBuiltin(source: AbstractType | undefined,
                              target: AbstractType | undefined,
@@ -1037,5 +1109,65 @@ export class TypeUtils {
       || type instanceof CSequenceType
       || type instanceof CGenericType
       || type instanceof SimpleType;
+  }
+
+  // A data object passed to an IMPORTING parameter by reference, with a complete elementary type,
+  // must be compatible with it, there is no conversion. An expression, a functional call or a literal
+  // is passed as a temporary of the type of the parameter, a parameter passed by value converts.
+  // Returns true if an issue was reported.
+  public checkReferenceCompatible(
+    source: ExpressionNode,
+    sourceType: AbstractType | undefined,
+    parameter: TypedIdentifier | undefined,
+    method: IMethodDefinition | VoidType,
+    input: SyntaxInput): boolean {
+
+    if (parameter === undefined
+        || method instanceof VoidType
+        || method instanceof BuiltInMethod
+        || parameter.getMeta().includes(IdentifierMeta.PassByValue)
+        || this.isDataObject(source, input) === false) {
+      return false;
+    }
+
+    const targetType = parameter.getType();
+    if (this.isReferenceCompatibleElementary(sourceType, targetType) === true) {
+      return false;
+    }
+
+    const message = `The type "${sourceType?.toABAP()}" of "${source.concatTokens()}" is not compatible with the type "${
+      targetType.toABAP()}" of "${parameter.getName()}", passed by reference`;
+    input.issues.push(syntaxIssue(input, source.getFirstToken(), message));
+    return true;
+  }
+
+  // a variable, a constant, an attribute, a component or a field symbol, without offset, length, table
+  // expression, method call or dynamic component; an inline declared variable is left out, its type is inferred
+  private isDataObject(source: ExpressionNode, input: SyntaxInput): boolean {
+    if (!(source.get() instanceof Expressions.Source) || source.getChildren().length !== 1) {
+      return false;
+    }
+    const chain = source.getFirstChild();
+    if (!(chain instanceof ExpressionNode) || !(chain.get() instanceof Expressions.FieldChain)) {
+      return false;
+    }
+    if (chain.findFirstExpression(Expressions.TableExpression) !== undefined
+        || chain.findFirstExpression(Expressions.TableBody) !== undefined
+        || chain.findFirstExpression(Expressions.FieldOffset) !== undefined
+        || chain.findFirstExpression(Expressions.FieldLength) !== undefined
+        || chain.findFirstExpression(Expressions.MethodCall) !== undefined
+        || chain.concatTokens().includes("(")) {
+      return false;
+    }
+
+    const children = chain.getChildren();
+    if (children.length === 1) {
+      const name = children[0].concatTokens();
+      const found = input.scope.findVariable(name);
+      if (found === undefined || found.getMeta().includes(IdentifierMeta.InlineDefinition)) {
+        return false;
+      }
+    }
+    return true;
   }
 }

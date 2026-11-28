@@ -228,6 +228,8 @@ export class MethodParameters {
         const message = "Method parameter type not compatible, " + item.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
+      } else if (new TypeUtils(input.scope).checkReferenceCompatible(item.source, item.sourceType, parameter, method, input)) {
+        return;
       }
     }
 
