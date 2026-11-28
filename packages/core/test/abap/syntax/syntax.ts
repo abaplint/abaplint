@@ -1259,6 +1259,57 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("RAISE EVENT, event only declared in subclass", () => {
+    const abap = `
+CLASS lcl_base DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_base.
+  PUBLIC SECTION.
+    EVENTS ev.
+ENDCLASS.
+
+CLASS lcl_base IMPLEMENTATION.
+  METHOD run.
+* The event is declared in the subclass only, not in lcl_base.
+    RAISE EVENT ev.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("ev");
+    expect(issues[0].getStart().getRow()).to.equal(15);
+  });
+
+  it("RAISE EVENT, event declared in super class, ok", () => {
+    const abap = `
+CLASS lcl_base DEFINITION.
+  PUBLIC SECTION.
+    EVENTS ev.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_base.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_base IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD run.
+    RAISE EVENT ev.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("event handler parameter", () => {
     const abap = "CLASS zcl_moo DEFINITION CREATE PUBLIC.\n" +
       "  PUBLIC SECTION.\n" +
