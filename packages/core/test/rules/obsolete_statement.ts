@@ -151,6 +151,29 @@ describe("test obsolete_statements rule - versions", () => {
   });
 });
 
+describe("test obsolete_statements rule - GET REFERENCE", () => {
+  it("Cloud, issue", async () => {
+    const issues = await findIssues("GET REFERENCE OF foo INTO bar.", Version.Cloud);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("GET REFERENCE is deprecated, use REF");
+  });
+
+  it("Cloud, REF no issue", async () => {
+    const issues = await findIssues("bar = REF #( foo ).", Version.Cloud);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("on-premise, no issue", async () => {
+    const issues = await findIssues("GET REFERENCE OF foo INTO bar.", Version.v758);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("702, no issue", async () => {
+    const issues = await findIssues("GET REFERENCE OF foo INTO bar.", Version.v702);
+    expect(issues.length).to.equal(0);
+  });
+});
+
 const fixes = [
   {input: "REFRESH foo.", output: "CLEAR foo."},
   {input: "COMPUTE foo = 2 + 3.", output: "foo = 2 + 3."},
