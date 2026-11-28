@@ -190,7 +190,16 @@ export class ObjectOriented {
 
     const name = foundDef.getName().toUpperCase();
     enclosing = enclosing?.toUpperCase();
-    if (enclosing === undefined || enclosing === name) {
+    if (enclosing === undefined) {
+      return undefined;
+    } else if (enclosing === name) {
+      // in the declaring class, a protected member cannot be reached via a reference typed with a subclass
+      if (visibility === Visibility.Protected
+          && def instanceof ClassDefinition
+          && def.getName().toUpperCase() !== name
+          && this.hasFriendship(def, enclosing) === false) {
+        return "protected";
+      }
       return undefined;
     }
 
