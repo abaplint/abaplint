@@ -3423,6 +3423,16 @@ ${indentation}    output = ${uniqueName}.\n`;
                 added = true;
               }
               body += indentation + structureName + "-" + (b as ExpressionNode).concatTokensWithLinebreaks() + ".\n";
+            } else if (b instanceof ExpressionNode && b.get() instanceof Expressions.Source && this.isTextLiteral(b)) {
+              // INSERT INTO TABLE does not convert its operand like VALUE does: a text literal is only compatible with
+              // a row of type c of the same length, so it is assigned to the work area, which converts it
+              if (added === false) {
+                body += data;
+                added = true;
+              }
+              body += indentation + structureName + " = " + b.concatTokens() + ".\n";
+              body += indentation + `INSERT ${structureName} INTO TABLE ${uniqueName}.\n`;
+              skip = true;
             } else if (b.get() instanceof Expressions.Source) {
 // note: it wont work with APPEND for Hashed/Sorted Tables, so use INSERT,
               body += indentation + "INSERT " + (b as ExpressionNode).concatTokensWithLinebreaks() + ` INTO TABLE ${uniqueName}.\n`;
@@ -3510,7 +3520,12 @@ ${indentation}    output = ${uniqueName}.\n`;
   private valueRowsNeedClear(valueBody: ExpressionNode): boolean {
     let shape: string | undefined = undefined;
     let rowSeen = false;
+    let literalSeen = false;
     for (const c of valueBody.getChildren()) {
+      const source = c instanceof ExpressionNode ? c.findDirectExpression(Expressions.Source) : undefined;
+      if (c.get() instanceof Expressions.ValueBodyLine && source !== undefined && this.isTextLiteral(source)) {
+        literalSeen = true;
+      }
       if (c.get() instanceof Expressions.FieldAssignment) {
         if (rowSeen === true) {
           return true;
@@ -3529,7 +3544,8 @@ ${indentation}    output = ${uniqueName}.\n`;
         shape = current;
       }
     }
-    return false;
+    // a text literal row is assigned to the work area, which an empty row "( )" expects to be initial
+    return literalSeen && rowSeen;
   }
 
   private outlineLet(node: ExpressionNode, indentation: string, highSyntax: ISyntaxResult, lowFile: ABAPFile): string {
@@ -3606,6 +3622,14 @@ ${indentation}    output = ${uniqueName}.\n`;
     }
 
     return undefined;
+  }
+
+  /** a source that is one text literal, like 'abc' */
+  private isTextLiteral(source: ExpressionNode): boolean {
+    const children = source.getChildren();
+    return children.length === 1
+      && children[0].get() instanceof Expressions.Constant
+      && children[0].getFirstToken().getStr().startsWith("'");
   }
 
   private findType(i: ExpressionNode, lowFile: ABAPFile, highSyntax: ISyntaxResult, ref = false): string | undefined {

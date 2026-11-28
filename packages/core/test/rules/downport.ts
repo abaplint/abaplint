@@ -2,7 +2,7 @@
 import {expect} from "chai";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
-import {Downport} from "../../src/rules";
+import {CheckSyntax, Downport, ParserError} from "../../src/rules";
 import {Config} from "../../src/config";
 import {testRuleFixAll, testRuleFixCount} from "./_utils";
 import {IConfiguration} from "../../src/_config";
@@ -1550,6 +1550,90 @@ CLEAR temp1.
 INSERT 1 INTO TABLE temp1.
 INSERT 2 INTO TABLE temp1.
 DATA(sdf) = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("VALUE text literal rows, assigned to the work area, the result has no syntax error in 702", async () => {
+    const abap = `
+TYPES c5 TYPE c LENGTH 5.
+DATA t2 TYPE STANDARD TABLE OF c5 WITH DEFAULT KEY.
+t2 = VALUE #( ( 'abc' ) ( 'de' ) ).`;
+
+    const expected = `
+TYPES c5 TYPE c LENGTH 5.
+DATA t2 TYPE STANDARD TABLE OF c5 WITH DEFAULT KEY.
+DATA temp1 LIKE t2.
+CLEAR temp1.
+DATA temp2 LIKE LINE OF temp1.
+temp2 = 'abc'.
+INSERT temp2 INTO TABLE temp1.
+temp2 = 'de'.
+INSERT temp2 INTO TABLE temp1.
+t2 = temp1.`;
+
+    testFix(abap, expected);
+
+    // INSERT 'abc' INTO TABLE temp1 is "Types not compatible", the literal is c LENGTH 3
+    const reg = new Registry(buildConfig(Version.v702)).addFile(new MemoryFile("zdownport.prog.abap", expected)).parse();
+    for (const rule of [new CheckSyntax(), new ParserError()]) {
+      const issues = rule.initialize(reg).run(reg.getFirstObject()!);
+      expect(issues[0]?.getMessage()).to.equal(undefined);
+    }
+  });
+
+  it("VALUE text literal row into a table of strings", async () => {
+    const abap = `
+DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+result = VALUE #( ( 'abc' ) ).`;
+
+    const expected = `
+DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA temp1 LIKE result.
+CLEAR temp1.
+DATA temp2 LIKE LINE OF temp1.
+temp2 = 'abc'.
+INSERT temp2 INTO TABLE temp1.
+result = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("VALUE text literal row followed by an empty row, the work area is cleared", async () => {
+    const abap = `
+TYPES c5 TYPE c LENGTH 5.
+DATA t2 TYPE STANDARD TABLE OF c5 WITH DEFAULT KEY.
+t2 = VALUE #( ( 'abc' ) ( ) ).`;
+
+    const expected = `
+TYPES c5 TYPE c LENGTH 5.
+DATA t2 TYPE STANDARD TABLE OF c5 WITH DEFAULT KEY.
+DATA temp1 LIKE t2.
+CLEAR temp1.
+DATA temp2 LIKE LINE OF temp1.
+temp2 = 'abc'.
+INSERT temp2 INTO TABLE temp1.
+CLEAR temp2.
+INSERT temp2 INTO TABLE temp1.
+t2 = temp1.`;
+
+    testFix(abap, expected);
+  });
+
+  it("VALUE string literal and variable rows, unchanged", async () => {
+    const abap = `
+DATA str TYPE string.
+DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+result = VALUE #( ( \`abc\` ) ( str ) ).`;
+
+    const expected = `
+DATA str TYPE string.
+DATA result TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA temp1 LIKE result.
+CLEAR temp1.
+INSERT \`abc\` INTO TABLE temp1.
+INSERT str INTO TABLE temp1.
+result = temp1.`;
 
     testFix(abap, expected);
   });
