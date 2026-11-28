@@ -6149,6 +6149,39 @@ DATA(sdf) = CONV clike( foo ).`;
     expect(issues[0].getMessage()).to.contain("generic");
   });
 
+  it("VALUE of generic table type, no key", () => {
+    const abap = `
+TYPES: BEGIN OF ty_name_value,
+         name  TYPE string,
+         value TYPE string,
+       END OF ty_name_value.
+TYPES ty_table TYPE TABLE OF ty_name_value.
+DATA(sdf) = VALUE ty_table(
+  ( name = 'key' value = 'a b!' )
+  ( name = 'mode' value = 'x' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("generic");
+  });
+
+  it("VALUE of table types with keys, and VALUE # of DATA without key, ok", () => {
+    const abap = `
+TYPES: BEGIN OF ty_name_value,
+         name  TYPE string,
+         value TYPE string,
+       END OF ty_name_value.
+TYPES ty_default TYPE TABLE OF ty_name_value WITH DEFAULT KEY.
+TYPES ty_empty TYPE STANDARD TABLE OF ty_name_value WITH EMPTY KEY.
+TYPES ty_user TYPE STANDARD TABLE OF ty_name_value WITH NON-UNIQUE KEY name.
+DATA(default) = VALUE ty_default( ( name = 'key' value = 'a' ) ).
+DATA(empty) = VALUE ty_empty( ( name = 'key' value = 'a' ) ).
+DATA(user) = VALUE ty_user( ( name = 'key' value = 'a' ) ).
+DATA tab TYPE TABLE OF ty_name_value.
+tab = VALUE #( ( name = 'key' value = 'a' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
   it("ok, deferred friend exists", () => {
     const abap = `
 CLASS ltcl_xml DEFINITION DEFERRED.
