@@ -86,7 +86,7 @@ define view zhvamfoocust as select from zhvam_cust
     expect(result[13].getRow()).to.equal(4);
 
     expect(result[5]).to.be.instanceof(Comment);
-    expect(result[5].getCol()).to.equal(24);
+    expect(result[5].getCol()).to.equal(23);
   });
 
   it("eq without spaces", () => {
@@ -139,4 +139,25 @@ define view zhvamfoocust as select from zhvam_cust
     expect(result[0].getStr()).to.equal(cds);
   });
 
+
+  it("positions are the first character of each token", () => {
+    const cds = `define view entity zi_foo with parameters p : abap.char(4)
+  /* multi
+     line */ as select from 'str' "quoted" // comment
+@Anno: #X -- dashes
+end`;
+    const lines = cds.split("\n");
+    const result = CDSLexer.run(new MemoryFile("zi_foo.ddls.asddls", cds));
+    expect(result.length).to.equal(25);
+    for (const token of result) {
+      expect(lines[token.getRow() - 1].substr(token.getCol() - 1, token.getStr().length), token.getStr()).to.equal(token.getStr());
+    }
+  });
+
+  it("position after a string spanning lines", () => {
+    const result = CDSLexer.run(new MemoryFile("zi_foo.ddls.asddls", `a 'b\nc' d`));
+    expect(result.map(t => t.getStr())).to.deep.equal(["a", "'b\nc'", "d"]);
+    expect(result[2].getRow()).to.equal(2);
+    expect(result[2].getCol()).to.equal(4);
+  });
 });
