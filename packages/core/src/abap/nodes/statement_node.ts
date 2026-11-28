@@ -65,6 +65,16 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
   }
 
   public includesToken(search: AbstractToken): boolean {
+    // the tokens are in source order, a token starting outside the first and last token is not part of the statement,
+    // callers search the statement of a token by asking every statement of a file
+    if (this.getChildren().length === 0) {
+      return false;
+    }
+    const start = search.getStart();
+    if (start.isBefore(this.getFirstToken().getStart()) || this.getLastToken().getStart().isBefore(start)) {
+      return false;
+    }
+
     for (const t of this.getTokens()) {
       if (t.getStart().equals(search.getStart())) {
         return true;
