@@ -66,6 +66,9 @@ export interface IRenameSettings {
    * @uniqueItems true
   */
   skip?: string[];
+  /** also rename the old object names in string literals and string templates of the ABAP sources,
+   * a name is matched as a whole word and keeps its case, disabled by default */
+  literals?: boolean;
   /** also rename the URLs of renamed ICF nodes (SICF) in the pages of the BSP applications (WAPA),
    * eg. a data source in a manifest.json, a URL is matched as a whole path, disabled by default */
   urls?: boolean;

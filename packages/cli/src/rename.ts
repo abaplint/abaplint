@@ -25,13 +25,11 @@ export class Rename {
 
     this.skip(rconfig);
     const renamer = this.rename(rconfig, quiet);
+    if (rconfig.literals === true) {
+      this.addUpdated(renamer.renameLiterals());
+    }
     if (rconfig.urls === true) {
-      const result = renamer.renameURLs();
-      result.updatedFiles.forEach(f => {
-        if (this.addedFiles.has(f) === false) {
-          this.updatedFiles.add(f);
-        }
-      });
+      this.addUpdated(renamer.renameURLs());
     }
     if (rconfig.output === undefined || rconfig.output === "") {
       // write changes inline
@@ -89,6 +87,15 @@ export class Rename {
         fs.writeFileSync(n, f.getRaw());
       }
     }
+  }
+
+  /** the files changed by a step after the renaming, a file added by the renaming is written anyhow */
+  private addUpdated(result: ReturnType<abaplint.Rename["rename"]>) {
+    result.updatedFiles.forEach(f => {
+      if (this.addedFiles.has(f) === false) {
+        this.updatedFiles.add(f);
+      }
+    });
   }
 
   private rename(rconfig: abaplint.IRenameSettings, quiet?: boolean): abaplint.Rename {
