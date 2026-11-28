@@ -2262,7 +2262,43 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
     }
 
     let code: string;
-    if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
+    const optional = high.findDirectExpression(Expressions.Source)?.findDirectTokenByText("OPTIONAL") !== undefined;
+    const fieldChain = sourceRef.findDirectExpression(Expressions.FieldChain);
+    const tableExpression = fieldChain?.findDirectExpression(Expressions.TableExpression);
+    if (optional === true && fieldChain !== undefined && tableExpression !== undefined) {
+      // REF #( tab[ ... ] OPTIONAL ) is an initial reference when the row is not found, nothing is raised
+      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
+      const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+
+      // "tab[ ... ]" is assigned, what follows the table expression is read from the assigned row
+      let row = "";
+      let after = "";
+      let seen = false;
+      for (const c of fieldChain.getChildren()) {
+        if (seen === false) {
+          row += c.concatTokens();
+          seen = c === tableExpression;
+        } else {
+          after += c.concatTokens();
+        }
+      }
+
+      const targetCode = target.concatTokens();
+      // "DATA(ref)" is declared by the statement that sets it, and cleared by its name
+      const targetName = target.findDirectExpression(Expressions.InlineData)
+        ?.findDirectExpression(Expressions.TargetField)?.concatTokens() || targetCode;
+      // a further table expression is again OPTIONAL, and downported by the next run of this method
+      const found = fieldChain.findDirectExpressions(Expressions.TableExpression).length > 1
+        ? `${targetCode} = REF #( ${uniqueName}${after} OPTIONAL ).`
+        : `GET REFERENCE OF ${uniqueName}${after} INTO ${targetCode}.`;
+
+      code = `ASSIGN ${row} TO FIELD-SYMBOL(${uniqueName}).
+${indentation}IF sy-subrc = 0.
+${indentation}  ${found}
+${indentation}ELSE.
+${indentation}  CLEAR ${targetName}.
+${indentation}ENDIF`;
+    } else if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       code = `ASSIGN ${sourceRef.concatTokens()} TO FIELD-SYMBOL(<${uniqueName}>).
 IF sy-subrc <> 0.
@@ -4321,8 +4357,6 @@ ${indentation}    output = ${uniqueName}.\n`;
         const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
         const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
-        const sy = func === "LINE_EXISTS" ? "sy-subrc" : "sy-tabix";
-
         let insertAt: Position | undefined = node.getFirstToken().getStart();
         if (node.get() instanceof ElseIf) {
           // assumption: no side effects in IF conditions, except the READ itself, see below
@@ -4346,7 +4380,14 @@ ${indentation}    output = ${uniqueName}.\n`;
           keep.map(k => indentation + `DATA ${k.name} LIKE ${k.field}.\n`).join("") +
           keep.map(k => indentation + `${k.name} = ${k.field}.\n`).join("") +
           indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
-          indentation + uniqueName + ` = ${sy}.\n` +
+          (func === "LINE_EXISTS"
+            ? indentation + `${uniqueName} = sy-subrc.\n`
+            // line_index( ) is zero when the row is not found, sy-tabix is not, eg. after a binary search
+            : indentation + `IF sy-subrc = 0.\n` +
+              indentation + `  ${uniqueName} = sy-tabix.\n` +
+              indentation + `ELSE.\n` +
+              indentation + `  ${uniqueName} = 0.\n` +
+              indentation + `ENDIF.\n`) +
           keep.map(k => indentation + `${k.field} = ${k.name}.\n`).join("") +
           indentation ;
         const fix1 = EditHelper.insertAt(lowFile, insertAt, code);
@@ -4491,10 +4532,11 @@ ${indentation}`;
       // must be at top level of the source for quickfix to work(todo: handle more scenarios)
       if (target
           && found
-          && source.concatTokens() === found.concatTokens()
-          && target.findDirectExpression(Expressions.InlineData) === undefined) {
-        const abap = this.newDataReference(high, target, found, lowFile, highSyntax)
-          ?? this.newParameters(found, target.concatTokens(), highSyntax, lowFile);
+          && source.concatTokens() === found.concatTokens()) {
+        let abap = this.newDataReference(high, target, found, lowFile, highSyntax);
+        if (abap === undefined && target.findDirectExpression(Expressions.InlineData) === undefined) {
+          abap = this.newParameters(found, target.concatTokens(), highSyntax, lowFile);
+        }
         if (abap !== undefined) {
           fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), abap);
         }
@@ -4536,18 +4578,13 @@ ${indentation}`;
     }
   }
 
-  /** NEW into a data reference creates data, CREATE OBJECT cannot: "target = NEW #|type( [value] )"
-   *  with a target typed REF TO a data type becomes CREATE DATA plus the assignment of the value */
+  /** NEW into a data reference creates data, CREATE OBJECT cannot: "target = NEW #|type( [content] )"
+   *  with a target typed REF TO a data type becomes CREATE DATA plus the assignment of the content,
+   *  a single value as it is, components and rows as VALUE, which is downported afterwards */
   private newDataReference(high: StatementNode, target: ExpressionNode, found: ExpressionNode,
                            lowFile: ABAPFile, highSyntax: ISyntaxResult): string | undefined {
-    const children = found.getChildren();
-    const value = found.findDirectExpression(Expressions.Source);
-    // NEW, the type, "(", optionally one value, ")"
-    if (children.length !== 4 + (value ? 1 : 0)) {
-      return undefined;
-    }
-
-    const name = target.concatTokens();
+    const inline = target.findDirectExpression(Expressions.InlineData)?.findDirectExpression(Expressions.TargetField);
+    const name = inline ? inline.concatTokens() : target.concatTokens();
     const typeExpr = found.findDirectExpression(Expressions.TypeNameOrInfer);
     const typeName = typeExpr?.concatTokens();
     const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
@@ -4558,26 +4595,41 @@ ${indentation}`;
       const resolved = spag?.getData().references.find(r => r.referenceType === ReferenceType.InferredType
         && r.position.getStart().equals(typeToken.getStart()))?.resolved;
       type = resolved instanceof TypedIdentifier ? resolved.getType() : undefined;
-    } else if (target.getChildren().length === 1 && target.getFirstChild()?.get() instanceof Expressions.TargetField) {
+    } else if (inline || (target.getChildren().length === 1 && target.getFirstChild()?.get() instanceof Expressions.TargetField)) {
       type = spag?.findVariable(name)?.getType();
     }
     if (!(type instanceof DataReference)) {
       return undefined;
     }
 
+    // what is between the parentheses: NEW, the type, "(", the content, ")"
+    const content = found.getChildren().slice(3, -1);
+    let value = content.map(c => c.concatTokens()).join(" ");
+    // one table row "( val )" parses as a Source too
+    const singleValue = content.length === 1
+      && content[0].get() instanceof Expressions.Source
+      && !(type.getType() instanceof TableType && value.startsWith("("));
+    if (singleValue === false) {
+      // structure components or table rows
+      value = `VALUE ${typeName}( ${value} )`;
+    }
+
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     let abap = `CREATE DATA ${name}` + (typeName === "#" ? "" : ` TYPE ${typeName}`) + ".";
-    if (value === undefined) {
+    if (inline) {
+      abap = `DATA ${name} TYPE REF TO ${typeName}.\n` + indentation + abap;
+    }
+    if (content.length === 0) {
       return abap;
     } else if (type.getType().isGeneric() === false) {
-      return abap + `\n${indentation}${name}->* = ${value.concatTokens()}.`;
+      return abap + `\n${indentation}${name}->* = ${value}.`;
     }
     // a generic reference cannot be dereferenced as a target below v756
     const fs = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
     abap = `FIELD-SYMBOLS ${fs} TYPE any.\n` +
       indentation + abap + "\n" +
       indentation + `ASSIGN ${name}->* TO ${fs}.\n` +
-      indentation + `${fs} = ${value.concatTokens()}.`;
+      indentation + `${fs} = ${value}.`;
     return abap;
   }
 

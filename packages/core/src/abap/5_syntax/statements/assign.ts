@@ -9,6 +9,7 @@ import {Dynamic} from "../expressions/dynamic";
 import {TypeUtils} from "../_type_utils";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
 import {LanguageVersion, Release, releaseAtLeast} from "../../../version";
+import {allowEmptySubstring} from "../expressions/_substring";
 
 export class Assign implements StatementSyntax {
   public runSyntax(node: StatementNode, input: SyntaxInput): void {
@@ -31,7 +32,8 @@ export class Assign implements StatementSyntax {
       }
       sourceType = VoidType.get("Dynamic");
     } else {
-      sourceType = Source.runSyntax(theSource, input, undefined, false, isComponent === false);
+      const sourceInput = theSource && isComponent === false ? allowEmptySubstring(input, theSource) : input;
+      sourceType = Source.runSyntax(theSource, sourceInput, undefined, false, isComponent === false);
       if (secondAssign?.concatTokens() === "->"
           && thirdAssign?.get() instanceof Expressions.Dynamic
           && sourceType?.isGeneric() === true
