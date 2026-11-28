@@ -3,6 +3,9 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Issue} from "../../src/issue";
 import {Registry} from "../../src/registry";
 import {ParserError} from "../../src/rules/parser_error";
+import {STATEMENT_MAX_OPERATORS} from "../../src/abap/2_statements/statement_parser";
+import {Move} from "../../src/abap/2_statements/statements";
+import {ABAPObject} from "../../src/objects/_abap_object";
 import {Version} from "../../src/version";
 import {testRule} from "./_utils";
 import {expect} from "chai";
@@ -92,6 +95,48 @@ describe("Rule: parser_error", () => {
   it("pragma should give error on 700", async () => {
     const issues = await findIssues("foo = 2 ##pragma.", Version.v700);
     expect(issues.length).to.equal(1);
+  });
+
+  function operatorChain(operator: string, operators: number): string {
+    return "DATA x TYPE string.\nx = a" + ` ${operator} a`.repeat(operators) + ".";
+  }
+
+  it("too many && operators, statement too long", async () => {
+    const issues = await findIssues(operatorChain("&&", STATEMENT_MAX_OPERATORS + 1));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Statement too long, refactor statement");
+  });
+
+  it("too many + operators, statement too long", async () => {
+    const issues = await findIssues(operatorChain("+", STATEMENT_MAX_OPERATORS + 1));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Statement too long, refactor statement");
+  });
+
+  it("2000 && operators, statement too long, no stack overflow", async () => {
+    const issues = await findIssues(operatorChain("&&", 2000));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Statement too long, refactor statement");
+  });
+
+  it("2000 + operators, statement too long, no stack overflow", async () => {
+    const issues = await findIssues(operatorChain("+", 2000));
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.equal("Statement too long, refactor statement");
+  });
+
+  it("&& operators, just below the limit, parses", async () => {
+    const abap = operatorChain("&&", STATEMENT_MAX_OPERATORS);
+    const reg = new Registry().addFile(new MemoryFile("zparser_error.prog.abap", abap)).parse();
+    expect((reg.getFirstObject() as ABAPObject).getABAPFiles()[0].getStatements()[1].get()).to.be.instanceof(Move);
+    expect(await findIssues(abap)).to.have.length(0);
+  });
+
+  it("+ operators, just below the limit, parses", async () => {
+    const abap = operatorChain("+", STATEMENT_MAX_OPERATORS);
+    const reg = new Registry().addFile(new MemoryFile("zparser_error.prog.abap", abap)).parse();
+    expect((reg.getFirstObject() as ABAPObject).getABAPFiles()[0].getStatements()[1].get()).to.be.instanceof(Move);
+    expect(await findIssues(abap)).to.have.length(0);
   });
 
   it("EXISTS ENDMETHOD", async () => {

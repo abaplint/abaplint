@@ -17,6 +17,28 @@ import {IStatementRunnable} from "./statement_runnable";
 import {reclassifySelect} from "./_select_reclassify";
 
 export const STATEMENT_MAX_TOKENS = 20000;
+// each operator nests the matching of Source one level deeper, "a && a && ..." exceeds the default
+// call stack of node at about 950 operators on a first parse, the longest found in real code is about 450
+export const STATEMENT_MAX_OPERATORS = 700;
+
+const OPERATORS = new Set(["&&", "&", "*", "/", "**", "DIV", "MOD"]);
+
+/** counts the operators of arithmetic and string expressions in the tokens of a statement */
+export function countOperators(tokens: readonly AbstractToken[]): number {
+  let count = 0;
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (token instanceof Tokens.WPlusW || token instanceof Tokens.WDashW) {
+      count++;
+    } else if (token instanceof Tokens.Dash && tokens[i - 1]?.getStr().toUpperCase() === "BIT") {
+      // "BIT-AND", "BIT-OR" and "BIT-XOR" are lexed as three tokens
+      count++;
+    } else if (token instanceof Tokens.Identifier && OPERATORS.has(token.getStr().toUpperCase())) {
+      count++;
+    }
+  }
+  return count;
+}
 
 const EMPTY_PRAGMAS: readonly AbstractToken[] = Object.freeze([]);
 
@@ -244,7 +266,10 @@ export class StatementParser {
       const tokens = statement.getTokens();
       statement = new StatementNode(new Empty()).setChildren(this.tokensToNodes(tokens));
     } else if (statement.get() instanceof Unknown) {
-      if (isPunctuation) {
+      if (length > STATEMENT_MAX_OPERATORS && countOperators(input.getTokens()) > STATEMENT_MAX_OPERATORS) {
+        // matching would exceed the call stack, give up, parser_error reports it
+        statement = input;
+      } else if (isPunctuation) {
         statement = this.match(statement);
       } else if (length > STATEMENT_MAX_TOKENS) {
         // if the statement contains more than STATEMENT_MAX_TOKENS tokens, just give up
