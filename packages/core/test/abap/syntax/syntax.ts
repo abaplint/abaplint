@@ -7598,6 +7598,31 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.contain("READ TABLE, INDEX must be simple");
   });
 
+  it("READ TABLE INDEX on generic ANY TABLE, error", () => {
+    const abap = `
+DATA gt_data TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+DATA gr_data TYPE REF TO data.
+
+FORM run.
+  FIELD-SYMBOLS <any_tab> TYPE ANY TABLE.
+  FIELD-SYMBOLS <line> TYPE any.
+
+  ASSIGN gr_data->* TO <any_tab>.
+
+* index access on a generic ANY TABLE: expected syntax error
+  READ TABLE <any_tab> ASSIGNING <line> INDEX 1.
+ENDFORM.
+
+START-OF-SELECTION.
+  APPEND 1 TO gt_data.
+  GET REFERENCE OF gt_data INTO gr_data.
+  PERFORM run.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.contain("index operations cannot be used");
+    expect(issues[0].getStart().getRow()).to.equal(12);
+  });
+
   it("READ TABLE, table_line, ok", () => {
     const abap = `
   DATA lt_body TYPE STANDARD TABLE OF string WITH DEFAULT KEY.

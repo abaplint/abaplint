@@ -61,6 +61,10 @@ export class ReadTable implements StatementSyntax {
         const message = "INDEX on hashed table not possible";
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;
+      } else if (sourceType instanceof TableType && sourceType.getAccessType() === TableAccessType.any) {
+        const message = "Explicit or implicit index operations cannot be used on tables with types \"HASHED TABLE\" or \"ANY TABLE\"";
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
       }
     }
 
