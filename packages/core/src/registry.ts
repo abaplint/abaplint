@@ -88,6 +88,8 @@ export class Registry implements IRegistry {
   private macroReferences: IMacroReferences;
   private errorNamespace: RegExp;
   private conf: IConfiguration;
+  /** revision of each object at the end of the last parse pass */
+  private parsedRevisions = new Map<IObject, number>();
 
   public constructor(conf?: IConfiguration) {
     this.setConfig(conf ? conf : Config.getDefault());
@@ -372,6 +374,7 @@ export class Registry implements IRegistry {
     }
     new CrossIncludeMacros(this).run();
     new FindGlobalDefinitions(this).run();
+    this.recordParsedRevisions();
 
     return this;
   }
@@ -393,6 +396,7 @@ export class Registry implements IRegistry {
     }
     new CrossIncludeMacros(this).run();
     new FindGlobalDefinitions(this).run(input?.progress);
+    this.recordParsedRevisions();
 
     return this;
   }
@@ -407,14 +411,24 @@ export class Registry implements IRegistry {
     ParsingPerformance.push(input, result);
   }
 
+  // the object dirty flags are not used: XML-only objects never clear theirs, objects parsed on demand clear
+  // theirs before the registry pass ran, and removed objects are not in the registry anymore
   private isDirty(): boolean {
+    let count = 0;
     for (const o of this.getObjects()) {
-      const dirty = o.isDirty();
-      if (dirty === true) {
+      if (this.parsedRevisions.get(o) !== o.getRevision()) {
         return true;
       }
+      count++;
     }
-    return false;
+    return count !== this.parsedRevisions.size;
+  }
+
+  private recordParsedRevisions(): void {
+    this.parsedRevisions = new Map();
+    for (const o of this.getObjects()) {
+      this.parsedRevisions.set(o, o.getRevision());
+    }
   }
 
   private findOrCreate(name: string, type?: string): IObject {

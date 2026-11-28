@@ -29,6 +29,8 @@ export interface IObject extends IArtifact {
 
   setDirty(): void;
   isDirty(): boolean;
+  /** changes with each setDirty(), the registry compares it to decide if a parse pass is needed */
+  getRevision(): number;
 
   /** returns true if the object was parsed, false if no changes since last parse
    * registry for global cross object macros
