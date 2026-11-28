@@ -26,11 +26,13 @@ export class GetTime implements StatementSyntax {
 
   }
 
-  // the target must be a timestamp, ie. packed(timestamp and timestampl) or utclong
+  // the target must be a timestamp, ie. packed (timestamp and timestampl), a utclong is not one
   private compatibleTimeStamp(type: AbstractType | undefined): boolean {
+    if (type instanceof UTCLongType) {
+      return false;
+    }
     return type === undefined
       || type instanceof PackedType
-      || type instanceof UTCLongType
       || type instanceof VoidType
       || type instanceof AnyType
       || type instanceof DataType

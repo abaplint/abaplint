@@ -2531,13 +2531,13 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
-  it("loop at ANY should give ANY", () => {
+  it("loop at ANY TABLE, inline field symbol is typed data", () => {
     const abap = `
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
     LOOP AT <tab> ASSIGNING FIELD-SYMBOL(<sdf>).
     ENDLOOP.`;
     const identifier = resolveVariable(abap, "<sdf>");
-    expect(identifier?.getType()).to.be.instanceof(Basic.AnyType);
+    expect(identifier?.getType()).to.be.instanceof(Basic.DataType);
   });
 
   it("data reference via NEW", () => {
@@ -3118,6 +3118,12 @@ DATA(res) = cha && cha.`;
   CONVERT UTCLONG ts TIME ZONE 'CET' INTO DATE DATA(date) TIME DATA(time) DAYLIGHT SAVING TIME DATA(dst).`, "dst")?.getType();
     expect(type).to.be.instanceof(Basic.CharacterType);
     expect((type as Basic.CharacterType).getLength()).to.equal(1);
+  });
+
+  it("inline DATA, CONVERT UTCLONG with FRACTIONAL SECONDS", () => {
+    const type = resolveVariable(`DATA ts TYPE utclong.
+  CONVERT UTCLONG ts INTO DATE DATA(date) TIME DATA(time) FRACTIONAL SECONDS DATA(frac) DAYLIGHT SAVING TIME DATA(dst) TIME ZONE sy-zonlo.`, "frac")?.getType();
+    expect(type).to.be.instanceof(Basic.DecFloat34Type);
   });
 
 });

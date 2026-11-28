@@ -2,6 +2,7 @@ import {Issue} from "../../issue";
 import {Severity} from "../../severity";
 import {IEdit} from "../../edit_helper";
 import {AbstractToken} from "../1_lexer/tokens/abstract_token";
+import {INode} from "../nodes/_inode";
 import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
 
@@ -19,8 +20,12 @@ export type SyntaxInput = {
   /** checks which can only run once the full object has been traversed, eg. PERFORM parameters,
    * the FORM might be defined after the PERFORM */
   deferred: (() => void)[],
+  /** the substring length of an operand which can be 0, see allowEmptySubstring */
+  emptySubstring?: INode,
   /** the statement is inside a LOOP structure */
   inLoop?: boolean,
+  /** of the TRY, CATCH and CLEANUP blocks around the statement, the innermost one is a CATCH block */
+  inCatch?: boolean,
 };
 
 export function syntaxIssue(input: SyntaxInput, token: AbstractToken, message: string, fix?: IEdit) {

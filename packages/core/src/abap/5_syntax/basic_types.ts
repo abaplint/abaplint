@@ -17,6 +17,7 @@ import {Field, FieldSub, TypeTableKey} from "../2_statements/expressions";
 import {BuiltIn} from "./_builtin";
 import {Position} from "../../position";
 import {CheckSyntaxKey, SyntaxInput, syntaxIssue} from "./_syntax_input";
+import {Constant} from "./expressions/constant";
 import {IObjectAndToken} from "../../_iddic_references";
 import {Release, releaseAtLeast} from "../../version";
 
@@ -1078,6 +1079,12 @@ export class BasicTypes {
     const found = this.resolveTypeName(chain);
     if (found && found instanceof Types.VoidType) {
       return found;
+    } else if (found
+        && found.isGeneric() === true
+        && !(found instanceof Types.DataType)
+        && !(found instanceof Types.TableType)) {
+      // "REF TO data" is the only generic type allowed, generic tables are handled elsewhere
+      throw new Error(`A generic type cannot be specified after "REF TO"`);
     } else if (found && !(found instanceof Types.UnknownType)) {
       return new Types.DataReference(found);
     } else if (chain.concatTokens().toUpperCase() === "DATA") {
@@ -1113,6 +1120,7 @@ export class BasicTypes {
     if (constant) {
       const conc = val.findFirstExpression(Expressions.ConcatenatedConstant);
       if (conc) {
+        Constant.checkConcatenatedLength(conc, this.input);
         const first = conc.getFirstToken().getStr().substring(0, 1);
         let result = "";
         for (const token of conc.getAllTokens()) {

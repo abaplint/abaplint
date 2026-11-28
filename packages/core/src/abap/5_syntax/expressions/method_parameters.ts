@@ -16,6 +16,7 @@ import {checkOffsetLength} from "./_check_offset_length";
 import {checkTextSymbol} from "./_check_text_symbol";
 import {checkHeaderLine} from "./_check_header_line";
 import {BuiltInMethod} from "../_builtin";
+import {UTCLongType} from "../../types/basic/utc_long_type";
 
 interface IListItemT {
   name: string;
@@ -31,6 +32,13 @@ interface IListItemS {
 
 function normalizeParameterName(name: string): string {
   return name.replace(/^!/, "").toUpperCase();
+}
+
+// nmax( ) and nmin( ) compare numbers, which a utclong cannot be converted into, but their parameters are typed "simple"
+function isTimeStampExtremum(method: IMethodDefinition, type: AbstractType | undefined): boolean {
+  return type instanceof UTCLongType
+    && method instanceof BuiltInMethod
+    && ["NMAX", "NMIN"].includes(method.getName().toUpperCase());
 }
 
 export class MethodParameters {
@@ -86,7 +94,8 @@ export class MethodParameters {
 
   private checkReceiving(node: INode, input: SyntaxInput, method: IMethodDefinition | VoidType) {
 
-    const type = method instanceof VoidType ? method : method.getParameters().getReturning()?.getType();
+    const returning = method instanceof VoidType ? undefined : method.getParameters().getReturning();
+    const type = method instanceof VoidType ? method : returning?.getType();
     if (type === undefined) {
       const message = "Method does not have a returning parameter";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
@@ -94,6 +103,14 @@ export class MethodParameters {
     } else if (!(node instanceof ExpressionNode)) {
       const message = "checkReceiving, not an expression node";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
+    }
+
+    const nameNode = node.findDirectExpression(Expressions.ParameterName);
+    const name = nameNode === undefined ? undefined : normalizeParameterName(nameNode.getFirstToken().getStr());
+    if (returning !== undefined && name !== undefined && returning.getName().toUpperCase() !== name) {
+      const message = "Method returning parameter \"" + name + "\" does not exist";
+      input.issues.push(syntaxIssue(input, nameNode!.getFirstToken(), message));
       return;
     }
 
@@ -206,7 +223,8 @@ export class MethodParameters {
         return;
       } else if (checkHeaderLine(item.source, item.sourceType, parameter.getType(), method, input)) {
         return;
-      } else if (assignable(item.sourceType, parameter.getType(), item.source) === false) {
+      } else if (assignable(item.sourceType, parameter.getType(), item.source) === false
+          || isTimeStampExtremum(method, item.sourceType)) {
         const message = "Method parameter type not compatible, " + item.name;
         input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
         return;

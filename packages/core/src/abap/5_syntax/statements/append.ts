@@ -5,6 +5,7 @@ import {checkParenthesizedOperand} from "../_parenthesized_operand";
 import {Target} from "../expressions/target";
 import {DataReference, DataType, TableAccessType, TableType, UnknownType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {InlineFS} from "../expressions/inline_fs";
 import {FSTarget} from "../expressions/fstarget";
 import {StatementSyntax} from "../_statement_syntax";
 import {InlineData} from "../expressions/inline_data";
@@ -27,9 +28,13 @@ export class Append implements StatementSyntax {
       targetType = Target.runSyntax(target, input);
     }
 
-    // a hashed table has no index, APPEND adds at the end
+    // a hashed table has no index, APPEND adds at the end, and ANY TABLE might be hashed
     if (targetType instanceof TableType && targetType.getAccessType() === TableAccessType.hashed) {
       const message = "Implicit or explicit index operation on hashed table is not possible";
+      input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+      return;
+    } else if (targetType instanceof TableType && targetType.getAccessType() === TableAccessType.any) {
+      const message = "Explicit or implicit index operations cannot be used on tables with types \"HASHED TABLE\" or \"ANY TABLE\"";
       input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
       return;
     }
@@ -42,7 +47,7 @@ export class Append implements StatementSyntax {
         return;
       }
       const rowType = targetType instanceof TableType ? targetType.getRowType() : targetType;
-      FSTarget.runSyntax(fsTarget, input, rowType);
+      FSTarget.runSyntax(fsTarget, input, InlineFS.typeForTableRow(rowType));
     }
 
     const dataTarget = node.findExpressionAfterToken("INTO");
@@ -62,6 +67,15 @@ export class Append implements StatementSyntax {
     }
     if (source) {
       checkParenthesizedOperand(source, input);
+      if (source.getFirstToken().getStr().toUpperCase() === "VALUE"
+          && source.findDirectExpression(Expressions.TypeNameOrInfer) !== undefined
+          && node.findDirectTokenByText("LINES") === undefined
+          && target?.concatTokens().toUpperCase() === "VALUE") {
+// when appending to a table named VALUE, the VALUE operator is read as the short form without work area
+        const message = `An explicit work area is necessary in the OO context. Use "APPEND wa TO VALUE [SORTED BY]".`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      }
       if (targetType !== undefined
           && !(targetType instanceof TableType)
           && !(targetType instanceof UnknownType)

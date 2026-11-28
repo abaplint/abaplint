@@ -430,6 +430,18 @@ Make sure to test the downported code, it might not always be completely correct
         }
       }
 
+      // CASE with a 702 built-in function as the operand parses in the low version, but before
+      // 740sp02 the operand takes only the functions called with one unnamed argument, like strlen( )
+      if (ret.length === 0) {
+        for (let i = 0; i < lowStatements.length; i++) {
+          const issue = this.outlineCaseBuiltin(lowStatements[i], highStatements[i], lowFile, highSyntax);
+          if (issue) {
+            ret.push(issue);
+            break;
+          }
+        }
+      }
+
       // MOVE-CORRESPONDING between tables parses in the low version, but is only allowed from
       // v740sp05, "MOVE-CORRESPONDING with tables possible from v740sp05"
       if (ret.length === 0) {
@@ -1734,6 +1746,60 @@ ${indentation}`);
                          this.getMetadata().key, this.conf.severity, fix);
   }
 
+  /** CASE to_upper( val ), the operand is outlined into a variable in front of the CASE.
+   * A WHEN operand stays, in front of the CASE it would be evaluated even if an earlier WHEN matches */
+  private outlineCaseBuiltin(low: StatementNode, high: StatementNode, lowFile: ABAPFile,
+                             highSyntax: ISyntaxResult): Issue | undefined {
+    if (!(high.get() instanceof Statements.Case)) {
+      return undefined;
+    } else if (this.lowReg.getConfig().isOpenABAP()) {
+      return undefined;
+    } else if (low.getFirstToken().getStart() instanceof VirtualPosition) {
+      return undefined;
+    }
+
+    // the whole operand is the call, same condition as the syntax check in checkCaseOperand()
+    const source = high.findDirectExpression(Expressions.Source);
+    const chain = source?.findDirectExpression(Expressions.MethodCallChain);
+    if (source === undefined || chain === undefined
+        || source.getChildren().length !== 1 || chain.getChildren().length !== 1) {
+      return undefined;
+    }
+
+    // functions older than 702 with one unnamed argument are allowed, functions newer than 702
+    // are not valid in the assignment either, and a predicate function returns no value
+    const name = source.getFirstToken().getStr().toUpperCase();
+    if (BuiltIn.hasUnnamedArgument(name)
+        || BuiltIn.methods[name]?.release !== Release.v702
+        || BuiltIn.isPredicate(name) === true) {
+      return undefined;
+    }
+
+    // the result of these has the type of the arguments, which is not known here
+    if (["NMAX", "NMIN", "ROUND", "RESCALE"].includes(name)) {
+      return undefined;
+    }
+
+    // undefined if the name is not a built-in function here, eg. a method of the class with the same name
+    const type = this.builtinReturnType(source, lowFile, highSyntax);
+    if (type === undefined) {
+      return undefined;
+    }
+
+    const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
+    const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+    const code = `DATA ${uniqueName} TYPE ${type}.\n` +
+      indentation + `${uniqueName} = ${source.concatTokens()}.\n` +
+      indentation;
+
+    const fix1 = EditHelper.insertAt(lowFile, high.getFirstToken().getStart(), code);
+    const fix2 = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), uniqueName);
+    const fix = EditHelper.merge(fix2, fix1);
+
+    return Issue.atToken(lowFile, source.getFirstToken(), "Outline built-in function in CASE",
+                         this.getMetadata().key, this.conf.severity, fix);
+  }
+
   /** MOVE-CORRESPONDING between internal tables is possible from v740sp05, in 702 move row by row;
    * a typed target must be a standard table, as a row is added before its fields are filled, and a
    * fully generic target carries no table kind, so its row is added with INSERT INTO TABLE */
@@ -2196,7 +2262,43 @@ ${indentation}${uniqueName2}->if_t100_message~t100key = ${uniqueName1}.\n`;
     }
 
     let code: string;
-    if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
+    const optional = high.findDirectExpression(Expressions.Source)?.findDirectTokenByText("OPTIONAL") !== undefined;
+    const fieldChain = sourceRef.findDirectExpression(Expressions.FieldChain);
+    const tableExpression = fieldChain?.findDirectExpression(Expressions.TableExpression);
+    if (optional === true && fieldChain !== undefined && tableExpression !== undefined) {
+      // REF #( tab[ ... ] OPTIONAL ) is an initial reference when the row is not found, nothing is raised
+      const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
+      const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
+
+      // "tab[ ... ]" is assigned, what follows the table expression is read from the assigned row
+      let row = "";
+      let after = "";
+      let seen = false;
+      for (const c of fieldChain.getChildren()) {
+        if (seen === false) {
+          row += c.concatTokens();
+          seen = c === tableExpression;
+        } else {
+          after += c.concatTokens();
+        }
+      }
+
+      const targetCode = target.concatTokens();
+      // "DATA(ref)" is declared by the statement that sets it, and cleared by its name
+      const targetName = target.findDirectExpression(Expressions.InlineData)
+        ?.findDirectExpression(Expressions.TargetField)?.concatTokens() || targetCode;
+      // a further table expression is again OPTIONAL, and downported by the next run of this method
+      const found = fieldChain.findDirectExpressions(Expressions.TableExpression).length > 1
+        ? `${targetCode} = REF #( ${uniqueName}${after} OPTIONAL ).`
+        : `GET REFERENCE OF ${uniqueName}${after} INTO ${targetCode}.`;
+
+      code = `ASSIGN ${row} TO FIELD-SYMBOL(${uniqueName}).
+${indentation}IF sy-subrc = 0.
+${indentation}  ${found}
+${indentation}ELSE.
+${indentation}  CLEAR ${targetName}.
+${indentation}ENDIF`;
+    } else if (sourceRef.findFirstExpression(Expressions.TableExpression)) {
       const uniqueName = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
       code = `ASSIGN ${sourceRef.concatTokens()} TO FIELD-SYMBOL(<${uniqueName}>).
 IF sy-subrc <> 0.
@@ -4079,14 +4181,21 @@ ${indentation}    output = ${uniqueName}.\n`;
             break;
           }
         }
+        // the call is the first four children: xsdbool, "(", Cond and ")",
+        // when it is the first operand of a longer expression, the operator and the rest follow, "xsdbool( a = 1 ) && b"
         const children = source?.getChildren();
-        if (source === undefined || children?.length !== 4) {
+        if (source === undefined
+            || children === undefined
+            || children.length < 4
+            || !(children[2].get() instanceof Expressions.Cond)
+            || children[3].concatTokens() !== ")") {
           continue;
         }
 
         // make sure to convert to the correct type, RTTI might be used on the result of XSDBOOL
+        // only the call itself is replaced, the rest of the expression stays as it is
         const code = "CONV xsdboolean( boolc( " + children[2].concatTokens() + " ) )";
-        const fix = EditHelper.replaceRange(lowFile, source.getFirstToken().getStart(), source.getLastToken().getEnd(), code);
+        const fix = EditHelper.replaceRange(lowFile, children[0].getFirstToken().getStart(), children[3].getLastToken().getEnd(), code);
         return Issue.atToken(lowFile, token, "Use BOOLC", this.getMetadata().key, this.conf.severity, fix);
       }
     }
@@ -4248,8 +4357,6 @@ ${indentation}    output = ${uniqueName}.\n`;
         const uniqueName = this.uniqueName(node.getFirstToken().getStart(), lowFile.getFilename(), highSyntax);
         const indentation = " ".repeat(node.getFirstToken().getStart().getCol() - 1);
 
-        const sy = func === "LINE_EXISTS" ? "sy-subrc" : "sy-tabix";
-
         let insertAt: Position | undefined = node.getFirstToken().getStart();
         if (node.get() instanceof ElseIf) {
           // assumption: no side effects in IF conditions, except the READ itself, see below
@@ -4273,7 +4380,14 @@ ${indentation}    output = ${uniqueName}.\n`;
           keep.map(k => indentation + `DATA ${k.name} LIKE ${k.field}.\n`).join("") +
           keep.map(k => indentation + `${k.name} = ${k.field}.\n`).join("") +
           indentation + `READ TABLE ${tableName} ${condition}TRANSPORTING NO FIELDS.\n` +
-          indentation + uniqueName + ` = ${sy}.\n` +
+          (func === "LINE_EXISTS"
+            ? indentation + `${uniqueName} = sy-subrc.\n`
+            // line_index( ) is zero when the row is not found, sy-tabix is not, eg. after a binary search
+            : indentation + `IF sy-subrc = 0.\n` +
+              indentation + `  ${uniqueName} = sy-tabix.\n` +
+              indentation + `ELSE.\n` +
+              indentation + `  ${uniqueName} = 0.\n` +
+              indentation + `ENDIF.\n`) +
           keep.map(k => indentation + `${k.field} = ${k.name}.\n`).join("") +
           indentation ;
         const fix1 = EditHelper.insertAt(lowFile, insertAt, code);
@@ -4418,10 +4532,11 @@ ${indentation}`;
       // must be at top level of the source for quickfix to work(todo: handle more scenarios)
       if (target
           && found
-          && source.concatTokens() === found.concatTokens()
-          && target.findDirectExpression(Expressions.InlineData) === undefined) {
-        const abap = this.newDataReference(high, target, found, lowFile, highSyntax)
-          ?? this.newParameters(found, target.concatTokens(), highSyntax, lowFile);
+          && source.concatTokens() === found.concatTokens()) {
+        let abap = this.newDataReference(high, target, found, lowFile, highSyntax);
+        if (abap === undefined && target.findDirectExpression(Expressions.InlineData) === undefined) {
+          abap = this.newParameters(found, target.concatTokens(), highSyntax, lowFile);
+        }
         if (abap !== undefined) {
           fix = EditHelper.replaceRange(lowFile, high.getFirstToken().getStart(), high.getLastToken().getEnd(), abap);
         }
@@ -4463,18 +4578,13 @@ ${indentation}`;
     }
   }
 
-  /** NEW into a data reference creates data, CREATE OBJECT cannot: "target = NEW #|type( [value] )"
-   *  with a target typed REF TO a data type becomes CREATE DATA plus the assignment of the value */
+  /** NEW into a data reference creates data, CREATE OBJECT cannot: "target = NEW #|type( [content] )"
+   *  with a target typed REF TO a data type becomes CREATE DATA plus the assignment of the content,
+   *  a single value as it is, components and rows as VALUE, which is downported afterwards */
   private newDataReference(high: StatementNode, target: ExpressionNode, found: ExpressionNode,
                            lowFile: ABAPFile, highSyntax: ISyntaxResult): string | undefined {
-    const children = found.getChildren();
-    const value = found.findDirectExpression(Expressions.Source);
-    // NEW, the type, "(", optionally one value, ")"
-    if (children.length !== 4 + (value ? 1 : 0)) {
-      return undefined;
-    }
-
-    const name = target.concatTokens();
+    const inline = target.findDirectExpression(Expressions.InlineData)?.findDirectExpression(Expressions.TargetField);
+    const name = inline ? inline.concatTokens() : target.concatTokens();
     const typeExpr = found.findDirectExpression(Expressions.TypeNameOrInfer);
     const typeName = typeExpr?.concatTokens();
     const spag = highSyntax.spaghetti.lookupPosition(high.getFirstToken().getStart(), lowFile.getFilename());
@@ -4485,26 +4595,41 @@ ${indentation}`;
       const resolved = spag?.getData().references.find(r => r.referenceType === ReferenceType.InferredType
         && r.position.getStart().equals(typeToken.getStart()))?.resolved;
       type = resolved instanceof TypedIdentifier ? resolved.getType() : undefined;
-    } else if (target.getChildren().length === 1 && target.getFirstChild()?.get() instanceof Expressions.TargetField) {
+    } else if (inline || (target.getChildren().length === 1 && target.getFirstChild()?.get() instanceof Expressions.TargetField)) {
       type = spag?.findVariable(name)?.getType();
     }
     if (!(type instanceof DataReference)) {
       return undefined;
     }
 
+    // what is between the parentheses: NEW, the type, "(", the content, ")"
+    const content = found.getChildren().slice(3, -1);
+    let value = content.map(c => c.concatTokens()).join(" ");
+    // one table row "( val )" parses as a Source too
+    const singleValue = content.length === 1
+      && content[0].get() instanceof Expressions.Source
+      && !(type.getType() instanceof TableType && value.startsWith("("));
+    if (singleValue === false) {
+      // structure components or table rows
+      value = `VALUE ${typeName}( ${value} )`;
+    }
+
     const indentation = " ".repeat(high.getFirstToken().getStart().getCol() - 1);
     let abap = `CREATE DATA ${name}` + (typeName === "#" ? "" : ` TYPE ${typeName}`) + ".";
-    if (value === undefined) {
+    if (inline) {
+      abap = `DATA ${name} TYPE REF TO ${typeName}.\n` + indentation + abap;
+    }
+    if (content.length === 0) {
       return abap;
     } else if (type.getType().isGeneric() === false) {
-      return abap + `\n${indentation}${name}->* = ${value.concatTokens()}.`;
+      return abap + `\n${indentation}${name}->* = ${value}.`;
     }
     // a generic reference cannot be dereferenced as a target below v756
     const fs = this.uniqueName(high.getFirstToken().getStart(), lowFile.getFilename(), highSyntax, true);
     abap = `FIELD-SYMBOLS ${fs} TYPE any.\n` +
       indentation + abap + "\n" +
       indentation + `ASSIGN ${name}->* TO ${fs}.\n` +
-      indentation + `${fs} = ${value.concatTokens()}.`;
+      indentation + `${fs} = ${value}.`;
     return abap;
   }
 

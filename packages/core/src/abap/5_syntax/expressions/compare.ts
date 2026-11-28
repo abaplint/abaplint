@@ -1,6 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode, TokenNode} from "../../nodes";
 import {Source} from "./source";
+import {InitialOperand} from "../_initial_operand";
 import {MethodCallChain} from "./method_call_chain";
 import {SourceFieldSymbol} from "./source_field_symbol";
 import {SyntaxInput, syntaxIssue} from "../_syntax_input";
@@ -72,8 +73,7 @@ export class Compare {
     }
   }
 
-  // a built-in function with a character-like result cannot be the operand of IS [NOT] INITIAL,
-  // "Unexpected operator IS" on a system, while one with a numeric result, lines( ), can
+  // the operand of IS [NOT] INITIAL, see InitialOperand
   private static checkInitialOperand(node: ExpressionNode, input: SyntaxInput): string | undefined {
     if (input.scope.getOpenABAP()) {
       return undefined;
@@ -82,18 +82,8 @@ export class Compare {
     if (tokens.includes("IS") === false || tokens[tokens.length - 1] !== "INITIAL") {
       return undefined;
     }
-    const chain = node.findDirectExpression(Expressions.Source)?.getChildren();
-    // xsdbool( ) and boolc( ) are their own form in the Source grammar, a condition in parentheses
-    const first = chain?.[0]?.getFirstToken().getStr().toUpperCase();
-    if (chain?.length === 4 && chain[0] instanceof TokenNode && (first === "XSDBOOL" || first === "BOOLC")) {
-      return `Built-in function "${chain[0].getFirstToken().getStr()}" cannot be the operand of IS INITIAL`;
-    }
-    const name = this.builtinCallName(node.findDirectExpression(Expressions.Source), input);
-    const returning = BuiltIn.searchBuiltin(name)?.getParameters().getReturning()?.getType();
-    if (returning instanceof StringType || returning instanceof CharacterType) {
-      return `Built-in function "${name}" cannot be the operand of IS INITIAL`;
-    }
-    return undefined;
+    const source = node.findDirectExpression(Expressions.Source);
+    return source === undefined ? undefined : InitialOperand.check(source, input);
   }
 
   // a predicate function, contains( ) or line_exists( ), is a relational expression and not a value,
