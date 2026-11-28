@@ -20,6 +20,8 @@ export type SyntaxInput = {
   emptySubstring?: INode,
   /** the statement is inside a LOOP structure */
   inLoop?: boolean,
+  /** the statement is inside any loop structure, LOOP, DO, WHILE, SELECT etc. */
+  inAnyLoop?: boolean,
   /** of the TRY, CATCH and CLEANUP blocks around the statement, the innermost one is a CATCH block */
   inCatch?: boolean,
 };

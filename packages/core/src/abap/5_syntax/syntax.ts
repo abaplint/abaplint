@@ -121,6 +121,8 @@ import {Controls} from "./statements/controls";
 import {While} from "./statements/while";
 import {SelectLoop} from "./statements/select_loop";
 import {Check} from "./statements/check";
+import {Continue} from "./statements/continue";
+import {isLoopStructure} from "./_loop_structures";
 import {LogPoint} from "./statements/log_point";
 import {Severity} from "../../severity";
 import {RaiseEvent} from "./statements/raise_event";
@@ -293,6 +295,7 @@ if (Object.keys(map).length === 0) {
   addToMap(new Multiply());
   addToMap(new Divide());
   addToMap(new Check());
+  addToMap(new Continue());
   addToMap(new ModifyDatabase());
   addToMap(new Form());
   addToMap(new SelectOption());
@@ -333,6 +336,7 @@ export class SyntaxLogic {
   private scope: CurrentScope;
   private loopTables: LoopTableChange;
   private loopDepth: number;
+  private anyLoopDepth: number;
   private inCatch: boolean;
   private currentMethod: StructureNode | undefined;
   private sortedLines: SortedKeyWrite;
@@ -366,6 +370,7 @@ export class SyntaxLogic {
     this.deferred = [];
     this.loopTables = new LoopTableChange();
     this.loopDepth = 0;
+    this.anyLoopDepth = 0;
     this.inCatch = false;
     this.sortedLines = new SortedKeyWrite();
     this.reg.getDDICReferences().clear(this.object);
@@ -454,6 +459,10 @@ export class SyntaxLogic {
     if (isLoop) {
       this.loopDepth++;
     }
+    const isAnyLoop = node instanceof StructureNode && isLoopStructure(node.get());
+    if (isAnyLoop) {
+      this.anyLoopDepth++;
+    }
     if (node instanceof StructureNode) {
       this.sortedLines.enter(node, this.currentFile.getFilename());
     }
@@ -514,6 +523,9 @@ export class SyntaxLogic {
     if (isLoop) {
       this.loopDepth--;
     }
+    if (isAnyLoop) {
+      this.anyLoopDepth--;
+    }
     if (node instanceof StructureNode && node.get() instanceof Structures.Loop) {
       const loopStatement = node.findDirectStatement(Statements.Loop);
       if (loopStatement) {
@@ -541,6 +553,7 @@ export class SyntaxLogic {
       filename,
       issues: this.issues,
       deferred: this.deferred,
+      inAnyLoop: this.anyLoopDepth > 0,
     };
 
     if (stru instanceof Structures.ClassDefinition) {
@@ -598,6 +611,7 @@ export class SyntaxLogic {
       issues: this.issues,
       deferred: this.deferred,
       inLoop: this.loopDepth > 0,
+      inAnyLoop: this.anyLoopDepth > 0,
       inCatch: this.inCatch,
     };
 
