@@ -3823,7 +3823,7 @@ ENDCLASS.`;
     FIELD-SYMBOLS <temp1> LIKE LINE OF cipher_dict.
     DATA temp2 LIKE sy-tabix.
     temp2 = sy-tabix.
-    READ TABLE cipher_dict WITH TABLE KEY cipher_key COMPONENTS cipher = '' ASSIGNING <temp1>.
+    READ TABLE cipher_dict WITH KEY cipher_key COMPONENTS cipher = '' ASSIGNING <temp1>.
     sy-tabix = temp2.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
@@ -3831,6 +3831,235 @@ ENDCLASS.`;
     foo = <temp1>-plain.`;
     testFix(abap, expected);
   });
+
+  const keyedTable = `TYPES: BEGIN OF ty_row,
+         k TYPE i,
+         v TYPE i,
+       END OF ty_row.
+DATA it TYPE SORTED TABLE OF ty_row WITH UNIQUE KEY k WITH NON-UNIQUE SORTED KEY sec_key COMPONENTS v.
+DATA st TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA s TYPE ty_row.
+DATA r TYPE REF TO ty_row.
+DATA i TYPE i.
+FIELD-SYMBOLS <fs> TYPE ty_row.
+`;
+
+  it("table expression, KEY primary_key COMPONENTS", async () => {
+    const abap = keyedTable + `s = it[ KEY primary_key COMPONENTS k = 1 ].`;
+    const expected = keyedTable + `FIELD-SYMBOLS <temp1> LIKE LINE OF it.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE it WITH KEY k = 1 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+s = <temp1>.`;
+    testFix(abap, expected);
+  });
+
+  it("table expression, KEY primary_key without COMPONENTS, standard table", async () => {
+    const abap = keyedTable + `s = st[ KEY primary_key k = 1 v = 2 ].`;
+    const expected = keyedTable + `FIELD-SYMBOLS <temp1> LIKE LINE OF st.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE st WITH KEY k = 1 v = 2 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+s = <temp1>.`;
+    testFix(abap, expected);
+  });
+
+  it("table expression, KEY secondary key COMPONENTS", async () => {
+    const abap = keyedTable + `i = it[ KEY sec_key COMPONENTS v = 1 ]-k.`;
+    const expected = keyedTable + `FIELD-SYMBOLS <temp1> LIKE LINE OF it.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE it WITH KEY sec_key COMPONENTS v = 1 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+i = <temp1>-k.`;
+    testFix(abap, expected);
+  });
+
+  it("table expression, KEY secondary key INDEX", async () => {
+    const abap = keyedTable + `s = it[ KEY sec_key INDEX 1 ].`;
+    const expected = keyedTable + `FIELD-SYMBOLS <temp1> LIKE LINE OF it.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE it INDEX 1 USING KEY sec_key ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+s = <temp1>.`;
+    testFix(abap, expected);
+  });
+
+  it("table expression as target, KEY primary_key", async () => {
+    const abap = keyedTable + `it[ KEY primary_key k = 1 ]-v = 2.`;
+    const expected = keyedTable + `FIELD-SYMBOLS <temp1> LIKE LINE OF it.
+DATA temp2 LIKE sy-tabix.
+temp2 = sy-tabix.
+READ TABLE it WITH KEY k = 1 ASSIGNING <temp1>.
+sy-tabix = temp2.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+<temp1>-v = 2.`;
+    testFix(abap, expected);
+  });
+
+  it("ASSIGN table expression, KEY primary_key COMPONENTS", async () => {
+    const abap = keyedTable + `ASSIGN it[ KEY primary_key COMPONENTS k = 1 ] TO <fs>.`;
+    const expected = keyedTable + `READ TABLE it WITH KEY k = 1 ASSIGNING <fs>.`;
+    testFix(abap, expected);
+  });
+
+  it("ASSIGN table expression, KEY secondary key", async () => {
+    const abap = keyedTable + `ASSIGN it[ KEY sec_key v = 1 ] TO <fs>.`;
+    const expected = keyedTable + `READ TABLE it WITH KEY sec_key COMPONENTS v = 1 ASSIGNING <fs>.`;
+    testFix(abap, expected);
+  });
+
+  it("ASSIGN table expression, KEY secondary key INDEX", async () => {
+    const abap = keyedTable + `ASSIGN it[ KEY sec_key INDEX 1 ] TO <fs>.`;
+    const expected = keyedTable + `READ TABLE it INDEX 1 USING KEY sec_key ASSIGNING <fs>.`;
+    testFix(abap, expected);
+  });
+
+  it("ASSIGN table expression, INDEX", async () => {
+    const abap = keyedTable + `ASSIGN it[ INDEX 1 ] TO <fs>.`;
+    const expected = keyedTable + `READ TABLE it INDEX 1 ASSIGNING <fs>.`;
+    testFix(abap, expected);
+  });
+
+  it("line_exists(), KEY primary_key COMPONENTS", async () => {
+    const abap = keyedTable + `IF line_exists( it[ KEY primary_key COMPONENTS k = 1 ] ).
+ENDIF.`;
+    const expected = keyedTable + `DATA temp1 LIKE sy-subrc.
+READ TABLE it WITH KEY k = 1 TRANSPORTING NO FIELDS.
+temp1 = sy-subrc.
+IF temp1 = 0.
+ENDIF.`;
+    testFix(abap, expected);
+  });
+
+  it("line_exists(), KEY secondary key", async () => {
+    const abap = keyedTable + `IF line_exists( it[ KEY sec_key v = 1 ] ).
+ENDIF.`;
+    const expected = keyedTable + `DATA temp1 LIKE sy-subrc.
+READ TABLE it WITH KEY sec_key COMPONENTS v = 1 TRANSPORTING NO FIELDS.
+temp1 = sy-subrc.
+IF temp1 = 0.
+ENDIF.`;
+    testFix(abap, expected);
+  });
+
+  it("line_index(), KEY secondary key INDEX", async () => {
+    const abap = keyedTable + `i = line_index( it[ KEY sec_key INDEX 1 ] ).`;
+    const expected = keyedTable + `DATA temp1 LIKE sy-subrc.
+READ TABLE it INDEX 1 USING KEY sec_key TRANSPORTING NO FIELDS.
+temp1 = sy-tabix.
+i = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE OPTIONAL, KEY primary_key COMPONENTS", async () => {
+    const abap = keyedTable + `s = VALUE #( it[ KEY primary_key COMPONENTS k = 1 ] OPTIONAL ).`;
+    const expected = keyedTable + `DATA temp1 TYPE ty_row.
+CLEAR temp1.
+DATA temp2 TYPE ty_row.
+READ TABLE it INTO temp2 WITH KEY k = 1.
+IF sy-subrc = 0.
+  temp1 = temp2.
+ENDIF.
+s = temp1.`;
+    testFixAll(abap, expected);
+  });
+
+  it("VALUE OPTIONAL, KEY secondary key COMPONENTS", async () => {
+    const abap = keyedTable + `s = VALUE #( it[ KEY sec_key COMPONENTS v = 1 ] OPTIONAL ).`;
+    const expected = keyedTable + `DATA temp1 TYPE ty_row.
+CLEAR temp1.
+DATA temp2 TYPE ty_row.
+READ TABLE it INTO temp2 WITH KEY sec_key COMPONENTS v = 1.
+IF sy-subrc = 0.
+  temp1 = temp2.
+ENDIF.
+s = temp1.`;
+    testFixAll(abap, expected);
+  });
+
+  it("REF table expression, KEY primary_key", async () => {
+    const abap = keyedTable + `r = REF #( it[ KEY primary_key k = 1 ] ).`;
+    const expected = keyedTable + `FIELD-SYMBOLS <temp1> TYPE ty_row.
+READ TABLE it WITH KEY k = 1 ASSIGNING <temp1>.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+GET REFERENCE OF <temp1> INTO r.`;
+    testFixAll(abap, expected);
+  });
+
+  it("ASSIGN table expression, dynamic component", async () => {
+    const abap = keyedTable + `ASSIGN it[ ('K') = 1 ] TO <fs>.`;
+    const expected = keyedTable + `READ TABLE it WITH KEY ('K') = 1 ASSIGNING <fs>.`;
+    testFix(abap, expected);
+  });
+
+  // every form of a table expression with a key, in every statement that lowers one:
+  // the downported code has no finding from check_syntax and parser_error at 702
+  const keyForms = [
+    "KEY primary_key COMPONENTS k = 1",
+    "KEY primary_key k = 1",
+    "KEY PRIMARY_KEY COMPONENTS k = 1 v = 2",
+    "KEY primary_key INDEX 1",
+    "KEY sec_key COMPONENTS v = 1",
+    "KEY sec_key v = 1",
+    "KEY sec_key INDEX 1"];
+  const keyStatements = [
+    "s = it[ # ].",
+    "s = st[ # ].",
+    "it[ # ]-v = 2.",
+    "ASSIGN it[ # ] TO <fs>.",
+    "IF line_exists( it[ # ] ).\nENDIF.",
+    "i = line_index( it[ # ] ).",
+    "s = VALUE #( it[ # ] OPTIONAL ).",
+    "r = REF #( it[ # ] )."];
+
+  for (const statement of keyStatements) {
+    for (const form of keyForms) {
+      const abap = keyedTable + statement.replace("[ # ]", "[ " + form + " ]");
+      it("valid 702 after downport, " + abap.split("\n")[10], async () => {
+        const reg = new Registry(buildConfig(Version.v702)).addFile(new MemoryFile("zfoo.prog.abap", abap));
+        reg.parse();
+        const rule = new Downport();
+        for (let iteration = 0; iteration < 20; iteration++) {
+          const issues = rule.initialize(reg).run(reg.getFirstObject()!).filter(issue => issue.getDefaultFix() !== undefined);
+          if (issues.length === 0) {
+            break;
+          }
+          for (const issue of [...issues].reverse()) {
+            applyEditSingle(reg, issue.getDefaultFix()!);
+          }
+          reg.parse();
+        }
+        const fixed = reg.getFirstObject()!.getFiles()[0].getRaw();
+        expect(fixed).to.not.include("[");
+
+        const conf = Config.getDefault().get();
+        conf.syntax.version = Version.v702;
+        conf.rules = {"check_syntax": true, "parser_error": true};
+        const found = new Registry(new Config(JSON.stringify(conf))).addFile(new MemoryFile("zfoo.prog.abap", fixed)).parse().findIssues();
+        expect(found.map(issue => issue.getMessage()).join("\n")).to.equal("", fixed);
+      });
+    }
+  }
 
   it("REDUCE, str should be TYPE string", async () => {
     const abap = `
