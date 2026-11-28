@@ -3,6 +3,13 @@ import * as path from "path";
 import {FileOperations} from "./file_operations";
 import {PartialFS} from "./partial_fs";
 
+interface IRename {
+  type: string;
+  oldName: string;
+  newName: string;
+  maxLength: number;
+}
+
 export class Rename {
   private readonly reg: abaplint.IRegistry;
   private readonly deletedFiles: Set<string>;
@@ -92,7 +99,26 @@ export class Rename {
   }
 
   private rename(rconfig: abaplint.IRenameSettings, quiet?: boolean): abaplint.Rename {
+    const renames = this.findRenames(rconfig);
+    this.checkLengths(renames);
+
     const renamer = new abaplint.Rename(this.reg);
+    for (const r of renames) {
+      if (quiet !== true) {
+        console.log("Renaming " + r.type + " " + r.oldName.padEnd(30, " ") + " -> " + r.newName);
+      }
+
+      const result = renamer.rename(r.type, r.oldName, r.newName);
+      result.updatedFiles.forEach(f => { this.updatedFiles.add(f); });
+      result.deletedFiles.forEach(f => { this.deletedFiles.add(f); });
+      result.addedFiles.forEach(f => { this.addedFiles.add(f); });
+    }
+    return renamer;
+  }
+
+  /** the objects to rename, each with the first pattern that matches it */
+  private findRenames(rconfig: abaplint.IRenameSettings): IRename[] {
+    const renames: IRename[] = [];
     for (const o of this.reg.getObjects()) {
       if (this.reg.isDependency(o) === true) {
         continue;
@@ -102,24 +128,30 @@ export class Rename {
           continue;
         }
         const regex = new RegExp(p.oldName, "i");
-        const match = regex.exec(o.getName());
-        if (!match) {
+        if (!regex.exec(o.getName())) {
           continue;
         }
-
-        const newStr = o.getName().replace(regex, p.newName);
-        if (quiet !== true) {
-          console.log("Renaming " + o.getType() + " " + o.getName().padEnd(30, " ") + " -> " + newStr);
-        }
-
-        const result = renamer.rename(o.getType(), o.getName(), newStr);
-        result.updatedFiles.forEach(f => { this.updatedFiles.add(f); });
-        result.deletedFiles.forEach(f => { this.deletedFiles.add(f); });
-        result.addedFiles.forEach(f => { this.addedFiles.add(f); });
+        renames.push({
+          type: o.getType(),
+          oldName: o.getName(),
+          newName: o.getName().replace(regex, p.newName),
+          maxLength: o.getAllowedNaming().maxLength,
+        });
         break;
       }
     }
-    return renamer;
+    return renames;
+  }
+
+  /** Nothing is renamed if a new name is too long, and the error lists all of them: a pattern
+   *  that adds characters typically pushes several names over the limit, not one */
+  private checkLengths(renames: IRename[]) {
+    const tooLong = renames.filter(r => r.newName.length > r.maxLength);
+    if (tooLong.length > 0) {
+      throw new Error("Name not allowed, " + tooLong.length + " new name(s) too long:\n" + tooLong.map(r =>
+        "  " + r.type + " " + r.oldName + " -> " + r.newName + ", " + r.newName.length +
+        " characters, at most " + r.maxLength).join("\n"));
+    }
   }
 
   private skip(rconfig: abaplint.IRenameSettings) {

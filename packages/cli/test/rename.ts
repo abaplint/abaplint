@@ -43,6 +43,41 @@ ENDCLASS.`;
     expect(clasNew).to.include("TYPE yif_sdfsdf=>");
   });
 
+  it("lists all new names that are too long, and renames nothing", async () => {
+    const clas = (name: string) => `CLASS ${name} DEFINITION PUBLIC FINAL CREATE PUBLIC.
+ENDCLASS.
+CLASS ${name} IMPLEMENTATION.
+ENDCLASS.`;
+
+    const file1 = new MemoryFile("zcl_short.clas.abap", clas("zcl_short"));
+    const file2 = new MemoryFile("zcl_a_name_of_26_characters.clas.abap", clas("zcl_a_name_of_26_characters"));
+    const file3 = new MemoryFile("zcl_b_name_of_26_characters.clas.abap", clas("zcl_b_name_of_26_characters"));
+    const reg = new Registry().addFiles([file1, file2, file3]).parse();
+
+    const jsonFiles: any = {};
+    for (const f of [file1, file2, file3]) {
+      jsonFiles[f.getFilename()] = f.getRaw();
+    }
+    const mockFS = memfs.createFsFromVolume(memfs.Volume.fromJSON(jsonFiles));
+
+    const config = reg.getConfig().get();
+    config.rename = {"patterns": [{"type": "CLAS", "oldName": "^zcl_(.*)$", "newName": "zlonger_cl_$1"}]};
+
+    let message = "";
+    try {
+      new Rename(reg).run(config, "base", mockFS, true);
+    } catch (e) {
+      message = (e as Error).message;
+    }
+
+    expect(message).to.include("Name not allowed, 2 new name(s) too long");
+    expect(message).to.include("CLAS ZCL_A_NAME_OF_26_CHARACTERS -> zlonger_cl_A_NAME_OF_26_CHARACTERS, 34 characters, at most 30");
+    expect(message).to.include("CLAS ZCL_B_NAME_OF_26_CHARACTERS -> zlonger_cl_B_NAME_OF_26_CHARACTERS, 34 characters, at most 30");
+    expect(message).to.not.include("ZCL_SHORT");
+    expect(reg.getObject("CLAS", "ZCL_SHORT")).to.not.equal(undefined);
+    expect(mockFS.existsSync("zcl_short.clas.abap")).to.equal(true);
+  });
+
   it("only rename with the first match", async () => {
     const intf = `INTERFACE zif_intf PUBLIC.
   TYPES: BEGIN of ty,
