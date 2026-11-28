@@ -91,6 +91,11 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       this.createVisibilityValue = Visibility.Private;
     } else if (concat.includes(" CREATE PROTECTED")) {
       this.createVisibilityValue = Visibility.Protected;
+    } else if (!concat.includes(" CREATE PUBLIC")
+        && this.superClass !== undefined
+        && input.scope.findClassDefinition(this.superClass)?.getCreateVisibility() === Visibility.Protected) {
+// without its own CREATE addition, a subclass inherits CREATE PROTECTED from its superclass
+      this.createVisibilityValue = Visibility.Protected;
     } else {
       this.createVisibilityValue = Visibility.Public;
     }
