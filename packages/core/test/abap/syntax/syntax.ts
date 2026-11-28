@@ -4481,6 +4481,35 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("VALUE #, character literal in standard table of numc, error", () => {
+    const abap = `
+TYPES ty TYPE n LENGTH 4.
+DATA lt_screens TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+lt_screens = VALUE #( ( '0100' ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with row type n LENGTH 4");
+  });
+
+  it("VALUE #, string literal in standard table of c, error", () => {
+    const abap = `
+TYPES ty TYPE c LENGTH 20.
+DATA active_ucomm TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+active_ucomm = VALUE #( ( \`BACK\` ) ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not compatible with row type c LENGTH 20");
+  });
+
+  it("VALUE #, converted character literal in standard table of numc, ok", () => {
+    const abap = `
+TYPES ty TYPE n LENGTH 4.
+DATA lt_screens TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+lt_screens = VALUE #( ( CONV #( '0100' ) ) ).`;
+    const issues = runProgram(abap, [], Release.v750);
+    expect(issues.length).to.equals(0, issues.map(i => i.getMessage()).join(", "));
+  });
+
   it("VALUE #, too short hex in sorted table, error", () => {
     const abap = `
 CLASS lcl DEFINITION.
@@ -6338,6 +6367,69 @@ ENDCLASS.
 
 START-OF-SELECTION.
   lcl_factory=>create( ).`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("subclass inherits CREATE PROTECTED from superclass, error", () => {
+    const abap = `
+CLASS lcl_parent DEFINITION CREATE PROTECTED.
+ENDCLASS.
+CLASS lcl_parent IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_child DEFINITION INHERITING FROM lcl_parent.
+ENDCLASS.
+CLASS lcl_child IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_user DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl_user IMPLEMENTATION.
+  METHOD run.
+    DATA(lo_child) = NEW lcl_child( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal("lcl_child cannot be instantiated, class is defined as protected");
+  });
+
+  it("subclass inherits CREATE PROTECTED from superclass, instantiated in itself, ok", () => {
+    const abap = `
+CLASS lcl_parent DEFINITION CREATE PROTECTED.
+ENDCLASS.
+CLASS lcl_parent IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_child DEFINITION INHERITING FROM lcl_parent.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl_child IMPLEMENTATION.
+  METHOD run.
+    DATA(lo_child) = NEW lcl_child( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+
+  it("subclass overrides inherited CREATE PROTECTED with CREATE PUBLIC, ok", () => {
+    const abap = `
+CLASS lcl_parent DEFINITION CREATE PROTECTED.
+ENDCLASS.
+CLASS lcl_parent IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_child DEFINITION INHERITING FROM lcl_parent CREATE PUBLIC.
+ENDCLASS.
+CLASS lcl_child IMPLEMENTATION.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA(lo_child) = NEW lcl_child( ).`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
@@ -23125,5 +23217,108 @@ APPEND INITIAL LINE TO <display_tab> ASSIGNING FIELD-SYMBOL(<display_row>).
 ASSERT lines( <display_row> ) = 1.`;
     const issues = runProgram(abap);
     expect(issues[0]?.getMessage()).to.equal(`"<display_row>" is not an internal table`);
+  });
+});
+
+describe("syntax.ts, APPEND VALUE with a data object named value", () => {
+  const program = (name: string) => `
+TYPES: BEGIN OF ty_column,
+         columnname TYPE string,
+         r_column   TYPE REF TO object,
+       END OF ty_column,
+       ty_columns TYPE STANDARD TABLE OF ty_column WITH DEFAULT KEY.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS get RETURNING VALUE(${name}) TYPE ty_columns.
+  PRIVATE SECTION.
+    DATA mt_columns TYPE ty_columns.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD get.
+    LOOP AT mt_columns INTO DATA(ls_column).
+      APPEND VALUE #( columnname = ls_column-columnname
+                      r_column   = ls_column-r_column ) TO ${name}.
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.`;
+
+  it("returning parameter named value, error", () => {
+    const issues = runProgram(program("value"));
+    expect(issues[0]?.getMessage()).to.equal(`An explicit work area is necessary in the OO context. Use "APPEND wa TO VALUE [SORTED BY]".`);
+  });
+
+  it("returning parameter named result, ok", () => {
+    const issues = runProgram(program("result"));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
+
+describe("syntax.ts, protected attribute via reference typed with a subclass", () => {
+  const program = (refType: string) => `
+CLASS lcl_container DEFINITION DEFERRED.
+
+CLASS lcl_control DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run IMPORTING parent TYPE REF TO ${refType}.
+  PROTECTED SECTION.
+    DATA control_id TYPE string.
+  PRIVATE SECTION.
+    CLASS-METHODS initialize IMPORTING parent TYPE REF TO ${refType}.
+ENDCLASS.
+
+CLASS lcl_container DEFINITION INHERITING FROM lcl_control.
+ENDCLASS.
+
+CLASS lcl_control IMPLEMENTATION.
+  METHOD run.
+    initialize( parent ).
+  ENDMETHOD.
+  METHOD initialize.
+    DATA(lv_id) = parent->control_id.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_container IMPLEMENTATION.
+ENDCLASS.`;
+
+  it("accessed in the declaring class via a subclass reference, error", () => {
+    const issues = runProgram(program("lcl_container"));
+    expect(issues[0]?.getMessage()).to.equal(`Attribute "control_id" is protected and cannot be accessed`);
+  });
+
+  it("accessed in the declaring class via a reference of its own type, ok", () => {
+    const issues = runProgram(program("lcl_control"));
+    expect(issues[0]?.getMessage()).to.equal(undefined);
+  });
+});
+
+describe("syntax.ts, APPEND VALUE with a data object named value in scope, other target", () => {
+  it("value is a string or a table, target is another table, ok", () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         name TYPE string,
+       END OF ty_row,
+       ty_rows TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    METHODS value_is_string IMPORTING value TYPE string.
+    METHODS value_is_table IMPORTING value TYPE ty_rows.
+  PRIVATE SECTION.
+    DATA mt_rows TYPE ty_rows.
+ENDCLASS.
+
+CLASS lcl IMPLEMENTATION.
+  METHOD value_is_string.
+    APPEND VALUE #( name = value ) TO mt_rows.
+  ENDMETHOD.
+  METHOD value_is_table.
+    APPEND VALUE #( name = 'A' ) TO mt_rows.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 });
