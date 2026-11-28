@@ -67,6 +67,15 @@ export class Append implements StatementSyntax {
     }
     if (source) {
       checkParenthesizedOperand(source, input);
+      if (source.getFirstToken().getStr().toUpperCase() === "VALUE"
+          && source.findDirectExpression(Expressions.TypeNameOrInfer) !== undefined
+          && node.findDirectTokenByText("LINES") === undefined
+          && target?.concatTokens().toUpperCase() === "VALUE") {
+// when appending to a table named VALUE, the VALUE operator is read as the short form without work area
+        const message = `An explicit work area is necessary in the OO context. Use "APPEND wa TO VALUE [SORTED BY]".`;
+        input.issues.push(syntaxIssue(input, node.getFirstToken(), message));
+        return;
+      }
       if (targetType !== undefined
           && !(targetType instanceof TableType)
           && !(targetType instanceof UnknownType)
