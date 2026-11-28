@@ -4628,6 +4628,98 @@ foo = temp1.`;
     testFix(abap, expected);
   });
 
+  it("VALUE table expression, default, index", async () => {
+    const abap = `
+  DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA input TYPE i.
+  DATA result TYPE i.
+  result = VALUE i( lt_prime_numbers[ input ] DEFAULT 5 ).`;
+    const expected = `
+  DATA lt_prime_numbers TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  DATA input TYPE i.
+  DATA result TYPE i.
+  DATA temp1 TYPE i.
+  CLEAR temp1.
+  READ TABLE lt_prime_numbers INTO DATA(temp2) INDEX input.
+  IF sy-subrc = 0.
+    temp1 = temp2.
+  ELSE.
+    temp1 = 5.
+  ENDIF.
+  result = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE table expression, default, component", async () => {
+    const abap = `
+TYPES: BEGIN OF ty_row,
+         ext TYPE i,
+         int TYPE string,
+       END OF ty_row.
+DATA table TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA foo TYPE string.
+foo = VALUE #( table[ ext = 2 ]-int DEFAULT \`OK\` ).`;
+    const expected = `
+TYPES: BEGIN OF ty_row,
+         ext TYPE i,
+         int TYPE string,
+       END OF ty_row.
+DATA table TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+DATA foo TYPE string.
+DATA temp1 TYPE string.
+CLEAR temp1.
+READ TABLE table INTO DATA(temp2) WITH KEY ext = 2.
+IF sy-subrc = 0.
+  temp1 = temp2-int.
+ELSE.
+  temp1 = \`OK\`.
+ENDIF.
+foo = temp1.`;
+    testFix(abap, expected);
+  });
+
+  it("VALUE table expression, default, method call only evaluated when not found", async () => {
+    const abap = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS fallback RETURNING VALUE(rv) TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD fallback.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM run.
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA(choice) = VALUE string( tab[ 1 ] DEFAULT lcl=>fallback( ) ).
+ENDFORM.`;
+    const expected = `
+CLASS lcl DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS fallback RETURNING VALUE(rv) TYPE string.
+ENDCLASS.
+CLASS lcl IMPLEMENTATION.
+  METHOD fallback.
+  ENDMETHOD.
+ENDCLASS.
+
+FORM run.
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA temp1 TYPE string.
+  CLEAR temp1.
+  DATA temp2 TYPE string.
+  READ TABLE tab INTO temp2 INDEX 1.
+  IF sy-subrc = 0.
+    temp1 = temp2.
+  ELSE.
+    temp1 = lcl=>fallback( ).
+  ENDIF.
+  DATA choice LIKE temp1.
+  choice = temp1.
+ENDFORM.`;
+    testFixAll(abap, expected);
+  });
+
   it("SQL, INTO field list", async () => {
     const abap = `
 SELECT SINGLE foo, bar INTO (@ls_result-foo, @ls_result-bar)
