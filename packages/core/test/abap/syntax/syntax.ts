@@ -20332,6 +20332,60 @@ ENDCLASS.`;
     expect(issues[0]?.getMessage()).to.equal(undefined);
   });
 
+  it("friendship of the super class, not via a reference typed with the sub class", () => {
+    const abap = `
+CLASS lcl_friend DEFINITION DEFERRED.
+
+CLASS lcl_super DEFINITION FRIENDS lcl_friend.
+  PROTECTED SECTION.
+    DATA mv_value TYPE i.
+    METHODS prot_method.
+ENDCLASS.
+
+CLASS lcl_super IMPLEMENTATION.
+  METHOD prot_method.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+ENDCLASS.
+
+CLASS lcl_sub IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_friend DEFINITION.
+  PUBLIC SECTION.
+    METHODS run.
+ENDCLASS.
+
+CLASS lcl_friend IMPLEMENTATION.
+  METHOD run.
+    DATA lo_super TYPE REF TO lcl_super.
+    DATA lo_sub TYPE REF TO lcl_sub.
+
+    lo_sub = NEW #( ).
+    lo_super = lo_sub.
+
+* static type = class granting friendship: expected OK
+    lo_super->mv_value = 1.
+    lo_super->prot_method( ).
+
+* static type = subclass, which grants no friendship: expected syntax error
+    lo_sub->mv_value = 2.
+    lo_sub->prot_method( ).
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  NEW lcl_friend( )->run( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(2);
+    expect(issues[0].getMessage()).to.equal(`Attribute "mv_value" is protected and cannot be accessed`);
+    expect(issues[0].getStart().getRow()).to.equal(39);
+    expect(issues[1].getMessage()).to.equal(`Method "prot_method" is protected and cannot be accessed`);
+    expect(issues[1].getStart().getRow()).to.equal(40);
+  });
+
   it("ok, interface attribute", () => {
     const abap = `
 INTERFACE lif.
